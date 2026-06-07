@@ -7,72 +7,34 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', system-ui, sans-serif; line-height: 1.6; color: #333; background: #f9f7f4; }
+        body { font-family: 'Noto Sans TC', system-ui, sans-serif; line-height: 1.8; color: #333; background: #f9f7f4; }
         nav {
-            position: sticky;
-            top: 0;
-            background: linear-gradient(135deg, #6b4e31, #8d6e4f);
-            box-shadow: 0 4px 20px rgba(107,78,49,0.3);
-            z-index: 1000;
-            color: white;
+            position: sticky; top: 0; background: linear-gradient(135deg, #6b4e31, #8d6e4f);
+            box-shadow: 0 4px 20px rgba(107,78,49,0.3); z-index: 1000; color: white;
         }
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        ul {
-            list-style: none;
-            display: flex;
-            gap: 2.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 1rem 0;
-        }
-        li {
-            position: relative;
-            cursor: pointer;
-            padding: 0.6rem 1.2rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
-        li:hover {
-            background: rgba(255,255,255,0.15);
-        }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        ul { list-style: none; display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap; padding: 1rem 0; }
+        li { position: relative; cursor: pointer; padding: 0.6rem 1.2rem; font-weight: 500; transition: all 0.3s ease; border-radius: 8px; }
+        li:hover { background: rgba(255,255,255,0.15); }
         li a { text-decoration: none; color: inherit; }
         .dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            color: #333;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 1.2rem;
-            min-width: 220px;
-            border-radius: 12px;
-            z-index: 1001;
-            margin-top: 8px;
+            display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            background: white; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 1.2rem; min-width: 220px; border-radius: 12px; z-index: 1001; margin-top: 8px;
         }
         li.active .dropdown { display: block; }
-        .dropdown a {
-            display: block;
-            padding: 0.6rem 1rem;
-            text-decoration: none;
-            color: #444;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-        .dropdown a:hover {
-            background: #f0e9df;
-            color: #6b4e31;
-        }
-        .dropdown hr {
-            margin: 0.8rem 0;
-            border: none;
-            border-top: 1px solid #eee;
+        .dropdown a { display: block; padding: 0.6rem 1rem; text-decoration: none; color: #444; border-radius: 6px; }
+        .dropdown a:hover { background: #f0e9df; color: #6b4e31; }
+        .dropdown hr { margin: 0.8rem 0; border: none; border-top: 1px solid #eee; }
+
+        main { max-width: 860px; margin: 3rem auto; padding: 0 1.5rem; }
+        h1 { text-align: center; color: #6b4e31; margin-bottom: 2rem; }
+        h2 { color: #6b4e31; margin: 2.2rem 0 1rem; font-size: 1.35rem; }
+        p { margin-bottom: 1.4rem; text-align: justify; }
+        img { max-width: 100%; height: auto; border-radius: 12px; margin: 1.5rem 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .closing-block {
+            background: #f4f0e9; padding: 2rem; border-radius: 16px; margin-top: 2.5rem;
+            border-left: 5px solid #6b4e31;
         }
     </style>
 </head>
@@ -113,10 +75,28 @@
         </div>
     </nav>
 
-    <main style="max-width: 1200px; margin: 3rem auto; padding: 0 1.5rem;">
-        <h1 style="text-align:center; color:#6b4e31;">關於宇色</h1>
-        <p>這裡是你的關於頁面內容...</p>
-        <!-- 保留你原本的 about 內容 -->
+    <main>
+        <h1>關於宇色</h1>
+
+        <img src="about-1.jpg" alt="靈元院法會">
+
+        <h2>靈元院緣起與法脈</h2>
+        <p>奉靈山派創始神無極瑤池金母慈示，於台中設立專屬靈修之會靈聖地。以喚醒元神靈性為靈修根本，提供自修者一個心靈梲居静修之所。靈元院規制與儀軌，依循靈山派無極法精神與無極瑤池金母降示之教導，向世人分享靈山派獨樹一幅的元神修煉奧秘、信仰神學與空間美學。</p>
+
+        <img src="about-2.jpg" alt="空間美學">
+
+        <h2>靕心修持的靈性空間美學</h2>
+        <p>本院舉凡道場題名、布置擺設、芸術美學以及空間規劃，均依無極瑤池金母親降指示，及空間氣場流動而設計。形成一處隱匿於都市叢林中，寧靓且適於靈修人親近無極瑤池金母靈山法靕修的環境，使每一位進到靈元院的信眾皆能靕心，感受到空間所帶來的沉靓與安寧。</p>
+
+        <div class="closing-block">
+            <h2>靈元院目前於隱院靕修期間</h2>
+            <p style="margin-bottom: 18px;">目前靈元院處於隱院靕修階段，暫不對外開放參訪。<br>如有事務、法務或修行相關諮詢，敬請透過電話或 Telegram 聯繫。</p>
+            <p>
+                <strong>TEL</strong> 0975-256579<br>
+                <strong>Telegram 官方頻道</strong><br>
+                <strong>Telegram 聯繫帳號</strong>
+            </p>
+        </div>
     </main>
 
     <script>
@@ -126,7 +106,6 @@
             });
             el.classList.toggle('active');
         }
-
         document.addEventListener('click', function(e) {
             if (!e.target.closest('li')) {
                 document.querySelectorAll('li.active').forEach(item => item.classList.remove('active'));
