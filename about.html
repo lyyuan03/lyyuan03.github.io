@@ -1,116 +1,222 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>關於宇色 | 靈元院</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', system-ui, sans-serif; line-height: 1.8; color: #333; background: #f9f7f4; }
-        nav {
-            position: sticky; top: 0; background: linear-gradient(135deg, #6b4e31, #8d6e4f);
-            box-shadow: 0 4px 20px rgba(107,78,49,0.3); z-index: 1000; color: white;
-        }
-        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-        ul { list-style: none; display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap; padding: 1rem 0; }
-        li { position: relative; cursor: pointer; padding: 0.6rem 1.2rem; font-weight: 500; transition: all 0.3s ease; border-radius: 8px; }
-        li:hover { background: rgba(255,255,255,0.15); }
-        li a { text-decoration: none; color: inherit; }
-        .dropdown {
-            display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-            background: white; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 1.2rem; min-width: 220px; border-radius: 12px; z-index: 1001; margin-top: 8px;
-        }
-        li.active .dropdown { display: block; }
-        .dropdown a { display: block; padding: 0.6rem 1rem; text-decoration: none; color: #444; border-radius: 6px; }
-        .dropdown a:hover { background: #f0e9df; color: #6b4e31; }
-        .dropdown hr { margin: 0.8rem 0; border: none; border-top: 1px solid #eee; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>關於宇色 | 靈元院</title>
+<meta name="theme-color" content="#0f1a14">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;500&display=swap">
+<style>
+:root {
+  --lyy-dark: #0f1a14;
+  --lyy-gold: #C5A26F;
+  --lyy-cream: #F5F1E9;
+  --lyy-white: #FFFFFF;
+  --font-serif: 'Noto Serif TC', 'Georgia', serif;
+  --font-sans: 'Noto Sans TC', 'Arial', sans-serif;
+  --font-en: 'Cormorant Garamond', serif;
+}
 
-        main { max-width: 860px; margin: 3rem auto; padding: 0 1.5rem; }
-        h1 { text-align: center; color: #6b4e31; margin-bottom: 2rem; }
-        h2 { color: #6b4e31; margin: 2.2rem 0 1rem; font-size: 1.35rem; }
-        p { margin-bottom: 1.4rem; text-align: justify; }
-        img { max-width: 100%; height: auto; border-radius: 12px; margin: 1.5rem 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .closing-block {
-            background: #f4f0e9; padding: 2rem; border-radius: 16px; margin-top: 2.5rem;
-            border-left: 5px solid #6b4e31;
-        }
-    </style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--lyy-cream);
+  background-color: var(--lyy-dark);
+  line-height: 1.8;
+  letter-spacing: 0.03em;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Navigation - Centered, No Left Logo */
+nav {
+  position: sticky;
+  top: 0;
+  background: rgba(15, 26, 20, 0.95);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(197, 162, 111, 0.15);
+}
+.nav-content {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0;
+}
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+.nav-links > li {
+  position: relative;
+}
+.nav-links > li > a,
+.nav-links > li > span {
+  color: var(--lyy-cream);
+  text-decoration: none;
+  font-size: 14.5px;
+  letter-spacing: 0.08em;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.nav-links > li > a:hover,
+.nav-links > li > span:hover { color: var(--lyy-gold); }
+
+/* Dropdown */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a2620;
+  border: 1px solid rgba(197, 162, 111, 0.2);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  min-width: 170px;
+  padding: 8px 0;
+  z-index: 200;
+  list-style: none;
+  margin: 0;
+}
+.dropdown li a {
+  display: block;
+  padding: 11px 22px;
+  color: var(--lyy-cream);
+  text-decoration: none;
+  font-size: 13.5px;
+  transition: all 0.2s;
+}
+.dropdown li a:hover {
+  background: rgba(197, 162, 111, 0.1);
+  color: var(--lyy-gold);
+}
+.nav-links > li:hover .dropdown {
+  display: block;
+}
+
+/* About page content */
+main {
+  max-width: 860px;
+  margin: 3rem auto;
+  padding: 0 24px;
+  color: var(--lyy-cream);
+}
+
+h1 { 
+  text-align: center; 
+  color: var(--lyy-gold); 
+  margin-bottom: 2.5rem;
+  font-size: 2.1rem;
+}
+
+h2 { 
+  color: var(--lyy-gold); 
+  margin: 2.5rem 0 1rem;
+  font-size: 1.45rem;
+}
+
+p { 
+  margin-bottom: 1.5rem; 
+  text-align: justify;
+  color: rgba(245, 241, 233, 0.92);
+}
+
+img { 
+  max-width: 100%; 
+  height: auto; 
+  border-radius: 12px; 
+  margin: 1.8rem 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.closing-block {
+  background: rgba(26, 38, 32, 0.6);
+  padding: 2.2rem;
+  border-radius: 16px;
+  margin-top: 2.8rem;
+  border-left: 5px solid var(--lyy-gold);
+}
+</style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <ul>
-                <li><a href="/">首頁</a></li>
-                <li><a href="about.html">關於宇色</a></li>
-                <li onclick="toggleDropdown(this)">活動
-                    <div class="dropdown">
-                        <a href="#">🔸 近期講座與工作坊</a>
-                        <a href="#">🔸 線上分享會</a>
-                        <a href="#">🔸 冥想體驗營</a>
-                        <hr>
-                        <a href="#">📅 查看活動行事曆</a>
-                    </div>
-                </li>
-                <li onclick="toggleDropdown(this)">文選
-                    <div class="dropdown">
-                        <a href="#">🔸 靈修隨筆</a>
-                        <a href="#">🔸 塔羅洞見</a>
-                        <a href="#">🔸 心養生文章</a>
-                        <hr>
-                        <a href="#">📚 完整文章列表</a>
-                    </div>
-                </li>
-                <li onclick="toggleDropdown(this)">選物
-                    <div class="dropdown">
-                        <a href="#">🔸 推薦書籍</a>
-                        <a href="#">🔸 靈性用品</a>
-                        <a href="#">🔸 療癒工具</a>
-                        <hr>
-                        <a href="#">🛍️ 選物商店</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
 
-    <main>
-        <h1>關於宇色</h1>
+<!-- Navigation - Exactly same as index.html -->
+<nav>
+<div class="container">
+<div class="nav-content">
+<ul class="nav-links">
+<li><a href="https://lyyuan03.github.io/">首頁</a></li>
+<li><a href="about.html">關於</a></li>
+<li>
+<span class="has-dropdown">活動</span>
+<ul class="dropdown">
+<li><a href="https://www.beclass.com/rid=305019268fd7f0561282" target="_blank">年度點燈</a></li>
+<li><a href="https://kinkiosel.pixnet.net/blog/post/33959738" target="_blank">奠基法會</a></li>
+<li><a href="https://kinkiosel.pixnet.net/blog/post/33478346" target="_blank">靈元院立院法會</a></li>
+</ul>
+</li>
+<li>
+<span class="has-dropdown">文選</span>
+<ul class="dropdown">
+<li><a href="#">靈修隨筆</a></li>
+<li><a href="#">塔羅洞見</a></li>
+<li><a href="#">心養生文章</a></li>
+</ul>
+</li>
+<li>
+<span class="has-dropdown">選物</span>
+<ul class="dropdown">
+<li><a href="#">推薦書籍</a></li>
+<li><a href="#">靈性用品</a></li>
+<li><a href="#">療癒工具</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
 
-        <img src="about-1.jpg" alt="靈元院法會">
+<main>
+    <h1>關於宇色</h1>
 
-        <h2>靈元院緣起與法脈</h2>
-        <p>奉靈山派創始神無極瑤池金母慈示，於台中設立專屬靈修之會靈聖地。以喚醒元神靈性為靈修根本，提供自修者一個心靈梲居静修之所。靈元院規制與儀軌，依循靈山派無極法精神與無極瑤池金母降示之教導，向世人分享靈山派獨樹一幅的元神修煉奧秘、信仰神學與空間美學。</p>
+    <img src="about-1.jpg" alt="靈元院法會">
 
-        <img src="about-2.jpg" alt="空間美學">
+    <h2>靈元院緣起與法脈</h2>
+    <p>奉靈山派創始神無極瑤池金母慈示，於台中設立專屬靈修之會靈聖地。以喚醒元神靈性為靈修根本，提供自修者一個心靈梲居靕修之所。靈元院規制與儀軌，依循靈山派無極法精神與無極瑤池金母降示之教導，向世人分享靈山派獨樹一幅的元神修煉奧秘、信仰神學與空間美學。</p>
 
-        <h2>靕心修持的靈性空間美學</h2>
-        <p>本院舉凡道場題名、布置擺設、芸術美學以及空間規劃，均依無極瑤池金母親降指示，及空間氣場流動而設計。形成一處隱匿於都市叢林中，寧靓且適於靈修人親近無極瑤池金母靈山法靕修的環境，使每一位進到靈元院的信眾皆能靕心，感受到空間所帶來的沉靓與安寧。</p>
+    <img src="about-2.jpg" alt="空間美學">
 
-        <div class="closing-block">
-            <h2>靈元院目前於隱院靕修期間</h2>
-            <p style="margin-bottom: 18px;">目前靈元院處於隱院靕修階段，暫不對外開放參訪。<br>如有事務、法務或修行相關諮詢，敬請透過電話或 Telegram 聯繫。</p>
-            <p>
-                <strong>TEL</strong> 0975-256579<br>
-                <strong>Telegram 官方頻道</strong><br>
-                <strong>Telegram 聯繫帳號</strong>
-            </p>
-        </div>
-    </main>
+    <h2>靕心修持的靈性空間美學</h2>
+    <p>本院舉凡道場題名、布置擺設、芸術美學以及空間規劃，均依無極瑤池金母親降指示，及空間氣場流動而設計。形成一處隱匿於都市叢林中，寧靓且適於靈修人親近無極瑤池金母靈山法靕修的環境，使每一位進到靈元院的信眾皆能靕心，感受到空間所帶來的沉靓與安寧。</p>
 
-    <script>
-        function toggleDropdown(el) {
-            document.querySelectorAll('li.active').forEach(item => {
-                if (item !== el) item.classList.remove('active');
-            });
-            el.classList.toggle('active');
-        }
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('li')) {
-                document.querySelectorAll('li.active').forEach(item => item.classList.remove('active'));
-            }
-        });
-    </script>
+    <div class="closing-block">
+        <h2>靈元院目前於隱院靕修期間</h2>
+        <p style="margin-bottom: 18px;">目前靈元院處於隱院靕修階段，暫不對外開放參訪。<br>如有事務、法務或修行相關諮詢，敬請透過電話或 Telegram 聯繫。</p>
+        <p>
+            <strong>TEL</strong> 0975-256579<br>
+            <strong>Telegram 官方頻道</strong><br>
+            <strong>Telegram 聯繫帳號</strong>
+        </p>
+    </div>
+</main>
+
 </body>
 </html>
