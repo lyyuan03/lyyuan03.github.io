@@ -118,6 +118,24 @@ nav {
   display: block;
 }
 
+/* 修復間隙：用透明偽元素橋接選單與導覽列之間的空隙 */
+.nav-links > li > span.has-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  right: -20px;
+  height: 22px;
+}
+.nav-links > li .dropdown::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+}
+
 /* Hero with Forest Background */
 .hero {
   min-height: 100vh;
