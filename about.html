@@ -296,6 +296,30 @@ nav {
   letter-spacing: 0.04em;
 }
 
+.tg-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.tg-btn {
+  display: inline-block;
+  padding: 11px 28px;
+  border: 1px solid rgba(197, 162, 111, 0.45);
+  color: var(--lyy-gold);
+  text-decoration: none;
+  font-size: 13.5px;
+  letter-spacing: 0.1em;
+  border-radius: 2px;
+  transition: all 0.25s ease;
+  font-family: var(--font-sans);
+}
+.tg-btn:hover {
+  background: rgba(197, 162, 111, 0.12);
+  border-color: var(--lyy-gold);
+}
+
 footer {
   background: rgba(8, 14, 10, 0.85);
   padding: 40px 0 32px;
@@ -416,34 +440,24 @@ footer {
 
   <div class="contact-section">
     <div class="contact-box">
-      <h2>靈元院目前於隱院靕修期間</h2>
+      <h2>目前閉院期間</h2>
       <span class="sub">CURRENTLY IN RETREAT</span>
       <div class="contact-divider"></div>
-      <div class="contact-row">
-        <div class="contact-item">
-          <span class="clabel">TEL</span>
-          <span class="value">0975-256579</span>
-        </div>
-        <div class="contact-item">
-          <span class="clabel">EMAIL</span>
-          <span class="value">lyyuan03@gmail.com</span>
-        </div>
-        <div class="contact-item">
-          <span class="clabel">WEBSITE</span>
-          <span class="value">www.lyyuan.tw</span>
-        </div>
-      </div>
       <p class="status-note">
-        目前靈元院處於隱院靕修階段，暫不對外開放參訪。<br>
-        如有事務、法務或修行相關諮詢，敬請透過電話或 Telegram 聯繫。
+        暫不對外開放參訪。<br>
+        如有事務、法務或修行相關諮詢，敬請透過 Telegram 聯繫。
       </p>
+      <div class="tg-links">
+        <a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a>
+        <a href="https://t.me/lyyuan" target="_blank" class="tg-btn">Telegram 聯絡帳號</a>
+      </div>
     </div>
   </div>
 </div>
 
 <footer>
   <div class="container">
-    靈元院 Ling Yuan Yuan © 2026 &nbsp;&nbsp;•&nbsp;&nbsp; 修行在己
+    靈元院 Ling Yuan Yuan © 2026 &nbsp;&nbsp;•&nbsp;&nbsp; 靈修在心
   </div>
 </footer>
 
