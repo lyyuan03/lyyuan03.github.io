@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>年度點燈 | 靈元院</title>
 <meta name="theme-color" content="#0f1a14">
-<meta name="description" content="靈元院年度點燈法會｜太歲燈、破災降魔燈、廣財運通燈">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;500&display=swap">
 <style>
 :root {
@@ -14,7 +13,6 @@
   --lyy-cream: #F5F1E9;
   --font-serif: 'Noto Serif TC', 'Georgia', serif;
   --font-sans: 'Noto Sans TC', 'Arial', sans-serif;
-  --font-en: 'Cormorant Garamond', serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,202 +20,127 @@
 body {
   font-family: var(--font-sans);
   color: var(--lyy-cream);
-  line-height: 1.8;
-  letter-spacing: 0.03em;
-  background: linear-gradient(rgba(15,26,20,0.72), rgba(15,26,20,0.85)),
+  line-height: 2.0;
+  letter-spacing: 0.04em;
+  background: linear-gradient(rgba(15,26,20,0.78), rgba(15,26,20,0.88)),
               url('https://lyyuan.tw/forest-path.jpg') center/cover no-repeat fixed;
   background-color: #0f1a14;
   min-height: 100vh;
 }
 
-h1, h2, h3 { font-family: var(--font-serif); font-weight: 500; letter-spacing: 0.08em; }
-
-.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-
 /* Navigation */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  background: rgba(15, 26, 20, 0.88);
+  background: rgba(15, 26, 20, 0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(197, 162, 111, 0.15);
   z-index: 100;
 }
-.nav-content { display: flex; justify-content: center; padding: 18px 0; }
-.nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
-.nav-links > li { position: relative; }
-.nav-links > li > a,
-.nav-links > li > span {
+.nav-content { display: flex; justify-content: center; padding: 20px 0; }
+.nav-links { display: flex; gap: 40px; list-style: none; align-items: center; }
+.nav-links li { position: relative; }
+.nav-links a, .nav-links span {
   color: var(--lyy-cream);
   text-decoration: none;
-  font-size: 14.5px;
-  letter-spacing: 0.08em;
-  transition: color 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  transition: color 0.3s;
 }
-.nav-links > li > a:hover,
-.nav-links > li > span:hover { color: var(--lyy-gold); }
-.nav-links > li > a.active { color: var(--lyy-gold); }
-.nav-links > li > span.has-dropdown::after { content: '▾'; font-size: 10px; opacity: 0.6; }
+.nav-links a:hover, .nav-links span:hover { color: var(--lyy-gold); }
+
+/* Dropdown 優化 */
 .dropdown {
   display: none;
   position: absolute;
-  top: calc(100% + 14px);
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: #1a2620;
-  border: 1px solid rgba(197, 162, 111, 0.2);
+  background: rgba(26,38,32,0.98);
+  border: 1px solid rgba(197,162,111,0.25);
   border-radius: 6px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  min-width: 170px;
-  padding: 8px 0;
+  padding: 12px 0;
+  min-width: 180px;
   z-index: 200;
-  list-style: none;
 }
 .dropdown li a {
   display: block;
-  padding: 11px 22px;
-  color: var(--lyy-cream);
-  text-decoration: none;
-  font-size: 13.5px;
-  transition: all 0.2s;
+  padding: 12px 24px;
+  white-space: nowrap;
 }
-.dropdown li a:hover { background: rgba(197, 162, 111, 0.1); color: var(--lyy-gold); }
-.nav-links > li:hover .dropdown { display: block; }
+.nav-links li:hover .dropdown { display: block; }
 
-/* Page Content */
-.page-content { padding-top: 120px; padding-bottom: 100px; }
+/* 主要內容區塊 - 日本禪風 */
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 140px 24px 100px;
+}
 
-.page-header {
+h1 {
+  font-family: var(--font-serif);
+  font-size: 2.4rem;
   text-align: center;
-  padding: 72px 24px 56px;
+  letter-spacing: 0.12em;
+  margin-bottom: 80px;
+  border-bottom: 1px solid rgba(197,162,111,0.4);
+  padding-bottom: 24px;
 }
-.page-header .plabel {
-  font-family: var(--font-en);
-  font-size: 13px;
+
+.content-block {
+  background: rgba(245, 241, 233, 0.13);
+  border-left: 5px solid var(--lyy-gold);
+  padding: 48px 52px;
+  margin-bottom: 90px;
+  border-radius: 4px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+}
+
+.content-block h2 {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  margin-bottom: 28px;
   color: var(--lyy-gold);
-  letter-spacing: 0.42em;
-  display: block;
-  margin-bottom: 20px;
-}
-.page-header h1 {
-  font-size: clamp(28px, 5vw, 44px);
-  font-weight: 400;
-  color: var(--lyy-cream);
-  margin: 0 0 20px;
-  letter-spacing: 0.16em;
-}
-.page-header .rule {
-  width: 48px;
-  height: 1px;
-  background: rgba(197, 162, 111, 0.5);
-  margin: 0 auto;
-}
-
-.content-wrap {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-.section {
-  margin-bottom: 52px;
-}
-
-.section h2 {
-  font-size: 23px;
-  font-weight: 500;
-  color: var(--lyy-cream);
-  margin: 0 0 24px;
   letter-spacing: 0.08em;
 }
 
-.section p {
-  font-size: 16px;
-  color: rgba(245, 241, 233, 0.88);
-  line-height: 1.95;
-  margin-bottom: 22px;
+.content-block p {
+  margin-bottom: 1.6em;
+  font-size: 1.05rem;
 }
 
-/* 新增：透明白色色塊樣式 */
-.highlight-section {
-  background: rgba(255, 255, 255, 0.12);
-  padding: 32px 28px;
-  border-radius: 8px;
-  border-left: 4px solid var(--lyy-gold);
-  margin-bottom: 52px;
+/* 最後狀態文字 */
+.status {
+  text-align: center;
+  font-size: 1.3rem;
+  color: var(--lyy-gold);
+  margin: 80px 0 40px;
+  letter-spacing: 0.08em;
 }
-
-.emoji { font-size: 1.4em; margin-right: 8px; }
 
 footer {
-  background: rgba(8, 14, 10, 0.85);
-  padding: 40px 0 32px;
-  font-size: 13px;
-  color: rgba(245, 241, 233, 0.5);
   text-align: center;
-  letter-spacing: 0.06em;
-  border-top: 1px solid rgba(197, 162, 111, 0.1);
-}
-
-@media (max-width: 700px) {
-  .nav-links { gap: 18px; }
-  .nav-links > li > a,
-  .nav-links > li > span { font-size: 12.5px; }
+  padding: 60px 0 40px;
+  font-size: 0.95rem;
+  opacity: 0.7;
 }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="container">
+  <div class="container" style="max-width:1080px">
     <div class="nav-content">
       <ul class="nav-links">
         <li><a href="https://lyyuan.tw/">首頁</a></li>
         <li><a href="about.html">關於</a></li>
         <li>
-          <span class="has-dropdown active">活動</span>
+          <span>活動</span>
           <ul class="dropdown">
-            <li><a href="niandian.html" class="active">年度點燈</a></li>
+            <li><a href="niandian.html">年度點燈</a></li>
             <li><a href="dizhi.html">奠基法會</a></li>
             <li><a href="https://kinkiosel.pixnet.net/blog/post/33478333" target="_blank">線上課程</a></li>
             <li><a href="https://kinkiosel.pixnet.net/blog/post/33528826" target="_blank">例行法儀</a></li>
-          </ul>
-        </li>
-        <li>
-          <span class="has-dropdown">文選</span>
-          <ul class="dropdown">
-            <li><a href="https://kinkiosel.pixnet.net/blog/category/1537788" target="_blank">靈修奧義</a></li>
-            <li><a href="https://kinkiosel.pixnet.net/blog/category/1609797" target="_blank">問事實錄</a></li>
-            <li><a href="https://kinkiosel.pixnet.net/blog/category/1615684" target="_blank">法會感應</a></li>
-          </ul>
-        </li>
-        <li>
-          <span class="has-dropdown">選物</span>
-          <ul class="dropdown">
-            <li><a href="https://kinkiosel.pixnet.net/blog/post/32284312" target="_blank">宇色最新著作</a></li>
-            <li><a href="https://reurl.cc/vv1k5e" target="_blank">靈性美學館</a></li>
-          </ul>
-        </li>
-        <li>
-          <span class="has-dropdown">影像</span>
-          <ul class="dropdown">
-            <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank">YT ｜ 宇色心養生</a></li>
-            <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank">YT ｜ 靈元院頻道</a></li>
-            <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank">Podcast ｜ 宇色人間書影</a></li>
-            <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank">Podcast ｜ 宇色心養生</a></li>
-          </ul>
-        </li>
-        <li>
-          <span class="has-dropdown">社群</span>
-          <ul class="dropdown">
-            <li><a href="https://www.facebook.com/lyy.taiwan" target="_blank">FB ｜ 靈元院</a></li>
-            <li><a href="https://www.instagram.com/lyyuan03/" target="_blank">IG ｜ 靈元院</a></li>
-            <li><a href="https://www.facebook.com/authorosel/" target="_blank">FB ｜ 我在人間－宇色</a></li>
-            <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank">IG ｜ 我在人間－宇色</a></li>
           </ul>
         </li>
       </ul>
@@ -225,49 +148,39 @@ footer {
   </div>
 </nav>
 
-<div class="page-content">
-  <div class="page-header">
-    <span class="plabel">ANNUAL LIGHTING CEREMONY</span>
-    <h1>年度點燈</h1>
-    <div class="rule"></div>
+<div class="container">
+  <h1>年度點燈</h1>
+
+  <div class="content-block">
+    <p>靈元院 太歲燈、破災降魔燈、廣財運通燈<br>點亮你的心光，喚醒丙午年好運勢！</p>
+    <p>在靈元院，每一盞燈都不只是「象徵光明」—— 而是一場與無極瑤池金母親傳能量法脈的連結修持。</p>
+    <p>自從本院開放「年度點燈」以來，信眾年年踴躍，因為這不只是祈福，更是靈性修行的具體行動。</p>
   </div>
 
-  <div class="content-wrap">
-    <div class="section">
-      <h2>靈元院 太歲燈、破災降魔燈、廣財運通燈 點亮你的心光，喚醒丙午年好運勢！</h2>
-      <p>在靈元院，每一盞燈都不只是「象徵光明」—— 而是一場與無極瑤池金母親傳能量法脈的連結修持。</p>
-      <p>自從本院開放「年度點燈」以來，信眾年年踴躍， 因為這不只是祈福，更是靈性修行的具體行動。</p>
-    </div>
+  <div class="content-block">
+    <h2>無極瑤池金母親傳——【破災降魔燈】</h2>
+    <p>母娘慈示：「只照亮外在，不足以安神；唯有破災降魔，方能安住真心。」 這盞燈的核心靈力，不在求外在的平安，而是幫你化解內在深處的暗中阻力、降伏內在心魔。每一位登記的信眾芳名都會寫入靈元院丙午年的祈福迴向祈福疏文中，由蘇監院每日親自供燈，每月初一誦經，為你轉化災厄、護持元神。</p>
+  </div>
 
-    <div class="highlight-section section">
-      <h2>無極瑤池金母親傳——【破災降魔燈】</h2>
-      <p>母娘慈示：「只照亮外在，不足以安神；唯有破災降魔，方能安住真心。」 這盞燈的核心靈力，不在求外在的平安，而是幫你化解內在深處的暗中阻力、降伏內在心魔。 每一位登記的信眾芳名都會寫入靈元院丙午年的祈福迴向祈福疏文中， 由蘇監院每日親自供燈，每月初一誦經，為你轉化災厄、護持元神。</p>
-    </div>
+  <div class="content-block">
+    <h2>招財寶、開財脈——【廣財運通燈】</h2>
+    <p>面對全球經濟變動，靈元院特別於乙巳(2025)年起安奉此燈，為信眾「開財運、通財脈」。登記此燈的信眾，除每月初一誦經祈福外，將特別加修【廣財運通修法】，藉由靈元院堂上無極瑤池金母所傳降之廣財運通修法經咒，以神佛加持之力，提升貴人運、財運亨通與開啟富足能量。此燈不只是求財，更是開啟「富足豐盛循環」的修法之燈。</p>
+  </div>
 
-    <div class="section">
-      <h2>招財寶、開財脈——【廣財運通燈】</h2>
-      <p>面對全球經濟變動，靈元院特別於乙巳(2025)年起安奉此燈，為信眾「開財運、通財脈」。 登記此燈的信眾，除每月初一誦經祈福外，將特別加修【廣財運通修法】， 藉由靈元院堂上無極瑤池金母所傳降之廣財運通修法經咒，以神佛加持之力，提升貴人運、財運亨通與開啟富足能量。 此燈不只是求財，更是開啟「富足豐盛循環」的修法之燈。</p>
-    </div>
+  <div class="content-block">
+    <h2>逢凶化吉——【太歲燈】</h2>
+    <p>俗話說：「太歲當頭座，無災便有禍；太歲出現來，無病恐破財。」 年度犯太歲者，容易感到生活、工作、事業、感情運勢不順遂，是非衰事纏身，整體能量不穩定。</p>
+    <p>丙午馬年太歲護佑之燈，安奉太歲星君、穩運轉吉—— 點太歲燈能穩定磁場，守護流年運勢，安魂定命。</p>
+  </div>
 
-    <div class="highlight-section section">
-      <h2>逢凶化吉——【太歲燈】</h2>
-      <p>俗話說：「太歲當頭座，無災便有禍；太歲出現來，無病恐破財。」 年度犯太歲者，容易感到生活、工作、事業、感情運勢不順遂，是非衰事纏身，整體能量不穩定。</p>
-      <p>丙午馬年太歲護佑之燈，安奉太歲星君、穩運轉吉—— 點太歲燈能穩定磁場，守護流年運勢，安魂定命。</p>
-    </div>
-
-    <div class="section" style="text-align: center; margin-top: 60px; padding: 40px; background: rgba(197,162,111,0.08); border-radius: 8px;">
-      <h2>丙午年 已結束</h2>
-      <p style="font-size: 18px; margin-top: 20px; color: var(--lyy-gold);">
-        丁未年(116年)點燈 年底開放登記 即將開放
-      </p>
-    </div>
+  <div class="status">
+    丙午年 已結束<br>
+    丁未年(116年)點燈年底開放登記 即將開放
   </div>
 </div>
 
 <footer>
-  <div class="container">
-    靈元院 Ling Yuan Yuan © 2026 &nbsp;&nbsp;•&nbsp;&nbsp; 修心在己
-  </div>
+  靈元院 Ling Yuan Yuan © 2026 &nbsp;&nbsp;•&nbsp;&nbsp; 修心在己
 </footer>
 
 </body>
