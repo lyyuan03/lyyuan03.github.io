@@ -30,19 +30,11 @@ body {
   min-height: 100vh;
 }
 
-h1, h2, h3 {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-}
+h1, h2, h3 { font-family: var(--font-serif); font-weight: 500; letter-spacing: 0.08em; }
 
-.container {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
-/* Navigation */
+/* ── Navigation ── */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -51,17 +43,8 @@ nav {
   border-bottom: 1px solid rgba(197, 162, 111, 0.15);
   z-index: 100;
 }
-.nav-content {
-  display: flex;
-  justify-content: center;
-  padding: 18px 0;
-}
-.nav-links {
-  display: flex;
-  gap: 36px;
-  list-style: none;
-  align-items: center;
-}
+.nav-content { display: flex; justify-content: center; padding: 18px 0; }
+.nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
 .nav-links > li { position: relative; }
 .nav-links > li > a,
 .nav-links > li > span {
@@ -78,11 +61,7 @@ nav {
 .nav-links > li > a:hover,
 .nav-links > li > span:hover { color: var(--lyy-gold); }
 .nav-links > li > a.active { color: var(--lyy-gold); }
-.nav-links > li > span.has-dropdown::after {
-  content: '▾';
-  font-size: 10px;
-  opacity: 0.6;
-}
+.nav-links > li > span.has-dropdown::after { content: '▾'; font-size: 10px; opacity: 0.6; }
 .dropdown {
   display: none;
   position: absolute;
@@ -106,55 +85,380 @@ nav {
   font-size: 13.5px;
   transition: all 0.2s;
 }
-.dropdown li a:hover {
-  background: rgba(197, 162, 111, 0.1);
-  color: var(--lyy-gold);
-}
+.dropdown li a:hover { background: rgba(197, 162, 111, 0.1); color: var(--lyy-gold); }
 .nav-links > li:hover .dropdown { display: block; }
+.nav-links > li > span.has-dropdown::before {
+  content: ''; position: absolute; top: 100%; left: -20px; right: -20px; height: 22px;
+}
+.nav-links > li .dropdown::before {
+  content: ''; position: absolute; top: -14px; left: 0; right: 0; height: 14px;
+}
 
-/* Support Grid - 上下排 + hover 放大 */
+/* ── Page Header ── */
+.page-content { padding-top: 100px; padding-bottom: 100px; }
+
+.page-header {
+  text-align: center;
+  padding: 72px 24px 48px;
+}
+.page-header .plabel {
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: var(--lyy-gold);
+  letter-spacing: 0.42em;
+  display: block;
+  margin-bottom: 20px;
+}
+.page-header h1 {
+  font-size: clamp(26px, 5vw, 42px);
+  font-weight: 400;
+  color: var(--lyy-cream);
+  margin: 0 0 8px;
+  letter-spacing: 0.16em;
+}
+.page-header .subtitle {
+  font-size: 15px;
+  color: rgba(197, 162, 111, 0.7);
+  letter-spacing: 0.18em;
+  margin-bottom: 28px;
+}
+.page-header .rule {
+  width: 48px; height: 1px;
+  background: rgba(197, 162, 111, 0.5);
+  margin: 0 auto;
+}
+
+/* ── Hero Image ── */
+.hero-img-wrap {
+  max-width: 860px;
+  margin: 0 auto 64px;
+  padding: 0 24px;
+  animation: fadeUp 0.8s ease both;
+}
+.hero-img-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+  filter: brightness(0.9) sepia(0.08);
+}
+
+/* ── Video ── */
+.video-wrap {
+  max-width: 760px;
+  margin: 0 auto 56px;
+  padding: 0 24px;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+.video-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(197, 162, 111, 0.12);
+}
+.video-container iframe { width: 100%; height: 100%; border: 0; }
+
+/* ── Content ── */
+.content-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  margin-bottom: 64px;
+  animation: fadeUp 0.8s ease both;
+}
+.section:nth-child(1) { animation-delay: 0.05s; }
+.section:nth-child(2) { animation-delay: 0.15s; }
+.section:nth-child(3) { animation-delay: 0.2s; }
+.section:nth-child(4) { animation-delay: 0.25s; }
+.section:nth-child(5) { animation-delay: 0.3s; }
+.section:nth-child(6) { animation-delay: 0.35s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section-label {
+  font-family: var(--font-en);
+  font-size: 11.5px;
+  color: var(--lyy-gold);
+  letter-spacing: 0.38em;
+  display: block;
+  margin-bottom: 14px;
+}
+.section h2 {
+  font-size: 21px;
+  font-weight: 400;
+  color: var(--lyy-cream);
+  margin: 0 0 22px;
+  letter-spacing: 0.12em;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(197, 162, 111, 0.22);
+}
+.section p {
+  font-size: 15.5px;
+  color: rgba(245, 241, 233, 0.82);
+  line-height: 2.05;
+  margin: 0 0 18px;
+}
+.section p:last-child { margin-bottom: 0; }
+
+.section-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+  filter: brightness(0.88) sepia(0.1);
+  margin: 28px 0;
+}
+
+/* ── Quote Block ── */
+.quote-block {
+  background: rgba(197, 162, 111, 0.06);
+  border-left: 2px solid rgba(197, 162, 111, 0.45);
+  padding: 28px 32px;
+  margin: 28px 0;
+  border-radius: 0 2px 2px 0;
+}
+.quote-block p {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: rgba(245, 241, 233, 0.9);
+  line-height: 2.1;
+  margin: 0;
+  letter-spacing: 0.06em;
+}
+
+/* ── 建院日誌 ── */
+.journal-list { margin-top: 8px; }
+.journal-item {
+  border: 1px solid rgba(197, 162, 111, 0.14);
+  border-radius: 4px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  background: rgba(15, 26, 20, 0.45);
+  backdrop-filter: blur(6px);
+  transition: border-color 0.25s ease;
+}
+.journal-item:hover { border-color: rgba(197, 162, 111, 0.32); }
+.journal-date {
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: var(--lyy-gold);
+  letter-spacing: 0.2em;
+  margin-bottom: 12px;
+  display: block;
+}
+.journal-headline {
+  font-family: var(--font-serif);
+  font-size: 16.5px;
+  color: var(--lyy-cream);
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+  line-height: 1.8;
+}
+.journal-body {
+  font-size: 14.5px;
+  color: rgba(245, 241, 233, 0.72);
+  line-height: 1.95;
+  margin-bottom: 18px;
+}
+.fb-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 22px;
+  border-radius: 999px;
+  background: rgba(197, 162, 111, 0.1);
+  border: 1px solid rgba(197, 162, 111, 0.35);
+  color: var(--lyy-gold);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  transition: all 0.22s ease;
+}
+.fb-link:hover { background: rgba(197, 162, 111, 0.18); border-color: var(--lyy-gold); }
+.fb-icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--lyy-gold);
+  color: #0f1a14;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── 護持圖片 Grid ── */
 .support-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
-  margin: 40px 0;
-}
-.support-grid a {
-  display: block;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
 }
 .support-grid img {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 4px;
-  transition: transform 0.4s ease, box-shadow 0.3s ease;
-  cursor: zoom-in;
+  border-radius: 2px;
+  filter: brightness(0.9) sepia(0.08);
 }
-.support-grid img:hover {
-  transform: scale(1.03);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+.support-grid-full {
+  margin: 24px 0;
+}
+.support-grid-full img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+  filter: brightness(0.9) sepia(0.08);
 }
 
-.page-content {
-  padding-top: 120px;
-  padding-bottom: 80px;
-}
-
-.hero {
+/* ── CTA 按鈕 ── */
+.cta-wrap {
   text-align: center;
-  padding: 140px 24px 80px;
-  color: var(--lyy-cream);
+  margin: 36px 0 0;
 }
-.hero h1 {
-  font-size: clamp(32px, 6vw, 52px);
-  margin-bottom: 16px;
+.cta-btn {
+  display: inline-block;
+  padding: 14px 40px;
+  border-radius: 2px;
+  background: transparent;
+  border: 1px solid rgba(197, 162, 111, 0.6);
+  color: var(--lyy-gold);
+  text-decoration: none;
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  font-family: var(--font-sans);
+  transition: all 0.25s ease;
+}
+.cta-btn:hover {
+  background: rgba(197, 162, 111, 0.12);
+  border-color: var(--lyy-gold);
+}
+.cta-btn.primary {
+  background: rgba(197, 162, 111, 0.15);
+  border-color: var(--lyy-gold);
+}
+.cta-btn.primary:hover { background: rgba(197, 162, 111, 0.28); }
+
+/* ── 延伸閱讀連結 ── */
+.reading-link {
+  font-size: 14px;
+  color: rgba(245, 241, 233, 0.6);
+  margin: 16px 0;
+  letter-spacing: 0.04em;
+}
+.reading-link a {
+  color: var(--lyy-gold);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(197, 162, 111, 0.3);
+  padding-bottom: 1px;
+  transition: border-color 0.2s;
+}
+.reading-link a:hover { border-bottom-color: var(--lyy-gold); }
+
+.divider {
+  width: 40px; height: 1px;
+  background: rgba(197, 162, 111, 0.28);
+  margin: 52px auto;
 }
 
-.section {
-  max-width: 900px;
+/* ── 底部聯繫區 ── */
+.contact-section {
+  max-width: 720px;
   margin: 0 auto 80px;
   padding: 0 24px;
+  animation: fadeUp 0.8s 0.4s ease both;
 }
+.contact-box {
+  border: 1px solid rgba(197, 162, 111, 0.22);
+  border-radius: 4px;
+  padding: 44px 48px;
+  text-align: center;
+  background: rgba(15, 26, 20, 0.5);
+  backdrop-filter: blur(8px);
+}
+.contact-box h2 {
+  font-size: 20px; font-weight: 400;
+  color: var(--lyy-cream);
+  margin: 0 0 10px;
+  letter-spacing: 0.14em;
+}
+.contact-box .sub {
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: rgba(197, 162, 111, 0.7);
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+  display: block;
+}
+.contact-divider { width: 40px; height: 1px; background: rgba(197,162,111,0.3); margin: 0 auto 28px; }
+.contact-note {
+  font-size: 14px;
+  color: rgba(245, 241, 233, 0.6);
+  line-height: 2;
+  margin-bottom: 28px;
+}
+.contact-note a { color: var(--lyy-gold); text-decoration: none; }
+.tg-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.tg-btn {
+  display: inline-block;
+  padding: 11px 28px;
+  border: 1px solid rgba(197, 162, 111, 0.45);
+  color: var(--lyy-gold);
+  text-decoration: none;
+  font-size: 13.5px;
+  letter-spacing: 0.1em;
+  border-radius: 2px;
+  transition: all 0.25s ease;
+}
+.tg-btn:hover { background: rgba(197, 162, 111, 0.12); border-color: var(--lyy-gold); }
+
+/* ── 頻道連結 ── */
+.channel-section { margin-top: 48px; }
+.channel-title {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(245, 241, 233, 0.5);
+  letter-spacing: 0.24em;
+  margin-bottom: 20px;
+}
+.channel-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  list-style: none;
+}
+.channel-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  color: rgba(245, 241, 233, 0.6);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.channel-links a:hover { color: var(--lyy-gold); }
+.channel-icon {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #0f1a14;
+}
+.channel-icon.yt { background: var(--lyy-gold); }
+.channel-icon.pod { background: rgba(245, 241, 233, 0.55); }
 
 footer {
   background: rgba(8, 14, 10, 0.85);
@@ -164,6 +468,15 @@ footer {
   text-align: center;
   letter-spacing: 0.06em;
   border-top: 1px solid rgba(197, 162, 111, 0.1);
+}
+
+@media (max-width: 700px) {
+  .support-grid { grid-template-columns: 1fr; }
+  .contact-box { padding: 36px 24px; }
+  .nav-links { gap: 16px; }
+  .nav-links > li > a,
+  .nav-links > li > span { font-size: 12.5px; }
+  .journal-item { padding: 22px 20px; }
 }
 </style>
 </head>
@@ -178,10 +491,43 @@ footer {
         <li>
           <span class="has-dropdown active">活動</span>
           <ul class="dropdown">
-            <li><a href="niandian.html">年度點燈</a></li>
+            <li><a href="https://www.beclass.com/rid=305019268fd7f0561282" target="_blank">年度點燈</a></li>
             <li><a href="dizhi.html" class="active">奠基法會</a></li>
-            <li><a href="https://kinkiosel.pixnet.net/blog/post/33478333" target="_blank" rel="noopener noreferrer">線上課程</a></li>
-            <li><a href="https://kinkiosel.pixnet.net/blog/post/33528826" target="_blank" rel="noopener noreferrer">例行法儀</a></li>
+            <li><a href="https://kinkiosel.pixnet.net/blog/post/33478333" target="_blank">線上課程</a></li>
+            <li><a href="https://kinkiosel.pixnet.net/blog/post/33528826" target="_blank">例行法儀</a></li>
+          </ul>
+        </li>
+        <li>
+          <span class="has-dropdown">文選</span>
+          <ul class="dropdown">
+            <li><a href="https://kinkiosel.pixnet.net/blog/category/1537788" target="_blank">靈修奧義</a></li>
+            <li><a href="https://kinkiosel.pixnet.net/blog/category/1609797" target="_blank">問事實錄</a></li>
+            <li><a href="https://kinkiosel.pixnet.net/blog/category/1615684" target="_blank">法會感應</a></li>
+          </ul>
+        </li>
+        <li>
+          <span class="has-dropdown">選物</span>
+          <ul class="dropdown">
+            <li><a href="https://kinkiosel.pixnet.net/blog/post/32284312" target="_blank">宇色最新著作</a></li>
+            <li><a href="https://reurl.cc/vv1k5e" target="_blank">靈性美學館</a></li>
+          </ul>
+        </li>
+        <li>
+          <span class="has-dropdown">影像</span>
+          <ul class="dropdown">
+            <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank">YT ｜ 宇色心養生</a></li>
+            <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank">YT ｜ 靈元院頻道</a></li>
+            <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank">Podcast ｜ 宇色人間書影</a></li>
+            <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank">Podcast ｜ 宇色心養生</a></li>
+          </ul>
+        </li>
+        <li>
+          <span class="has-dropdown">社群</span>
+          <ul class="dropdown">
+            <li><a href="https://www.facebook.com/lyy.taiwan" target="_blank">FB ｜ 靈元院</a></li>
+            <li><a href="https://www.instagram.com/lyyuan03/" target="_blank">IG ｜ 靈元院</a></li>
+            <li><a href="https://www.facebook.com/authorosel/" target="_blank">FB ｜ 我在人間－宇色</a></li>
+            <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank">IG ｜ 我在人間－宇色</a></li>
           </ul>
         </li>
       </ul>
@@ -190,30 +536,188 @@ footer {
 </nav>
 
 <div class="page-content">
-  <div class="hero">
+
+  <!-- 頁首 -->
+  <div class="page-header">
+    <span class="plabel">FOUNDATION CEREMONY · LING YUAN YUAN</span>
     <h1>建院奠基護法法會</h1>
-    <p style="font-size:18px; opacity:0.85; margin-top:20px;">功德無量  護持建寺</p>
+    <p class="subtitle">建寺之功德無量</p>
+    <div class="rule"></div>
   </div>
 
-  <div class="section">
-    <p>奉無極瑤池金母慈示，靈元院正積極尋覓下一處靈修道場新址。為使建院之路順遂，同時也號召靈修龍鳳兒隨喜捐獻，支持建寺，讓未來的新道場得以順利成就。</p>
+  <!-- 首圖 -->
+  <div class="hero-img-wrap">
+    <img src="https://lyyuan.tw/images/dizhi-hero.jpg" alt="靈元院建院奠基護法法會">
   </div>
 
-  <div class="section">
-    <div class="support-grid">
-      <a href="https://lyyuan.tw/images/dizhi-gongde.jpg" target="_blank" rel="noopener noreferrer">
-        <img src="https://lyyuan.tw/images/dizhi-gongde.jpg" alt="奠基功德主">
-      </a>
-      <a href="https://lyyuan.tw/images/dizhi-items.jpg" target="_blank" rel="noopener noreferrer">
-        <img src="https://lyyuan.tw/images/dizhi-items.jpg" alt="護持項目">
-      </a>
+  <!-- 影片 -->
+  <div class="video-wrap">
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/6lrkTClvIus" title="靈元院建院奠基護法法會" loading="lazy" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+    </div>
+    <p class="reading-link" style="margin-top:14px; text-align:center;">▍延伸閱讀　<a href="https://www.youtube.com/watch?v=aXKb6OT7CyE" target="_blank">靈元院．建院奠基護法法會影音介紹</a></p>
+  </div>
+
+  <div class="content-wrap">
+
+    <!-- 元神召喚 -->
+    <div class="section">
+      <span class="section-label">THE CALLING</span>
+      <h2>元神的召喚：在末法時期尋找內在明燈</h2>
+      <p>在這個末法時期，每個人的心中，都曾聽過元神的召喚。尋求平靜的渴望，其實就是元神在我們心中點亮的那盞明燈，時時刻刻在生命裡呼喚靈性覺醒，引導我們走向屬於元神的那片淨土。</p>
+      <p>元神是每一位龍鳳兒的化身，也是此生靈魂的導師，幫助我們尋回失落的力量，覺悟隱藏的印記。靈修法教導我們回歸內心的平靜，與元神融合，走向與主神合一的自我修持法門。</p>
+    </div>
+
+    <!-- 靈元院緣起 -->
+    <div class="section">
+      <span class="section-label">THE ORIGIN</span>
+      <h2>靈元院的緣起：為靈修人開啟的心靈淨土</h2>
+      <p><a href="https://www.facebook.com/lyy.taiwan/" target="_blank" style="color:var(--lyy-gold); text-decoration:none; border-bottom:1px solid rgba(197,162,111,0.3);">靈元院</a>奉無極瑤池金母之旨創立於台中，作為靈山派的道院，專為靈修人而設，承擔共修、修法、沉思、冥想與會靈的功能，讓靈修人能重新連接內在靈性，有一處得以安歇的心靈淨土。</p>
+      <p>靈元院的修法儀軌，以喚醒每一位靈修人的元神為目的，讓靈修者在心靈棲居之處，感受到無極瑤池金母的恩典。在眾仙佛菩薩的指導之下，每一位龍鳳兒都能暫時遠離塵囂紛擾，找回內在的寧靜，喚醒沈睡的元神。</p>
+      <img src="https://lyyuan.tw/images/dizhi-build-pause.jpg" alt="靈元院過往道場空間" class="section-img">
+    </div>
+
+    <!-- 為何要有道院 -->
+    <div class="section">
+      <span class="section-label">THE PURPOSE</span>
+      <h2>為何要有一間靈修道院？</h2>
+      <p>宇色老師曾請教無極瑤池金母：寺廟、道院的用途是什麼？無極瑤池金母云：</p>
+      <div class="quote-block">
+        <p>每一處能夠讓人靈魂深思，讓內心與神明共鳴的地方，都是神聖的靈性轉化之所。凡是能夠啟迪靈魂、喚醒我們的內在神性並淨化心靈的場所，這就是道院和寺廟存在的目的。</p>
+      </div>
+      <p>因此，主事者必須以虔誠的心來經營、佈置、裝飾這個空間；當信眾進入此一神聖領域，便能在其中完成靈性的轉化，這也是經營道場所帶來的功德與祝福。</p>
+    </div>
+
+    <!-- 舊址 -->
+    <div class="section">
+      <span class="section-label">THE TRANSITION</span>
+      <h2>舊址畫下句點，法脈仍在延續</h2>
+      <p>過去的靈元院道場空間，陪伴了許多龍鳳兒的靈修旅程。在那裡，我們共修、懺儀、點燈、會靈，也共同見證了許多靈性覺醒與生命轉化的片刻。</p>
+      <p>然而，因為租約與場地條件等現實因素，原有道場空間目前已無法再繼續使用，也暫時不再對外開放。雖然「房子」暫時不在，但靈元院的法脈與香火並未中斷——母娘的法仍在，靈山派的修持仍在，我們依然透過法會、共修與線上課程持續陪伴眾龍鳳兒。</p>
+      <img src="https://lyyuan.tw/images/dizhi-blueprint.jpg" alt="靈元院過往法會照片" class="section-img">
+    </div>
+
+    <!-- 尋找新道場 -->
+    <div class="section">
+      <span class="section-label">THE SEARCH</span>
+      <h2>正在尋找下一處靈元院道場</h2>
+      <p>母娘慈示，道場可以暫時沒有屋瓦，但法脈不能斷、香火不能熄。因此，靈元院一方面持續辦理必要的法務與共修，一方面也謹慎評估、尋覓下一處能長久安住、適合靈修、交通便利的道場新址。</p>
+      <p>我們期待未來的靈元院，不只是另一個修行空間，更是一處真正能夠承載靈山法脈、靈修教學與靈性美學的靜謐道場，成為眾龍鳳兒的會靈之所，也是母娘法脈在現代城市中再次落腳的靈性基地。</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 建院之路 -->
+    <div class="section">
+      <span class="section-label">THE CAUSE</span>
+      <h2>建院之路，需要眾人一同成就</h2>
+      <p>未來的新道場，從選址、規劃、整建，到正式對外開放，每一步都需要大量心力與資金。目前靈元院可運用的建院資金仍非常有限，遠不足以支撐一座完整道場的興建與長期維護。</p>
+      <p>在無極瑤池金母應允之下，特舉辦「靈元院．建院奠基護法法會」，在靈修法之護法神恩典和庇佑之下，祈願建院之路一路順遂，同時也號召靈修龍鳳兒慈善捐獻，支持建寺，讓未來的新道場得以順利成就。</p>
+
+      <div class="support-grid">
+        <img src="https://lyyuan.tw/images/dizhi-gongde.jpg" alt="2024奠基法會文宣－奠基大功德主">
+        <img src="https://lyyuan.tw/images/dizhi-items.jpg" alt="2024奠基法會文宣－護持項目">
+      </div>
+      <div class="support-grid-full">
+        <img src="https://lyyuan.tw/images/dizhi-card.jpg" alt="奠基功德主護持卡介紹">
+      </div>
+
+      <p class="reading-link">▍法會報名與說明　<a href="https://www.beclass.com/rid=284b35e651faf0d00ad4" target="_blank">靈元院．建院奠基護法法會</a></p>
+
+      <div class="cta-wrap">
+        <a href="https://www.beclass.com/rid=294fe6367aabaca90a6d" target="_blank" class="cta-btn primary">隨喜護持建院基金</a>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 建院日誌 -->
+    <div class="section">
+      <span class="section-label">JOURNAL</span>
+      <h2>建院日誌：從尋地到奠基</h2>
+
+      <div class="journal-list">
+
+        <div class="journal-item">
+          <span class="journal-date">2025 · 09 · 10</span>
+          <p class="journal-headline">這將近二年來，靈元院一直在尋找一塊能夠承載龍鳳兒靈修的土地。</p>
+          <p class="journal-body">我們走訪過許多地方，有的格局不適合，有的價格超出預期。我們所期盼的，不只是單純的參拜空間，而是一個能讓信眾走入後，可以散步、可以靜坐、可以沉澱的園地。宇色老師希望，當大家來到這裡，不只是「拜一拜」就離開，而是能在不同角落找到屬於自己的一片清靜，讓心慢慢安定，真正與神明會靈。</p>
+          <a href="https://www.facebook.com/share/p/17UanGQA8g/" target="_blank" class="fb-link">
+            <span class="fb-icon">f</span>在臉書上閱讀這篇建院日誌
+          </a>
+        </div>
+
+        <div class="journal-item">
+          <span class="journal-date">2024 · 06 · 17</span>
+          <p class="journal-headline">在人力可解決的問題前，何必請示神明？</p>
+          <p class="journal-body">上週，小編與宇色老師及仲介又去看了一塊土地。這塊土地是這三四年來我們看過的眾多土地中唯一一塊我們非常滿意的，如果要打分數，我們可以打到85分。它的總面積有將近1000坪，並且已經有一個地上建築物——對靈元院來說，這是非常重要的，因為有了這個建築物，我們可以省下幾百萬甚至上千萬的建設費用。</p>
+          <a href="https://www.facebook.com/share/p/1Gb6DNGDX5/" target="_blank" class="fb-link">
+            <span class="fb-icon">f</span>在臉書上閱讀這篇建院日誌
+          </a>
+        </div>
+
+        <div class="journal-item">
+          <span class="journal-date">2024 · 05 · 24</span>
+          <p class="journal-headline">在這段期間，我們看過上百塊土地，實際到訪的也有好幾十塊，但都沒有符合我們的需求。</p>
+          <p class="journal-body">前幾天，我們到了一處非常適合靈元院修行的場地。這塊地非常隱密，離市區不遠，價格也非常合理，雖然仍然上看千萬，確實非常昂貴。第一次，我們一行人冒著大雨前去，主要是觀察交通、地形與周邊環境。這塊地在地理位置和交通上非常合適，從市區騎車過去只需5到10分鐘。</p>
+          <a href="https://www.facebook.com/share/p/1A8HShtpt7/" target="_blank" class="fb-link">
+            <span class="fb-icon">f</span>在臉書上閱讀這篇建院日誌
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 建寺功德 -->
+    <div class="section">
+      <span class="section-label">MERIT</span>
+      <h2>建寺之功德無量</h2>
+      <p>建寺之功德，能為我們現世與來世帶來無窮利益。在一切利生之功德中，建寺為最勝，能使正法常轉於世間，能使無數眾生脫離輪迴之苦。護持靈修法、護持靈山法脈，就是祈請靈修界神聖之恩典，讓功德永存不滅。</p>
+      <p>道場是傳承善知識、善法之所依，讓靈修的龍鳳兒有所歸屬，得以繼承靈修法殊勝不斷的傳承，進而解脫生死。因此，竭盡所能建寺，是利益眾生、具有無量功德之事；無論此生或來世，都有不可思議的利益。</p>
+      <p>隨喜心護持隨喜，不分多寡，如同滴水歸入大海，海不枯則水一滴不亡，功德不可思議。</p>
+    </div>
+
+  </div><!-- /.content-wrap -->
+
+  <!-- 贊助 CTA -->
+  <div class="contact-section">
+    <div class="contact-box">
+      <h2>贊助靈元院建院基金</h2>
+      <span class="sub">SUPPORT THE FOUNDATION</span>
+      <div class="contact-divider"></div>
+      <p class="contact-note">
+        若您願意以隨喜護持方式，長期助力靈元院未來新道場的興建與維運，<br>
+        也歡迎透過線上贊助管道，為建院之路添上一盞心燈。
+      </p>
+      <div class="tg-links" style="margin-bottom:28px;">
+        <a href="https://www.beclass.com/rid=294fe6367aabaca90a6d" target="_blank" class="tg-btn">隨喜護持連結</a>
+        <a href="https://www.beclass.com/rid=284b35e651faf0d00ad4" target="_blank" class="tg-btn">法會報名說明</a>
+      </div>
+      <p class="contact-note" style="margin-bottom:0; font-size:13px;">
+        家宅、公司、道場神像安座開光／道場風水堪輿、誦經科儀、神尊祝壽懺儀等相關事宜，<br>
+        敬請聯繫靈元院行政團隊。<br>
+        Email｜<a href="mailto:lyyuan03@gmail.com">lyyuan03@gmail.com</a>　TEL 0975-256579
+      </p>
+      <div class="tg-links" style="margin-top:20px;">
+        <a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a>
+        <a href="https://t.me/lyyuan" target="_blank" class="tg-btn">Telegram 聯絡帳號</a>
+      </div>
+
+      <div class="channel-section">
+        <p class="channel-title">了解更多無極瑤池金母　靈修觀念</p>
+        <ul class="channel-links">
+          <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank"><span class="channel-icon yt">▶</span>YouTube｜宇色心養生</a></li>
+          <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank"><span class="channel-icon yt">▶</span>YouTube｜靈元院頻道</a></li>
+          <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank"><span class="channel-icon pod">♫</span>Podcast｜宇色人間書影</a></li>
+          <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank"><span class="channel-icon pod">♫</span>Podcast｜宇色心養生</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 
-  <div class="section">
-    <p style="text-align:center; font-size:15px; opacity:0.8;">目前閉院期間，暫不對外開放參訪。如有事務或修行相關諮詢，敬請透過 Telegram 聯繫。</p>
-  </div>
-</div>
+</div><!-- /.page-content -->
 
 <footer>
   <div class="container">
