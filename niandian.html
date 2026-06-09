@@ -11,116 +11,90 @@
   --lyy-dark: #0f1a14;
   --lyy-gold: #C5A26F;
   --lyy-cream: #F5F1E9;
-  --font-serif: 'Noto Serif TC', 'Georgia', serif;
-  --font-sans: 'Noto Sans TC', 'Arial', sans-serif;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: var(--font-sans);
+  font-family: 'Noto Sans TC', Arial, sans-serif;
   color: var(--lyy-cream);
-  line-height: 2.0;
-  letter-spacing: 0.04em;
-  background: linear-gradient(rgba(15,26,20,0.78), rgba(15,26,20,0.88)),
+  line-height: 1.8;
+  background: linear-gradient(rgba(15,26,20,0.75), rgba(15,26,20,0.88)), 
               url('https://lyyuan.tw/forest-path.jpg') center/cover no-repeat fixed;
   background-color: #0f1a14;
-  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
-/* Navigation */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  background: rgba(15, 26, 20, 0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(197, 162, 111, 0.15);
+  background: rgba(15,26,20,0.9);
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(197,162,111,0.2);
   z-index: 100;
 }
-.nav-content { display: flex; justify-content: center; padding: 20px 0; }
-.nav-links { display: flex; gap: 40px; list-style: none; align-items: center; }
-.nav-links li { position: relative; }
+
+.nav-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .nav-links a, .nav-links span {
   color: var(--lyy-cream);
   text-decoration: none;
   font-size: 15px;
-  letter-spacing: 0.1em;
-  transition: color 0.3s;
+  letter-spacing: 0.08em;
 }
-.nav-links a:hover, .nav-links span:hover { color: var(--lyy-gold); }
 
-/* Dropdown 優化 */
-.dropdown {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(26,38,32,0.98);
-  border: 1px solid rgba(197,162,111,0.25);
-  border-radius: 6px;
-  padding: 12px 0;
-  min-width: 180px;
-  z-index: 200;
-}
-.dropdown li a {
-  display: block;
-  padding: 12px 24px;
-  white-space: nowrap;
-}
-.nav-links li:hover .dropdown { display: block; }
-
-/* 主要內容區塊 - 日本禪風 */
 .container {
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 140px 24px 100px;
+  max-width: 720px;
+  margin: 140px auto 80px;
+  padding: 0 24px;
 }
 
 h1 {
-  font-family: var(--font-serif);
-  font-size: 2.4rem;
   text-align: center;
-  letter-spacing: 0.12em;
-  margin-bottom: 80px;
-  border-bottom: 1px solid rgba(197,162,111,0.4);
-  padding-bottom: 24px;
+  font-size: 2.2rem;
+  margin-bottom: 50px;
+  letter-spacing: 0.1em;
 }
 
-.content-block {
-  background: rgba(245, 241, 233, 0.13);
-  border-left: 5px solid var(--lyy-gold);
-  padding: 48px 52px;
-  margin-bottom: 90px;
-  border-radius: 4px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.35);
-}
-
-.content-block h2 {
-  font-family: var(--font-serif);
-  font-size: 1.65rem;
-  margin-bottom: 28px;
-  color: var(--lyy-gold);
-  letter-spacing: 0.08em;
-}
-
-.content-block p {
-  margin-bottom: 1.6em;
+p {
+  margin-bottom: 1.5em;
   font-size: 1.05rem;
 }
 
-/* 最後狀態文字 */
-.status {
-  text-align: center;
-  font-size: 1.3rem;
+.cta-button {
+  display: inline-block;
+  padding: 18px 48px;
+  background: rgba(197,162,111,0.15);
+  border: 1px solid var(--lyy-gold);
   color: var(--lyy-gold);
-  margin: 80px 0 40px;
-  letter-spacing: 0.08em;
+  text-decoration: none;
+  font-size: 17px;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  margin-top: 30px;
+}
+
+.cta-button:hover {
+  background: var(--lyy-gold);
+  color: #0f1a14;
 }
 
 footer {
   text-align: center;
-  padding: 60px 0 40px;
+  padding: 50px 0;
   font-size: 0.95rem;
   opacity: 0.7;
 }
@@ -129,53 +103,30 @@ footer {
 <body>
 
 <nav>
-  <div class="container" style="max-width:1080px">
-    <div class="nav-content">
-      <ul class="nav-links">
-        <li><a href="https://lyyuan.tw/">首頁</a></li>
-        <li><a href="about.html">關於</a></li>
-        <li>
-          <span>活動</span>
-          <ul class="dropdown">
-            <li><a href="niandian.html">年度點燈</a></li>
-            <li><a href="dizhi.html">奠基法會</a></li>
-            <li><a href="https://kinkiosel.pixnet.net/blog/post/33478333" target="_blank">線上課程</a></li>
-            <li><a href="https://kinkiosel.pixnet.net/blog/post/33528826" target="_blank">例行法儀</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
+  <div class="nav-content">
+    <ul class="nav-links">
+      <li><a href="https://lyyuan.tw/">首頁</a></li>
+      <li><a href="about.html">關於</a></li>
+      <li><a href="niandian.html">年度點燈</a></li>
+      <li><a href="dizhi.html">奠基法會</a></li>
+    </ul>
   </div>
 </nav>
 
 <div class="container">
   <h1>年度點燈</h1>
+  
+  <p>年度點燈是靈元院一年一度最重要的法會之一。透過點燈儀式，與無極瑤池金母及諸天仙佛菩薩結緣，祈求一年平安順遂、智慧增長、業障消除。</p>
+  
+  <p>每一位參與者都將獲得專屬燈位，並由宇色老師為大家祈福加持。點燈不僅是形式，更是與神明對話、與自己和解的深刻過程。</p>
 
-  <div class="content-block">
-    <p>靈元院 太歲燈、破災降魔燈、廣財運通燈<br>點亮你的心光，喚醒丙午年好運勢！</p>
-    <p>在靈元院，每一盞燈都不只是「象徵光明」—— 而是一場與無極瑤池金母親傳能量法脈的連結修持。</p>
-    <p>自從本院開放「年度點燈」以來，信眾年年踴躍，因為這不只是祈福，更是靈性修行的具體行動。</p>
-  </div>
-
-  <div class="content-block">
-    <h2>無極瑤池金母親傳——【破災降魔燈】</h2>
-    <p>母娘慈示：「只照亮外在，不足以安神；唯有破災降魔，方能安住真心。」 這盞燈的核心靈力，不在求外在的平安，而是幫你化解內在深處的暗中阻力、降伏內在心魔。每一位登記的信眾芳名都會寫入靈元院丙午年的祈福迴向祈福疏文中，由蘇監院每日親自供燈，每月初一誦經，為你轉化災厄、護持元神。</p>
-  </div>
-
-  <div class="content-block">
-    <h2>招財寶、開財脈——【廣財運通燈】</h2>
-    <p>面對全球經濟變動，靈元院特別於乙巳(2025)年起安奉此燈，為信眾「開財運、通財脈」。登記此燈的信眾，除每月初一誦經祈福外，將特別加修【廣財運通修法】，藉由靈元院堂上無極瑤池金母所傳降之廣財運通修法經咒，以神佛加持之力，提升貴人運、財運亨通與開啟富足能量。此燈不只是求財，更是開啟「富足豐盛循環」的修法之燈。</p>
-  </div>
-
-  <div class="content-block">
-    <h2>逢凶化吉——【太歲燈】</h2>
-    <p>俗話說：「太歲當頭座，無災便有禍；太歲出現來，無病恐破財。」 年度犯太歲者，容易感到生活、工作、事業、感情運勢不順遂，是非衰事纏身，整體能量不穩定。</p>
-    <p>丙午馬年太歲護佑之燈，安奉太歲星君、穩運轉吉—— 點太歲燈能穩定磁場，守護流年運勢，安魂定命。</p>
-  </div>
-
-  <div class="status">
-    丙午年 已結束<br>
-    丁未年(116年)點燈年底開放登記 即將開放
+  <div style="text-align: center; margin-top: 60px;">
+    <a href="https://www.beclass.com/rid=305019268fd7f0561282" target="_blank" class="cta-button">
+      前往報名年度點燈
+    </a>
+    <p style="margin-top: 20px; font-size: 0.95rem; opacity: 0.7;">
+      點擊後將開啟外部報名頁面（beclass）
+    </p>
   </div>
 </div>
 
