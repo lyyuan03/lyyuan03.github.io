@@ -421,6 +421,34 @@ nav {
 }
 .tg-btn:hover { background: rgba(197, 162, 111, 0.12); border-color: var(--lyy-gold); }
 
+/* ── 表格圖上下排列 ── */
+.support-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 24px 0;
+}
+.support-img-link {
+  display: block;
+  overflow: hidden;
+  border-radius: 2px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.support-img-link:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+}
+.support-img-link img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: brightness(0.92) sepia(0.06);
+  transition: filter 0.3s ease;
+}
+.support-img-link:hover img {
+  filter: brightness(1) sepia(0);
+}
+
 /* ── 頻道連結 ── */
 .channel-section { margin-top: 48px; }
 .channel-title {
@@ -616,12 +644,16 @@ footer {
       <p>未來的新道場，從選址、規劃、整建，到正式對外開放，每一步都需要大量心力與資金。目前靈元院可運用的建院資金仍非常有限，遠不足以支撐一座完整道場的興建與長期維護。</p>
       <p>在無極瑤池金母應允之下，特舉辦「靈元院．建院奠基護法法會」，在靈修法之護法神恩典和庇佑之下，祈願建院之路一路順遂，同時也號召靈修龍鳳兒慈善捐獻，支持建寺，讓未來的新道場得以順利成就。</p>
 
-      <div class="support-grid">
-        <img src="https://lyyuan.tw/images/dizhi-gongde.jpg" alt="2024奠基法會文宣－奠基大功德主">
-        <img src="https://lyyuan.tw/images/dizhi-items.jpg" alt="2024奠基法會文宣－護持項目">
-      </div>
-      <div class="support-grid-full">
-        <img src="https://lyyuan.tw/images/dizhi-card.jpg" alt="奠基功德主護持卡介紹">
+      <div class="support-stack">
+        <a href="https://lyyuan.tw/images/dizhi-gongde.jpg" target="_blank" class="support-img-link">
+          <img src="https://lyyuan.tw/images/dizhi-gongde.jpg" alt="2024奠基法會文宣－奠基大功德主">
+        </a>
+        <a href="https://lyyuan.tw/images/dizhi-items.jpg" target="_blank" class="support-img-link">
+          <img src="https://lyyuan.tw/images/dizhi-items.jpg" alt="2024奠基法會文宣－護持項目">
+        </a>
+        <a href="https://lyyuan.tw/images/dizhi-card.jpg" target="_blank" class="support-img-link">
+          <img src="https://lyyuan.tw/images/dizhi-card.jpg" alt="奠基功德主護持卡介紹">
+        </a>
       </div>
 
       <p class="reading-link">▍法會報名與說明　<a href="https://www.beclass.com/rid=284b35e651faf0d00ad4" target="_blank">靈元院．建院奠基護法法會</a></p>
