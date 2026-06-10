@@ -99,9 +99,9 @@ nav {
 .hero-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(180deg,
-    rgba(245,240,232,0.42) 0%,
-    rgba(240,234,220,0.28) 50%,
-    rgba(230,224,210,0.52) 100%);
+    rgba(245,240,232,0.62) 0%,
+    rgba(240,234,220,0.55) 50%,
+    rgba(230,224,210,0.70) 100%);
   z-index: 1;
 }
 /* 中軸細線 */
@@ -148,7 +148,7 @@ nav {
   margin: 0 auto 52px; animation: fadeIn 1.4s 0.3s ease both;
 }
 .hero-poem {
-  font-family: var(--font-serif); font-size: 15.5px;
+  font-family: var(--font-serif); font-size: 19px;
   color: var(--ink-mid); line-height: 2.4;
   letter-spacing: 0.22em; margin-bottom: 56px;
   animation: fadeIn 1.2s 0.4s ease both;
@@ -166,7 +166,7 @@ nav {
 }
 .brand-row:last-child { margin-bottom: 0; }
 .brand-char {
-  font-family: var(--font-serif); font-size: 26px;
+  font-family: var(--font-serif); font-size: 30px;
   color: var(--gold); min-width: 32px; text-align: center; font-weight: 300;
 }
 .brand-divider {
@@ -174,11 +174,11 @@ nav {
   background: rgba(165,130,84,0.35); align-self: center;
 }
 .brand-def {
-  font-family: var(--font-serif); font-size: 14px;
+  font-family: var(--font-serif); font-size: 17px;
   color: var(--ink); letter-spacing: 0.22em; min-width: 72px; text-align: left;
 }
 .brand-en {
-  font-family: var(--font-en); font-size: 12.5px;
+  font-family: var(--font-en); font-size: 15px;
   color: var(--ink-dim); font-style: italic; letter-spacing: 0.04em;
 }
 .scroll-hint {
@@ -224,13 +224,13 @@ nav {
   display: block; margin-bottom: 18px; opacity: 0.75;
 }
 .about-item h3 {
-  font-family: var(--font-serif); font-size: 17px; font-weight: 400;
+  font-family: var(--font-serif); font-size: 20px; font-weight: 400;
   color: var(--ink); letter-spacing: 0.2em;
   margin-bottom: 22px; padding-bottom: 16px;
   border-bottom: 1px solid rgba(165,130,84,0.2);
 }
 .about-item p {
-  font-size: 14px; color: var(--ink-mid);
+  font-size: 16px; color: var(--ink-mid);
   line-height: 2.1; letter-spacing: 0.08em; margin-bottom: 12px;
 }
 .about-item p:last-child { margin-bottom: 0; }
@@ -246,14 +246,14 @@ nav {
 
 /* ── 閉院聯繫 ── */
 .contact-section {
-  background: rgba(89,79,71,0.14);
+  background: rgba(245,240,232,0.65);
   backdrop-filter: blur(8px);
   border-top: 1px solid rgba(165,130,84,0.14);
   padding: 80px 24px; text-align: center;
 }
 .contact-inner { max-width: 520px; margin: 0 auto; }
 .contact-inner h2 {
-  font-size: 18px; font-weight: 400;
+  font-size: 22px; font-weight: 400;
   color: var(--ink); letter-spacing: 0.24em; margin-bottom: 8px;
 }
 .contact-sub {
@@ -266,20 +266,20 @@ nav {
   background: rgba(165,130,84,0.3); margin: 0 auto 28px;
 }
 .contact-note {
-  font-size: 13.5px; color: var(--ink-soft);
+  font-size: 16px; color: var(--ink-mid);
   line-height: 2; letter-spacing: 0.08em; margin-bottom: 32px;
 }
 .tg-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
 .tg-btn {
-  display: inline-block; padding: 11px 28px;
-  border: 1px solid rgba(165,130,84,0.5);
+  display: inline-block; padding: 12px 32px;
+  border: 1px solid rgba(89,79,71,0.6);
   color: var(--brown-ci); text-decoration: none;
-  font-size: 13px; letter-spacing: 0.12em;
+  font-size: 14px; letter-spacing: 0.14em;
   border-radius: 2px; transition: all 0.25s ease;
-  background: rgba(245,240,232,0.6);
+  background: transparent;
 }
 .tg-btn:hover {
-  background: rgba(165,130,84,0.15); border-color: var(--gold); color: var(--gold);
+  background: rgba(165,130,84,0.12); border-color: var(--gold); color: var(--gold);
 }
 
 /* ── Footer ── */
