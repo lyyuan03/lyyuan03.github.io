@@ -9,10 +9,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
 <style>
 :root {
-  --ink:      #2a2118;
-  --ink-mid:  rgba(42,33,24,0.72);
-  --ink-soft: rgba(42,33,24,0.48);
-  --ink-dim:  rgba(42,33,24,0.32);
+  --ink:      #1a1208;
+  --ink-mid:  #3d2e1e;
+  --ink-soft: #5c4a35;
+  --ink-dim:  rgba(42,30,16,0.45);
   --gold:     #A58254;
   --gold-dim: rgba(165,130,84,0.4);
   --parchment:#F5F0E8;
@@ -99,9 +99,9 @@ nav {
 .hero-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(180deg,
-    rgba(245,240,232,0.62) 0%,
-    rgba(240,234,220,0.55) 50%,
-    rgba(230,224,210,0.70) 100%);
+    rgba(248,244,236,0.75) 0%,
+    rgba(245,240,228,0.68) 50%,
+    rgba(238,232,218,0.80) 100%);
   z-index: 1;
 }
 /* 中軸細線 */
@@ -134,12 +134,12 @@ nav {
 .hero-name {
   font-family: var(--font-serif);
   font-size: clamp(28px,4vw,44px); font-weight: 300;
-  letter-spacing: 0.55em; color: var(--ink);
+  letter-spacing: 0.55em; color: #1a1208;
   margin-bottom: 6px; animation: fadeDown 1.2s 0.1s ease both;
 }
 .hero-name-en {
   font-family: var(--font-en); font-size: 13px;
-  color: var(--ink-soft); letter-spacing: 0.42em;
+  color: #5c4a35; letter-spacing: 0.42em;
   margin-bottom: 52px; animation: fadeDown 1.2s 0.2s ease both;
 }
 .hero-rule {
@@ -148,17 +148,24 @@ nav {
   margin: 0 auto 52px; animation: fadeIn 1.4s 0.3s ease both;
 }
 .hero-poem {
-  font-family: var(--font-serif); font-size: 19px;
-  color: var(--ink-mid); line-height: 2.4;
+  font-family: var(--font-serif); font-size: 20px;
+  color: #1a1208; line-height: 2.5;
   letter-spacing: 0.22em; margin-bottom: 56px;
   animation: fadeIn 1.2s 0.4s ease both;
+  background: rgba(248,244,236,0.55);
+  backdrop-filter: blur(4px);
+  padding: 28px 40px;
+  border-radius: 2px;
 }
 .brand-block {
-  width: 100%; max-width: 560px;
-  border-top: 1px solid rgba(165,130,84,0.28);
-  border-bottom: 1px solid rgba(165,130,84,0.28);
-  padding: 36px 0; margin-bottom: 40px;
+  width: 100%; max-width: 600px;
+  border-top: 1px solid rgba(138,101,53,0.35);
+  border-bottom: 1px solid rgba(138,101,53,0.35);
+  padding: 36px 32px; margin-bottom: 40px;
   animation: fadeIn 1.2s 0.5s ease both;
+  background: rgba(248,244,236,0.55);
+  backdrop-filter: blur(4px);
+  border-radius: 2px;
 }
 .brand-row {
   display: flex; align-items: baseline;
@@ -166,20 +173,21 @@ nav {
 }
 .brand-row:last-child { margin-bottom: 0; }
 .brand-char {
-  font-family: var(--font-serif); font-size: 30px;
-  color: var(--gold); min-width: 32px; text-align: center; font-weight: 300;
+  font-family: var(--font-serif); font-size: 32px;
+  color: #8a6535; min-width: 32px; text-align: center; font-weight: 500;
 }
 .brand-divider {
   width: 1px; height: 14px;
   background: rgba(165,130,84,0.35); align-self: center;
 }
 .brand-def {
-  font-family: var(--font-serif); font-size: 17px;
-  color: var(--ink); letter-spacing: 0.22em; min-width: 72px; text-align: left;
+  font-family: var(--font-serif); font-size: 18px;
+  color: #1a1208; letter-spacing: 0.22em; min-width: 72px; text-align: left;
+  font-weight: 500;
 }
 .brand-en {
   font-family: var(--font-en); font-size: 15px;
-  color: var(--ink-dim); font-style: italic; letter-spacing: 0.04em;
+  color: #5c4a35; font-style: italic; letter-spacing: 0.04em;
 }
 .scroll-hint {
   position: absolute; bottom: 32px; left: 50%;
@@ -214,8 +222,8 @@ nav {
   background: rgba(165,130,84,0.12); padding: 0 24px;
 }
 .about-item {
-  background: rgba(250,246,240,0.82);
-  backdrop-filter: blur(6px);
+  background: rgba(250,246,240,0.94);
+  backdrop-filter: blur(10px);
   padding: 48px 36px 44px;
 }
 .about-item-label {
@@ -224,13 +232,13 @@ nav {
   display: block; margin-bottom: 18px; opacity: 0.75;
 }
 .about-item h3 {
-  font-family: var(--font-serif); font-size: 20px; font-weight: 400;
-  color: var(--ink); letter-spacing: 0.2em;
+  font-family: var(--font-serif); font-size: 20px; font-weight: 500;
+  color: #1a1208; letter-spacing: 0.2em;
   margin-bottom: 22px; padding-bottom: 16px;
   border-bottom: 1px solid rgba(165,130,84,0.2);
 }
 .about-item p {
-  font-size: 16px; color: var(--ink-mid);
+  font-size: 16px; color: #3d2e1e;
   line-height: 2.1; letter-spacing: 0.08em; margin-bottom: 12px;
 }
 .about-item p:last-child { margin-bottom: 0; }
@@ -246,15 +254,16 @@ nav {
 
 /* ── 閉院聯繫 ── */
 .contact-section {
-  background: rgba(245,240,232,0.65);
+  background: rgba(245,240,232,0.82);
+  backdrop-filter: blur(12px);
   backdrop-filter: blur(8px);
   border-top: 1px solid rgba(165,130,84,0.14);
   padding: 80px 24px; text-align: center;
 }
 .contact-inner { max-width: 520px; margin: 0 auto; }
 .contact-inner h2 {
-  font-size: 22px; font-weight: 400;
-  color: var(--ink); letter-spacing: 0.24em; margin-bottom: 8px;
+  font-size: 22px; font-weight: 500;
+  color: #1a1208; letter-spacing: 0.24em; margin-bottom: 8px;
 }
 .contact-sub {
   font-family: var(--font-en); font-size: 11.5px;
@@ -266,7 +275,7 @@ nav {
   background: rgba(165,130,84,0.3); margin: 0 auto 28px;
 }
 .contact-note {
-  font-size: 16px; color: var(--ink-mid);
+  font-size: 16px; color: #3d2e1e;
   line-height: 2; letter-spacing: 0.08em; margin-bottom: 32px;
 }
 .tg-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
