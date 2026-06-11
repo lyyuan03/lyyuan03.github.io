@@ -100,9 +100,10 @@ nav {
   position: absolute; inset: 0;
   background: linear-gradient(180deg,
     rgba(10,15,8,0.18) 0%,
-    rgba(10,15,8,0.08) 45%,
-    rgba(10,15,8,0.55) 85%,
-    rgba(10,15,8,0.85) 100%);
+    rgba(10,15,8,0.08) 40%,
+    rgba(10,15,8,0.42) 78%,
+    rgba(10,15,8,0.65) 92%,
+    rgba(10,15,8,0.72) 100%);
   z-index: 1;
 }
 /* 中軸細線 */
@@ -137,39 +138,28 @@ nav {
   animation: fadeDown 1.4s ease both;
 }
 /* 院名 */
-.hero-name {
-  font-family: var(--font-serif);
-  font-size: clamp(32px,4.5vw,52px); font-weight: 300;
-  letter-spacing: 0.6em; color: var(--cream);
-  margin-bottom: 6px; animation: fadeDown 1.4s 0.12s ease both;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
-}
-.hero-name-en {
-  font-family: var(--font-en); font-size: 14px;
-  color: rgba(197,162,111,0.7); letter-spacing: 0.45em;
-  margin-bottom: 64px; animation: fadeDown 1.4s 0.22s ease both;
-}
+
 /* 細線分隔 */
 .hero-rule {
   width: 1px; height: 56px;
   background: linear-gradient(180deg, transparent, rgba(165,130,84,0.55), transparent);
-  margin: 0 auto 64px; animation: fadeIn 1.6s 0.32s ease both;
+  margin: 0 auto 56px; animation: fadeIn 1.6s 0.22s ease both;
 }
 
 /* ── 詩句：靠右，毛筆直排感 ── */
 .hero-poem-wrap {
-  width: 100%; display: flex; justify-content: flex-end;
+  width: 100%; display: flex; justify-content: flex-start;
   margin-bottom: 64px; animation: fadeIn 1.4s 0.42s ease both;
 }
 .hero-poem {
-  text-align: right;
+  text-align: left;
   font-family: var(--font-serif); font-size: 21px;
   color: var(--cream); line-height: 2.6;
   letter-spacing: 0.28em;
   background: rgba(10,15,8,0.38);
   backdrop-filter: blur(2px);
-  padding: 32px 40px 32px 52px;
-  border-right: 2px solid rgba(165,130,84,0.55);
+  padding: 32px 52px 32px 40px;
+  border-left: 2px solid rgba(165,130,84,0.55);
   border-radius: 0;
   text-shadow: 0 1px 12px rgba(0,0,0,0.7);
   max-width: 520px;
@@ -249,10 +239,7 @@ nav {
 
 /* ── Hero 到三欄：漸層過渡 ── */
 .hero-to-about {
-  height: 120px;
-  background: linear-gradient(180deg,
-    rgba(10,15,8,0.85) 0%,
-    rgba(245,240,232,0.0) 100%);
+  height: 0;
   pointer-events: none;
 }
 
@@ -260,8 +247,8 @@ nav {
 .about-section {
   background: linear-gradient(180deg,
     rgba(245,240,232,0.0) 0%,
-    rgba(245,240,232,0.88) 8%,
-    rgba(245,240,232,0.92) 92%,
+    rgba(245,240,232,0.82) 12%,
+    rgba(245,240,232,0.92) 88%,
     rgba(245,240,232,0.88) 100%);
   backdrop-filter: blur(10px);
   padding: 88px 0 80px;
@@ -474,11 +461,9 @@ footer {
   <div class="hero-content">
     <p class="hero-eyebrow">LING · YUAN · YUAN</p>
     <img src="logo.png" alt="靈元院 Logo" class="hero-logo">
-    <h1 class="hero-name">靈　元　院</h1>
-    <p class="hero-name-en">Ling Yuan Yuan Temple</p>
     <div class="hero-rule"></div>
 
-    <!-- 詩句靠右 毛筆感 -->
+    <!-- 詩句靠左 毛筆感 -->
     <div class="hero-poem-wrap">
       <div class="hero-poem">
         穿過五欲六塵的層層煙迷<br>
