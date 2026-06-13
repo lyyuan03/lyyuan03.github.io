@@ -41,13 +41,11 @@ nav {
   border-bottom: 1px solid rgba(165,130,84,0.14);
 }
 .nav-inner {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex; justify-content: center; align-items: center;
   padding: 0 40px; height: 56px;
 }
-.nav-logo {
-  font-family: var(--font-serif); font-size: 15px;
-  color: var(--gold); letter-spacing: 0.3em; text-decoration: none;
-}
+.nav-logo { display: none; }
+.nav-content { display: flex; justify-content: center; padding: 0; }
 .nav-links { display: flex; gap: 30px; list-style: none; align-items: center; }
 .nav-links > li { position: relative; }
 .nav-links > li > a,
@@ -396,9 +394,9 @@ footer {
 <body>
 
 <nav>
-  <div class="nav-inner">
-    <a href="https://lyyuan.tw/" class="nav-logo">靈元院</a>
-    <ul class="nav-links">
+  <div class="container">
+    <div class="nav-content">
+      <ul class="nav-links">
       <li><a href="https://lyyuan.tw/" class="active">首頁</a></li>
       <li>
         <span class="has-dropdown">活動</span>
@@ -442,7 +440,8 @@ footer {
           <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank">IG ｜ 我在人間－宇色</a></li>
         </ul>
       </li>
-    </ul>
+      </ul>
+    </div>
   </div>
 </nav>
 
