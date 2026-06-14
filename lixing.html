@@ -466,6 +466,38 @@ footer {
   .event-body p { font-size: 15px; }
   .corner-kamon { display: none; }
 }
+
+/* ── 贊助按鈕 ── */
+.cta-wrap { text-align: center; margin: 48px 0 0; }
+.cta-btn-gold {
+  display: inline-block;
+  padding: 16px 48px;
+  background: linear-gradient(135deg, #A58254 0%, #C5A26F 50%, #A58254 100%);
+  color: #1a1208 !important;
+  text-decoration: none;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  border-radius: 2px;
+  border: 1px solid rgba(197,162,111,0.6);
+  box-shadow: 0 4px 20px rgba(165,130,84,0.35), 0 1px 0 rgba(255,255,255,0.15) inset;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.cta-btn-gold::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cta-btn-gold:hover {
+  background: linear-gradient(135deg, #C5A26F 0%, #d4b480 50%, #C5A26F 100%);
+  box-shadow: 0 6px 28px rgba(165,130,84,0.5);
+  transform: translateY(-2px);
+}
+
 </style>
 </head>
 <body>
@@ -596,6 +628,25 @@ footer {
             <span class="tl-text">恭誦《普門品》・廣財運通修法・宣讀芳名迴向</span>
           </li>
         </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 丙午聖誕慈示 -->
+  <div class="decree-section" style="padding-top:48px;">
+    <div class="decree-inner">
+      <div class="decree-heading">
+        <div class="decree-line"></div>
+        <div>
+          <h2>丙午・無極老母聖誕慈示</h2>
+          <span class="heading-en">DECREE · BING WU YEAR</span>
+        </div>
+      </div>
+      <div class="decree-box">
+        <p>眾靈子聽之——丙午之歲，人間風動於未形之處，兩岸之象，將起更大波瀾。台島氣數多變，安寧有時起伏，維安、治安皆恐生動盪。腥風血雨雖未必臨門，然氣機之亂，已見於天心。不可不慎。靈子若欲安度此年，必須守心如定海。世事不安之時，人心亦隨之轉。心若不守，則魔心乘隙，邪心易生；心若能定，則亂世不能奪其志。</p>
+        <p>是故吾諭：2026 之厄，人禍甚於天災。此乃氣數之變，亦是眾生心念所感。靈修之子，更當警醒——勤修己心，慎思慎行，步步在道，不偏不倚。大道不離日用之間，妙法常存一念之中。念若正，則凶可轉吉；心若明，則大事化小，小事化無。但守此心，便能平穩度歲。</p>
+        <p>汝等皆吾子，勿懼變局，但守靈山於心，但行妙法於身，自能越此丙午之關。</p>
       </div>
     </div>
   </div>
@@ -738,6 +789,14 @@ footer {
     </div>
   </div>
 
+
+  <!-- 贊助按鈕 -->
+  <div class="cta-wrap" style="padding: 0 24px;">
+    <a class="cta-btn-gold" href="https://www.beclass.com/rid=294fe6367aabaca90a6d" target="_blank">
+      靈元院・建院奠基護法法會｜隨喜護持
+    </a>
+  </div>
+
   <!-- 聯繫 -->
   <div class="contact-section">
     <div class="contact-inner">
@@ -747,8 +806,7 @@ footer {
         <div class="contact-divider"></div>
         <p class="contact-note">
           如欲第一手收到靈元院最新課程與未公開活動訊息，敬請加入官方頻道。<br>
-          法務、課程、合作諮詢，敬請透過聯絡帳號洽詢。<br>
-          Email｜<a href="mailto:lyyuan03@gmail.com">lyyuan03@gmail.com</a>　TEL 0975-256579
+          法務、課程、合作諮詢，敬請透過聯絡帳號洽詢。
         </p>
         <div class="tg-links">
           <a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a>
@@ -777,7 +835,7 @@ footer {
         <a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
         </a>
-        <a href="mailto:lyyuan03@gmail.com" aria-label="Email">
+        <a href="mailto:lyyuan03@gmail.com" aria-label="Email" style="cursor:pointer;">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         </a>
       </div>
