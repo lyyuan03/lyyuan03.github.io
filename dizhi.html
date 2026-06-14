@@ -577,24 +577,25 @@ footer {
 
 /* email toast */
 #email-toast {
-  position: fixed; bottom: 80px; left: 50%;
-  transform: translateX(-50%);
-  background: rgba(165,130,84,0.95);
+  position: fixed; bottom: 88px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(165,130,84,0.96);
   color: #1a1208;
-  padding: 10px 24px;
-  border-radius: 2px;
-  font-size: 13.5px;
+  padding: 11px 28px;
+  border-radius: 999px;
+  font-size: 14px;
   letter-spacing: 0.1em;
   font-family: 'Noto Sans TC', sans-serif;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
   pointer-events: none;
-  z-index: 999;
+  z-index: 9999;
   white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 
 
-/* ── CIS 金色按鈕 ── */
+
 .cta-btn-gold, a.cta-btn-gold,
 .book-link-block, a.book-link-block,
 a.book-link-block:visited,
@@ -614,6 +615,38 @@ a.book-link-block:active {
   box-shadow: 0 4px 20px rgba(165,130,84,0.35) !important;
   transition: all 0.3s ease !important;
   background-color: #A58254 !important;
+}
+.book-link-block:hover, a.book-link-block:hover,
+.cta-btn-gold:hover {
+  background: linear-gradient(135deg, #C5A26F 0%, #d4b480 50%, #C5A26F 100%) !important;
+  box-shadow: 0 6px 28px rgba(165,130,84,0.55) !important;
+  transform: translateY(-2px) !important;
+  color: #1a1208 !important;
+}
+.book-link-block * { color: #1a1208 !important; }
+
+
+/* ── 圓角膠囊按鈕 ── */
+.cta-btn-gold, a.cta-btn-gold,
+.book-link-block, a.book-link-block,
+a.book-link-block:visited,
+a.book-link-block:hover,
+a.book-link-block:active {
+  display: inline-block !important;
+  padding: 15px 52px !important;
+  background: linear-gradient(135deg, #A58254 0%, #C5A26F 50%, #A58254 100%) !important;
+  background-color: #A58254 !important;
+  color: #1a1208 !important;
+  text-decoration: none !important;
+  font-family: 'Noto Serif TC', serif !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.2em !important;
+  border-radius: 999px !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(165,130,84,0.35) !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
 }
 .book-link-block:hover, a.book-link-block:hover,
 .cta-btn-gold:hover {
@@ -847,7 +880,7 @@ a.book-link-block:active {
       <p class="contact-note" style="margin-bottom:0; font-size:13px;">
         家宅、公司、道場神像安座開光／道場風水堪輿、誦經科儀、神尊祝壽懺儀等相關事宜，<br>
         敬請聯繫靈元院行政團隊。<br>
-        Email｜<a href="mailto:lyyuan03@gmail.com">lyyuan03@gmail.com</a>　TEL 0975-256579
+        Email｜<a href="mailto:lyyuan03@gmail.com" aria-label="Email" onclick="handleEmail(event); return false;" style="cursor:pointer;">lyyuan03@gmail.com</a>　TEL 0975-256579
       </p>
       <div class="tg-links" style="margin-top:20px;">
         <a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a>
