@@ -499,7 +499,7 @@ footer {
 }
 
 
-/* ── CIS 金色按鈕 ── */
+
 .cta-btn-gold, a.cta-btn-gold,
 .book-link-block, a.book-link-block,
 a.book-link-block:visited,
@@ -519,6 +519,38 @@ a.book-link-block:active {
   box-shadow: 0 4px 20px rgba(165,130,84,0.35) !important;
   transition: all 0.3s ease !important;
   background-color: #A58254 !important;
+}
+.book-link-block:hover, a.book-link-block:hover,
+.cta-btn-gold:hover {
+  background: linear-gradient(135deg, #C5A26F 0%, #d4b480 50%, #C5A26F 100%) !important;
+  box-shadow: 0 6px 28px rgba(165,130,84,0.55) !important;
+  transform: translateY(-2px) !important;
+  color: #1a1208 !important;
+}
+.book-link-block * { color: #1a1208 !important; }
+
+
+/* ── 圓角膠囊按鈕 ── */
+.cta-btn-gold, a.cta-btn-gold,
+.book-link-block, a.book-link-block,
+a.book-link-block:visited,
+a.book-link-block:hover,
+a.book-link-block:active {
+  display: inline-block !important;
+  padding: 15px 52px !important;
+  background: linear-gradient(135deg, #A58254 0%, #C5A26F 50%, #A58254 100%) !important;
+  background-color: #A58254 !important;
+  color: #1a1208 !important;
+  text-decoration: none !important;
+  font-family: 'Noto Serif TC', serif !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.2em !important;
+  border-radius: 999px !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(165,130,84,0.35) !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
 }
 .book-link-block:hover, a.book-link-block:hover,
 .cta-btn-gold:hover {
@@ -866,7 +898,7 @@ a.book-link-block:active {
         <a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
         </a>
-        <a href="mailto:lyyuan03@gmail.com" aria-label="Email" onclick="if(navigator.clipboard){navigator.clipboard.writeText('lyyuan03@gmail.com');var t=document.getElementById('email-toast');t.style.opacity='1';setTimeout(function(){t.style.opacity='0'},2000);}" style="cursor:pointer; position:relative;">
+        <a href="mailto:lyyuan03@gmail.com" aria-label="Email" onclick="handleEmail(event); return false;" style="cursor:pointer;">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         </a>
       </div>
