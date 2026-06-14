@@ -389,6 +389,47 @@ footer {
   .brand-en { display:none; }
   .brand-divider { display:none; }
 }
+
+/* ── Nav Fix: force all items visible ── */
+.nav-content {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 16px 24px !important;
+  width: 100% !important;
+}
+.nav-links {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 26px !important;
+  list-style: none !important;
+  margin: 0 !important; padding: 0 !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+.nav-links > li {
+  position: relative !important;
+  display: list-item !important;
+  white-space: nowrap !important;
+}
+.nav-links > li > a,
+.nav-links > li > span {
+  white-space: nowrap !important;
+  font-size: 13.5px !important;
+  letter-spacing: 0.1em !important;
+}
+.dropdown {
+  min-width: 190px !important;
+  white-space: nowrap !important;
+}
+.dropdown li a {
+  white-space: nowrap !important;
+  font-size: 13px !important;
+  padding: 10px 20px !important;
+}
+
 </style>
 </head>
 <body>
