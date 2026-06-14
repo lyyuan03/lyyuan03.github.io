@@ -302,6 +302,25 @@ footer {
   padding: 10px 20px !important;
 }
 
+
+/* email toast */
+#email-toast {
+  position: fixed; bottom: 80px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(165,130,84,0.95);
+  color: #1a1208;
+  padding: 10px 24px;
+  border-radius: 2px;
+  font-size: 13.5px;
+  letter-spacing: 0.1em;
+  font-family: 'Noto Sans TC', sans-serif;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+}
+
 </style>
 <!-- deploy:1781056471 -->
 </head>
@@ -477,6 +496,9 @@ footer {
     靈元院 Ling Yuan Yuan © 2026 &nbsp;&nbsp;•&nbsp;&nbsp; 修心在己
   </div>
 </footer>
+
+
+<div id="email-toast">✉ lyyuan03@gmail.com 已複製</div>
 
 </body>
 </html>
