@@ -1,0 +1,31 @@
+.nav-links > li.dropdown-open > .dropdown {
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .nav-content {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-links {
+    min-width: max-content;
+  }
+}
+
+@media (max-width: 600px) {
+  .dropdown {
+    top: calc(100% + 10px);
+    left: 0;
+    right: auto;
+    transform: none;
+    min-width: 170px;
+  }
+
+  .nav-links > li:last-child > .dropdown,
+  .nav-links > li:nth-last-child(2) > .dropdown {
+    left: auto;
+    right: 0;
+  }
+}
