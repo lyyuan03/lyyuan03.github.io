@@ -1,31 +1,47 @@
 .nav-links > li.dropdown-open > .dropdown {
-  display: block;
+  display: block !important;
+}
+
+.nav-links > li > .has-dropdown {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 @media (max-width: 900px) {
-  .nav-content {
-    justify-content: flex-start;
-    overflow-x: auto;
+  .nav-content,
+  .nav-inner {
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
     -webkit-overflow-scrolling: touch;
   }
 
   .nav-links {
-    min-width: max-content;
+    min-width: max-content !important;
+    flex-wrap: nowrap !important;
+  }
+
+  nav,
+  .nav-content,
+  .nav-inner,
+  .nav-links,
+  .nav-links > li {
+    overflow: visible;
   }
 }
 
 @media (max-width: 600px) {
   .dropdown {
-    top: calc(100% + 10px);
-    left: 0;
-    right: auto;
-    transform: none;
+    top: calc(100% + 10px) !important;
+    left: 0 !important;
+    right: auto !important;
+    transform: none !important;
     min-width: 170px;
   }
 
   .nav-links > li:last-child > .dropdown,
   .nav-links > li:nth-last-child(2) > .dropdown {
-    left: auto;
-    right: 0;
+    left: auto !important;
+    right: 0 !important;
   }
 }
