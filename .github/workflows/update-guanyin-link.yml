@@ -1,0 +1,40 @@
+name: Update Guanyin Link
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-link:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace registration link
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('fahui.html')
+          text = path.read_text(encoding='utf-8')
+          old = 'https://ling-yuan-nest.base44.app/guanyin-event'
+          new = 'guanyin-event-v2.html'
+          if old not in text:
+              print('Old link not found; no change needed.')
+          else:
+              path.write_text(text.replace(old, new), encoding='utf-8')
+              print('Updated registration link.')
+          PY
+      - name: Commit change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add fahui.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update Guanyin registration link"
+            git push
+          fi
