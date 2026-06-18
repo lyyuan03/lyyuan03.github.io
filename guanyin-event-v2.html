@@ -51,6 +51,31 @@ a {
   -webkit-tap-highlight-color: rgba(47, 61, 44, 0.18);
 }
 
+header,
+nav,
+.navbar,
+.site-header,
+.site-nav,
+.menu,
+.dropdown,
+.dropdown-menu {
+  position: relative;
+  z-index: 2000;
+  pointer-events: auto;
+}
+
+header a,
+nav a,
+.navbar a,
+.site-header a,
+.site-nav a,
+.menu a,
+.dropdown a,
+.dropdown-menu a {
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
 .page {
   min-height: 100vh;
   overflow-x: hidden;
@@ -156,6 +181,17 @@ h1 {
   background:
     repeating-radial-gradient(ellipse at 50% -18%, transparent 0 30px, rgba(76, 90, 67, 0.16) 31px 32px);
   pointer-events: none;
+}
+
+body > * {
+  position: relative;
+}
+
+body > header,
+body > nav,
+body > .navbar,
+body > .site-header {
+  z-index: 3000;
 }
 
 .event-heading {
