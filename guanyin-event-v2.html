@@ -8,16 +8,16 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:wght@400;500&display=swap">
 <style>
 :root {
-  --sumi: #172016;
-  --moss: #2f3d2c;
-  --pine: #4c5a43;
-  --washi: #f3eee3;
-  --rice: #fbf7ec;
-  --wood: #9a7a55;
-  --cedar: #6b5439;
-  --ink: #1f241d;
-  --soft: #6f6a5d;
-  --line: rgba(107, 84, 57, 0.25);
+  --sumi: #131b12;
+  --moss: #364432;
+  --pine: #5c6956;
+  --washi: rgba(245, 240, 232, 0.96);
+  --rice: #f7f2e8;
+  --wood: #9f825f;
+  --cedar: #7b6449;
+  --ink: #f4efe6;
+  --soft: rgba(245, 240, 232, 0.72);
+  --line: rgba(165, 130, 84, 0.2);
   --serif: "Noto Serif TC", "Georgia", serif;
   --sans: "Noto Sans TC", "Arial", sans-serif;
   --en: "Cormorant Garamond", serif;
@@ -35,9 +35,8 @@ body {
   margin: 0;
   color: var(--ink);
   background:
-    linear-gradient(rgba(243, 238, 227, 0.9), rgba(243, 238, 227, 0.94)),
-    radial-gradient(circle at 20% 20%, rgba(76, 90, 67, 0.12), transparent 28%),
-    repeating-linear-gradient(90deg, rgba(107, 84, 57, 0.04) 0 1px, transparent 1px 9px);
+    linear-gradient(rgba(10, 15, 8, 0.46), rgba(10, 15, 8, 0.58)),
+    url('forest-path.jpg') center center / cover fixed no-repeat;
   font-family: var(--sans);
   line-height: 1.78;
   -webkit-font-smoothing: antialiased;
@@ -83,7 +82,7 @@ nav a,
 
 .hero {
   position: relative;
-  background: var(--sumi);
+  background: rgba(10, 15, 8, 0.5);
 }
 
 .cover-image {
@@ -168,8 +167,8 @@ h1 {
   position: relative;
   z-index: 0;
   background:
-    linear-gradient(180deg, rgba(243, 238, 227, 0.98), rgba(251, 247, 236, 0.96)),
-    repeating-linear-gradient(0deg, rgba(47, 61, 44, 0.035) 0 2px, transparent 2px 13px);
+    linear-gradient(180deg, rgba(10, 15, 8, 0.20), rgba(10, 15, 8, 0.36)),
+    linear-gradient(180deg, rgba(18, 26, 17, 0.18), rgba(18, 26, 17, 0.30));
 }
 
 .main::before {
@@ -177,9 +176,10 @@ h1 {
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.38;
+  opacity: 0.30;
   background:
-    repeating-radial-gradient(ellipse at 50% -18%, transparent 0 30px, rgba(76, 90, 67, 0.16) 31px 32px);
+    radial-gradient(ellipse at 50% 0%, rgba(245, 240, 232, 0.12), transparent 46%),
+    repeating-radial-gradient(ellipse at 50% -18%, transparent 0 30px, rgba(76, 90, 67, 0.14) 31px 32px);
   pointer-events: none;
 }
 
@@ -199,28 +199,30 @@ body > .site-header {
   z-index: 2;
   width: min(860px, calc(100% - 40px));
   margin: 0 auto;
-  padding: 72px 0 56px;
+  padding: 78px 0 52px;
   text-align: center;
+  color: var(--rice);
 }
 
 .event-heading .eyebrow {
-  color: var(--cedar);
+  color: rgba(245, 240, 232, 0.68);
 }
 
 .event-heading h1 {
-  color: var(--sumi);
+  color: var(--rice);
+  text-shadow: 0 4px 24px rgba(0,0,0,0.45);
 }
 
 .event-heading .btn {
-  border-color: rgba(47, 61, 44, 0.45);
-  background: transparent;
-  color: var(--moss);
+  border-color: rgba(245, 240, 232, 0.38);
+  background: rgba(245, 240, 232, 0.10);
+  color: var(--rice);
 }
 
 .event-heading .btn.primary {
-  border-color: var(--moss);
-  background: var(--moss);
-  color: var(--rice);
+  border-color: rgba(245, 240, 232, 0.75);
+  background: rgba(245, 240, 232, 0.92);
+  color: var(--sumi);
 }
 
 .section {
@@ -261,26 +263,28 @@ body > .site-header {
   margin-bottom: 7px;
   font-family: var(--en);
   font-size: 14px;
-  color: var(--cedar);
+  color: rgba(245, 240, 232, 0.62);
   letter-spacing: 0.2em;
 }
 
 .section-title h2 {
-  color: var(--sumi);
+  color: var(--rice);
   font-size: 38px;
   line-height: 1.32;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.25);
 }
 
 .washi-panel {
   position: relative;
-  border: 1px solid rgba(107, 84, 57, 0.12);
+  border: 1px solid rgba(245, 240, 232, 0.16);
   background:
-    linear-gradient(rgba(251, 247, 236, 0.88), rgba(251, 247, 236, 0.9)),
-    repeating-linear-gradient(90deg, rgba(107, 84, 57, 0.05) 0 1px, transparent 1px 8px);
+    linear-gradient(rgba(18, 26, 17, 0.55), rgba(18, 26, 17, 0.42)),
+    repeating-linear-gradient(90deg, rgba(245, 240, 232, 0.045) 0 1px, transparent 1px 8px);
   padding: clamp(30px, 5vw, 56px);
-  box-shadow: 0 14px 36px rgba(31, 36, 29, 0.05);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
   max-width: 760px;
   border-radius: 20px;
+  backdrop-filter: blur(10px);
 }
 
 .washi-panel p {
@@ -288,7 +292,7 @@ body > .site-header {
   font-family: var(--serif);
   font-size: 18px;
   line-height: 1.95;
-  color: var(--ink);
+  color: rgba(245, 240, 232, 0.88);
 }
 
 .washi-panel p:last-child {
@@ -298,8 +302,8 @@ body > .site-header {
 .notice {
   margin-top: 22px;
   padding-left: 18px;
-  border-left: 2px solid rgba(154, 122, 85, 0.38);
-  color: var(--soft);
+  border-left: 2px solid rgba(165, 130, 84, 0.42);
+  color: rgba(245, 240, 232, 0.68);
   font-size: 15px;
   line-height: 1.8;
 }
@@ -315,12 +319,12 @@ body > .site-header {
 .lotus-ink {
   min-height: 360px;
   background:
-    linear-gradient(rgba(47, 61, 44, 0.1), rgba(47, 61, 44, 0.2)),
-    radial-gradient(ellipse at 50% 75%, rgba(251, 247, 236, 0.62) 0 8%, transparent 9% 100%),
-    radial-gradient(ellipse at 32% 64%, rgba(76, 90, 67, 0.28) 0 10%, transparent 11% 100%),
-    radial-gradient(ellipse at 68% 64%, rgba(76, 90, 67, 0.28) 0 10%, transparent 11% 100%),
-    linear-gradient(135deg, var(--moss), var(--sumi));
-  border: 1px solid rgba(47, 61, 44, 0.16);
+    linear-gradient(rgba(10, 15, 8, 0.42), rgba(10, 15, 8, 0.18)),
+    radial-gradient(ellipse at 50% 75%, rgba(245, 240, 232, 0.26) 0 8%, transparent 9% 100%),
+    radial-gradient(ellipse at 32% 64%, rgba(165, 130, 84, 0.16) 0 10%, transparent 11% 100%),
+    radial-gradient(ellipse at 68% 64%, rgba(165, 130, 84, 0.16) 0 10%, transparent 11% 100%),
+    url('forest-path.jpg') center center / cover;
+  border: 1px solid rgba(245, 240, 232, 0.18);
   border-radius: 24px;
 }
 
@@ -331,7 +335,7 @@ body > .site-header {
 
 .lamp-intro p {
   margin: 0;
-  color: var(--soft);
+  color: rgba(245, 240, 232, 0.74);
   max-width: 34em;
   font-size: 16px;
   line-height: 1.9;
@@ -347,25 +351,25 @@ body > .site-header {
   min-height: 220px;
   padding: 30px 28px;
   background:
-    linear-gradient(90deg, rgba(107, 84, 57, 0.09), transparent 18%),
-    linear-gradient(180deg, #fffaf0, #eee2cf);
-  border: 1px solid rgba(107, 84, 57, 0.14);
-  box-shadow: inset 4px 0 0 rgba(107, 84, 57, 0.12), 0 10px 22px rgba(31, 36, 29, 0.04);
+    linear-gradient(90deg, rgba(245, 240, 232, 0.08), transparent 18%),
+    linear-gradient(180deg, rgba(245, 240, 232, 0.88), rgba(238, 231, 219, 0.84));
+  border: 1px solid rgba(165, 130, 84, 0.12);
+  box-shadow: inset 4px 0 0 rgba(165, 130, 84, 0.10), 0 10px 22px rgba(0, 0, 0, 0.08);
   border-radius: 22px;
 }
 
 .lamp h3 {
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(107, 84, 57, 0.16);
-  color: var(--cedar);
+  border-bottom: 1px solid rgba(165, 130, 84, 0.18);
+  color: #6a553b;
   font-size: 20px;
   line-height: 1.38;
 }
 
 .lamp p {
   margin: 0;
-  color: #4d4a3f;
+  color: #5d5a50;
   font-size: 16px;
   line-height: 1.9;
 }
@@ -376,34 +380,34 @@ body > .site-header {
   gap: 28px;
   align-items: center;
   padding: 44px 0 30px;
-  border-top: 1px solid rgba(107, 84, 57, 0.14);
-  border-bottom: 1px solid rgba(107, 84, 57, 0.14);
+  border-top: 1px solid rgba(245, 240, 232, 0.14);
+  border-bottom: 1px solid rgba(245, 240, 232, 0.14);
 }
 
 .form-panel h2 {
-  color: var(--sumi);
+  color: var(--rice);
   font-size: 34px;
 }
 
 .form-panel p {
   max-width: 620px;
   margin: 12px 0 0;
-  color: var(--soft);
+  color: rgba(245, 240, 232, 0.72);
   line-height: 1.85;
 }
 
 .form-panel .btn {
-  border-color: var(--moss);
-  background: var(--moss);
-  color: var(--rice);
+  border-color: rgba(245, 240, 232, 0.72);
+  background: rgba(245, 240, 232, 0.9);
+  color: var(--sumi);
 }
 
 .back {
   display: inline-block;
   margin-top: 28px;
-  color: var(--cedar);
+  color: rgba(245, 240, 232, 0.76);
   text-decoration: none;
-  border-bottom: 1px solid rgba(107, 84, 57, 0.28);
+  border-bottom: 1px solid rgba(245, 240, 232, 0.28);
 }
 
 footer {
@@ -411,7 +415,7 @@ footer {
   z-index: 2;
   padding: 40px 24px 50px;
   text-align: center;
-  color: var(--soft);
+  color: rgba(245, 240, 232, 0.68);
   font-size: 13px;
   letter-spacing: 0.08em;
 }
@@ -444,7 +448,7 @@ footer {
 
 @media (max-width: 640px) {
   .hero {
-    background: var(--sumi);
+    background: rgba(10, 15, 8, 0.56);
   }
 
   .eyebrow {
@@ -481,11 +485,11 @@ footer {
   .btn {
     width: 100%;
     min-height: 48px;
-    background: rgba(251, 247, 236, 0.1);
+    background: rgba(245, 240, 232, 0.12);
   }
 
   .btn.primary {
-    background: rgba(251, 247, 236, 0.96);
+    background: rgba(245, 240, 232, 0.94);
   }
 
   .event-heading {
@@ -494,8 +498,8 @@ footer {
   }
 
   .event-heading .btn {
-    border-color: rgba(47, 61, 44, 0.42);
-    background: rgba(47, 61, 44, 0.04);
+    border-color: rgba(245, 240, 232, 0.36);
+    background: rgba(245, 240, 232, 0.08);
   }
 
   .event-heading .btn.primary {
