@@ -1,0 +1,43 @@
+name: Zen Guanyin Style
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  zen-style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply Japanese Zen Guanyin details
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('guanyin-event-v2.html')
+          s = p.read_text(encoding='utf-8')
+          css = """
+.temple-mark{width:128px;height:54px;margin:0 auto 28px;position:relative;opacity:.66}.temple-mark:before{content:'';position:absolute;left:0;right:0;top:0;height:6px;background:var(--gold)}.temple-mark:after{content:'';position:absolute;left:18px;right:18px;top:17px;height:4px;background:var(--gold)}.temple-mark i:before,.temple-mark i:after{content:'';position:absolute;top:21px;width:5px;height:33px;background:var(--gold)}.temple-mark i:before{left:34px}.temple-mark i:after{right:34px}.hero-banner:after{content:'観音';position:absolute;right:28px;bottom:18px;writing-mode:vertical-rl;font-family:var(--serif);font-size:30px;letter-spacing:.32em;color:rgba(245,240,232,.88);text-shadow:0 2px 12px rgba(0,0,0,.45)}.hero-text h1{font-weight:300!important;letter-spacing:.15em}.btn{border-radius:0!important;background:rgba(165,130,84,.07)!important;box-shadow:none!important}.temple-row{text-align:center;color:rgba(165,130,84,.72);font-family:var(--serif);font-size:22px;letter-spacing:.32em;margin:4px 0 26px}.zen-line{width:1px;height:78px;margin:34px auto;background:linear-gradient(180deg,transparent,rgba(165,130,84,.48),transparent)}.lamp h3{font-weight:300!important}.section h2,.lamps-intro h2{font-weight:300!important}body:after{background:radial-gradient(circle at 50% 0%,rgba(165,130,84,.13),transparent 42%)!important}
+"""
+          if '.temple-mark' not in s:
+              s = s.replace('</style>', css + '</style>')
+          s = s.replace('<div class="page">', '<div class="page">\n<div class="temple-mark"><i></i></div>')
+          s = s.replace('GUANYIN EVENT · LING YUAN YUAN', 'KANNON · LING YUAN YUAN')
+          s = s.replace('<div class="divider"><span>◇</span></div>', '<div class="divider"><span>蓮</span></div>')
+          s = s.replace('<div class="lamps"><article class="lamp">', '<div class="temple-row">寺　鐘　蓮　燈　願</div><div class="lamps"><article class="lamp">')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add guanyin-event-v2.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Apply Japanese Zen Guanyin temple elements"
+            git push
+          fi
