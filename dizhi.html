@@ -54,9 +54,7 @@ nav {
   letter-spacing: 0.08em;
   transition: color 0.3s ease;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  display: flex; align-items: center; gap: 4px;
 }
 .nav-links > li > a:hover,
 .nav-links > li > span:hover { color: var(--lyy-gold); }
@@ -417,7 +415,7 @@ nav {
   font-size: 14px;
   color: rgba(245, 241, 233, 0.6);
   line-height: 2;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 .contact-note a { color: var(--lyy-gold); text-decoration: none; }
 .tg-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
@@ -433,48 +431,6 @@ nav {
   transition: all 0.25s ease;
 }
 .tg-btn:hover { background: rgba(197, 162, 111, 0.12); border-color: var(--lyy-gold); }
-
-/* ── Beclass 報名表單 ── */
-.beclass-wrap {
-  margin: 32px 0 0;
-  border: 1px solid rgba(197, 162, 111, 0.18);
-  border-radius: 4px;
-  overflow: hidden;
-  background: rgba(255,255,255,0.97);
-}
-.beclass-wrap iframe {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* ── 表格圖上下排列 ── */
-.support-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin: 24px 0;
-}
-.support-img-link {
-  display: block;
-  overflow: hidden;
-  border-radius: 2px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.support-img-link:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
-}
-.support-img-link img {
-  width: 100%;
-  height: auto;
-  display: block;
-  filter: brightness(0.92) sepia(0.06);
-  transition: filter 0.3s ease;
-}
-.support-img-link:hover img {
-  filter: brightness(1) sepia(0);
-}
 
 /* ── 頻道連結 ── */
 .channel-section { margin-top: 48px; }
@@ -514,6 +470,13 @@ nav {
 }
 .channel-icon.yt { background: var(--lyy-gold); }
 .channel-icon.pod { background: rgba(245, 241, 233, 0.55); }
+
+.footer-inner { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.footer-logo { font-family: var(--font-serif); font-size: 14px; color: rgba(165,130,84,0.5); letter-spacing: 0.32em; }
+.footer-links { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.footer-links a { color: rgba(245,240,232,0.38); text-decoration: none; transition: color 0.3s, transform 0.2s; display: flex; align-items: center; }
+.footer-links a:hover { color: var(--gold); transform: translateY(-2px); }
+.footer-copy { font-size: 12px; color: rgba(245,240,232,0.22); letter-spacing: 0.12em; }
 
 footer {
   background: rgba(8, 14, 10, 0.85);
@@ -869,32 +832,16 @@ a.book-link-block:active {
   <!-- 贊助 CTA -->
   <div class="contact-section">
     <div class="contact-box">
-      <h2>贊助靈元院建院基金</h2>
-      <span class="sub">SUPPORT THE FOUNDATION</span>
+      <h2>第一手掌握法會訊息</h2>
+      <span class="sub">STAY CONNECTED</span>
       <div class="contact-divider"></div>
       <p class="contact-note">
-        若您願意以隨喜護持方式，長期助力靈元院未來新道場的興建與維運，<br>
-        也歡迎透過線上贊助管道，為建院之路添上一盞心燈。
+        如欲第一手收到靈元院最新課程與未公開活動訊息，敬請加入官方頻道。<br>
+        法務、課程、合作諮詢，敬請通過聯繫帳號洽詢。
       </p>
-
-      <p class="contact-note" style="margin-bottom:0; font-size:13px;">
-        家宅、公司、道場神像安座開光／道場風水堪輿、誦經科儀、神尊祝壽懺儀等相關事宜，<br>
-        敬請聯繫靈元院行政團隊。<br>
-        Email｜<a href="mailto:lyyuan03@gmail.com" aria-label="Email" onclick="handleEmail(event); return false;" style="cursor:pointer;">lyyuan03@gmail.com</a>　TEL 0975-256579
-      </p>
-      <div class="tg-links" style="margin-top:20px;">
+      <div class="tg-links">
         <a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a>
-        <a href="https://t.me/lyyuan" target="_blank" class="tg-btn">Telegram 聯絡帳號</a>
-      </div>
-
-      <div class="channel-section">
-        <p class="channel-title">了解更多無極瑤池金母　靈修觀念</p>
-        <ul class="channel-links">
-          <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank"><span class="channel-icon yt">▶</span>YouTube｜宇色心養生</a></li>
-          <li><a href="https://www.youtube.com/@lyyuan03" target="_blank"><span class="channel-icon yt">▶</span>YouTube｜靈元院頻道</a></li>
-          <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank"><span class="channel-icon pod">♫</span>Podcast｜宇色人間書影</a></li>
-          <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank"><span class="channel-icon pod">♫</span>Podcast｜宇色心養生</a></li>
-        </ul>
+        <a href="https://t.me/lyyuan" target="_blank" class="tg-btn">Telegram 聯繫帳號</a>
       </div>
     </div>
   </div>
@@ -903,7 +850,27 @@ a.book-link-block:active {
 
 <footer>
   <div class="container">
-    靈元院 Ling Yuan Yuan © 2026 &nbsp;&nbsp;•&nbsp;&nbsp; 修心在己
+    <div class="footer-inner">
+      <p class="footer-logo">靈 元 院　LING YUAN YUAN</p>
+      <div class="footer-links">
+        <a href="https://www.facebook.com/lyy.taiwan" target="_blank" aria-label="Facebook">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg>
+        </a>
+        <a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg>
+        </a>
+        <a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+        </a>
+        <a href="mailto:lyyuan03@gmail.com" aria-label="Email" style="cursor:pointer;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p>
+    </div>
   </div>
 </footer>
 
