@@ -656,6 +656,19 @@ body > .site-header {
     linear-gradient(180deg, rgba(250, 247, 242, 0.88), rgba(244, 238, 228, 0.76)),
     linear-gradient(90deg, rgba(165, 130, 84, 0.08), rgba(245, 240, 232, 0.00) 34%);
   border-radius: 14px;
+  transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, transform 0.28s ease;
+}
+
+.form-copy .form-block:hover {
+  border-color: rgba(165, 130, 84, 0.42);
+  border-left-color: rgba(96, 99, 48, 0.72);
+  background:
+    linear-gradient(180deg, rgba(247, 250, 244, 0.94), rgba(236, 241, 229, 0.86)),
+    linear-gradient(90deg, rgba(96, 99, 48, 0.13), rgba(165, 130, 84, 0.05) 42%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    0 16px 30px rgba(18, 13, 10, 0.12);
+  transform: translateY(-2px);
 }
 
 .form-copy .form-block h3 {
@@ -673,6 +686,18 @@ body > .site-header {
   color: rgba(61, 46, 30, 0.88);
   line-height: 1.9;
   font-size: 14.5px;
+}
+
+.form-copy .form-block p + p {
+  margin-top: 12px;
+}
+
+.form-copy .form-block .block-note {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(165, 130, 84, 0.20);
+  color: rgba(89, 79, 71, 0.86);
+  font-size: 13.5px;
 }
 
 .form-highlights {
@@ -1241,20 +1266,6 @@ footer {
       </div>
     </section>
 
-    <section class="section narrow">
-      <div class="section-title">
-        <div>
-          <span>PRAYER LAMP</span>
-          <h2>啟願燈燈首</h2>
-        </div>
-      </div>
-      <div class="washi-panel">
-        <p>疏文所啟，請如實寫下自己修行上遇到的困難與瓶頸，例如：被靈擾纏身、心性不定、修行受阻，或其他各種困擾。</p>
-        <p>要誠心誠意地寫出來，祈請觀音菩薩慈悲垂鑒、護念加持，指引你走出迷津，早日突破關卡，逐步進入圓滿的境界。</p>
-        <div class="notice">＊疏文僅代為宣讀啟秉，祈願菩薩指引，無提供實體疑惑回覆。</div>
-      </div>
-    </section>
-
     <section class="section narrow" id="form">
       <div class="form-panel">
         <div class="form-visual" aria-hidden="true">
@@ -1270,6 +1281,9 @@ footer {
             <div class="form-block">
               <h3>此燈的特殊性</h3>
               <p>此非單為求順，而是以觀音隨類化現的慈悲願力，為眾生在困局中開一道光。凡心緒紛亂、運勢受阻、修行卡關、家宅不寧者，皆可藉此燈，將願心安放於菩薩之前。</p>
+              <p>疏文所啟，請如實寫下自己修行上遇到的困難與瓶頸，例如：被靈擾纏身、心性不定、修行受阻，或其他各種困擾。</p>
+              <p>要誠心誠意地寫出來，祈請觀音菩薩慈悲垂鑒、護念加持，指引你走出迷津，早日突破關卡，逐步進入圓滿的境界。</p>
+              <p class="block-note">＊疏文僅代為宣讀啟秉，祈願菩薩指引，無提供實體疑惑回覆。</p>
             </div>
             <div class="form-highlights">
               <div class="form-highlight">
