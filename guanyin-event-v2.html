@@ -601,32 +601,117 @@ body > .site-header {
 }
 
 .form-copy {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 22px;
-  padding: 14px 10px 12px 4px;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 18px;
+  padding: 16px 14px 16px 6px;
+  min-height: 100%;
 }
 
 .form-panel h2 {
   color: var(--rice);
   font-size: 30px;
   line-height: 1.34;
-  margin-top: 6px;
-  margin-bottom: 10px;
+  margin: 4px 0 0;
+  letter-spacing: 0.12em;
 }
 
-.form-panel p {
+.form-copy .form-intro {
+  display: grid;
+  gap: 10px;
+}
+
+.form-copy .form-intro p {
   max-width: 620px;
-  margin: 8px 0 0;
-  color: rgba(245, 240, 232, 0.72);
-  line-height: 1.9;
+  margin: 0;
+  color: rgba(245, 240, 232, 0.78);
+  line-height: 1.95;
+  font-size: 16px;
 }
 
 .form-panel .btn {
   border-color: rgba(245, 240, 232, 0.72);
   background: rgba(245, 240, 232, 0.9);
   color: var(--sumi);
+}
+
+.form-copy .form-summary {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.form-copy .form-block {
+  padding: 14px 16px;
+  border: 1px solid rgba(165, 130, 84, 0.16);
+  border-left: 2px solid rgba(165, 130, 84, 0.42);
+  background: linear-gradient(180deg, rgba(245, 240, 232, 0.04), rgba(245, 240, 232, 0.02));
+  border-radius: 12px;
+}
+
+.form-copy .form-block h3 {
+  margin: 0 0 8px;
+  color: rgba(245, 240, 232, 0.92);
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+}
+
+.form-copy .form-block p {
+  margin: 0;
+  color: rgba(245, 240, 232, 0.74);
+  line-height: 1.9;
+  font-size: 14.5px;
+}
+
+.form-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.form-highlight {
+  padding: 12px 12px 13px;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 118, 0.18);
+  background:
+    linear-gradient(180deg, rgba(250, 247, 242, 0.08), rgba(250, 247, 242, 0.03));
+}
+
+.form-highlight .label {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--en);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: rgba(201, 168, 118, 0.88);
+}
+
+.form-highlight .value {
+  display: block;
+  color: rgba(245, 240, 232, 0.92);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.form-copy .form-note {
+  margin: 0;
+  padding-left: 14px;
+  border-left: 2px solid rgba(165, 130, 84, 0.24);
+  color: rgba(245, 240, 232, 0.74);
+  line-height: 1.95;
+  font-size: 14.5px;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 6px;
 }
 
 .back {
@@ -643,6 +728,29 @@ body > .site-header {
   font-size: 12px;
   color: rgba(197, 162, 111, 0.82);
   letter-spacing: 0.34em;
+}
+
+.form-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 6px 10px 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(165, 130, 84, 0.16);
+  background: rgba(245, 240, 232, 0.04);
+  color: rgba(245, 240, 232, 0.7);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.form-seal::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(201, 168, 118, 0.9);
+  box-shadow: 0 0 10px rgba(201, 168, 118, 0.45);
 }
 
 /* ── Beclass 報名表單 ── */
@@ -982,13 +1090,33 @@ footer {
     gap: 16px;
   }
 
+  .form-copy {
+    gap: 14px;
+    padding: 4px 2px 8px;
+  }
+
   .form-visual {
     min-height: 240px;
     border-radius: 14px;
   }
 
-  .form-copy {
-    padding: 6px 4px 8px;
+  .form-highlights {
+    grid-template-columns: 1fr;
+  }
+
+  .form-copy .form-block {
+    padding: 12px 13px;
+  }
+
+  .form-copy .form-block h3,
+  .form-copy .form-note,
+  .form-copy .form-block p,
+  .form-copy .form-intro p {
+    font-size: 14px;
+  }
+
+  .form-actions {
+    gap: 10px;
   }
 
   .beclass-wrap {
@@ -1164,12 +1292,36 @@ footer {
           <img id="form-art" src="https://scontent-nrt6-1.xx.fbcdn.net/v/t39.30808-6/656837249_1948742992433301_1458028434965716351_n.jpg?stp=dst-jpg_tt6&cstp=mx1024x1536&ctp=s1024x1536&_nc_cat=105&ccb=1-7&_nc_sid=f727a1&_nc_ohc=N8DjrxffwAcQ7kNvwH_YTBM&_nc_oc=Adq0DHi-UMPo8iiaq4bx1DXo1N5DZPzfo7UEc73WmZ5QVzCtGvw_okSMPyC-_3_HPss&_nc_zt=23&_nc_ht=scontent-nrt6-1.xx&_nc_gid=l_Tc9dz7utS-cMfRr1o-mw&_nc_ss=7b2a8&oh=00_Af-inewxrIwoGuFCLHXV1nW09UW0sGvZ4XQ5Dm2V5oMdag&oe=6A3D6631" alt="觀世音菩薩法會插圖" loading="lazy" decoding="async">
         </div>
         <div class="form-copy">
-          <div>
+          <div class="form-intro">
             <span class="form-eyebrow">KANNON CEREMONY · LING YUAN YUAN</span>
-          <h2>觀音三十三應化身・啟願燈燈首</h2>
-          <p>祈請觀世音菩薩慈悲護念，消災降福，照破障礙，護持修行與人生諸事轉順。</p>
+            <h2>觀音三十三應化身・啟願燈燈首</h2>
+            <p>以觀世音菩薩三十三應化身慈悲願力，為修行者與護願者照見迷霧、安定身心、消災降福，令所遇阻滯得以轉化，所發善願得以成就。</p>
           </div>
-          <a class="btn" href="https://ling-yuan-nest.base44.app/guanyin-event" target="_blank" rel="noopener">前往報名</a>
+          <div class="form-summary">
+            <div class="form-block">
+              <h3>此燈的特殊性</h3>
+              <p>此非單為求順，而是以觀音隨類化現的慈悲願力，為眾生在困局中開一道光。凡心緒紛亂、運勢受阻、修行卡關、家宅不寧者，皆可藉此燈，將願心安放於菩薩之前。</p>
+            </div>
+            <div class="form-highlights">
+              <div class="form-highlight">
+                <span class="label">適合對象</span>
+                <span class="value">修行卡關、心神不寧、家運起伏、諸事未順者</span>
+              </div>
+              <div class="form-highlight">
+                <span class="label">核心功德</span>
+                <span class="value">消災、降福、護持、轉化、成願</span>
+              </div>
+              <div class="form-highlight">
+                <span class="label">祈願方向</span>
+                <span class="value">安住身心、照破障礙、轉逆為順、福慧雙增</span>
+              </div>
+            </div>
+            <p class="form-note">願菩薩光明遍照，令一切障緣化散，善願漸成，福慧圓滿。此燈為一盞兼具護持、轉化與成願意義的法燈，適合誠心求安、求順、求明、求成就者參與。</p>
+          </div>
+          <div class="form-actions">
+            <a class="btn" href="https://ling-yuan-nest.base44.app/guanyin-event" target="_blank" rel="noopener">前往報名</a>
+            <span class="form-seal">KANNON LAMP · 護持成願</span>
+          </div>
         </div>
       </div>
       <a class="back" href="fahui.html">返回報名法儀</a>
