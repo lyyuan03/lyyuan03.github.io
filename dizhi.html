@@ -54,7 +54,9 @@ nav {
   letter-spacing: 0.08em;
   transition: color 0.3s ease;
   cursor: pointer;
-  display: flex; align-items: center; gap: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .nav-links > li > a:hover,
 .nav-links > li > span:hover { color: var(--lyy-gold); }
@@ -415,7 +417,7 @@ nav {
   font-size: 14px;
   color: rgba(245, 241, 233, 0.6);
   line-height: 2;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 .contact-note a { color: var(--lyy-gold); text-decoration: none; }
 .tg-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
@@ -431,6 +433,76 @@ nav {
   transition: all 0.25s ease;
 }
 .tg-btn:hover { background: rgba(197, 162, 111, 0.12); border-color: var(--lyy-gold); }
+
+/* ── Beclass 報名表單 ── */
+.beclass-wrap {
+  width: 100%;
+  max-width: 860px;
+  margin: 32px auto 0;
+  border: 1px solid rgba(197, 162, 111, 0.18);
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.97);
+}
+.beclass-wrap iframe {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  height: 3000px;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  .content-wrap {
+    padding: 0 16px;
+  }
+  .beclass-wrap {
+    width: 100%;
+    max-width: none;
+    margin: 24px 0 0;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    overflow: hidden;
+    height: 2080px;
+    position: relative;
+  }
+  .beclass-wrap iframe {
+    width: 600px;
+    min-width: 600px;
+    height: 3200px;
+    transform: scale(0.65);
+    transform-origin: 0 0;
+  }
+}
+
+/* ── 表格圖上下排列 ── */
+.support-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 24px 0;
+}
+.support-img-link {
+  display: block;
+  overflow: hidden;
+  border-radius: 2px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.support-img-link:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+}
+.support-img-link img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: brightness(0.92) sepia(0.06);
+  transition: filter 0.3s ease;
+}
+.support-img-link:hover img {
+  filter: brightness(1) sepia(0);
+}
 
 /* ── 頻道連結 ── */
 .channel-section { margin-top: 48px; }
@@ -495,23 +567,6 @@ footer {
   .nav-links > li > a,
   .nav-links > li > span { font-size: 12.5px; }
   .journal-item { padding: 22px 20px; }
-  .content-wrap {
-    padding: 0 16px;
-  }
-  .beclass-wrap {
-    max-width: none;
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    border-radius: 0;
-    border-left: 0;
-    border-right: 0;
-  }
-  .beclass-wrap iframe {
-    width: 100vw;
-    min-width: 100vw;
-    height: 3200px;
-  }
 }
 
 /* ── Nav Fix: force all items visible ── */
