@@ -571,24 +571,56 @@ body > .site-header {
 
 .form-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 20px;
-  align-items: center;
-  padding: 34px 0 24px;
-  border-top: 1px solid rgba(245, 240, 232, 0.07);
-  border-bottom: 1px solid rgba(245, 240, 232, 0.07);
+  grid-template-columns: minmax(240px, 0.95fr) minmax(0, 1.05fr);
+  gap: 22px;
+  align-items: stretch;
+  padding: 18px;
+  border: 1px solid rgba(245, 240, 232, 0.10);
+  background:
+    linear-gradient(180deg, rgba(20, 28, 19, 0.44), rgba(11, 16, 10, 0.52)),
+    rgba(8, 11, 8, 0.22);
+  border-radius: 22px;
+  backdrop-filter: blur(12px) saturate(105%);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
+}
+
+.form-visual {
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(250, 247, 242, 0.06);
+  border: 1px solid rgba(245, 240, 232, 0.10);
+  min-height: 360px;
+}
+
+.form-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.02) brightness(0.96);
+}
+
+.form-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 14px 10px 12px 4px;
 }
 
 .form-panel h2 {
   color: var(--rice);
   font-size: 30px;
+  line-height: 1.34;
+  margin-top: 6px;
+  margin-bottom: 10px;
 }
 
 .form-panel p {
   max-width: 620px;
   margin: 8px 0 0;
   color: rgba(245, 240, 232, 0.72);
-  line-height: 1.8;
+  line-height: 1.9;
 }
 
 .form-panel .btn {
@@ -603,6 +635,14 @@ body > .site-header {
   color: rgba(245, 240, 232, 0.76);
   text-decoration: none;
   border-bottom: 1px solid rgba(245, 240, 232, 0.28);
+}
+
+.form-eyebrow {
+  display: inline-block;
+  font-family: var(--en);
+  font-size: 12px;
+  color: rgba(197, 162, 111, 0.82);
+  letter-spacing: 0.34em;
 }
 
 /* ── Beclass 報名表單 ── */
@@ -691,7 +731,7 @@ body > .site-header {
   flex-wrap: wrap;
 }
 
-.tg-btn {
+tg-btn {
   display: inline-block;
   padding: 13px 30px;
   border: 1px solid rgba(165, 130, 84, 0.5);
@@ -935,6 +975,22 @@ footer {
     line-height: 1.42;
   }
 
+  .form-panel {
+    grid-template-columns: 1fr;
+    padding: 14px;
+    border-radius: 16px;
+    gap: 16px;
+  }
+
+  .form-visual {
+    min-height: 240px;
+    border-radius: 14px;
+  }
+
+  .form-copy {
+    padding: 6px 4px 8px;
+  }
+
   .beclass-wrap {
     width: 100%;
     max-width: none;
@@ -1104,11 +1160,17 @@ footer {
 
     <section class="section narrow" id="form">
       <div class="form-panel">
-        <div>
+        <div class="form-visual" aria-hidden="true">
+          <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAoHBwgHBgoICAkLCgkLDhgQDQwNDh0VFhEYIx8lJCIfIiEmKS4pLSEnKSgoLC8xNDQ0HiQ5QzI6PzgyPjQBCwsLDw4PHRERHTIpIigxMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEBDAwMEA8QHxISHzQhISE0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NP/AABEIAWgC4wMBIgACEQEDEQH/xAAbAAACAgMBAAAAAAAAAAAAAAAFBgMEAAIHAf/EAD8QAAEDAgQDBgQEBAMJAAAAAAECAwQABREGEiExBxMiQVFhcYGRBzKRobHB0fAHFCNS4fAVM0OSYnLhM2KC/8QAGAEBAQEBAQAAAAAAAAAAAAAAAAECAwT/xAAhEQEBAAICAgICAwAAAAAAAAAAAQIRAyExBBJBEyJRMf/aAAwDAQACEQMRAD8A+3VxWj1jK2W4W5JQKQyC0c3XwQ8m6hD0H3lJ5X8wJ4dM6j3rX3n0p7xQd4w6q7o2zWQZrQkq0WwO3i6QxO3O4VhXz9k+0vYxk1vH8m5a2mZx0Wj1Yj0x7bW0z6s6l2q9Q2V6mZ4w+fN1Zl0r9Vv5c1+Jw8bU1fFQ+L4b9n8D7mM5n3m4pXb8Zf2hQ0kqN0vYQ7mX2eW5o8fQ7M6g1w0dZsH2x8Wv1xM6sX0V6v0d0vY7X4Xg7G8W7z2c8fVvW7fQf2m9j1s3cTtWgk0vUQ4p0a0z8nY8Z7+T8b4H0Vf0Nf0P0v1K9Yx9rQ0r8u4vO0Zp1Xg6m9b3r1c3fQ7fQf2x3Yp6mM0eX8s7d6nL9q5fQn0R8j8eZQ0tZ9k6b7n8b8D1j6e6m8W0r8b8r4mM2i7b4mX0d7X4mZxg9z5m4o8v1nQ2v0m0r8r0y0m2v8g4v0Y7q7u0f2f8V2m8c1fQxk0h1j0p4x2m9y3d9xv0f8A1Hf+q3w0u+0v8Aj8W0n6g6m8f0s5x7c5y6gk0tY0V+f8A0k4r3m9i8o7u8R9O4mV0X2u9n9m8dQ0qk1u1Wk1w0o9K0b0s7y7b8m4r9b7w6p8W8q0u0Z5x6e8Y7m5e6u7p9o8fQ7i8O8W4z0f2j8b4n0P2l0s8x0n7e6r4m5c6Y8m9H8m0f0b8b7P3r0v8A0f/2Q==" alt="觀世音菩薩法會插圖">
+        </div>
+        <div class="form-copy">
+          <div>
+            <span class="form-eyebrow">KANNON CEREMONY · LING YUAN YUAN</span>
           <h2>觀音三十三應化身・啟願燈燈首</h2>
           <p>祈請觀世音菩薩慈悲護念，消災降福，照破障礙，護持修行與人生諸事轉順。</p>
+          </div>
+          <a class="btn" href="https://ling-yuan-nest.base44.app/guanyin-event" target="_blank" rel="noopener">前往報名</a>
         </div>
-        <a class="btn" href="https://ling-yuan-nest.base44.app/guanyin-event" target="_blank" rel="noopener">前往報名</a>
       </div>
       <a class="back" href="fahui.html">返回報名法儀</a>
     </section>
