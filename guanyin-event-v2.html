@@ -605,6 +605,29 @@ body > .site-header {
   border-bottom: 1px solid rgba(245, 240, 232, 0.28);
 }
 
+/* ── Beclass 報名表單 ── */
+.beclass-section {
+  padding-top: 18px;
+}
+
+.beclass-wrap {
+  width: 100%;
+  max-width: 860px;
+  margin: 18px auto 0;
+  border: 1px solid rgba(165, 130, 84, 0.18);
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.97);
+}
+
+.beclass-wrap iframe {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  height: 3951px;
+  border: 0;
+}
+
 .contact-section {
   padding: 64px 24px 80px;
 }
@@ -681,7 +704,7 @@ body > .site-header {
   background: transparent;
 }
 
-.tg-btn:hover {
+tg-btn:hover {
   background: rgba(165, 130, 84, 0.12);
   border-color: var(--wood);
 }
@@ -912,6 +935,26 @@ footer {
     line-height: 1.42;
   }
 
+  .beclass-wrap {
+    width: 100%;
+    max-width: none;
+    margin: 18px 0 0;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    overflow: hidden;
+    height: 2180px;
+    position: relative;
+  }
+
+  .beclass-wrap iframe {
+    width: 440px;
+    min-width: 440px;
+    height: 3951px;
+    transform: scale(0.65);
+    transform-origin: 0 0;
+  }
+
   .contact-section {
     padding: 48px 18px 64px;
   }
@@ -1068,6 +1111,30 @@ footer {
         <a class="btn" href="https://ling-yuan-nest.base44.app/guanyin-event" target="_blank" rel="noopener">前往報名</a>
       </div>
       <a class="back" href="fahui.html">返回報名法儀</a>
+    </section>
+
+    <section class="section narrow beclass-section">
+      <div class="section-title">
+        <div>
+          <span>BECLASS FORM</span>
+          <h2>報名法儀表單</h2>
+        </div>
+      </div>
+      <div class="beclass-wrap">
+        <div style="text-align:center;">
+          <iframe
+            src="https://www.beclass.com/m/showregist.php?regist_id=MzA1MjY0MDY5ZTA0OTUwZjA5ZGE6U2hvd0Zvcm0="
+            frameborder="0"
+            height="3951"
+            width="440"
+            marginwidth="0"
+            marginheight="0"
+            align="center"
+            name="beclassmainframe"
+            id="beclassmainframe"
+            scrolling="no"></iframe>
+        </div>
+      </div>
     </section>
 
     <div class="contact-section">
