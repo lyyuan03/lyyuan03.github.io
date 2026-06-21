@@ -648,6 +648,17 @@ body > .site-header {
   align-content: start;
 }
 
+.form-copy .form-block,
+.form-highlight {
+  position: relative;
+  transform: translateZ(0);
+  transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, transform 0.28s ease, filter 0.28s ease;
+  will-change: transform;
+  cursor: zoom-in;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(165, 130, 84, 0.12);
+}
+
 .form-copy .form-block {
   padding: 14px 16px;
   border: 1px solid rgba(165, 130, 84, 0.18);
@@ -659,7 +670,10 @@ body > .site-header {
   transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, transform 0.28s ease;
 }
 
-.form-copy .form-block:hover {
+.form-copy .form-block:hover,
+.form-copy .form-block:focus,
+.form-copy .form-block:focus-visible,
+.form-copy .form-block:active {
   border-color: rgba(165, 130, 84, 0.42);
   border-left-color: rgba(96, 99, 48, 0.72);
   background:
@@ -668,7 +682,8 @@ body > .site-header {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.68),
     0 16px 30px rgba(18, 13, 10, 0.12);
-  transform: translateY(-2px);
+  transform: scale(1.03) translateY(-2px);
+  z-index: 3;
 }
 
 .form-copy .form-block h3 {
@@ -712,6 +727,20 @@ body > .site-header {
   border: 1px solid rgba(165, 130, 84, 0.20);
   background:
     linear-gradient(180deg, rgba(250, 247, 242, 0.92), rgba(244, 238, 228, 0.78));
+}
+
+.form-highlight:hover,
+.form-highlight:focus,
+.form-highlight:focus-visible,
+.form-highlight:active {
+  border-color: rgba(165, 130, 84, 0.42);
+  background:
+    linear-gradient(180deg, rgba(249, 246, 239, 0.98), rgba(238, 244, 232, 0.88));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 14px 26px rgba(18, 13, 10, 0.10);
+  transform: scale(1.04);
+  z-index: 3;
 }
 
 .form-highlight .label {
@@ -1142,6 +1171,20 @@ footer {
     padding: 12px 13px;
   }
 
+  .form-copy .form-block:hover,
+  .form-copy .form-block:focus,
+  .form-copy .form-block:focus-visible,
+  .form-copy .form-block:active {
+    transform: scale(1.025) translateY(-1px);
+  }
+
+  .form-highlight:hover,
+  .form-highlight:focus,
+  .form-highlight:focus-visible,
+  .form-highlight:active {
+    transform: scale(1.035);
+  }
+
   .form-copy .form-block h3,
   .form-copy .form-note,
   .form-copy .form-block p,
@@ -1278,7 +1321,7 @@ footer {
             <p>以觀世音菩薩三十三應化身慈悲願力，為修行者與護願者照見迷霧、安定身心、消災降福，令所遇阻滯得以轉化，所發善願得以成就。</p>
           </div>
           <div class="form-summary">
-            <div class="form-block">
+            <div class="form-block" tabindex="0">
               <h3>此燈的特殊性</h3>
               <p>此非單為求順，而是以觀音隨類化現的慈悲願力，為眾生在困局中開一道光。凡心緒紛亂、運勢受阻、修行卡關、家宅不寧者，皆可藉此燈，將願心安放於菩薩之前。</p>
               <p>疏文所啟，請如實寫下自己修行上遇到的困難與瓶頸，例如：被靈擾纏身、心性不定、修行受阻，或其他各種困擾。</p>
@@ -1286,15 +1329,15 @@ footer {
               <p class="block-note">＊疏文僅代為宣讀啟秉，祈願菩薩指引，無提供實體疑惑回覆。</p>
             </div>
             <div class="form-highlights">
-              <div class="form-highlight">
+              <div class="form-highlight" tabindex="0">
                 <span class="label">適合對象</span>
                 <span class="value">修行卡關、心神不寧、家運起伏、諸事未順者</span>
               </div>
-              <div class="form-highlight">
+              <div class="form-highlight" tabindex="0">
                 <span class="label">核心功德</span>
                 <span class="value">消災、降福、護持、轉化、成願</span>
               </div>
-              <div class="form-highlight">
+              <div class="form-highlight" tabindex="0">
                 <span class="label">祈願方向</span>
                 <span class="value">安住身心、照破障礙、轉逆為順、福慧雙增</span>
               </div>
