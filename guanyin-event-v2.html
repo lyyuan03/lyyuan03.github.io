@@ -1161,7 +1161,7 @@ footer {
     <section class="section narrow" id="form">
       <div class="form-panel">
         <div class="form-visual" aria-hidden="true">
-          <img id="form-art" src="guanyin-banner.png" alt="觀世音菩薩法會插圖" loading="lazy" decoding="async">
+          <img id="form-art" src="https://scontent-nrt6-1.xx.fbcdn.net/v/t39.30808-6/656837249_1948742992433301_1458028434965716351_n.jpg?stp=dst-jpg_tt6&cstp=mx1024x1536&ctp=s1024x1536&_nc_cat=105&ccb=1-7&_nc_sid=f727a1&_nc_ohc=N8DjrxffwAcQ7kNvwH_YTBM&_nc_oc=Adq0DHi-UMPo8iiaq4bx1DXo1N5DZPzfo7UEc73WmZ5QVzCtGvw_okSMPyC-_3_HPss&_nc_zt=23&_nc_ht=scontent-nrt6-1.xx&_nc_gid=l_Tc9dz7utS-cMfRr1o-mw&_nc_ss=7b2a8&oh=00_Af-inewxrIwoGuFCLHXV1nW09UW0sGvZ4XQ5Dm2V5oMdag&oe=6A3D6631" alt="觀世音菩薩法會插圖" loading="lazy" decoding="async">
         </div>
         <div class="form-copy">
           <div>
@@ -1296,16 +1296,16 @@ footer {
     });
   }
 
-document.addEventListener("click", function (event) {
-  const link = event.target.closest("a[href^='#']");
-  if (!link) return;
+  document.addEventListener("click", function (event) {
+    const link = event.target.closest("a[href^='#']");
+    if (!link) return;
 
-  const target = document.querySelector(link.getAttribute("href"));
-  if (!target) return;
+    const target = document.querySelector(link.getAttribute("href"));
+    if (!target) return;
 
-  event.preventDefault();
-  target.scrollIntoView({ behavior: "smooth", block: "start" });
-});
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 })();
 </script>
 
