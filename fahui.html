@@ -10,11 +10,11 @@
 <style>
 :root {
   --gold:#A58254;
-  --brown:#594F47;
   --ink:#1a1208;
   --ink-mid:#3d2e1e;
+  --ink-soft:#5c4a35;
   --cream:#F5F0E8;
-  --panel-bg:rgba(248,244,236,0.95);
+  --panel-bg:rgba(248,244,236,0.94);
   --panel-dark:rgba(14,20,12,0.88);
   --font-serif:'Noto Serif TC','Georgia',serif;
   --font-sans:'Noto Sans TC','Arial',sans-serif;
@@ -110,7 +110,6 @@ nav {
   padding:64px 24px 52px;
   background:rgba(10,15,8,0.62);
   backdrop-filter:blur(8px);
-  position:relative;
 }
 .page-header .plabel {
   font-family:var(--font-en);
@@ -181,60 +180,48 @@ nav {
 .heading-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); flex-shrink:0; box-shadow:0 0 8px rgba(165,130,84,0.5); }
 .heading-rule { flex:0 0 48px; height:1px; background:linear-gradient(90deg, transparent, rgba(165,130,84,0.45)); }
 .heading-rule.right { background:linear-gradient(90deg, rgba(165,130,84,0.45), transparent); }
-.event-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
-.event-card {
+.announcement-list { display:flex; flex-direction:column; gap:22px; max-width:860px; margin:0 auto; }
+.announcement-item {
+  display:grid;
+  grid-template-columns:120px 1fr;
+  align-items:center;
+  min-height:118px;
   background:var(--panel-bg);
-  border-radius:3px;
+  border:1px solid rgba(165,130,84,0.18);
+  border-radius:14px;
+  box-shadow:0 10px 36px rgba(0,0,0,0.24);
   overflow:hidden;
-  transition:transform 0.3s ease, box-shadow 0.3s ease;
   animation:fadeUp 0.7s ease both;
 }
-.event-card:hover { transform:translateY(-5px); box-shadow:0 16px 48px rgba(0,0,0,0.4); }
-.event-thumb-wrap { position:relative; }
-.event-thumb { width:100%; height:190px; background-size:cover; background-position:center; filter:saturate(0.72) brightness(0.9); display:block; }
-.event-thumb-overlay { position:absolute; inset:0; background:linear-gradient(180deg, transparent 40%, rgba(10,15,8,0.55) 100%); }
-.event-stamp {
-  position:absolute; top:14px; left:14px;
-  background:rgba(10,15,8,0.78);
-  backdrop-filter:blur(4px);
-  border:1px solid rgba(165,130,84,0.55);
-  padding:4px 14px;
-  font-family:var(--font-serif);
-  font-size:13px;
-  color:var(--gold);
-  letter-spacing:0.22em;
+.announcement-item:nth-child(2) { animation-delay:0.08s; }
+.announcement-date {
+  height:100%;
+  min-height:118px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg, rgba(165,130,84,0.92), rgba(89,79,71,0.95));
+  color:#F5F0E8;
+  font-family:var(--font-en);
+  font-size:23px;
+  letter-spacing:0.08em;
 }
-.event-body { padding:26px 28px 24px; }
-.event-body h3 {
-  font-family:var(--font-serif);
-  font-size:18px;
-  font-weight:500;
+.announcement-body { padding:28px 34px; }
+.announcement-body h3 {
   color:var(--ink);
-  letter-spacing:0.1em;
-  margin-bottom:14px;
-  padding-bottom:14px;
-  border-bottom:1px solid rgba(165,130,84,0.22);
+  font-size:22px;
+  font-weight:600;
   line-height:1.7;
+  letter-spacing:0.08em;
 }
-.event-body p { font-size:15.5px; color:var(--ink-mid); line-height:2.1; letter-spacing:0.06em; }
-.cta-btn-gold,
-a.cta-btn-gold {
-  display:inline-block !important;
-  padding:15px 52px !important;
-  background:linear-gradient(135deg, #A58254 0%, #C5A26F 50%, #A58254 100%) !important;
-  color:#1a1208 !important;
-  text-decoration:none !important;
-  font-family:var(--font-serif) !important;
-  font-size:16px !important;
-  font-weight:500 !important;
-  letter-spacing:0.2em !important;
-  border-radius:999px !important;
-  border:none !important;
-  box-shadow:0 4px 20px rgba(165,130,84,0.35) !important;
-  transition:all 0.3s ease !important;
-  cursor:pointer !important;
+.announcement-note {
+  margin-top:8px;
+  color:var(--gold);
+  font-family:var(--font-en);
+  font-size:12px;
+  letter-spacing:0.36em;
+  opacity:0.75;
 }
-.cta-btn-gold:hover { background:linear-gradient(135deg, #C5A26F 0%, #d4b480 50%, #C5A26F 100%) !important; box-shadow:0 6px 28px rgba(165,130,84,0.55) !important; transform:translateY(-2px) !important; }
 
 .contact-section { padding:64px 24px 80px; }
 .contact-inner { max-width:600px; margin:0 auto; }
@@ -285,7 +272,6 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
   .nav-links > li.open .dropdown { display:block; }
   .nav-links > li > span.has-dropdown::before { display:none; }
   .nav-links > li > span.has-dropdown::after { content:'+'; font-size:10px; opacity:0.7; }
-  .event-grid { grid-template-columns:1fr; }
   .contact-box { padding:36px 28px; }
 }
 @media (max-width:600px) {
@@ -294,8 +280,10 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
   .nav-links > li > span { font-size:12.5px; }
   .decree-box { padding:26px 22px; }
   .decree-box p { font-size:16px; }
-  .event-body h3 { font-size:17px; }
-  .event-body p { font-size:15px; }
+  .announcement-item { grid-template-columns:1fr; min-height:auto; }
+  .announcement-date { min-height:58px; font-size:21px; }
+  .announcement-body { padding:22px 24px 26px; }
+  .announcement-body h3 { font-size:18px; }
 }
 </style>
 </head>
@@ -378,7 +366,7 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
     </div>
   </div>
 
-  <div class="events-section" style="padding-bottom: 0;">
+  <div class="events-section" style="padding-bottom:0;">
     <div class="events-inner">
       <div class="events-heading">
         <div class="heading-rule"></div>
@@ -390,27 +378,21 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
         <div class="heading-dot"></div>
         <div class="heading-rule right"></div>
       </div>
-      <div class="event-grid">
-        <div class="event-card">
-          <div class="event-thumb-wrap">
-            <div class="event-thumb" style="background-image:url('https://pic.pimg.tw/kinkiosel/1764747783-767307838-g_n.jpg');"></div>
-            <div class="event-thumb-overlay"></div>
-            <div class="event-stamp">農曆二月</div>
-          </div>
-          <div class="event-body">
-            <h3>觀世音菩薩聖誕・福壽康寧祝壽懺儀</h3>
-            <p>透過禮拜、持誦聖號，以慈悲願力迴向父母長輩與自身福壽。供燈、供花功德尤為殊勝，能增長慈心與福報。</p>
-            <div style="margin-top:18px;">
-              <a href="guanyin-event-v2.html" target="_blank" class="cta-btn-gold" style="padding:11px 32px !important; font-size:14px !important; display:inline-block;">前往報名</a>
-            </div>
+
+      <div class="announcement-list">
+        <div class="announcement-item">
+          <div class="announcement-date">8/1</div>
+          <div class="announcement-body">
+            <h3>觀世音菩薩成道日．觀音消災降福法儀</h3>
+            <div class="announcement-note">COMING SOON</div>
           </div>
         </div>
 
-        <div class="event-card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:300px; background:rgba(248,244,236,0.5); border:1px dashed rgba(165,130,84,0.3);">
-          <div style="text-align:center; padding:40px 24px;">
-            <p style="font-family:'Cormorant Garamond',serif; font-size:13px; color:rgba(165,130,84,0.65); letter-spacing:0.4em; margin-bottom:16px;">COMING SOON</p>
-            <h3 style="font-family:'Noto Serif TC',serif; font-size:17px; color:#5c4a35; letter-spacing:0.14em; font-weight:400;">更多法會即將公告</h3>
-            <p style="font-size:14px; color:#5c4a35; margin-top:12px; line-height:2;">敬請關注 Telegram 官方頻道<br>第一時間掌握法會訊息</p>
+        <div class="announcement-item">
+          <div class="announcement-date">8/30</div>
+          <div class="announcement-body">
+            <h3>無極瑤池金母聖誕．福壽康寧祝壽懺儀暨解冤赦業法儀</h3>
+            <div class="announcement-note">COMING SOON</div>
           </div>
         </div>
       </div>
@@ -441,21 +423,11 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
     <div class="footer-inner">
       <p class="footer-logo">靈 元 院　LING YUAN YUAN</p>
       <div class="footer-links">
-        <a href="https://www.facebook.com/lyy.taiwan" target="_blank" aria-label="Facebook">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg>
-        </a>
-        <a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg>
-        </a>
-        <a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg>
-        </a>
-        <a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-        </a>
-        <a href="mailto:lyyuan03@gmail.com" aria-label="Email" style="cursor:pointer;">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-        </a>
+        <a href="https://www.facebook.com/lyy.taiwan" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a>
+        <a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a>
+        <a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a>
+        <a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a>
+        <a href="mailto:lyyuan03@gmail.com" aria-label="Email" style="cursor:pointer;"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></a>
       </div>
       <p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p>
     </div>
@@ -474,15 +446,15 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
     nav.querySelectorAll('.nav-links > li.open').forEach((item) => {
       item.classList.remove('open');
       const trigger = item.querySelector('span.has-dropdown');
-      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      if (trigger) trigger.setAttribute('aria-expanded','false');
     });
   };
   triggers.forEach((trigger) => {
     const item = trigger.closest('li');
     if (!item) return;
-    trigger.setAttribute('role', 'button');
-    trigger.setAttribute('tabindex', '0');
-    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('role','button');
+    trigger.setAttribute('tabindex','0');
+    trigger.setAttribute('aria-expanded','false');
     trigger.addEventListener('click', (event) => {
       if (!mobileQuery.matches) return;
       event.preventDefault();
@@ -490,7 +462,7 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
       closeAll();
       if (!isOpen) {
         item.classList.add('open');
-        trigger.setAttribute('aria-expanded', 'true');
+        trigger.setAttribute('aria-expanded','true');
       }
     });
     trigger.addEventListener('keydown', (event) => {
