@@ -15,6 +15,7 @@
   --ink-soft:#5c4a35;
   --cream:#F5F0E8;
   --panel-bg:rgba(248,244,236,0.94);
+  --panel-soft:rgba(248,244,236,0.72);
   --panel-dark:rgba(14,20,12,0.88);
   --font-serif:'Noto Serif TC','Georgia',serif;
   --font-sans:'Noto Sans TC','Arial',sans-serif;
@@ -183,44 +184,73 @@ nav {
 .announcement-list { display:flex; flex-direction:column; gap:22px; max-width:860px; margin:0 auto; }
 .announcement-item {
   display:grid;
-  grid-template-columns:120px 1fr;
-  align-items:center;
-  min-height:118px;
+  grid-template-columns:142px 1fr;
+  align-items:stretch;
+  min-height:138px;
   background:var(--panel-bg);
-  border:1px solid rgba(165,130,84,0.18);
+  border:1px solid rgba(165,130,84,0.2);
   border-radius:14px;
   box-shadow:0 10px 36px rgba(0,0,0,0.24);
   overflow:hidden;
   animation:fadeUp 0.7s ease both;
 }
-.announcement-item:nth-child(2) { animation-delay:0.08s; }
-.announcement-date {
-  height:100%;
-  min-height:118px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(135deg, rgba(165,130,84,0.92), rgba(89,79,71,0.95));
-  color:#F5F0E8;
-  font-family:var(--font-en);
-  font-size:23px;
-  letter-spacing:0.08em;
+.announcement-item.pending {
+  background:var(--panel-soft);
+  border:1px solid rgba(245,240,232,0.18);
+  opacity:0.86;
+  box-shadow:0 8px 28px rgba(0,0,0,0.16);
 }
-.announcement-body { padding:28px 34px; }
+.announcement-thumb {
+  min-height:138px;
+  background-size:cover;
+  background-position:center;
+  filter:saturate(0.75) brightness(0.92);
+  position:relative;
+}
+.announcement-thumb::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg, rgba(10,15,8,0.08), rgba(10,15,8,0.26));
+}
+.announcement-body { padding:24px 30px 26px; display:flex; flex-direction:column; justify-content:center; }
+.announcement-meta {
+  display:block;
+  margin-bottom:8px;
+  color:var(--gold);
+  font-family:var(--font-serif);
+  font-size:15px;
+  letter-spacing:0.18em;
+}
 .announcement-body h3 {
   color:var(--ink);
-  font-size:22px;
+  font-size:21px;
   font-weight:600;
-  line-height:1.7;
+  line-height:1.65;
   letter-spacing:0.08em;
 }
-.announcement-note {
-  margin-top:8px;
-  color:var(--gold);
-  font-family:var(--font-en);
-  font-size:12px;
-  letter-spacing:0.36em;
-  opacity:0.75;
+.announcement-action { margin-top:17px; }
+.announcement-btn {
+  display:inline-block;
+  padding:10px 30px;
+  border-radius:999px;
+  background:linear-gradient(135deg, #A58254 0%, #C5A26F 50%, #A58254 100%);
+  color:#1a1208;
+  text-decoration:none;
+  font-family:var(--font-serif);
+  font-size:14.5px;
+  font-weight:500;
+  letter-spacing:0.16em;
+  box-shadow:0 4px 16px rgba(165,130,84,0.34);
+  transition:all 0.25s ease;
+}
+.announcement-btn:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(165,130,84,0.46); }
+.announcement-btn.disabled {
+  background:rgba(89,79,71,0.22);
+  color:rgba(61,46,30,0.58);
+  box-shadow:none;
+  cursor:default;
+  pointer-events:none;
 }
 
 .contact-section { padding:64px 24px 80px; }
@@ -280,10 +310,12 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
   .nav-links > li > span { font-size:12.5px; }
   .decree-box { padding:26px 22px; }
   .decree-box p { font-size:16px; }
-  .announcement-item { grid-template-columns:1fr; min-height:auto; }
-  .announcement-date { min-height:58px; font-size:21px; }
-  .announcement-body { padding:22px 24px 26px; }
-  .announcement-body h3 { font-size:18px; }
+  .announcement-item { grid-template-columns:96px 1fr; min-height:132px; }
+  .announcement-thumb { min-height:132px; }
+  .announcement-body { padding:20px 18px 22px; }
+  .announcement-meta { font-size:13.5px; margin-bottom:5px; }
+  .announcement-body h3 { font-size:16.5px; line-height:1.7; }
+  .announcement-btn { padding:9px 22px; font-size:13px; }
 }
 </style>
 </head>
@@ -381,18 +413,24 @@ footer { background:rgba(6,9,5,0.97); border-top:1px solid rgba(165,130,84,0.1);
 
       <div class="announcement-list">
         <div class="announcement-item">
-          <div class="announcement-date">8/1</div>
+          <div class="announcement-thumb" style="background-image:url('https://pic.pimg.tw/kinkiosel/1764747783-767307838-g_n.jpg');"></div>
           <div class="announcement-body">
+            <span class="announcement-meta">8/1</span>
             <h3>觀世音菩薩成道日．觀音消災降福法儀</h3>
-            <div class="announcement-note">COMING SOON</div>
+            <div class="announcement-action">
+              <a href="guanyin-event-v2.html" target="_blank" class="announcement-btn">報名法會</a>
+            </div>
           </div>
         </div>
 
-        <div class="announcement-item">
-          <div class="announcement-date">8/30</div>
+        <div class="announcement-item pending">
+          <div class="announcement-thumb" style="background-image:url('forest-path.jpg');"></div>
           <div class="announcement-body">
+            <span class="announcement-meta">8/30</span>
             <h3>無極瑤池金母聖誕．福壽康寧祝壽懺儀暨解冤赦業法儀</h3>
-            <div class="announcement-note">COMING SOON</div>
+            <div class="announcement-action">
+              <span class="announcement-btn disabled">尚未開放報名</span>
+            </div>
           </div>
         </div>
       </div>
