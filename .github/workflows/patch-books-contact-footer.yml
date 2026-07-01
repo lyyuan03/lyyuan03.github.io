@@ -1,0 +1,46 @@
+name: One-time patch books contact footer
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-books-contact-footer.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-books:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Patch books footer section
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('books.html')
+          text = path.read_text(encoding='utf-8')
+          old = '<section class="quiet"><div class="wrap"><div class="quietbox"><h2>和你一樣的人，也曾經從這裡開始。</h2><p>有些閱讀心得，只有當你找到適合自己的那本書，才真正有意義。</p><div class="note">完成閱讀導航後，看看其他讀者，是如何遇見這本書。</div></div></div></section>\n<section class="tg" id="contact"><div class="tgimg"></div><div class="tgmain"><div><h2>加入靈元院 Telegram</h2><p>接收最新活動資訊、課程開放與心靈指引。</p></div><a class="btn gold" href="https://t.me/lyyuan_channel" target="_blank">立即加入　〉</a></div></section>'
+          new = ''
+          if old not in text:
+              old_alt = '<section class="quiet"><div class="wrap"><div class="quietbox"><h2>和你一樣的人，也曾經從這裡開始。</h2><p>有些閱讀心得，只有當你找到適合自己的那本書，才真正有意義。</p><div class="note">完成閱讀導航後，看看其他讀者，是如何遇見這本書。</div></div></div></section><section class="tg" id="contact"><div class="tgimg"></div><div class="tgmain"><div><h2>加入靈元院 Telegram</h2><p>接收最新活動資訊、課程開放與心靈指引。</p></div><a class="btn gold" href="https://t.me/lyyuan_channel" target="_blank">立即加入　〉</a></div></section>'
+              if old_alt not in text:
+                  raise SystemExit('target section not found')
+              text = text.replace(old_alt, new)
+          else:
+              text = text.replace(old, new)
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit patched books.html
+        run: |
+          if git diff --quiet books.html; then
+            echo "No changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add books.html
+          git commit -m "fix(books): remove quiet and telegram sections before footer"
+          git push
