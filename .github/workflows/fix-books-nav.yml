@@ -1,4 +1,4 @@
-name: Fix books timeline spacing
+name: Fix books timeline links
 
 on:
   workflow_dispatch:
@@ -14,21 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch books timeline
+      - name: Patch timeline book links
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('books.html')
           s = p.read_text(encoding='utf-8')
-          s = s.replace('display:flex;gap:12px;align-items:flex-start;justify-content:center;padding:24px 0 10px;min-width:1380px', 'display:flex;gap:0;align-items:flex-start;justify-content:center;padding:24px 0 10px;min-width:1180px')
-          s = s.replace('.era{position:relative;min-width:92px;', '.era{position:relative;width:104px;min-width:0;')
-          s = s.replace('.era-books{display:flex;justify-content:center;gap:3px;', '.era-books{display:flex;justify-content:center;gap:1px;')
-          s = s.replace('.era-book{display:block;width:60px}', '.era-book{display:block;width:45px}')
-          s = s.replace('.era-book img{width:56px;height:84px;', '.era-book img{width:44px;height:66px;')
-          s = s.replace('.era.multi{min-width:190px}', '.era.multi{width:148px;min-width:0}')
-          s = s.replace('.era.multi .era-book{width:54px}', '.era.multi .era-book{width:45px}')
-          s = s.replace('.era.multi .era-book img{width:54px;height:81px}', '.era.multi .era-book img{width:44px;height:66px}')
-          s = s.replace('.future-cover{width:56px;height:84px;', '.future-cover{width:44px;height:66px;')
+          marker = "const works=[['2011',[books.tarotFirst,books.tarotEastWest,books.talk]],['2012',[books.event]],['2013',[books.faith1]],['2014',[books.tarotPro]],['2015',[books.faith2]],['2016',[books.practice1]],['2018',[books.practice2]],['2020',[books.karma,books.w]],['2024',[books.good]],['2025',[books.love1,books.love2,books.ghost]],['2026','future']];"
+          insert = marker + "\nconst timelineLinks={'請問財富':'https://www.books.com.tw/products/0011029320?loc=P_0005_033','喚醒天生好命':'https://www.books.com.tw/products/0011003625','請問愛上冊':'https://www.books.com.tw/products/0011022589','請問愛下冊':'https://www.books.com.tw/products/0011022592','請問輪迴':'https://www.books.com.tw/products/0011002849','請問鬼怪':'https://www.books.com.tw/products/0011029318?sloc=main','靈界事件簿':'https://www.books.com.tw/products/0010709682','透視靈驗':'https://www.books.com.tw/products/0010992671','靈視拜拜':'https://www.books.com.tw/products/0011015834','靈修迷藏':'https://www.books.com.tw/products/0010719221','關鍵報告':'https://www.books.com.tw/products/0010784866','我在人間與靈界對話':'https://www.books.com.tw/products/0010944208'};function timelineUrl(b){return timelineLinks[b[0]]||b[1]}"
+          if 'const timelineLinks=' not in s:
+              s = s.replace(marker, insert)
+          s = s.replace('`<a class="era-book" href="${b[1]}" target="_blank"><img src="${b[2]}" alt="${b[0]}"><span>${b[0]}</span></a>`', '`<a class="era-book" href="${timelineUrl(b)}" target="_blank"><img src="${b[2]}" alt="${b[0]}"><span>${b[0]}</span></a>`')
           p.write_text(s, encoding='utf-8')
           PY
       - name: Commit changes
@@ -37,5 +33,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add books.html
           git diff --cached --quiet && exit 0
-          git commit -m "fix books timeline spacing"
+          git commit -m "fix books timeline links to books.com.tw"
           git p"ush"
