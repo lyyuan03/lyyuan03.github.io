@@ -20,14 +20,20 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          old = '<li><a href="https://kinkiosel.pixnet.net/blog/post/32284312" target="_blank">宇色最新著作</a></li>'
-          new = '<li><a href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a></li>'
+          target = 'https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh'
+          replacements = {
+              '<li><a href="https://kinkiosel.pixnet.net/blog/post/32284312" target="_blank">宇色最新著作</a></li>': f'<li><a href="{target}">宇色靈修著作</a></li>',
+              '<li><a href="https://kinkiosel.pixnet.net/blog/post/32284312">宇色最新著作</a></li>': f'<li><a href="{target}">宇色靈修著作</a></li>',
+              'href="books.html">宇色靈修著作</a>': f'href="{target}">宇色靈修著作</a>',
+              'href="https://lyyuan.tw/books.html?v=no-lotus-text-final">宇色靈修著作</a>': f'href="{target}">宇色靈修著作</a>',
+              'href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a>': f'href="{target}">宇色靈修著作</a>',
+          }
           changed = []
           for p in Path('.').glob('*.html'):
               s = p.read_text(encoding='utf-8')
-              ns = s.replace(old, new)
-              ns = ns.replace('href="books.html">宇色靈修著作</a>', 'href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a>')
-              ns = ns.replace('href="https://lyyuan.tw/books.html?v=no-lotus-text-final">宇色靈修著作</a>', 'href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a>')
+              ns = s
+              for old, new in replacements.items():
+                  ns = ns.replace(old, new)
               if ns != s:
                   p.write_text(ns, encoding='utf-8')
                   changed.append(str(p))
@@ -43,5 +49,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add *.html
-          git commit -m "fix(nav): point books item to spiritual books page"
+          git commit -m "fix(nav): refresh books item links across pages"
           git push
