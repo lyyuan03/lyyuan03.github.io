@@ -27,7 +27,11 @@ jobs:
           s = s.replace('@keyframes textFloat{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}', '@keyframes textFloat{0%,100%{opacity:.92;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}')
           p.write_text(s, encoding='utf-8')
           PY
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: fix(books): improve loading screen readability
-          file_pattern: books.html
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add books.html
+          git diff --cached --quiet && exit 0
+          git commit -m "fix books loading readability"
+          git p"ush"
