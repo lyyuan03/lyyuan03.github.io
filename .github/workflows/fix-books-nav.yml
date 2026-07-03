@@ -1,4 +1,4 @@
-name: Fix books nav links
+name: Fix books loading screen
 
 on:
   workflow_dispatch:
@@ -13,58 +13,21 @@ jobs:
   fix:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Update books page purchase links and UI text
-        shell: bash
+      - uses: actions/checkout@v4
+      - name: Patch books page
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          target = 'https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh'
-          purchase = 'https://page.cashier.ecpay.com.tw/forms/b7KC'
-          nav_replacements = {
-              'href="books.html">宇色靈修著作</a>': f'href="{target}">宇色靈修著作</a>',
-              'href="https://lyyuan.tw/books.html?v=no-lotus-text-final">宇色靈修著作</a>': f'href="{target}">宇色靈修著作</a>',
-              'href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a>': f'href="{target}">宇色靈修著作</a>',
-          }
-          book_urls = [
-              'https://www.books.com.tw/products/0011029320?loc=P_0005_033',
-              'https://www.books.com.tw/products/0011003625',
-              'https://www.books.com.tw/products/0011022589',
-              'https://www.books.com.tw/products/0011022592',
-              'https://www.books.com.tw/products/0011002849',
-              'https://www.books.com.tw/products/0011029318?sloc=main',
-              'https://www.books.com.tw/products/0010709682',
-              'https://www.books.com.tw/products/0010992671',
-              'https://www.books.com.tw/products/0011015834',
-              'https://www.books.com.tw/products/0010719221',
-              'https://www.books.com.tw/products/0010784866',
-              'https://www.books.com.tw/products/0010944208',
-          ]
-          changed = []
-          for p in Path('.').glob('*.html'):
-              s = p.read_text(encoding='utf-8')
-              ns = s
-              for old, new in nav_replacements.items():
-                  ns = ns.replace(old, new)
-              if p.name == 'books.html':
-                  for old in book_urls:
-                      ns = ns.replace(old, purchase)
-                  ns = ns.replace('前往博客來查看', '前往靈元院購書頁')
-              if ns != s:
-                  p.write_text(ns, encoding='utf-8')
-                  changed.append(str(p))
-          print('changed:', changed)
+          p = Path('books.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('},3000);return}', '},5000);return}')
+          s = s.replace('rgba(245,240,232,.55),rgba(165,130,84,.25) 28%,rgba(10,15,8,.96) 72%', 'rgba(245,240,232,.30),rgba(165,130,84,.16) 26%,rgba(10,15,8,.98) 70%')
+          s = s.replace('color:rgba(245,240,232,.88);letter-spacing:.12em;animation:textFloat 3.8s ease-in-out infinite', 'color:rgba(255,252,246,.98);letter-spacing:.12em;text-shadow:0 2px 10px rgba(0,0,0,.75);font-weight:500;animation:textFloat 3.8s ease-in-out infinite')
+          s = s.replace('.mystic-wait .last{color:#d9b777;text-shadow:0 0 12px rgba(217,183,119,.42)}', '.mystic-wait .last{color:#e8bd72;text-shadow:0 2px 10px rgba(0,0,0,.75),0 0 14px rgba(217,183,119,.55);font-weight:500}')
+          s = s.replace('@keyframes textFloat{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}', '@keyframes textFloat{0%,100%{opacity:.92;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}')
+          p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit changes
-        shell: bash
-        run: |
-          if git diff --quiet; then
-            echo "No changes"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add *.html
-          git commit -m "fix(books): send recommendations to LYY purchase page"
-          git push
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: fix(books): improve loading screen readability
+          file_pattern: books.html
