@@ -14,31 +14,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch timeline
+      - name: Patch timeline compact layout
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('books.html')
           s=p.read_text(encoding='utf-8')
           repl={
-          'min-width:1180px':'min-width:1144px',
-          'min-width:1380px':'min-width:1144px',
-          'width:104px;min-width:0;text-align:center':'width:74px;min-width:0;text-align:center',
-          'min-width:92px;text-align:center':'width:74px;min-width:0;text-align:center',
-          'gap:1px;align-items:flex-start':'gap:3px;align-items:flex-start',
+          'max-width:1620px':'max-width:1120px',
+          'min-width:1144px':'min-width:930px',
+          'min-width:1180px':'min-width:930px',
+          'min-width:1380px':'min-width:930px',
+          'width:104px;min-width:0;text-align:center':'width:64px;min-width:0;text-align:center',
+          'width:74px;min-width:0;text-align:center':'width:64px;min-width:0;text-align:center',
+          'min-width:92px;text-align:center':'width:64px;min-width:0;text-align:center',
+          '.era.multi{width:184px;min-width:0}':'.era.multi{width:168px;min-width:0}',
+          '.era.multi{width:148px;min-width:0}':'.era.multi{width:168px;min-width:0}',
+          '.era.multi{min-width:190px}':'.era.multi{width:168px;min-width:0}',
           '.era-book{display:block;width:45px}':'.era-book{display:block;width:60px}',
           'width:44px;height:66px;object-fit:cover':'width:56px;height:84px;object-fit:cover',
-          '.era.multi{width:148px;min-width:0}':'.era.multi{width:184px;min-width:0}',
-          '.era.multi{min-width:190px}':'.era.multi{width:184px;min-width:0}',
           '.era.multi .era-book{width:45px}':'.era.multi .era-book{width:54px}',
-          '.era.multi .era-book img{width:56px;height:84px}':'.era.multi .era-book img{width:54px;height:81px}',
           '.era.multi .era-book img{width:44px;height:66px}':'.era.multi .era-book img{width:54px;height:81px}',
           '.future-cover{width:44px;height:66px;':'.future-cover{width:56px;height:84px;'
           }
-          for a,b in repl.items(): s=s.replace(a,b)
+          for a,b in repl.items():
+              s=s.replace(a,b)
           p.write_text(s,encoding='utf-8')
           PY
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: fix books timeline spacing keep cover size
+          commit_message: fix books timeline compact width
           file_pattern: books.html
