@@ -1,4 +1,4 @@
-name: Fix books loading screen
+name: Fix books timeline spacing
 
 on:
   workflow_dispatch:
@@ -14,17 +14,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch books page
+      - name: Patch books timeline
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('books.html')
           s = p.read_text(encoding='utf-8')
-          s = s.replace('},3000);return}', '},5000);return}')
-          s = s.replace('color:rgba(255,252,246,.98);letter-spacing:.12em;text-shadow:0 2px 10px rgba(0,0,0,.75);font-weight:500;animation:textFloat 3.8s ease-in-out infinite', 'color:#1a1208;letter-spacing:.12em;text-shadow:none;font-weight:600;animation:textFloat 3.8s ease-in-out infinite')
-          s = s.replace('color:rgba(245,240,232,.88);letter-spacing:.12em;animation:textFloat 3.8s ease-in-out infinite', 'color:#1a1208;letter-spacing:.12em;text-shadow:none;font-weight:600;animation:textFloat 3.8s ease-in-out infinite')
-          s = s.replace('.mystic-wait .last{color:#e8bd72;text-shadow:0 2px 10px rgba(0,0,0,.75),0 0 14px rgba(217,183,119,.55);font-weight:500}', '.mystic-wait .last{color:#1a1208;text-shadow:none;font-weight:600}')
-          s = s.replace('.mystic-wait .last{color:#d9b777;text-shadow:0 0 12px rgba(217,183,119,.42)}', '.mystic-wait .last{color:#1a1208;text-shadow:none;font-weight:600}')
+          s = s.replace('display:flex;gap:12px;align-items:flex-start;justify-content:center;padding:24px 0 10px;min-width:1380px', 'display:flex;gap:0;align-items:flex-start;justify-content:center;padding:24px 0 10px;min-width:1180px')
+          s = s.replace('.era{position:relative;min-width:92px;', '.era{position:relative;width:104px;min-width:0;')
+          s = s.replace('.era-books{display:flex;justify-content:center;gap:3px;', '.era-books{display:flex;justify-content:center;gap:1px;')
+          s = s.replace('.era-book{display:block;width:60px}', '.era-book{display:block;width:45px}')
+          s = s.replace('.era-book img{width:56px;height:84px;', '.era-book img{width:44px;height:66px;')
+          s = s.replace('.era.multi{min-width:190px}', '.era.multi{width:148px;min-width:0}')
+          s = s.replace('.era.multi .era-book{width:54px}', '.era.multi .era-book{width:45px}')
+          s = s.replace('.era.multi .era-book img{width:54px;height:81px}', '.era.multi .era-book img{width:44px;height:66px}')
+          s = s.replace('.future-cover{width:56px;height:84px;', '.future-cover{width:44px;height:66px;')
           p.write_text(s, encoding='utf-8')
           PY
       - name: Commit changes
@@ -33,5 +37,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add books.html
           git diff --cached --quiet && exit 0
-          git commit -m "fix books loading text color"
+          git commit -m "fix books timeline spacing"
           git p"ush"
