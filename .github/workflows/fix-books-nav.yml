@@ -1,0 +1,47 @@
+name: Fix books nav links
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/fix-books-nav.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Replace old books nav labels and links
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          old = '<li><a href="https://kinkiosel.pixnet.net/blog/post/32284312" target="_blank">宇色最新著作</a></li>'
+          new = '<li><a href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a></li>'
+          changed = []
+          for p in Path('.').glob('*.html'):
+              s = p.read_text(encoding='utf-8')
+              ns = s.replace(old, new)
+              ns = ns.replace('href="books.html">宇色靈修著作</a>', 'href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a>')
+              ns = ns.replace('href="https://lyyuan.tw/books.html?v=no-lotus-text-final">宇色靈修著作</a>', 'href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a>')
+              if ns != s:
+                  p.write_text(ns, encoding='utf-8')
+                  changed.append(str(p))
+          print('changed:', changed)
+          PY
+      - name: Commit changes
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add *.html
+          git commit -m "fix(nav): point books item to spiritual books page"
+          git push
