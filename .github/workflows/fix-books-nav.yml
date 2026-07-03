@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Replace nav links and refine books timeline spacing
+      - name: Replace nav links, refine spacing, animate reading screen
         shell: bash
         run: |
           python3 - <<'PY'
@@ -28,6 +28,8 @@ jobs:
               'href="https://lyyuan.tw/books.html?v=no-lotus-text-final">宇色靈修著作</a>': f'href="{target}">宇色靈修著作</a>',
               'href="https://lyyuan.tw/books.html?v=spiritual-books-20260703">宇色靈修著作</a>': f'href="{target}">宇色靈修著作</a>',
           }
+          old_css = ".mystic-wait{position:relative;overflow:hidden;background:radial-gradient(circle at center,rgba(165,130,84,.22),rgba(10,15,8,.96) 68%);border:1px solid rgba(197,162,111,.36);padding:42px 26px;text-align:center;color:#f5f0e8;border-radius:12px;box-shadow:inset 0 0 60px rgba(165,130,84,.12)}.mystic-wait:before{content:'';position:absolute;inset:12%;border:1px solid rgba(197,162,111,.22);border-radius:50%;animation:breath 3s infinite ease-in-out}.mystic-wait:after{content:'✦';position:absolute;left:50%;top:20px;transform:translateX(-50%);color:#d9b777;font-size:20px;animation:glow 3s infinite ease-in-out}.mystic-wait p{position:relative;z-index:1;font-family:var(--serif);font-size:17px;line-height:2.3;color:rgba(245,240,232,.88);letter-spacing:.12em}.mystic-wait .last{color:#d9b777}@keyframes breath{0%,100%{transform:scale(.92);opacity:.35}50%{transform:scale(1.06);opacity:.75}}@keyframes glow{0%,100%{opacity:.45;text-shadow:0 0 8px rgba(217,183,119,.4)}50%{opacity:1;text-shadow:0 0 26px rgba(217,183,119,.9)}}"
+          new_css = ".mystic-wait{position:relative;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(245,240,232,.55),rgba(165,130,84,.25) 28%,rgba(10,15,8,.96) 72%);background-size:160% 160%;border:1px solid rgba(197,162,111,.38);padding:42px 26px;text-align:center;color:#f5f0e8;border-radius:12px;box-shadow:inset 0 0 72px rgba(165,130,84,.16),0 0 26px rgba(165,130,84,.12);animation:auraFlow 5.6s ease-in-out infinite}.mystic-wait:before{content:'';position:absolute;inset:12%;border:1px solid rgba(197,162,111,.24);border-radius:50%;animation:breath 3s infinite ease-in-out}.mystic-wait:after{content:'✦';position:absolute;left:-18%;top:0;width:36%;height:100%;display:flex;align-items:flex-start;justify-content:center;padding-top:22px;color:#d9b777;font-size:20px;background:linear-gradient(90deg,transparent,rgba(245,240,232,.18),transparent);text-shadow:0 0 20px rgba(217,183,119,.95);animation:scanLight 3.2s ease-in-out infinite}.mystic-wait p{position:relative;z-index:1;font-family:var(--serif);font-size:17px;line-height:2.3;color:rgba(245,240,232,.88);letter-spacing:.12em;animation:textFloat 3.8s ease-in-out infinite}.mystic-wait p:nth-child(2){animation-delay:.25s}.mystic-wait p:nth-child(3){animation-delay:.5s}.mystic-wait .last{color:#d9b777;text-shadow:0 0 12px rgba(217,183,119,.42)}@keyframes auraFlow{0%,100%{background-position:50% 50%;filter:brightness(1)}50%{background-position:48% 42%;filter:brightness(1.08)}}@keyframes scanLight{0%{left:-24%;opacity:0}18%{opacity:.85}55%{opacity:.65}100%{left:102%;opacity:0}}@keyframes textFloat{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}@keyframes breath{0%,100%{transform:scale(.92);opacity:.35}50%{transform:scale(1.06);opacity:.75}}@keyframes glow{0%,100%{opacity:.45;text-shadow:0 0 8px rgba(217,183,119,.4)}50%{opacity:1;text-shadow:0 0 26px rgba(217,183,119,.9)}}"
           changed = []
           for p in Path('.').glob('*.html'):
               s = p.read_text(encoding='utf-8')
@@ -38,6 +40,7 @@ jobs:
                   ns = ns.replace('.era-books{display:flex;justify-content:center;gap:8px;align-items:flex-start}', '.era-books{display:flex;justify-content:center;gap:3px;align-items:flex-start}')
                   ns = ns.replace('.era.multi .era-book{width:58px}', '.era.multi .era-book{width:54px}')
                   ns = ns.replace('.era-book span{display:block;margin-top:8px;', '.era-book span{display:block;margin-top:7px;')
+                  ns = ns.replace(old_css, new_css)
               if ns != s:
                   p.write_text(ns, encoding='utf-8')
                   changed.append(str(p))
@@ -53,5 +56,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add *.html
-          git commit -m "fix(books): tighten book spacing in timeline"
+          git commit -m "feat(books): animate reading analysis screen"
           git push
