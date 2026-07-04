@@ -1,0 +1,1 @@
+Trigger GitHub Pages deploy for Guanyin image update.
