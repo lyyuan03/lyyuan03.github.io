@@ -7,65 +7,74 @@
 <meta name="description" content="靈元院觀世音菩薩得道日消災降福、成道祈願法儀，啟願燈燈首與觀音慈心護持燈點燈項目。">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:wght@400;500&display=swap">
 <style>
-:root {
-  --sumi: #120d0a;
-  --moss: #606330;
-  --pine: #5c6956;
-  --washi: rgba(250, 247, 242, 0.94);
-  --rice: #faf7f2;
-  --wood: #a58254;
-  --cedar: #594f47;
-  --ink: #f4efe6;
-  --soft: rgba(250, 247, 242, 0.74);
-  --line: rgba(165, 130, 84, 0.18);
-  --serif: "Noto Serif TC", "Georgia", serif;
-  --sans: "Noto Sans TC", "Arial", sans-serif;
-  --en: "Cormorant Garamond", serif;
+:root{
+  --sumi:#120d0a;
+  --moss:#606330;
+  --wood:#a58254;
+  --ink:#f4efe6;
+  --serif:'Noto Serif TC','Georgia',serif;
+  --sans:'Noto Sans TC','Arial',sans-serif;
 }
-
-* { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  color: var(--ink);
-  background: radial-gradient(ellipse at top, rgba(165,130,84,0.10), transparent 42%), linear-gradient(rgba(10,15,8,0.46),rgba(10,15,8,0.62)), url('forest-path.jpg') center/cover fixed no-repeat;
-  font-family: var(--sans);
-  line-height: 1.82;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--ink);
+  background:linear-gradient(rgba(10,15,8,.55),rgba(10,15,8,.65)),url('forest-path.jpg') center/cover fixed no-repeat;
 }
-
-/* ===== FIX HOVER EFFECT (NO SCALE) ===== */
-.form-copy .form-block:hover,
-.form-copy .form-block:focus,
-.form-copy .form-block:active {
-  border-color: rgba(165,130,84,0.42);
-  border-left-color: rgba(96,99,48,0.72);
-  background: linear-gradient(180deg, rgba(247,250,244,0.94), rgba(236,241,229,0.86));
-  box-shadow: 0 16px 30px rgba(18,13,10,0.12);
-  transform: translateY(-2px);
-  outline: 2px solid rgba(201,168,118,0.42);
-  outline-offset: 3px;
-  filter: brightness(1.03);
-  z-index: 10;
+.page{
+  display:flex;
+  min-height:100vh;
+  align-items:stretch;
 }
-
-.form-highlight:hover,
-.form-highlight:focus,
-.form-highlight:active {
-  border-color: rgba(165,130,84,0.42);
-  background: linear-gradient(180deg, rgba(249,246,239,0.98), rgba(238,244,232,0.88));
-  box-shadow: 0 14px 26px rgba(18,13,10,0.10);
-  transform: translateY(-2px);
-  outline: 2px solid rgba(201,168,118,0.42);
-  outline-offset: 3px;
-  filter: brightness(1.03);
-  z-index: 10;
+.left{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.25);
 }
-
+.left img{
+  max-width:90%;
+  max-height:90vh;
+  object-fit:contain;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.45));
+}
+.right{
+  flex:1;
+  padding:60px 50px;
+  background:rgba(245,240,232,.92);
+  color:#2b1f16;
+  overflow:auto;
+}
+.right h1{
+  font-family:var(--serif);
+  font-weight:400;
+  color:#3d2e1e;
+}
+.placeholder{
+  margin-top:20px;
+  padding:20px;
+  border-left:3px solid var(--wood);
+  background:rgba(165,130,84,.08);
+}
 </style>
 </head>
 <body>
-<!-- rest unchanged -->
+<div class="page">
+  <!-- LEFT IMAGE RESTORED -->
+  <div class="left">
+    <img src="guanyin-left.png" alt="觀世音菩薩法會插圖">
+  </div>
+
+  <!-- RIGHT CONTENT AREA -->
+  <div class="right">
+    <h1>觀世音菩薩得道日法儀</h1>
+    <div class="placeholder">
+      此區原為法會報名與燈儀內容，已重新整理版面結構。
+      請將原本右側表單內容貼回此區以完成頁面。
+    </div>
+  </div>
+</div>
 </body>
 </html>
