@@ -1,0 +1,40 @@
+name: Remove lamp icons
+
+on:
+  push:
+    paths:
+      - '.github/workflows/remove-lamp-icons.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remove-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore lamp headings without icons
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('guanyin-event-v2.html')
+          html = path.read_text(encoding='utf-8')
+          old_style = 'width:80px;height:80px;vertical-align:middle;margin-right:16px;object-fit:contain;'
+          replacements = {
+              f'<h3><img src="assets/lamp-icons/baozhu.svg" alt="" aria-hidden="true" style="{old_style}">全方位福運燈</h3>': '<h3>全方位福運燈</h3>',
+              f'<h3><img src="assets/lamp-icons/candlelight.svg" alt="" aria-hidden="true" style="{old_style}">平安消災燈</h3>': '<h3>平安消災燈</h3>',
+              f'<h3><img src="assets/lamp-icons/dharma-wheel.svg" alt="" aria-hidden="true" style="{old_style}">福慧健康燈</h3>': '<h3>福慧健康燈</h3>',
+              f'<h3><img src="assets/lamp-icons/radiance.svg" alt="" aria-hidden="true" style="{old_style}">財運轉順燈</h3>': '<h3>財運轉順燈</h3>',
+              f'<h3><img src="assets/lamp-icons/lotus.svg" alt="" aria-hidden="true" style="{old_style}">家運守護燈</h3>': '<h3>家運守護燈</h3>',
+          }
+          for old, new in replacements.items():
+              html = html.replace(old, new)
+          path.write_text(html, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add guanyin-event-v2.html
+          git commit -m "Remove lamp icons from Guanyin event page"
+          git push
