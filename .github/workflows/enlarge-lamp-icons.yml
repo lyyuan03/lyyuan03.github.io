@@ -1,0 +1,36 @@
+name: Enlarge lamp icons
+
+on:
+  push:
+    paths:
+      - '.github/workflows/enlarge-lamp-icons.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enlarge and darken lamp icons
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('guanyin-event-v2.html')
+          html = page.read_text(encoding='utf-8')
+          html = html.replace('width:30px;height:30px;vertical-align:middle;margin-right:10px;object-fit:contain;', 'width:42px;height:42px;vertical-align:middle;margin-right:12px;object-fit:contain;')
+          page.write_text(html, encoding='utf-8')
+
+          for icon in Path('assets/lamp-icons').glob('*.svg'):
+              svg = icon.read_text(encoding='utf-8')
+              svg = svg.replace('#d8c49a', '#a58254')
+              icon.write_text(svg, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add guanyin-event-v2.html assets/lamp-icons/*.svg
+          git commit -m "Enlarge and darken lamp icons"
+          git push
