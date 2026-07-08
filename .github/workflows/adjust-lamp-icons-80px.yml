@@ -1,0 +1,43 @@
+name: Adjust lamp icons to 80px
+
+on:
+  push:
+    paths:
+      - '.github/workflows/adjust-lamp-icons-80px.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make lamp icons 80px and deeper coffee
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          page = Path('guanyin-event-v2.html')
+          html = page.read_text(encoding='utf-8')
+          html = html.replace(
+              'width:60px;height:60px;vertical-align:middle;margin-right:14px;object-fit:contain;',
+              'width:80px;height:80px;vertical-align:middle;margin-right:16px;object-fit:contain;'
+          )
+          page.write_text(html, encoding='utf-8')
+
+          dark_coffee = '#3D2E1E'
+          for icon in Path('assets/lamp-icons').glob('*.svg'):
+              svg = icon.read_text(encoding='utf-8')
+              svg = re.sub(r'fill="#[0-9A-Fa-f]{6}"', f'fill="{dark_coffee}"', svg)
+              svg = re.sub(r'stroke="#[0-9A-Fa-f]{6}"', f'stroke="{dark_coffee}"', svg)
+              svg = re.sub(r'stroke-width="[^"]*"', 'stroke-width="4"', svg)
+              icon.write_text(svg, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add guanyin-event-v2.html assets/lamp-icons/*.svg
+          git commit -m "Adjust lamp icons to 80px deep coffee"
+          git push
