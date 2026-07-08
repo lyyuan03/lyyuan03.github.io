@@ -1,0 +1,35 @@
+name: Apply lamp copy
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-lamp-copy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-copy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply copy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          page = Path('guanyin-event-v2.html')
+          html = page.read_text(encoding='utf-8')
+          new = base64.b64decode(Path('.tmp-lamp-copy.b64').read_text().strip()).decode('utf-8')
+          start = html.index('<section class="section" id="lamps">')
+          end_marker = '<section class="section narrow beclass-section" id="beclass-form">'
+          end = html.index(end_marker, start)
+          html = html[:start] + new + html[end:]
+          page.write_text(html, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add guanyin-event-v2.html
+          git commit -m "Update Guanyin lamp copy"
+          git push
