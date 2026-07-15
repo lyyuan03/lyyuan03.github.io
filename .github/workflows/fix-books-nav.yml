@@ -1,4 +1,4 @@
-name: Fix books timeline spacing
+name: Disable Wenxuan navigation
 
 on:
   workflow_dispatch:
@@ -14,34 +14,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch timeline compact layout
+      - name: Disable Wenxuan dropdowns
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p=Path('books.html')
-          s=p.read_text(encoding='utf-8')
-          repl={
-          'max-width:1620px':'max-width:1120px',
-          'min-width:1144px':'min-width:930px',
-          'min-width:1180px':'min-width:930px',
-          'min-width:1380px':'min-width:930px',
-          'width:104px;min-width:0;text-align:center':'width:64px;min-width:0;text-align:center',
-          'width:74px;min-width:0;text-align:center':'width:64px;min-width:0;text-align:center',
-          'min-width:92px;text-align:center':'width:64px;min-width:0;text-align:center',
-          '.era.multi{width:184px;min-width:0}':'.era.multi{width:168px;min-width:0}',
-          '.era.multi{width:148px;min-width:0}':'.era.multi{width:168px;min-width:0}',
-          '.era.multi{min-width:190px}':'.era.multi{width:168px;min-width:0}',
-          '.era-book{display:block;width:45px}':'.era-book{display:block;width:60px}',
-          'width:44px;height:66px;object-fit:cover':'width:56px;height:84px;object-fit:cover',
-          '.era.multi .era-book{width:45px}':'.era.multi .era-book{width:54px}',
-          '.era.multi .era-book img{width:44px;height:66px}':'.era.multi .era-book img{width:54px;height:81px}',
-          '.future-cover{width:44px;height:66px;':'.future-cover{width:56px;height:84px;'
-          }
-          for a,b in repl.items():
-              s=s.replace(a,b)
-          p.write_text(s,encoding='utf-8')
+          import re
+
+          files = [
+              'index.html',
+              'niandian.html',
+              'fahui.html',
+              'lixing.html',
+              'books.html',
+              'guanyin-event-v2.html',
+              'dizhi.html',
+          ]
+          disabled = '<li><span aria-disabled="true" style="color:rgba(245,240,232,.32);cursor:default;pointer-events:none">文選</span></li>'
+          pattern = re.compile(
+              r'<li>\s*<span class="has-dropdown">文選</span>\s*<ul class="dropdown">\s*'
+              r'<li><a href="https://kinkiosel\.pixnet\.net/blog/category/1537788" target="_blank">靈修奧義</a></li>\s*'
+              r'<li><a href="https://kinkiosel\.pixnet\.net/blog/category/1609797" target="_blank">問事實錄</a></li>\s*'
+              r'<li><a href="https://kinkiosel\.pixnet\.net/blog/category/1615684" target="_blank">法會感應</a></li>\s*'
+              r'</ul>\s*</li>'
+          )
+
+          changed = []
+          for name in files:
+              path = Path(name)
+              text = path.read_text(encoding='utf-8')
+              updated, count = pattern.subn(disabled, text)
+              if count:
+                  path.write_text(updated, encoding='utf-8')
+                  changed.append(f'{name}: {count}')
+
+          if changed:
+              print('Updated Wenxuan nav:')
+              print('\n'.join(changed))
+          else:
+              print('No Wenxuan dropdowns needed changes.')
           PY
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: fix books timeline compact width
-          file_pattern: books.html
+          commit_message: Disable Wenxuan navigation
+          file_pattern: index.html niandian.html fahui.html lixing.html books.html guanyin-event-v2.html dizhi.html
