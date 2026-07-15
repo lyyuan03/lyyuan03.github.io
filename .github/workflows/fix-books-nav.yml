@@ -57,3 +57,5 @@ jobs:
         with:
           commit_message: Disable Wenxuan navigation
           file_pattern: index.html niandian.html fahui.html lixing.html books.html guanyin-event-v2.html dizhi.html
+
+# Triggered after Wenxuan nav patch so GitHub Pages deploys the updated tree.
