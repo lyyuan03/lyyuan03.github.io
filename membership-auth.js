@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAgHy-nPOErzs7NDJossVGPITbenXOfjQY",
@@ -32,6 +32,17 @@ function installStyles() {
     .member-google-button{width:100%;border:1px solid rgba(165,130,84,.58);background:rgba(165,130,84,.12);color:#C5A26F;padding:13px 18px;font-family:'Noto Sans TC','Arial',sans-serif;font-size:14px;letter-spacing:.1em;cursor:pointer}
     .member-google-button:hover{background:rgba(165,130,84,.2)}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
+    .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
+    @media(max-width:768px){
+      nav{height:56px;overflow:visible}
+      .nav-inner{height:56px!important;padding:0 8px!important;display:block!important;overflow:visible}
+      .nav-links{height:56px!important;width:100%!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:13px!important;overflow-x:auto!important;overflow-y:visible!important;padding:0 96px 0 8px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+      .nav-links::-webkit-scrollbar{display:none}
+      .nav-links>li{flex:0 0 auto}
+      .nav-links>li:last-child{position:absolute!important;right:8px!important;top:10px!important;z-index:5;background:rgba(10,15,8,.98);box-shadow:-14px 0 18px rgba(10,15,8,.98)}
+      #member-login-button{height:36px!important;padding:6px 10px!important;font-size:11px!important;letter-spacing:.08em!important;background:rgba(10,15,8,.98)!important}
+      .dropdown{max-height:70vh;overflow:auto}
+    }
   `;
   document.head.appendChild(style);
 }
@@ -51,6 +62,7 @@ function installModal() {
       <p>請使用 Google 帳號登入。接下來將由 Google 官方安全視窗，讓您選擇要使用的 Gmail 帳號。</p>
       <button class="member-google-button" type="button">選擇 Google 帳號</button>
       <p class="member-login-note">登入完成後，將自動回到目前頁面。</p>
+      <p class="member-login-browser-note">目前正在 Facebook 內建瀏覽器中開啟。Google 登入可能較慢；若畫面長時間沒有反應，請點右上角分享按鈕，選擇「以 Safari 開啟」。</p>
     </div>`;
   document.body.appendChild(modal);
   const close = () => modal.classList.remove("is-open");
@@ -65,7 +77,14 @@ if (loginButton) {
   installStyles();
   const modal = installModal();
   const googleButton = modal.querySelector(".member-google-button");
+  const browserNote = modal.querySelector(".member-login-browser-note");
+  const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
+  const isMobile = window.matchMedia("(max-width: 768px), (pointer: coarse)").matches;
+  if (isInAppBrowser && browserNote) browserNote.style.display = "block";
   setPersistence(auth, browserLocalPersistence).catch(console.error);
+  getRedirectResult(auth).catch((error) => {
+    console.error("Google 重新導向登入失敗：", error);
+  });
 
   loginButton.addEventListener("click", async () => {
     if (auth.currentUser) {
@@ -78,18 +97,27 @@ if (loginButton) {
 
   googleButton.addEventListener("click", async () => {
     googleButton.disabled = true;
-    googleButton.textContent = "正在開啟 Google 登入…";
+    googleButton.textContent = isMobile ? "正在前往 Google 登入…" : "正在開啟 Google 登入…";
+    loginButton.disabled = true;
+    loginButton.textContent = "登入中…";
     try {
+      if (isMobile) {
+        sessionStorage.setItem("member-login-return", location.href);
+        await signInWithRedirect(auth, provider);
+        return;
+      }
       await signInWithPopup(auth, provider);
       modal.classList.remove("is-open");
     } catch (error) {
       if (error?.code !== "auth/popup-closed-by-user" && error?.code !== "auth/cancelled-popup-request") {
         console.error("Google 登入失敗：", error);
-        alert("目前無法完成 Google 登入，請稍後再試。");
+        alert(isInAppBrowser ? "Facebook 內建瀏覽器限制了 Google 登入。請點右上角分享按鈕，選擇「以 Safari 開啟」後再登入。" : "目前無法完成 Google 登入，請稍後再試。");
       }
     } finally {
       googleButton.disabled = false;
       googleButton.textContent = "選擇 Google 帳號";
+      loginButton.disabled = false;
+      if (!auth.currentUser) loginButton.textContent = "會員登入";
     }
   });
 
