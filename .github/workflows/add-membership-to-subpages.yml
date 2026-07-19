@@ -1,0 +1,58 @@
+name: Add membership login to subpages
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-membership-to-subpages.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add homepage-style membership login
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          pages = ['niandian.html', 'dizhi.html', 'lixing.html', 'fahui.html', 'books.html']
+          button = '<li><button id="member-login-button" type="button">會員登入</button></li>'
+          module = '<script type="module" src="/membership-auth.js?v=20260719-2"></script>'
+
+          def add_button(text):
+              if 'id="member-login-button"' in text:
+                  return text
+              match = re.search(r'<ul\s+class=["\']nav-links["\'][^>]*>', text, re.I)
+              if not match:
+                  raise RuntimeError('找不到 nav-links')
+              pos = match.end()
+              depth = 1
+              tag_re = re.compile(r'<ul\b[^>]*>|</ul\s*>', re.I)
+              for tag in tag_re.finditer(text, pos):
+                  if tag.group(0).lower().startswith('<ul'):
+                      depth += 1
+                  else:
+                      depth -= 1
+                      if depth == 0:
+                          return text[:tag.start()] + button + text[tag.start():]
+              raise RuntimeError('找不到 nav-links 結尾')
+
+          for page in pages:
+              path = Path(page)
+              text = path.read_text(encoding='utf-8')
+              text = add_button(text)
+              if '/membership-auth.js' not in text:
+                  text = text.replace('</body>', module + '\n</body>', 1)
+              path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add niandian.html dizhi.html lixing.html fahui.html books.html
+          git commit -m "Add membership login to activity and books pages"
+          git push
