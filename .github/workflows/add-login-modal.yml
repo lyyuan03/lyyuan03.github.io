@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/add-login-modal.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -22,13 +23,13 @@ jobs:
           path = Path('index.html')
           text = path.read_text(encoding='utf-8')
 
-          css = r'''
+          css = '''
 #member-login-modal{position:fixed;inset:0;background:rgba(3,7,4,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px;z-index:9998}#member-login-modal.is-open{display:flex}.member-login-card{position:relative;width:min(420px,100%);background:linear-gradient(180deg,rgba(18,25,16,.98),rgba(9,14,9,.98));border:1px solid rgba(165,130,84,.42);box-shadow:0 28px 80px rgba(0,0,0,.62);padding:40px 34px 32px;text-align:center}.member-login-close{position:absolute;top:12px;right:14px;border:0;background:transparent;color:rgba(245,240,232,.58);font-size:25px;line-height:1;cursor:pointer}.member-login-close:hover{color:var(--gold)}.member-login-mark{font-family:var(--serif);font-size:22px;color:var(--gold);letter-spacing:.28em;margin-bottom:8px}.member-login-en{font-family:var(--en);font-size:11px;color:rgba(165,130,84,.65);letter-spacing:.34em;margin-bottom:25px}.member-login-title{font-family:var(--serif);font-size:21px;color:var(--cream);letter-spacing:.14em;margin-bottom:12px}.member-login-copy{font-size:14px;color:rgba(245,240,232,.68);line-height:1.9;margin-bottom:25px}.google-login-button{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid rgba(165,130,84,.58);background:rgba(165,130,84,.1);color:var(--cream);padding:13px 18px;font-family:var(--sans);font-size:14px;letter-spacing:.08em;cursor:pointer}.google-login-button:hover{background:rgba(165,130,84,.18);border-color:var(--gold)}.google-login-button:disabled{opacity:.55;cursor:wait}.google-g{width:20px;height:20px;border-radius:50%;background:#fff;color:#4285f4;display:inline-flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;font-weight:700;font-size:14px}.member-login-note{font-size:11px;color:rgba(245,240,232,.38);line-height:1.7;margin-top:18px}@media(max-width:600px){.member-login-card{padding:36px 24px 28px}}
 '''
           if '#member-login-modal{' not in text:
               text = text.replace('</style>', css + '</style>', 1)
 
-          modal = r'''
+          modal = '''
 <div id="member-login-modal" role="dialog" aria-modal="true" aria-labelledby="member-login-title" aria-hidden="true">
   <div class="member-login-card">
     <button id="member-login-close" class="member-login-close" type="button" aria-label="關閉">×</button>
@@ -44,27 +45,9 @@ jobs:
           if 'id="member-login-modal"' not in text:
               text = text.replace('<div id="email-toast">', modal + '<div id="email-toast">', 1)
 
-          old = '''const loginButton = document.getElementById("member-login-button");
-
-setPersistence(auth, browserLocalPersistence).catch(console.error);
-
-loginButton.addEventListener("click", async () => {
-  loginButton.disabled = true;
-  try {
-    if (auth.currentUser) {
-      await signOut(auth);
-    } else {
-      await signInWithPopup(auth, provider);
-    }
-  } catch (error) {
-    console.error("Google 登入失敗：", error);
-    alert("目前無法完成 Google 登入，請稍後再試。若持續發生，請確認 Firebase 已將 lyyuan.tw 設為授權網域。");
-  } finally {
-    loginButton.disabled = false;
-  }
-});'''
-
-          new = '''const loginButton = document.getElementById("member-login-button");
+          start = text.index('const loginButton = document.getElementById("member-login-button");')
+          end = text.index('\nonAuthStateChanged(auth, (user) => {', start)
+          replacement = '''const loginButton = document.getElementById("member-login-button");
 const loginModal = document.getElementById("member-login-modal");
 const modalCloseButton = document.getElementById("member-login-close");
 const googleLoginButton = document.getElementById("google-login-button");
@@ -118,12 +101,9 @@ googleLoginButton.addEventListener("click", async () => {
   } finally {
     googleLoginButton.disabled = false;
   }
-});'''
-
-          if old not in text:
-              raise SystemExit('Login block was not found; no changes were made.')
-
-          text = text.replace(old, new, 1)
+});
+'''
+          text = text[:start] + replacement + text[end:]
           path.write_text(text, encoding='utf-8')
           PY
 
