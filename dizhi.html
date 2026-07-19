@@ -693,6 +693,16 @@ a.book-link-block:active {
 .book-link-block * { color: #1a1208 !important; }
 
 </style>
+<style id="mobile-member-nav-fix">
+@media(max-width:768px){
+nav{height:56px;overflow:visible}
+.nav-inner{height:56px!important;padding:0 8px!important;display:block!important;overflow:visible}
+.nav-links{height:56px!important;width:100%!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:13px!important;overflow-x:auto!important;overflow-y:visible!important;padding:0 96px 0 8px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.nav-links::-webkit-scrollbar{display:none}.nav-links>li{flex:0 0 auto}
+.nav-links>li:last-child{position:absolute!important;right:8px!important;top:10px!important;z-index:105;background:rgba(10,15,8,.98);box-shadow:-14px 0 18px rgba(10,15,8,.98)}
+#member-login-button{height:36px!important;padding:6px 10px!important;font-size:11px!important;letter-spacing:.08em!important;background:rgba(10,15,8,.98)!important}
+}
+</style>
 </head>
 <body>
 
