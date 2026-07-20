@@ -694,13 +694,19 @@ a.book-link-block:active {
 
 </style>
 <style id="mobile-member-nav-fix">
+body{padding-top:104px!important}
+nav{position:fixed!important;top:0!important;left:0!important;right:0!important;height:104px!important;overflow:visible!important}
+.nav-inner,.nav-content{height:56px!important;min-height:56px!important;padding-top:0!important;padding-bottom:0!important;display:flex!important;align-items:center!important}
+.nav-links{height:56px!important;align-items:center!important;flex-wrap:nowrap!important}
+.nav-links>li:last-child{position:fixed!important;top:56px!important;left:0!important;right:0!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;padding:0 max(24px,calc((100vw - 1080px)/2 + 24px))!important;background:rgba(7,11,6,.97)!important;border-top:1px solid rgba(165,130,84,.12)!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:99!important;box-shadow:none!important}
+#member-login-button{height:34px!important;padding:6px 14px!important;font-size:12px!important;letter-spacing:.1em!important;background:rgba(165,130,84,.07)!important}
+.hero{margin-top:0!important}.page-content{padding-top:0!important}
 @media(max-width:768px){
-nav{height:56px;overflow:visible}
-.nav-inner{height:56px!important;padding:0 8px!important;display:block!important;overflow:visible}
-.nav-links{height:56px!important;width:100%!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:13px!important;overflow-x:auto!important;overflow-y:visible!important;padding:0 96px 0 8px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.nav-links::-webkit-scrollbar{display:none}.nav-links>li{flex:0 0 auto}
-.nav-links>li:last-child{position:absolute!important;right:8px!important;top:10px!important;z-index:105;background:rgba(10,15,8,.98);box-shadow:-14px 0 18px rgba(10,15,8,.98)}
-#member-login-button{height:36px!important;padding:6px 10px!important;font-size:11px!important;letter-spacing:.08em!important;background:rgba(10,15,8,.98)!important}
+.nav-inner,.nav-content{padding-left:12px!important;padding-right:12px!important;overflow:hidden!important}
+.nav-links{width:100%!important;display:flex!important;gap:16px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:0 8px!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch}
+.nav-links::-webkit-scrollbar{display:none}.nav-links>li{flex:0 0 auto!important}
+.nav-links>li:last-child{padding:0 14px!important}
+#member-login-button{max-width:calc(100vw - 28px)!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
 }
 </style>
 </head>
@@ -952,6 +958,6 @@ nav{height:56px;overflow:visible}
 
 <div id="email-toast">✉ lyyuan03@gmail.com 已複製</div>
 
-<script type="module" src="/membership-auth.js?v=20260719-4"></script>
+<script type="module" src="/membership-auth.js?v=20260720-1"></script>
 </body>
 </html>
