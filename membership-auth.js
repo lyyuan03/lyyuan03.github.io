@@ -33,15 +33,14 @@ function installStyles() {
     .member-google-button:hover{background:rgba(165,130,84,.2)}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
+    nav{height:104px!important;overflow:visible!important}
+    .nav-inner{height:56px!important;position:relative}
+    .nav-links>li:last-child{position:fixed!important;top:56px!important;left:0!important;right:0!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;padding:0 24px!important;background:rgba(7,11,6,.97)!important;border-top:1px solid rgba(165,130,84,.12)!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:99!important;box-shadow:none!important}
+    #member-login-button{height:34px!important;padding:6px 14px!important;font-size:12px!important;letter-spacing:.1em!important;background:rgba(165,130,84,.07)!important}
     @media(max-width:768px){
-      nav{height:56px;overflow:visible}
-      .nav-inner{height:56px!important;padding:0 8px!important;display:block!important;overflow:visible}
-      .nav-links{height:56px!important;width:100%!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:13px!important;overflow-x:auto!important;overflow-y:visible!important;padding:0 96px 0 8px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-      .nav-links::-webkit-scrollbar{display:none}
-      .nav-links>li{flex:0 0 auto}
-      .nav-links>li:last-child{position:absolute!important;right:8px!important;top:10px!important;z-index:5;background:rgba(10,15,8,.98);box-shadow:-14px 0 18px rgba(10,15,8,.98)}
-      #member-login-button{height:36px!important;padding:6px 10px!important;font-size:11px!important;letter-spacing:.08em!important;background:rgba(10,15,8,.98)!important}
-      .dropdown{max-height:70vh;overflow:auto}
+      .nav-inner{padding:0 12px!important;display:block!important;overflow:hidden!important}
+      .nav-links{height:56px!important;width:100%!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:16px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:0 8px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+      .nav-links::-webkit-scrollbar{display:none}.nav-links>li{flex:0 0 auto}.nav-links>li:last-child{padding:0 14px!important}.dropdown{max-height:70vh;overflow:auto}
     }
   `;
   document.head.appendChild(style);
