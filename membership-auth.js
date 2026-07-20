@@ -33,6 +33,8 @@ function installStyles() {
     .member-google-button:hover{background:rgba(165,130,84,.2)}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
+    /* unified-black-navigation */
+    nav,.nav-inner,.nav-content{background:rgba(7,11,6,.97)!important}
     /* dropdown-layer-fix */
     nav{height:104px!important;overflow:visible!important}
     .nav-links>li:not(:last-child){position:relative!important;z-index:220!important}
