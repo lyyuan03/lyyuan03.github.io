@@ -33,7 +33,11 @@ function installStyles() {
     .member-google-button:hover{background:rgba(165,130,84,.2)}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
+    /* dropdown-layer-fix */
     nav{height:104px!important;overflow:visible!important}
+    .nav-links>li:not(:last-child){position:relative!important;z-index:220!important}
+    .nav-links>li:not(:last-child)>.dropdown{z-index:1200!important}
+    .nav-links>li:not(:last-child)>.dropdown:before{content:''!important;position:absolute!important;top:-18px!important;left:0!important;right:0!important;height:18px!important}
     .nav-inner{height:56px!important;position:relative}
     .nav-links>li:last-child{position:fixed!important;top:56px!important;left:0!important;right:0!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;padding:0 24px!important;background:rgba(7,11,6,.97)!important;border-top:1px solid rgba(165,130,84,.12)!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:99!important;box-shadow:none!important}
     #member-login-button{height:34px!important;padding:6px 14px!important;font-size:12px!important;letter-spacing:.1em!important;background:rgba(165,130,84,.07)!important}
