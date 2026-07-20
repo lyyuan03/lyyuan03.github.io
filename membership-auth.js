@@ -41,7 +41,7 @@ function installStyles() {
     .nav-links>li:not(:last-child)>.dropdown{z-index:1200!important}
     .nav-links>li:not(:last-child)>.dropdown:before{content:''!important;position:absolute!important;top:-18px!important;left:0!important;right:0!important;height:18px!important}
     .nav-inner{height:56px!important;position:relative}
-    .nav-links>li:last-child{position:fixed!important;top:56px!important;left:0!important;right:0!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;padding:0 24px!important;background:rgba(7,11,6,.97)!important;border-top:1px solid rgba(165,130,84,.12)!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:99!important;box-shadow:none!important}
+    .nav-links>li:last-child{position:fixed!important;top:56px!important;left:0!important;right:0!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;padding:0 24px!important;background:rgba(7,11,6,.97)!important;border-top:0!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:99!important;box-shadow:none!important}
     #member-login-button{height:34px!important;padding:6px 14px!important;font-size:12px!important;letter-spacing:.1em!important;background:rgba(165,130,84,.07)!important}
     @media(max-width:768px){
       .nav-inner{padding:0 12px!important;display:block!important;overflow:hidden!important}
