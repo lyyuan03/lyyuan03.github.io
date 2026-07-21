@@ -7,9 +7,9 @@ export const staticArticles = [
     status: "published",
     publishedAt: "2026-07-21T00:00:00.000Z",
     updatedAt: "2026-07-21T00:00:00.000Z",
-    coverImage: "assets/articles/lingxiu-zouhuo/cover.png",
+    coverImage: "assets/articles/lingxiu-zouhuo/cover.jpg",
     excerpt: "靈修真正需要分辨的，不只是異象、靈動與身體反應，而是一個人是否能在氣脈變化與內在陰影浮現時，誠實回到自己。",
-    content: `![靈修者在森林中靜坐，胸口有微光流動](assets/articles/lingxiu-zouhuo/cover.png)
+    content: `![靈修者在森林中靜坐，胸口有微光流動](assets/articles/lingxiu-zouhuo/cover.jpg)
 
 這些年來，幾乎每一場公開講座結束，都會有人小聲問我同一句話：「老師，我是不是快走火入魔了？」
 
@@ -27,7 +27,7 @@ export const staticArticles = [
 
 多年的靈修經驗讓我看得越來越清楚：走火入魔，從來不是一件事，而是兩件完全不同的事，只是被同一個詞語混在一起講了。
 
-![氣脈光線與內在陰影分立於靜謐空間](assets/articles/lingxiu-zouhuo/qimai-shadow.png)
+![氣脈光線與內在陰影分立於靜謐空間](assets/articles/lingxiu-zouhuo/qimai-shadow.jpg)
 
 第一種，是身體的魔性，也就是氣脈本身出的問題。靈修者在啟靈、靈動的過程中，身體會有能量的運行與轉化。如果修練的方法不對，或是急於求成、強行導引，氣脈就會逆亂失序。這時候出現的顫抖、暈眩、胸悶、氣血翻湧，是生理層面的失衡，是身體在告訴你：方法錯了，速度太快了，該停下來調整了。這一種魔，處理的方法相對單純。找對懂氣脈的老師，慢下來，讓身體重新找回它原本的節奏。
 
@@ -59,7 +59,7 @@ export const staticArticles = [
 
 這正是為什麼我常說：靈修出問題的人，往往不是能力太弱，而是自我覺察太少。他們能感應到很多，卻無法回頭看見自己。氣脈可以調，方法可以改，但心魔不會因為換了一個老師、換了一套呼吸法就自動消失。它只會在你願意誠實面對自己的那一刻，慢慢鬆開。
 
-![修行者走出森林，回到晨光中的日常街道](assets/articles/lingxiu-zouhuo/return-life.png)
+![修行者走出森林，回到晨光中的日常街道](assets/articles/lingxiu-zouhuo/return-life.jpg)
 
 ## 修行的核心，從來是回到做人
 
