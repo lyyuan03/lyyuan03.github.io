@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -86,10 +86,10 @@ function renderArticle(article) {
 
 async function loadArticles() {
   renderTabs();
-  const snapshot = await getDocs(collection(db, "articles"));
+  const publishedQuery = query(collection(db, "articles"), where("status", "==", "published"));
+  const snapshot = await getDocs(publishedQuery);
   const articles = snapshot.docs
     .map((item) => ({ id: item.id, ...item.data() }))
-    .filter((article) => article.status === "published")
     .sort(sortPublished);
 
   if (activeId) {
