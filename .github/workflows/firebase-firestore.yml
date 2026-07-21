@@ -9,6 +9,7 @@ on:
       - firestore.rules
       - firebase.json
       - .firebaserc
+      - .github/workflows/firebase-firestore.yml
 
 jobs:
   deploy-firestore:
@@ -33,7 +34,7 @@ jobs:
           if gcloud firestore databases describe --database="(default)" --project="$PROJECT_ID" >/dev/null 2>&1; then
             echo "Firestore default database already exists."
           else
-            gcloud firestore databases create --database="(default)" --location="asia-east1" --project="$PROJECT_ID"
+            gcloud firestore databases create --database="(default)" --location="asia-east1" --type="firestore-native" --project="$PROJECT_ID"
           fi
 
       - name: Install Firebase CLI
