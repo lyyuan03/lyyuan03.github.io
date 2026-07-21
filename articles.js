@@ -134,7 +134,6 @@ function renderArticleShare(article) {
   const shareUrl = `${location.origin}${location.pathname}?id=${encodeURIComponent(article.id || article.slug || activeId)}`;
   return `
     <div class="article-share" aria-label="靈元院社群平台">
-      <span>社群</span>
       <a class="article-social-facebook" href="https://www.facebook.com/lyy.taiwan" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Facebook" title="靈元院 Facebook">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4.4c-.5-.1-2.1-.2-4-.2-3.9 0-6.6 2.4-6.6 6.8v3.8H2v4h4.4V24h5.4v-5.2h4.5l.7-4h-5.2v-3.4C11.8 9.8 12.2 8 14 8Z" fill="currentColor"/></svg>
       </a>
