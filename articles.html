@@ -10,16 +10,53 @@
 :root{--gold:#A58254;--cream:#F5F0E8;--deep:#071106;--panel:rgba(14,22,12,.9);--line:rgba(165,130,84,.24);--serif:'Noto Serif TC','Georgia',serif;--sans:'Noto Sans TC','Arial',sans-serif;--en:'Cormorant Garamond',serif}
 *{box-sizing:border-box}body{margin:0;background:#071106;color:var(--cream);font-family:var(--sans);line-height:1.9;letter-spacing:.04em}a{color:inherit;text-decoration:none}.site-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 28px;background:rgba(7,17,6,.97);border-bottom:1px solid var(--line)}.logo{font-family:var(--serif);color:var(--gold);letter-spacing:.22em;font-size:20px}.site-top nav{display:flex;gap:18px;flex-wrap:wrap}.site-top a{font-size:14px;color:rgba(245,240,232,.72)}.hero{padding:74px 24px 52px;text-align:center;background:linear-gradient(180deg,rgba(7,17,6,.84),rgba(7,17,6,.96)),url('forest-path.jpg') center/cover}.hero .eyebrow{font-family:var(--en);font-size:13px;letter-spacing:.42em;color:rgba(165,130,84,.8)}h1{font-family:var(--serif);font-size:42px;font-weight:500;letter-spacing:.24em;color:var(--gold);margin:10px 0 14px}.hero p{max-width:680px;margin:0 auto;color:rgba(245,240,232,.72)}.wrap{max-width:1040px;margin:0 auto;padding:34px 24px 72px}.category-tabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:30px}.category-tabs a{border:1px solid rgba(165,130,84,.28);padding:9px 14px;color:rgba(245,240,232,.66);font-size:14px}.category-tabs a.is-active,.category-tabs a:hover{background:rgba(165,130,84,.14);color:var(--gold)}.article-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.article-card{display:block;padding:24px;background:var(--panel);border:1px solid var(--line);min-height:210px}.article-card:hover{background:rgba(25,36,20,.94)}.article-card img{width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;border:1px solid rgba(165,130,84,.18)}.article-meta{font-size:12px;color:rgba(165,130,84,.86);letter-spacing:.18em}.article-card h2{font-family:var(--serif);font-size:23px;font-weight:500;letter-spacing:.1em;margin:10px 0;color:#F5F0E8}.article-card p{margin:0;color:rgba(245,240,232,.66);font-size:15px}.article-view{max-width:760px;margin:0 auto;padding:34px 0}.article-view h2{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:.12em;color:var(--gold);line-height:1.45}.article-cover{width:100%;max-height:460px;object-fit:cover;margin:22px 0;border:1px solid var(--line)}.article-body{font-family:var(--serif);font-size:18px;color:rgba(245,240,232,.86)}.article-body p{margin:0 0 1.35em}.article-body h1,.article-body h2,.article-body h3{color:var(--gold);font-weight:500}.article-body img{width:100%;height:auto;display:block;margin:28px auto;border:1px solid var(--line)}.member-article-gate{margin:42px auto 0;padding:34px 30px;text-align:center;border:1px solid rgba(165,130,84,.32);background:linear-gradient(180deg,rgba(165,130,84,.13),rgba(14,22,12,.94));box-shadow:0 18px 60px rgba(0,0,0,.22)}.member-article-gate-label{font-family:var(--en);font-size:12px;letter-spacing:.34em;color:rgba(165,130,84,.86);margin-bottom:10px}.member-article-gate h3{margin:0 0 12px;font-family:var(--serif);font-size:23px;font-weight:500;letter-spacing:.12em;color:var(--gold)}.member-article-gate p{margin:0 auto 22px;max-width:520px;color:rgba(245,240,232,.68)}#article-login-button{border:1px solid rgba(165,130,84,.58);background:rgba(165,130,84,.18);color:#F5F0E8;padding:12px 24px;font-family:var(--sans);font-size:14px;letter-spacing:.1em;cursor:pointer}#article-login-button:disabled{opacity:.6;cursor:wait}.empty{text-align:center;color:rgba(245,240,232,.54);padding:60px 0}@media(max-width:760px){.site-top{align-items:flex-start;flex-direction:column}.article-grid{grid-template-columns:1fr}h1{font-size:34px}.wrap{padding:26px 18px 56px}}
 </style>
+
+<style id="homepage-nav-style">
+nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-filter:blur(20px);z-index:100;border-bottom:1px solid rgba(165,130,84,.14)}
+.nav-inner{display:flex;justify-content:center;align-items:center;height:56px;padding:0 40px}
+.nav-links{display:flex;gap:30px;list-style:none;align-items:center;margin:0;padding:0}
+.nav-links>li{position:relative}
+.nav-links>li>a,.nav-links>li>span{color:rgba(245,240,232,.78);font-size:13.5px;letter-spacing:.14em;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;text-decoration:none}
+.nav-links>li>a:hover,.nav-links>li>span:hover,.nav-links>li>a.active{color:var(--gold)}
+.has-dropdown:after{content:'▾';font-size:9px;opacity:.5}
+.dropdown{display:none;position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%);background:rgba(14,20,12,.97);border:1px solid rgba(165,130,84,.18);box-shadow:0 10px 32px rgba(0,0,0,.5);min-width:185px;padding:6px 0;list-style:none;white-space:nowrap;margin:0}
+.dropdown:before{content:'';position:absolute;top:-14px;left:0;right:0;height:14px}
+.dropdown li a,.dropdown li span{display:block;padding:10px 20px;color:rgba(245,240,232,.7);font-size:13px;letter-spacing:.1em;text-decoration:none}
+.dropdown li a:hover{background:rgba(165,130,84,.1);color:var(--gold)}
+.nav-links>li:hover .dropdown{display:block}
+.nav-disabled{color:rgba(245,240,232,.28)!important;cursor:default;pointer-events:none}
+</style>
+<style id="mobile-member-nav-fix">
+nav,.nav-inner,.nav-content{background:rgba(7,11,6,.97)!important}
+.nav-links>li:not(:last-child){position:relative!important;z-index:220!important}.nav-links>li:not(:last-child)>.dropdown{z-index:1200!important}.nav-links>li:not(:last-child)>.dropdown:before{content:""!important;position:absolute!important;top:-18px!important;left:0!important;right:0!important;height:18px!important}
+body{padding-top:104px!important}
+nav{position:fixed!important;top:0!important;left:0!important;right:0!important;height:104px!important;overflow:visible!important}
+.nav-inner,.nav-content{height:56px!important;min-height:56px!important;padding-top:0!important;padding-bottom:0!important;display:flex!important;align-items:center!important}
+.nav-links{height:56px!important;align-items:center!important;flex-wrap:nowrap!important}
+.nav-links>li:last-child{position:fixed!important;top:56px!important;left:0!important;right:0!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;padding:0 max(24px,calc((100vw - 1080px)/2 + 24px))!important;background:rgba(7,11,6,.97)!important;border-top:0!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:99!important;box-shadow:none!important}
+#member-login-button{height:34px!important;padding:6px 14px!important;font-size:12px!important;letter-spacing:.1em!important;background:rgba(165,130,84,.07)!important}
+.hero{margin-top:0!important}
+@media(max-width:768px){
+.nav-inner,.nav-content{padding-left:12px!important;padding-right:12px!important;overflow:hidden!important}
+.nav-links{width:100%!important;display:flex!important;gap:16px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:0 8px!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch}
+.nav-links::-webkit-scrollbar{display:none}.nav-links>li{flex:0 0 auto!important}
+.nav-links>li:last-child{padding:0 14px!important}
+#member-login-button{max-width:calc(100vw - 28px)!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+.dropdown{position:static;transform:none;margin-top:8px;background:rgba(14,20,12,.96)}
+.nav-links>li:hover .dropdown{display:none}.nav-links>li.open .dropdown{display:block}
+}
+</style>
 </head>
 <body>
-<header class="site-top">
-  <a class="logo" href="index.html">靈元院</a>
-  <nav>
-    <a href="index.html">首頁</a>
-    <a href="articles.html">全部文選</a>
-    <a href="admin.html" rel="nofollow">文章後台</a>
-  </nav>
-</header>
+<nav><div class="nav-inner"><ul class="nav-links">
+<li><a href="https://lyyuan.tw/">首頁</a></li>
+<li><span class="has-dropdown">活動</span><ul class="dropdown"><li><a href="niandian.html">年度點燈</a></li><li><a href="dizhi.html">奠基法會</a></li><li><a href="lixing.html">例行法儀</a></li><li><a href="fahui.html">報名法儀</a></li><li><a class="nav-disabled">課程</a></li></ul></li>
+<li><a class="has-dropdown active" href="articles.html">文選</a><ul class="dropdown"><li><a href="articles.html?category=spiritual">靈．修行</a></li><li><a href="articles.html?category=worldly">人．俗世</a></li><li><a href="articles.html?category=spirit-world">異．靈界</a></li><li><a href="articles.html?category=reading">思．讀物</a></li></ul></li>
+<li><span class="has-dropdown">選物</span><ul class="dropdown"><li><a href="https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh">宇色靈修著作</a></li><li><a href="https://reurl.cc/vv1k5e" target="_blank">靈性美學館</a></li></ul></li>
+<li><span class="has-dropdown">影像</span><ul class="dropdown"><li><a href="https://www.youtube.com/KINKIOSEL" target="_blank">YT ｜ 宇色心養生</a></li><li><a href="https://www.youtube.com/@lyyuan03" target="_blank">YT ｜ 靈元院頻道</a></li><li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank">Podcast ｜ 宇色人間書影</a></li><li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank">Podcast ｜ 宇色心養生</a></li></ul></li>
+<li><span class="has-dropdown">社群</span><ul class="dropdown"><li><a href="https://www.facebook.com/lyy.taiwan" target="_blank">FB ｜ 靈元院</a></li><li><a href="https://www.instagram.com/lyyuan03/" target="_blank">IG ｜ 靈元院</a></li><li><a href="https://www.facebook.com/authorosel/" target="_blank">FB ｜ 我在人間－宇色</a></li><li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank">IG ｜ 我在人間－宇色</a></li></ul></li>
+<li><button id="member-login-button" type="button" style="border:1px solid rgba(165,130,84,.55);background:rgba(165,130,84,.08);color:#A58254;padding:7px 14px;font-family:'Noto Sans TC','Arial',sans-serif;font-size:12px;letter-spacing:.12em;cursor:pointer;white-space:nowrap">會員登入</button></li>
+</ul></div></nav>
 <section class="hero">
   <div class="eyebrow">SPIRITUAL READING</div>
   <h1>文選</h1>
@@ -29,6 +66,8 @@
   <div id="category-tabs" class="category-tabs"></div>
   <div id="article-root"><div class="empty">文章載入中…</div></div>
 </main>
-<script type="module" src="articles.js?v=20260721-member-gate-1"></script>
+<script>(()=>{const nav=document.querySelector('nav');if(!nav)return;const triggers=[...nav.querySelectorAll('.has-dropdown')];const mq=window.matchMedia('(max-width:768px)');const close=()=>nav.querySelectorAll('.open').forEach(i=>i.classList.remove('open'));triggers.forEach(t=>{const li=t.closest('li');t.addEventListener('click',e=>{if(!mq.matches)return;e.preventDefault();const is=li.classList.contains('open');close();if(!is)li.classList.add('open')})});document.addEventListener('click',e=>{if(!nav.contains(e.target))close()})})();</script>
+<script type="module" src="/membership-auth.js?v=20260720-1"></script>
+<script type="module" src="articles.js?v=20260721-member-gate-2"></script>
 </body>
 </html>
