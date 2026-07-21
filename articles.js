@@ -109,14 +109,24 @@ function renderBookCta() {
   `;
 }
 
-function renderMemberGate() {
+function renderMemberGate(lockedContent = "") {
+  const preview = lockedContent.trim() || "登入會員後，即可閱讀完整文章內容。";
   return `
-    <div class="member-article-gate">
-      <div class="member-article-gate-label">MEMBER ONLY</div>
-      <h3>登入會員後，繼續閱讀完整文章</h3>
-      <p>這篇文章後段內容僅開放登入會員閱讀。登入後會自動展開全文。</p>
-      <button id="article-login-button" type="button">使用 Google 登入</button>
-    </div>
+    <section class="member-lock-zone" aria-label="訂閱看完整內容">
+      <div class="article-body member-lock-preview" aria-hidden="true">${renderContent(preview)}</div>
+      <div class="member-lock-card">
+        <div class="member-lock-icon" aria-hidden="true">⌕</div>
+        <h3>訂閱看完整內容</h3>
+        <p>免費會員限閱文章</p>
+        <ul>
+          <li>支持會員觀看全文</li>
+          <li>宇色老師靈修解析</li>
+          <li>靈異政治人間社會</li>
+          <li>付費暢讀全網文章</li>
+        </ul>
+        <button id="article-login-button" type="button">會員登入看全文</button>
+      </div>
+    </section>
   `;
 }
 
@@ -152,8 +162,8 @@ function renderArticle(article) {
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-body">${renderContent(visibleContent)}</div>
+      ${!canReadFull ? renderMemberGate(lockedContent) : ""}
       ${renderBookCta()}
-      ${!canReadFull ? renderMemberGate() : ""}
     </article>
   `;
   bindArticleLogin();
