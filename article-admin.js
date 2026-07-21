@@ -113,17 +113,38 @@ function renderList() {
   });
 }
 
+function showFirestoreError(error) {
+  console.error(error);
+  const code = error?.code || "";
+  if (code === "permission-denied") {
+    listEl.innerHTML = '<div class="empty">Firestore 權限尚未開通。請確認 firestore.rules 已發布，且目前登入帳號為靈元院管理員 Gmail。</div>';
+    saveStatus.textContent = "權限未開通";
+    return;
+  }
+  if (code === "unavailable" || code === "failed-precondition" || code === "not-found") {
+    listEl.innerHTML = '<div class="empty">Firestore Database 尚未建立或索引尚未完成，請先完成 Firebase 部署設定。</div>';
+    saveStatus.textContent = "資料庫尚未就緒";
+    return;
+  }
+  listEl.innerHTML = '<div class="empty">文章資料暫時無法載入，請稍後再試。</div>';
+  saveStatus.textContent = "載入失敗";
+}
+
 async function loadArticles() {
   listEl.innerHTML = '<div class="empty">載入中…</div>';
-  const snapshot = await getDocs(collection(db, "articles"));
-  articles = snapshot.docs
-    .map((item) => ({ id: item.id, ...item.data() }))
-    .sort((a, b) => {
-      const at = a.updatedAt?.toMillis?.() || 0;
-      const bt = b.updatedAt?.toMillis?.() || 0;
-      return bt - at;
-    });
-  renderList();
+  try {
+    const snapshot = await getDocs(collection(db, "articles"));
+    articles = snapshot.docs
+      .map((item) => ({ id: item.id, ...item.data() }))
+      .sort((a, b) => {
+        const at = a.updatedAt?.toMillis?.() || 0;
+        const bt = b.updatedAt?.toMillis?.() || 0;
+        return bt - at;
+      });
+    renderList();
+  } catch (error) {
+    showFirestoreError(error);
+  }
 }
 
 async function saveArticle(event) {
@@ -200,5 +221,5 @@ onAuthStateChanged(auth, async (user) => {
   app.classList.remove("hidden");
   userLabel.textContent = user.email;
   await loadArticles();
-  if (!currentId) newArticle();
+  if (!currentId && !saveStatus.textContent) newArticle();
 });
