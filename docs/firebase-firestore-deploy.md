@@ -1,6 +1,6 @@
 # Firebase Firestore 部署設定
 
-這個 repo 已經準備好從 GitHub Actions 發布 Firestore 規則。
+這個 repo 已經準備好從 GitHub Actions 發布 Firestore 與 Storage 規則。
 
 ## 已完成
 
@@ -11,7 +11,7 @@
   - 不存在時建立 `(default)` 資料庫
   - 資料庫地區：`asia-east1`
   - 模式：Firestore Native
-  - 發布 `firestore.rules`
+  - 發布 `firestore.rules` 與 `storage.rules`
 
 ## GitHub Secret
 
@@ -40,3 +40,12 @@
 GitHub repo → Actions → Deploy Firebase Firestore → Run workflow
 
 成功後，`admin.html` 才能安全寫入 `articles`，前台 `articles.html` 也能讀取已發布文章。
+
+## 圖片存放
+
+後台文章圖片會上傳到 Firebase Storage：
+
+`articles/{articleId 或 draft}/{檔名}`
+
+文章文字、摘要、分類與發布狀態存在 Firestore 的 `articles` collection。
+圖片檔案本身存在 Storage，文章內只保存圖片下載網址。
