@@ -120,6 +120,12 @@ function renderSupportGate(lockedContent = "") {
           <a class="article-support-link facebook" href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">追蹤 靈元院 Facebook</a>
         </div>
         <button id="article-continue-button" type="button">繼續閱讀全文</button>
+        <div class="article-author-links" aria-label="宇色老師社群">
+          <span>更多宇色老師</span>
+          <a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">影音</a>
+          <i aria-hidden="true">·</i>
+          <a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">文章</a>
+        </div>
       </div>
     </section>
   `;
