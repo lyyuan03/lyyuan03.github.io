@@ -45,8 +45,8 @@
   - 訂閱 靈元院YouTube
   - 追蹤 靈元院 Facebook
   - 繼續閱讀全文
-- YouTube 固定連到 `https://www.youtube.com/KINKIOSEL?sub_confirmation=1`。
-- Facebook 固定連到 `https://www.facebook.com/authorosel/`。
+- YouTube 固定連到 `https://www.youtube.com/@lyyuan03`。
+- Facebook 固定連到 `https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr`。
 - 社群支持屬於邀請，不強迫驗證；讀者可直接按「繼續閱讀全文」在原頁展開後段。
 - 不再使用手機系統分享選單，也不得把 Google 登入重新放回公開導覽列。
 
@@ -71,7 +71,7 @@
   - 使用淡色細框
   - 滑入時才稍微提高亮度
 - 固定順序與功能：
-  1. Facebook：直接前往靈元院官方帳號 `https://www.facebook.com/lyy.taiwan`
+  1. Facebook：直接前往靈元院官方帳號 `https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr`
   2. Instagram：直接前往靈元院官方帳號 `https://www.instagram.com/lyyuan03/`
   3. LINE：分享目前文章標題與網址
   4. Telegram：分享目前文章標題與網址
