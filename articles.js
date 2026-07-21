@@ -135,10 +135,10 @@ function renderArticleShare(article) {
   return `
     <div class="article-share" aria-label="靈元院社群平台">
       <span>社群</span>
-      <a href="https://www.facebook.com/lyy.taiwan" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Facebook" title="靈元院 Facebook">
+      <a class="article-social-facebook" href="https://www.facebook.com/lyy.taiwan" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Facebook" title="靈元院 Facebook">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4.4c-.5-.1-2.1-.2-4-.2-3.9 0-6.6 2.4-6.6 6.8v3.8H2v4h4.4V24h5.4v-5.2h4.5l.7-4h-5.2v-3.4C11.8 9.8 12.2 8 14 8Z" fill="currentColor"/></svg>
       </a>
-      <a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="靈元院 Instagram">
+      <a class="article-social-instagram" href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="靈元院 Instagram">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/></svg>
       </a>
       <button class="article-share-copy" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="複製文章連結" title="複製文章連結">
