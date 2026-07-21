@@ -32,7 +32,7 @@ function escapeHtml(value = "") {
 }
 
 function renderInline(value = "") {
-  return escapeHtml(value).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, '<img src="$2" alt="$1">');
+  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1">');
 }
 
 function renderContent(value = "") {
