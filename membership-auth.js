@@ -1,4 +1,4 @@
-import { auth, provider } from "./firebase-config.js";
+import { auth, provider, isAdminEmail } from "./firebase-config.js";
 import { signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 function installStyles() {
@@ -79,6 +79,10 @@ if (loginButton) {
 
   loginButton.addEventListener("click", async () => {
     if (auth.currentUser) {
+      if (isAdminEmail(auth.currentUser.email)) {
+        window.location.href = "admin.html";
+        return;
+      }
       loginButton.disabled = true;
       try { await signOut(auth); } finally { loginButton.disabled = false; }
     } else {
@@ -88,6 +92,7 @@ if (loginButton) {
 
   googleButton.addEventListener("click", async () => {
     googleButton.disabled = true;
+    sessionStorage.setItem("member-login-target-admin", "1");
     googleButton.textContent = isMobile ? "正在前往 Google 登入…" : "正在開啟 Google 登入…";
     loginButton.disabled = true;
     loginButton.textContent = "登入中…";
@@ -115,9 +120,20 @@ if (loginButton) {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       const displayName = (user.displayName || "會員").trim().split(/\s+/)[0];
+      if (isAdminEmail(user.email)) {
+        loginButton.textContent = "文章後台";
+        loginButton.title = "前往靈元院文章後台";
+        if (sessionStorage.getItem("member-login-target-admin") === "1") {
+          sessionStorage.removeItem("member-login-target-admin");
+          window.location.href = "admin.html";
+        }
+        return;
+      }
+      sessionStorage.removeItem("member-login-target-admin");
       loginButton.textContent = `${displayName}｜登出`;
       loginButton.title = user.email || "已登入";
     } else {
+      sessionStorage.removeItem("member-login-target-admin");
       loginButton.textContent = "會員登入";
       loginButton.title = "使用 Google 帳號登入";
     }
