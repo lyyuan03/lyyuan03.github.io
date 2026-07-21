@@ -136,10 +136,10 @@ function renderArticleShare(article) {
   return `
     <div class="article-share" aria-label="分享文章">
       <span>分享</span>
-      <button class="article-share-facebook" type="button" data-share-url="${escapeHtml(shareUrl)}" data-facebook-url="${escapeHtml(facebookUrl)}" aria-label="開啟分享選單，可選 Facebook" title="分享到 Facebook">
+      <button class="article-share-facebook" type="button" data-share-url="${escapeHtml(shareUrl)}" data-facebook-url="${escapeHtml(facebookUrl)}" aria-label="使用 Facebook 分享" title="分享到 Facebook">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4.4c-.5-.1-2.1-.2-4-.2-3.9 0-6.6 2.4-6.6 6.8v3.8H2v4h4.4V24h5.4v-5.2h4.5l.7-4h-5.2v-3.4C11.8 9.8 12.2 8 14 8Z" fill="currentColor"/></svg>
       </button>
-      <button class="article-share-instagram" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="開啟分享選單，可選 Instagram" title="分享到 Instagram">
+      <button class="article-share-instagram" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="開啟 Instagram，文章連結會先複製" title="分享到 Instagram">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/></svg>
       </button>
       <button class="article-share-copy" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="複製文章連結" title="複製文章連結">
@@ -160,30 +160,42 @@ async function copyArticleUrl(button) {
   }
 }
 
-async function openNativeShare(button) {
-  if (!navigator.share) return false;
-  try {
-    await navigator.share({ title: document.title, url: button.dataset.shareUrl });
-    return true;
-  } catch (error) {
-    return error?.name === "AbortError";
-  }
+function openAppWithFallback(appUrl, fallbackUrl) {
+  let appOpened = false;
+  const markOpened = () => {
+    if (document.hidden) appOpened = true;
+  };
+  document.addEventListener("visibilitychange", markOpened, { once: true });
+  location.href = appUrl;
+  window.setTimeout(() => {
+    document.removeEventListener("visibilitychange", markOpened);
+    if (!appOpened && fallbackUrl) location.href = fallbackUrl;
+  }, 1200);
 }
 
 function bindArticleShare() {
   const copyButton = document.querySelector(".article-share-copy");
   const facebookButton = document.querySelector(".article-share-facebook");
   const instagramButton = document.querySelector(".article-share-instagram");
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   copyButton?.addEventListener("click", () => copyArticleUrl(copyButton));
-  facebookButton?.addEventListener("click", async () => {
-    if (await openNativeShare(facebookButton)) return;
-    window.open(facebookButton.dataset.facebookUrl, "_blank", "noopener,noreferrer");
+  facebookButton?.addEventListener("click", () => {
+    if (!isMobile) {
+      window.open(facebookButton.dataset.facebookUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    const appUrl = `fb://facewebmodal/f?href=${encodeURIComponent(facebookButton.dataset.facebookUrl)}`;
+    openAppWithFallback(appUrl, facebookButton.dataset.facebookUrl);
   });
-  instagramButton?.addEventListener("click", async () => {
-    if (await openNativeShare(instagramButton)) return;
-    await copyArticleUrl(instagramButton);
+  instagramButton?.addEventListener("click", () => {
+    navigator.clipboard?.writeText(instagramButton.dataset.shareUrl).catch(() => {});
     const status = document.querySelector(".article-share-status");
-    if (status) status.textContent = "已複製，請至 Instagram 貼上";
+    if (status) status.textContent = "連結已複製，請在 Instagram 貼上";
+    if (!isMobile) {
+      window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+      return;
+    }
+    openAppWithFallback("instagram://app", "https://www.instagram.com/");
   });
 }
 
