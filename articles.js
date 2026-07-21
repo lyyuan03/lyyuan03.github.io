@@ -113,11 +113,11 @@ function renderSupportGate(lockedContent = "") {
       <div class="article-body member-lock-preview" aria-hidden="true">${renderContent(preview)}</div>
       <div class="member-lock-card article-support-card">
         <div class="member-lock-icon" aria-hidden="true">◇</div>
-        <h3>支持宇色老師，繼續閱讀</h3>
-        <p>若這篇文章對你有所啟發，歡迎訂閱 YouTube、追蹤 Facebook，持續收到新的靈修解析。</p>
+        <h3>文章未完，繼續閱讀</h3>
+        <p>若這篇文章對你有所啟發，歡迎訂閱<br><span>YouTube、追蹤 Facebook，持續收到新的靈修解析。</span></p>
         <div class="article-support-actions">
-          <a class="article-support-link youtube" href="https://www.youtube.com/KINKIOSEL?sub_confirmation=1" target="_blank" rel="noopener noreferrer">訂閱宇色 YouTube</a>
-          <a class="article-support-link facebook" href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">追蹤宇色 Facebook</a>
+          <a class="article-support-link youtube" href="https://www.youtube.com/KINKIOSEL?sub_confirmation=1" target="_blank" rel="noopener noreferrer">訂閱 靈元院YouTube</a>
+          <a class="article-support-link facebook" href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">追蹤 靈元院 Facebook</a>
         </div>
         <button id="article-continue-button" type="button">繼續閱讀全文</button>
       </div>
