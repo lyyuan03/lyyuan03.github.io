@@ -1,6 +1,7 @@
-import { auth, db, provider, isAdminEmail } from "./firebase-config.js";
+import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
 import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDocs, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -24,6 +25,9 @@ const preview = document.getElementById("preview");
 const saveStatus = document.getElementById("save-status");
 const deleteButton = document.getElementById("delete-article");
 const newButton = document.getElementById("new-article");
+const uploadButton = document.getElementById("upload-image");
+const imageInput = document.getElementById("image-input");
+const uploadStatus = document.getElementById("upload-status");
 
 function slugify(value) {
   const text = (value || "").trim().toLowerCase();
@@ -45,16 +49,20 @@ function escapeHtml(value = "") {
   }[char]));
 }
 
+function renderInline(value = "") {
+  return escapeHtml(value).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, '<img src="$2" alt="$1">');
+}
+
 function renderContent(value = "") {
-  return escapeHtml(value)
+  return value
     .split(/\n{2,}/)
     .map((block) => {
       const trimmed = block.trim();
       if (!trimmed) return "";
-      if (trimmed.startsWith("### ")) return `<h3>${trimmed.slice(4)}</h3>`;
-      if (trimmed.startsWith("## ")) return `<h2>${trimmed.slice(3)}</h2>`;
-      if (trimmed.startsWith("# ")) return `<h1>${trimmed.slice(2)}</h1>`;
-      return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
+      if (trimmed.startsWith("### ")) return `<h3>${renderInline(trimmed.slice(4))}</h3>`;
+      if (trimmed.startsWith("## ")) return `<h2>${renderInline(trimmed.slice(3))}</h2>`;
+      if (trimmed.startsWith("# ")) return `<h1>${renderInline(trimmed.slice(2))}</h1>`;
+      return `<p>${renderInline(trimmed).replace(/\n/g, "<br>")}</p>`;
     })
     .join("");
 }
@@ -186,6 +194,47 @@ async function deleteArticle() {
   await loadArticles();
 }
 
+async function uploadImages(files) {
+  const user = auth.currentUser;
+  if (!user || !isAdminEmail(user.email)) {
+    alert("請先使用靈元院管理員 Gmail 登入。");
+    return;
+  }
+  const selected = Array.from(files || []).filter((file) => file.type.startsWith("image/"));
+  if (!selected.length) return;
+
+  uploadButton.disabled = true;
+  uploadStatus.textContent = `上傳中 0/${selected.length}…`;
+
+  const inserted = [];
+  for (let index = 0; index < selected.length; index += 1) {
+    const file = selected[index];
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+    const articleKey = currentId || "draft";
+    const storagePath = `articles/${articleKey}/${Date.now()}-${index + 1}-${safeName}`;
+    const imageRef = ref(storage, storagePath);
+    await uploadBytes(imageRef, file, {
+      contentType: file.type,
+      customMetadata: {
+        uploadedBy: user.email || "",
+        articleId: articleKey
+      }
+    });
+    const url = await getDownloadURL(imageRef);
+    inserted.push(`![${file.name}](${url})`);
+    uploadStatus.textContent = `上傳中 ${index + 1}/${selected.length}…`;
+  }
+
+  const addition = `\n\n${inserted.join("\n\n")}\n\n`;
+  const start = form.content.selectionStart || form.content.value.length;
+  const end = form.content.selectionEnd || form.content.value.length;
+  form.content.value = form.content.value.slice(0, start) + addition + form.content.value.slice(end);
+  preview.innerHTML = renderContent(form.content.value);
+  uploadStatus.textContent = `已插入 ${inserted.length} 張圖片`;
+  uploadButton.disabled = false;
+  imageInput.value = "";
+}
+
 loginButton.addEventListener("click", async () => {
   gateStatus.textContent = "登入中…";
   try {
@@ -200,6 +249,12 @@ logoutButton.addEventListener("click", () => signOut(auth));
 newButton.addEventListener("click", newArticle);
 form.addEventListener("submit", saveArticle);
 deleteButton.addEventListener("click", deleteArticle);
+uploadButton.addEventListener("click", () => imageInput.click());
+imageInput.addEventListener("change", () => uploadImages(imageInput.files).catch((error) => {
+  console.error(error);
+  uploadStatus.textContent = "圖片上傳失敗，請確認 Firebase Storage 權限。";
+  uploadButton.disabled = false;
+}));
 form.content.addEventListener("input", () => {
   preview.innerHTML = renderContent(form.content.value);
 });
