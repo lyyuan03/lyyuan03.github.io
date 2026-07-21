@@ -116,8 +116,8 @@ function renderSupportGate(lockedContent = "") {
         <h3>文章未完，繼續閱讀</h3>
         <p>若這篇文章對你有所啟發，歡迎訂閱<br><span>YouTube、追蹤 Facebook，持續收到新的靈修解析。</span></p>
         <div class="article-support-actions">
-          <a class="article-support-link youtube" href="https://www.youtube.com/KINKIOSEL?sub_confirmation=1" target="_blank" rel="noopener noreferrer">訂閱 靈元院YouTube</a>
-          <a class="article-support-link facebook" href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">追蹤 靈元院 Facebook</a>
+          <a class="article-support-link youtube" href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">訂閱 靈元院YouTube</a>
+          <a class="article-support-link facebook" href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">追蹤 靈元院 Facebook</a>
         </div>
         <button id="article-continue-button" type="button">繼續閱讀全文</button>
       </div>
@@ -144,7 +144,7 @@ function renderArticleShare(article) {
   const encodedTitle = encodeURIComponent(shareTitle);
   return `
     <div class="article-share" aria-label="靈元院社群平台">
-      <a class="article-social-facebook" href="https://www.facebook.com/lyy.taiwan" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Facebook" title="靈元院 Facebook">
+      <a class="article-social-facebook" href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Facebook" title="靈元院 Facebook">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4.4c-.5-.1-2.1-.2-4-.2-3.9 0-6.6 2.4-6.6 6.8v3.8H2v4h4.4V24h5.4v-5.2h4.5l.7-4h-5.2v-3.4C11.8 9.8 12.2 8 14 8Z" fill="currentColor"/></svg>
       </a>
       <a class="article-social-instagram" href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="靈元院 Instagram">
