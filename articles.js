@@ -1,4 +1,6 @@
-import { db } from "./firebase-config.js";
+import { auth, db, provider } from "./firebase-config.js";
+import { staticArticles } from "./static-articles.js";
+import { onAuthStateChanged, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
@@ -13,6 +15,11 @@ const tabs = document.getElementById("category-tabs");
 const params = new URLSearchParams(location.search);
 const activeCategory = params.get("category") || "";
 const activeId = params.get("id") || "";
+const memberMarker = "<!-- member-only -->";
+
+let currentUser = null;
+let authReady = false;
+let loadedArticles = [];
 
 function escapeHtml(value = "") {
   return value.replace(/[&<>"']/g, (char) => ({
@@ -30,6 +37,7 @@ function renderInline(value = "") {
 
 function renderContent(value = "") {
   return value
+    .replace(memberMarker, "")
     .split(/\n{2,}/)
     .map((block) => {
       const trimmed = block.trim();
@@ -42,9 +50,17 @@ function renderContent(value = "") {
     .join("");
 }
 
+function getTimeValue(value) {
+  if (!value) return 0;
+  if (typeof value?.toMillis === "function") return value.toMillis();
+  if (typeof value === "number") return value;
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 function sortPublished(a, b) {
-  const at = a.publishedAt?.toMillis?.() || a.updatedAt?.toMillis?.() || 0;
-  const bt = b.publishedAt?.toMillis?.() || b.updatedAt?.toMillis?.() || 0;
+  const at = getTimeValue(a.publishedAt) || getTimeValue(a.updatedAt);
+  const bt = getTimeValue(b.publishedAt) || getTimeValue(b.updatedAt);
   return bt - at;
 }
 
@@ -65,11 +81,51 @@ function renderList(articles) {
   root.innerHTML = `<div class="article-grid">${filtered.map((article) => `
     <a class="article-card" href="articles.html?id=${encodeURIComponent(article.id)}">
       ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="">` : ""}
-      <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
+      <div class="article-meta">${categoryLabels[article.category] || "文選"}${article.content?.includes?.(memberMarker) ? "｜會員全文" : ""}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       <p>${escapeHtml(article.excerpt || "")}</p>
     </a>
   `).join("")}</div>`;
+}
+
+function splitMemberContent(content = "") {
+  if (!content.includes(memberMarker)) {
+    return { publicContent: content, lockedContent: "", isLocked: false };
+  }
+  const [publicContent, ...rest] = content.split(memberMarker);
+  return {
+    publicContent: publicContent.trim(),
+    lockedContent: rest.join(memberMarker).trim(),
+    isLocked: true
+  };
+}
+
+function renderMemberGate() {
+  return `
+    <div class="member-article-gate">
+      <div class="member-article-gate-label">MEMBER ONLY</div>
+      <h3>登入會員後，繼續閱讀完整文章</h3>
+      <p>這篇文章後段內容僅開放登入會員閱讀。登入後會自動展開全文。</p>
+      <button id="article-login-button" type="button">使用 Google 登入</button>
+    </div>
+  `;
+}
+
+function bindArticleLogin() {
+  const button = document.getElementById("article-login-button");
+  if (!button) return;
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    button.textContent = "登入中…";
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error(error);
+      alert("目前無法完成 Google 登入，請稍後再試。");
+      button.disabled = false;
+      button.textContent = "使用 Google 登入";
+    }
+  });
 }
 
 function renderArticle(article) {
@@ -78,30 +134,56 @@ function renderArticle(article) {
     return;
   }
   document.title = `${article.title}｜靈元院文選`;
+  const { publicContent, lockedContent, isLocked } = splitMemberContent(article.content || "");
+  const canReadFull = !isLocked || currentUser;
+  const visibleContent = canReadFull ? [publicContent, lockedContent].filter(Boolean).join("\n\n") : publicContent;
   root.innerHTML = `
     <article class="article-view">
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
-      <div class="article-body">${renderContent(article.content || "")}</div>
+      <div class="article-body">${renderContent(visibleContent)}</div>
+      ${!canReadFull ? renderMemberGate() : ""}
     </article>
   `;
+  bindArticleLogin();
+}
+
+function renderCurrentView() {
+  if (!authReady) return;
+  if (activeId) {
+    renderArticle(loadedArticles.find((article) => article.id === activeId || article.slug === activeId));
+  } else {
+    renderList(loadedArticles);
+  }
 }
 
 async function loadArticles() {
   renderTabs();
-  const publishedQuery = query(collection(db, "articles"), where("status", "==", "published"));
-  const snapshot = await getDocs(publishedQuery);
-  const articles = snapshot.docs
-    .map((item) => ({ id: item.id, ...item.data() }))
-    .sort(sortPublished);
-
-  if (activeId) {
-    renderArticle(articles.find((article) => article.id === activeId));
-  } else {
-    renderList(articles);
+  let articles = [];
+  try {
+    const publishedQuery = query(collection(db, "articles"), where("status", "==", "published"));
+    const snapshot = await getDocs(publishedQuery);
+    articles = snapshot.docs
+      .map((item) => ({ id: item.id, ...item.data() }))
+      .sort(sortPublished);
+  } catch (error) {
+    console.warn("Firebase 文章暫時無法載入，改顯示靜態文章。", error);
   }
+  const merged = [...staticArticles, ...articles].reduce((items, article) => {
+    if (!items.some((item) => item.id === article.id)) items.push(article);
+    return items;
+  }, []);
+  loadedArticles = merged.sort(sortPublished);
+
+  renderCurrentView();
 }
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  authReady = true;
+  renderCurrentView();
+});
 
 loadArticles().catch((error) => {
   console.error(error);
