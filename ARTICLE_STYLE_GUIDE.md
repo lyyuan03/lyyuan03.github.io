@@ -36,11 +36,13 @@
 
 - 公開內容約為全文前三分之一，使用 `<!-- member-only -->` 分隔前後段。
 - 公開網站不顯示會員登入，也不要求一般讀者使用 Google 登入。
-- 後段正文保留可辨識的霧化背景，上方顯示小型、半透明的支持提示，不占滿畫面。
+- 後段正文保留可辨識的霧化背景，上方顯示約原尺寸三分之二的小型半透明支持提示；背景需可隱約透出。
 - 固定提示為：
-  - 支持宇色老師，繼續閱讀
-  - 訂閱宇色 YouTube
-  - 追蹤宇色 Facebook
+  - 文章未完，繼續閱讀
+  - 若這篇文章對你有所啟發，歡迎訂閱
+  - YouTube、追蹤 Facebook，持續收到新的靈修解析。
+  - 訂閱 靈元院YouTube
+  - 追蹤 靈元院 Facebook
   - 繼續閱讀全文
 - YouTube 固定連到 `https://www.youtube.com/KINKIOSEL?sub_confirmation=1`。
 - Facebook 固定連到 `https://www.facebook.com/authorosel/`。
