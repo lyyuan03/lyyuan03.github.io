@@ -132,7 +132,6 @@ function renderMemberGate(lockedContent = "") {
 
 function renderArticleShare(article) {
   const shareUrl = `${location.origin}${location.pathname}?id=${encodeURIComponent(article.id || article.slug || activeId)}`;
-  const shareTitle = article.title || "靈元院文選";
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
   return `
     <div class="article-share" aria-label="分享文章">
@@ -166,8 +165,17 @@ function bindArticleShare() {
   const instagramButton = document.querySelector(".article-share-instagram");
   copyButton?.addEventListener("click", () => copyArticleUrl(copyButton));
   instagramButton?.addEventListener("click", async () => {
-    await copyArticleUrl(instagramButton);
+    const shareData = { title: document.title, url: instagramButton.dataset.shareUrl };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
     window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+    await copyArticleUrl(instagramButton);
   });
 }
 
