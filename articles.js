@@ -24,16 +24,20 @@ function escapeHtml(value = "") {
   }[char]));
 }
 
+function renderInline(value = "") {
+  return escapeHtml(value).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, '<img src="$2" alt="$1">');
+}
+
 function renderContent(value = "") {
-  return escapeHtml(value)
+  return value
     .split(/\n{2,}/)
     .map((block) => {
       const trimmed = block.trim();
       if (!trimmed) return "";
-      if (trimmed.startsWith("### ")) return `<h3>${trimmed.slice(4)}</h3>`;
-      if (trimmed.startsWith("## ")) return `<h2>${trimmed.slice(3)}</h2>`;
-      if (trimmed.startsWith("# ")) return `<h1>${trimmed.slice(2)}</h1>`;
-      return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
+      if (trimmed.startsWith("### ")) return `<h3>${renderInline(trimmed.slice(4))}</h3>`;
+      if (trimmed.startsWith("## ")) return `<h2>${renderInline(trimmed.slice(3))}</h2>`;
+      if (trimmed.startsWith("# ")) return `<h1>${renderInline(trimmed.slice(2))}</h1>`;
+      return `<p>${renderInline(trimmed).replace(/\n/g, "<br>")}</p>`;
     })
     .join("");
 }
