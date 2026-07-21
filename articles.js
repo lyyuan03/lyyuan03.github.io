@@ -1,6 +1,5 @@
-import { auth, db, provider } from "./firebase-config.js";
+import { db } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js";
-import { onAuthStateChanged, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
@@ -18,8 +17,6 @@ const activeId = params.get("id") || "";
 const memberMarker = "<!-- member-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
 
-let currentUser = null;
-let authReady = false;
 let loadedArticles = [];
 
 function escapeHtml(value = "") {
@@ -82,7 +79,7 @@ function renderList(articles) {
   root.innerHTML = `<div class="article-grid">${filtered.map((article) => `
     <a class="article-card" href="articles.html?id=${encodeURIComponent(article.id)}">
       ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="">` : ""}
-      <div class="article-meta">${categoryLabels[article.category] || "文選"}${article.content?.includes?.(memberMarker) ? "｜會員全文" : ""}</div>
+      <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       <p>${escapeHtml(article.excerpt || "")}</p>
     </a>
@@ -109,25 +106,35 @@ function renderBookCta() {
   `;
 }
 
-function renderMemberGate(lockedContent = "") {
-  const preview = lockedContent.trim() || "登入會員後，即可閱讀完整文章內容。";
+function renderSupportGate(lockedContent = "") {
+  const preview = lockedContent.trim() || "更多宇色老師的靈修解析與生命觀察。";
   return `
-    <section class="member-lock-zone" aria-label="訂閱看完整內容">
+    <section class="member-lock-zone" id="article-support-gate" aria-label="支持宇色老師">
       <div class="article-body member-lock-preview" aria-hidden="true">${renderContent(preview)}</div>
-      <div class="member-lock-card">
-        <div class="member-lock-icon" aria-hidden="true">⌕</div>
-        <h3>訂閱看完整內容</h3>
-        <p>免費會員限閱文章</p>
-        <ul>
-          <li>支持會員觀看全文</li>
-          <li>宇色老師靈修解析</li>
-          <li>靈異政治人間社會</li>
-          <li>付費暢讀全網文章</li>
-        </ul>
-        <button id="article-login-button" type="button">會員登入看全文</button>
+      <div class="member-lock-card article-support-card">
+        <div class="member-lock-icon" aria-hidden="true">◇</div>
+        <h3>支持宇色老師，繼續閱讀</h3>
+        <p>若這篇文章對你有所啟發，歡迎訂閱 YouTube、追蹤 Facebook，持續收到新的靈修解析。</p>
+        <div class="article-support-actions">
+          <a class="article-support-link youtube" href="https://www.youtube.com/KINKIOSEL?sub_confirmation=1" target="_blank" rel="noopener noreferrer">訂閱宇色 YouTube</a>
+          <a class="article-support-link facebook" href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">追蹤宇色 Facebook</a>
+        </div>
+        <button id="article-continue-button" type="button">繼續閱讀全文</button>
       </div>
     </section>
   `;
+}
+
+function bindArticleContinue() {
+  const button = document.getElementById("article-continue-button");
+  const gate = document.getElementById("article-support-gate");
+  const remaining = document.getElementById("article-remaining-content");
+  if (!button || !gate || !remaining) return;
+  button.addEventListener("click", () => {
+    gate.remove();
+    remaining.hidden = false;
+    remaining.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 function renderArticleShare(article) {
@@ -175,23 +182,6 @@ function bindArticleShare() {
   copyButton?.addEventListener("click", () => copyArticleUrl(copyButton));
 }
 
-function bindArticleLogin() {
-  const button = document.getElementById("article-login-button");
-  if (!button) return;
-  button.addEventListener("click", async () => {
-    button.disabled = true;
-    button.textContent = "登入中…";
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error(error);
-      alert("目前無法完成 Google 登入，請稍後再試。");
-      button.disabled = false;
-      button.textContent = "使用 Google 登入";
-    }
-  });
-}
-
 function renderArticle(article) {
   if (!article) {
     root.innerHTML = '<div class="empty">找不到這篇文章，或文章尚未發布。</div>';
@@ -199,25 +189,23 @@ function renderArticle(article) {
   }
   document.title = `${article.title}｜靈元院文選`;
   const { publicContent, lockedContent, isLocked } = splitMemberContent(article.content || "");
-  const canReadFull = !isLocked || currentUser;
-  const visibleContent = canReadFull ? [publicContent, lockedContent].filter(Boolean).join("\n\n") : publicContent;
   root.innerHTML = `
     <article class="article-view">
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
-      <div class="article-body">${renderContent(visibleContent)}</div>
-      ${!canReadFull ? renderMemberGate(lockedContent) : ""}
+      <div class="article-body">${renderContent(publicContent)}</div>
+      ${isLocked ? renderSupportGate(lockedContent) : ""}
+      ${isLocked ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}
       ${renderBookCta()}
       ${renderArticleShare(article)}
     </article>
   `;
-  bindArticleLogin();
+  bindArticleContinue();
   bindArticleShare();
 }
 
 function renderCurrentView() {
-  if (!authReady) return;
   if (activeId) {
     renderArticle(loadedArticles.find((article) => article.id === activeId || article.slug === activeId));
   } else {
@@ -245,12 +233,6 @@ async function loadArticles() {
 
   renderCurrentView();
 }
-
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-  authReady = true;
-  renderCurrentView();
-});
 
 loadArticles().catch((error) => {
   console.error(error);
