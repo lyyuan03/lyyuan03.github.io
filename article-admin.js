@@ -484,7 +484,7 @@ async function exportAllArticles() {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1500);
 
     exportStatus.textContent = `已匯出 ${allItems.length} 篇文章`;
   } catch (error) {
