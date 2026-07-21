@@ -16,6 +16,7 @@ const params = new URLSearchParams(location.search);
 const activeCategory = params.get("category") || "";
 const activeId = params.get("id") || "";
 const memberMarker = "<!-- member-only -->";
+const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
 
 let currentUser = null;
 let authReady = false;
@@ -100,6 +101,17 @@ function splitMemberContent(content = "") {
   };
 }
 
+function renderBookCta() {
+  return `
+    <aside class="article-book-cta" aria-label="宇色靈修著作延伸閱讀">
+      <div class="article-book-cta-label">FURTHER READING</div>
+      <h3>延伸閱讀｜宇色靈修著作</h3>
+      <p>若這篇文章讓你對靈修、元神與生命修煉有更深的思考，可以延伸閱讀宇色老師的相關著作，從文字中慢慢建立更完整的修行理解。</p>
+      <a class="article-book-cta-button" href="${bookUrl}">前往宇色靈修著作</a>
+    </aside>
+  `;
+}
+
 function renderMemberGate() {
   return `
     <div class="member-article-gate">
@@ -143,6 +155,7 @@ function renderArticle(article) {
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-body">${renderContent(visibleContent)}</div>
+      ${renderBookCta()}
       ${!canReadFull ? renderMemberGate() : ""}
     </article>
   `;
