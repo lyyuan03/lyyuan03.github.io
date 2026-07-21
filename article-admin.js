@@ -1,0 +1,204 @@
+import { auth, db, provider, isAdminEmail } from "./firebase-config.js";
+import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { collection, addDoc, deleteDoc, doc, getDocs, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const categoryLabels = {
+  spiritual: "靈．修行",
+  worldly: "人．俗世",
+  "spirit-world": "異．靈界",
+  reading: "思．讀物"
+};
+
+let articles = [];
+let currentId = null;
+
+const gate = document.getElementById("login-gate");
+const app = document.getElementById("admin-app");
+const gateStatus = document.getElementById("gate-status");
+const loginButton = document.getElementById("admin-login");
+const logoutButton = document.getElementById("admin-logout");
+const userLabel = document.getElementById("admin-user");
+const listEl = document.getElementById("article-list");
+const form = document.getElementById("article-form");
+const preview = document.getElementById("preview");
+const saveStatus = document.getElementById("save-status");
+const deleteButton = document.getElementById("delete-article");
+const newButton = document.getElementById("new-article");
+
+function slugify(value) {
+  const text = (value || "").trim().toLowerCase();
+  const ascii = text
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return ascii || `article-${Date.now()}`;
+}
+
+function escapeHtml(value = "") {
+  return value.replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
+function renderContent(value = "") {
+  return escapeHtml(value)
+    .split(/\n{2,}/)
+    .map((block) => {
+      const trimmed = block.trim();
+      if (!trimmed) return "";
+      if (trimmed.startsWith("### ")) return `<h3>${trimmed.slice(4)}</h3>`;
+      if (trimmed.startsWith("## ")) return `<h2>${trimmed.slice(3)}</h2>`;
+      if (trimmed.startsWith("# ")) return `<h1>${trimmed.slice(2)}</h1>`;
+      return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
+    })
+    .join("");
+}
+
+function getFormData() {
+  const data = Object.fromEntries(new FormData(form).entries());
+  return {
+    title: data.title.trim(),
+    slug: slugify(data.slug || data.title),
+    category: data.category,
+    status: data.status,
+    excerpt: data.excerpt.trim(),
+    coverImage: data.coverImage.trim(),
+    content: data.content.trim()
+  };
+}
+
+function setFormData(article = {}) {
+  form.title.value = article.title || "";
+  form.slug.value = article.slug || "";
+  form.category.value = article.category || "spiritual";
+  form.status.value = article.status || "draft";
+  form.excerpt.value = article.excerpt || "";
+  form.coverImage.value = article.coverImage || "";
+  form.content.value = article.content || "";
+  preview.innerHTML = renderContent(form.content.value);
+  deleteButton.disabled = !currentId;
+}
+
+function newArticle() {
+  currentId = null;
+  setFormData();
+  saveStatus.textContent = "新增文章";
+  document.querySelectorAll(".article-item").forEach((item) => item.classList.remove("is-active"));
+}
+
+function renderList() {
+  if (!articles.length) {
+    listEl.innerHTML = '<div class="empty">目前尚無文章</div>';
+    return;
+  }
+  listEl.innerHTML = articles.map((article) => `
+    <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${article.id}">
+      <div class="article-item-title">${escapeHtml(article.title || "未命名文章")}</div>
+      <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}</div>
+    </button>
+  `).join("");
+  listEl.querySelectorAll("[data-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentId = button.dataset.id;
+      const article = articles.find((item) => item.id === currentId);
+      setFormData(article);
+      renderList();
+      saveStatus.textContent = "";
+    });
+  });
+}
+
+async function loadArticles() {
+  listEl.innerHTML = '<div class="empty">載入中…</div>';
+  const snapshot = await getDocs(collection(db, "articles"));
+  articles = snapshot.docs
+    .map((item) => ({ id: item.id, ...item.data() }))
+    .sort((a, b) => {
+      const at = a.updatedAt?.toMillis?.() || 0;
+      const bt = b.updatedAt?.toMillis?.() || 0;
+      return bt - at;
+    });
+  renderList();
+}
+
+async function saveArticle(event) {
+  event.preventDefault();
+  const data = getFormData();
+  if (!data.title || !data.content) {
+    alert("請至少填寫標題與內文。");
+    return;
+  }
+  saveStatus.textContent = "儲存中…";
+  const payload = {
+    ...data,
+    updatedAt: serverTimestamp()
+  };
+  if (data.status === "published") {
+    payload.publishedAt = serverTimestamp();
+  }
+  if (currentId) {
+    await updateDoc(doc(db, "articles", currentId), payload);
+  } else {
+    const created = await addDoc(collection(db, "articles"), {
+      ...payload,
+      createdAt: serverTimestamp()
+    });
+    currentId = created.id;
+  }
+  saveStatus.textContent = "已儲存";
+  await loadArticles();
+}
+
+async function deleteArticle() {
+  if (!currentId) return;
+  if (!confirm("確定要刪除這篇文章嗎？")) return;
+  saveStatus.textContent = "刪除中…";
+  await deleteDoc(doc(db, "articles", currentId));
+  currentId = null;
+  setFormData();
+  saveStatus.textContent = "已刪除";
+  await loadArticles();
+}
+
+loginButton.addEventListener("click", async () => {
+  gateStatus.textContent = "登入中…";
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (error) {
+    console.error(error);
+    gateStatus.textContent = "登入失敗，請稍後再試。";
+  }
+});
+
+logoutButton.addEventListener("click", () => signOut(auth));
+newButton.addEventListener("click", newArticle);
+form.addEventListener("submit", saveArticle);
+deleteButton.addEventListener("click", deleteArticle);
+form.content.addEventListener("input", () => {
+  preview.innerHTML = renderContent(form.content.value);
+});
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    gate.classList.remove("hidden");
+    app.classList.add("hidden");
+    gateStatus.textContent = "";
+    return;
+  }
+  if (!isAdminEmail(user.email)) {
+    gate.classList.remove("hidden");
+    app.classList.add("hidden");
+    gateStatus.textContent = "此帳號沒有文章後台權限，請改用靈元院指定 Gmail 登入。";
+    return;
+  }
+  gate.classList.add("hidden");
+  app.classList.remove("hidden");
+  userLabel.textContent = user.email;
+  await loadArticles();
+  if (!currentId) newArticle();
+});
