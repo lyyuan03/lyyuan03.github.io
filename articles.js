@@ -103,12 +103,9 @@ function splitMemberContent(content = "") {
 
 function renderBookCta() {
   return `
-    <aside class="article-book-cta" aria-label="宇色靈修著作延伸閱讀">
-      <div class="article-book-cta-label">FURTHER READING</div>
-      <h3>延伸閱讀｜宇色靈修著作</h3>
-      <p>若這篇文章讓你對靈修、元神與生命修煉有更深的思考，可以延伸閱讀宇色老師的相關著作，從文字中慢慢建立更完整的修行理解。</p>
-      <a class="article-book-cta-button" href="${bookUrl}">前往宇色靈修著作</a>
-    </aside>
+    <div class="article-book-link-wrap">
+      <a class="article-book-link" href="${bookUrl}">延伸閱讀｜宇色靈修著作</a>
+    </div>
   `;
 }
 
