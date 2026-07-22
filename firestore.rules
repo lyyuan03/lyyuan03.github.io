@@ -15,6 +15,48 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    match /articleMetrics/{articleId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly([
+          "articleId", "views", "shares", "copies", "updatedAt"
+        ])
+        && request.resource.data.articleId == articleId
+        && request.resource.data.views is int
+        && request.resource.data.shares is int
+        && request.resource.data.copies is int
+        && request.resource.data.views >= 0
+        && request.resource.data.shares >= 0
+        && request.resource.data.copies >= 0
+        && request.resource.data.views
+          + request.resource.data.shares
+          + request.resource.data.copies == 1
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isAdmin() || (
+        request.resource.data.keys().hasOnly([
+          "articleId", "views", "shares", "copies", "updatedAt"
+        ])
+        && request.resource.data.articleId == articleId
+        && request.resource.data.articleId == resource.data.articleId
+        && request.resource.data.views is int
+        && request.resource.data.shares is int
+        && request.resource.data.copies is int
+        && request.resource.data.views >= resource.data.views
+        && request.resource.data.shares >= resource.data.shares
+        && request.resource.data.copies >= resource.data.copies
+        && request.resource.data.views - resource.data.views <= 1
+        && request.resource.data.shares - resource.data.shares <= 1
+        && request.resource.data.copies - resource.data.copies <= 1
+        && request.resource.data.views - resource.data.views
+          + request.resource.data.shares - resource.data.shares
+          + request.resource.data.copies - resource.data.copies == 1
+        && request.resource.data.updatedAt == request.time
+      );
+
+      allow delete: if isAdmin();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
