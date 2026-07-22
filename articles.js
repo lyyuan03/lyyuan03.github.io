@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260722-yuanshen-3";
+import { staticArticles } from "./static-articles.js?v=20260722-paid-pilot-1";
 import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
@@ -15,6 +15,7 @@ const params = new URLSearchParams(location.search);
 const activeCategory = params.get("category") || "";
 const activeId = params.get("id") || "";
 const memberMarker = "<!-- member-only -->";
+const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
 
 let loadedArticles = [];
@@ -36,6 +37,7 @@ function renderInline(value = "") {
 function renderContent(value = "") {
   return value
     .replace(memberMarker, "")
+    .replace(paidMarker, "")
     .split(/\n{2,}/)
     .map((block) => {
       const trimmed = block.trim();
@@ -87,14 +89,20 @@ function renderList(articles) {
 }
 
 function splitMemberContent(content = "") {
-  if (!content.includes(memberMarker)) {
-    return { publicContent: content, lockedContent: "", isLocked: false };
+  const accessType = content.includes(paidMarker)
+    ? "paid"
+    : content.includes(memberMarker)
+      ? "member"
+      : "open";
+  if (accessType === "open") {
+    return { publicContent: content, lockedContent: "", accessType };
   }
-  const [publicContent, ...rest] = content.split(memberMarker);
+  const marker = accessType === "paid" ? paidMarker : memberMarker;
+  const [publicContent, ...rest] = content.split(marker);
   return {
     publicContent: publicContent.trim(),
-    lockedContent: rest.join(memberMarker).trim(),
-    isLocked: true
+    lockedContent: rest.join(marker).trim(),
+    accessType
   };
 }
 
@@ -126,6 +134,28 @@ function renderSupportGate(lockedContent = "") {
           <i aria-hidden="true">·</i>
           <a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">文章</a>
         </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderPaidGate(article) {
+  const subject = encodeURIComponent(`詢問付費閱讀｜${article.title || "靈元院文選"}`);
+  const body = encodeURIComponent(`您好，我想詢問〈${article.title || "這篇文章"}〉的付費閱讀方式。`);
+  return `
+    <section class="member-lock-zone paid-lock-zone" aria-label="付費會員限定">
+      <div class="paid-lock-preview" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="member-lock-card paid-lock-card">
+        <div class="member-lock-icon" aria-hidden="true">◇</div>
+        <h3>本文為付費會員限定</h3>
+        <p>本篇目前僅開放前段試閱。若希望閱讀全文，歡迎聯繫靈元院，了解付費會員開放方式。</p>
+        <div class="paid-inquiry-actions">
+          <a class="paid-inquiry-primary" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">詢問付費閱讀方式</a>
+          <a class="paid-inquiry-secondary" href="mailto:lyyuan03@gmail.com?subject=${subject}&body=${body}">使用 Email 詢問</a>
+        </div>
+        <small>完整內容不會在本頁直接展開</small>
       </div>
     </section>
   `;
@@ -197,20 +227,21 @@ function renderArticle(article) {
     return;
   }
   document.title = `${article.title}｜靈元院文選`;
-  const { publicContent, lockedContent, isLocked } = splitMemberContent(article.content || "");
+  const { publicContent, lockedContent, accessType } = splitMemberContent(article.content || "");
   root.innerHTML = `
     <article class="article-view">
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-body">${renderContent(publicContent)}</div>
-      ${isLocked ? renderSupportGate(lockedContent) : ""}
-      ${isLocked ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}
+      ${accessType === "member" ? renderSupportGate(lockedContent) : ""}
+      ${accessType === "paid" ? renderPaidGate(article) : ""}
+      ${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}
       ${renderBookCta()}
       ${renderArticleShare(article)}
     </article>
   `;
-  bindArticleContinue();
+  if (accessType === "member") bindArticleContinue();
   bindArticleShare();
 }
 
