@@ -31,8 +31,8 @@ function markPaidCards() {
     if (!id || !title || !paidIds.has(id) || title.querySelector(".paid-article-badge")) return;
     const badge = document.createElement("span");
     badge.className = "paid-article-badge";
-    badge.textContent = "付費";
-    badge.setAttribute("aria-label", "付費文章");
+    badge.textContent = "贊助專屬";
+    badge.setAttribute("aria-label", "贊助專屬文章");
     title.prepend(badge);
   });
 }
@@ -46,7 +46,7 @@ async function loadPaidIds() {
       if ((article.content || "").includes(paidMarker)) paidIds.add(article.id || article.slug);
     });
   } catch (error) {
-    console.warn("付費文章標示暫時僅使用靜態資料。", error);
+    console.warn("贊助專屬文章標示暫時僅使用靜態資料。", error);
   }
   markPaidCards();
 }
