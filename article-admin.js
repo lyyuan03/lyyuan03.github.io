@@ -13,6 +13,7 @@ const categoryLabels = {
 
 let articles = [];
 let currentId = null;
+let metricsByArticle = new Map();
 
 const gate = document.getElementById("login-gate");
 const app = document.getElementById("admin-app");
@@ -21,6 +22,7 @@ const loginButton = document.getElementById("admin-login");
 const logoutButton = document.getElementById("admin-logout");
 const userLabel = document.getElementById("admin-user");
 const listEl = document.getElementById("article-list");
+const metricsEl = document.getElementById("article-metrics");
 const form = document.getElementById("article-form");
 const preview = document.getElementById("preview");
 const saveStatus = document.getElementById("save-status");
@@ -124,6 +126,33 @@ function renderList() {
   });
 }
 
+function renderMetricsDashboard() {
+  if (!metricsEl) return;
+  const titleMap = new Map();
+  staticArticles.forEach((article) => titleMap.set(article.id, article.title || "未命名文章"));
+  articles.forEach((article) => titleMap.set(article.id, article.title || "未命名文章"));
+  metricsByArticle.forEach((value, id) => {
+    if (!titleMap.has(id)) titleMap.set(id, value.articleTitle || id);
+  });
+  const rows = [...titleMap.entries()]
+    .map(([id, title]) => ({ id, title, ...(metricsByArticle.get(id) || {}) }))
+    .sort((a, b) => Number(b.views || 0) - Number(a.views || 0));
+  if (!rows.length) {
+    metricsEl.innerHTML = '<div class="metrics-empty">尚無統計資料</div>';
+    return;
+  }
+  metricsEl.innerHTML = rows.map((item) => `
+    <div class="metrics-row">
+      <div class="metrics-title">${escapeHtml(item.title)}</div>
+      <div class="metrics-values">
+        <span>閱讀 ${Number(item.views || 0).toLocaleString("zh-TW")}</span>
+        <span>分享 ${Number(item.shares || 0).toLocaleString("zh-TW")}</span>
+        <span>複製 ${Number(item.copies || 0).toLocaleString("zh-TW")}</span>
+      </div>
+    </div>
+  `).join("");
+}
+
 function showFirestoreError(error) {
   console.error(error);
   const code = error?.code || "";
@@ -145,6 +174,13 @@ async function loadArticles() {
   listEl.innerHTML = '<div class="empty">載入中…</div>';
   try {
     const snapshot = await getDocs(collection(db, "articles"));
+    try {
+      const metricsSnapshot = await getDocs(collection(db, "articleMetrics"));
+      metricsByArticle = new Map(metricsSnapshot.docs.map((item) => [item.id, item.data()]));
+    } catch (metricsError) {
+      console.warn("文章統計暫時無法載入。", metricsError);
+      metricsByArticle = new Map();
+    }
     articles = snapshot.docs
       .map((item) => ({ id: item.id, ...item.data() }))
       .sort((a, b) => {
@@ -153,6 +189,7 @@ async function loadArticles() {
         return bt - at;
       });
     renderList();
+    renderMetricsDashboard();
   } catch (error) {
     showFirestoreError(error);
   }
