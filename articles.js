@@ -158,7 +158,6 @@ function renderList(articles) {
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${renderMetricSummary(article.id || article.slug || activeId)}
       <p>${escapeHtml(article.excerpt || "")}</p>
-      ${renderMetricSummary(article.id || article.slug, true)}
     </a>
   `).join("")}</div>`;
 }
