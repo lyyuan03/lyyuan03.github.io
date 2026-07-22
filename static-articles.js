@@ -8,6 +8,7 @@ export const staticArticles = [
     publishedAt: "2026-07-21T00:00:00.000Z",
     updatedAt: "2026-07-21T00:00:00.000Z",
     coverImage: "assets/articles/lingxiu-zouhuo/cover.jpg",
+    sharePath: "article/lingxiu-zouhuo-rumo.html",
     excerpt: "靈修真正需要分辨的，不只是異象、靈動與身體反應，而是一個人是否能在氣脈變化與內在陰影浮現時，誠實回到自己。",
     content: `這些年來，幾乎每一場公開講座結束，都會有人小聲問我同一句話：「老師，我是不是快走火入魔了？」
 
