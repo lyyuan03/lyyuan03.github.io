@@ -208,14 +208,7 @@ export const staticArticles = [
 ### 出處說明
 
 本文重新詮釋自《我在人間的靈界事件簿》一書中關於先天元神與靈修適性的論述。
-
-相關資源：
-
-- 宇色老師官方網站：lyyuan.tw
-- 靈元院 Facebook：https://reurl.cc/NQ9dg6
-- YouTube 頻道：https://pse.is/3ew7bx
-- 官方 Instagram：https://reurl.cc/5400VR
-- Podcast 節目（宇色心養生）：https://reurl.cc/XRXzI3`
+`
   }
 
 ];
