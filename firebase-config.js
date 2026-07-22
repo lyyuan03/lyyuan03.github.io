@@ -3,6 +3,10 @@ import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
+if (/(^|\/)articles\.html$/i.test(location.pathname)) {
+  import("./article-protection.js?v=20260722-1");
+}
+
 export const firebaseConfig = {
   apiKey: "AIzaSyAgHy-nPOErzs7NDJossVGPITbenXOfjQY",
   authDomain: "lyyuan03-membership.firebaseapp.com",
