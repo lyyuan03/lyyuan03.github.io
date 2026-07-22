@@ -121,3 +121,13 @@
 - 頁尾只保留靈元院官方帳號，不放宇色老師個人帳號。
 - 文章閱讀提示框的主要按鈕只引導靈元院 YouTube 與 Facebook；宇色老師以較小的「影音／文章」文字連結呈現，不得搶過主按鈕。
 - 靈元院負責院務、法儀、活動與官方發布；宇色老師負責靈修解析、生命觀點、影音與個人文章。
+
+
+## Facebook 與社群連結預覽
+
+- 每篇可分享文章必須有獨立的靜態分享頁，路徑固定為 `article/文章-slug.html`，並在文章資料加入 `sharePath`。
+- 靜態分享頁的 HTML `<head>` 必須直接寫入 `og:type`、`og:site_name`、`og:title`、`og:description`、`og:url`、`og:image` 與 Twitter Card 標記；不得只依賴 JavaScript 或 Firebase 動態填入。
+- `og:image` 使用該篇文章第一張圖的完整 HTTPS 網址。建議另備 1200 × 630 像素社群圖；若未另製，沿用文章首圖。
+- Facebook 分享按鈕固定使用 `https://www.facebook.com/sharer/sharer.php?u=網址編碼後的分享頁網址`，開啟使用者自己的貼文編輯器。
+- LINE、Telegram、Email 與複製連結均使用同一個 `sharePath`，確保各平台讀取相同標題與首圖。
+- 新增文章時，發布流程必須同步建立分享頁；Facebook 已快取過的網址需透過 Sharing Debugger 重新抓取。
