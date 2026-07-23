@@ -323,6 +323,8 @@ export const staticArticles = [
 
 ![站在破碎比較與平靜道路之間，重新取回生命選擇的人](assets/articles/market-crash-money/self-rescue-text-v2.jpg)
 
+<!-- paid-only -->
+
 ## 你是在投資，還是在拯救自己？
 
 很多人以為，富足意識就是相信自己值得擁有更多金錢。
