@@ -4,7 +4,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebas
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 if (/(^|\/)articles\.html$/i.test(location.pathname)) {
-  import("./article-protection.js?v=20260722-1");
+  import("./article-protection.js?v=20260723-member-watermark-1");
   import("./article-paid-badge.js?v=20260722-3");
 }
 
