@@ -6,8 +6,8 @@ export const staticArticles = [
     category: "spiritual",
     status: "published",
     publishedAt: "2026-07-23T16:00:00.000Z",
-    updatedAt: "2026-07-23T16:00:00.000Z",
-    coverImage: "assets/articles/jitong-discernment/cover.jpg",
+    updatedAt: "2026-07-24T00:00:00.000Z",
+    coverImage: "assets/articles/tonglingren-return/cover.jpg",
     sharePath: "article/tonglingren-wufa-huifu-putongren.html",
     excerpt: "最可怕的不是神明的力量有多大，而是一個人嚐過被仰望的滋味後，再也不願意做回普通人。",
     content: `最可怕的不是神明的力量有多大，而是一個人嚐過被仰望的滋味後，再也不願意做回普通人。
@@ -51,6 +51,8 @@ export const staticArticles = [
 替人祈福，不只是經文熟不熟、科儀完整不完整。更重要的是，站在神案前的人能不能分清楚：現在傳達的究竟是神明的旨意，還是自己想被需要、被肯定的欲望。
 
 兩者剛開始混在一起時，通常不容易發現。
+
+![人的欲望逐漸混入自稱為神意的光](assets/articles/tonglingren-return/desire-and-divine.jpg)
 
 這些年，我看過一些真心助人的宗教人士。他們起初非常謹慎，也曾有過清楚的感應，確實幫助過不少信眾。正因為那些經驗曾經如此真實，後來才更難承認自己的狀態已經不同。
 
@@ -97,6 +99,8 @@ export const staticArticles = [
 這才是靈力最深的考驗。
 
 考驗的不是你能承接多大的力量，而是力量離開以後，你還知不知道自己是誰。
+
+![力量離開後，從神壇走回普通人的日常](assets/articles/tonglingren-return/return-to-ordinary.jpg)
 
 神明來時，盡心奉行；神明離開後，回到人的位置。有領受就如實傳達，沒有領受便安靜。事情完成了，不把功勞留在自己身上，也不要求信眾繼續用侍奉神明的方式對待自己。
 
