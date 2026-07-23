@@ -290,7 +290,7 @@ export const staticArticles = [
     status: "published",
     publishedAt: "2026-07-23T00:00:00.000Z",
     updatedAt: "2026-07-23T00:00:00.000Z",
-    coverImage: "",
+    coverImage: "assets/articles/market-crash-money/cover.jpg",
     sharePath: "article/market-crash-money-self-control.html",
     excerpt: "從七一七股災重新看見恐懼、欲望與富足意識：真正的修練不是保證永遠不犯錯，而是在市場波動中，不讓金錢奪走對生命的主導權。",
     content: `2026年7月17日，台股加權指數單日重挫2,953點，寫下臺灣股市史上最大的單日跌點。
@@ -320,6 +320,8 @@ export const staticArticles = [
 這才是槓桿最危險的地方。
 
 它放大的不只是資金，也會放大一個人內在所有尚未被處理的欲望。
+
+![站在破碎比較與平靜道路之間，重新取回生命選擇的人](assets/articles/market-crash-money/self-rescue.jpg)
 
 ## 你是在投資，還是在拯救自己？
 
@@ -390,6 +392,8 @@ export const staticArticles = [
 你可以錯過一段上漲，也可以保留現金；可以承認看不懂，也可以選擇不參與。
 
 能夠不做，是投資裡最困難的能力之一。
+
+![手中承接著向下扎根、向上生長的金色生命](assets/articles/market-crash-money/enough.jpg)
 
 ## 股災不是報應，也不是市場替誰清業
 
