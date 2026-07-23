@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260723-market-paid-5";
+import { staticArticles } from "./static-articles.js?v=20260724-tonglingren-1";
 import { collection, doc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
