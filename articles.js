@@ -17,6 +17,11 @@ const activeId = params.get("id") || "";
 const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
+const limitedReadingDeadline = Date.parse("2026-07-24T22:28:58.068Z");
+const limitedReadingIds = new Set([
+  "jitong-shenming-fushen",
+  "market-crash-money-self-control"
+]);
 
 let loadedArticles = [];
 let articleMetrics = new Map();
@@ -145,6 +150,41 @@ function trackArticleView(articleId) {
   incrementArticleMetric(articleId, "views");
 }
 
+function renderLimitedReadingCountdown(articleId) {
+  if (!limitedReadingIds.has(articleId)) return "";
+  return `<small class="limited-reading-countdown" data-limited-reading-countdown aria-live="polite">限時閱讀｜計算中…</small>`;
+}
+
+function bindLimitedReadingCountdowns() {
+  const nodes = [...document.querySelectorAll("[data-limited-reading-countdown]")];
+  if (!nodes.length) return;
+
+  const update = () => {
+    const remaining = limitedReadingDeadline - Date.now();
+    if (remaining <= 0) {
+      nodes.forEach((node) => {
+        node.textContent = "限時閱讀已結束";
+        node.classList.add("is-ended");
+      });
+      return false;
+    }
+
+    const totalSeconds = Math.floor(remaining / 1000);
+    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    nodes.forEach((node) => {
+      node.textContent = `限時閱讀｜${hours}：${minutes}：${seconds}`;
+    });
+    return true;
+  };
+
+  if (!update()) return;
+  const timer = window.setInterval(() => {
+    if (!update()) window.clearInterval(timer);
+  }, 1000);
+}
+
 function renderList(articles) {
   const filtered = activeCategory ? articles.filter((article) => article.category === activeCategory) : articles;
   if (!filtered.length) {
@@ -156,10 +196,12 @@ function renderList(articles) {
       ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
+      ${renderLimitedReadingCountdown(article.id || article.slug || activeId)}
       ${renderMetricSummary(article.id || article.slug || activeId)}
       <p>${escapeHtml(article.excerpt || "")}</p>
     </a>
   `).join("")}</div>`;
+  bindLimitedReadingCountdowns();
 }
 
 function splitMemberContent(content = "") {
@@ -310,6 +352,7 @@ function renderArticle(article) {
     <article class="article-view">
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
+      ${renderLimitedReadingCountdown(article.id || article.slug || activeId)}
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-body">${renderContent(publicContent)}</div>
       ${accessType === "member" ? renderSupportGate(lockedContent) : ""}
@@ -319,6 +362,7 @@ function renderArticle(article) {
       ${renderArticleShare(article)}
     </article>
   `;
+  bindLimitedReadingCountdowns();
   if (accessType === "member") bindArticleContinue();
   const articleKey = article.id || article.slug || activeId;
   bindArticleShare(articleKey);
