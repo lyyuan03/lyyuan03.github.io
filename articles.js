@@ -17,10 +17,9 @@ const activeId = params.get("id") || "";
 const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
-const limitedReadingDeadline = Date.parse("2026-07-24T22:28:58.068Z");
-const limitedReadingIds = new Set([
-  "jitong-shenming-fushen",
-  "market-crash-money-self-control"
+const limitedReadingDeadlines = new Map([
+  ["jitong-shenming-fushen", Date.parse("2026-07-24T22:28:58.068Z")],
+  ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
 
 let loadedArticles = [];
@@ -151,8 +150,8 @@ function trackArticleView(articleId) {
 }
 
 function renderLimitedReadingCountdown(articleId) {
-  if (!limitedReadingIds.has(articleId)) return "";
-  return `<small class="limited-reading-countdown" data-limited-reading-countdown aria-live="polite">限時閱讀｜計算中…</small>`;
+  if (!limitedReadingDeadlines.has(articleId)) return "";
+  return `<small class="limited-reading-countdown" data-limited-reading-countdown data-article-id="${escapeHtml(articleId)}" aria-live="polite">限時閱讀｜計算中…</small>`;
 }
 
 function bindLimitedReadingCountdowns() {
@@ -160,23 +159,25 @@ function bindLimitedReadingCountdowns() {
   if (!nodes.length) return;
 
   const update = () => {
-    const remaining = limitedReadingDeadline - Date.now();
-    if (remaining <= 0) {
-      nodes.forEach((node) => {
+    const now = Date.now();
+    let hasActiveCountdown = false;
+    nodes.forEach((node) => {
+      const deadline = limitedReadingDeadlines.get(node.dataset.articleId);
+      const remaining = deadline - now;
+      if (remaining <= 0) {
         node.textContent = "限時閱讀已結束";
         node.classList.add("is-ended");
-      });
-      return false;
-    }
+        return;
+      }
 
-    const totalSeconds = Math.floor(remaining / 1000);
-    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-    const seconds = String(totalSeconds % 60).padStart(2, "0");
-    nodes.forEach((node) => {
+      hasActiveCountdown = true;
+      const totalSeconds = Math.floor(remaining / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+      const seconds = String(totalSeconds % 60).padStart(2, "0");
       node.textContent = `限時閱讀｜${hours}：${minutes}：${seconds}`;
     });
-    return true;
+    return hasActiveCountdown;
   };
 
   if (!update()) return;
