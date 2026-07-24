@@ -260,16 +260,16 @@ function renderPaidGate(article) {
   const subject = encodeURIComponent(`詢問付費閱讀｜${article.title || "靈元院文選"}`);
   const body = encodeURIComponent(`您好，我想詢問〈${article.title || "這篇文章"}〉的付費閱讀方式。`);
   return `
-    <section class="member-lock-zone paid-lock-zone" aria-label="付費會員限定">
+    <section class="member-lock-zone paid-lock-zone" aria-label="贊助會員專屬">
       <div class="paid-lock-preview" aria-hidden="true">
         <span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
       <div class="member-lock-card paid-lock-card">
         <div class="member-lock-icon" aria-hidden="true">◇</div>
-        <h3>本文為付費會員限定</h3>
-        <p>本篇目前僅開放前段試閱。若希望閱讀全文，歡迎聯繫靈元院，了解付費會員開放方式。</p>
+        <h3>本文為贊助會員專屬</h3>
+        <p>本篇目前僅開放前段試閱。若希望閱讀全文，歡迎聯繫靈元院，了解贊助會員開放方式。</p>
         <div class="paid-inquiry-actions">
-          <a class="paid-inquiry-primary" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">詢問付費閱讀方式</a>
+          <a class="paid-inquiry-primary" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">詢問贊助閱讀方式</a>
           <a class="paid-inquiry-secondary" href="mailto:lyyuan03@gmail.com?subject=${subject}&body=${body}">使用 Email 詢問</a>
         </div>
         <small>完整內容不會在本頁直接展開</small>
