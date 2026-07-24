@@ -782,7 +782,7 @@ export const staticArticles = [
 
 ![站在破碎比較與平靜道路之間，重新取回生命選擇的人](assets/articles/market-crash-money/self-rescue-text-v2.jpg)
 
-<!-- member-only -->
+<!-- paid-only -->
 
 ## 你是在投資，還是在拯救自己？
 
