@@ -165,7 +165,7 @@ function bindLimitedReadingCountdowns() {
       const deadline = limitedReadingDeadlines.get(node.dataset.articleId);
       const remaining = deadline - now;
       if (remaining <= 0) {
-        node.textContent = "限時閱讀已結束";
+        node.textContent = "贊助專屬";
         node.classList.add("is-ended");
         return;
       }
