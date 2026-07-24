@@ -149,9 +149,9 @@ function trackArticleView(articleId) {
   incrementArticleMetric(articleId, "views");
 }
 
-function renderLimitedReadingCountdown(articleId) {
+function renderLimitedReadingCountdown(articleId, isPaid = false) {
   if (!limitedReadingDeadlines.has(articleId)) return "";
-  return `<small class="limited-reading-countdown" data-limited-reading-countdown data-article-id="${escapeHtml(articleId)}" aria-live="polite">限時閱讀｜計算中…</small>`;
+  return `<small class="limited-reading-countdown" data-limited-reading-countdown data-article-id="${escapeHtml(articleId)}" data-paid="${isPaid ? "true" : "false"}" aria-live="polite">限時閱讀｜計算中…</small>`;
 }
 
 function bindLimitedReadingCountdowns() {
@@ -165,6 +165,10 @@ function bindLimitedReadingCountdowns() {
       const deadline = limitedReadingDeadlines.get(node.dataset.articleId);
       const remaining = deadline - now;
       if (remaining <= 0) {
+        if (node.dataset.paid === "true") {
+          node.remove();
+          return;
+        }
         node.textContent = "贊助專屬";
         node.classList.add("is-ended");
         return;
@@ -197,7 +201,7 @@ function renderList(articles) {
       ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
-      ${renderLimitedReadingCountdown(article.id || article.slug || activeId)}
+      ${renderLimitedReadingCountdown(article.id || article.slug || activeId, (article.content || "").includes(paidMarker))}
       ${renderMetricSummary(article.id || article.slug || activeId)}
       <p>${escapeHtml(article.excerpt || "")}</p>
     </a>
@@ -353,7 +357,7 @@ function renderArticle(article) {
     <article class="article-view">
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
-      ${renderLimitedReadingCountdown(article.id || article.slug || activeId)}
+      ${renderLimitedReadingCountdown(article.id || article.slug || activeId, (article.content || "").includes(paidMarker))}
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-body">${renderContent(publicContent)}</div>
       ${accessType === "member" ? renderSupportGate(lockedContent) : ""}
