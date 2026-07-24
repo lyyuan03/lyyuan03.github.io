@@ -7,7 +7,7 @@ export const staticArticles = [
     status: "published",
     publishedAt: "2026-07-24T16:00:00.000Z",
     updatedAt: "2026-07-24T16:00:00.000Z",
-    coverImage: "assets/articles/seven-twenty-five-election/cover.png",
+    coverImage: "assets/articles/seven-twenty-five-election/cover.jpg",
     sharePath: "article/seven-twenty-five-election-shift.html",
     excerpt: "七二五遊行之後，短期有場面，中期有攻防；真正可能改變年底選情的，是中央與地方如何面對各自不願承擔的責任。",
     accessType: "paid",
@@ -225,7 +225,7 @@ export const staticArticles = [
 
 人民要知道的是，政府錯在哪裡、如何補救，以及下一次如何避免同樣的事情再次發生。
 
-![一邊甩鍋，一邊不沾鍋](assets/articles/seven-twenty-five-election/responsibility.png)
+![一邊甩鍋，一邊不沾鍋](assets/articles/seven-twenty-five-election/responsibility.jpg)
 
 ## 國民黨的甩鍋，與民進黨的不沾鍋
 
@@ -301,7 +301,7 @@ export const staticArticles = [
 
 真正被消耗的，是人民對政治仍然能夠解決問題的信任。
 
-![修行不是沒有立場，而是用相同標準檢驗自己人](assets/articles/seven-twenty-five-election/equal-standard.png)
+![修行不是沒有立場，而是用相同標準檢驗自己人](assets/articles/seven-twenty-five-election/equal-standard.jpg)
 
 ## 修行不是不談政治，而是用相同的標準看待自己人
 
