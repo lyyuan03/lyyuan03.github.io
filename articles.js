@@ -171,8 +171,7 @@ function bindLimitedReadingCountdowns() {
           renderCurrentView();
           return;
         }
-        node.textContent = "贊助專屬";
-        node.classList.add("is-ended");
+        node.remove();
         return;
       }
 
