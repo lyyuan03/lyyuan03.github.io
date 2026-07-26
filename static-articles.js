@@ -10,6 +10,7 @@ export const staticArticles = [
     coverImage: "assets/articles/good-fortune-choices/receive-opportunity.svg",
     sharePath: "article/good-fortune-believe-in-yourself-choices.html",
     excerpt: "真正阻擋人生改變的，往往不是命不好，而是每一次站在機會面前，都習慣性退回那個不相信自己的舊身分。",
+    accessType: "paid",
     content: `很多人以為，自己的人生遲遲沒有改變，是因為命不好、運氣不夠，或是努力了很久，始終沒有得到應有的回報。
 
 但我這些年看過太多人，真正阻擋他們的，往往不是外在環境，而是他們每一次站在機會面前，都習慣性地選擇退後。
@@ -29,6 +30,8 @@ export const staticArticles = [
 改變人生，意味著你必須離開熟悉的自己。
 
 ![一個人最大的困境，未必是沒有機會，而是機會來了也未必敢接住](assets/articles/good-fortune-choices/receive-opportunity.svg)
+
+<!-- paid-only -->
 
 ## 很多人不是沒有價值，而是不敢承認自己的價值
 
