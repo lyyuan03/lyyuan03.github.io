@@ -7,7 +7,7 @@ export const staticArticles = [
     status: "published",
     publishedAt: "2026-07-26T08:30:00.000Z",
     updatedAt: "2026-07-26T08:30:00.000Z",
-    coverImage: "forest-path.jpg",
+    coverImage: "assets/articles/good-fortune-choices/receive-opportunity.svg",
     sharePath: "article/good-fortune-believe-in-yourself-choices.html",
     excerpt: "真正阻擋人生改變的，往往不是命不好，而是每一次站在機會面前，都習慣性退回那個不相信自己的舊身分。",
     content: `很多人以為，自己的人生遲遲沒有改變，是因為命不好、運氣不夠，或是努力了很久，始終沒有得到應有的回報。
@@ -27,6 +27,8 @@ export const staticArticles = [
 因為改變人生，從來不只是得到更多。
 
 改變人生，意味著你必須離開熟悉的自己。
+
+![一個人最大的困境，未必是沒有機會，而是機會來了也未必敢接住](assets/articles/good-fortune-choices/receive-opportunity.svg)
 
 ## 很多人不是沒有價值，而是不敢承認自己的價值
 
@@ -100,6 +102,8 @@ export const staticArticles = [
 
 真正的富足，是你的想法、選擇與行動，終於走向同一個方向。
 
+![真正的富足，是想法、選擇與行動走向同一個方向](assets/articles/good-fortune-choices/aligned-direction.svg)
+
 當一個人嘴上說想改變，實際上卻每天重複相同的選擇，他的能量就會不斷分裂。
 
 一部分的他想向前，另一部分的他卻緊抓著過去不放。
@@ -165,6 +169,8 @@ export const staticArticles = [
 命運不會只因為一句祈求而改變。
 
 但當一個人開始做出不同的選擇，命運就已經開始轉動。
+
+![當一個人開始做出不同的選擇，命運就已經開始轉動](assets/articles/good-fortune-choices/destiny-turns.svg)
 
 ---
 
