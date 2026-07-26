@@ -18,6 +18,7 @@ const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
 const limitedReadingDeadlines = new Map([
+  ["good-fortune-believe-in-yourself-choices", Date.parse("2026-07-26T16:19:35.857Z")],
   ["jitong-shenming-fushen", Date.parse("2026-07-24T22:28:58.068Z")],
   ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
@@ -151,7 +152,8 @@ function trackArticleView(articleId) {
 
 function renderLimitedReadingCountdown(articleId, isPaid = false) {
   if (!limitedReadingDeadlines.has(articleId)) return "";
-  return `<small class="limited-reading-countdown" data-limited-reading-countdown data-article-id="${escapeHtml(articleId)}" data-paid="${isPaid ? "true" : "false"}" aria-live="polite">限時閱讀｜計算中…</small>`;
+  const isLimitedOpen = isPaid && Date.now() < limitedReadingDeadlines.get(articleId);
+  return `<small class="limited-reading-countdown" data-limited-reading-countdown data-article-id="${escapeHtml(articleId)}" data-limited-open="${isLimitedOpen ? "true" : "false"}" aria-live="polite">限時閱讀｜計算中…</small>`;
 }
 
 function bindLimitedReadingCountdowns() {
@@ -165,8 +167,8 @@ function bindLimitedReadingCountdowns() {
       const deadline = limitedReadingDeadlines.get(node.dataset.articleId);
       const remaining = deadline - now;
       if (remaining <= 0) {
-        if (node.dataset.paid === "true") {
-          node.remove();
+        if (node.dataset.limitedOpen === "true" && activeId) {
+          renderCurrentView();
           return;
         }
         node.textContent = "贊助專屬";
@@ -209,7 +211,11 @@ function renderList(articles) {
   bindLimitedReadingCountdowns();
 }
 
-function splitMemberContent(content = "") {
+function splitMemberContent(content = "", articleId = "") {
+  const deadline = limitedReadingDeadlines.get(articleId);
+  if (content.includes(paidMarker) && deadline && Date.now() < deadline) {
+    return { publicContent: content.replace(paidMarker, ""), lockedContent: "", accessType: "open" };
+  }
   const accessType = content.includes(paidMarker)
     ? "paid"
     : content.includes(memberMarker)
@@ -352,7 +358,8 @@ function renderArticle(article) {
     return;
   }
   document.title = `${article.title}｜靈元院文選`;
-  const { publicContent, lockedContent, accessType } = splitMemberContent(article.content || "");
+  const articleKey = article.id || article.slug || activeId;
+  const { publicContent, lockedContent, accessType } = splitMemberContent(article.content || "", articleKey);
   root.innerHTML = `
     <article class="article-view">
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
@@ -369,7 +376,6 @@ function renderArticle(article) {
   `;
   bindLimitedReadingCountdowns();
   if (accessType === "member") bindArticleContinue();
-  const articleKey = article.id || article.slug || activeId;
   bindArticleShare(articleKey);
   trackArticleView(articleKey);
 }
