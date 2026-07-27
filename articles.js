@@ -23,6 +23,11 @@ const limitedReadingDeadlines = new Map([
   ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
 const articleGuides = {
+  "jitong-leader-discernment": {
+    topics: ["靈乩辨識", "權力與界線"],
+    level: "深度",
+    nextId: "tonglingren-wufa-huifu-putongren"
+  },
   "jitong-discernment-before-exorcism": {
     topics: ["靈乩辨識", "靈擾與中邪"],
     level: "深度",
