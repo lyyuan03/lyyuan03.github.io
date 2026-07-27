@@ -22,6 +22,48 @@ const limitedReadingDeadlines = new Map([
   ["jitong-shenming-fushen", Date.parse("2026-07-24T22:28:58.068Z")],
   ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
+const articleGuides = {
+  "good-fortune-believe-in-yourself-choices": {
+    topics: ["自我信任", "生命選擇"],
+    level: "初識",
+    nextId: "market-crash-money-self-control"
+  },
+  "yuanshen-awakening-eleven-principles": {
+    topics: ["元神與人格", "靈能力"],
+    level: "初識",
+    nextId: "lingxiu-yuanshen-reality"
+  },
+  "seven-twenty-five-election-shift": {
+    topics: ["社會觀察", "責任與選擇"],
+    level: "初識",
+    nextId: "market-crash-money-self-control"
+  },
+  "tonglingren-wufa-huifu-putongren": {
+    topics: ["通靈辨識", "人格膨脹"],
+    level: "進階",
+    nextId: "jitong-shenming-fushen"
+  },
+  "lingxiu-zouhuo-rumo": {
+    topics: ["修行偏差", "身心辨識"],
+    level: "初識",
+    nextId: "lingxiu-yuanshen-reality"
+  },
+  "lingxiu-yuanshen-reality": {
+    topics: ["元神與人格", "修行責任"],
+    level: "進階",
+    nextId: "yuanshen-awakening-eleven-principles"
+  },
+  "jitong-shenming-fushen": {
+    topics: ["通靈辨識", "乩身與神意"],
+    level: "深度",
+    nextId: "tonglingren-wufa-huifu-putongren"
+  },
+  "market-crash-money-self-control": {
+    topics: ["財富與生命", "自我主導"],
+    level: "初識",
+    nextId: "good-fortune-believe-in-yourself-choices"
+  }
+};
 
 let loadedArticles = [];
 let articleMetrics = new Map();
@@ -92,6 +134,45 @@ function renderMetricSummary(articleId, compact = false) {
       <span>分享 <b data-metric-value="shares">${shares.toLocaleString("zh-TW")}</b></span>
       <span>複製 <b data-metric-value="copies">${copies.toLocaleString("zh-TW")}</b></span>
     </div>
+  `;
+}
+
+function articleKey(article = {}) {
+  return article.id || article.slug || "";
+}
+
+function getArticleGuide(article = {}) {
+  return articleGuides[articleKey(article)] || {
+    topics: Array.isArray(article.topics) ? article.topics : [],
+    level: article.readingLevel || ""
+  };
+}
+
+function renderArticleGuide(article, compact = false) {
+  const guide = getArticleGuide(article);
+  if (!guide.topics.length && !guide.level) return "";
+  return `
+    <div class="article-guide${compact ? " is-compact" : ""}" aria-label="文章主題與閱讀程度">
+      ${guide.topics.map((topic) => `<span class="article-topic">${escapeHtml(topic)}</span>`).join("")}
+      ${guide.level ? `<span class="article-level">${escapeHtml(guide.level)}閱讀</span>` : ""}
+    </div>
+  `;
+}
+
+function renderNextReading(article) {
+  const guide = getArticleGuide(article);
+  if (!guide.nextId) return "";
+  const nextArticle = loadedArticles.find((item) => articleKey(item) === guide.nextId);
+  if (!nextArticle) return "";
+  const nextGuide = getArticleGuide(nextArticle);
+  return `
+    <aside class="next-reading" aria-label="下一篇延伸閱讀">
+      <div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div>
+      <a href="articles.html?id=${encodeURIComponent(articleKey(nextArticle))}">
+        <strong>${escapeHtml(nextArticle.title || "下一篇文章")}</strong>
+        ${nextGuide.topics.length ? `<span>${nextGuide.topics.map(escapeHtml).join("・")}</span>` : ""}
+      </a>
+    </aside>
   `;
 }
 
@@ -202,6 +283,7 @@ function renderList(articles) {
       ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
+      ${renderArticleGuide(article, true)}
       ${renderLimitedReadingCountdown(article.id || article.slug || activeId, (article.content || "").includes(paidMarker))}
       ${renderMetricSummary(article.id || article.slug || activeId)}
       <p>${escapeHtml(article.excerpt || "")}</p>
@@ -363,12 +445,14 @@ function renderArticle(article) {
     <article class="article-view">
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
+      ${renderArticleGuide(article)}
       ${renderLimitedReadingCountdown(article.id || article.slug || activeId, (article.content || "").includes(paidMarker))}
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
       <div class="article-body">${renderContent(publicContent)}</div>
       ${accessType === "member" ? renderSupportGate(lockedContent) : ""}
       ${accessType === "paid" ? renderPaidGate(article) : ""}
       ${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}
+      ${renderNextReading(article)}
       ${renderBookCta()}
       ${renderArticleShare(article)}
     </article>
