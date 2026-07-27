@@ -1,6 +1,7 @@
-import { db } from "./firebase-config.js";
+import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260727-jitong-member-1";
-import { collection, doc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -77,6 +78,8 @@ const articleGuides = {
 
 let loadedArticles = [];
 let articleMetrics = new Map();
+let currentUser = null;
+let currentMemberAccess = null;
 
 function escapeHtml(value = "") {
   return value.replace(/[&<>"']/g, (char) => ({
@@ -312,6 +315,9 @@ function splitMemberContent(content = "", articleId = "") {
     : content.includes(memberMarker)
       ? "member"
       : "open";
+  if (accessType === "paid" && hasPaidAccess()) {
+    return { publicContent: content.replace(paidMarker, ""), lockedContent: "", accessType: "open" };
+  }
   if (accessType === "open") {
     return { publicContent: content, lockedContent: "", accessType };
   }
@@ -322,6 +328,26 @@ function splitMemberContent(content = "", articleId = "") {
     lockedContent: rest.join(marker).trim(),
     accessType
   };
+}
+
+function hasPaidAccess() {
+  if (isAdminEmail(currentUser?.email)) return true;
+  if (!currentMemberAccess || currentMemberAccess.status !== "active") return false;
+  const expiry = currentMemberAccess.expiresAt?.toDate?.()
+    || (currentMemberAccess.expiresAt ? new Date(currentMemberAccess.expiresAt) : null);
+  return Boolean(expiry && !Number.isNaN(expiry.getTime()) && expiry > new Date());
+}
+
+async function loadMemberAccess(user) {
+  currentMemberAccess = null;
+  if (!user?.email || isAdminEmail(user.email)) return;
+  try {
+    const email = user.email.trim().toLowerCase();
+    const snapshot = await getDoc(doc(db, "memberAccess", email));
+    if (snapshot.exists()) currentMemberAccess = snapshot.data();
+  } catch (error) {
+    console.warn("會員閱讀資格暫時無法確認。", error);
+  }
 }
 
 function renderBookCta() {
@@ -370,6 +396,7 @@ function renderPaidGate(article) {
         <h3>本文為贊助會員專屬</h3>
         <p>本篇目前僅開放前段試閱。若希望閱讀全文，歡迎聯繫靈元院，了解贊助會員開放方式。</p>
         <div class="paid-inquiry-actions">
+          <button class="paid-inquiry-primary" id="article-member-login-button" type="button">${currentUser ? "重新確認會員資格" : "會員登入"}</button>
           <a class="paid-inquiry-primary" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">詢問贊助閱讀方式</a>
           <a class="paid-inquiry-secondary" href="mailto:lyyuan03@gmail.com?subject=${subject}&body=${body}">使用 Email 詢問</a>
         </div>
@@ -377,6 +404,12 @@ function renderPaidGate(article) {
       </div>
     </section>
   `;
+}
+
+function bindPaidLogin() {
+  document.getElementById("article-member-login-button")?.addEventListener("click", () => {
+    document.getElementById("member-login-button")?.click();
+  });
 }
 
 function bindArticleContinue() {
@@ -469,6 +502,7 @@ function renderArticle(article) {
   `;
   bindLimitedReadingCountdowns();
   if (accessType === "member") bindArticleContinue();
+  if (accessType === "paid") bindPaidLogin();
   bindArticleShare(articleKey);
   trackArticleView(articleKey);
 }
@@ -506,4 +540,10 @@ async function loadArticles() {
 loadArticles().catch((error) => {
   console.error(error);
   root.innerHTML = '<div class="empty">文章暫時無法載入，請稍後再試。</div>';
+});
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  await loadMemberAccess(user);
+  if (loadedArticles.length) renderCurrentView();
 });
