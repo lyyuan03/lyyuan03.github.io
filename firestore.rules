@@ -57,6 +57,16 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /membershipSettings/{settingId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /memberAccess/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn() && request.auth.token.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
