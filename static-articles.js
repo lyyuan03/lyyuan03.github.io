@@ -1,4 +1,7 @@
+import { jitongDiscernmentArticle } from "./article-jitong-discernment.js?v=20260727-jitong-discernment-1";
+
 export const staticArticles = [
+  jitongDiscernmentArticle,
   {
     id: "good-fortune-believe-in-yourself-choices",
     slug: "good-fortune-believe-in-yourself-choices",
