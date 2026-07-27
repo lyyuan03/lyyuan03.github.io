@@ -1,4 +1,4 @@
-import { jitongLeaderDiscernmentArticle } from "./article-jitong-leader-discernment.js?v=20260727-jitong-leader-discernment-1";
+import { jitongLeaderDiscernmentArticle } from "./article-jitong-leader-discernment.js?v=20260727-jitong-member-1";
 import { jitongDiscernmentArticle } from "./article-jitong-discernment.js?v=20260727-jitong-discernment-1";
 
 export const staticArticles = [
