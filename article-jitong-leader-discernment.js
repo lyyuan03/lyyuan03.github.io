@@ -6,7 +6,7 @@ export const jitongLeaderDiscernmentArticle = {
   status: "published",
   publishedAt: "2026-07-27T15:00:00.000Z",
   updatedAt: "2026-07-27T15:00:00.000Z",
-  coverImage: "assets/articles/jitong-leader-discernment/cover.svg",
+  coverImage: "assets/articles/jitong-discernment/cover.jpg",
   sharePath: "article/jitong-leader-discernment.html",
   excerpt: "判斷一位宮壇主事者，不是看神通有多強，而是看他在神明離開之後，如何面對權力、金錢、質疑與信眾的依賴。",
   accessType: "paid",
