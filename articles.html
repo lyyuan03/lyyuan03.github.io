@@ -68,6 +68,24 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 .limited-reading-countdown,.limited-reading-countdown.is-ended{padding:7px 11px;font-size:13px}
 .article-card .article-engagement{color:rgba(255,253,248,.66);font-size:11px}
 .article-card .article-engagement b{color:#D8BD91;font-weight:500}
+.article-guide{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 22px}
+.article-guide span{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:5px 10px;
+  border-radius:999px;
+  font-family:var(--sans);
+  font-size:12px;
+  line-height:1.4;
+  letter-spacing:.06em;
+}
+.article-topic{border:1px solid rgba(139,104,63,.3);background:rgba(165,130,84,.09);color:#664B2D}
+.article-level{border:1px solid rgba(90,67,42,.18);background:rgba(255,255,255,.28);color:#725C42}
+.article-guide.is-compact{margin:2px 0 13px;gap:6px}
+.article-guide.is-compact span{min-height:26px;padding:4px 9px;font-size:11px}
+.article-card .article-topic{border-color:rgba(216,189,145,.3);background:rgba(197,162,111,.11);color:#E3CEAA}
+.article-card .article-level{border-color:rgba(255,253,248,.17);background:rgba(255,253,248,.06);color:rgba(255,253,248,.76)}
 
 .article-view{
   max-width:760px;
@@ -112,6 +130,25 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 }
 .article-view .article-engagement{font-size:12px;color:#725C42}
 .article-view .article-engagement b{font-weight:500;color:#8B683F}
+.next-reading{
+  margin:42px 0 16px;
+  padding:22px 24px;
+  border-top:1px solid rgba(90,67,42,.25);
+  border-bottom:1px solid rgba(90,67,42,.25);
+  background:rgba(255,255,255,.16);
+}
+.next-reading-eyebrow{
+  margin-bottom:9px;
+  font-family:var(--sans);
+  color:#8B683F;
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.12em;
+}
+.next-reading a{display:block;color:#493724}
+.next-reading strong{display:block;font-family:var(--serif);font-size:21px;line-height:1.65;font-weight:700}
+.next-reading a>span{display:block;margin-top:7px;color:#725C42;font-family:var(--sans);font-size:12px;letter-spacing:.08em}
+.next-reading a:hover strong,.next-reading a:focus-visible strong{color:#8B683F}
 .article-book-link-wrap{margin:30px 0 8px}
 .article-book-link{
   min-height:44px;
@@ -175,6 +212,6 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 </main>
 <footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5 17 7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>
 <script>(()=>{const nav=document.querySelector('nav');if(!nav)return;const triggers=[...nav.querySelectorAll('.has-dropdown')];const mq=window.matchMedia('(max-width:768px)');const close=()=>nav.querySelectorAll('.open').forEach(i=>i.classList.remove('open'));triggers.forEach(t=>{const li=t.closest('li');t.addEventListener('click',e=>{if(!mq.matches)return;e.preventDefault();const is=li.classList.contains('open');close();if(!is)li.classList.add('open')})});document.addEventListener('click',e=>{if(!nav.contains(e.target))close()})})();</script>
-<script type="module" src="articles.js?v=20260726-expired-countdown-cleanup-1"></script>
+<script type="module" src="articles.js?v=20260727-thought-map-1"></script>
 </body>
 </html>
