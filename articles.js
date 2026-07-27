@@ -23,6 +23,11 @@ const limitedReadingDeadlines = new Map([
   ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
 const articleGuides = {
+  "jitong-discernment-before-exorcism": {
+    topics: ["靈乩辨識", "靈擾與中邪"],
+    level: "深度",
+    nextId: "jitong-shenming-fushen"
+  },
   "good-fortune-believe-in-yourself-choices": {
     topics: ["自我信任", "生命選擇"],
     level: "初識",
