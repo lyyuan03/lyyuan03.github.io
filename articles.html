@@ -37,6 +37,121 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 .footer-brand-mark{display:block;width:128px;max-width:34vw;height:auto;margin:0 auto 2px;opacity:.64;filter:saturate(.72) brightness(.78)}
 @media(max-width:560px){.footer-brand-mark{width:112px;max-width:38vw}}
 </style>
+<style id="article-reading-accessibility">
+/* 保留網站原有深綠背景，只提升文選列表與文章閱讀區的清晰度。 */
+.article-grid{gap:20px}
+.article-card{
+  padding:26px;
+  background:rgba(25,36,22,.96);
+  border-color:rgba(197,162,111,.34);
+  box-shadow:0 12px 30px rgba(0,0,0,.2);
+  transition:background .2s,border-color .2s,transform .2s,box-shadow .2s;
+}
+.article-card:hover,.article-card:focus-visible{
+  background:rgba(34,47,29,.98);
+  border-color:rgba(197,162,111,.58);
+  transform:translateY(-2px);
+  box-shadow:0 16px 36px rgba(0,0,0,.28);
+  outline:none;
+}
+.article-card img{border-color:rgba(197,162,111,.28)}
+.article-card .article-meta{font-size:13px;font-weight:500;color:#CDAE80}
+.article-card h2{font-size:24px;line-height:1.6;letter-spacing:.08em;color:#FFFDF8}
+.article-card p{color:rgba(255,253,248,.84);font-size:16px;line-height:1.9}
+.category-tabs a{
+  display:inline-flex;
+  align-items:center;
+  min-height:44px;
+  padding:10px 16px;
+  color:rgba(255,253,248,.82);
+}
+.limited-reading-countdown,.limited-reading-countdown.is-ended{padding:7px 11px;font-size:13px}
+.article-card .article-engagement{color:rgba(255,253,248,.66);font-size:11px}
+.article-card .article-engagement b{color:#D8BD91;font-weight:500}
+
+.article-view{
+  max-width:760px;
+  margin:12px auto 0;
+  padding:52px 56px 46px;
+  background:#F4EFE6;
+  color:#302A23;
+  border:1px solid rgba(197,162,111,.38);
+  box-shadow:0 22px 55px rgba(0,0,0,.3);
+}
+.article-view>.article-meta{font-size:13px;font-weight:500;color:#8B683F}
+.article-view>h2{
+  margin-top:10px;
+  font-size:36px;
+  font-weight:700;
+  line-height:1.55;
+  letter-spacing:.08em;
+  color:#5A432A;
+}
+.article-cover{margin:24px 0 32px;border-color:rgba(90,67,42,.2)}
+.article-body{
+  font-size:20px;
+  line-height:2.05;
+  letter-spacing:.035em;
+  color:#302A23;
+}
+.article-body p{margin-bottom:1.55em}
+.article-body h1,.article-body h2,.article-body h3{
+  margin-top:1.8em;
+  color:#664B2D;
+  font-weight:700;
+  line-height:1.65;
+}
+.article-body img{margin:34px auto;border-color:rgba(90,67,42,.2)}
+.article-view .member-lock-zone:before{
+  background:linear-gradient(180deg,#F4EFE6 0%,rgba(244,239,230,.46) 55%,rgba(244,239,230,0) 100%);
+}
+.article-view .member-lock-zone:after{
+  background:linear-gradient(180deg,rgba(244,239,230,0),#F4EFE6 92%);
+}
+.article-view .article-engagement{font-size:12px;color:#725C42}
+.article-view .article-engagement b{font-weight:500;color:#8B683F}
+.article-book-link-wrap{margin:30px 0 8px}
+.article-book-link{
+  min-height:44px;
+  padding:10px 15px;
+  border-color:rgba(90,67,42,.3);
+  background:rgba(165,130,84,.1);
+  color:#664B2D;
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:.08em;
+}
+.article-book-link:hover,.article-book-link:focus-visible{
+  background:rgba(165,130,84,.2);
+  border-color:rgba(90,67,42,.5);
+  color:#3D2E1E;
+}
+.article-share{gap:10px;margin-top:16px;color:#5F4A33}
+.article-share>a,.article-share>button{
+  width:44px;
+  height:44px;
+  opacity:.9;
+  filter:saturate(.72) brightness(.94);
+  box-shadow:0 3px 9px rgba(48,42,35,.12);
+}
+.article-share .article-share-copy{background:#8B683F}
+.article-share-status{color:#5F4A33;font-size:12px}
+
+@media(max-width:760px){
+  .article-card{padding:22px}
+  .article-card h2{font-size:23px}
+  .article-view{margin-top:8px;padding:38px 28px 36px}
+  .article-view>h2{font-size:31px;line-height:1.55}
+  .article-body{font-size:19px;line-height:2;letter-spacing:.025em}
+}
+@media(max-width:420px){
+  .wrap{padding-left:12px;padding-right:12px}
+  .article-view{padding:34px 20px 32px}
+  .article-view>h2{font-size:29px;letter-spacing:.055em}
+  .article-body{font-size:19px}
+  .article-share{justify-content:flex-start;flex-wrap:wrap}
+}
+</style>
 </head>
 <body>
 <nav><div class="nav-inner"><ul class="nav-links">
