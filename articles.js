@@ -646,6 +646,7 @@ function bindArticleExperience() {
   const body = article?.querySelector(".article-body");
   if (!article || !body) return;
 
+  document.querySelector(".reading-progress")?.remove();
   const progress = document.createElement("div");
   progress.className = "reading-progress";
   progress.setAttribute("aria-hidden", "true");
