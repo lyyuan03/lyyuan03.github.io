@@ -709,6 +709,7 @@ function renderArticle(article) {
   const { publicContent, lockedContent, accessType } = splitMemberContent(article.content || "", articleKey);
   root.innerHTML = `
     <article class="article-view">
+      <a class="article-back" href="articles.html">← 返回全部文選</a>
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${renderArticleGuide(article)}
@@ -732,7 +733,10 @@ function renderArticle(article) {
 }
 
 function renderCurrentView() {
-  if (activeId) {
+  const isDetail = Boolean(activeId);
+  document.body.classList.toggle("is-article-detail", isDetail);
+  tabs.hidden = isDetail;
+  if (isDetail) {
     renderArticle(loadedArticles.find((article) => article.id === activeId || article.slug === activeId));
   } else {
     renderList(loadedArticles);
