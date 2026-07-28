@@ -376,12 +376,13 @@ function renderList(articles) {
         return `
           <a class="article-card" href="articles.html?id=${encodeURIComponent(key)}">
             <div class="article-card-media">
-              ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
+              ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
+              <div class="article-card-media-gradient" aria-hidden="true"></div>
               <span class="article-access-badge is-${access}">${accessLabel}</span>
+              <h2 class="article-cover-title">${escapeHtml(article.title || "未命名文章")}</h2>
             </div>
             <div class="article-card-content">
               <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
-              <h2>${escapeHtml(article.title || "未命名文章")}</h2>
               ${renderArticleGuide(article, true)}
               ${renderLimitedReadingCountdown(key, articleIsPaid(article))}
               <p>${escapeHtml(article.excerpt || "")}</p>
