@@ -89,6 +89,21 @@ const articleGuides = {
   }
 };
 
+const articleHooks = {
+  "japan-temple-faith-and-decline": "如果有一天，信仰的人都不在了，這些神佛又會去哪裡？寺院還在，信仰卻可能早已離開。",
+  "spiritual-practice-cannot-be-outsourced-to-gods": "神明可以引路，也可能給你感應；但神明離開之後，你是否仍能清醒做人，才是修為真正開始被檢驗的時刻。",
+  "jitong-leader-discernment": "最容易讓人誤判的，不是神明降駕的那一刻，而是神明離開之後，那個人還坐在原位。",
+  "jitong-discernment-before-exorcism": "第一個問題不該是「附在他身上的到底是誰」，而是：這裡真的有外靈嗎？判斷錯誤，驅邪反而可能使情況更嚴重。",
+  "good-fortune-believe-in-yourself-choices": "真正阻擋人生改變的，往往不是命不好；而是每一次站在機會面前，你都習慣退回那個不相信自己的舊身分。",
+  "yuanshen-awakening-eleven-principles": "你能看見別人看不見的東西，那是責任，不是特權。元神覺醒之後，最需要提防的，反而是人的貪念與膨脹。",
+  "seven-twenty-five-election-shift": "七二五之後，短期有場面，中期有攻防；真正可能改變年底選情的，是中央與地方如何面對各自不願承擔的責任。",
+  "tonglingren-wufa-huifu-putongren": "最可怕的不是神明的力量有多大，而是一個人嚐過被仰望的滋味後，再也不願意做回普通人。",
+  "lingxiu-zouhuo-rumo": "身體出現異象、靈動或能量反應，不等於修為提升。當氣脈與內在問題一起浮現，你能否誠實回到自己？",
+  "lingxiu-yuanshen-reality": "許多人以為靈修是努力就能學會的技能；真正要先面對的，卻是先天條件、生命軌跡，以及你是否承擔得起。",
+  "jitong-shenming-fushen": "很多看似「神明附身」的展演，可能只是想像與暗示交織出的產物，連當事人自己都未必察覺。",
+  "market-crash-money-self-control": "當你把「這次一定要翻身」放進市場，押上的就不只是一檔股票，也包括焦慮、不甘心，以及對未來的恐懼。"
+};
+
 let loadedArticles = [];
 let articleMetrics = new Map();
 let currentUser = null;
@@ -223,6 +238,10 @@ function getArticleGuide(article = {}) {
     topics: Array.isArray(article.topics) ? article.topics : [],
     level: article.readingLevel || ""
   };
+}
+
+function getArticleHook(article = {}) {
+  return articleHooks[articleKey(article)] || article.excerpt || "";
 }
 
 function renderArticleGuide(article, compact = false) {
@@ -383,9 +402,10 @@ function renderList(articles) {
             </div>
             <div class="article-card-content">
               <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
+              <h2 class="article-list-title">${escapeHtml(article.title || "未命名文章")}</h2>
               ${renderArticleGuide(article, true)}
               ${renderLimitedReadingCountdown(key, articleIsPaid(article))}
-              <p>${escapeHtml(article.excerpt || "")}</p>
+              <p class="article-hook">${escapeHtml(getArticleHook(article))}</p>
               ${renderMetricSummary(key, true)}
             </div>
           </a>
