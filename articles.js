@@ -385,7 +385,7 @@ function renderList(articles) {
               ${renderArticleGuide(article, true)}
               ${renderLimitedReadingCountdown(key, articleIsPaid(article))}
               <p>${escapeHtml(article.excerpt || "")}</p>
-              ${renderMetricSummary(key)}
+              ${renderMetricSummary(key, true)}
             </div>
           </a>
         `;
