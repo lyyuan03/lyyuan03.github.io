@@ -1,7 +1,9 @@
 import { jitongLeaderDiscernmentArticle } from "./article-jitong-leader-discernment.js?v=20260727-jitong-member-1";
 import { jitongDiscernmentArticle } from "./article-jitong-discernment.js?v=20260727-jitong-discernment-1";
+import { japanTempleFaithArticle } from "./article-japan-temple-faith.js?v=20260728-japan-temple-faith-1";
 
 export const staticArticles = [
+  japanTempleFaithArticle,
   {
     id: "spiritual-practice-cannot-be-outsourced-to-gods",
     slug: "spiritual-practice-cannot-be-outsourced-to-gods",

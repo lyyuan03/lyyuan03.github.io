@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260728-god-guides-1";
+import { staticArticles } from "./static-articles.js?v=20260728-japan-temple-faith-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -25,6 +25,11 @@ const limitedReadingDeadlines = new Map([
   ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
 const articleGuides = {
+  "japan-temple-faith-and-decline": {
+    topics: ["信仰與人", "寺院興衰"],
+    level: "深度",
+    nextId: "spiritual-practice-cannot-be-outsourced-to-gods"
+  },
   "shenming-yinlu-ganying-budengyu-xiuwei": {
     topics: ["感應與修為", "心性與界線"],
     level: "進階",
