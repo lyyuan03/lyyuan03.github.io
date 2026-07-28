@@ -90,18 +90,18 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
-  "japan-temple-faith-and-decline": "assets/articles/japan-temple-faith/temple-without-faith.jpg",
-  "spiritual-practice-cannot-be-outsourced-to-gods": "assets/articles/jitong-discernment/cover.jpg",
-  "jitong-leader-discernment": "assets/articles/jitong-discernment/cover.jpg",
-  "jitong-discernment-before-exorcism": "assets/articles/jitong-discernment/character.jpg",
-  "good-fortune-believe-in-yourself-choices": "assets/articles/good-fortune-choices/receive-opportunity.svg",
-  "yuanshen-awakening-eleven-principles": "assets/articles/yuanshen-awakening-eleven/whole-person.jpg",
-  "seven-twenty-five-election-shift": "assets/articles/seven-twenty-five-election/cover.jpg",
-  "tonglingren-wufa-huifu-putongren": "assets/articles/tonglingren-return/cover.jpg",
-  "lingxiu-zouhuo-rumo": "assets/articles/lingxiu-zouhuo/cover.jpg",
-  "lingxiu-yuanshen-reality": "assets/articles/yuanshen-reality/return-duty.jpg",
-  "jitong-shenming-fushen": "assets/articles/jitong-discernment/character.jpg",
-  "market-crash-money-self-control": "assets/articles/market-crash-money/self-rescue-text-v2.jpg"
+  "japan-temple-faith-and-decline": "assets/articles/thumbnails/japan-temple.jpg",
+  "spiritual-practice-cannot-be-outsourced-to-gods": "assets/articles/thumbnails/spiritual-practice.jpg",
+  "jitong-leader-discernment": "assets/articles/thumbnails/jitong-leader.jpg",
+  "jitong-discernment-before-exorcism": "assets/articles/thumbnails/jitong-discernment.jpg",
+  "good-fortune-believe-in-yourself-choices": "assets/articles/thumbnails/good-fortune.jpg",
+  "yuanshen-awakening-eleven-principles": "assets/articles/thumbnails/yuanshen-awakening.jpg",
+  "seven-twenty-five-election-shift": "assets/articles/thumbnails/election.jpg",
+  "tonglingren-wufa-huifu-putongren": "assets/articles/thumbnails/tongling-return.jpg",
+  "lingxiu-zouhuo-rumo": "assets/articles/thumbnails/lingxiu-zouhuo.jpg",
+  "lingxiu-yuanshen-reality": "assets/articles/thumbnails/yuanshen-reality.jpg",
+  "jitong-shenming-fushen": "assets/articles/thumbnails/jitong-shenming.jpg",
+  "market-crash-money-self-control": "assets/articles/thumbnails/market-crash.jpg"
 };
 
 const articleHooks = {
