@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260727-jitong-member-1";
+import { staticArticles } from "./static-articles.js?v=20260728-god-guides-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -19,11 +19,17 @@ const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
 const limitedReadingDeadlines = new Map([
+  ["shenming-yinlu-ganying-budengyu-xiuwei", Date.parse("2026-07-28T10:30:00.000Z")],
   ["good-fortune-believe-in-yourself-choices", Date.parse("2026-07-26T16:19:35.857Z")],
   ["jitong-shenming-fushen", Date.parse("2026-07-24T22:28:58.068Z")],
   ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
 const articleGuides = {
+  "shenming-yinlu-ganying-budengyu-xiuwei": {
+    topics: ["感應與修為", "心性與界線"],
+    level: "進階",
+    nextId: "jitong-leader-discernment"
+  },
   "jitong-leader-discernment": {
     topics: ["靈乩辨識", "權力與界線"],
     level: "深度",
