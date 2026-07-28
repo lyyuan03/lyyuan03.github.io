@@ -668,9 +668,10 @@ function bindArticleExperience() {
     headings.forEach((heading, index) => {
       heading.id = `article-section-${index + 1}`;
     });
-    const toc = document.createElement("nav");
+    const toc = document.createElement("aside");
     toc.className = "article-toc";
     toc.setAttribute("aria-label", "文章章節");
+    toc.setAttribute("role", "navigation");
     toc.innerHTML = `
       <button class="article-toc-toggle" type="button" aria-expanded="false">
         <span>文章章節</span><small>共 ${headings.length} 節</small>
