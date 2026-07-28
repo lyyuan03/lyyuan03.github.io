@@ -14,6 +14,7 @@ const root = document.getElementById("article-root");
 const tabs = document.getElementById("category-tabs");
 const params = new URLSearchParams(location.search);
 const activeCategory = params.get("category") || "";
+const activeAccess = params.get("access") || "all";
 const activeId = params.get("id") || "";
 const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
@@ -92,6 +93,7 @@ let loadedArticles = [];
 let articleMetrics = new Map();
 let currentUser = null;
 let currentMemberAccess = null;
+let visibleArticleCount = window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
 
 function escapeHtml(value = "") {
   return value.replace(/[&<>"']/g, (char) => ({
@@ -137,12 +139,62 @@ function sortPublished(a, b) {
   return bt - at;
 }
 
+function articleIsPaid(article = {}) {
+  return article.accessType === "paid" || (article.content || "").includes(paidMarker);
+}
+
+function articleIsLimitedOpen(article = {}) {
+  const key = articleKey(article);
+  return articleIsPaid(article)
+    && limitedReadingDeadlines.has(key)
+    && Date.now() < limitedReadingDeadlines.get(key);
+}
+
+function articleAccess(article = {}) {
+  return articleIsPaid(article) && !articleIsLimitedOpen(article) ? "paid" : "free";
+}
+
+function filterHref(access, category) {
+  const next = new URLSearchParams();
+  if (access && access !== "all") next.set("access", access);
+  if (category) next.set("category", category);
+  const queryString = next.toString();
+  return queryString ? `articles.html?${queryString}` : "articles.html";
+}
+
 function renderTabs() {
-  const items = [["", "全部"], ...Object.entries(categoryLabels)];
-  tabs.innerHTML = items.map(([key, label]) => {
-    const href = key ? `articles.html?category=${encodeURIComponent(key)}` : "articles.html";
-    return `<a class="${key === activeCategory ? "is-active" : ""}" href="${href}">${label}</a>`;
-  }).join("");
+  const accessItems = [
+    ["all", "全部文章"],
+    ["free", "免費閱讀"],
+    ["paid", "贊助專屬"]
+  ];
+  const categoryItems = [["", "全部主題"], ...Object.entries(categoryLabels)];
+  const counts = loadedArticles.reduce((result, article) => {
+    result.all += 1;
+    result[articleAccess(article)] += 1;
+    return result;
+  }, { all: 0, free: 0, paid: 0 });
+
+  tabs.innerHTML = `
+    <div class="article-filter-panel" id="article-filters">
+      <div class="filter-heading">
+        <strong>選擇想閱讀的文章</strong>
+        <span>依閱讀方式或主題快速尋找</span>
+      </div>
+      <div class="filter-row access-filter" aria-label="閱讀方式">
+        ${accessItems.map(([key, label]) => `
+          <a class="${key === activeAccess ? "is-active" : ""}" href="${filterHref(key, activeCategory)}">
+            ${label}<small>${counts[key]}</small>
+          </a>
+        `).join("")}
+      </div>
+      <div class="filter-row topic-filter" aria-label="文章主題">
+        ${categoryItems.map(([key, label]) => `
+          <a class="${key === activeCategory ? "is-active" : ""}" href="${filterHref(activeAccess, key)}">${label}</a>
+        `).join("")}
+      </div>
+    </div>
+  `;
 }
 
 function metricValue(articleId, key) {
@@ -298,22 +350,60 @@ function bindLimitedReadingCountdowns() {
 }
 
 function renderList(articles) {
-  const filtered = activeCategory ? articles.filter((article) => article.category === activeCategory) : articles;
+  const filtered = articles.filter((article) => {
+    const matchesCategory = !activeCategory || article.category === activeCategory;
+    const matchesAccess = activeAccess === "all" || articleAccess(article) === activeAccess;
+    return matchesCategory && matchesAccess;
+  });
+
   if (!filtered.length) {
-    root.innerHTML = '<div class="empty">目前尚無文章。</div>';
+    root.innerHTML = '<div class="empty">目前沒有符合條件的文章，請選擇其他分類。</div>';
     return;
   }
-  root.innerHTML = `<div class="article-grid">${filtered.map((article) => `
-    <a class="article-card" href="articles.html?id=${encodeURIComponent(article.id)}">
-      ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="">` : ""}
-      <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
-      <h2>${escapeHtml(article.title || "未命名文章")}</h2>
-      ${renderArticleGuide(article, true)}
-      ${renderLimitedReadingCountdown(article.id || article.slug || activeId, (article.content || "").includes(paidMarker))}
-      ${renderMetricSummary(article.id || article.slug || activeId)}
-      <p>${escapeHtml(article.excerpt || "")}</p>
-    </a>
-  `).join("")}</div>`;
+
+  const visibleArticles = filtered.slice(0, visibleArticleCount);
+  const remainingCount = filtered.length - visibleArticles.length;
+  root.innerHTML = `
+    <div class="article-result-summary">
+      <span>共 ${filtered.length} 篇文章</span>
+      <a href="#article-filters">重新選擇分類</a>
+    </div>
+    <div class="article-grid">
+      ${visibleArticles.map((article) => {
+        const key = articleKey(article);
+        const access = articleAccess(article);
+        const accessLabel = access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
+        return `
+          <a class="article-card" href="articles.html?id=${encodeURIComponent(key)}">
+            <div class="article-card-media">
+              ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
+              <span class="article-access-badge is-${access}">${accessLabel}</span>
+            </div>
+            <div class="article-card-content">
+              <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
+              <h2>${escapeHtml(article.title || "未命名文章")}</h2>
+              ${renderArticleGuide(article, true)}
+              ${renderLimitedReadingCountdown(key, articleIsPaid(article))}
+              <p>${escapeHtml(article.excerpt || "")}</p>
+              ${renderMetricSummary(key)}
+            </div>
+          </a>
+        `;
+      }).join("")}
+    </div>
+    ${remainingCount > 0 ? `
+      <div class="article-load-more-wrap">
+        <button class="article-load-more" id="article-load-more" type="button">
+          顯示更多文章 <small>尚有 ${remainingCount} 篇</small>
+        </button>
+      </div>
+    ` : ""}
+  `;
+
+  document.getElementById("article-load-more")?.addEventListener("click", () => {
+    visibleArticleCount += window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
+    renderList(articles);
+  });
   bindLimitedReadingCountdowns();
 }
 
@@ -544,6 +634,7 @@ async function loadArticles() {
     return items;
   }, []);
   loadedArticles = merged.sort(sortPublished);
+  renderTabs();
   await loadArticleMetrics();
 
   renderCurrentView();
