@@ -446,6 +446,28 @@ function renderList(articles) {
     renderList(articles);
   });
   bindLimitedReadingCountdowns();
+  bindListMotion();
+}
+
+function bindListMotion() {
+  const cards = [...document.querySelectorAll(".article-card")];
+  if (!cards.length) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+    cards.forEach((card) => card.classList.add("is-visible"));
+    return;
+  }
+  document.documentElement.classList.add("article-motion-ready");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: .08, rootMargin: "0px 0px -24px" });
+  cards.forEach((card, index) => {
+    card.style.setProperty("--card-order", String(index % 3));
+    observer.observe(card);
+  });
 }
 
 function splitMemberContent(content = "", articleId = "") {
@@ -619,6 +641,63 @@ function bindArticleShare(articleId) {
   });
 }
 
+function bindArticleExperience() {
+  const article = document.querySelector(".article-view");
+  const body = article?.querySelector(".article-body");
+  if (!article || !body) return;
+
+  const progress = document.createElement("div");
+  progress.className = "reading-progress";
+  progress.setAttribute("aria-hidden", "true");
+  progress.innerHTML = "<span></span>";
+  document.body.appendChild(progress);
+  const progressBar = progress.querySelector("span");
+
+  const updateProgress = () => {
+    const start = article.offsetTop;
+    const end = start + article.offsetHeight - window.innerHeight;
+    const ratio = end <= start ? 1 : Math.min(1, Math.max(0, (window.scrollY - start) / (end - start)));
+    progressBar.style.transform = `scaleX(${ratio})`;
+  };
+  updateProgress();
+  window.addEventListener("scroll", updateProgress, { passive: true });
+
+  const headings = [...body.querySelectorAll("h2, h3")].filter((heading) => heading.textContent.trim());
+  if (headings.length >= 3) {
+    headings.forEach((heading, index) => {
+      heading.id = `article-section-${index + 1}`;
+    });
+    const toc = document.createElement("nav");
+    toc.className = "article-toc";
+    toc.setAttribute("aria-label", "文章章節");
+    toc.innerHTML = `
+      <button class="article-toc-toggle" type="button" aria-expanded="false">
+        <span>文章章節</span><small>共 ${headings.length} 節</small>
+      </button>
+      <ol>
+        ${headings.map((heading) => `<li class="${heading.tagName === "H3" ? "is-sub" : ""}"><a href="#${heading.id}">${escapeHtml(heading.textContent.trim())}</a></li>`).join("")}
+      </ol>
+    `;
+    const cover = article.querySelector(".article-cover");
+    (cover || body).before(toc);
+    const toggle = toc.querySelector(".article-toc-toggle");
+    toggle.addEventListener("click", () => {
+      const open = toc.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+    toc.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
+      toc.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+    }));
+  }
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    requestAnimationFrame(() => article.classList.add("is-ready"));
+  } else {
+    article.classList.add("is-ready");
+  }
+}
+
 function renderArticle(article) {
   if (!article) {
     root.innerHTML = '<div class="empty">找不到這篇文章，或文章尚未發布。</div>';
@@ -647,6 +726,7 @@ function renderArticle(article) {
   if (accessType === "member") bindArticleContinue();
   if (accessType === "paid") bindPaidLogin();
   bindArticleShare(articleKey);
+  bindArticleExperience();
   trackArticleView(articleKey);
 }
 
