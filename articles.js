@@ -19,6 +19,7 @@ const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
 const limitedReadingDeadlines = new Map([
+  ["japan-temple-faith-and-decline", Date.parse("2026-07-28T15:15:12.000Z")],
   ["shenming-yinlu-ganying-budengyu-xiuwei", Date.parse("2026-07-28T10:30:00.000Z")],
   ["good-fortune-believe-in-yourself-choices", Date.parse("2026-07-26T16:19:35.857Z")],
   ["jitong-shenming-fushen", Date.parse("2026-07-24T22:28:58.068Z")],
