@@ -343,6 +343,67 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
   }
 }
 </style>
+
+<style id="article-light-ci-v1">
+/* 文選卡片採靈元院 CI 延伸淺色：奇數暖米棕、偶數柔和橄欖；網站深色背景維持不變。 */
+.article-card{
+  color:#3B312A;
+  border-color:rgba(165,130,84,.46);
+  box-shadow:0 10px 26px rgba(0,0,0,.16)
+}
+.article-grid .article-card:nth-child(odd){background:#E9E0D4}
+.article-grid .article-card:nth-child(even){background:#DEE1CD}
+.article-grid .article-card:nth-child(odd):hover,
+.article-grid .article-card:nth-child(odd):focus-visible{background:#F0E8DE}
+.article-grid .article-card:nth-child(even):hover,
+.article-grid .article-card:nth-child(even):focus-visible{background:#E7E9D8}
+.article-card-content{color:#3B312A}
+.article-card .article-meta{color:#725532;font-weight:700}
+.article-card p{color:#493F36}
+.article-card .article-topic{
+  border-color:rgba(89,79,71,.28);
+  background:rgba(165,130,84,.14);
+  color:#594F47
+}
+.article-card .article-level{
+  border-color:rgba(96,99,48,.3);
+  background:rgba(96,99,48,.12);
+  color:#4E5229
+}
+.article-card .article-engagement,
+.article-card .article-engagement b{color:#675847}
+.article-card .article-engagement.is-compact{border-top-color:rgba(89,79,71,.18)}
+.article-card-media{background:#C8C4B4}
+.article-card-media img{
+  filter:brightness(.92) saturate(.9) contrast(1.03);
+  transform:scale(1.002)
+}
+.article-card:hover .article-card-media img{transform:scale(1.025)}
+.article-card-media-gradient{
+  background:linear-gradient(
+    180deg,
+    rgba(7,17,6,0) 0%,
+    rgba(7,17,6,.02) 42%,
+    rgba(7,17,6,.35) 68%,
+    rgba(7,17,6,.88) 100%
+  )
+}
+.article-card .article-cover-title{
+  color:#FFFDF8;
+  text-shadow:0 2px 5px rgba(0,0,0,.95),0 1px 14px rgba(0,0,0,.62)
+}
+@media(max-width:760px){
+  .article-card-media-gradient{
+    background:linear-gradient(
+      180deg,
+      rgba(7,17,6,0) 0%,
+      rgba(7,17,6,.08) 38%,
+      rgba(7,17,6,.46) 66%,
+      rgba(7,17,6,.92) 100%
+    )
+  }
+}
+</style>
 </head>
 <body>
 <nav><div class="nav-inner"><ul class="nav-links">
@@ -366,6 +427,6 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 <footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5 17 7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>
 <script>(()=>{const nav=document.querySelector('nav');if(!nav)return;const triggers=[...nav.querySelectorAll('.has-dropdown')];const mq=window.matchMedia('(max-width:768px)');const close=()=>nav.querySelectorAll('.open').forEach(i=>i.classList.remove('open'));triggers.forEach(t=>{const li=t.closest('li');t.addEventListener('click',e=>{if(!mq.matches)return;e.preventDefault();const is=li.classList.contains('open');close();if(!is)li.classList.add('open')})});document.addEventListener('click',e=>{if(!nav.contains(e.target))close()})})();</script>
 <script type="module" src="membership-auth.js?v=20260727-member-access-1"></script>
-<script type="module" src="articles.js?v=20260728-cover-system-2"></script>
+<script type="module" src="articles.js?v=20260728-light-ci-1"></script>
 </body>
 </html>
