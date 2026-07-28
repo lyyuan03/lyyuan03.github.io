@@ -89,6 +89,21 @@ const articleGuides = {
   }
 };
 
+const articleThumbnailImages = {
+  "japan-temple-faith-and-decline": "assets/articles/japan-temple-faith/temple-without-faith.jpg",
+  "spiritual-practice-cannot-be-outsourced-to-gods": "assets/articles/jitong-discernment/cover.jpg",
+  "jitong-leader-discernment": "assets/articles/jitong-discernment/cover.jpg",
+  "jitong-discernment-before-exorcism": "assets/articles/jitong-discernment/character.jpg",
+  "good-fortune-believe-in-yourself-choices": "assets/articles/good-fortune-choices/receive-opportunity.svg",
+  "yuanshen-awakening-eleven-principles": "assets/articles/yuanshen-awakening-eleven/whole-person.jpg",
+  "seven-twenty-five-election-shift": "assets/articles/seven-twenty-five-election/cover.jpg",
+  "tonglingren-wufa-huifu-putongren": "assets/articles/tonglingren-return/cover.jpg",
+  "lingxiu-zouhuo-rumo": "assets/articles/lingxiu-zouhuo/cover.jpg",
+  "lingxiu-yuanshen-reality": "assets/articles/yuanshen-reality/return-duty.jpg",
+  "jitong-shenming-fushen": "assets/articles/jitong-discernment/character.jpg",
+  "market-crash-money-self-control": "assets/articles/market-crash-money/self-rescue-text-v2.jpg"
+};
+
 const articleHooks = {
   "japan-temple-faith-and-decline": "如果有一天，信仰的人都不在了，這些神佛又會去哪裡？寺院還在，信仰卻可能早已離開。",
   "spiritual-practice-cannot-be-outsourced-to-gods": "神明可以引路，也可能給你感應；但神明離開之後，你是否仍能清醒做人，才是修為真正開始被檢驗的時刻。",
@@ -238,6 +253,10 @@ function getArticleGuide(article = {}) {
     topics: Array.isArray(article.topics) ? article.topics : [],
     level: article.readingLevel || ""
   };
+}
+
+function getArticleThumbnail(article = {}) {
+  return articleThumbnailImages[articleKey(article)] || article.coverImage || "";
 }
 
 function getArticleHook(article = {}) {
@@ -393,15 +412,16 @@ function renderList(articles) {
         const access = articleAccess(article);
         const accessLabel = access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
         return `
-          <a class="article-card" href="articles.html?id=${encodeURIComponent(key)}">
+          <a class="article-card" data-article-id="${escapeHtml(key)}" href="articles.html?id=${encodeURIComponent(key)}">
             <div class="article-card-media">
-              ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
+              ${getArticleThumbnail(article) ? `<img src="${escapeHtml(getArticleThumbnail(article))}" alt="" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
               <div class="article-card-media-gradient" aria-hidden="true"></div>
-              <span class="article-access-badge is-${access}">${accessLabel}</span>
-              <h2 class="article-cover-title">${escapeHtml(article.title || "未命名文章")}</h2>
             </div>
             <div class="article-card-content">
-              <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
+              <div class="article-card-heading">
+                <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
+                <span class="article-access-badge is-${access}">${accessLabel}</span>
+              </div>
               <h2 class="article-list-title">${escapeHtml(article.title || "未命名文章")}</h2>
               ${renderArticleGuide(article, true)}
               ${renderLimitedReadingCountdown(key, articleIsPaid(article))}
