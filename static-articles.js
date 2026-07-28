@@ -176,7 +176,7 @@ export const staticArticles = [
 這才是我所理解的修行。
 
 也是神明引路之後，任何人都必須親自走完的路。`
-  },,
+  },
   jitongLeaderDiscernmentArticle,
   jitongDiscernmentArticle,
   {
