@@ -18,6 +18,7 @@ const resetButton = document.getElementById("member-form-reset");
 const expiryModeEl = document.getElementById("member-expiry-mode");
 const customExpiryEl = document.getElementById("member-custom-expiry");
 const levelEl = document.getElementById("member-level");
+const firstJoinedAtEl = document.getElementById("member-first-joined-at");
 
 let settings = { price1: 0, price3: 0, price12: 0, paymentDays: 3, ecpayUrl: "" };
 let members = [];
@@ -27,29 +28,23 @@ function escapeHtml(value = "") {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
   }[char]));
 }
-
-function normalizeEmail(value = "") {
-  return value.trim().toLowerCase();
-}
-
+function normalizeEmail(value = "") { return value.trim().toLowerCase(); }
 function formatDate(value) {
   const date = toDate(value);
-  return date ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(date) : "尚未開通";
+  return date ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(date) : "尚未設定";
 }
-
 function toDateInputValue(value) {
   const date = toDate(value);
   if (!date) return "";
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   return local.toISOString().slice(0, 10);
 }
-
-function dateInputToExpiry(value) {
+function dateInputToDate(value, endOfDay = false) {
   if (!value) return null;
-  const date = new Date(`${value}T23:59:59+08:00`);
+  const time = endOfDay ? "23:59:59" : "00:00:00";
+  const date = new Date(`${value}T${time}+08:00`);
   return Number.isNaN(date.getTime()) ? null : date;
 }
-
 function addMonths(date, months) {
   const result = new Date(date);
   const originalDay = result.getDate();
@@ -59,39 +54,29 @@ function addMonths(date, months) {
   result.setDate(Math.min(originalDay, lastDay));
   return result;
 }
-
 function selectedMonths() {
-  return monthsEl.value === "custom"
-    ? Math.max(1, Number(customMonthsEl.value || 1))
-    : Number(monthsEl.value || 1);
+  return monthsEl.value === "custom" ? Math.max(1, Number(customMonthsEl.value || 1)) : Number(monthsEl.value || 1);
 }
-
 function planAmount(months) {
   if (months === 1) return Number(settings.price1 || 0);
   if (months === 3) return Number(settings.price3 || 0);
   if (months === 12) return Number(settings.price12 || 0);
   return Number(settings.price1 || 0) * months;
 }
-
 function calculatedExpiry(existingExpiry = null) {
   const now = new Date();
   const currentExpiry = toDate(existingExpiry);
   const base = currentExpiry && currentExpiry > now ? currentExpiry : now;
   return addMonths(base, selectedMonths());
 }
-
 function previewExpiry(existingExpiry = null) {
-  if (expiryModeEl?.value === "custom") {
-    return dateInputToExpiry(customExpiryEl?.value) || calculatedExpiry(existingExpiry);
-  }
+  if (expiryModeEl?.value === "custom") return dateInputToDate(customExpiryEl?.value, true) || calculatedExpiry(existingExpiry);
   return calculatedExpiry(existingExpiry);
 }
-
 function updateExpiryControls() {
   const custom = expiryModeEl?.value === "custom";
   if (customExpiryEl) customExpiryEl.disabled = !custom;
 }
-
 function updatePlanPreview(forceAmount = false) {
   customMonthsEl.disabled = monthsEl.value !== "custom";
   updateExpiryControls();
@@ -100,9 +85,9 @@ function updatePlanPreview(forceAmount = false) {
   const originalEmail = normalizeEmail(document.getElementById("member-original-email").value);
   const existing = members.find((item) => item.email === originalEmail);
   const expiry = previewExpiry(existing?.expiresAt);
-  summaryEl.textContent = `${memberLevelLabel(levelEl?.value)}｜${selectedMonths()} 個月｜應繳 NT$${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜開通後到期日 ${formatDate(expiry)}`;
+  const firstJoined = dateInputToDate(firstJoinedAtEl?.value) || toDate(existing?.firstJoinedAt) || toDate(existing?.startsAt) || new Date();
+  summaryEl.textContent = `${memberLevelLabel(levelEl?.value)}｜首次加入 ${formatDate(firstJoined)}｜${selectedMonths()} 個月｜應繳 NT$${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜到期日 ${formatDate(expiry)}`;
 }
-
 function resetMemberForm() {
   memberForm.reset();
   document.getElementById("member-original-email").value = "";
@@ -111,10 +96,10 @@ function resetMemberForm() {
   if (levelEl) levelEl.value = "wellness";
   if (expiryModeEl) expiryModeEl.value = "months";
   if (customExpiryEl) customExpiryEl.value = "";
+  if (firstJoinedAtEl) firstJoinedAtEl.value = new Date().toISOString().slice(0, 10);
   paymentUrlEl.value = settings.ecpayUrl || "";
   updatePlanPreview(true);
 }
-
 async function loadSettings() {
   const snapshot = await getDoc(doc(db, "membershipSettings", "default"));
   if (snapshot.exists()) settings = { ...settings, ...snapshot.data() };
@@ -125,7 +110,6 @@ async function loadSettings() {
   document.getElementById("ecpay-url").value = settings.ecpayUrl || "";
   updatePlanPreview(true);
 }
-
 async function saveSettings(event) {
   event.preventDefault();
   settings = {
@@ -140,12 +124,12 @@ async function saveSettings(event) {
   statusEl.textContent = "方案設定已儲存";
   updatePlanPreview(true);
 }
-
 function memberPayload(paymentStatus = null, activateMembership = false) {
   const email = normalizeEmail(document.getElementById("member-email").value);
   const existing = members.find((item) => item.email === normalizeEmail(document.getElementById("member-original-email").value));
   const status = paymentStatus || document.getElementById("member-payment-status").value;
   const expiry = previewExpiry(existing?.expiresAt);
+  const firstJoinedAt = dateInputToDate(firstJoinedAtEl?.value) || toDate(existing?.firstJoinedAt) || toDate(existing?.startsAt) || new Date();
   return {
     email,
     name: document.getElementById("member-name").value.trim(),
@@ -155,18 +139,14 @@ function memberPayload(paymentStatus = null, activateMembership = false) {
     paymentUrl: paymentUrlEl.value.trim(),
     paymentStatus: status,
     status: status === "paid" ? "active" : "pending",
-    startsAt: status === "paid" ? (existing?.startsAt || new Date().toISOString()) : (existing?.startsAt || null),
-    expiresAt: status === "paid" && (activateMembership || !existing?.expiresAt)
-      ? expiry.toISOString()
-      : (existing?.expiresAt || null),
-    paidAt: status === "paid" && (activateMembership || !existing?.paidAt)
-      ? new Date().toISOString()
-      : (existing?.paidAt || null),
+    firstJoinedAt: firstJoinedAt.toISOString(),
+    startsAt: status === "paid" ? (existing?.startsAt || firstJoinedAt.toISOString()) : (existing?.startsAt || null),
+    expiresAt: status === "paid" && (activateMembership || !existing?.expiresAt) ? expiry.toISOString() : (existing?.expiresAt || null),
+    paidAt: status === "paid" && (activateMembership || !existing?.paidAt) ? new Date().toISOString() : (existing?.paidAt || null),
     note: document.getElementById("member-note").value.trim(),
     updatedAt: serverTimestamp()
   };
 }
-
 async function saveMember(event) {
   event.preventDefault();
   const payload = memberPayload();
@@ -178,7 +158,6 @@ async function saveMember(event) {
   await loadMembers();
   resetMemberForm();
 }
-
 async function activateMember() {
   if (!memberForm.reportValidity()) return;
   const payload = memberPayload("paid", true);
@@ -189,13 +168,11 @@ async function activateMember() {
   await loadMembers();
   resetMemberForm();
 }
-
 function paymentDeadline() {
   const date = new Date();
   date.setDate(date.getDate() + Number(settings.paymentDays || 3));
   return formatDate(date);
 }
-
 function openPaymentEmail() {
   if (!memberForm.reportValidity()) return;
   const email = normalizeEmail(document.getElementById("member-email").value);
@@ -204,41 +181,24 @@ function openPaymentEmail() {
   const amount = Number(amountEl.value || 0).toLocaleString("zh-TW");
   const paymentUrl = paymentUrlEl.value.trim();
   const level = memberLevelLabel(levelEl?.value);
-  if (!paymentUrl) {
-    alert("請先填寫綠界付款連結。");
-    return;
-  }
+  if (!paymentUrl) { alert("請先填寫綠界付款連結。"); return; }
   const subject = `靈元院${level}｜${months}個月方案繳費通知`;
-  const body = `${name}您好：\n\n感謝您申請靈元院${level}。\n\n會員期間：${months}個月\n預計到期日：${formatDate(previewExpiry())}\n應繳金額：新台幣 ${amount} 元\n付款期限：${paymentDeadline()}\n\n請由以下綠界連結完成付款：\n${paymentUrl}\n\n完成付款後，我們將於確認款項後開通會員閱讀資格。請使用本信收件 Gmail（${email}）登入官網。\n\n靈元院行政團隊`;
+  const body = `${name}您好：\n\n感謝您申請靈元院${level}。\n\n會員期間：${months}個月\n預計到期日：${formatDate(previewExpiry())}\n應繳金額：新台幣 ${amount} 元\n付款期限：${paymentDeadline()}\n\n請由以下綠界連結完成付款：\n${paymentUrl}\n\n完成付款後，我們將於確認款項後開通會員資格。請使用本信收件 Gmail（${email}）登入官網。\n\n靈元院行政團隊`;
   location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
-
 function renderMembers() {
-  if (!members.length) {
-    listEl.innerHTML = '<div class="empty">目前尚無會員資料</div>';
-    return;
-  }
+  if (!members.length) { listEl.innerHTML = '<div class="empty">目前尚無會員資料</div>'; return; }
   const now = new Date();
   listEl.innerHTML = members.map((member) => {
     const expiry = toDate(member.expiresAt);
     const active = member.status === "active" && expiry && expiry > now;
     const label = member.paymentStatus === "pending" ? "待付款" : active ? "有效" : "已到期";
     const level = memberLevelLabel(member.memberLevel);
-    return `<div class="member-row">
-      <div>
-        <strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(level)}｜${escapeHtml(label)}</strong>
-        <small>${escapeHtml(member.email)}｜${Number(member.planMonths || 0)}個月｜NT$${Number(member.amount || 0).toLocaleString("zh-TW")}｜到期 ${escapeHtml(formatDate(member.expiresAt))}</small>
-      </div>
-      <div class="member-row-actions">
-        <button class="btn" type="button" data-edit="${escapeHtml(member.email)}">編輯</button>
-        <button class="btn danger" type="button" data-delete="${escapeHtml(member.email)}">刪除</button>
-      </div>
-    </div>`;
+    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(level)}｜${escapeHtml(label)}</strong><small>${escapeHtml(member.email)}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt || member.startsAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}</small></div><div class="member-row-actions"><button class="btn" type="button" data-edit="${escapeHtml(member.email)}">編輯</button><a class="btn" href="member-videos.html?preview=${encodeURIComponent(member.email)}" target="_blank">預覽影片</a><button class="btn danger" type="button" data-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
   }).join("");
   listEl.querySelectorAll("[data-edit]").forEach((button) => button.addEventListener("click", () => editMember(button.dataset.edit)));
   listEl.querySelectorAll("[data-delete]").forEach((button) => button.addEventListener("click", () => removeMember(button.dataset.delete)));
 }
-
 function editMember(email) {
   const member = members.find((item) => item.email === email);
   if (!member) return;
@@ -246,11 +206,12 @@ function editMember(email) {
   document.getElementById("member-name").value = member.name || "";
   document.getElementById("member-email").value = member.email || "";
   if (levelEl) levelEl.value = normalizeMemberLevel(member.memberLevel);
-  const standard = [1, 3, 12].includes(Number(member.planMonths));
+  const standard = [1, 3, 4, 6, 12].includes(Number(member.planMonths));
   monthsEl.value = standard ? String(member.planMonths) : "custom";
   customMonthsEl.value = String(member.planMonths || 1);
   if (expiryModeEl) expiryModeEl.value = "custom";
   if (customExpiryEl) customExpiryEl.value = toDateInputValue(member.expiresAt);
+  if (firstJoinedAtEl) firstJoinedAtEl.value = toDateInputValue(member.firstJoinedAt || member.startsAt);
   amountEl.value = String(member.amount || "");
   document.getElementById("member-payment-status").value = member.paymentStatus || "pending";
   paymentUrlEl.value = member.paymentUrl || settings.ecpayUrl || "";
@@ -258,45 +219,34 @@ function editMember(email) {
   updatePlanPreview(false);
   memberForm.scrollIntoView({ behavior: "smooth", block: "start" });
 }
-
 async function removeMember(email) {
   if (!confirm(`確定要刪除 ${email} 的會員資料嗎？`)) return;
   await deleteDoc(doc(db, "memberAccess", email));
   statusEl.textContent = "會員資料已刪除";
   await loadMembers();
 }
-
 async function loadMembers() {
   const snapshot = await getDocs(collection(db, "memberAccess"));
-  members = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))
-    .sort((a, b) => String(a.email).localeCompare(String(b.email), "zh-TW"));
+  members = snapshot.docs.map((item) => ({ id: item.id, ...item.data() })).sort((a, b) => String(a.email).localeCompare(String(b.email), "zh-TW"));
   renderMembers();
 }
-
+function showError(error) {
+  console.error(error);
+  statusEl.textContent = error?.code === "permission-denied" ? "Firebase 會員管理權限尚未發布" : "會員資料處理失敗";
+}
 settingsForm?.addEventListener("submit", (event) => saveSettings(event).catch(showError));
 memberForm?.addEventListener("submit", (event) => saveMember(event).catch(showError));
-monthsEl?.addEventListener("change", () => updatePlanPreview(true));
-customMonthsEl?.addEventListener("input", () => updatePlanPreview(true));
-amountEl?.addEventListener("input", () => updatePlanPreview(false));
-levelEl?.addEventListener("change", () => updatePlanPreview(false));
-expiryModeEl?.addEventListener("change", () => updatePlanPreview(false));
-customExpiryEl?.addEventListener("input", () => updatePlanPreview(false));
 activateButton?.addEventListener("click", () => activateMember().catch(showError));
 emailButton?.addEventListener("click", openPaymentEmail);
 resetButton?.addEventListener("click", resetMemberForm);
-
-function showError(error) {
-  console.error(error);
-  statusEl.textContent = error?.code === "permission-denied" ? "Firebase 會員權限尚未發布" : "會員資料處理失敗";
-}
+monthsEl?.addEventListener("change", () => updatePlanPreview(true));
+customMonthsEl?.addEventListener("input", () => updatePlanPreview(true));
+expiryModeEl?.addEventListener("change", () => updatePlanPreview(false));
+customExpiryEl?.addEventListener("change", () => updatePlanPreview(false));
+levelEl?.addEventListener("change", () => updatePlanPreview(false));
+firstJoinedAtEl?.addEventListener("change", () => updatePlanPreview(false));
 
 onAuthStateChanged(auth, async (user) => {
   if (!user || !isAdminEmail(user.email)) return;
-  try {
-    await loadSettings();
-    await loadMembers();
-  } catch (error) {
-    showError(error);
-    listEl.innerHTML = '<div class="empty">會員資料暫時無法載入，請確認 Firebase 規則已發布。</div>';
-  }
+  try { await Promise.all([loadSettings(), loadMembers()]); } catch (error) { showError(error); }
 });
