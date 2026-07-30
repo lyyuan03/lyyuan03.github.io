@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>會員消費管理｜靈元院</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap">
+<style>
+:root{--gold:#A58254;--gold2:#CBAA77;--cream:#F5F0E8;--deep:#071106;--panel:#10180d;--line:rgba(165,130,84,.26);--muted:rgba(245,240,232,.58);--sans:'Noto Sans TC',sans-serif;--serif:'Noto Serif TC',serif}*{box-sizing:border-box}body{margin:0;background:#071106;color:var(--cream);font-family:var(--sans)}.hidden{display:none!important}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line);background:rgba(7,17,6,.96)}.brand{font-family:var(--serif);color:var(--gold2);letter-spacing:.16em;font-size:20px}.main{max-width:1040px;margin:0 auto;padding:30px 18px 60px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.card{border:1px solid var(--line);background:rgba(16,24,13,.96);padding:22px}.card h2{font-family:var(--serif);font-weight:500;color:var(--gold2);letter-spacing:.12em;margin:0 0 18px}.field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:13px;color:rgba(245,240,232,.68)}input,textarea{width:100%;padding:11px 12px;background:rgba(4,8,3,.65);border:1px solid rgba(165,130,84,.3);color:var(--cream);font:inherit}textarea{min-height:90px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid rgba(165,130,84,.48);background:rgba(165,130,84,.1);color:var(--gold2);padding:10px 14px;text-decoration:none;font:inherit;cursor:pointer}.btn.primary{background:rgba(165,130,84,.24);color:#fff}.status{margin:0 0 18px;color:var(--muted);font-size:13px}.help{font-size:12px;color:var(--muted);line-height:1.8}.gate{max-width:460px;margin:12vh auto;text-align:center}@media(max-width:780px){.grid,.row{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand">靈元院會員消費管理</div><div class="actions"><a class="btn" href="admin.html">回文章後台</a><a class="btn" href="member-center.html" target="_blank">查看會員中心</a></div></header>
+<main id="purchase-admin-section" class="main hidden">
+  <p id="purchase-admin-status" class="status">可新增每筆消費，或人工修正會員累積金額與回饋金。</p>
+  <section class="grid">
+    <form id="member-purchase-form" class="card">
+      <h2>新增消費紀錄</h2>
+      <div class="field"><label for="purchase-email">會員 Gmail</label><input id="purchase-email" type="email" required></div>
+      <div class="row"><div class="field"><label for="purchase-date">消費日期</label><input id="purchase-date" type="date" required></div><div class="field"><label for="purchase-item">商品／項目</label><input id="purchase-item" placeholder="例如：保健組合"></div></div>
+      <div class="row"><div class="field"><label for="purchase-amount">消費金額</label><input id="purchase-amount" type="number" min="1" step="1" required></div><div class="field"><label for="purchase-reward">本次增加回饋金</label><input id="purchase-reward" type="number" min="0" step="1" value="0"></div></div>
+      <div class="field"><label for="purchase-note">備註</label><textarea id="purchase-note"></textarea></div>
+      <button class="btn primary" type="submit">新增並累積</button>
+      <p class="help">單筆消費滿 NT$15,000 時，可在回饋金欄填入 NT$1,000。系統會將金額累加到會員中心。</p>
+    </form>
+
+    <form id="member-adjust-form" class="card">
+      <h2>人工調整會員資料</h2>
+      <div class="field"><label for="adjust-email">會員 Gmail</label><input id="adjust-email" type="email" required></div>
+      <div class="actions" style="margin-bottom:14px"><button id="adjust-load" class="btn" type="button">載入目前資料</button></div>
+      <div class="field"><label for="adjust-total-spend">累積消費金額</label><input id="adjust-total-spend" type="number" min="0" step="1" required></div>
+      <div class="field"><label for="adjust-reward-balance">可用回饋金</label><input id="adjust-reward-balance" type="number" min="0" step="1" required></div>
+      <button class="btn primary" type="submit">儲存調整</button>
+      <p class="help">適用於舊訂單補登、退貨扣除、回饋金已使用或行政更正。</p>
+    </form>
+  </section>
+</main>
+<div class="gate card" id="purchase-admin-gate"><h2>請先從文章後台登入管理員 Gmail</h2><p class="help">完成登入後再開啟此頁，即可管理會員消費。</p></div>
+<script type="module" src="member-purchase-admin.js?v=20260730-purchase-admin-1"></script>
+<script type="module">import{auth,isAdminEmail}from'./firebase-config.js';import{onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';onAuthStateChanged(auth,u=>{const ok=u&&isAdminEmail(u.email);document.getElementById('purchase-admin-section').classList.toggle('hidden',!ok);document.getElementById('purchase-admin-gate').classList.toggle('hidden',!!ok);if(ok&&!document.getElementById('purchase-date').value)document.getElementById('purchase-date').valueAsDate=new Date();});</script>
+</body>
+</html>
