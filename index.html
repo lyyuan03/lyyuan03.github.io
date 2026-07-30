@@ -146,7 +146,7 @@ nav.is-scrolled{background:rgba(7,17,6,.94);border-color:rgba(165,130,84,.28)}
       <div><span class="section-kicker">SELECTED READING</span><h2 id="featured-title">從一篇文章，走入更深的觀看</h2></div>
       <a href="articles.html">瀏覽全部文選</a>
     </div>
-    <div class="featured-grid">
+    <div class="featured-grid" id="latest-articles" aria-live="polite">
       <a class="featured-card" data-reveal href="articles.html?id=japan-temple-faith-and-decline">
         <img src="assets/articles/thumbnails/japan-temple.jpg" alt="" loading="lazy">
         <div class="featured-copy"><small>靈・修行</small><h3>當一座寺廟不再有人相信，神明還在嗎？</h3><p>如果相信的人逐漸離開，神明與人間的關係還剩下什麼？</p><span>開始閱讀 →</span></div>
@@ -166,6 +166,69 @@ nav.is-scrolled{background:rgba(7,17,6,.94);border-color:rgba(165,130,84,.28)}
 <footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5 17 7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>
 <div id="email-toast">✉ lyyuan03@gmail.com 已複製</div>
 <script>(()=>{const nav=document.querySelector('nav');if(!nav)return;const triggers=[...nav.querySelectorAll('.has-dropdown')];const mq=window.matchMedia('(max-width:768px)');const close=()=>nav.querySelectorAll('.open').forEach(i=>i.classList.remove('open'));triggers.forEach(t=>{if(t.matches('a[href]'))return;const li=t.closest('li');t.addEventListener('click',e=>{if(!mq.matches)return;e.preventDefault();const is=li.classList.contains('open');close();if(!is)li.classList.add('open')})});document.addEventListener('click',e=>{if(!nav.contains(e.target))close()})})();</script>
+<script type="module">
+import { db } from "./firebase-config.js";
+import { staticArticles } from "./static-articles.js?v=20260730-home-latest-1";
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const categoryLabels = {
+  spiritual: "靈・修行",
+  human: "人・俗世",
+  "spirit-world": "異・靈界",
+  reading: "思・讀物"
+};
+
+const escapeHtml = (value = "") => String(value)
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;")
+  .replace(/'/g, "&#039;");
+
+const articleTime = (article) => {
+  const value = article.publishedAt || article.updatedAt || article.createdAt;
+  if (typeof value?.toMillis === "function") return value.toMillis();
+  const parsed = Date.parse(value || "");
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
+
+const renderLatestArticles = (articles) => {
+  const grid = document.getElementById("latest-articles");
+  if (!grid || !articles.length) return;
+  grid.innerHTML = articles.slice(0, 3).map((article, index) => `
+    <a class="featured-card is-visible" data-reveal data-reveal-delay="${index}" href="articles.html?id=${encodeURIComponent(article.id || article.slug)}">
+      ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="" loading="lazy">` : ""}
+      <div class="featured-copy">
+        <small>${escapeHtml(categoryLabels[article.category] || "文選")}</small>
+        <h3>${escapeHtml(article.title || "未命名文章")}</h3>
+        <p>${escapeHtml(article.excerpt || "閱讀最新文章，從不同角度重新觀看生命。")}</p>
+        <span>開始閱讀 →</span>
+      </div>
+    </a>
+  `).join("");
+};
+
+(async () => {
+  let firestoreArticles = [];
+  try {
+    const snapshot = await getDocs(query(collection(db, "articles"), where("status", "==", "published")));
+    firestoreArticles = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+  } catch (error) {
+    console.warn("首頁暫時使用網站內建文章。", error);
+  }
+
+  const merged = [...firestoreArticles, ...staticArticles]
+    .filter((article) => article.status === "published")
+    .reduce((items, article) => {
+      const key = article.id || article.slug;
+      if (key && !items.some((item) => (item.id || item.slug) === key)) items.push(article);
+      return items;
+    }, [])
+    .sort((a, b) => articleTime(b) - articleTime(a));
+
+  renderLatestArticles(merged);
+})();
+</script>
 <script id="design-motion-v1">
 (() => {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
