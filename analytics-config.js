@@ -10,8 +10,13 @@ window.LYY_ANALYTICS_CONFIG = Object.freeze({
 });
 
 if (location.pathname.endsWith("/articles.html")) {
-  const script = document.createElement("script");
-  script.src = "/article-filter-fix.js?v=20260730-1";
-  script.defer = true;
-  document.head.appendChild(script);
+  const filterScript = document.createElement("script");
+  filterScript.src = "/article-filter-fix.js?v=20260730-1";
+  filterScript.defer = true;
+  document.head.appendChild(filterScript);
+
+  const tocPolicyScript = document.createElement("script");
+  tocPolicyScript.src = "/article-toc-policy.js?v=20260730-1";
+  tocPolicyScript.defer = true;
+  document.head.appendChild(tocPolicyScript);
 }
