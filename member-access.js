@@ -1,7 +1,7 @@
 export const MEMBER_LEVELS = {
-  wellness: "養生療癒會員",
-  lingji: "靈極會員",
-  sponsor: "官網付費會員"
+  wellness: "養生療癒一般會員",
+  lingji: "養生療癒頂級會員",
+  sponsor: "官網付費文章會員"
 };
 
 export function normalizeMemberLevel(value = "") {
