@@ -1,8 +1,15 @@
 # 綠界會員自動開通後端
 
+目前自動付款先套用於「一般會員」：
+
+- 一個月：新台幣 120 元
+- 三個月：新台幣 300 元
+
+金額與月份由後端固定驗證，前端無法自行修改訂單金額。養生療癒頻道會員維持原有人工管理，不列入本階段上線測試。
+
 本後端使用 Firebase Functions、Firestore 與綠界全方位金流，處理：
 
-1. 管理員在文章後台建立會員付款訂單。
+1. 管理員在文章後台選擇一個月或三個月方案並建立付款訂單。
 2. 系統寄出會員專屬綠界付款連結。
 3. 綠界透過 `ReturnURL` 通知付款結果。
 4. 後端驗證 `CheckMacValue`、特店編號、金額與 `RtnCode`。
@@ -53,6 +60,7 @@ firebase deploy --only functions,firestore:rules --project lyyuan03-membership
 
 ## Function 端點
 
+- 建立一般會員訂單：`createSponsorMembershipCheckout`（Callable，僅限管理員）
 - 建立訂單：`createMembershipCheckout`（Callable，僅限管理員）
 - 後端狀態：`membershipBackendStatus`
 - 會員付款轉址：`membershipPayment`
