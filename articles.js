@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260730-wealth-images-2";
+import { staticArticles } from "./static-articles.js?v=20260730-wealth-images-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -709,7 +709,7 @@ function renderArticle(article) {
   const articleKey = article.id || article.slug || activeId;
   const { publicContent, lockedContent, accessType } = splitMemberContent(article.content || "", articleKey);
   root.innerHTML = `
-    <article class="article-view">
+    <article class="article-view" data-article-id="${escapeHtml(articleKey)}">
       <a class="article-back" href="articles.html">← 返回全部文選</a>
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
