@@ -5,7 +5,7 @@ const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
   publishedAt: "2026-07-30T23:59:00.000Z",
   updatedAt: "2026-07-30T23:59:00.000Z",
-  coverImage: "assets/articles/wealth-discipline/cover.svg?v=20260730-cover-2"
+  coverImage: "assets/articles/wealth-discipline/hand-book-photo.svg?v=20260730-hand-book-1"
 };
 
 export const staticArticles = [featuredWealthDisciplineArticle, ...baseArticles];
