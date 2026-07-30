@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260730-wealth-images-4";
+import { staticArticles } from "./static-articles.js?v=20260730-admin-edit-book-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -81,6 +81,11 @@ const articleGuides = {
     topics: ["通靈辨識", "乩身與神意"],
     level: "深度",
     nextId: "tonglingren-wufa-huifu-putongren"
+  },
+  "wealth-discipline-investing-and-self-mastery": {
+    topics: ["投資心理", "財富與定力"],
+    level: "初識",
+    nextId: "market-crash-money-self-control"
   },
   "market-crash-money-self-control": {
     topics: ["財富與生命", "自我主導"],
@@ -515,6 +520,21 @@ async function loadMemberAccess(user) {
   }
 }
 
+function renderRecommendedBook(article) {
+  if (!article.bookTitle && !article.bookAuthor && !article.bookPublisher && !article.bookPurchaseUrl) return "";
+  return `
+    <aside class="recommended-book" aria-label="本篇推薦書籍">
+      <div class="recommended-book-eyebrow">本篇推薦書籍</div>
+      ${article.bookTitle ? `<strong>${escapeHtml(article.bookTitle)}</strong>` : ""}
+      <div class="recommended-book-meta">
+        ${article.bookAuthor ? `<span>作者｜${escapeHtml(article.bookAuthor)}</span>` : ""}
+        ${article.bookPublisher ? `<span>出版社｜${escapeHtml(article.bookPublisher)}</span>` : ""}
+      </div>
+      ${article.bookPurchaseUrl ? `<a href="${escapeHtml(article.bookPurchaseUrl)}" target="_blank" rel="noopener noreferrer">前往博客來看書籍介紹</a>` : ""}
+    </aside>
+  `;
+}
+
 function renderBookCta() {
   return `
     <div class="article-book-link-wrap">
@@ -721,6 +741,7 @@ function renderArticle(article) {
       ${accessType === "paid" ? renderPaidGate(article) : ""}
       ${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}
       ${renderNextReading(article)}
+      ${renderRecommendedBook(article)}
       ${renderBookCta()}
       ${renderArticleShare(article)}
     </article>
@@ -756,7 +777,7 @@ async function loadArticles() {
   } catch (error) {
     console.warn("Firebase 文章暫時無法載入，改顯示靜態文章。", error);
   }
-  const merged = [...staticArticles, ...articles].reduce((items, article) => {
+  const merged = [...articles, ...staticArticles].reduce((items, article) => {
     if (!items.some((item) => item.id === article.id)) items.push(article);
     return items;
   }, []);
