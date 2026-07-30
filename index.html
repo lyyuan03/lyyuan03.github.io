@@ -68,17 +68,23 @@ nav.is-scrolled{background:rgba(7,17,6,.94);border-color:rgba(165,130,84,.28)}
 .section-heading>a{padding-bottom:4px;border-bottom:1px solid rgba(197,162,111,.42);color:#CDAE80;font-size:13px;letter-spacing:.1em}
 .featured-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .featured-card{
-  display:flex;min-height:280px;overflow:hidden;background:#E9E0D4;color:#3B312A;
+  display:flex;min-height:500px;overflow:hidden;flex-direction:column;background:#E9E0D4;color:#3B312A;
   border:1px solid rgba(165,130,84,.4);box-shadow:0 14px 32px rgba(0,0,0,.18);
   transition:transform .35s var(--ease-calm),box-shadow .35s
 }
 .featured-card:nth-child(even){background:#DEE1CD}
 .featured-card:hover,.featured-card:focus-visible{transform:translateY(-5px);box-shadow:0 22px 44px rgba(0,0,0,.26);outline:none}
-.featured-card img{width:38%;min-width:118px;object-fit:cover;aspect-ratio:9/16}
-.featured-copy{display:flex;flex:1;flex-direction:column;padding:22px 20px}
+.featured-card img{display:block;width:100%;height:230px;min-width:0;aspect-ratio:auto;object-fit:cover;object-position:center}
+.featured-copy{display:flex;min-height:270px;flex:1;flex-direction:column;padding:24px 24px 22px}
 .featured-copy small{color:#765A39;font-size:11px;font-weight:500;letter-spacing:.13em}
-.featured-copy h3{margin:12px 0 10px;color:#493724;font-size:20px;font-weight:700;line-height:1.55;letter-spacing:.06em}
-.featured-copy p{color:#493F36;font-family:var(--serif);font-size:14px;font-weight:500;line-height:1.8}
+.featured-copy h3{
+  display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+  margin:12px 0 10px;color:#493724;font-size:20px;font-weight:700;line-height:1.55;letter-spacing:.045em
+}
+.featured-copy p{
+  display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+  margin:0;color:#493F36;font-family:var(--serif);font-size:14px;font-weight:500;line-height:1.8
+}
 .featured-copy span{margin-top:auto;padding-top:18px;color:#765A39;font-size:12px;letter-spacing:.08em}
 .contact-section{padding:92px 24px}
 .tg-btn{min-height:46px;transition:background .22s,transform .22s,color .22s}
@@ -94,7 +100,7 @@ nav.is-scrolled{background:rgba(7,17,6,.94);border-color:rgba(165,130,84,.28)}
 .motion-ready .hero-content.is-visible>*:nth-child(4){transition-delay:.28s}
 .motion-ready .hero-content.is-visible>*:nth-child(5){transition-delay:.38s}
 .motion-ready .hero-content.is-visible>*:nth-child(6){transition-delay:.48s}
-@media(max-width:900px){.featured-grid{grid-template-columns:1fr}.featured-card{min-height:250px}}
+@media(max-width:900px){.featured-grid{grid-template-columns:1fr}.featured-card{min-height:0}.featured-card img{height:280px}.featured-copy{min-height:240px}}
 @media(max-width:768px){
   .hero{min-height:auto}
   .hero-content{padding-top:106px}
@@ -195,9 +201,14 @@ const articleTime = (article) => {
 const renderLatestArticles = (articles) => {
   const grid = document.getElementById("latest-articles");
   if (!grid || !articles.length) return;
-  grid.innerHTML = articles.slice(0, 3).map((article, index) => `
-    <a class="featured-card is-visible" data-reveal data-reveal-delay="${index}" href="articles.html?id=${encodeURIComponent(article.id || article.slug)}">
-      ${article.coverImage ? `<img src="${escapeHtml(article.coverImage)}" alt="" loading="lazy">` : ""}
+  grid.innerHTML = articles.slice(0, 3).map((article, index) => {
+    const articleId = article.id || article.slug;
+    const image = articleId === "wealth-discipline-investing-and-self-mastery"
+      ? "assets/articles/wealth-discipline/hand-book-photo.jpg?v=20260730-hand-book-4"
+      : article.coverImage;
+    return `
+    <a class="featured-card is-visible" data-reveal data-reveal-delay="${index}" href="articles.html?id=${encodeURIComponent(articleId)}">
+      ${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy">` : ""}
       <div class="featured-copy">
         <small>${escapeHtml(categoryLabels[article.category] || "文選")}</small>
         <h3>${escapeHtml(article.title || "未命名文章")}</h3>
@@ -205,7 +216,8 @@ const renderLatestArticles = (articles) => {
         <span>開始閱讀 →</span>
       </div>
     </a>
-  `).join("");
+  `;
+  }).join("");
 };
 
 (async () => {
