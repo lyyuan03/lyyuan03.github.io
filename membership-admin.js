@@ -1,6 +1,7 @@
-import { auth, db, isAdminEmail } from "./firebase-config.js";
+import { app, auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
 const settingsForm = document.getElementById("membership-settings-form");
 const memberForm = document.getElementById("member-form");
@@ -8,14 +9,17 @@ const statusEl = document.getElementById("membership-status");
 const listEl = document.getElementById("membership-list");
 const summaryEl = document.getElementById("member-summary");
 const monthsEl = document.getElementById("member-months");
-const customMonthsEl = document.getElementById("member-custom-months");
 const amountEl = document.getElementById("member-amount");
 const paymentUrlEl = document.getElementById("member-payment-url");
 const activateButton = document.getElementById("member-activate");
 const emailButton = document.getElementById("member-email-payment");
+const sendPaymentButton = document.getElementById("member-send-payment");
 const resetButton = document.getElementById("member-form-reset");
+const functions = getFunctions(app, "asia-east1");
+const createSponsorMembershipCheckout = httpsCallable(functions, "createSponsorMembershipCheckout");
+const backendStatusUrl = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/membershipBackendStatus";
 
-let settings = { price1: 0, price3: 0, price12: 0, paymentDays: 3, ecpayUrl: "" };
+let settings = { price1: 120, price3: 300, paymentDays: 3, ecpayUrl: "" };
 let members = [];
 
 function escapeHtml(value = "") {
@@ -51,16 +55,11 @@ function addMonths(date, months) {
 }
 
 function selectedMonths() {
-  return monthsEl.value === "custom"
-    ? Math.max(1, Number(customMonthsEl.value || 1))
-    : Number(monthsEl.value || 1);
+  return Number(monthsEl.value) === 3 ? 3 : 1;
 }
 
 function planAmount(months) {
-  if (months === 1) return Number(settings.price1 || 0);
-  if (months === 3) return Number(settings.price3 || 0);
-  if (months === 12) return Number(settings.price12 || 0);
-  return Number(settings.price1 || 0) * months;
+  return months === 3 ? 300 : 120;
 }
 
 function previewExpiry(existingExpiry = null) {
@@ -71,7 +70,6 @@ function previewExpiry(existingExpiry = null) {
 }
 
 function updatePlanPreview(forceAmount = false) {
-  customMonthsEl.disabled = monthsEl.value !== "custom";
   if (forceAmount || !amountEl.value) amountEl.value = String(planAmount(selectedMonths()) || "");
   if (!paymentUrlEl.value) paymentUrlEl.value = settings.ecpayUrl || "";
   const originalEmail = normalizeEmail(document.getElementById("member-original-email").value);
@@ -83,7 +81,6 @@ function resetMemberForm() {
   memberForm.reset();
   document.getElementById("member-original-email").value = "";
   monthsEl.value = "1";
-  customMonthsEl.value = "1";
   paymentUrlEl.value = settings.ecpayUrl || "";
   updatePlanPreview(true);
 }
@@ -91,9 +88,10 @@ function resetMemberForm() {
 async function loadSettings() {
   const snapshot = await getDoc(doc(db, "membershipSettings", "default"));
   if (snapshot.exists()) settings = { ...settings, ...snapshot.data() };
-  document.getElementById("price-1").value = settings.price1 || "";
-  document.getElementById("price-3").value = settings.price3 || "";
-  document.getElementById("price-12").value = settings.price12 || "";
+  settings.price1 = 120;
+  settings.price3 = 300;
+  document.getElementById("price-1").value = "120";
+  document.getElementById("price-3").value = "300";
   document.getElementById("payment-days").value = settings.paymentDays || 3;
   document.getElementById("ecpay-url").value = settings.ecpayUrl || "";
   updatePlanPreview(true);
@@ -102,9 +100,8 @@ async function loadSettings() {
 async function saveSettings(event) {
   event.preventDefault();
   settings = {
-    price1: Number(document.getElementById("price-1").value || 0),
-    price3: Number(document.getElementById("price-3").value || 0),
-    price12: Number(document.getElementById("price-12").value || 0),
+    price1: 120,
+    price3: 300,
     paymentDays: Number(document.getElementById("payment-days").value || 3),
     ecpayUrl: document.getElementById("ecpay-url").value.trim(),
     updatedAt: serverTimestamp()
@@ -161,6 +158,41 @@ async function activateMember() {
   resetMemberForm();
 }
 
+async function createPaymentOrder() {
+  if (!memberForm.reportValidity()) return;
+  sendPaymentButton.disabled = true;
+  const originalLabel = sendPaymentButton.textContent;
+  sendPaymentButton.textContent = "正在建立訂單並寄信…";
+  statusEl.textContent = "";
+  try {
+    const result = await createSponsorMembershipCheckout({
+      email: normalizeEmail(document.getElementById("member-email").value),
+      name: document.getElementById("member-name").value.trim(),
+      planMonths: selectedMonths()
+    });
+    statusEl.textContent = `繳費信已寄出｜訂單 ${result.data.merchantTradeNo}｜NT$${Number(result.data.amount).toLocaleString("zh-TW")}／${result.data.planMonths}個月`;
+    await loadMembers();
+    resetMemberForm();
+  } finally {
+    sendPaymentButton.disabled = false;
+    sendPaymentButton.textContent = originalLabel;
+  }
+}
+
+async function loadPaymentBackendStatus() {
+  try {
+    const response = await fetch(backendStatusUrl, { cache: "no-store" });
+    const result = await response.json();
+    if (!response.ok || result.ready !== true) throw new Error("backend-not-ready");
+    sendPaymentButton.disabled = false;
+    sendPaymentButton.textContent = "建立綠界訂單並寄出繳費信";
+  } catch (error) {
+    console.warn("一般會員金流後端尚未啟用。", error);
+    sendPaymentButton.disabled = true;
+    sendPaymentButton.textContent = "金流後端待完成安全設定";
+  }
+}
+
 function paymentDeadline() {
   const date = new Date();
   date.setDate(date.getDate() + Number(settings.paymentDays || 3));
@@ -214,9 +246,7 @@ function editMember(email) {
   document.getElementById("member-original-email").value = member.email;
   document.getElementById("member-name").value = member.name || "";
   document.getElementById("member-email").value = member.email || "";
-  const standard = [1, 3, 12].includes(Number(member.planMonths));
-  monthsEl.value = standard ? String(member.planMonths) : "custom";
-  customMonthsEl.value = String(member.planMonths || 1);
+  monthsEl.value = Number(member.planMonths) === 3 ? "3" : "1";
   amountEl.value = String(member.amount || "");
   document.getElementById("member-payment-status").value = member.paymentStatus || "pending";
   paymentUrlEl.value = member.paymentUrl || settings.ecpayUrl || "";
@@ -242,10 +272,10 @@ async function loadMembers() {
 settingsForm?.addEventListener("submit", (event) => saveSettings(event).catch(showError));
 memberForm?.addEventListener("submit", (event) => saveMember(event).catch(showError));
 monthsEl?.addEventListener("change", () => updatePlanPreview(true));
-customMonthsEl?.addEventListener("input", () => updatePlanPreview(true));
 amountEl?.addEventListener("input", () => updatePlanPreview(false));
 activateButton?.addEventListener("click", () => activateMember().catch(showError));
 emailButton?.addEventListener("click", openPaymentEmail);
+sendPaymentButton?.addEventListener("click", () => createPaymentOrder().catch(showError));
 resetButton?.addEventListener("click", resetMemberForm);
 
 function showError(error) {
@@ -256,8 +286,7 @@ function showError(error) {
 onAuthStateChanged(auth, async (user) => {
   if (!user || !isAdminEmail(user.email)) return;
   try {
-    await loadSettings();
-    await loadMembers();
+    await Promise.all([loadSettings(), loadMembers(), loadPaymentBackendStatus()]);
   } catch (error) {
     showError(error);
     listEl.innerHTML = '<div class="empty">會員資料暫時無法載入，請確認 Firebase 規則已發布。</div>';
