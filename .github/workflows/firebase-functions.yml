@@ -1,0 +1,33 @@
+name: Deploy Firebase Membership Backend
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-functions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+
+      - name: Verify backend
+        run: npm --prefix functions ci && npm --prefix functions test
+
+      - name: Deploy membership functions and rules
+        run: firebase deploy --only functions,firestore:rules --project lyyuan03-membership --non-interactive

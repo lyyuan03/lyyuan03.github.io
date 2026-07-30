@@ -216,8 +216,10 @@
               <span><strong>開放付費文章閱讀權限</strong><small>儲存後，會員使用此 Gmail 登入即可閱讀付費文章；靈極會員會自動開啟。</small></span>
             </label>
             <div class="field"><label for="wellness-member-note">行政備註</label><textarea id="wellness-member-note" style="min-height:80px"></textarea></div>
+            <div class="membership-summary">自動付款方案｜新台幣 6,000 元／4個月。系統會寄出會員專屬綠界付款連結；付款成功後自動開通，不需人工登錄。</div>
             <div class="top-actions">
               <button class="btn primary" type="submit">儲存養生療癒會員</button>
+              <button id="wellness-member-send-payment" class="btn primary" type="button" disabled>正在確認金流後端…</button>
               <button id="wellness-member-reset" class="btn" type="button">清除</button>
             </div>
           </form>
@@ -234,6 +236,6 @@
 
 <script type="module" src="article-admin.js?v=20260730-static-edit-book-1"></script>
 <script type="module" src="membership-admin.js?v=20260727-membership-1"></script>
-<script type="module" src="wellness-member-admin.js?v=20260730-wellness-access-2"></script>
+<script type="module" src="wellness-member-admin.js?v=20260730-ecpay-auto-1"></script>
 </body>
 </html>

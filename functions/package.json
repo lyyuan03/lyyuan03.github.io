@@ -1,0 +1,21 @@
+{
+  "name": "lyyuan-membership-functions",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "lint": "node --check index.js && node --check ecpay.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2",
+    "nodemailer": "^9.0.3"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.9"
+  }
+}

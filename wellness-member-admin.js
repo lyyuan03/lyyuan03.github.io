@@ -1,6 +1,7 @@
-import { auth, db, isAdminEmail } from "./firebase-config.js";
+import { app, auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
 const form = document.getElementById("wellness-member-form");
 const listEl = document.getElementById("wellness-member-list");
@@ -8,6 +9,10 @@ const statusEl = document.getElementById("wellness-member-status");
 const resetButton = document.getElementById("wellness-member-reset");
 const levelEl = document.getElementById("wellness-member-level");
 const articleAccessEl = document.getElementById("wellness-member-article-access");
+const sendPaymentButton = document.getElementById("wellness-member-send-payment");
+const functions = getFunctions(app, "asia-east1");
+const createMembershipCheckout = httpsCallable(functions, "createMembershipCheckout");
+const backendStatusUrl = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/membershipBackendStatus";
 
 let members = [];
 
@@ -102,6 +107,41 @@ async function saveMember(event) {
   resetForm();
 }
 
+async function createPaymentOrder() {
+  if (!form.reportValidity()) return;
+  sendPaymentButton.disabled = true;
+  const originalLabel = sendPaymentButton.textContent;
+  sendPaymentButton.textContent = "正在建立訂單並寄信…";
+  statusEl.textContent = "";
+  try {
+    const result = await createMembershipCheckout({
+      email: normalizeEmail(document.getElementById("wellness-member-email").value),
+      name: document.getElementById("wellness-member-name").value.trim(),
+      memberLevel: levelEl.value === "lingji" ? "lingji" : "wellness",
+      articleAccess: levelEl.value === "lingji" || articleAccessEl.checked
+    });
+    statusEl.textContent = `繳費信已寄出｜訂單 ${result.data.merchantTradeNo}｜NT$${Number(result.data.amount).toLocaleString("zh-TW")}／${result.data.planMonths}個月`;
+    await loadMembers();
+  } finally {
+    sendPaymentButton.disabled = false;
+    sendPaymentButton.textContent = originalLabel;
+  }
+}
+
+async function loadPaymentBackendStatus() {
+  try {
+    const response = await fetch(backendStatusUrl, { cache: "no-store" });
+    const result = await response.json();
+    if (!response.ok || result.ready !== true) throw new Error("backend-not-ready");
+    sendPaymentButton.disabled = false;
+    sendPaymentButton.textContent = "建立綠界訂單並寄出繳費信";
+  } catch (error) {
+    console.warn("會員金流後端尚未啟用。", error);
+    sendPaymentButton.disabled = true;
+    sendPaymentButton.textContent = "金流後端待完成安全設定";
+  }
+}
+
 function normalizeStoredLevel(member = {}) {
   if (member.memberLevel === "lingji" || member.wellnessLevel === "lingji" || member.wellnessLevel === "wellness-premium") return "lingji";
   return "wellness";
@@ -166,12 +206,13 @@ function showError(error) {
 form?.addEventListener("submit", (event) => saveMember(event).catch(showError));
 resetButton?.addEventListener("click", resetForm);
 levelEl?.addEventListener("change", syncArticleAccess);
+sendPaymentButton?.addEventListener("click", () => createPaymentOrder().catch(showError));
 
 onAuthStateChanged(auth, async (user) => {
   if (!user || !isAdminEmail(user.email)) return;
   try {
     resetForm();
-    await loadMembers();
+    await Promise.all([loadMembers(), loadPaymentBackendStatus()]);
   } catch (error) {
     showError(error);
     listEl.innerHTML = '<div class="empty">養生療癒會員資料暫時無法載入。</div>';
