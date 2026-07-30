@@ -26,6 +26,8 @@ function resetForm() {
   form.reset();
   document.getElementById("member-video-id").value = "";
   document.getElementById("member-video-status-select").value = "published";
+  document.getElementById("member-video-access-level").value = "general";
+  document.getElementById("member-video-published-at").value = new Date().toISOString().slice(0, 10);
 }
 
 async function saveVideo(event) {
@@ -38,17 +40,19 @@ async function saveVideo(event) {
   const originalId = document.getElementById("member-video-id").value.trim();
   const id = originalId || `video-${Date.now()}`;
   const existing = videos.find((video) => video.id === originalId);
+  const publishedDate = document.getElementById("member-video-published-at").value;
   const payload = {
     title: document.getElementById("member-video-title").value.trim(),
     description: document.getElementById("member-video-description").value.trim(),
     youtubeUrl,
+    accessLevel: document.getElementById("member-video-access-level").value,
     status: document.getElementById("member-video-status-select").value,
-    publishedAt: existing?.publishedAt || new Date().toISOString(),
+    publishedAt: publishedDate ? new Date(`${publishedDate}T00:00:00+08:00`).toISOString() : (existing?.publishedAt || new Date().toISOString()),
     createdAt: existing?.createdAt || new Date().toISOString(),
     updatedAt: serverTimestamp()
   };
   await setDoc(doc(db, "memberVideos", id), payload, { merge: true });
-  status.textContent = originalId ? "影片已更新" : "影片已發布到靈極會員專區";
+  status.textContent = originalId ? "影片已更新" : "影片已發布到會員專區";
   resetForm();
   await loadVideos();
 }
@@ -58,7 +62,11 @@ function renderVideos() {
     list.innerHTML = '<div class="empty">目前尚未新增影片</div>';
     return;
   }
-  list.innerHTML = videos.map((video) => `<div class="member-row"><div><strong>${escapeHtml(video.title || "未命名影片")}｜${video.status === "published" ? "已發布" : "草稿"}</strong><small>${escapeHtml(video.youtubeUrl || "")}</small></div><div class="member-row-actions"><button class="btn" type="button" data-video-edit="${escapeHtml(video.id)}">編輯</button><button class="btn danger" type="button" data-video-delete="${escapeHtml(video.id)}">刪除</button></div></div>`).join("");
+  list.innerHTML = videos.map((video) => {
+    const level = video.accessLevel === "lingji" ? "靈極會員" : "一般會員";
+    const date = video.publishedAt ? new Intl.DateTimeFormat("zh-TW").format(new Date(video.publishedAt)) : "未設定";
+    return `<div class="member-row"><div><strong>${escapeHtml(video.title || "未命名影片")}｜${escapeHtml(level)}｜${video.status === "published" ? "已發布" : "草稿"}</strong><small>${escapeHtml(date)}｜${escapeHtml(video.youtubeUrl || "")}</small></div><div class="member-row-actions"><button class="btn" type="button" data-video-edit="${escapeHtml(video.id)}">編輯</button><button class="btn danger" type="button" data-video-delete="${escapeHtml(video.id)}">刪除</button></div></div>`;
+  }).join("");
   list.querySelectorAll("[data-video-edit]").forEach((button) => button.addEventListener("click", () => editVideo(button.dataset.videoEdit)));
   list.querySelectorAll("[data-video-delete]").forEach((button) => button.addEventListener("click", () => removeVideo(button.dataset.videoDelete)));
 }
@@ -70,6 +78,8 @@ function editVideo(id) {
   document.getElementById("member-video-title").value = video.title || "";
   document.getElementById("member-video-description").value = video.description || "";
   document.getElementById("member-video-url").value = video.youtubeUrl || "";
+  document.getElementById("member-video-access-level").value = video.accessLevel || "general";
+  document.getElementById("member-video-published-at").value = video.publishedAt ? new Date(video.publishedAt).toISOString().slice(0, 10) : "";
   document.getElementById("member-video-status-select").value = video.status || "draft";
   form.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -98,5 +108,6 @@ function showError(error) {
 
 onAuthStateChanged(auth, async (user) => {
   if (!user || !isAdminEmail(user.email)) return;
+  resetForm();
   try { await loadVideos(); } catch (error) { showError(error); }
 });
