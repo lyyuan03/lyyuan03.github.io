@@ -57,83 +57,35 @@
       </div>
       <form id="article-form" class="editor">
         <div class="grid">
-          <div class="field">
-            <label for="title">標題</label>
-            <input id="title" name="title" required>
-          </div>
-          <div class="field">
-            <label for="slug">網址代稱</label>
-            <input id="slug" name="slug" placeholder="可留空，系統會依標題產生">
-          </div>
-          <div class="field">
-            <label for="category">分類</label>
-            <select id="category" name="category">
-              <option value="spiritual">靈．修行</option>
-              <option value="worldly">人．俗世</option>
-              <option value="spirit-world">異．靈界</option>
-              <option value="reading">思．讀物</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="status">狀態</label>
-            <select id="status" name="status">
-              <option value="draft">草稿</option>
-              <option value="published">發布</option>
-            </select>
-          </div>
+          <div class="field"><label for="title">標題</label><input id="title" name="title" required></div>
+          <div class="field"><label for="slug">網址代稱</label><input id="slug" name="slug" placeholder="可留空，系統會依標題產生"></div>
+          <div class="field"><label for="category">分類</label><select id="category" name="category"><option value="spiritual">靈．修行</option><option value="worldly">人．俗世</option><option value="spirit-world">異．靈界</option><option value="reading">思．讀物</option></select></div>
+          <div class="field"><label for="status">狀態</label><select id="status" name="status"><option value="draft">草稿</option><option value="published">發布</option></select></div>
         </div>
-
-        <div class="field">
-          <label for="excerpt">摘要</label>
-          <textarea id="excerpt" name="excerpt" style="min-height:96px"></textarea>
-        </div>
-
-        <div class="field">
-          <label for="coverImage">封面圖片網址</label>
-          <input id="coverImage" name="coverImage" placeholder="https://...">
-        </div>
-
-        <div class="field">
-          <label for="content">內文</label>
-          <div class="editor-tools">
-            <button id="upload-image" class="btn" type="button">插入圖片</button>
-            <input id="image-input" type="file" accept="image/*" multiple hidden>
-            <span id="upload-status" class="upload-note">可一次選擇多張圖片，系統會自動插入文章中。</span>
-          </div>
-          <textarea id="content" name="content" required></textarea>
-        </div>
-
-        <div class="field">
-          <label>即時預覽</label>
-          <div id="preview" class="content-preview"></div>
-        </div>
-
-        <div class="top-actions">
-          <button id="save-article" class="btn primary" type="submit">儲存文章</button>
-          <button id="delete-article" class="btn danger" type="button">刪除文章</button>
-        </div>
+        <div class="field"><label for="excerpt">摘要</label><textarea id="excerpt" name="excerpt" style="min-height:96px"></textarea></div>
+        <div class="field"><label for="coverImage">封面圖片網址</label><input id="coverImage" name="coverImage" placeholder="https://..."></div>
+        <div class="field"><label for="content">內文</label><div class="editor-tools"><button id="upload-image" class="btn" type="button">插入圖片</button><input id="image-input" type="file" accept="image/*" multiple hidden><span id="upload-status" class="upload-note">可一次選擇多張圖片，系統會自動插入文章中。</span></div><textarea id="content" name="content" required></textarea></div>
+        <div class="field"><label>即時預覽</label><div id="preview" class="content-preview"></div></div>
+        <div class="top-actions"><button id="save-article" class="btn primary" type="submit">儲存文章</button><button id="delete-article" class="btn danger" type="button">刪除文章</button></div>
       </form>
     </section>
 
     <section class="panel membership-panel">
-      <div class="panel-head">
-        <h2>贊助會員管理</h2>
-        <span id="membership-status" class="status" aria-live="polite"></span>
-      </div>
+      <div class="panel-head"><h2>會員資格管理</h2><span id="membership-status" class="status" aria-live="polite"></span></div>
       <div class="membership-layout">
         <div>
           <div class="membership-card">
-            <h3>方案與付款設定</h3>
+            <h3>官網付費方案設定</h3>
             <form id="membership-settings-form" class="membership-form">
               <div class="grid">
-                <div class="field"><label for="price-1">一個月費用</label><input id="price-1" type="number" min="0" step="1" placeholder="例如 190"></div>
-                <div class="field"><label for="price-3">三個月費用</label><input id="price-3" type="number" min="0" step="1" placeholder="例如 570"></div>
-                <div class="field"><label for="price-12">十二個月費用</label><input id="price-12" type="number" min="0" step="1" placeholder="例如 1900"></div>
+                <div class="field"><label for="price-1">一個月費用</label><input id="price-1" type="number" min="0" step="1" placeholder="例如 150"></div>
+                <div class="field"><label for="price-3">三個月費用</label><input id="price-3" type="number" min="0" step="1" placeholder="例如 450"></div>
+                <div class="field"><label for="price-12">十二個月費用</label><input id="price-12" type="number" min="0" step="1" placeholder="例如 1,500"></div>
                 <div class="field"><label for="payment-days">付款期限（天）</label><input id="payment-days" type="number" min="1" max="30" value="3"></div>
               </div>
               <div class="field"><label for="ecpay-url">綠界付款連結</label><input id="ecpay-url" type="url" placeholder="https://..."></div>
               <button class="btn primary" type="submit">儲存方案設定</button>
-              <p class="membership-help">綠界若為不同金額提供不同連結，可在建立單一會員時改填該筆專用網址。</p>
+              <p class="membership-help">養生療癒會員與靈極會員可直接輸入 Gmail、會員等級與到期日，不必使用官網月租金額。</p>
             </form>
           </div>
 
@@ -144,34 +96,28 @@
               <div class="grid">
                 <div class="field"><label for="member-name">會員姓名</label><input id="member-name"></div>
                 <div class="field"><label for="member-email">登入 Gmail</label><input id="member-email" type="email" required></div>
-                <div class="field"><label for="member-months">會員月數</label><select id="member-months"><option value="1">一個月</option><option value="3">三個月</option><option value="12">十二個月</option><option value="custom">自訂月數</option></select></div>
+                <div class="field"><label for="member-level">會員等級</label><select id="member-level"><option value="wellness">養生療癒會員</option><option value="lingji">靈極會員</option><option value="sponsor">官網付費會員</option></select></div>
+                <div class="field"><label for="member-months">會員月數</label><select id="member-months"><option value="1">一個月</option><option value="3">三個月</option><option value="4">四個月</option><option value="6">六個月</option><option value="12">十二個月</option><option value="custom">自訂月數</option></select></div>
                 <div class="field"><label for="member-custom-months">自訂月數</label><input id="member-custom-months" type="number" min="1" value="1" disabled></div>
-                <div class="field"><label for="member-amount">應繳金額</label><input id="member-amount" type="number" min="0" step="1" required></div>
-                <div class="field"><label for="member-payment-status">付款狀態</label><select id="member-payment-status"><option value="pending">待付款</option><option value="paid">已付款</option></select></div>
+                <div class="field"><label for="member-expiry-mode">到期日設定</label><select id="member-expiry-mode"><option value="months">依月數自動計算</option><option value="custom">直接指定到期日</option></select></div>
+                <div class="field"><label for="member-custom-expiry">指定到期日</label><input id="member-custom-expiry" type="date" disabled></div>
+                <div class="field"><label for="member-amount">應繳／消費金額</label><input id="member-amount" type="number" min="0" step="1" required></div>
+                <div class="field"><label for="member-payment-status">付款狀態</label><select id="member-payment-status"><option value="pending">待付款</option><option value="paid">已付款／已達資格</option></select></div>
               </div>
-              <div class="field"><label for="member-payment-url">本次付款連結</label><input id="member-payment-url" type="url" placeholder="預設帶入綠界付款連結"></div>
+              <div class="field"><label for="member-payment-url">本次付款連結</label><input id="member-payment-url" type="url" placeholder="官網付費會員可填寫；既有會員可留空"></div>
               <div class="field"><label for="member-note">行政備註</label><textarea id="member-note" style="min-height:80px"></textarea></div>
-              <div id="member-summary" class="membership-summary">選擇方案後，系統將自動計算金額與效期。</div>
-              <div class="top-actions">
-                <button class="btn primary" type="submit">儲存會員資料</button>
-                <button id="member-activate" class="btn" type="button">確認付款並開通</button>
-                <button id="member-email-payment" class="btn" type="button">開啟繳費通知 Email</button>
-                <button id="member-form-reset" class="btn" type="button">清除</button>
-              </div>
+              <div id="member-summary" class="membership-summary">選擇會員等級、月數或指定日期後，系統會顯示效期。</div>
+              <div class="top-actions"><button class="btn primary" type="submit">儲存會員資料</button><button id="member-activate" class="btn" type="button">確認並開通資格</button><button id="member-email-payment" class="btn" type="button">開啟繳費通知 Email</button><button id="member-form-reset" class="btn" type="button">清除</button></div>
             </form>
           </div>
         </div>
-
-        <div class="membership-card">
-          <h3>會員名單</h3>
-          <div id="membership-list" class="membership-list"><div class="empty">載入中…</div></div>
-        </div>
+        <div class="membership-card"><h3>會員名單</h3><div id="membership-list" class="membership-list"><div class="empty">載入中…</div></div></div>
       </div>
     </section>
   </main>
 </div>
 
 <script type="module" src="article-admin.js?v=20260722-article-metrics-1"></script>
-<script type="module" src="membership-admin.js?v=20260727-membership-1"></script>
+<script type="module" src="membership-admin.js?v=20260730-member-level-expiry-1"></script>
 </body>
 </html>
