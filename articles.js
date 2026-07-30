@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260730-wealth-images-3";
+import { staticArticles } from "./static-articles.js?v=20260730-wealth-images-4";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
