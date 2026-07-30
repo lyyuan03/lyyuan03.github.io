@@ -14,6 +14,7 @@ const {
   formatTaipeiTradeDate,
   verifyCheckMacValue
 } = require("./ecpay");
+const { sponsorPlanAmount } = require("./membership-plans");
 
 initializeApp();
 const db = getFirestore();
@@ -144,6 +145,64 @@ LYY靈元院行政團隊`,
   });
 }
 
+async function sendSponsorPaymentEmail({ email, name, amount, months, paymentUrl }) {
+  const { transporter, from } = mailTransport();
+  const displayName = name || "會員";
+  await transporter.sendMail({
+    from,
+    to: email,
+    subject: `靈元院一般會員｜${months}個月方案繳費通知`,
+    text: `${displayName}您好：
+
+感謝您申請靈元院一般會員。
+
+會員期間：${months}個月
+應繳金額：新台幣 ${amount.toLocaleString("zh-TW")} 元
+
+請由以下專屬連結前往綠界安全付款：
+${paymentUrl}
+
+付款成功後，系統會自動開通會員資格，不需要再回覆帳號。
+請使用本信收件 Gmail 登入靈元院官網。
+
+LYY靈元院行政團隊`,
+    html: `<p>${htmlEscape(displayName)}您好：</p>
+      <p>感謝您申請靈元院一般會員。</p>
+      <p>會員期間：<strong>${months}個月</strong><br>應繳金額：<strong>新台幣 ${amount.toLocaleString("zh-TW")} 元</strong></p>
+      <p><a href="${htmlEscape(paymentUrl)}" style="display:inline-block;padding:12px 20px;background:#606330;color:#fff;text-decoration:none">前往綠界安全付款</a></p>
+      <p>付款成功後，系統會自動開通會員資格，不需要再回覆帳號。請使用本信收件 Gmail 登入靈元院官網。</p>
+      <p>LYY靈元院行政團隊</p>`
+  });
+}
+
+async function sendSponsorActivationEmail({ email, name, expiresAt }) {
+  const { transporter, from } = mailTransport();
+  const displayName = name || "會員";
+  const expiry = new Intl.DateTimeFormat("zh-TW", {
+    timeZone: "Asia/Taipei",
+    dateStyle: "long"
+  }).format(expiresAt);
+  await transporter.sendMail({
+    from,
+    to: email,
+    subject: "靈元院一般會員｜會員資格已開通",
+    text: `${displayName}您好：
+
+您的款項已確認，靈元院一般會員資格已自動開通。
+本次會期至：${expiry}
+
+請使用本信收件 Gmail 登入靈元院官網。
+${SITE_URL}/articles.html
+
+LYY靈元院行政團隊`,
+    html: `<p>${htmlEscape(displayName)}您好：</p>
+      <p>您的款項已確認，靈元院一般會員資格已自動開通。</p>
+      <p>本次會期至：<strong>${htmlEscape(expiry)}</strong></p>
+      <p><a href="${SITE_URL}/articles.html">登入靈元院官網</a></p>
+      <p>LYY靈元院行政團隊</p>`
+  });
+}
+
 exports.membershipBackendStatus = onRequest(
   {
     region: REGION,
@@ -264,6 +323,91 @@ exports.createMembershipCheckout = onCall(
   }
 );
 
+exports.createSponsorMembershipCheckout = onCall(
+  {
+    region: REGION,
+    secrets: [ecpayConfig, smtpConfig],
+    enforceAppCheck: false
+  },
+  async (request) => {
+    if (!isAdminRequest(request)) {
+      throw new HttpsError("permission-denied", "僅限靈元院管理員建立付款訂單。");
+    }
+
+    const email = normalizeEmail(request.data?.email);
+    const name = cleanText(request.data?.name, 60);
+    const planMonths = Number(request.data?.planMonths);
+    const amount = sponsorPlanAmount(planMonths);
+    if (!email || !email.includes("@")) {
+      throw new HttpsError("invalid-argument", "請填寫有效的會員 Gmail。");
+    }
+    if (!amount) {
+      throw new HttpsError("invalid-argument", "一般會員目前僅提供一個月或三個月方案。");
+    }
+
+    const config = ecpayConfig.value();
+    const tradeNo = createMerchantTradeNo();
+    const paymentToken = crypto.randomBytes(24).toString("base64url");
+    const paymentUrl = `${FUNCTIONS_BASE_URL}/membershipPayment?order=${encodeURIComponent(tradeNo)}&token=${encodeURIComponent(paymentToken)}`;
+    const orderRef = db.doc(`membershipOrders/${tradeNo}`);
+    const now = Timestamp.now();
+    const expiresAt = Timestamp.fromMillis(now.toMillis() + 3 * 24 * 60 * 60 * 1000);
+
+    await orderRef.create({
+      merchantTradeNo: tradeNo,
+      email,
+      name,
+      memberType: "sponsor-member",
+      amount,
+      planMonths,
+      status: "pending",
+      paymentTokenHash: tokenHash(paymentToken),
+      paymentLinkExpiresAt: expiresAt,
+      ecpayEnvironment: config.environment === "production" ? "production" : "stage",
+      createdBy: normalizeEmail(request.auth.token.email),
+      createdAt: now,
+      updatedAt: now
+    });
+
+    await db.doc(`memberAccess/${email}`).set({
+      email,
+      name,
+      memberType: "sponsor-member",
+      planMonths,
+      amount,
+      paymentStatus: "pending",
+      status: "pending",
+      pendingOrderNo: tradeNo,
+      updatedAt: now
+    }, { merge: true });
+
+    try {
+      await sendSponsorPaymentEmail({ email, name, amount, months: planMonths, paymentUrl });
+      await orderRef.update({
+        emailStatus: "sent",
+        emailSentAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp()
+      });
+    } catch (error) {
+      console.error("Sponsor payment email failed", { tradeNo, error });
+      await orderRef.update({
+        emailStatus: "error",
+        emailError: cleanText(error.message, 300),
+        updatedAt: FieldValue.serverTimestamp()
+      });
+      throw new HttpsError("internal", "訂單已建立，但繳費信寄送失敗。請檢查寄信設定後再試。");
+    }
+
+    return {
+      merchantTradeNo: tradeNo,
+      paymentUrl,
+      amount,
+      planMonths,
+      emailSent: true
+    };
+  }
+);
+
 exports.membershipPayment = onRequest(
   {
     region: REGION,
@@ -291,14 +435,16 @@ exports.membershipPayment = onRequest(
     }
 
     const config = ecpayConfig.value();
+    const isSponsorMember = order.memberType === "sponsor-member";
+    const productName = isSponsorMember ? "靈元院一般會員" : "靈元院養生療癒頻道會員";
     const parameters = {
       MerchantID: config.merchantId,
       MerchantTradeNo: tradeNo,
       MerchantTradeDate: formatTaipeiTradeDate(),
       PaymentType: "aio",
       TotalAmount: String(order.amount),
-      TradeDesc: "靈元院養生療癒頻道會員",
-      ItemName: `靈元院養生療癒頻道會員${order.planMonths}個月`,
+      TradeDesc: productName,
+      ItemName: `${productName}${order.planMonths}個月`,
       ReturnURL: `${FUNCTIONS_BASE_URL}/ecpayMembershipCallback`,
       ChoosePayment: "ALL",
       EncryptType: "1",
@@ -372,13 +518,10 @@ exports.ecpayMembershipCallback = onRequest(
         const nowTimestamp = Timestamp.fromDate(now);
         const expiryTimestamp = Timestamp.fromDate(expiresAt);
 
-        transaction.set(memberRef, {
+        const activeMember = {
           email: order.email,
           name: order.name,
-          memberType: "wellness-channel",
-          memberLevel: order.memberLevel,
-          wellnessLevel: order.memberLevel,
-          articleAccess: order.memberLevel === "lingji" || order.articleAccess === true,
+          memberType: order.memberType === "sponsor-member" ? "sponsor-member" : "wellness-channel",
           planMonths: order.planMonths,
           amount: order.amount,
           paymentStatus: "paid",
@@ -390,7 +533,13 @@ exports.ecpayMembershipCallback = onRequest(
           lastOrderNo: tradeNo,
           pendingOrderNo: FieldValue.delete(),
           updatedAt: nowTimestamp
-        }, { merge: true });
+        };
+        if (order.memberType !== "sponsor-member") {
+          activeMember.memberLevel = order.memberLevel;
+          activeMember.wellnessLevel = order.memberLevel;
+          activeMember.articleAccess = order.memberLevel === "lingji" || order.articleAccess === true;
+        }
+        transaction.set(memberRef, activeMember, { merge: true });
         transaction.update(orderRef, {
           status: "paid",
           paidAt: nowTimestamp,
@@ -400,7 +549,12 @@ exports.ecpayMembershipCallback = onRequest(
           callbackReceivedAt: nowTimestamp,
           updatedAt: nowTimestamp
         });
-        return { email: order.email, name: order.name, expiresAt };
+        return {
+          email: order.email,
+          name: order.name,
+          expiresAt,
+          memberType: order.memberType
+        };
       });
     } catch (error) {
       console.error("ECPay membership callback failed", { tradeNo, error: error.message });
@@ -410,7 +564,11 @@ exports.ecpayMembershipCallback = onRequest(
 
     if (activation) {
       try {
-        await sendActivationEmail(activation);
+        if (activation.memberType === "sponsor-member") {
+          await sendSponsorActivationEmail(activation);
+        } else {
+          await sendActivationEmail(activation);
+        }
         await orderRef.update({
           activationEmailStatus: "sent",
           activationEmailSentAt: FieldValue.serverTimestamp()
