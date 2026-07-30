@@ -1,4 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
+import { MEMBER_LEVELS, memberLevelLabel, normalizeMemberLevel, toDate } from "./member-access.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -14,6 +15,9 @@ const paymentUrlEl = document.getElementById("member-payment-url");
 const activateButton = document.getElementById("member-activate");
 const emailButton = document.getElementById("member-email-payment");
 const resetButton = document.getElementById("member-form-reset");
+const expiryModeEl = document.getElementById("member-expiry-mode");
+const customExpiryEl = document.getElementById("member-custom-expiry");
+const levelEl = document.getElementById("member-level");
 
 let settings = { price1: 0, price3: 0, price12: 0, paymentDays: 3, ecpayUrl: "" };
 let members = [];
@@ -28,16 +32,22 @@ function normalizeEmail(value = "") {
   return value.trim().toLowerCase();
 }
 
-function dateValue(value) {
-  if (!value) return null;
-  if (typeof value?.toDate === "function") return value.toDate();
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? null : date;
+function formatDate(value) {
+  const date = toDate(value);
+  return date ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(date) : "尚未開通";
 }
 
-function formatDate(value) {
-  const date = dateValue(value);
-  return date ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(date) : "尚未開通";
+function toDateInputValue(value) {
+  const date = toDate(value);
+  if (!date) return "";
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+}
+
+function dateInputToExpiry(value) {
+  if (!value) return null;
+  const date = new Date(`${value}T23:59:59+08:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
 function addMonths(date, months) {
@@ -63,20 +73,34 @@ function planAmount(months) {
   return Number(settings.price1 || 0) * months;
 }
 
-function previewExpiry(existingExpiry = null) {
+function calculatedExpiry(existingExpiry = null) {
   const now = new Date();
-  const currentExpiry = dateValue(existingExpiry);
+  const currentExpiry = toDate(existingExpiry);
   const base = currentExpiry && currentExpiry > now ? currentExpiry : now;
   return addMonths(base, selectedMonths());
 }
 
+function previewExpiry(existingExpiry = null) {
+  if (expiryModeEl?.value === "custom") {
+    return dateInputToExpiry(customExpiryEl?.value) || calculatedExpiry(existingExpiry);
+  }
+  return calculatedExpiry(existingExpiry);
+}
+
+function updateExpiryControls() {
+  const custom = expiryModeEl?.value === "custom";
+  if (customExpiryEl) customExpiryEl.disabled = !custom;
+}
+
 function updatePlanPreview(forceAmount = false) {
   customMonthsEl.disabled = monthsEl.value !== "custom";
+  updateExpiryControls();
   if (forceAmount || !amountEl.value) amountEl.value = String(planAmount(selectedMonths()) || "");
   if (!paymentUrlEl.value) paymentUrlEl.value = settings.ecpayUrl || "";
   const originalEmail = normalizeEmail(document.getElementById("member-original-email").value);
   const existing = members.find((item) => item.email === originalEmail);
-  summaryEl.textContent = `本次 ${selectedMonths()} 個月｜應繳 NT$${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜付款確認後預計到期日 ${formatDate(previewExpiry(existing?.expiresAt))}`;
+  const expiry = previewExpiry(existing?.expiresAt);
+  summaryEl.textContent = `${memberLevelLabel(levelEl?.value)}｜${selectedMonths()} 個月｜應繳 NT$${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜開通後到期日 ${formatDate(expiry)}`;
 }
 
 function resetMemberForm() {
@@ -84,6 +108,9 @@ function resetMemberForm() {
   document.getElementById("member-original-email").value = "";
   monthsEl.value = "1";
   customMonthsEl.value = "1";
+  if (levelEl) levelEl.value = "wellness";
+  if (expiryModeEl) expiryModeEl.value = "months";
+  if (customExpiryEl) customExpiryEl.value = "";
   paymentUrlEl.value = settings.ecpayUrl || "";
   updatePlanPreview(true);
 }
@@ -114,23 +141,25 @@ async function saveSettings(event) {
   updatePlanPreview(true);
 }
 
-function memberPayload(paymentStatus = null, extendMembership = false) {
+function memberPayload(paymentStatus = null, activateMembership = false) {
   const email = normalizeEmail(document.getElementById("member-email").value);
   const existing = members.find((item) => item.email === normalizeEmail(document.getElementById("member-original-email").value));
   const status = paymentStatus || document.getElementById("member-payment-status").value;
+  const expiry = previewExpiry(existing?.expiresAt);
   return {
     email,
     name: document.getElementById("member-name").value.trim(),
+    memberLevel: normalizeMemberLevel(levelEl?.value),
     planMonths: selectedMonths(),
     amount: Number(amountEl.value || 0),
     paymentUrl: paymentUrlEl.value.trim(),
     paymentStatus: status,
     status: status === "paid" ? "active" : "pending",
     startsAt: status === "paid" ? (existing?.startsAt || new Date().toISOString()) : (existing?.startsAt || null),
-    expiresAt: status === "paid" && (extendMembership || !existing?.expiresAt)
-      ? previewExpiry(existing?.expiresAt).toISOString()
+    expiresAt: status === "paid" && (activateMembership || !existing?.expiresAt)
+      ? expiry.toISOString()
       : (existing?.expiresAt || null),
-    paidAt: status === "paid" && (extendMembership || !existing?.paidAt)
+    paidAt: status === "paid" && (activateMembership || !existing?.paidAt)
       ? new Date().toISOString()
       : (existing?.paidAt || null),
     note: document.getElementById("member-note").value.trim(),
@@ -145,7 +174,7 @@ async function saveMember(event) {
   const original = normalizeEmail(document.getElementById("member-original-email").value);
   await setDoc(doc(db, "memberAccess", payload.email), payload, { merge: true });
   if (original && original !== payload.email) await deleteDoc(doc(db, "memberAccess", original));
-  statusEl.textContent = payload.paymentStatus === "paid" ? "會員資格已開通" : "會員資料已儲存";
+  statusEl.textContent = payload.paymentStatus === "paid" ? "會員資格已儲存" : "會員資料已儲存";
   await loadMembers();
   resetMemberForm();
 }
@@ -156,7 +185,7 @@ async function activateMember() {
   const original = normalizeEmail(document.getElementById("member-original-email").value);
   await setDoc(doc(db, "memberAccess", payload.email), payload, { merge: true });
   if (original && original !== payload.email) await deleteDoc(doc(db, "memberAccess", original));
-  statusEl.textContent = "付款已確認，會員資格已開通";
+  statusEl.textContent = `${memberLevelLabel(payload.memberLevel)}已開通，到期日 ${formatDate(payload.expiresAt)}`;
   await loadMembers();
   resetMemberForm();
 }
@@ -174,12 +203,13 @@ function openPaymentEmail() {
   const months = selectedMonths();
   const amount = Number(amountEl.value || 0).toLocaleString("zh-TW");
   const paymentUrl = paymentUrlEl.value.trim();
+  const level = memberLevelLabel(levelEl?.value);
   if (!paymentUrl) {
     alert("請先填寫綠界付款連結。");
     return;
   }
-  const subject = `靈元院贊助會員｜${months}個月方案繳費通知`;
-  const body = `${name}您好：\n\n感謝您申請靈元院贊助會員。\n\n會員期間：${months}個月\n應繳金額：新台幣 ${amount} 元\n付款期限：${paymentDeadline()}\n\n請由以下綠界連結完成付款：\n${paymentUrl}\n\n完成付款後，我們將於確認款項後開通會員閱讀資格。請使用本信收件 Gmail（${email}）登入官網。\n\n靈元院行政團隊`;
+  const subject = `靈元院${level}｜${months}個月方案繳費通知`;
+  const body = `${name}您好：\n\n感謝您申請靈元院${level}。\n\n會員期間：${months}個月\n預計到期日：${formatDate(previewExpiry())}\n應繳金額：新台幣 ${amount} 元\n付款期限：${paymentDeadline()}\n\n請由以下綠界連結完成付款：\n${paymentUrl}\n\n完成付款後，我們將於確認款項後開通會員閱讀資格。請使用本信收件 Gmail（${email}）登入官網。\n\n靈元院行政團隊`;
   location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
@@ -190,12 +220,13 @@ function renderMembers() {
   }
   const now = new Date();
   listEl.innerHTML = members.map((member) => {
-    const expiry = dateValue(member.expiresAt);
+    const expiry = toDate(member.expiresAt);
     const active = member.status === "active" && expiry && expiry > now;
     const label = member.paymentStatus === "pending" ? "待付款" : active ? "有效" : "已到期";
+    const level = memberLevelLabel(member.memberLevel);
     return `<div class="member-row">
       <div>
-        <strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(label)}</strong>
+        <strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(level)}｜${escapeHtml(label)}</strong>
         <small>${escapeHtml(member.email)}｜${Number(member.planMonths || 0)}個月｜NT$${Number(member.amount || 0).toLocaleString("zh-TW")}｜到期 ${escapeHtml(formatDate(member.expiresAt))}</small>
       </div>
       <div class="member-row-actions">
@@ -214,9 +245,12 @@ function editMember(email) {
   document.getElementById("member-original-email").value = member.email;
   document.getElementById("member-name").value = member.name || "";
   document.getElementById("member-email").value = member.email || "";
+  if (levelEl) levelEl.value = normalizeMemberLevel(member.memberLevel);
   const standard = [1, 3, 12].includes(Number(member.planMonths));
   monthsEl.value = standard ? String(member.planMonths) : "custom";
   customMonthsEl.value = String(member.planMonths || 1);
+  if (expiryModeEl) expiryModeEl.value = "custom";
+  if (customExpiryEl) customExpiryEl.value = toDateInputValue(member.expiresAt);
   amountEl.value = String(member.amount || "");
   document.getElementById("member-payment-status").value = member.paymentStatus || "pending";
   paymentUrlEl.value = member.paymentUrl || settings.ecpayUrl || "";
@@ -244,6 +278,9 @@ memberForm?.addEventListener("submit", (event) => saveMember(event).catch(showEr
 monthsEl?.addEventListener("change", () => updatePlanPreview(true));
 customMonthsEl?.addEventListener("input", () => updatePlanPreview(true));
 amountEl?.addEventListener("input", () => updatePlanPreview(false));
+levelEl?.addEventListener("change", () => updatePlanPreview(false));
+expiryModeEl?.addEventListener("change", () => updatePlanPreview(false));
+customExpiryEl?.addEventListener("input", () => updatePlanPreview(false));
 activateButton?.addEventListener("click", () => activateMember().catch(showError));
 emailButton?.addEventListener("click", openPaymentEmail);
 resetButton?.addEventListener("click", resetMemberForm);
