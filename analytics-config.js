@@ -8,3 +8,10 @@ window.LYY_ANALYTICS_CONFIG = Object.freeze({
   gtmId: "",
   measurementId: ""
 });
+
+if (location.pathname.endsWith("/articles.html")) {
+  const script = document.createElement("script");
+  script.src = "/article-filter-fix.js?v=20260730-1";
+  script.defer = true;
+  document.head.appendChild(script);
+}
