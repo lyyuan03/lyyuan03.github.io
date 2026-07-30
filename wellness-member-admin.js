@@ -48,11 +48,11 @@ function formatDate(value) {
 }
 
 function levelLabel(level) {
-  return level === "wellness-premium" ? "養生療癒頂級會員" : "養生療癒一般會員";
+  return level === "lingji" ? "靈極會員" : "一般會員";
 }
 
 function syncArticleAccess() {
-  if (levelEl.value === "wellness-premium") {
+  if (levelEl.value === "lingji") {
     articleAccessEl.checked = true;
     articleAccessEl.disabled = true;
   } else {
@@ -63,26 +63,26 @@ function syncArticleAccess() {
 function resetForm() {
   form.reset();
   document.getElementById("wellness-member-original-email").value = "";
-  levelEl.value = "wellness-general";
+  levelEl.value = "wellness";
   articleAccessEl.checked = false;
   articleAccessEl.disabled = false;
 }
 
 function payload() {
-  const level = levelEl.value;
+  const level = levelEl.value === "lingji" ? "lingji" : "wellness";
   const status = document.getElementById("wellness-member-state").value;
   return {
     email: normalizeEmail(document.getElementById("wellness-member-email").value),
     name: document.getElementById("wellness-member-name").value.trim(),
     memberType: "wellness-channel",
+    memberLevel: level,
     wellnessLevel: level,
-    memberLevel: level === "wellness-premium" ? "lingji" : "wellness",
     status,
     paymentStatus: status === "active" ? "paid" : "pending",
     firstJoinedAt: dateInputToIso(document.getElementById("wellness-member-first-joined-at").value),
     startsAt: dateInputToIso(document.getElementById("wellness-member-starts-at").value),
     expiresAt: dateInputToIso(document.getElementById("wellness-member-expires-at").value, true),
-    articleAccess: level === "wellness-premium" || articleAccessEl.checked,
+    articleAccess: level === "lingji" || articleAccessEl.checked,
     totalSpend: Number(document.getElementById("wellness-member-total-spend").value || 0),
     rewardBalance: Number(document.getElementById("wellness-member-reward-balance").value || 0),
     note: document.getElementById("wellness-member-note").value.trim(),
@@ -99,23 +99,29 @@ async function saveMember(event) {
   if (originalEmail && originalEmail !== data.email) {
     await deleteDoc(doc(db, "memberAccess", originalEmail));
   }
-  statusEl.textContent = "養生療癒會員資料已儲存";
+  statusEl.textContent = "會員頻道資料已儲存";
   await loadMembers();
   resetForm();
 }
 
+function normalizeStoredLevel(member = {}) {
+  if (member.memberLevel === "lingji" || member.wellnessLevel === "lingji" || member.wellnessLevel === "wellness-premium") return "lingji";
+  return "wellness";
+}
+
 function renderMembers() {
   if (!members.length) {
-    listEl.innerHTML = '<div class="empty">目前尚無養生療癒會員資料</div>';
+    listEl.innerHTML = '<div class="empty">目前尚無會員頻道資料</div>';
     return;
   }
   const now = new Date();
   listEl.innerHTML = members.map((member) => {
+    const level = normalizeStoredLevel(member);
     const expiry = toDate(member.expiresAt);
     const active = member.status === "active" && expiry && expiry > now;
     const stateLabel = active ? "有效" : member.status === "active" ? "已到期" : "未啟用";
-    const articleLabel = member.articleAccess === true || member.wellnessLevel === "wellness-premium" ? "文章已開放" : "文章未開放";
-    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(levelLabel(member.wellnessLevel))}｜${escapeHtml(stateLabel)}</strong><small>${escapeHtml(member.email)}｜${articleLabel}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}｜累積消費 NT$${Number(member.totalSpend || 0).toLocaleString("zh-TW")}｜回饋金 NT$${Number(member.rewardBalance || 0).toLocaleString("zh-TW")}</small></div><div class="member-row-actions"><button class="btn" type="button" data-wellness-edit="${escapeHtml(member.email)}">編輯</button><button class="btn danger" type="button" data-wellness-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
+    const articleLabel = member.articleAccess === true || level === "lingji" ? "文章已開放" : "文章未開放";
+    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(levelLabel(level))}｜${escapeHtml(stateLabel)}</strong><small>${escapeHtml(member.email)}｜${articleLabel}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}｜累積消費 NT$${Number(member.totalSpend || 0).toLocaleString("zh-TW")}｜回饋金 NT$${Number(member.rewardBalance || 0).toLocaleString("zh-TW")}</small></div><div class="member-row-actions"><button class="btn" type="button" data-wellness-edit="${escapeHtml(member.email)}">編輯</button><button class="btn danger" type="button" data-wellness-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
   }).join("");
   listEl.querySelectorAll("[data-wellness-edit]").forEach((button) => button.addEventListener("click", () => editMember(button.dataset.wellnessEdit)));
   listEl.querySelectorAll("[data-wellness-delete]").forEach((button) => button.addEventListener("click", () => removeMember(button.dataset.wellnessDelete)));
@@ -127,12 +133,12 @@ function editMember(email) {
   document.getElementById("wellness-member-original-email").value = member.email;
   document.getElementById("wellness-member-name").value = member.name || "";
   document.getElementById("wellness-member-email").value = member.email || "";
-  levelEl.value = member.wellnessLevel || (member.memberLevel === "lingji" ? "wellness-premium" : "wellness-general");
+  levelEl.value = normalizeStoredLevel(member);
   document.getElementById("wellness-member-state").value = member.status || "pending";
   document.getElementById("wellness-member-first-joined-at").value = toDateInput(member.firstJoinedAt || member.startsAt);
   document.getElementById("wellness-member-starts-at").value = toDateInput(member.startsAt);
   document.getElementById("wellness-member-expires-at").value = toDateInput(member.expiresAt);
-  articleAccessEl.checked = member.articleAccess === true || levelEl.value === "wellness-premium";
+  articleAccessEl.checked = member.articleAccess === true || levelEl.value === "lingji";
   document.getElementById("wellness-member-total-spend").value = String(member.totalSpend || 0);
   document.getElementById("wellness-member-reward-balance").value = String(member.rewardBalance || 0);
   document.getElementById("wellness-member-note").value = member.note || "";
@@ -141,9 +147,9 @@ function editMember(email) {
 }
 
 async function removeMember(email) {
-  if (!confirm(`確定要刪除 ${email} 的養生療癒會員資料嗎？`)) return;
+  if (!confirm(`確定要刪除 ${email} 的會員頻道資料嗎？`)) return;
   await deleteDoc(doc(db, "memberAccess", email));
-  statusEl.textContent = "養生療癒會員資料已刪除";
+  statusEl.textContent = "會員頻道資料已刪除";
   await loadMembers();
 }
 
@@ -158,7 +164,7 @@ async function loadMembers() {
 
 function showError(error) {
   console.error(error);
-  statusEl.textContent = error?.code === "permission-denied" ? "Firebase 會員權限尚未發布" : "養生療癒會員資料處理失敗";
+  statusEl.textContent = error?.code === "permission-denied" ? "Firebase 會員權限尚未發布" : "會員頻道資料處理失敗";
 }
 
 form?.addEventListener("submit", (event) => saveMember(event).catch(showError));
@@ -171,6 +177,6 @@ onAuthStateChanged(auth, async (user) => {
     await loadMembers();
   } catch (error) {
     showError(error);
-    listEl.innerHTML = '<div class="empty">養生療癒會員資料暫時無法載入。</div>';
+    listEl.innerHTML = '<div class="empty">會員頻道資料暫時無法載入。</div>';
   }
 });
