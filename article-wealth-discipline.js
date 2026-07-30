@@ -21,7 +21,7 @@ export const wealthDisciplineArticle = {
 
 佳寧的故事，說的是一個市場如何被財富神話催眠；《致富的定力》談的，則是一個人如何不要在神話裡失去自己。
 
-![手拿《致富的定力》書籍照片](assets/articles/wealth-discipline/hand-book-photo.svg?v=20260730-hand-book-1)
+![手拿《致富的定力》書籍照片](assets/articles/wealth-discipline/hand-book-photo.svg?v=20260730-hand-book-2)
 
 ## 一場由所有人共同完成的財富神話
 
