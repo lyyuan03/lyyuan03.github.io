@@ -1,7 +1,9 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { addDoc, collection, doc, getDoc, getDocs, increment, query, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { addDoc, collection, doc, getDoc, increment, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+const ARTICLE_ACCESS_THRESHOLD = 15000;
+const FULL_ORDER_REWARD = 1000;
 const form = document.getElementById("member-purchase-form");
 const statusEl = document.getElementById("purchase-admin-status");
 
@@ -17,7 +19,9 @@ async function savePurchase(event) {
   event.preventDefault();
   const email = emailValue();
   const amount = numberValue("purchase-amount");
-  const reward = numberValue("purchase-reward");
+  const enteredReward = numberValue("purchase-reward");
+  const qualifiesForFullOrder = amount >= ARTICLE_ACCESS_THRESHOLD;
+  const reward = qualifiesForFullOrder && enteredReward <= 0 ? FULL_ORDER_REWARD : enteredReward;
   if (!email || amount <= 0) return;
 
   const memberRef = doc(db, "memberAccess", email);
@@ -32,6 +36,8 @@ async function savePurchase(event) {
     item: document.getElementById("purchase-item").value.trim() || "消費",
     amount,
     reward,
+    articleAccessGranted: qualifiesForFullOrder,
+    rewardUsableFromNextPurchase: reward > 0,
     note: document.getElementById("purchase-note").value.trim(),
     purchasedAt: document.getElementById("purchase-date").value
       ? new Date(`${document.getElementById("purchase-date").value}T12:00:00+08:00`).toISOString()
@@ -39,13 +45,23 @@ async function savePurchase(event) {
     createdAt: serverTimestamp()
   });
 
-  await setDoc(memberRef, {
+  const memberUpdate = {
     totalSpend: increment(amount),
     rewardBalance: increment(reward),
     updatedAt: serverTimestamp()
-  }, { merge: true });
+  };
+  if (qualifiesForFullOrder) {
+    memberUpdate.articleAccess = true;
+    memberUpdate.articleAccessSource = "single-purchase-15000";
+    memberUpdate.articleAccessGrantedAt = new Date().toISOString();
+  }
 
-  statusEl.textContent = `已新增 NT$${amount.toLocaleString("zh-TW")} 消費${reward ? `，並增加 NT$${reward.toLocaleString("zh-TW")} 回饋金` : ""}`;
+  await setDoc(memberRef, memberUpdate, { merge: true });
+
+  const messages = [`已新增 NT$${amount.toLocaleString("zh-TW")} 消費`];
+  if (reward) messages.push(`增加 NT$${reward.toLocaleString("zh-TW")} 回饋金（下次消費使用）`);
+  if (qualifiesForFullOrder) messages.push("已自動開通付費文章閱讀權限");
+  statusEl.textContent = messages.join("，");
   form.reset();
   document.getElementById("purchase-date").valueAsDate = new Date();
 }
