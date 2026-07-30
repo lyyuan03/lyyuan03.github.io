@@ -9,6 +9,10 @@ export const wealthDisciplineArticle = {
   coverImage: "assets/articles/wealth-discipline/cover.svg",
   excerpt: "從佳寧集團、《金手指》、槓桿悲劇，到創辦人的人格、禪修與長期投資：真正能讓人留在市場裡的，不只是分析能力，而是節制欲望、辨識企業與安住自己的定力。",
   accessType: "free",
+  bookTitle: "致富的定力：一年只需10小時，就能穩賺18%，投資新手也能在30歲財富自由",
+  bookAuthor: "陳韋峰",
+  bookPublisher: "橡樹林文化",
+  bookPurchaseUrl: "https://www.books.com.tw/products/0011056698",
   content: `# 《致富的定力》：股市真正考驗的，不是選股，而是你能不能活過每一次貪婪與恐慌
 
 最近這一波股市下跌，許多人的財富在短短幾天內快速縮水。原本每天在網路上介紹熱門題材、飆股與AI概念股的人，也陸續公開自己的虧損。有些人只是把先前賺到的獲利吐回去，有些人動用融資、借款與槓桿，當跌幅被放大，連原本安穩的生活也受到影響。
