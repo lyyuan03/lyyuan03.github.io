@@ -1,4 +1,11 @@
 import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1";
 import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=20260730-wealth-discipline-2";
 
-export const staticArticles = [wealthDisciplineArticle, ...baseArticles];
+const featuredWealthDisciplineArticle = {
+  ...wealthDisciplineArticle,
+  publishedAt: "2026-07-30T23:59:00.000Z",
+  updatedAt: "2026-07-30T23:59:00.000Z",
+  coverImage: "assets/articles/wealth-discipline/cover.svg?v=20260730-cover-2"
+};
+
+export const staticArticles = [featuredWealthDisciplineArticle, ...baseArticles];
