@@ -1,7 +1,7 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js";
 import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc, deleteDoc, doc, getDocs, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const categoryLabels = {
@@ -55,7 +55,7 @@ function escapeHtml(value = "") {
 }
 
 function renderInline(value = "") {
-  return escapeHtml(value).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, '<img src="$2" alt="$1">');
+  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^\s)]+)\)/g, '<img src="$2" alt="$1">');
 }
 
 function renderContent(value = "") {
@@ -81,6 +81,10 @@ function getFormData() {
     status: data.status,
     excerpt: data.excerpt.trim(),
     coverImage: data.coverImage.trim(),
+    bookTitle: data.bookTitle.trim(),
+    bookAuthor: data.bookAuthor.trim(),
+    bookPublisher: data.bookPublisher.trim(),
+    bookPurchaseUrl: data.bookPurchaseUrl.trim(),
     content: data.content.trim()
   };
 }
@@ -92,6 +96,10 @@ function setFormData(article = {}) {
   form.status.value = article.status || "draft";
   form.excerpt.value = article.excerpt || "";
   form.coverImage.value = article.coverImage || "";
+  form.bookTitle.value = article.bookTitle || "";
+  form.bookAuthor.value = article.bookAuthor || "";
+  form.bookPublisher.value = article.bookPublisher || "";
+  form.bookPurchaseUrl.value = article.bookPurchaseUrl || "";
   form.content.value = article.content || "";
   preview.innerHTML = renderContent(form.content.value);
   deleteButton.disabled = !currentId;
@@ -112,7 +120,7 @@ function renderList() {
   listEl.innerHTML = articles.map((article) => `
     <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${article.id}">
       <div class="article-item-title">${escapeHtml(article.title || "未命名文章")}</div>
-      <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}</div>
+      <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}｜${article.source === "github-static" ? "網站文章" : "後台文章"}</div>
     </button>
   `).join("");
   listEl.querySelectorAll("[data-id]").forEach((button) => {
@@ -181,13 +189,24 @@ async function loadArticles() {
       console.warn("文章統計暫時無法載入。", metricsError);
       metricsByArticle = new Map();
     }
-    articles = snapshot.docs
-      .map((item) => ({ id: item.id, ...item.data() }))
-      .sort((a, b) => {
-        const at = a.updatedAt?.toMillis?.() || 0;
-        const bt = b.updatedAt?.toMillis?.() || 0;
-        return bt - at;
-      });
+    const firestoreArticles = snapshot.docs.map((item) => ({
+      id: item.id,
+      ...item.data(),
+      source: "firestore"
+    }));
+    const mergedArticles = new Map(
+      staticArticles.map((article) => [article.id, { ...article, source: "github-static" }])
+    );
+    firestoreArticles.forEach((article) => mergedArticles.set(article.id, article));
+    const articleTime = (value) => {
+      if (!value) return 0;
+      if (typeof value?.toMillis === "function") return value.toMillis();
+      const parsed = Date.parse(value);
+      return Number.isNaN(parsed) ? 0 : parsed;
+    };
+    articles = [...mergedArticles.values()].sort((a, b) =>
+      articleTime(b.updatedAt || b.publishedAt) - articleTime(a.updatedAt || a.publishedAt)
+    );
     renderList();
     renderMetricsDashboard();
   } catch (error) {
@@ -211,7 +230,7 @@ async function saveArticle(event) {
     payload.publishedAt = serverTimestamp();
   }
   if (currentId) {
-    await updateDoc(doc(db, "articles", currentId), payload);
+    await setDoc(doc(db, "articles", currentId), payload, { merge: true });
   } else {
     const created = await addDoc(collection(db, "articles"), {
       ...payload,
@@ -308,6 +327,10 @@ function articleForExport(article, source) {
     status: article.status || "published",
     excerpt: article.excerpt || "",
     coverImage: article.coverImage || "",
+    bookTitle: article.bookTitle || "",
+    bookAuthor: article.bookAuthor || "",
+    bookPublisher: article.bookPublisher || "",
+    bookPurchaseUrl: article.bookPurchaseUrl || "",
     content: article.content || "",
     createdAt: exportDate(article.createdAt),
     updatedAt: exportDate(article.updatedAt),
