@@ -45,23 +45,41 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.92);backdrop-fi
 .hero-inner{position:relative;z-index:1;max-width:760px}
 .eyebrow{font-family:var(--en);font-size:12px;color:var(--gold-light);letter-spacing:.48em;margin-bottom:22px}
 .hero h1{font-size:clamp(30px,5vw,49px);line-height:1.55;letter-spacing:.14em;text-shadow:0 3px 22px rgba(0,0,0,.7)}
-.hero-subtitle{max-width:620px;margin:20px auto 0;color:rgba(245,240,232,.78);font-family:var(--serif);font-size:17px;line-height:2;letter-spacing:.09em}
+.hero-subtitle{max-width:650px;margin:20px auto 0;color:rgba(245,240,232,.88);font-family:var(--serif);font-size:18px;line-height:2;letter-spacing:.09em}
 .hero-rule{display:flex;align-items:center;gap:16px;max-width:340px;margin:30px auto 0;color:var(--gold)}
 .hero-rule:before,.hero-rule:after{content:'';height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(165,130,84,.6))}
 .hero-rule:after{transform:scaleX(-1)}
+.hero-promise{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:28px auto 0}
+.hero-promise span{padding:7px 14px;border:1px solid rgba(197,162,111,.42);background:rgba(10,15,8,.44);color:rgba(245,240,232,.86);font-size:13px;letter-spacing:.08em}
+.hero-cta{display:inline-flex;align-items:center;justify-content:center;min-height:49px;margin-top:26px;padding:11px 30px;background:linear-gradient(135deg,#A58254,#C5A26F);color:#20180F;font-family:var(--serif);font-size:15px;font-weight:500;letter-spacing:.14em;box-shadow:0 8px 26px rgba(0,0,0,.28);transition:.22s}
+.hero-cta:hover{transform:translateY(-2px);filter:brightness(1.07)}
 main{background:linear-gradient(180deg,#E9E1D4,#F3EDE4 45%,#E7DFD2);color:var(--ink);padding:84px 24px 96px}
 .content{max-width:900px;margin:0 auto}
 .intro{font-family:var(--serif);font-size:18px;line-height:2.25;color:#3E342A;padding:38px 42px;background:rgba(255,252,247,.72);border-left:3px solid var(--gold);box-shadow:0 18px 48px rgba(60,42,20,.08)}
+.value-strip{display:grid;grid-template-columns:repeat(3,1fr);margin-top:24px;border:1px solid rgba(89,79,71,.24);box-shadow:0 15px 36px rgba(60,42,20,.08)}
+.value-item{min-height:154px;padding:27px 25px}
+.value-item:nth-child(1){background:#594F47;color:#F5F0E8}
+.value-item:nth-child(2){background:#A58254;color:#20180F}
+.value-item:nth-child(3){background:#606330;color:#F5F0E8}
+.value-item small{display:block;margin-bottom:10px;font-family:var(--en);font-size:11px;letter-spacing:.25em;opacity:.72}
+.value-item strong{display:block;font-family:var(--serif);font-size:18px;font-weight:500;letter-spacing:.08em;line-height:1.6}
+.value-item p{margin-top:8px;font-size:13.5px;line-height:1.75;opacity:.86}
 .section{margin-top:68px}
 .section-heading{text-align:center;margin-bottom:34px}
 .section-kicker{display:block;font-family:var(--en);font-size:11px;color:#87683F;letter-spacing:.38em;margin-bottom:8px}
 .section h2{font-size:clamp(24px,3.5vw,32px);color:#463522;letter-spacing:.14em}
 .benefits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.benefit{position:relative;padding:28px 28px 26px;background:rgba(255,252,247,.78);border:1px solid rgba(165,130,84,.2);box-shadow:0 12px 30px rgba(60,42,20,.06)}
+.benefit{position:relative;min-height:250px;padding:30px 30px 28px;border:1px solid rgba(165,130,84,.2);box-shadow:0 12px 30px rgba(60,42,20,.08);transition:transform .3s ease,box-shadow .3s ease}
+.benefit:hover{transform:translateY(-4px);box-shadow:0 19px 38px rgba(60,42,20,.14)}
 .benefit:last-child{grid-column:1/-1}
-.benefit .number{font-family:var(--en);font-size:12px;color:#947249;letter-spacing:.2em}
-.benefit h3{font-size:18px;color:#473622;letter-spacing:.08em;margin:7px 0 10px;line-height:1.65}
-.benefit p,.prose p{font-size:16px;color:#4A4037;line-height:2;margin-bottom:14px}
+.benefit:nth-child(1),.benefit:nth-child(6){background:#594F47;color:#F5F0E8}
+.benefit:nth-child(2){background:#DEE1CD;color:#303424}
+.benefit:nth-child(3),.benefit:nth-child(7){background:#606330;color:#F5F0E8}
+.benefit:nth-child(4){background:#A58254;color:#20180F}
+.benefit:nth-child(5){background:#EEE7DA;color:#3D332A}
+.benefit .number{font-family:var(--en);font-size:12px;color:inherit;letter-spacing:.22em;opacity:.65}
+.benefit h3{font-size:20px;color:inherit;letter-spacing:.08em;margin:9px 0 12px;line-height:1.65}
+.benefit p{font-size:15.5px;color:inherit;line-height:1.95;margin-bottom:14px;opacity:.88}
 .channel-box{padding:34px 38px;background:#182017;color:rgba(245,240,232,.86);border:1px solid rgba(165,130,84,.35)}
 .channel-box h3{color:var(--gold-light);font-size:21px;letter-spacing:.1em;margin-bottom:17px}
 .channel-box p{font-family:var(--serif);font-size:16px;line-height:2.1;margin-bottom:13px}
@@ -84,12 +102,13 @@ main{background:linear-gradient(180deg,#E9E1D4,#F3EDE4 45%,#E7DFD2);color:var(--
 .contact p{max-width:620px;margin:15px auto 23px;line-height:2}
 .contact-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
 .contact-actions a{padding:11px 24px;border:1px solid rgba(165,130,84,.55);color:var(--gold-light);font-size:14px;letter-spacing:.1em}
+.mobile-join{display:none}
 footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 0 30px}
 .footer-inner{display:flex;flex-direction:column;align-items:center;gap:14px}
 .footer-brand-mark{display:block;width:128px;max-width:34vw;height:auto;opacity:.64;filter:saturate(.72) brightness(.78)}
 .footer-copy{font-size:11px;color:rgba(245,240,232,.22);letter-spacing:.12em}
 @media(max-width:900px){.nav-inner{justify-content:flex-start;overflow-x:auto;padding:0 18px}.nav-links{min-width:max-content;gap:18px}.hero{min-height:510px;padding-top:122px}}
-@media(max-width:680px){main{padding:62px 16px 76px}.hero{min-height:470px;padding:112px 18px 70px}.hero h1{font-size:30px;letter-spacing:.09em}.hero-subtitle{font-size:15.5px}.intro{padding:28px 24px;font-size:16.5px}.section{margin-top:54px}.benefits{grid-template-columns:1fr}.benefit:last-child{grid-column:auto}.benefit{padding:24px 22px}.channel-box,.reason,.notes{padding:28px 23px}.step{padding:72px 23px 27px}.step:before{left:23px;top:21px}.contact{padding:42px 22px}.nav-links>li>a,.nav-links>li>span{font-size:12.5px}}
+@media(max-width:680px){body{padding-bottom:67px}main{padding:62px 16px 76px}.hero{min-height:560px;padding:112px 18px 70px}.hero h1{font-size:30px;letter-spacing:.09em}.hero-subtitle{font-size:16px}.hero-promise{gap:7px}.hero-promise span{padding:6px 10px;font-size:12px}.intro{padding:28px 24px;font-size:16.5px}.value-strip{grid-template-columns:1fr}.value-item{min-height:0;padding:22px 23px}.section{margin-top:54px}.benefits{grid-template-columns:1fr}.benefit:last-child{grid-column:auto}.benefit{min-height:0;padding:25px 23px}.channel-box,.reason,.notes{padding:28px 23px}.step{padding:72px 23px 27px}.step:before{left:23px;top:21px}.contact{padding:42px 22px}.nav-links>li>a,.nav-links>li>span{font-size:12.5px}.mobile-join{position:fixed;left:0;right:0;bottom:0;z-index:120;display:flex;align-items:center;justify-content:center;min-height:67px;background:rgba(20,28,17,.97);border-top:1px solid rgba(197,162,111,.42);box-shadow:0 -8px 24px rgba(0,0,0,.24)}.mobile-join a{width:calc(100% - 32px);padding:11px 18px;text-align:center;background:#A58254;color:#17120C;font-family:var(--serif);font-weight:500;letter-spacing:.13em}}
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -108,12 +127,19 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
 <header class="hero"><div class="hero-inner">
   <p class="eyebrow">MEMBERSHIP · WELLNESS · SPIRITUAL PRACTICE</p>
   <h1>身心養護療遇頻道</h1>
-  <p class="hero-subtitle">會員權益與加入方式</p>
+  <p class="hero-subtitle">照顧身體，也讓靈性的道路走得更深、更穩</p>
+  <div class="hero-promise"><span>養生健康資訊</span><span>靈性修練影音</span><span>會員專屬諮詢</span><span>活動優先資格</span></div>
+  <a class="hero-cta" href="#join">了解如何加入</a>
   <div class="hero-rule">◈</div>
 </div></header>
 
 <main><div class="content">
   <div class="intro">想要穩定身心靈、療癒身體，同時打開靈性體驗嗎？靈元院是靈山派的靈修場域，由宇色老師以二十多年實修經驗帶領，強調「以身體為師」，從排毒、修復到調整體質，讓身體與靈性一起轉化。在這裡，修心、修性與鍛鍊身體被視為一體——願意為身體負責的人，靈性也會走得更深、更穩。</div>
+  <div class="value-strip" aria-label="會員核心價值">
+    <div class="value-item"><small>BODY</small><strong>讓身體得到更細緻的照顧</strong><p>從養生資訊到營養補品食用諮詢，陪您更有方向地照顧自己。</p></div>
+    <div class="value-item"><small>MIND</small><strong>在日常中安定身心</strong><p>透過影音、文章與練習，把修持真正帶回每天的生活。</p></div>
+    <div class="value-item"><small>SPIRIT</small><strong>讓靈性修練走得更穩</strong><p>建立清楚的觀念與節奏，減少摸索，也避免走入偏差。</p></div>
+  </div>
 
   <section class="section" id="benefits">
     <div class="section-heading"><span class="section-kicker">MEMBER BENEFITS</span><h2>會員頻道七大獨家福利</h2></div>
@@ -161,6 +187,7 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
 </div></main>
 
 <footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>
+<div class="mobile-join"><a href="#join">查看加入方式</a></div>
 <script src="/mobile-nav.js"></script>
 </body>
 </html>
