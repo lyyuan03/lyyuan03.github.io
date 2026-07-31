@@ -100,7 +100,7 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
-  "celebrity-death-dream-spirit-five-checks": "assets/articles/celebrity-dream-spirit/collective-projection.jpg",
+  "celebrity-death-dream-spirit-five-checks": "assets/articles/celebrity-dream-spirit/collective-projection.jpg?v=20260731-copy-1",
   "japan-temple-faith-and-decline": "assets/articles/thumbnails/japan-temple.jpg",
   "spiritual-practice-cannot-be-outsourced-to-gods": "assets/articles/thumbnails/spiritual-practice.jpg",
   "jitong-leader-discernment": "assets/articles/thumbnails/jitong-leader.jpg",

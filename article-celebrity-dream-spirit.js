@@ -6,7 +6,7 @@ export const celebrityDreamSpiritArticle = {
   status: "published",
   publishedAt: "2026-07-31T10:30:00.000Z",
   updatedAt: "2026-07-31T10:30:00.000Z",
-  coverImage: "assets/articles/celebrity-dream-spirit/collective-projection.jpg",
+  coverImage: "assets/articles/celebrity-dream-spirit/collective-projection.jpg?v=20260731-copy-1",
   excerpt: "當有人宣稱亡者托夢、名人指定自己傳話，我不急著判斷真假，而會先確認五件事：這段接觸，究竟讓活著的人更清明，還是更依賴另一個故事？",
   accessType: "paid",
   bookTitle: "請問鬼怪",
@@ -45,7 +45,7 @@ export const celebrityDreamSpiritArticle = {
 
 我自己也不例外。多年前，一位我曾經接觸過的個案驟逝，我確實在夢裡見過他一次，細節鮮明得讓我一度懷疑自己是不是也被同樣的渴望牽著走。後來我讓那個夢靜置了幾天，才慢慢分辨出——那更接近我對「沒能幫上他」的遺憾，而不是他真的來過。連我自己，都得用這五點回頭檢查自己。這套方法不是拿來審判別人的尺，是拿來提醒自己的鏡子。
 
-![文章情境圖](assets/articles/celebrity-dream-spirit/dream-boundary.jpg)
+![文章情境圖](assets/articles/celebrity-dream-spirit/dream-boundary.jpg?v=20260731-copy-1)
 
 
 ## 意識，是有邊界的
@@ -120,7 +120,7 @@ export const celebrityDreamSpiritArticle = {
 
 塔羅裡的死神牌，常被誤解成死亡本身，其實它談的是同一件事：結束一個階段，放下一段抓不住的執著，好讓下一段旅程能夠開始。牌義裡的骷髏騎士不急不徐，因為死亡從不需要匆忙——真正令人不安的，從來不是結束，而是不肯結束的那個心。一個人如果活著的時候，總是抗拒每一次小小的結束，不肯讓一段關係、一個身分、一種自我形象死去，那麼他遲早會在更大的結束來臨時，發現自己毫無準備。心念清明度，說到底，就是每天練習跟一些小小的死亡和解。
 
-![文章情境圖](assets/articles/celebrity-dream-spirit/clear-mind-farewell.jpg)
+![文章情境圖](assets/articles/celebrity-dream-spirit/clear-mind-farewell.jpg?v=20260731-copy-1)
 
 
 ## 回到活著的人
