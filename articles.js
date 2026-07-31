@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260730-admin-edit-book-1";
+import { staticArticles } from "./static-articles.js?v=20260731-celebrity-dream-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -27,6 +27,11 @@ const limitedReadingDeadlines = new Map([
   ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
 const articleGuides = {
+  "celebrity-death-dream-spirit-five-checks": {
+    topics: ["亡者接觸", "意識邊界"],
+    level: "深度",
+    nextId: "tonglingren-wufa-huifu-putongren"
+  },
   "japan-temple-faith-and-decline": {
     topics: ["信仰與人", "寺院興衰"],
     level: "深度",
@@ -95,6 +100,7 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
+  "celebrity-death-dream-spirit-five-checks": "assets/articles/celebrity-dream-spirit/collective-projection.jpg",
   "japan-temple-faith-and-decline": "assets/articles/thumbnails/japan-temple.jpg",
   "spiritual-practice-cannot-be-outsourced-to-gods": "assets/articles/thumbnails/spiritual-practice.jpg",
   "jitong-leader-discernment": "assets/articles/thumbnails/jitong-leader.jpg",
@@ -110,6 +116,7 @@ const articleThumbnailImages = {
 };
 
 const articleHooks = {
+  "celebrity-death-dream-spirit-five-checks": "有人說亡者托夢、名人指定自己傳話。比起急著判斷真假，我更在意的是：這段接觸，究竟讓活著的人更清明，還是更依賴另一個故事？",
   "japan-temple-faith-and-decline": "如果有一天，信仰的人都不在了，這些神佛又會去哪裡？寺院還在，信仰卻可能早已離開。",
   "spiritual-practice-cannot-be-outsourced-to-gods": "神明可以引路，也可能給你感應；但神明離開之後，你是否仍能清醒做人，才是修為真正開始被檢驗的時刻。",
   "jitong-leader-discernment": "最容易讓人誤判的，不是神明降駕的那一刻，而是神明離開之後，那個人還坐在原位。",
