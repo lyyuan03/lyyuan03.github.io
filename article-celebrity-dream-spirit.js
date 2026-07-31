@@ -12,7 +12,7 @@ export const celebrityDreamSpiritArticle = {
   bookTitle: "請問鬼怪",
   bookAuthor: "宇色Osel",
   bookPublisher: "橡樹林",
-  bookPurchaseUrl: "https://www.books.com.tw/products/0011029319",
+  bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053",
   content: `這些年，我看過太多次相同的畫面。
 
 一位名人剛離開人世，網路與社群立刻熱鬧起來。有人說自己夢到他，有人說他托夢交代後事，有人說他來找自己談話，甚至有人公開宣稱自己是他指定的代言者。無論這位名人在世時聲譽如何，無論他走得安詳還是充滿爭議，只要名字夠響亮，這類聲音幾乎都會出現。
