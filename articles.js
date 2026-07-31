@@ -788,7 +788,12 @@ async function loadArticles() {
     if (!items.some((item) => item.id === article.id)) items.push(article);
     return items;
   }, []);
-  loadedArticles = merged.sort(sortPublished);
+  const normalizedArticles = merged.map((article) =>
+    article.id === "celebrity-death-dream-spirit-five-checks"
+      ? { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" }
+      : article
+  );
+  loadedArticles = normalizedArticles.sort(sortPublished);
   renderTabs();
   await loadArticleMetrics();
 
