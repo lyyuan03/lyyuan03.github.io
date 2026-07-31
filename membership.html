@@ -64,6 +64,17 @@ main{background:linear-gradient(180deg,#E9E1D4,#F3EDE4 45%,#E7DFD2);color:var(--
 .value-item small{display:block;margin-bottom:10px;font-family:var(--en);font-size:11px;letter-spacing:.25em;opacity:.72}
 .value-item strong{display:block;font-family:var(--serif);font-size:18px;font-weight:500;letter-spacing:.08em;line-height:1.6}
 .value-item p{margin-top:8px;font-size:13.5px;line-height:1.75;opacity:.86}
+.visual-story{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);min-height:360px;margin-top:24px;overflow:hidden;box-shadow:0 18px 44px rgba(60,42,20,.12)}
+.visual-story.reverse{grid-template-columns:minmax(300px,.92fr) minmax(0,1.08fr)}
+.visual-story.reverse .visual-story-image{order:2}
+.visual-story-image{width:100%;height:100%;min-height:360px;object-fit:cover}
+.visual-story-copy{display:flex;flex-direction:column;justify-content:center;padding:42px 44px;background:#594F47;color:#F5F0E8}
+.visual-story.olive .visual-story-copy{background:#606330}
+.visual-story-kicker{font-family:var(--en);font-size:11px;color:var(--gold-light);letter-spacing:.3em;margin-bottom:10px}
+.visual-story h2{font-size:26px;color:inherit;letter-spacing:.12em;line-height:1.6;margin-bottom:15px}
+.visual-story p{font-family:var(--serif);font-size:16px;line-height:2;opacity:.9}
+.visual-credit{margin-top:16px;font-family:var(--sans)!important;font-size:10.5px!important;line-height:1.6!important;opacity:.52!important;letter-spacing:.05em}
+.visual-credit a{border-bottom:1px solid currentColor}
 .section{margin-top:68px}
 .section-heading{text-align:center;margin-bottom:34px}
 .section-kicker{display:block;font-family:var(--en);font-size:11px;color:#87683F;letter-spacing:.38em;margin-bottom:8px}
@@ -128,7 +139,7 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
 .footer-brand-mark{display:block;width:128px;max-width:34vw;height:auto;opacity:.64;filter:saturate(.72) brightness(.78)}
 .footer-copy{font-size:11px;color:rgba(245,240,232,.22);letter-spacing:.12em}
 @media(max-width:900px){.nav-inner{justify-content:flex-start;overflow-x:auto;padding:0 18px}.nav-links{min-width:max-content;gap:18px}.hero{min-height:510px;padding-top:122px}}
-@media(max-width:680px){body{padding-bottom:67px}main{padding:62px 16px 76px}.hero{min-height:560px;padding:112px 18px 70px}.hero h1{font-size:30px;letter-spacing:.09em}.hero-subtitle{font-size:16px}.hero-promise{gap:7px}.hero-promise span{padding:6px 10px;font-size:12px}.intro{padding:28px 24px;font-size:16.5px}.value-strip{grid-template-columns:1fr}.value-item{min-height:0;padding:22px 23px}.section{margin-top:54px}.benefits,.policy-grid{grid-template-columns:1fr}.benefit:last-child{grid-column:auto}.benefit{min-height:0;padding:25px 23px}.policy-card{padding:25px 23px}.channel-box,.reason,.notes{padding:28px 23px}.step{padding:72px 23px 27px}.step:before{left:23px;top:21px}.contact{padding:42px 22px}.nav-links>li>a,.nav-links>li>span{font-size:12.5px}.mobile-join{position:fixed;left:0;right:0;bottom:0;z-index:120;display:flex;align-items:center;justify-content:center;min-height:67px;background:rgba(20,28,17,.97);border-top:1px solid rgba(197,162,111,.42);box-shadow:0 -8px 24px rgba(0,0,0,.24)}.mobile-join a{width:calc(100% - 32px);padding:11px 18px;text-align:center;background:#A58254;color:#17120C;font-family:var(--serif);font-weight:500;letter-spacing:.13em}}
+@media(max-width:680px){body{padding-bottom:67px}main{padding:62px 16px 76px}.hero{min-height:560px;padding:112px 18px 70px}.hero h1{font-size:30px;letter-spacing:.09em}.hero-subtitle{font-size:16px}.hero-promise{gap:7px}.hero-promise span{padding:6px 10px;font-size:12px}.intro{padding:28px 24px;font-size:16.5px}.value-strip{grid-template-columns:1fr}.value-item{min-height:0;padding:22px 23px}.visual-story,.visual-story.reverse{grid-template-columns:1fr;min-height:0}.visual-story.reverse .visual-story-image{order:0}.visual-story-image{height:240px;min-height:0}.visual-story-copy{padding:30px 24px}.visual-story h2{font-size:22px}.section{margin-top:54px}.benefits,.policy-grid{grid-template-columns:1fr}.benefit:last-child{grid-column:auto}.benefit{min-height:0;padding:25px 23px}.policy-card{padding:25px 23px}.channel-box,.reason,.notes{padding:28px 23px}.step{padding:72px 23px 27px}.step:before{left:23px;top:21px}.contact{padding:42px 22px}.nav-links>li>a,.nav-links>li>span{font-size:12.5px}.mobile-join{position:fixed;left:0;right:0;bottom:0;z-index:120;display:flex;align-items:center;justify-content:center;min-height:67px;background:rgba(20,28,17,.97);border-top:1px solid rgba(197,162,111,.42);box-shadow:0 -8px 24px rgba(0,0,0,.24)}.mobile-join a{width:calc(100% - 32px);padding:11px 18px;text-align:center;background:#A58254;color:#17120C;font-family:var(--serif);font-weight:500;letter-spacing:.13em}}
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -160,6 +171,10 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
     <div class="value-item"><small>MIND</small><strong>在日常中安定身心</strong><p>透過影音、文章與練習，把修持真正帶回每天的生活。</p></div>
     <div class="value-item"><small>SPIRIT</small><strong>讓靈性修練走得更穩</strong><p>建立清楚的觀念與節奏，減少摸索，也避免走入偏差。</p></div>
   </div>
+  <aside class="visual-story" aria-label="從日常養護開始">
+    <img class="visual-story-image" src="/assets/membership/herbal-tea-1410565.jpg" alt="盛裝草本茶飲與香草的杯具" width="1280" height="797" loading="lazy">
+    <div class="visual-story-copy"><span class="visual-story-kicker">EVERYDAY WELLNESS</span><h2>養護，不只是一段課程<br>而是每天的選擇</h2><p>從飲食、營養補充到生活節奏，會員內容陪您把養生觀念落實在日常，慢慢建立適合自己的照顧方式。</p><p class="visual-credit">Photo: congerdesign／<a href="https://pixabay.com/photos/herbal-tea-tea-herbs-cups-teacups-1410565/" target="_blank" rel="noopener">Pixabay</a></p></div>
+  </aside>
 
   <section class="section" id="benefits">
     <div class="section-heading"><span class="section-kicker">MEMBER BENEFITS</span><h2>新版會員核心權益</h2></div>
@@ -176,6 +191,11 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
   <section class="section">
     <div class="channel-box"><h3>「靈元院＿身心養護療遇頻道」是什麼？</h3><p>「靈元院＿身心養護療遇頻道」由靈元院行政團隊主持。符合資格並受邀加入不公開會員頻道後，您將獲得一個有助於身心靈全方位療遇的空間。</p><p>我們提供各種不對外公開、由宇色老師親錄的音檔與文章，內容包括冥想、營養補品食用方式、課程與產品會員專屬優先訂購資格等，協助會員在快速變化的生活中保持平衡、照顧健康。</p></div>
   </section>
+
+  <aside class="visual-story reverse olive" aria-label="在日常中安定身心">
+    <img class="visual-story-image" src="/assets/membership/woman-yoga-meditation-5380651.jpg" alt="女性在自然環境中靜坐調息" width="1280" height="853" loading="lazy">
+    <div class="visual-story-copy"><span class="visual-story-kicker">A STEADIER PRACTICE</span><h2>有人陪伴，更容易把修練走穩</h2><p>透過持續更新的影音、文章與練習，在需要時回來觀看，讓身心安定與靈性修練不再只是偶爾想起的事。</p><p class="visual-credit">Photo: Juuucy／<a href="https://pixabay.com/photos/woman-yoga-meditation-relaxation-5380651/" target="_blank" rel="noopener">Pixabay</a></p></div>
+  </aside>
 
   <section class="section" id="join">
     <div class="section-heading"><span class="section-kicker">NEW MEMBERS</span><h2>新會員如何加入</h2></div>
