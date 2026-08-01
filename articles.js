@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260801-body-image-1";
+import { staticArticles } from "./static-articles.js?v=20260801-fantasy-visual-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -129,7 +129,7 @@ const articleThumbnailImages = {
   "jitong-shenming-fushen": "assets/articles/thumbnails/jitong-shenming.jpg",
   "market-crash-money-self-control": "assets/articles/thumbnails/market-crash.jpg",
   "wealth-as-water": "assets/articles/thumbnails/market-crash.jpg?v=20260801-wealth-as-water-restore-1",
-  "fantasy-intuition-or-yuanshen": "forest-path.jpg?v=20260801-fantasy-restore-1",
+  "fantasy-intuition-or-yuanshen": "assets/articles/fantasy-intuition-yuanshen/cover.webp?v=20260801-fantasy-visual-1",
   "wealth-discipline-investing-and-self-mastery": "assets/articles/wealth-discipline/book-cover-photo.jpg?v=20260730-book-cover-2"
 };
 
