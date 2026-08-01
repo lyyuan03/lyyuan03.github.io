@@ -377,6 +377,7 @@ async function saveArticle(event) {
 
     let distributedCount = 0;
     if (data.accessType === "event") {
+      payload.eventName = eventOptions.find((event) => event.id === data.eventId)?.name || data.eventId;
       const protectedContent = await encryptEventContent(data.content);
       payload.content = "";
       payload.encryptedContent = protectedContent.encryptedContent;
