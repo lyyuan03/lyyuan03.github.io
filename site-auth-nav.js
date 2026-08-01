@@ -9,7 +9,7 @@ import {
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const AUTH_VERSION = "20260801-split-auth-1";
+const AUTH_VERSION = "20260801-member-only-1";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -23,8 +23,6 @@ function installStyles() {
     .site-auth-button{height:34px;padding:6px 14px;border:1px solid rgba(165,130,84,.48);background:rgba(165,130,84,.07);color:#C5A26F;font:inherit;font-size:12px;letter-spacing:.1em;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s,border-color .2s,transform .2s}
     .site-auth-button:hover{background:rgba(165,130,84,.17);border-color:rgba(197,162,111,.72);transform:translateY(-1px)}
     .site-auth-button:disabled{opacity:.55;cursor:wait;transform:none}
-    #admin-login-button{border-color:rgba(245,240,232,.22);background:rgba(245,240,232,.04);color:rgba(245,240,232,.68)}
-    #admin-login-button:hover{border-color:rgba(245,240,232,.4);background:rgba(245,240,232,.09);color:#F5F0E8}
     #member-login-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,7,4,.72);backdrop-filter:blur(8px)}
     #member-login-modal.is-open{display:flex}
     .member-login-card{position:relative;width:min(430px,100%);padding:40px 38px 34px;text-align:center;background:linear-gradient(155deg,rgba(20,28,18,.98),rgba(8,13,7,.98));border:1px solid rgba(165,130,84,.42);box-shadow:0 24px 80px rgba(0,0,0,.62);color:#F5F0E8}
@@ -39,7 +37,7 @@ function installStyles() {
     @media(max-width:768px){
       :root{--site-auth-height:52px}
       #site-auth-bar{padding:0 12px;justify-content:center}
-      .site-auth-actions{width:100%;max-width:430px;gap:8px}
+      .site-auth-actions{width:100%;max-width:220px;gap:8px}
       .site-auth-button{flex:1;min-width:0;padding:6px 8px;font-size:11.5px}
       .member-login-card{padding:38px 24px 30px}
     }
@@ -56,7 +54,6 @@ function installBar() {
   bar.innerHTML = `
     <div class="site-auth-actions" aria-label="網站登入">
       <button id="member-login-button" class="site-auth-button" type="button">會員登入</button>
-      <button id="admin-login-button" class="site-auth-button" type="button">管理員登入</button>
     </div>`;
   document.body.appendChild(bar);
   document.body.classList.add("site-auth-enabled");
@@ -78,7 +75,6 @@ function installMemberModal() {
       <h2 id="member-login-title">靈元院會員登入</h2>
       <p>請使用登記會員資格的 Google 帳號登入。登入後將回到目前頁面，並依帳號取得相應閱讀權限。</p>
       <button class="member-google-button" type="button">選擇會員 Google 帳號</button>
-      <p class="member-login-note">管理員請使用頁面右上方的「管理員登入」。</p>
       <p class="member-login-browser-note">目前正在社群軟體的內建瀏覽器中開啟。若 Google 登入長時間沒有反應，請改用 Safari 或 Chrome 開啟本頁。</p>
     </div>`;
   document.body.appendChild(modal);
@@ -93,7 +89,6 @@ installStyles();
 const bar = installBar();
 const modal = installMemberModal();
 const memberButton = bar.querySelector("#member-login-button");
-const adminButton = bar.querySelector("#admin-login-button");
 const googleButton = modal.querySelector(".member-google-button");
 const browserNote = modal.querySelector(".member-login-browser-note");
 const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
@@ -110,7 +105,7 @@ memberButton.addEventListener("click", async () => {
     return;
   }
   if (auth.currentUser && isAdminEmail(auth.currentUser.email)) {
-    alert("目前為管理員帳號。請使用「管理員登入」進入後台。");
+    alert("目前為管理員帳號，請由管理後台專屬網址登入。");
     return;
   }
   modal.classList.add("is-open");
@@ -130,7 +125,7 @@ googleButton.addEventListener("click", async () => {
     const result = await signInWithPopup(auth, provider);
     if (isAdminEmail(result.user?.email)) {
       await signOut(auth);
-      alert("這是管理員帳號，請改用「管理員登入」。");
+      alert("這是管理員帳號，請由管理後台專屬網址登入。");
       return;
     }
     modal.classList.remove("is-open");
@@ -146,35 +141,25 @@ googleButton.addEventListener("click", async () => {
   }
 });
 
-adminButton.addEventListener("click", () => {
-  window.location.href = "/admin.html";
-});
-
 onAuthStateChanged(auth, async (user) => {
   if (user && sessionStorage.getItem("site-auth-flow") === "member" && isAdminEmail(user.email)) {
     sessionStorage.removeItem("site-auth-flow");
     await signOut(auth);
-    alert("這是管理員帳號，請改用「管理員登入」。");
+    alert("這是管理員帳號，請由管理後台專屬網址登入。");
     return;
   }
   sessionStorage.removeItem("site-auth-flow");
   if (!user) {
     memberButton.textContent = "會員登入";
     memberButton.title = "使用會員 Google 帳號登入";
-    adminButton.textContent = "管理員登入";
-    adminButton.title = "前往管理後台登入";
     return;
   }
   if (isAdminEmail(user.email)) {
     memberButton.textContent = "會員登入";
-    memberButton.title = "管理員請使用管理員登入";
-    adminButton.textContent = "進入管理後台";
-    adminButton.title = user.email || "管理員已登入";
+    memberButton.title = "管理員請由管理後台專屬網址登入";
     return;
   }
   const displayName = (user.displayName || "會員").trim().split(/\s+/)[0];
   memberButton.textContent = `${displayName}｜登出`;
   memberButton.title = user.email || "會員已登入";
-  adminButton.textContent = "管理員登入";
-  adminButton.title = "前往管理後台登入";
 });
