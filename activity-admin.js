@@ -464,7 +464,14 @@ async function removeParticipant(email) {
     eventArticleKeys: nextKeys,
     updatedAt: serverTimestamp()
   }, { merge: true });
-  setStatus(`已移除 ${email}。`, "success");
+  const personalRecord = linkRecord(event.id, email);
+  if (personalRecord) {
+    personalRecord.status = "inactive";
+    personalRecord.updatedAt = new Date().toISOString();
+    await saveMagicLinks();
+    await syncMagicLinksToArticles(event.id);
+  }
+  setStatus(`已移除 ${email}，相關專屬連結亦已停用。`, "success");
   await refresh();
 }
 
