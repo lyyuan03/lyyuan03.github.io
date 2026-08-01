@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260731-celebrity-dream-4";
+import { staticArticles } from "./static-articles.js?v=20260801-content-restore-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -113,6 +113,8 @@ const articleThumbnailImages = {
   "lingxiu-yuanshen-reality": "assets/articles/thumbnails/yuanshen-reality.jpg",
   "jitong-shenming-fushen": "assets/articles/thumbnails/jitong-shenming.jpg",
   "market-crash-money-self-control": "assets/articles/thumbnails/market-crash.jpg",
+  "wealth-as-water": "assets/articles/thumbnails/market-crash.jpg?v=20260801-wealth-as-water-restore-1",
+  "fantasy-intuition-or-yuanshen": "forest-path.jpg?v=20260801-fantasy-restore-1",
   "wealth-discipline-investing-and-self-mastery": "assets/articles/wealth-discipline/book-cover-photo.jpg?v=20260730-book-cover-2"
 };
 
@@ -785,7 +787,13 @@ async function loadArticles() {
   } catch (error) {
     console.warn("Firebase 文章暫時無法載入，改顯示靜態文章。", error);
   }
-  const merged = [...articles, ...staticArticles].reduce((items, article) => {
+  // 這兩篇以 GitHub 完整版本為準，避免 Firebase 舊稿覆蓋正文、封面與文章內圖片。
+  const authoritativeStaticIds = new Set([
+    "wealth-as-water",
+    "fantasy-intuition-or-yuanshen"
+  ]);
+  const authoritativeStaticArticles = staticArticles.filter((article) => authoritativeStaticIds.has(article.id));
+  const merged = [...authoritativeStaticArticles, ...articles, ...staticArticles].reduce((items, article) => {
     if (!items.some((item) => item.id === article.id)) items.push(article);
     return items;
   }, []);
