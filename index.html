@@ -175,7 +175,7 @@ nav.is-scrolled{background:rgba(7,17,6,.94);border-color:rgba(165,130,84,.28)}
 <script>(()=>{const nav=document.querySelector('nav');if(!nav)return;const triggers=[...nav.querySelectorAll('.has-dropdown')];const mq=window.matchMedia('(max-width:768px)');const close=()=>nav.querySelectorAll('.open').forEach(i=>i.classList.remove('open'));triggers.forEach(t=>{if(t.matches('a[href]'))return;const li=t.closest('li');t.addEventListener('click',e=>{if(!mq.matches)return;e.preventDefault();const is=li.classList.contains('open');close();if(!is)li.classList.add('open')})});document.addEventListener('click',e=>{if(!nav.contains(e.target))close()})})();</script>
 <script type="module">
 import { db } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260801-wealth-consciousness-1";
+import { staticArticles } from "./static-articles.js?v=20260801-fantasy-full-1";
 import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
