@@ -112,7 +112,8 @@ const articleThumbnailImages = {
   "lingxiu-zouhuo-rumo": "assets/articles/thumbnails/lingxiu-zouhuo.jpg",
   "lingxiu-yuanshen-reality": "assets/articles/thumbnails/yuanshen-reality.jpg",
   "jitong-shenming-fushen": "assets/articles/thumbnails/jitong-shenming.jpg",
-  "market-crash-money-self-control": "assets/articles/thumbnails/market-crash.jpg"
+  "market-crash-money-self-control": "assets/articles/thumbnails/market-crash.jpg",
+  "wealth-discipline-investing-and-self-mastery": "assets/articles/wealth-discipline/book-cover-photo.jpg?v=20260730-book-cover-2"
 };
 
 const articleHooks = {
