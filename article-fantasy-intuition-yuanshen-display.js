@@ -1,6 +1,6 @@
-import { fantasyIntuitionYuanshenArticle as baseArticle } from "./article-fantasy-intuition-yuanshen.js?v=20260801-body-image-1";
+import { fantasyIntuitionYuanshenArticle as baseArticle } from "./article-fantasy-intuition-yuanshen.js?v=20260801-fantasy-visual-1";
 
 export const fantasyIntuitionYuanshenArticle = {
   ...baseArticle,
-  coverImage: "forest-path.jpg?v=20260801-cover-fix-2"
+  coverImage: "assets/articles/fantasy-intuition-yuanshen/cover.webp?v=20260801-fantasy-visual-1"
 };
