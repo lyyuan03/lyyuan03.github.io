@@ -1,6 +1,7 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { evaluateMember } from "./member-dashboard-logic.js";
 
 // 新影片上架時，依序加入標題、說明與 YouTube 嵌入網址即可。
 const memberVideos = [];
@@ -30,7 +31,7 @@ function formatDate(value) {
 }
 
 function membershipLevel(member = {}) {
-  return member.memberLevel === "lingji" || member.wellnessLevel === "lingji" || member.wellnessLevel === "wellness-premium"
+  return evaluateMember(member).effectiveLevel === "lingji"
     ? "靈極會員"
     : "一般會員";
 }
