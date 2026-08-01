@@ -1,4 +1,4 @@
-import { auth, provider, isAdminEmail } from "./firebase-config.js";
+import { auth, provider, db, isAdminEmail } from "./firebase-config.js";
 import {
   signInWithPopup,
   signInWithRedirect,
@@ -8,8 +8,9 @@ import {
   setPersistence,
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const AUTH_VERSION = "20260801-member-menu-fix-2";
+const AUTH_VERSION = "20260801-account-menu-1";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -19,10 +20,16 @@ function installStyles() {
     :root{--site-auth-height:48px}
     body.site-auth-enabled{padding-top:var(--site-auth-height)!important}
     #site-auth-bar{position:fixed;top:56px;left:0;right:0;z-index:98;height:var(--site-auth-height);display:flex;align-items:center;justify-content:flex-end;padding:0 24px;background:rgba(7,11,6,.97);border-bottom:1px solid rgba(165,130,84,.22);font-family:'Noto Sans TC','Arial',sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.08)}
-    .site-auth-actions{display:flex;align-items:center;gap:9px}
+    .site-auth-actions{position:relative;display:flex;align-items:center;gap:9px}
     .site-auth-button{height:34px;padding:6px 14px;border:1px solid rgba(165,130,84,.48);background:rgba(165,130,84,.07);color:#C5A26F;font:inherit;font-size:12px;letter-spacing:.1em;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s,border-color .2s,transform .2s}
     .site-auth-button:hover{background:rgba(165,130,84,.17);border-color:rgba(197,162,111,.72);transform:translateY(-1px)}
     .site-auth-button:disabled{opacity:.55;cursor:wait;transform:none}
+    .site-account-menu{position:absolute;top:calc(100% + 9px);right:0;z-index:1300;width:220px;padding:7px;background:rgba(12,18,10,.99);border:1px solid rgba(165,130,84,.34);box-shadow:0 16px 42px rgba(0,0,0,.46)}
+    .site-account-menu[hidden]{display:none!important}
+    .site-account-menu:before{content:'';position:absolute;left:0;right:0;top:-10px;height:10px}
+    .site-account-menu a,.site-account-menu button{display:block;width:100%;padding:11px 14px;border:0;background:transparent;color:rgba(245,240,232,.78);font-family:'Noto Sans TC','Arial',sans-serif;font-size:13px;line-height:1.5;letter-spacing:.08em;text-align:left;text-decoration:none;cursor:pointer}
+    .site-account-menu a:hover,.site-account-menu button:hover{background:rgba(165,130,84,.12);color:#C5A26F}
+    .site-account-menu button{margin-top:5px;padding-top:12px;border-top:1px solid rgba(165,130,84,.2);color:rgba(245,240,232,.58)}
     #member-login-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,7,4,.72);backdrop-filter:blur(8px)}
     #member-login-modal.is-open{display:flex}
     .member-login-card{position:relative;width:min(430px,100%);padding:40px 38px 34px;text-align:center;background:linear-gradient(155deg,rgba(20,28,18,.98),rgba(8,13,7,.98));border:1px solid rgba(165,130,84,.42);box-shadow:0 24px 80px rgba(0,0,0,.62);color:#F5F0E8}
@@ -34,67 +41,16 @@ function installStyles() {
     .member-google-button:hover{background:rgba(165,130,84,.2)}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
-    nav .member-nav-trigger.active{color:#C5A26F!important}
-    nav .nav-links>li:focus-within>.dropdown{display:block}
-    nav .nav-links>li.open>.dropdown,
-    nav .nav-links>li.dropdown-open>.dropdown{display:block!important}
     @media(max-width:768px){
       :root{--site-auth-height:52px}
       #site-auth-bar{padding:0 12px;justify-content:center}
       .site-auth-actions{width:100%;max-width:220px;gap:8px}
       .site-auth-button{flex:1;min-width:0;padding:6px 8px;font-size:11.5px}
+      .site-account-menu{left:0;right:0;width:100%}
       .member-login-card{padding:38px 24px 30px}
     }
   `;
   document.head.appendChild(style);
-}
-
-function installMemberMenu() {
-  const membershipLink = [...document.querySelectorAll("nav .nav-links > li > a[href]")].find((link) => {
-    try {
-      const href = link.getAttribute("href");
-      return href && new URL(href, location.href).pathname.endsWith("/membership.html");
-    } catch (_error) {
-      return false;
-    }
-  });
-  const item = membershipLink?.closest("li");
-  if (!item || item.querySelector(".member-nav-trigger")) return;
-  const currentPath = location.pathname.replace(/\/+$/, "") || "/";
-  const isMemberPage = currentPath.endsWith("/membership.html") || currentPath.endsWith("/member-dashboard.html") || currentPath.endsWith("/member-videos.html");
-  item.innerHTML = `
-    <span class="has-dropdown member-nav-trigger${isMemberPage ? " active" : ""}" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">會員</span>
-    <ul class="dropdown member-nav-dropdown">
-      <li><a href="/membership.html">會員制度說明</a></li>
-      <li><a href="/member-dashboard.html">我的會員中心</a></li>
-      <li><a href="/member-videos.html">養生會員影片</a></li>
-    </ul>`;
-  const trigger = item.querySelector(".member-nav-trigger");
-  const closeMenu = () => {
-    item.classList.remove("open");
-    trigger.setAttribute("aria-expanded", "false");
-  };
-  const toggle = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const willOpen = !item.classList.contains("open");
-    document.querySelectorAll("nav .nav-links>li.open").forEach((openItem) => {
-      if (openItem !== item) openItem.classList.remove("open");
-    });
-    item.classList.toggle("open", willOpen);
-    trigger.setAttribute("aria-expanded", String(willOpen));
-  };
-  trigger.addEventListener("click", toggle);
-  trigger.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") toggle(event);
-    if (event.key === "Escape") closeMenu();
-  });
-  item.querySelector(".member-nav-dropdown").addEventListener("click", (event) => {
-    event.stopPropagation();
-  });
-  document.addEventListener("click", (event) => {
-    if (!item.contains(event.target)) closeMenu();
-  });
 }
 
 function installBar() {
@@ -105,7 +61,12 @@ function installBar() {
   bar.setAttribute("data-auth-version", AUTH_VERSION);
   bar.innerHTML = `
     <div class="site-auth-actions" aria-label="網站登入">
-      <button id="member-login-button" class="site-auth-button" type="button">會員登入</button>
+      <button id="member-login-button" class="site-auth-button" type="button" aria-haspopup="false" aria-expanded="false">會員登入</button>
+      <div id="site-account-menu" class="site-account-menu" hidden>
+        <a href="/member-dashboard.html">我的會員中心</a>
+        <a href="/member-videos.html">養生會員影片</a>
+        <button type="button" data-member-sign-out>登出</button>
+      </div>
     </div>`;
   document.body.appendChild(bar);
   document.body.classList.add("site-auth-enabled");
@@ -138,30 +99,75 @@ function installMemberModal() {
 }
 
 installStyles();
-installMemberMenu();
 const bar = installBar();
 const modal = installMemberModal();
 const memberButton = bar.querySelector("#member-login-button");
+const accountMenu = bar.querySelector("#site-account-menu");
+const signOutButton = accountMenu.querySelector("[data-member-sign-out]");
 const googleButton = modal.querySelector(".member-google-button");
 const browserNote = modal.querySelector(".member-login-browser-note");
 const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
 const isMobile = window.matchMedia("(max-width:768px), (pointer:coarse)").matches;
+let hasWellnessAccess = false;
 if (isInAppBrowser) browserNote.style.display = "block";
+
+function toDate(value) {
+  if (!value) return null;
+  if (typeof value?.toDate === "function") return value.toDate();
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function isActiveWellnessMember(member = {}) {
+  const isWellness = member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
+  const expiry = toDate(member.expiresAt);
+  return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
+}
+
+function closeAccountMenu() {
+  accountMenu.hidden = true;
+  memberButton.setAttribute("aria-expanded", "false");
+}
+
+function toggleAccountMenu() {
+  const willOpen = accountMenu.hidden;
+  accountMenu.hidden = !willOpen;
+  memberButton.setAttribute("aria-expanded", String(willOpen));
+}
 
 setPersistence(auth, browserLocalPersistence).catch(console.error);
 getRedirectResult(auth).catch((error) => console.error("Google 重新導向登入失敗：", error));
 
-memberButton.addEventListener("click", async () => {
-  if (auth.currentUser && !isAdminEmail(auth.currentUser.email)) {
-    memberButton.disabled = true;
-    try { await signOut(auth); } finally { memberButton.disabled = false; }
-    return;
-  }
+memberButton.addEventListener("click", async (event) => {
+  event.stopPropagation();
   if (auth.currentUser && isAdminEmail(auth.currentUser.email)) {
     location.href = "/admin.html";
     return;
   }
+  if (auth.currentUser && hasWellnessAccess) {
+    toggleAccountMenu();
+    return;
+  }
+  if (auth.currentUser) {
+    memberButton.disabled = true;
+    try { await signOut(auth); } finally { memberButton.disabled = false; }
+    return;
+  }
   modal.classList.add("is-open");
+});
+
+signOutButton.addEventListener("click", async () => {
+  closeAccountMenu();
+  memberButton.disabled = true;
+  try { await signOut(auth); } finally { memberButton.disabled = false; }
+});
+
+accountMenu.addEventListener("click", (event) => event.stopPropagation());
+document.addEventListener("click", (event) => {
+  if (!bar.contains(event.target)) closeAccountMenu();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeAccountMenu();
 });
 
 googleButton.addEventListener("click", async () => {
@@ -194,6 +200,10 @@ googleButton.addEventListener("click", async () => {
 });
 
 onAuthStateChanged(auth, async (user) => {
+  closeAccountMenu();
+  hasWellnessAccess = false;
+  memberButton.disabled = false;
+  memberButton.setAttribute("aria-haspopup", "false");
   if (user && sessionStorage.getItem("site-auth-flow") === "member" && isAdminEmail(user.email)) {
     sessionStorage.removeItem("site-auth-flow");
     location.href = "/admin.html";
@@ -211,6 +221,30 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
   const displayName = (user.displayName || "會員").trim().split(/\s+/)[0];
-  memberButton.textContent = `${displayName}｜登出`;
+  memberButton.textContent = `${displayName}｜確認資格中…`;
   memberButton.title = user.email || "會員已登入";
+  memberButton.disabled = true;
+  try {
+    const email = (user.email || "").trim().toLowerCase();
+    const snapshot = await getDoc(doc(db, "memberAccess", email));
+    const member = snapshot.exists() ? snapshot.data() : null;
+    if (auth.currentUser?.uid !== user.uid) return;
+    hasWellnessAccess = Boolean(member && isActiveWellnessMember(member));
+    if (hasWellnessAccess) {
+      memberButton.textContent = `${displayName} ▾`;
+      memberButton.title = "開啟個人會員選單";
+      memberButton.setAttribute("aria-haspopup", "menu");
+    } else {
+      memberButton.textContent = `${displayName}｜登出`;
+      memberButton.title = "目前帳號沒有有效的養生療癒頻道會籍；按此登出";
+    }
+  } catch (error) {
+    console.error("會員導覽資格確認失敗：", error);
+    if (auth.currentUser?.uid === user.uid) {
+      memberButton.textContent = `${displayName}｜登出`;
+      memberButton.title = "暫時無法確認養生會員資格；按此登出";
+    }
+  } finally {
+    if (auth.currentUser?.uid === user.uid) memberButton.disabled = false;
+  }
 });
