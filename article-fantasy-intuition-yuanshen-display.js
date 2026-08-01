@@ -1,4 +1,4 @@
-import { fantasyIntuitionYuanshenArticle as baseArticle } from "./article-fantasy-intuition-yuanshen.js?v=20260801-fantasy-modern-2";
+import { fantasyIntuitionYuanshenArticle as baseArticle } from "./article-fantasy-intuition-yuanshen.js?v=20260801-fantasy-full-1";
 
 export const fantasyIntuitionYuanshenArticle = {
   ...baseArticle,
