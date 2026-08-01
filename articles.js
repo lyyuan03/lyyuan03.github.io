@@ -802,16 +802,10 @@ async function loadArticles() {
   } catch (error) {
     console.warn("Firebase 文章暫時無法載入，改顯示靜態文章。", error);
   }
-  // 這兩篇以 GitHub 完整版本為準，避免 Firebase 舊稿覆蓋正文、封面與文章內圖片。
-  const authoritativeStaticIds = new Set([
-    "wealth-as-water",
-    "fantasy-intuition-or-yuanshen"
-  ]);
-  const authoritativeStaticArticles = staticArticles.filter((article) => authoritativeStaticIds.has(article.id));
-  const merged = [...authoritativeStaticArticles, ...articles, ...staticArticles].reduce((items, article) => {
-    if (!items.some((item) => item.id === article.id)) items.push(article);
-    return items;
-  }, []);
+  // 後台文章是正式來源；GitHub 靜態文章只在 Firestore 沒有同 ID 文章時作為備援。
+  const mergedById = new Map(staticArticles.map((article) => [article.id, article]));
+  articles.forEach((article) => mergedById.set(article.id, article));
+  const merged = [...mergedById.values()];
   const normalizedArticles = merged.map((article) =>
     article.id === "celebrity-death-dream-spirit-five-checks"
       ? { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" }
