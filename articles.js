@@ -27,6 +27,21 @@ const limitedReadingDeadlines = new Map([
   ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
 ]);
 const articleGuides = {
+  "wealth-as-water": {
+    topics: ["金錢意識", "安全感"],
+    level: "深度",
+    nextId: "market-crash-money-self-control"
+  },
+  "fantasy-intuition-or-yuanshen": {
+    topics: ["直覺辨識", "元神與識神"],
+    level: "深度",
+    nextId: "yuanshen-awakening-eleven-principles"
+  },
+  "spiritual-practice-cannot-be-outsourced-to-gods": {
+    topics: ["修行責任", "神明與自我"],
+    level: "初識",
+    nextId: "jitong-leader-discernment"
+  },
   "celebrity-death-dream-spirit-five-checks": {
     topics: ["亡者接觸", "意識邊界"],
     level: "深度",
@@ -429,7 +444,7 @@ function renderList(articles) {
         return `
           <a class="article-card" data-article-id="${escapeHtml(key)}" href="articles.html?id=${encodeURIComponent(key)}">
             <div class="article-card-media">
-              ${getArticleThumbnail(article) ? `<img src="${escapeHtml(getArticleThumbnail(article))}" alt="" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
+              ${getArticleThumbnail(article) ? `<img src="${escapeHtml(getArticleThumbnail(article))}" alt="${escapeHtml(article.title || "靈元院文選")}" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
               <div class="article-card-media-gradient" aria-hidden="true"></div>
             </div>
             <div class="article-card-content">
