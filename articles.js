@@ -16,6 +16,8 @@ const params = new URLSearchParams(location.search);
 const activeCategory = params.get("category") || "";
 const activeAccess = params.get("access") || "all";
 const activeId = params.get("id") || "";
+const magicToken = params.get("token") || "";
+const magicEventId = params.get("event") || "";
 const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
@@ -160,6 +162,32 @@ function base64ToBytes(value) {
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
+function bytesToBase64(bytes) {
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary);
+}
+
+function bytesToBase64Url(bytes) {
+  return bytesToBase64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+async function magicTokenHash(token) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  return bytesToBase64Url(new Uint8Array(digest));
+}
+
+async function unwrapEventKey(record, token) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  const wrappingKey = await crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["decrypt"]);
+  const unwrapped = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: base64ToBytes(record.iv) },
+    wrappingKey,
+    base64ToBytes(record.wrappedKey)
+  );
+  return new TextDecoder().decode(unwrapped);
+}
+
 async function decryptEventContent(encryptedContent, iv, rawKey) {
   const key = await crypto.subtle.importKey("raw", base64ToBytes(rawKey), { name: "AES-GCM" }, false, ["decrypt"]);
   const decrypted = await crypto.subtle.decrypt(
@@ -238,6 +266,8 @@ function filterHref(access, category) {
   const next = new URLSearchParams();
   if (access && access !== "all") next.set("access", access);
   if (category) next.set("category", category);
+  if (magicToken) next.set("token", magicToken);
+  if (magicEventId) next.set("event", magicEventId);
   const queryString = next.toString();
   return queryString ? `articles.html?${queryString}` : "articles.html";
 }
@@ -442,7 +472,8 @@ function renderList(articles) {
   const filtered = articles.filter((article) => {
     const matchesCategory = !activeCategory || article.category === activeCategory;
     const matchesAccess = activeAccess === "all" || articleAccess(article) === activeAccess;
-    return matchesCategory && matchesAccess;
+    const matchesEvent = !magicEventId || article.eventId === magicEventId;
+    return matchesCategory && matchesAccess && matchesEvent;
   });
 
   if (!filtered.length) {
@@ -463,7 +494,7 @@ function renderList(articles) {
         const access = articleAccess(article);
         const accessLabel = access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
         return `
-          <a class="article-card" data-article-id="${escapeHtml(key)}" href="articles.html?id=${encodeURIComponent(key)}">
+          <a class="article-card" data-article-id="${escapeHtml(key)}" href="articles.html?id=${encodeURIComponent(key)}${magicToken ? `&event=${encodeURIComponent(article.eventId || magicEventId)}&token=${encodeURIComponent(magicToken)}` : ""}">
             <div class="article-card-media">
               ${getArticleThumbnail(article) ? `<img src="${escapeHtml(getArticleThumbnail(article))}" alt="${escapeHtml(article.title || "靈元院文選")}" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
               <div class="article-card-media-gradient" aria-hidden="true"></div>
@@ -568,6 +599,14 @@ async function loadMemberAccess(user) {
 
 async function eventArticleKey(article) {
   const key = article.id || article.slug;
+  if (magicToken && (!magicEventId || magicEventId === article.eventId)) {
+    const hash = await magicTokenHash(magicToken);
+    const record = article.magicLinkAccess?.[hash];
+    const expiresAt = Date.parse(record?.expiresAt || "");
+    if (record?.status === "active" && Number.isFinite(expiresAt) && expiresAt > Date.now()) {
+      return unwrapEventKey(record, magicToken);
+    }
+  }
   if (isAdminEmail(currentUser?.email)) {
     const snapshot = await getDoc(doc(db, "membershipSettings", "eventArticleKeys"));
     return snapshot.exists() ? snapshot.data().keys?.[key] || "" : "";
@@ -578,7 +617,7 @@ async function eventArticleKey(article) {
 
 async function hydrateEventArticle(article) {
   if (!articleIsEvent(article)) return article;
-  if (!currentUser) return { ...article, content: "", eventAccessGranted: false };
+  if (!currentUser && !magicToken) return { ...article, content: "", eventAccessGranted: false };
   try {
     const key = await eventArticleKey(article);
     if (!key || !article.encryptedContent || !article.eventIv) {
@@ -671,7 +710,7 @@ function renderEventGate(article) {
       <div class="member-lock-card paid-lock-card">
         <div class="member-lock-icon" aria-hidden="true">◇</div>
         <h3>本文為活動限定文章</h3>
-        <p>此文章限 ${escapeHtml(eventName)}參加者閱讀。</p>
+        <p>${magicToken ? "此個人專屬連結已失效、逾期，或不適用於本篇文章。" : `此文章限 ${escapeHtml(eventName)}參加者閱讀。`}</p>
         <div class="paid-inquiry-actions">
           <button class="paid-inquiry-primary" id="article-event-login-button" type="button">${currentUser ? "重新確認活動資格" : "使用報名 Email 的 Google 帳號登入"}</button>
         </div>

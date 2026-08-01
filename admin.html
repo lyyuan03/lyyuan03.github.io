@@ -186,6 +186,18 @@
           <h3>活動參加者</h3>
           <form id="activity-participant-form" class="membership-form">
             <div class="field"><label for="activity-select">選擇活動</label><select id="activity-select"></select></div>
+            <div class="grid">
+              <div class="field">
+                <label for="activity-link-expiry">專屬連結有效期限</label>
+                <input id="activity-link-expiry" type="date">
+              </div>
+              <div class="field">
+                <label>沒有 Google 帳號者</label>
+                <button id="activity-link-generate-all" class="btn" type="button">為尚未建立者批次產生連結</button>
+                <button id="activity-link-export" class="btn" type="button">下載專屬連結名單 CSV</button>
+              </div>
+            </div>
+            <span id="activity-link-status" class="status activity-status" role="status" aria-live="polite">專屬連結可個別複製、停用或重新產生。</span>
             <div class="field">
               <label for="activity-participant-emails">批次匯入 Email</label>
               <textarea id="activity-participant-emails" style="min-height:130px" placeholder="每行一組 Email，也可使用逗號或空白分隔"></textarea>
@@ -301,8 +313,8 @@
 
 <div id="admin-toast" class="admin-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-<script type="module" src="activity-admin.js?v=20260801-import-fix-1"></script>
-<script type="module" src="article-admin.js?v=20260801-event-access-v1"></script>
+<script type="module" src="activity-admin.js?v=20260801-personal-links-v2"></script>
+<script type="module" src="article-admin.js?v=20260801-personal-links-v2"></script>
 <script type="module" src="membership-admin.js?v=20260730-sponsor-ecpay-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20260801-annual-spend-1"></script>
 </body>
