@@ -155,6 +155,21 @@ let currentUser = null;
 let currentMemberAccess = null;
 let visibleArticleCount = window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
 
+function base64ToBytes(value) {
+  const binary = atob(value);
+  return Uint8Array.from(binary, (character) => character.charCodeAt(0));
+}
+
+async function decryptEventContent(encryptedContent, iv, rawKey) {
+  const key = await crypto.subtle.importKey("raw", base64ToBytes(rawKey), { name: "AES-GCM" }, false, ["decrypt"]);
+  const decrypted = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: base64ToBytes(iv) },
+    key,
+    base64ToBytes(encryptedContent)
+  );
+  return new TextDecoder().decode(decrypted);
+}
+
 function escapeHtml(value = "") {
   return value.replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
@@ -203,6 +218,10 @@ function articleIsPaid(article = {}) {
   return article.accessType === "paid" || (article.content || "").includes(paidMarker);
 }
 
+function articleIsEvent(article = {}) {
+  return article.accessType === "event" && Boolean(article.eventId);
+}
+
 function articleIsLimitedOpen(article = {}) {
   const key = articleKey(article);
   return articleIsPaid(article)
@@ -211,6 +230,7 @@ function articleIsLimitedOpen(article = {}) {
 }
 
 function articleAccess(article = {}) {
+  if (articleIsEvent(article)) return "event";
   return articleIsPaid(article) && !articleIsLimitedOpen(article) ? "paid" : "free";
 }
 
@@ -226,14 +246,15 @@ function renderTabs() {
   const accessItems = [
     ["all", "全部文章"],
     ["free", "免費閱讀"],
-    ["paid", "贊助專屬"]
+    ["paid", "贊助專屬"],
+    ["event", "活動限定"]
   ];
   const categoryItems = [["", "全部主題"], ...Object.entries(categoryLabels)];
   const counts = loadedArticles.reduce((result, article) => {
     result.all += 1;
     result[articleAccess(article)] += 1;
     return result;
-  }, { all: 0, free: 0, paid: 0 });
+  }, { all: 0, free: 0, paid: 0, event: 0 });
 
   tabs.innerHTML = `
     <div class="article-filter-panel" id="article-filters">
@@ -440,7 +461,7 @@ function renderList(articles) {
       ${visibleArticles.map((article) => {
         const key = articleKey(article);
         const access = articleAccess(article);
-        const accessLabel = access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
+        const accessLabel = access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
         return `
           <a class="article-card" data-article-id="${escapeHtml(key)}" href="articles.html?id=${encodeURIComponent(key)}">
             <div class="article-card-media">
@@ -545,6 +566,32 @@ async function loadMemberAccess(user) {
   }
 }
 
+async function eventArticleKey(article) {
+  const key = article.id || article.slug;
+  if (isAdminEmail(currentUser?.email)) {
+    const snapshot = await getDoc(doc(db, "membershipSettings", "eventArticleKeys"));
+    return snapshot.exists() ? snapshot.data().keys?.[key] || "" : "";
+  }
+  if (currentMemberAccess?.eventAccess?.[article.eventId]?.status !== "active") return "";
+  return currentMemberAccess?.eventArticleKeys?.[key] || "";
+}
+
+async function hydrateEventArticle(article) {
+  if (!articleIsEvent(article)) return article;
+  if (!currentUser) return { ...article, content: "", eventAccessGranted: false };
+  try {
+    const key = await eventArticleKey(article);
+    if (!key || !article.encryptedContent || !article.eventIv) {
+      return { ...article, content: "", eventAccessGranted: false };
+    }
+    const content = await decryptEventContent(article.encryptedContent, article.eventIv, key);
+    return { ...article, content, eventAccessGranted: true };
+  } catch (error) {
+    console.warn("活動文章閱讀資格無法確認。", error);
+    return { ...article, content: "", eventAccessGranted: false };
+  }
+}
+
 function renderRecommendedBook(article) {
   if (!article.bookTitle && !article.bookAuthor && !article.bookPublisher && !article.bookPurchaseUrl) return "";
   return `
@@ -616,8 +663,32 @@ function renderPaidGate(article) {
   `;
 }
 
+function renderEventGate(article) {
+  const eventName = article.eventName || "2026 觀音成道日法會";
+  return `
+    <section class="member-lock-zone paid-lock-zone" aria-label="活動限定文章">
+      <div class="paid-lock-preview" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <div class="member-lock-card paid-lock-card">
+        <div class="member-lock-icon" aria-hidden="true">◇</div>
+        <h3>本文為活動限定文章</h3>
+        <p>此文章限 ${escapeHtml(eventName)}參加者閱讀。</p>
+        <div class="paid-inquiry-actions">
+          <button class="paid-inquiry-primary" id="article-event-login-button" type="button">${currentUser ? "重新確認活動資格" : "使用報名 Email 的 Google 帳號登入"}</button>
+        </div>
+        <small>一般會員或贊助會員不會自動取得本活動文章權限</small>
+      </div>
+    </section>
+  `;
+}
+
 function bindPaidLogin() {
   document.getElementById("article-member-login-button")?.addEventListener("click", () => {
+    document.getElementById("member-login-button")?.click();
+  });
+}
+
+function bindEventLogin() {
+  document.getElementById("article-event-login-button")?.addEventListener("click", () => {
     document.getElementById("member-login-button")?.click();
   });
 }
@@ -752,6 +823,20 @@ function renderArticle(article) {
   }
   document.title = `${article.title}｜靈元院文選`;
   const articleKey = article.id || article.slug || activeId;
+  if (articleIsEvent(article) && !article.eventAccessGranted) {
+    root.innerHTML = `
+      <article class="article-view" data-article-id="${escapeHtml(articleKey)}">
+        <a class="article-back" href="articles.html">← 返回全部文選</a>
+        <div class="article-meta">${categoryLabels[article.category] || "文選"}｜活動限定</div>
+        <h2>${escapeHtml(article.title || "未命名文章")}</h2>
+        ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
+        ${article.excerpt ? `<div class="article-body"><p>${escapeHtml(article.excerpt)}</p></div>` : ""}
+        ${renderEventGate(article)}
+      </article>
+    `;
+    bindEventLogin();
+    return;
+  }
   const { publicContent, lockedContent, accessType } = splitMemberContent(article.content || "", articleKey);
   root.innerHTML = `
     <article class="article-view" data-article-id="${escapeHtml(articleKey)}">
@@ -816,7 +901,10 @@ async function loadArticles() {
       ? { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" }
       : article
   );
-  loadedArticles = normalizedArticles.sort(sortPublished);
+  const hydratedArticles = await Promise.all(normalizedArticles.map((article) =>
+    activeId && (article.id === activeId || article.slug === activeId) ? hydrateEventArticle(article) : article
+  ));
+  loadedArticles = hydratedArticles.sort(sortPublished);
   renderTabs();
   await loadArticleMetrics();
 
@@ -840,5 +928,9 @@ document.addEventListener("visibilitychange", () => {
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   await loadMemberAccess(user);
+  if (loadedArticles.length && activeId) {
+    const index = loadedArticles.findIndex((article) => article.id === activeId || article.slug === activeId);
+    if (index >= 0) loadedArticles[index] = await hydrateEventArticle(loadedArticles[index]);
+  }
   if (loadedArticles.length) renderCurrentView();
 });
