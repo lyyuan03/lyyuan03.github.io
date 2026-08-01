@@ -26,6 +26,9 @@ const metricsEl = document.getElementById("article-metrics");
 const form = document.getElementById("article-form");
 const preview = document.getElementById("preview");
 const saveStatus = document.getElementById("save-status");
+const saveStatusInline = document.getElementById("save-status-inline");
+const saveButton = document.getElementById("save-article");
+const adminToast = document.getElementById("admin-toast");
 const deleteButton = document.getElementById("delete-article");
 const newButton = document.getElementById("new-article");
 const uploadButton = document.getElementById("upload-image");
@@ -33,6 +36,36 @@ const imageInput = document.getElementById("image-input");
 const uploadStatus = document.getElementById("upload-status");
 const exportButton = document.getElementById("export-articles");
 const exportStatus = document.getElementById("export-status");
+let toastTimer = null;
+let isSaving = false;
+
+function setSaveStatus(message, state = "") {
+  saveStatus.textContent = message;
+  if (saveStatusInline) {
+    saveStatusInline.textContent = message;
+    if (state) saveStatusInline.dataset.state = state;
+    else delete saveStatusInline.dataset.state;
+  }
+}
+
+function showAdminToast(message, state = "success") {
+  if (!adminToast) return;
+  window.clearTimeout(toastTimer);
+  adminToast.textContent = message;
+  adminToast.className = `admin-toast is-visible is-${state}`;
+  toastTimer = window.setTimeout(() => {
+    adminToast.classList.remove("is-visible");
+  }, state === "error" ? 6000 : 3600);
+}
+
+function savedTimeLabel(date = new Date()) {
+  return new Intl.DateTimeFormat("zh-TW", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).format(date);
+}
 
 function slugify(value) {
   const text = (value || "").trim().toLowerCase();
@@ -108,7 +141,7 @@ function setFormData(article = {}) {
 function newArticle() {
   currentId = null;
   setFormData();
-  saveStatus.textContent = "新增文章";
+  setSaveStatus("新增文章｜尚未儲存", "dirty");
   document.querySelectorAll(".article-item").forEach((item) => item.classList.remove("is-active"));
 }
 
@@ -129,7 +162,7 @@ function renderList() {
       const article = articles.find((item) => item.id === currentId);
       setFormData(article);
       renderList();
-      saveStatus.textContent = "";
+      setSaveStatus("尚未修改");
     });
   });
 }
@@ -218,28 +251,44 @@ async function saveArticle(event) {
   event.preventDefault();
   const data = getFormData();
   if (!data.title || !data.content) {
-    alert("請至少填寫標題與內文。");
+    setSaveStatus("無法儲存｜請填寫標題與內文", "error");
+    showAdminToast("文章尚未儲存：請至少填寫標題與內文。", "error");
     return;
   }
-  saveStatus.textContent = "儲存中…";
-  const payload = {
-    ...data,
-    updatedAt: serverTimestamp()
-  };
-  if (data.status === "published") {
-    payload.publishedAt = serverTimestamp();
+  isSaving = true;
+  saveButton.disabled = true;
+  saveButton.textContent = "儲存中…";
+  setSaveStatus("正在儲存，請稍候…", "saving");
+  try {
+    const payload = {
+      ...data,
+      updatedAt: serverTimestamp()
+    };
+    if (data.status === "published") {
+      payload.publishedAt = serverTimestamp();
+    }
+    if (currentId) {
+      await setDoc(doc(db, "articles", currentId), payload, { merge: true });
+    } else {
+      const created = await addDoc(collection(db, "articles"), {
+        ...payload,
+        createdAt: serverTimestamp()
+      });
+      currentId = created.id;
+    }
+    await loadArticles();
+    const savedAt = savedTimeLabel();
+    setSaveStatus(`已儲存｜${savedAt}`, "success");
+    showAdminToast(`文章已成功儲存｜${savedAt}`, "success");
+  } catch (error) {
+    console.error(error);
+    setSaveStatus("儲存失敗｜內容尚未更新", "error");
+    showAdminToast("文章儲存失敗，請確認網路或管理員權限後再試。", "error");
+  } finally {
+    isSaving = false;
+    saveButton.disabled = false;
+    saveButton.textContent = "儲存文章";
   }
-  if (currentId) {
-    await setDoc(doc(db, "articles", currentId), payload, { merge: true });
-  } else {
-    const created = await addDoc(collection(db, "articles"), {
-      ...payload,
-      createdAt: serverTimestamp()
-    });
-    currentId = created.id;
-  }
-  saveStatus.textContent = "已儲存";
-  await loadArticles();
 }
 
 async function deleteArticle() {
@@ -580,6 +629,9 @@ imageInput.addEventListener("change", () => uploadImages(imageInput.files).catch
 }));
 form.content.addEventListener("input", () => {
   preview.innerHTML = renderContent(form.content.value);
+});
+form.addEventListener("input", () => {
+  if (!isSaving) setSaveStatus("內容已修改｜尚未儲存", "dirty");
 });
 
 onAuthStateChanged(auth, async (user) => {
