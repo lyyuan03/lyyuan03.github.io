@@ -9,7 +9,7 @@ import {
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const AUTH_VERSION = "20260801-member-only-1";
+const AUTH_VERSION = "20260801-member-menu-1";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -34,6 +34,8 @@ function installStyles() {
     .member-google-button:hover{background:rgba(165,130,84,.2)}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
+    nav .member-nav-trigger.active{color:#C5A26F!important}
+    nav .nav-links>li:focus-within>.dropdown{display:block}
     @media(max-width:768px){
       :root{--site-auth-height:52px}
       #site-auth-bar{padding:0 12px;justify-content:center}
@@ -43,6 +45,42 @@ function installStyles() {
     }
   `;
   document.head.appendChild(style);
+}
+
+function installMemberMenu() {
+  const membershipLink = [...document.querySelectorAll("nav a")].find((link) => {
+    try {
+      return new URL(link.href, location.href).pathname.endsWith("/membership.html");
+    } catch (_error) {
+      return false;
+    }
+  });
+  const item = membershipLink?.closest("li");
+  if (!item || item.querySelector(".member-nav-trigger")) return;
+  const currentPath = location.pathname.replace(/\/+$/, "") || "/";
+  const isMemberPage = currentPath.endsWith("/membership.html") || currentPath.endsWith("/member-videos.html");
+  item.innerHTML = `
+    <span class="has-dropdown member-nav-trigger${isMemberPage ? " active" : ""}" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">會員</span>
+    <ul class="dropdown member-nav-dropdown">
+      <li><a href="/membership.html">會員制度說明</a></li>
+      <li><a href="/member-videos.html">養生會員影片</a></li>
+    </ul>`;
+  const trigger = item.querySelector(".member-nav-trigger");
+  const toggle = (event) => {
+    if (!window.matchMedia("(max-width:900px), (pointer:coarse)").matches) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const willOpen = !item.classList.contains("open");
+    document.querySelectorAll("nav .nav-links>li.open").forEach((openItem) => {
+      if (openItem !== item) openItem.classList.remove("open");
+    });
+    item.classList.toggle("open", willOpen);
+    trigger.setAttribute("aria-expanded", String(willOpen));
+  };
+  trigger.addEventListener("click", toggle);
+  trigger.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") toggle(event);
+  });
 }
 
 function installBar() {
@@ -86,6 +124,7 @@ function installMemberModal() {
 }
 
 installStyles();
+installMemberMenu();
 const bar = installBar();
 const modal = installMemberModal();
 const memberButton = bar.querySelector("#member-login-button");
