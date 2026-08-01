@@ -42,6 +42,7 @@
       <a class="btn" href="#activity-management">活動管理</a>
       <a class="btn" href="#sponsor-members">贊助會員</a>
       <a class="btn" href="#wellness-members">養生療癒會員</a>
+      <a class="btn" href="#member-video-management">會員影片</a>
       <a class="btn" href="articles.html" target="_blank">查看前台文章</a>
       <a class="btn" href="index.html">回首頁</a>
       <button id="admin-logout" class="btn" type="button">登出</button>
@@ -308,6 +309,40 @@
         </div>
       </div>
     </section>
+
+    <section id="member-video-management" class="panel membership-panel">
+      <div class="panel-head">
+        <h2>養生會員私人影片</h2>
+        <span id="member-video-status-message" class="status" aria-live="polite"></span>
+      </div>
+      <div class="membership-layout">
+        <div class="membership-card">
+          <h3>新增／編輯影片入口</h3>
+          <form id="member-video-form" class="membership-form">
+            <input id="member-video-id" type="hidden">
+            <div class="field"><label for="member-video-title">影片標題</label><input id="member-video-title" required></div>
+            <div class="field"><label for="member-video-youtube-url">YouTube 私人影片網址</label><input id="member-video-youtube-url" type="url" placeholder="https://www.youtube.com/watch?v=..." required></div>
+            <div class="field"><label for="member-video-description">影片說明</label><textarea id="member-video-description" style="min-height:110px"></textarea></div>
+            <div class="grid">
+              <div class="field"><label for="member-video-category">主題</label><input id="member-video-category" value="養護與修持"></div>
+              <div class="field"><label for="member-video-cover-url">自訂封面圖片網址</label><input id="member-video-cover-url" type="url" placeholder="https://..."></div>
+              <div class="field"><label for="member-video-duration">影片長度</label><input id="member-video-duration" placeholder="例：18 分鐘"></div>
+              <div class="field"><label for="member-video-access-level">觀看資格</label><select id="member-video-access-level"><option value="wellness">所有養生會員</option><option value="lingji">僅靈極會員</option></select></div>
+              <div class="field"><label for="member-video-status">發布狀態</label><select id="member-video-status"><option value="draft">草稿</option><option value="published">發布</option></select></div>
+              <div class="field"><label for="member-video-published-at">顯示日期</label><input id="member-video-published-at" type="date"></div>
+              <div class="field"><label for="member-video-sort-order">排序</label><input id="member-video-sort-order" type="number" min="0" step="1" value="0"></div>
+            </div>
+            <div class="membership-summary">安全流程：先將影片維持為 YouTube「私人」，並在 YouTube Studio 將每位有效會員的同一個 Gmail 加入私人分享名單。此後台只管理官網顯示權限，不會自動修改 YouTube 私人名單。</div>
+            <div class="top-actions"><button class="btn primary" type="submit">儲存影片入口</button><button id="member-video-reset" class="btn" type="button">清除</button></div>
+          </form>
+        </div>
+        <div class="membership-card">
+          <h3>已建立的會員影片</h3>
+          <p class="membership-help">私人影片不會寫入靜態網頁；會員通過官網資格驗證後，才會取得相符級別的觀看入口。</p>
+          <div id="member-video-list" class="membership-list"><div class="empty">載入中…</div></div>
+        </div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -317,5 +352,6 @@
 <script type="module" src="article-admin.js?v=20260801-personal-links-v2"></script>
 <script type="module" src="membership-admin.js?v=20260730-sponsor-ecpay-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20260801-annual-spend-1"></script>
+<script type="module" src="member-video-admin.js?v=20260801-private-youtube-1"></script>
 </body>
 </html>
