@@ -3,6 +3,7 @@ import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=202607
 import { celebrityDreamSpiritArticle } from "./article-celebrity-dream-spirit.js?v=20260731-celebrity-dream-4";
 import { fantasyIntuitionYuanshenArticle } from "./article-fantasy-intuition-yuanshen-display.js?v=20260801-fantasy-full-1";
 import { wealthAsWaterArticle } from "./article-wealth-as-water.js?v=20260801-wealth-consciousness-1";
+import { guanyinVowLampRecordArticle } from "./article-2026-guanyin-vow-lamp-record.js?v=20260801-event-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -11,4 +12,4 @@ const featuredWealthDisciplineArticle = {
   coverImage: "assets/articles/wealth-discipline/book-cover-photo.jpg?v=20260730-book-cover-2"
 };
 
-export const staticArticles = [wealthAsWaterArticle, fantasyIntuitionYuanshenArticle, celebrityDreamSpiritArticle, featuredWealthDisciplineArticle, ...baseArticles];
+export const staticArticles = [guanyinVowLampRecordArticle, wealthAsWaterArticle, fantasyIntuitionYuanshenArticle, celebrityDreamSpiritArticle, featuredWealthDisciplineArticle, ...baseArticles];
