@@ -9,7 +9,7 @@ import {
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const AUTH_VERSION = "20260801-admin-auto-route-1";
+const AUTH_VERSION = "20260801-member-menu-fix-1";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -36,6 +36,8 @@ function installStyles() {
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
     nav .member-nav-trigger.active{color:#C5A26F!important}
     nav .nav-links>li:focus-within>.dropdown{display:block}
+    nav .nav-links>li.open>.dropdown,
+    nav .nav-links>li.dropdown-open>.dropdown{display:block!important}
     @media(max-width:768px){
       :root{--site-auth-height:52px}
       #site-auth-bar{padding:0 12px;justify-content:center}
@@ -67,8 +69,11 @@ function installMemberMenu() {
       <li><a href="/member-videos.html">養生會員影片</a></li>
     </ul>`;
   const trigger = item.querySelector(".member-nav-trigger");
+  const closeMenu = () => {
+    item.classList.remove("open");
+    trigger.setAttribute("aria-expanded", "false");
+  };
   const toggle = (event) => {
-    if (!window.matchMedia("(max-width:900px), (pointer:coarse)").matches) return;
     event.preventDefault();
     event.stopPropagation();
     const willOpen = !item.classList.contains("open");
@@ -81,6 +86,13 @@ function installMemberMenu() {
   trigger.addEventListener("click", toggle);
   trigger.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") toggle(event);
+    if (event.key === "Escape") closeMenu();
+  });
+  item.querySelector(".member-nav-dropdown").addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+  document.addEventListener("click", (event) => {
+    if (!item.contains(event.target)) closeMenu();
   });
 }
 
