@@ -5,14 +5,14 @@ export const fantasyIntuitionYuanshenArticle = {
   category: "spiritual",
   status: "published",
   publishedAt: "2026-08-01T03:20:00.000Z",
-  updatedAt: "2026-08-01T03:20:00.000Z",
+  updatedAt: "2026-08-01T07:36:30.000Z",
   coverImage: "assets/articles/thumbnails/yuanshen-awakening.jpg",
   excerpt: "靈修者最容易誤判的，往往不是訊息本身，而是自己為什麼那麼想相信它。第一個念頭、平靜感與身體反應，都只能作為線索，不能直接當成真偽的證明。",
   accessType: "paid",
-  bookTitle: "我在人間的靈修地圖",
+  bookTitle: "靈修人關鍵報告",
   bookAuthor: "宇色Osel",
-  bookPublisher: "橡樹林",
-  bookPurchaseUrl: "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh",
+  bookPublisher: "柿子文化",
+  bookPurchaseUrl: "https://www.books.com.tw/products/0010784866?loc=P_0005_087",
   content: `### 靈修者最容易誤判的，往往不是訊息本身，而是自己為什麼那麼想相信它
 
 走上靈修這條路之後，許多人遲早會碰到同一個疑問：
@@ -29,7 +29,7 @@ export const fantasyIntuitionYuanshenArticle = {
 
 到了最後，人聽見的究竟是元神，還是自己替元神寫好的一套說法，往往連自己都無法分辨。
 
-![走在靈修的道路上，需要分辨幻想、直覺與元神訊息](assets/articles/fantasy-intuition-yuanshen/verification.webp?v=20260801-fantasy-visual-1)
+![推開感應之門後，回答你的究竟是元神，還是自己](assets/articles/fantasy-intuition-yuanshen/door-yuanshen-or-self.webp?v=20260801-fantasy-modern-2)
 
 感應像是一扇門，門後面是什麼，你其實看不清楚。真正困難的，從來不是要不要推開它，而是推開之後，站在那裡回答你的，究竟是元神，還是你自己扮演出來的元神。
 
@@ -71,6 +71,8 @@ export const fantasyIntuitionYuanshenArticle = {
 
 **第三層，觀察它如何改變現實生活。** 真正的覺醒，不會只讓一個人更會談論靈界。它應該使人對自己的言行更加負責，使生活逐漸穩定，也更能理解別人的感受。如果一個人聲稱元神已經覺醒，生活卻越來越混亂，開始排斥所有不同意見，把現實責任全部解釋成「低頻干擾」，那麼，無論他的感應多麼豐富，都有必要重新檢查。
 
+![真正的覺醒，最後要回到現實裡接受檢驗](assets/articles/fantasy-intuition-yuanshen/awakening-reality-test.webp?v=20260801-fantasy-modern-2)
+
 **第四層，交給時間與現實反覆驗證。** 真正重要的訊息，不怕等待。把最初出現的內容記錄下來，只留下原始感受，不要急著補充前因後果。隔幾天再回來看：最初的訊息是否仍然一致？還是它隨著你的情緒、期待與外在情勢，不斷改變內容？事情越重大，越不能只憑一次感應作出決定。涉及健康、金錢、婚姻、法律或人生重大選擇時，更需要結合客觀資料與專業意見。元神如果真的要引導你，不會害怕你多做一次確認。
 
 ## 元神顯現，不代表肉體立即做得到
@@ -88,6 +90,8 @@ export const fantasyIntuitionYuanshenArticle = {
 這些感受未必是刻意捏造的。當事人甚至可能非常真誠，真誠到無法容許別人提出懷疑。因為那個聲音填補了他長久以來的匱乏，也替他的痛苦、孤獨或挫敗賦予了一個不平凡的意義。
 
 所以，靈修中真正需要警覺的，未必是明顯荒謬的聲音。最難辨認的，往往是那些正好說中我們內心渴望的聲音——「你不是普通人」、「只有你知道真正的答案」、「別人不認同你，是因為他們還沒有覺醒」、「你身邊的人都在阻礙你的天命」。
+
+![最難辨認的，是正好說中你渴望的聲音](assets/articles/fantasy-intuition-yuanshen/mirror-desire-voice.webp?v=20260801-fantasy-modern-2)
 
 這個時候，不要急著證明訊息是真的。應該先誠實地問自己：為什麼我如此需要它是真的？
 
