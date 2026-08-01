@@ -218,6 +218,24 @@ footer{background:#303424;border-top:1px solid rgba(165,130,84,.26);padding:36px
 @media(max-width:680px){.soft-3d-flow{grid-template-columns:1fr;gap:27px}.flow-node,.flow-node:last-child{grid-column:auto;max-width:none;min-height:0}.flow-node:not(:last-child):after{display:block;top:auto;right:50%;bottom:-29px;width:3px;height:29px;background:linear-gradient(#A58254,#D0B47F)}.rights-core{width:230px;margin-bottom:38px}.rights-core:after{height:29px}.rights-branches{grid-template-columns:1fr;gap:27px}.rights-branches:before{display:none}.rights-branch:before{left:50%;top:-28px;height:28px}.flow-actions{flex-direction:column}.flow-actions .button{width:100%}}
 @media(prefers-reduced-motion:reduce){.flow-node,.rights-branch{transition:none}}
 
+
+/* Compact seven-benefit overview */
+#benefits .benefits{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+#benefits .benefit{grid-column:span 3;display:flex;min-height:164px;padding:27px 24px;flex-direction:column;justify-content:center;border-radius:24px;border:1px solid rgba(255,255,255,.28);box-shadow:0 18px 29px rgba(60,42,20,.13),inset 5px 5px 10px rgba(255,255,255,.12),inset -6px -6px 12px rgba(47,40,31,.09);transition:transform .3s ease,box-shadow .3s ease}
+#benefits .benefit:nth-child(n+5){grid-column:span 4}
+#benefits .benefit:last-child{grid-column:span 4}
+#benefits .benefit:nth-child(1),#benefits .benefit:nth-child(6){background:linear-gradient(145deg,#6D6258,#594F47);color:#F5F0E8}
+#benefits .benefit:nth-child(2){background:linear-gradient(145deg,#F1F1E4,#DDE1CB);color:#303424}
+#benefits .benefit:nth-child(3),#benefits .benefit:nth-child(7){background:linear-gradient(145deg,#777D49,#606330);color:#F5F0E8}
+#benefits .benefit:nth-child(4){background:linear-gradient(145deg,#C5A26F,#A58254);color:#20180F}
+#benefits .benefit:nth-child(5){background:linear-gradient(145deg,#FAF5EC,#E8DECE);color:#3D332A}
+#benefits .benefit:hover{transform:translateY(-6px);box-shadow:0 25px 36px rgba(60,42,20,.17),inset 5px 5px 10px rgba(255,255,255,.14),inset -6px -6px 12px rgba(47,40,31,.07)}
+#benefits .benefit .number{margin-bottom:12px;font-size:12px;letter-spacing:.24em}
+#benefits .benefit h3{margin:0;color:inherit;font-size:clamp(23px,2vw,28px);line-height:1.6;letter-spacing:.07em}
+@media(max-width:900px){#benefits .benefits{grid-template-columns:repeat(2,minmax(0,1fr))}#benefits .benefit,#benefits .benefit:nth-child(n+5),#benefits .benefit:last-child{grid-column:auto}#benefits .benefit:last-child{grid-column:1/-1}}
+@media(max-width:680px){#benefits .benefits{grid-template-columns:1fr;gap:14px}#benefits .benefit,#benefits .benefit:last-child{grid-column:auto;min-height:132px;padding:24px 22px}#benefits .benefit h3{font-size:24px}}
+@media(prefers-reduced-motion:reduce){#benefits .benefit{transition:none}}
+
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -259,13 +277,13 @@ footer{background:#303424;border-top:1px solid rgba(165,130,84,.26);padding:36px
   <section class="section" id="benefits">
     <div class="section-heading"><span class="section-kicker">MEMBER BENEFITS</span><h2>新版會員七大權益</h2></div>
     <div class="benefits">
-      <article class="benefit"><span class="number">BENEFIT 01</span><h3>4 個月會員資格</h3><p>新會員自首次加入日起算；舊會員續會則從原到期日往後延長，不會損失尚未使用完的會期。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 02</span><h3>會期內影片不限次數觀看</h3><p>會員資格有效期間內，可不限次數觀看自首次加入日起發布、且符合自身會員等級的影片。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 03</span><h3>養護與靈性修練內容</h3><p>不定期分享宇色老師親錄的影音、音檔與文章，將身體照顧、心念整理與靈性修練帶回日常。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 04</span><h3>會員本人專屬諮詢</h3><p>提供會員本人養護觀念、營養補品食用與生活調整相關諮詢，協助釐清實際使用上的疑問。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 05</span><h3>課程、旅行團與促銷專屬優惠</h3><p>部分課程、靈元院旅行團及促銷活動，可享會員專屬優惠價或優先報名資格，依各次公告為準。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 06</span><h3>滿額回饋與文章權限</h3><p>一般會員於有效會期內單筆消費滿 NT$15,000，可獲得 NT$1,000 回饋金，並開通當期「贊助專屬文章」免費瀏覽權限。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 07</span><h3>升級靈極會員</h3><p>年度結算區間內訂購營養品累積滿 NT$100,000，次一年度可升級為靈極會員，享有 9 折、年度健康運勢預測、專屬影片及贊助專屬文章等權益。</p></article>
+      <article class="benefit"><span class="number">BENEFIT 01</span><h3>4 個月會員資格</h3></article>
+      <article class="benefit"><span class="number">BENEFIT 02</span><h3>會期內影片不限次數觀看</h3></article>
+      <article class="benefit"><span class="number">BENEFIT 03</span><h3>養護與靈性修練內容</h3></article>
+      <article class="benefit"><span class="number">BENEFIT 04</span><h3>會員本人專屬諮詢</h3></article>
+      <article class="benefit"><span class="number">BENEFIT 05</span><h3>課程、旅行團與促銷專屬優惠</h3></article>
+      <article class="benefit"><span class="number">BENEFIT 06</span><h3>滿額回饋與文章權限</h3></article>
+      <article class="benefit"><span class="number">BENEFIT 07</span><h3>升級靈極會員</h3></article>
     </div>
   </section>
 
