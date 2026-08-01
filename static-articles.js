@@ -2,7 +2,7 @@ import { staticArticles as baseArticles } from "./static-articles-base.js?v=2026
 import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=20260730-wealth-discipline-6";
 import { celebrityDreamSpiritArticle } from "./article-celebrity-dream-spirit.js?v=20260731-celebrity-dream-4";
 import { fantasyIntuitionYuanshenArticle } from "./article-fantasy-intuition-yuanshen-display.js?v=20260801-fantasy-modern-2";
-import { wealthAsWaterArticle } from "./article-wealth-as-water.js?v=20260801-body-image-1";
+import { wealthAsWaterArticle } from "./article-wealth-as-water.js?v=20260801-wealth-consciousness-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
