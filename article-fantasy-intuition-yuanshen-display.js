@@ -2,5 +2,5 @@ import { fantasyIntuitionYuanshenArticle as baseArticle } from "./article-fantas
 
 export const fantasyIntuitionYuanshenArticle = {
   ...baseArticle,
-  coverImage: "assets/articles/thumbnails/yuanshen-reality.jpg?v=20260801-thumbnail-fix-1"
+  coverImage: "forest-path.jpg?v=20260801-cover-fix-2"
 };
