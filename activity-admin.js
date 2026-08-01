@@ -10,6 +10,7 @@ const DEFAULT_EVENT = {
 
 const settingsRef = doc(db, "membershipSettings", "eventManagement");
 const keyRef = doc(db, "membershipSettings", "eventArticleKeys");
+const magicSecretRef = doc(db, "membershipSettings", "eventMagicLinkSecrets");
 const statusEl = document.getElementById("activity-status");
 const eventSelect = document.getElementById("activity-select");
 const eventList = document.getElementById("activity-list");
@@ -18,10 +19,14 @@ const participantForm = document.getElementById("activity-participant-form");
 const participantInput = document.getElementById("activity-participant-emails");
 const participantButton = document.getElementById("activity-participant-submit");
 const importStatusEl = document.getElementById("activity-import-status");
+const linkExpiryInput = document.getElementById("activity-link-expiry");
+const linkGenerateAllButton = document.getElementById("activity-link-generate-all");
+const linkStatusEl = document.getElementById("activity-link-status");
 const eventForm = document.getElementById("activity-form");
 
 let events = [];
 let members = [];
+let magicLinks = {};
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (character) => ({
@@ -33,6 +38,59 @@ function setImportStatus(message, state = "") {
   if (!importStatusEl) return;
   importStatusEl.textContent = message;
   importStatusEl.dataset.state = state;
+}
+
+function setLinkStatus(message, state = "") {
+  if (!linkStatusEl) return;
+  linkStatusEl.textContent = message;
+  linkStatusEl.dataset.state = state;
+}
+
+function bytesToBase64(bytes) {
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary);
+}
+
+function bytesToBase64Url(bytes) {
+  return bytesToBase64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function randomToken() {
+  return bytesToBase64Url(crypto.getRandomValues(new Uint8Array(32)));
+}
+
+async function tokenHash(token) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  return bytesToBase64Url(new Uint8Array(digest));
+}
+
+async function wrapEventKey(eventKey, token) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  const wrappingKey = await crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["encrypt"]);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const wrapped = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    wrappingKey,
+    new TextEncoder().encode(eventKey)
+  );
+  return { wrappedKey: bytesToBase64(new Uint8Array(wrapped)), iv: bytesToBase64(iv) };
+}
+
+function emailKey(email) {
+  return bytesToBase64Url(new TextEncoder().encode(normalizeEmail(email)));
+}
+
+function defaultExpiryDate() {
+  const date = new Date();
+  date.setDate(date.getDate() + 90);
+  return date.toISOString().slice(0, 10);
+}
+
+function expiryIso() {
+  const value = linkExpiryInput?.value;
+  if (!value) throw new Error("missing-expiry");
+  return new Date(`${value}T23:59:59.999+08:00`).toISOString();
 }
 
 function normalizeEmail(value = "") {
@@ -107,6 +165,24 @@ function renderEvents() {
   renderParticipants();
 }
 
+function linkRecord(eventId, email) {
+  return magicLinks?.[eventId]?.[emailKey(email)] || null;
+}
+
+function personalLink(event, record) {
+  const params = new URLSearchParams({
+    access: "event",
+    event: event.id,
+    token: record.token
+  });
+  return `https://lyyuan.tw/articles.html?${params.toString()}`;
+}
+
+function linkExpiryLabel(value) {
+  const date = new Date(value || "");
+  return Number.isNaN(date.getTime()) ? "未設定期限" : date.toLocaleDateString("zh-TW");
+}
+
 function renderParticipants() {
   if (!participantList) return;
   const event = selectedEvent();
@@ -120,14 +196,36 @@ function renderParticipants() {
   }
   participantList.innerHTML = participants.map((member) => {
     const email = normalizeEmail(member.email || member.id);
+    const link = linkRecord(event.id, email);
+    const active = link?.status === "active" && Date.parse(link.expiresAt || "") > Date.now();
+    const linkMeta = !link
+      ? "尚未建立免登入連結"
+      : `${active ? "連結啟用" : link.status === "inactive" ? "連結已停用" : "連結已到期"}｜期限 ${linkExpiryLabel(link.expiresAt)}`;
     return `<div class="member-row">
-      <div><strong>${escapeHtml(member.name || email)}</strong><small>${escapeHtml(email)}</small></div>
-      <div class="member-row-actions"><button class="btn danger" type="button" data-remove-email="${escapeHtml(email)}">移除</button></div>
+      <div><strong>${escapeHtml(member.name || email)}</strong><small>${escapeHtml(email)}</small><small>${escapeHtml(linkMeta)}</small></div>
+      <div class="member-row-actions">
+        ${link ? `<button class="btn" type="button" data-link-copy="${escapeHtml(email)}">複製連結</button>` : `<button class="btn" type="button" data-link-create="${escapeHtml(email)}">產生連結</button>`}
+        ${link && active ? `<button class="btn danger" type="button" data-link-disable="${escapeHtml(email)}">停用連結</button>` : ""}
+        ${link ? `<button class="btn" type="button" data-link-regenerate="${escapeHtml(email)}">重新產生</button>` : ""}
+        <button class="btn danger" type="button" data-remove-email="${escapeHtml(email)}">移除</button>
+      </div>
     </div>`;
   }).join("");
 
   participantList.querySelectorAll("[data-remove-email]").forEach((button) => {
     button.addEventListener("click", () => removeParticipant(button.dataset.removeEmail));
+  });
+  participantList.querySelectorAll("[data-link-create]").forEach((button) => {
+    button.addEventListener("click", () => createPersonalLink(button.dataset.linkCreate, false));
+  });
+  participantList.querySelectorAll("[data-link-copy]").forEach((button) => {
+    button.addEventListener("click", () => copyPersonalLink(button.dataset.linkCopy));
+  });
+  participantList.querySelectorAll("[data-link-disable]").forEach((button) => {
+    button.addEventListener("click", () => disablePersonalLink(button.dataset.linkDisable));
+  });
+  participantList.querySelectorAll("[data-link-regenerate]").forEach((button) => {
+    button.addEventListener("click", () => createPersonalLink(button.dataset.linkRegenerate, true));
   });
 }
 
@@ -144,6 +242,146 @@ async function eventArticleKeys(eventId) {
     }
     return result;
   }, {});
+}
+
+async function loadMagicLinks() {
+  const snapshot = await getDoc(magicSecretRef);
+  magicLinks = snapshot.exists() ? snapshot.data().links || {} : {};
+}
+
+async function saveMagicLinks() {
+  await setDoc(magicSecretRef, { links: magicLinks, updatedAt: serverTimestamp() }, { merge: true });
+}
+
+async function buildArticleMagicAccess(eventId, articleKey) {
+  const records = Object.values(magicLinks?.[eventId] || {});
+  const result = {};
+  for (const record of records) {
+    if (!record?.token || !record.tokenHash) continue;
+    const wrapped = await wrapEventKey(articleKey, record.token);
+    result[record.tokenHash] = {
+      ...wrapped,
+      status: record.status,
+      expiresAt: record.expiresAt
+    };
+  }
+  return result;
+}
+
+async function syncMagicLinksToArticles(eventId) {
+  const [articlesSnapshot, keysSnapshot] = await Promise.all([
+    getDocs(collection(db, "articles")),
+    getDoc(keyRef)
+  ]);
+  const keys = keysSnapshot.exists() ? keysSnapshot.data().keys || {} : {};
+  const batch = writeBatch(db);
+  let count = 0;
+  for (const item of articlesSnapshot.docs) {
+    const article = item.data();
+    const articleKey = keys[item.id];
+    if (article.accessType !== "event" || article.eventId !== eventId || !articleKey) continue;
+    const magicLinkAccess = await buildArticleMagicAccess(eventId, articleKey);
+    batch.set(item.ref, { magicLinkAccess, updatedAt: serverTimestamp() }, { merge: true });
+    count += 1;
+  }
+  if (count) await batch.commit();
+  return count;
+}
+
+async function createLinkRecord(eventId, email) {
+  const token = randomToken();
+  return {
+    email,
+    token,
+    tokenHash: await tokenHash(token),
+    status: "active",
+    expiresAt: expiryIso(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+async function createPersonalLink(email, regenerate) {
+  const event = selectedEvent();
+  if (!linkExpiryInput?.value) {
+    setLinkStatus("請先設定專屬連結有效期限。", "error");
+    linkExpiryInput?.focus();
+    return;
+  }
+  if (regenerate && !confirm(`重新產生後，${email} 原本的連結將立即失效。確定繼續嗎？`)) return;
+  setLinkStatus("正在建立個人專屬連結…", "saving");
+  try {
+    magicLinks[event.id] = { ...(magicLinks[event.id] || {}) };
+    magicLinks[event.id][emailKey(email)] = await createLinkRecord(event.id, email);
+    await saveMagicLinks();
+    await syncMagicLinksToArticles(event.id);
+    renderParticipants();
+    await copyPersonalLink(email);
+    setLinkStatus(`${regenerate ? "已重新產生" : "已建立"} ${email} 的專屬連結，並已複製。`, "success");
+  } catch (error) {
+    console.error("建立專屬連結失敗：", error);
+    setLinkStatus(error.message === "missing-expiry" ? "請先設定有效期限。" : "建立連結失敗，請稍後再試。", "error");
+  }
+}
+
+async function copyPersonalLink(email) {
+  const event = selectedEvent();
+  const record = linkRecord(event.id, email);
+  if (!record?.token) return;
+  try {
+    await navigator.clipboard.writeText(personalLink(event, record));
+    setLinkStatus(`已複製 ${email} 的個人專屬連結。`, "success");
+  } catch {
+    window.prompt("請複製個人專屬連結", personalLink(event, record));
+  }
+}
+
+async function disablePersonalLink(email) {
+  const event = selectedEvent();
+  const record = linkRecord(event.id, email);
+  if (!record || !confirm(`確定停用 ${email} 的個人專屬連結嗎？`)) return;
+  record.status = "inactive";
+  record.updatedAt = new Date().toISOString();
+  setLinkStatus("正在停用專屬連結…", "saving");
+  await saveMagicLinks();
+  await syncMagicLinksToArticles(event.id);
+  renderParticipants();
+  setLinkStatus(`已停用 ${email} 的專屬連結。`, "success");
+}
+
+async function generateMissingLinks() {
+  const event = selectedEvent();
+  if (!linkExpiryInput?.value) {
+    setLinkStatus("請先設定專屬連結有效期限。", "error");
+    linkExpiryInput?.focus();
+    return;
+  }
+  const participants = members.filter((member) => member.eventAccess?.[event.id]?.status === "active");
+  const missing = participants.filter((member) => !linkRecord(event.id, normalizeEmail(member.email || member.id)));
+  if (!missing.length) {
+    setLinkStatus("所有參加者都已建立個人專屬連結。", "success");
+    return;
+  }
+  linkGenerateAllButton.disabled = true;
+  linkGenerateAllButton.textContent = "產生中…";
+  setLinkStatus(`正在為 ${missing.length} 位參加者建立專屬連結…`, "saving");
+  try {
+    magicLinks[event.id] = { ...(magicLinks[event.id] || {}) };
+    for (const member of missing) {
+      const email = normalizeEmail(member.email || member.id);
+      magicLinks[event.id][emailKey(email)] = await createLinkRecord(event.id, email);
+    }
+    await saveMagicLinks();
+    const articleCount = await syncMagicLinksToArticles(event.id);
+    renderParticipants();
+    setLinkStatus(`已為 ${missing.length} 位參加者建立專屬連結，並同步 ${articleCount} 篇活動文章。`, "success");
+  } catch (error) {
+    console.error("批次建立專屬連結失敗：", error);
+    setLinkStatus("批次建立失敗，請稍後再試。", "error");
+  } finally {
+    linkGenerateAllButton.disabled = false;
+    linkGenerateAllButton.textContent = "為尚未建立者批次產生連結";
+  }
 }
 
 async function addParticipants(emails) {
@@ -196,11 +434,13 @@ async function removeParticipant(email) {
 }
 
 async function refresh() {
-  await Promise.all([ensureDefaultEvent(), loadMembers()]);
+  await Promise.all([ensureDefaultEvent(), loadMembers(), loadMagicLinks()]);
+  if (linkExpiryInput && !linkExpiryInput.value) linkExpiryInput.value = defaultExpiryDate();
   renderEvents();
 }
 
 eventSelect?.addEventListener("change", renderParticipants);
+linkGenerateAllButton?.addEventListener("click", generateMissingLinks);
 
 eventForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
