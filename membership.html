@@ -236,6 +236,51 @@ footer{background:#303424;border-top:1px solid rgba(165,130,84,.26);padding:36px
 @media(max-width:680px){#benefits .benefits{grid-template-columns:1fr;gap:14px}#benefits .benefit,#benefits .benefit:last-child{grid-column:auto;min-height:132px;padding:24px 22px}#benefits .benefit h3{font-size:24px}}
 @media(prefers-reduced-motion:reduce){#benefits .benefit{transition:none}}
 
+
+/* Consolidated membership overview */
+.overview-map .rights-core{width:285px;margin-bottom:60px}
+.core-tags{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:13px}
+.core-tags em{padding:4px 9px;border:1px solid rgba(245,240,232,.25);border-radius:99px;font-style:normal;font-size:10.5px;letter-spacing:.06em;color:rgba(245,240,232,.82)}
+.overview-map .rights-branch{min-height:330px;padding:27px 23px 23px;display:flex;flex-direction:column;align-items:center}
+.branch-label{display:block;margin-bottom:10px;font-family:var(--sans);font-size:11px;letter-spacing:.16em;opacity:.68}
+.overview-map .rights-branch .amount{font-size:29px}
+.overview-map .rights-branch h3{font-size:20px}
+.overview-map .rights-branch p{margin-bottom:15px}
+.branch-rule{width:100%;margin-top:auto;padding:13px 12px;border-radius:15px;background:rgba(255,255,255,.25);font-size:12.5px;line-height:1.75}
+.overview-map .rights-branch.olive .branch-rule{background:rgba(255,255,255,.11)}
+.video-rule-chart{margin-top:34px;padding:31px 30px 32px;border-radius:28px;background:linear-gradient(145deg,#F8F2E8,#DFE2CB);border:1px solid rgba(165,130,84,.24);box-shadow:0 18px 34px rgba(60,42,20,.1),inset 5px 5px 11px rgba(255,255,255,.55)}
+.video-rule-title{text-align:center;margin-bottom:24px}
+.video-rule-title small{color:#87683F;font-family:var(--en);font-size:11px;letter-spacing:.28em}
+.video-rule-title h3{margin-top:5px;color:#463522;font-size:23px;letter-spacing:.1em}
+.video-rule-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.video-rule-step{position:relative;padding:20px 16px;text-align:center;border-radius:20px;background:rgba(255,252,247,.7);box-shadow:0 10px 20px rgba(70,53,34,.08)}
+.video-rule-step:not(:last-child):after{content:'›';position:absolute;right:-19px;top:50%;transform:translateY(-50%);color:#A58254;font-family:var(--serif);font-size:29px}
+.video-rule-step span{display:block;color:#A58254;font-family:var(--en);font-size:12px;letter-spacing:.15em}
+.video-rule-step strong{display:block;margin:5px 0 6px;color:#3D332A;font-family:var(--serif);font-size:17px;font-weight:500}
+.video-rule-step p{color:#594F47;font-size:12.5px;line-height:1.7}
+.level-up-chart{display:grid;grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);gap:22px;align-items:center;perspective:1200px}
+.level-card{position:relative;min-height:430px;padding:35px 34px;border-radius:34px;border:1px solid rgba(255,255,255,.45);box-shadow:0 24px 38px rgba(60,42,20,.16),inset 7px 7px 14px rgba(255,255,255,.22),inset -8px -8px 15px rgba(47,40,31,.08)}
+.general-level{background:linear-gradient(145deg,#FAF5EC,#DED5C5);color:#3D332A}
+.lingji-level{background:linear-gradient(145deg,#7D8450,#50562C);color:#F5F0E8;border-color:rgba(255,255,255,.24)}
+.level-card small{display:block;margin-bottom:7px;font-family:var(--en);font-size:11px;letter-spacing:.27em;opacity:.68}
+.level-card h3{font-size:29px;color:inherit;letter-spacing:.11em}
+.level-period{display:inline-flex;margin:13px 0 22px;padding:6px 12px;border-radius:99px;background:rgba(165,130,84,.15);font-size:12px;letter-spacing:.07em}
+.lingji-level .level-period{background:rgba(255,255,255,.12)}
+.level-card ul{list-style:none;padding:0}
+.level-card li{position:relative;padding:13px 0 13px 24px;border-top:1px solid rgba(89,79,71,.13);font-size:15px;line-height:1.75}
+.lingji-level li{border-color:rgba(245,240,232,.13)}
+.level-card li:before{content:'◆';position:absolute;left:0;top:1.45em;color:#A58254;font-size:8px}
+.lingji-level li:before{color:#D3B783}
+.level-card li em{display:inline-flex;margin-right:7px;padding:2px 7px;border-radius:99px;background:#C5A26F;color:#2F281F;font-style:normal;font-size:10.5px;font-weight:500}
+.level-note{margin-top:19px;padding:13px 15px;border-radius:15px;background:rgba(255,255,255,.1);font-size:12.5px;line-height:1.7}
+.level-up-arrow{text-align:center;color:#87683F}
+.level-up-arrow span{display:block;margin-bottom:10px;font-size:11px;line-height:1.6;letter-spacing:.08em}
+.level-up-arrow b{position:relative;display:grid;place-items:center;width:84px;height:84px;margin:0 auto;border-radius:50%;background:linear-gradient(145deg,#D1B27E,#A58254);color:#2F281F;font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:.1em;box-shadow:0 15px 25px rgba(135,104,63,.22),inset 5px 5px 10px rgba(255,255,255,.3)}
+.level-up-arrow b:before,.level-up-arrow b:after{content:'';position:absolute;top:50%;width:34px;height:2px;background:#B28E5D}
+.level-up-arrow b:before{right:100%}.level-up-arrow b:after{left:100%}
+@media(max-width:900px){.video-rule-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.video-rule-step:nth-child(2):after{display:none}.level-up-chart{grid-template-columns:1fr}.level-up-arrow{padding:6px 0}.level-up-arrow b:before,.level-up-arrow b:after{top:auto;left:50%;width:2px;height:25px}.level-up-arrow b:before{bottom:100%}.level-up-arrow b:after{top:100%}.level-card{min-height:0}}
+@media(max-width:680px){.overview-map .rights-core{width:240px}.overview-map .rights-branch{min-height:0}.video-rule-chart{padding:27px 20px}.video-rule-steps{grid-template-columns:1fr;gap:25px}.video-rule-step:not(:last-child):after{display:block;right:50%;top:auto;bottom:-27px;transform:translateX(50%) rotate(90deg)}.level-card{padding:29px 23px}.level-up-chart{gap:24px}}
+
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -313,34 +358,58 @@ footer{background:#303424;border-top:1px solid rgba(165,130,84,.26);padding:36px
   </section>
 
   <section class="section" id="details">
-    <div class="section-heading"><span class="section-kicker">MEMBERSHIP DETAILS</span><h2>會籍與權限說明</h2></div>
-    <p class="detail-intro">以下集中說明續會、影片、文章與回饋規則，無須在不同段落之間反覆查找。</p>
-    <div class="rights-3d-map" aria-label="會員消費資格與權益關係">
-      <div class="rights-core"><small>MEMBERSHIP CORE</small><strong>一般會員</strong><span>維持有效會員身分</span></div>
+    <div class="section-heading"><span class="section-kicker">MEMBERSHIP OVERVIEW</span><h2>會員資格與權益總覽</h2></div>
+    <p class="detail-intro">一張圖看懂舊會員續會、當期加開權益與靈極會員升級方式。三項條件用途不同，並不是三種入會方案。</p>
+
+    <div class="rights-3d-map overview-map" aria-label="會員資格與權益總覽">
+      <div class="rights-core"><small>MEMBERSHIP CORE</small><strong>一般會員</strong><span>4 個月有效會期</span><div class="core-tags"><em>一般會員影片</em><em>免費公開文章</em></div></div>
       <div class="rights-branches">
-        <article class="rights-branch"><span class="amount">NT$6,000</span><h3>舊會員續會</h3><p>單筆購買營養補品滿額，從原到期日往後延長 4 個月。</p></article>
-        <article class="rights-branch gold"><span class="amount">NT$15,000</span><h3>當期雙重回饋</h3><p>單筆滿額，可獲得 NT$1,000 回饋金與贊助專屬文章權限。</p></article>
-        <article class="rights-branch olive"><span class="amount">NT$100,000</span><h3>次年度靈極會員</h3><p>年度累積訂購營養品滿額，次一年度升級為靈極會員。</p></article>
+        <article class="rights-branch">
+          <small class="branch-label">舊會員續會</small><span class="amount">NT$6,000</span>
+          <h3>延長 4 個月會籍</h3>
+          <p>單筆購買營養補品滿額，不需重修課程，也不需重新申請。</p>
+          <div class="branch-rule">從原到期日往後延長<br>例：2026/7/30 → 2026/11/30</div>
+        </article>
+        <article class="rights-branch gold">
+          <small class="branch-label">當期加開權益</small><span class="amount">NT$15,000</span>
+          <h3>回饋金＋文章權限</h3>
+          <p>單筆滿額，可獲得 NT$1,000 回饋金及「贊助專屬文章」免費瀏覽權限。</p>
+          <div class="branch-rule">回饋金限下次消費使用<br>兩項權益皆限當期有效會期</div>
+        </article>
+        <article class="rights-branch olive">
+          <small class="branch-label">年度升級條件</small><span class="amount">NT$100,000</span>
+          <h3>次年度靈極會員</h3>
+          <p>於年度結算區間內，訂購營養品累積滿額，次一年度升級。</p>
+          <div class="branch-rule">結算：每年 2/1 至次年 1/31<br>須持續維持有效會員身分</div>
+        </article>
       </div>
-      <p class="diagram-note">三項條件分別代表續會、當期加開權益與年度升級，並不是三種不同的入會方案。</p>
     </div>
-    <div class="policy-grid">
-      <article class="policy-card green"><h3>舊會員續會</h3><p>單筆購買營養補品滿 NT$6,000，即可續會 4 個月；不需重修課程，也不需重新申請。</p><div class="example">續會一律從原到期日往後延長。例：原到期日為 2026/7/30，續會後為 2026/11/30。</div></article>
-      <article class="policy-card dark"><h3>影片觀看</h3><p>有效會期內，可不限次數觀看自首次加入日起發布、且符合會員等級的影片。</p><p>會籍到期後權限停止；續會後仍可回看符合資格的累積影片。</p></article>
-      <article class="policy-card gold"><h3>單筆滿 NT$15,000</h3><p>保留信用卡付款優惠，並獲得 NT$1,000 回饋金及當期「贊助專屬文章」免費瀏覽權限。</p><p>回饋金限下次消費使用，不得折抵當次訂單或兌換現金，須於當期有效會期內使用完畢。</p></article>
-      <article class="policy-card"><h3>靈極會員</h3><p>結算區間為每年 2 月 1 日至次年 1 月 31 日。一般會員於區間內訂購營養品累積滿 NT$100,000，次一年度可升級。</p><p>享有營養品 9 折、年度健康運勢預測、靈極會員專屬影片及贊助專屬文章；享有權益期間須持續維持有效會員身分。</p></article>
+
+    <div class="video-rule-chart" aria-label="會員影片觀看規則">
+      <div class="video-rule-title"><small>VIDEO ACCESS</small><h3>會員影片觀看規則</h3></div>
+      <div class="video-rule-steps">
+        <div class="video-rule-step"><span>01</span><strong>首次加入</strong><p>從首次加入日期開始累積</p></div>
+        <div class="video-rule-step"><span>02</span><strong>有效會期內</strong><p>符合等級的影片不限次數觀看</p></div>
+        <div class="video-rule-step"><span>03</span><strong>會籍到期</strong><p>會員影片觀看權限停止</p></div>
+        <div class="video-rule-step"><span>04</span><strong>完成續會</strong><p>可繼續回看符合資格的累積影片</p></div>
+      </div>
     </div>
   </section>
 
-  <section class="section" id="comparison">
-    <div class="section-heading"><span class="section-kicker">MEMBERSHIP COMPARISON</span><h2>兩種會員身分，一次看清楚</h2></div>
-    <div class="comparison-cards">
-      <article class="comparison-card"><small>GENERAL MEMBER</small><h3>一般會員</h3><ul>
-        <li>新會員完成必修課並單筆滿 NT$8,000</li><li>會期 4 個月，舊會員單筆滿 NT$6,000 可續會</li><li>觀看一般會員影片</li><li>閱讀免費公開文章</li><li>當期單筆滿 NT$15,000，可加開贊助專屬文章並獲得 NT$1,000 回饋金</li>
-      </ul></article>
-      <article class="comparison-card featured"><small>LINGJI MEMBER</small><h3>靈極會員</h3><ul>
-        <li>年度累積訂購營養品滿 NT$100,000</li><li>須持續維持有效會員身分</li><li>觀看一般會員及靈極會員專屬影片</li><li>閱讀贊助專屬文章</li><li>次一年度營養品 9 折及年度健康運勢預測</li>
-      </ul></article>
+  <section class="section" id="lingji-chart">
+    <div class="section-heading"><span class="section-kicker">LINGJI MEMBER</span><h2>升級靈極會員後，多了哪些權益？</h2></div>
+    <p class="detail-intro">靈極會員保留一般會員原有權益，並於次一年度增加四項專屬內容。</p>
+    <div class="level-up-chart" aria-label="一般會員與靈極會員權益差異">
+      <article class="level-card general-level">
+        <small>GENERAL MEMBER</small><h3>一般會員</h3><div class="level-period">4 個月有效會期</div>
+        <ul><li>一般會員影片</li><li>免費公開文章</li><li>會員本人專屬諮詢</li><li>課程、旅行團與促銷專屬優惠</li></ul>
+      </article>
+      <div class="level-up-arrow"><span>符合年度升級條件</span><b>升級</b></div>
+      <article class="level-card lingji-level">
+        <small>LINGJI MEMBER</small><h3>靈極會員</h3><div class="level-period">保留一般會員全部權益</div>
+        <ul><li><em>新增</em> 次一年度營養品 9 折</li><li><em>新增</em> 年度健康運勢預測</li><li><em>新增</em> 靈極會員專屬影片</li><li><em>新增</em> 贊助專屬文章免費瀏覽權限</li></ul>
+        <p class="level-note">享有上述權益期間，須持續維持有效會員身分。</p>
+      </article>
     </div>
   </section>
 
