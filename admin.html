@@ -190,7 +190,8 @@
               <label for="activity-participant-emails">批次匯入 Email</label>
               <textarea id="activity-participant-emails" style="min-height:130px" placeholder="每行一組 Email，也可使用逗號或空白分隔"></textarea>
             </div>
-            <button class="btn primary" type="submit">匯入參加者</button>
+            <button id="activity-participant-submit" class="btn primary" type="button">匯入參加者</button>
+            <span id="activity-import-status" class="status activity-status" role="status" aria-live="polite">貼上 Email 後按下匯入。</span>
             <p class="membership-help">活動資格獨立於贊助會員與養生療癒會員。參加者只會取得指定活動文章的解密金鑰。</p>
           </form>
           <div id="activity-participant-list" class="membership-list" style="margin-top:18px"><div class="empty">載入中…</div></div>
@@ -300,7 +301,7 @@
 
 <div id="admin-toast" class="admin-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-<script type="module" src="activity-admin.js?v=20260801-event-access-v1"></script>
+<script type="module" src="activity-admin.js?v=20260801-import-fix-1"></script>
 <script type="module" src="article-admin.js?v=20260801-event-access-v1"></script>
 <script type="module" src="membership-admin.js?v=20260730-sponsor-ecpay-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20260801-annual-spend-1"></script>

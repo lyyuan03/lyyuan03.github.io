@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const DEFAULT_EVENT = {
   id: "2026-guanyin-enlightenment",
@@ -16,6 +16,8 @@ const eventList = document.getElementById("activity-list");
 const participantList = document.getElementById("activity-participant-list");
 const participantForm = document.getElementById("activity-participant-form");
 const participantInput = document.getElementById("activity-participant-emails");
+const participantButton = document.getElementById("activity-participant-submit");
+const importStatusEl = document.getElementById("activity-import-status");
 const eventForm = document.getElementById("activity-form");
 
 let events = [];
@@ -25,6 +27,12 @@ function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
   }[character]));
+}
+
+function setImportStatus(message, state = "") {
+  if (!importStatusEl) return;
+  importStatusEl.textContent = message;
+  importStatusEl.dataset.state = state;
 }
 
 function normalizeEmail(value = "") {
@@ -140,14 +148,15 @@ async function eventArticleKeys(eventId) {
 
 async function addParticipants(emails) {
   const event = selectedEvent();
+  setImportStatus("正在準備活動文章權限…", "saving");
   const keys = await eventArticleKeys(event.id);
-  let added = 0;
-  for (const email of emails) {
+  const memberMap = new Map(members.map((member) => [normalizeEmail(member.email || member.id), member]));
+  const batch = writeBatch(db);
+
+  emails.forEach((email) => {
     const ref = doc(db, "memberAccess", email);
-    const snapshot = await getDoc(ref);
-    const current = snapshot.exists() ? snapshot.data() : {};
-    await setDoc(ref, {
-      ...current,
+    const current = memberMap.get(email) || {};
+    batch.set(ref, {
       email,
       eventAccess: {
         ...(current.eventAccess || {}),
@@ -156,9 +165,13 @@ async function addParticipants(emails) {
       eventArticleKeys: { ...(current.eventArticleKeys || {}), ...keys },
       updatedAt: serverTimestamp()
     }, { merge: true });
-    added += 1;
-  }
-  setStatus(`已匯入 ${added} 位活動參加者。`, "success");
+  });
+
+  setImportStatus(`正在寫入 ${emails.length} 位參加者，請勿關閉頁面…`, "saving");
+  await batch.commit();
+  setStatus(`已匯入 ${emails.length} 位活動參加者。`, "success");
+  setImportStatus(`匯入完成：共 ${emails.length} 位參加者。`, "success");
+  return emails.length;
 }
 
 async function removeParticipant(email) {
@@ -208,29 +221,49 @@ eventForm?.addEventListener("submit", async (event) => {
   await refresh();
 });
 
-participantForm?.addEventListener("submit", async (event) => {
-  event.preventDefault();
+async function importParticipants() {
   const emails = [...new Set(
     participantInput.value.split(/[\s,;，；]+/).map(normalizeEmail).filter(Boolean)
   )];
   const invalid = emails.filter((email) => !emailIsValid(email));
   if (invalid.length) {
-    setStatus(`以下 Email 格式不正確：${invalid.join("、")}`, "error");
+    const message = `以下 Email 格式不正確：${invalid.join("、")}`;
+    setStatus(message, "error");
+    setImportStatus(message, "error");
     return;
   }
   if (!emails.length) {
     setStatus("請先貼上至少一組 Email。", "error");
+    setImportStatus("請先貼上至少一組 Email。", "error");
+    participantInput.focus();
     return;
   }
-  setStatus("正在匯入活動參加者…", "saving");
+
+  participantButton.disabled = true;
+  participantButton.textContent = "匯入中…";
+  setStatus(`正在匯入 ${emails.length} 位活動參加者…`, "saving");
+  setImportStatus(`已讀取 ${emails.length} 組 Email，正在匯入…`, "saving");
   try {
     await addParticipants(emails);
     participantInput.value = "";
     await refresh();
   } catch (error) {
-    console.error(error);
-    setStatus("匯入失敗，請確認管理員權限與網路狀態。", "error");
+    console.error("活動參加者匯入失敗：", error);
+    const detail = error?.code === "permission-denied"
+      ? "目前登入帳號沒有活動名單寫入權限，請改用靈元院管理員 Google 帳號。"
+      : "匯入失敗，請確認網路狀態後再試一次。";
+    setStatus(detail, "error");
+    setImportStatus(detail, "error");
+  } finally {
+    participantButton.disabled = false;
+    participantButton.textContent = "匯入參加者";
   }
+}
+
+participantButton?.addEventListener("click", importParticipants);
+participantForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  importParticipants();
 });
 
 onAuthStateChanged(auth, async (user) => {
