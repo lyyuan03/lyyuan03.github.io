@@ -9,7 +9,7 @@ import {
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const AUTH_VERSION = "20260801-member-menu-fix-1";
+const AUTH_VERSION = "20260801-member-menu-fix-2";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -50,9 +50,10 @@ function installStyles() {
 }
 
 function installMemberMenu() {
-  const membershipLink = [...document.querySelectorAll("nav a")].find((link) => {
+  const membershipLink = [...document.querySelectorAll("nav .nav-links > li > a[href]")].find((link) => {
     try {
-      return new URL(link.href, location.href).pathname.endsWith("/membership.html");
+      const href = link.getAttribute("href");
+      return href && new URL(href, location.href).pathname.endsWith("/membership.html");
     } catch (_error) {
       return false;
     }
