@@ -1,7 +1,7 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const categoryLabels = {
@@ -36,8 +36,92 @@ const imageInput = document.getElementById("image-input");
 const uploadStatus = document.getElementById("upload-status");
 const exportButton = document.getElementById("export-articles");
 const exportStatus = document.getElementById("export-status");
+const accessTypeInput = document.getElementById("accessType");
+const eventIdInput = document.getElementById("eventId");
+const eventAccessField = document.getElementById("event-access-field");
 let toastTimer = null;
 let isSaving = false;
+let eventOptions = [];
+
+function bytesToBase64(bytes) {
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary);
+}
+
+function base64ToBytes(value) {
+  const binary = atob(value);
+  return Uint8Array.from(binary, (character) => character.charCodeAt(0));
+}
+
+async function encryptEventContent(content) {
+  const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(content));
+  const rawKey = await crypto.subtle.exportKey("raw", key);
+  return {
+    key: bytesToBase64(new Uint8Array(rawKey)),
+    iv: bytesToBase64(iv),
+    encryptedContent: bytesToBase64(new Uint8Array(encrypted))
+  };
+}
+
+async function decryptEventContent(encryptedContent, iv, rawKey) {
+  const key = await crypto.subtle.importKey("raw", base64ToBytes(rawKey), { name: "AES-GCM" }, false, ["decrypt"]);
+  const decrypted = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: base64ToBytes(iv) },
+    key,
+    base64ToBytes(encryptedContent)
+  );
+  return new TextDecoder().decode(decrypted);
+}
+
+function renderEventOptions(selected = "") {
+  if (!eventIdInput) return;
+  eventIdInput.innerHTML = '<option value="">請選擇活動</option>' + eventOptions.map((event) =>
+    `<option value="${escapeHtml(event.id)}"${event.id === selected ? " selected" : ""}>${escapeHtml(event.name)}${event.status === "inactive" ? "（停用）" : ""}</option>`
+  ).join("");
+}
+
+function toggleEventAccess() {
+  if (!eventAccessField) return;
+  const isEvent = accessTypeInput?.value === "event";
+  eventAccessField.classList.toggle("hidden", !isEvent);
+  if (eventIdInput) eventIdInput.required = isEvent;
+}
+
+async function loadEventOptions() {
+  const snapshot = await getDoc(doc(db, "membershipSettings", "eventManagement"));
+  eventOptions = snapshot.exists() && Array.isArray(snapshot.data().events) ? snapshot.data().events : [];
+  renderEventOptions(eventIdInput?.value || "");
+  toggleEventAccess();
+}
+
+async function loadAdminEventKeys() {
+  const snapshot = await getDoc(doc(db, "membershipSettings", "eventArticleKeys"));
+  return snapshot.exists() ? snapshot.data().keys || {} : {};
+}
+
+async function saveAdminEventKey(articleId, key) {
+  const ref = doc(db, "membershipSettings", "eventArticleKeys");
+  const snapshot = await getDoc(ref);
+  const keys = snapshot.exists() ? snapshot.data().keys || {} : {};
+  await setDoc(ref, { keys: { ...keys, [articleId]: key }, updatedAt: serverTimestamp() }, { merge: true });
+}
+
+async function distributeEventKey(eventId, articleId, key) {
+  const snapshot = await getDocs(collection(db, "memberAccess"));
+  const participants = snapshot.docs.filter((item) => item.data().eventAccess?.[eventId]?.status === "active");
+  await Promise.all(participants.map((item) => {
+    const data = item.data();
+    return setDoc(item.ref, {
+      eventArticleKeys: { ...(data.eventArticleKeys || {}), [articleId]: key },
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }));
+  return participants.length;
+}
+
 const authPersistenceReady = setPersistence(auth, browserLocalPersistence)
   .then(() => true)
   .catch((error) => {
@@ -124,6 +208,8 @@ function getFormData() {
     bookAuthor: data.bookAuthor.trim(),
     bookPublisher: data.bookPublisher.trim(),
     bookPurchaseUrl: data.bookPurchaseUrl.trim(),
+    accessType: data.accessType || "open",
+    eventId: (data.eventId || "").trim(),
     content: data.content.trim()
   };
 }
@@ -139,6 +225,9 @@ function setFormData(article = {}) {
   form.bookAuthor.value = article.bookAuthor || "";
   form.bookPublisher.value = article.bookPublisher || "";
   form.bookPurchaseUrl.value = article.bookPurchaseUrl || "";
+  form.accessType.value = article.accessType || ((article.content || "").includes("<!-- paid-only -->") ? "paid" : "open");
+  renderEventOptions(article.eventId || "");
+  toggleEventAccess();
   form.content.value = article.content || "";
   preview.innerHTML = renderContent(form.content.value);
   deleteButton.disabled = !currentId;
@@ -228,10 +317,18 @@ async function loadArticles() {
       console.warn("文章統計暫時無法載入。", metricsError);
       metricsByArticle = new Map();
     }
-    const firestoreArticles = snapshot.docs.map((item) => ({
-      id: item.id,
-      ...item.data(),
-      source: "firestore"
+    const adminKeys = await loadAdminEventKeys();
+    const firestoreArticles = await Promise.all(snapshot.docs.map(async (item) => {
+      const article = { id: item.id, ...item.data(), source: "firestore" };
+      if (article.accessType === "event" && article.encryptedContent && article.eventIv && adminKeys[item.id]) {
+        try {
+          article.content = await decryptEventContent(article.encryptedContent, article.eventIv, adminKeys[item.id]);
+        } catch (error) {
+          console.error("活動文章解密失敗：", item.id, error);
+          article.content = "";
+        }
+      }
+      return article;
     }));
     const mergedArticles = new Map(
       staticArticles.map((article) => [article.id, { ...article, source: "github-static" }])
@@ -261,31 +358,49 @@ async function saveArticle(event) {
     showAdminToast("文章尚未儲存：請至少填寫標題與內文。", "error");
     return;
   }
+  if (data.accessType === "event" && !data.eventId) {
+    setSaveStatus("無法儲存｜請指定活動", "error");
+    showAdminToast("活動限定文章必須先指定活動。", "error");
+    return;
+  }
   isSaving = true;
   saveButton.disabled = true;
   saveButton.textContent = "儲存中…";
   setSaveStatus("正在儲存，請稍候…", "saving");
   try {
+    const articleRef = currentId ? doc(db, "articles", currentId) : doc(collection(db, "articles"));
+    currentId = articleRef.id;
     const payload = {
       ...data,
       updatedAt: serverTimestamp()
     };
-    if (data.status === "published") {
-      payload.publishedAt = serverTimestamp();
-    }
-    if (currentId) {
-      await setDoc(doc(db, "articles", currentId), payload, { merge: true });
+
+    let distributedCount = 0;
+    if (data.accessType === "event") {
+      payload.eventName = eventOptions.find((event) => event.id === data.eventId)?.name || data.eventId;
+      const protectedContent = await encryptEventContent(data.content);
+      payload.content = "";
+      payload.encryptedContent = protectedContent.encryptedContent;
+      payload.eventIv = protectedContent.iv;
+      payload.encryption = "AES-GCM-256";
+      await saveAdminEventKey(currentId, protectedContent.key);
+      distributedCount = await distributeEventKey(data.eventId, currentId, protectedContent.key);
     } else {
-      const created = await addDoc(collection(db, "articles"), {
-        ...payload,
-        createdAt: serverTimestamp()
-      });
-      currentId = created.id;
+      payload.eventId = "";
+      payload.encryptedContent = "";
+      payload.eventIv = "";
+      payload.encryption = "";
     }
+
+    if (data.status === "published") payload.publishedAt = serverTimestamp();
+    if (!articles.some((article) => article.id === currentId)) payload.createdAt = serverTimestamp();
+    await setDoc(articleRef, payload, { merge: true });
+
     await loadArticles();
     const savedAt = savedTimeLabel();
-    setSaveStatus(`已儲存｜${savedAt}`, "success");
-    showAdminToast(`文章已成功儲存｜${savedAt}`, "success");
+    const note = data.accessType === "event" ? `｜已授權 ${distributedCount} 位活動參加者` : "";
+    setSaveStatus(`已儲存｜${savedAt}${note}`, "success");
+    showAdminToast(`文章已成功儲存｜${savedAt}${note}`, "success");
   } catch (error) {
     console.error(error);
     setSaveStatus("儲存失敗｜內容尚未更新", "error");
@@ -651,6 +766,12 @@ imageInput.addEventListener("change", () => uploadImages(imageInput.files).catch
 form.content.addEventListener("input", () => {
   preview.innerHTML = renderContent(form.content.value);
 });
+accessTypeInput?.addEventListener("change", toggleEventAccess);
+window.addEventListener("activity-events-updated", (event) => {
+  eventOptions = event.detail?.events || [];
+  renderEventOptions(eventIdInput?.value || "");
+  toggleEventAccess();
+});
 form.addEventListener("input", () => {
   if (!isSaving) setSaveStatus("內容已修改｜尚未儲存", "dirty");
 });
@@ -678,6 +799,7 @@ onAuthStateChanged(auth, async (user) => {
   gate.classList.add("hidden");
   app.classList.remove("hidden");
   userLabel.textContent = user.email;
+  await loadEventOptions();
   await loadArticles();
   if (!currentId && !saveStatus.textContent) newArticle();
 });

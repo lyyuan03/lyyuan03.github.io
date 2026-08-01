@@ -16,6 +16,7 @@
 .save-status-inline[data-state="saving"],.save-status-inline[data-state="dirty"]{color:#D8BD91}.save-status-inline[data-state="success"]{color:#BFD39C}.save-status-inline[data-state="error"]{color:#F1AAA2}
 .admin-toast{position:fixed;right:24px;bottom:24px;z-index:100;max-width:min(420px,calc(100vw - 32px));padding:14px 18px;border:1px solid rgba(165,130,84,.55);background:rgba(16,24,13,.97);color:#F5F0E8;box-shadow:0 16px 44px rgba(0,0,0,.42);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s,transform .2s}.admin-toast.is-visible{opacity:1;transform:none}.admin-toast.is-success{border-color:rgba(151,181,112,.72)}.admin-toast.is-error{border-color:rgba(218,117,106,.8)}
 @media(max-width:860px){.save-actions{bottom:8px}.save-status-inline{order:3;width:100%}.admin-toast{right:16px;bottom:16px;left:16px;max-width:none}}
+.activity-panel{grid-column:1/-1;scroll-margin-top:96px}.activity-layout{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(380px,1.2fr);gap:20px;padding:22px}.activity-stack{display:grid;gap:20px}.activity-status[data-state="success"]{color:#BFD39C}.activity-status[data-state="error"]{color:#F1AAA2}.activity-status[data-state="saving"]{color:#D8BD91}.event-access-fields{padding:14px;border:1px solid rgba(165,130,84,.22);background:rgba(165,130,84,.05)}@media(max-width:860px){.activity-layout{grid-template-columns:1fr;padding:16px}}
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -38,6 +39,7 @@
       <span id="admin-user" class="status"></span>
       <button id="export-articles" class="btn" type="button">匯出全部文章</button>
       <span id="export-status" class="status" aria-live="polite"></span>
+      <a class="btn" href="#activity-management">活動管理</a>
       <a class="btn" href="#sponsor-members">贊助會員</a>
       <a class="btn" href="#wellness-members">養生療癒會員</a>
       <a class="btn" href="articles.html" target="_blank">查看前台文章</a>
@@ -92,6 +94,21 @@
           </div>
         </div>
 
+        <div class="grid event-access-fields">
+          <div class="field">
+            <label for="accessType">閱讀權限</label>
+            <select id="accessType" name="accessType">
+              <option value="open">一般文章</option>
+              <option value="paid">贊助專屬文章</option>
+              <option value="event">活動限定文章</option>
+            </select>
+          </div>
+          <div class="field" id="event-access-field">
+            <label for="eventId">指定活動</label>
+            <select id="eventId" name="eventId"><option value="">請先選擇活動</option></select>
+          </div>
+        </div>
+
         <div class="field">
           <label for="excerpt">摘要</label>
           <textarea id="excerpt" name="excerpt" style="min-height:96px"></textarea>
@@ -142,6 +159,43 @@
           <button id="delete-article" class="btn danger" type="button">刪除文章</button>
         </div>
       </form>
+    </section>
+
+    <section id="activity-management" class="panel activity-panel">
+      <div class="panel-head">
+        <h2>活動管理</h2>
+        <span id="activity-status" class="status activity-status" role="status" aria-live="polite"></span>
+      </div>
+      <div class="activity-layout">
+        <div class="activity-stack">
+          <div class="membership-card">
+            <h3>建立活動</h3>
+            <form id="activity-form" class="membership-form">
+              <div class="field"><label for="activity-name">活動名稱</label><input id="activity-name" required placeholder="例如：瑤池金母聖誕法會"></div>
+              <div class="field"><label for="activity-id">活動代稱</label><input id="activity-id" placeholder="可留空，由系統自動建立"></div>
+              <button class="btn primary" type="submit">新增活動</button>
+              <p class="membership-help">活動建立後，可直接供文章指定，不必再修改網站程式。</p>
+            </form>
+          </div>
+          <div class="membership-card">
+            <h3>活動清單</h3>
+            <div id="activity-list" class="membership-list"><div class="empty">載入中…</div></div>
+          </div>
+        </div>
+        <div class="membership-card">
+          <h3>活動參加者</h3>
+          <form id="activity-participant-form" class="membership-form">
+            <div class="field"><label for="activity-select">選擇活動</label><select id="activity-select"></select></div>
+            <div class="field">
+              <label for="activity-participant-emails">批次匯入 Email</label>
+              <textarea id="activity-participant-emails" style="min-height:130px" placeholder="每行一組 Email，也可使用逗號或空白分隔"></textarea>
+            </div>
+            <button class="btn primary" type="submit">匯入參加者</button>
+            <p class="membership-help">活動資格獨立於贊助會員與養生療癒會員。參加者只會取得指定活動文章的解密金鑰。</p>
+          </form>
+          <div id="activity-participant-list" class="membership-list" style="margin-top:18px"><div class="empty">載入中…</div></div>
+        </div>
+      </div>
     </section>
 
     <section id="sponsor-members" class="panel membership-panel">
@@ -246,7 +300,8 @@
 
 <div id="admin-toast" class="admin-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-<script type="module" src="article-admin.js?v=20260801-admin-persistence-2"></script>
+<script type="module" src="activity-admin.js?v=20260801-event-access-v1"></script>
+<script type="module" src="article-admin.js?v=20260801-event-access-v1"></script>
 <script type="module" src="membership-admin.js?v=20260730-sponsor-ecpay-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20260801-annual-spend-1"></script>
 </body>
