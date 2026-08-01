@@ -6,11 +6,7 @@ import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-
 if (/(^|\/)articles\.html$/i.test(location.pathname)) {
   import("./article-protection.js?v=20260723-member-watermark-1");
   import("./article-paid-badge.js?v=20260722-3");
-  import("./article-taxonomy-v2.js?v=20260801-taxonomy-2");
-}
-
-if (/(^|\/)admin\.html$/i.test(location.pathname)) {
-  import("./article-taxonomy-v2.js?v=20260801-taxonomy-2");
+  import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
 }
 
 export const firebaseConfig = {
