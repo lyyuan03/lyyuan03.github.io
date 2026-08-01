@@ -1,6 +1,6 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js";
-import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
@@ -38,6 +38,12 @@ const exportButton = document.getElementById("export-articles");
 const exportStatus = document.getElementById("export-status");
 let toastTimer = null;
 let isSaving = false;
+const authPersistenceReady = setPersistence(auth, browserLocalPersistence)
+  .then(() => true)
+  .catch((error) => {
+    console.error("管理員登入狀態保存設定失敗：", error);
+    return false;
+  });
 
 function setSaveStatus(message, state = "") {
   saveStatus.textContent = message;
@@ -608,11 +614,26 @@ async function exportAllArticles() {
 
 loginButton.addEventListener("click", async () => {
   gateStatus.textContent = "登入中…";
+  loginButton.disabled = true;
+  loginButton.textContent = "登入中…";
   try {
+    const persistenceEnabled = await authPersistenceReady;
+    if (!persistenceEnabled) {
+      throw new Error("無法啟用瀏覽器登入狀態保存");
+    }
     await signInWithPopup(auth, provider);
   } catch (error) {
     console.error(error);
-    gateStatus.textContent = "登入失敗，請稍後再試。";
+    if (error?.code === "auth/popup-closed-by-user" || error?.code === "auth/cancelled-popup-request") {
+      gateStatus.textContent = "登入已取消。";
+    } else {
+      gateStatus.textContent = "登入失敗，請確認瀏覽器允許 Cookie 與網站資料後再試。";
+    }
+  } finally {
+    if (!auth.currentUser) {
+      loginButton.disabled = false;
+      loginButton.textContent = "使用 Google 登入";
+    }
   }
 });
 
@@ -635,15 +656,22 @@ form.addEventListener("input", () => {
 });
 
 onAuthStateChanged(auth, async (user) => {
+  const persistenceEnabled = await authPersistenceReady;
   if (!user) {
     gate.classList.remove("hidden");
     app.classList.add("hidden");
-    gateStatus.textContent = "";
+    loginButton.disabled = false;
+    loginButton.textContent = "使用 Google 登入";
+    gateStatus.textContent = persistenceEnabled
+      ? "登入狀態已確認，請使用管理員帳號登入。"
+      : "瀏覽器無法保存登入狀態，請確認 Cookie 與網站資料權限。";
     return;
   }
   if (!isAdminEmail(user.email)) {
     gate.classList.remove("hidden");
     app.classList.add("hidden");
+    loginButton.disabled = false;
+    loginButton.textContent = "改用 Google 帳號登入";
     gateStatus.textContent = "此帳號沒有文章後台權限，請改用靈元院指定 Gmail 登入。";
     return;
   }
