@@ -2,6 +2,7 @@ import { app, auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+import { LINGJI_THRESHOLD, annualCycle } from "./member-dashboard-logic.js";
 
 const form = document.getElementById("wellness-member-form");
 const listEl = document.getElementById("wellness-member-list");
@@ -52,6 +53,11 @@ function formatDate(value) {
   return date ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(date) : "未設定";
 }
 
+function currentCycleDefaults() {
+  const cycle = annualCycle();
+  return { start: cycle.start, end: cycle.end };
+}
+
 function levelLabel(level) {
   return level === "lingji" ? "靈極會員" : "一般會員";
 }
@@ -71,11 +77,19 @@ function resetForm() {
   levelEl.value = "wellness";
   articleAccessEl.checked = true;
   articleAccessEl.disabled = false;
+  document.getElementById("wellness-member-annual-spend").value = "0";
+  document.getElementById("wellness-member-annual-cycle").value = currentCycleDefaults().start;
+  document.getElementById("wellness-member-lingji-from").value = "";
+  document.getElementById("wellness-member-lingji-until").value = "";
 }
 
 function payload() {
   const level = levelEl.value === "lingji" ? "lingji" : "wellness";
   const status = document.getElementById("wellness-member-state").value;
+  const annualSpend = Math.max(0, Number(document.getElementById("wellness-member-annual-spend").value) || 0);
+  const cycleStart = document.getElementById("wellness-member-annual-cycle").value || currentCycleDefaults().start;
+  const lingjiFromInput = document.getElementById("wellness-member-lingji-from").value;
+  const lingjiUntilInput = document.getElementById("wellness-member-lingji-until").value;
   return {
     email: normalizeEmail(document.getElementById("wellness-member-email").value),
     name: document.getElementById("wellness-member-name").value.trim(),
@@ -87,6 +101,11 @@ function payload() {
     firstJoinedAt: dateInputToIso(document.getElementById("wellness-member-first-joined-at").value),
     startsAt: dateInputToIso(document.getElementById("wellness-member-starts-at").value),
     expiresAt: dateInputToIso(document.getElementById("wellness-member-expires-at").value, true),
+    annualSpend,
+    annualSpendCycleStart: dateInputToIso(cycleStart),
+    nextLingjiQualified: annualSpend >= LINGJI_THRESHOLD,
+    lingjiValidFrom: dateInputToIso(lingjiFromInput || (level === "lingji" ? currentCycleDefaults().start : "")),
+    lingjiValidUntil: dateInputToIso(lingjiUntilInput || (level === "lingji" ? currentCycleDefaults().end : ""), true),
     articleAccess: level === "lingji" || articleAccessEl.checked,
     note: document.getElementById("wellness-member-note").value.trim(),
     updatedAt: serverTimestamp()
@@ -159,7 +178,9 @@ function renderMembers() {
     const active = member.status === "active" && (!expiry || expiry > now);
     const stateLabel = active ? "有效" : member.status === "active" ? "已到期" : "未啟用";
     const articleLabel = member.articleAccess === true || level === "lingji" ? "可閱讀付費文章" : "未開放付費文章";
-    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(levelLabel(level))}｜${escapeHtml(stateLabel)}</strong><small>${escapeHtml(member.email)}｜${articleLabel}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}</small></div><div class="member-row-actions"><button class="btn" type="button" data-wellness-edit="${escapeHtml(member.email)}">編輯</button><button class="btn danger" type="button" data-wellness-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
+    const annualSpend = Math.max(0, Number(member.annualSpend) || 0);
+    const qualificationLabel = annualSpend >= LINGJI_THRESHOLD ? "符合次年度靈極資格" : `距次年度門檻 NT$${(LINGJI_THRESHOLD - annualSpend).toLocaleString("zh-TW")}`;
+    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(levelLabel(level))}｜${escapeHtml(stateLabel)}</strong><small>${escapeHtml(member.email)}｜${articleLabel}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}<br>本年度累積 NT$${annualSpend.toLocaleString("zh-TW")}｜${escapeHtml(qualificationLabel)}</small></div><div class="member-row-actions"><button class="btn" type="button" data-wellness-edit="${escapeHtml(member.email)}">編輯</button><button class="btn danger" type="button" data-wellness-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
   }).join("");
   listEl.querySelectorAll("[data-wellness-edit]").forEach((button) => button.addEventListener("click", () => editMember(button.dataset.wellnessEdit)));
   listEl.querySelectorAll("[data-wellness-delete]").forEach((button) => button.addEventListener("click", () => removeMember(button.dataset.wellnessDelete)));
@@ -176,6 +197,10 @@ function editMember(email) {
   document.getElementById("wellness-member-first-joined-at").value = toDateInput(member.firstJoinedAt || member.startsAt);
   document.getElementById("wellness-member-starts-at").value = toDateInput(member.startsAt);
   document.getElementById("wellness-member-expires-at").value = toDateInput(member.expiresAt);
+  document.getElementById("wellness-member-annual-spend").value = Math.max(0, Number(member.annualSpend) || 0);
+  document.getElementById("wellness-member-annual-cycle").value = toDateInput(member.annualSpendCycleStart) || currentCycleDefaults().start;
+  document.getElementById("wellness-member-lingji-from").value = toDateInput(member.lingjiValidFrom);
+  document.getElementById("wellness-member-lingji-until").value = toDateInput(member.lingjiValidUntil);
   articleAccessEl.checked = member.articleAccess === true || levelEl.value === "lingji";
   document.getElementById("wellness-member-note").value = member.note || "";
   syncArticleAccess();

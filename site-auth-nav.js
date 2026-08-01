@@ -9,7 +9,7 @@ import {
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const AUTH_VERSION = "20260801-member-menu-1";
+const AUTH_VERSION = "20260801-admin-auto-route-1";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -58,11 +58,12 @@ function installMemberMenu() {
   const item = membershipLink?.closest("li");
   if (!item || item.querySelector(".member-nav-trigger")) return;
   const currentPath = location.pathname.replace(/\/+$/, "") || "/";
-  const isMemberPage = currentPath.endsWith("/membership.html") || currentPath.endsWith("/member-videos.html");
+  const isMemberPage = currentPath.endsWith("/membership.html") || currentPath.endsWith("/member-dashboard.html") || currentPath.endsWith("/member-videos.html");
   item.innerHTML = `
     <span class="has-dropdown member-nav-trigger${isMemberPage ? " active" : ""}" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">會員</span>
     <ul class="dropdown member-nav-dropdown">
       <li><a href="/membership.html">會員制度說明</a></li>
+      <li><a href="/member-dashboard.html">我的會員中心</a></li>
       <li><a href="/member-videos.html">養生會員影片</a></li>
     </ul>`;
   const trigger = item.querySelector(".member-nav-trigger");
@@ -144,7 +145,7 @@ memberButton.addEventListener("click", async () => {
     return;
   }
   if (auth.currentUser && isAdminEmail(auth.currentUser.email)) {
-    alert("目前為管理員帳號，請由管理後台專屬網址登入。");
+    location.href = "/admin.html";
     return;
   }
   modal.classList.add("is-open");
@@ -163,8 +164,7 @@ googleButton.addEventListener("click", async () => {
     }
     const result = await signInWithPopup(auth, provider);
     if (isAdminEmail(result.user?.email)) {
-      await signOut(auth);
-      alert("這是管理員帳號，請由管理後台專屬網址登入。");
+      location.href = "/admin.html";
       return;
     }
     modal.classList.remove("is-open");
@@ -183,8 +183,7 @@ googleButton.addEventListener("click", async () => {
 onAuthStateChanged(auth, async (user) => {
   if (user && sessionStorage.getItem("site-auth-flow") === "member" && isAdminEmail(user.email)) {
     sessionStorage.removeItem("site-auth-flow");
-    await signOut(auth);
-    alert("這是管理員帳號，請由管理後台專屬網址登入。");
+    location.href = "/admin.html";
     return;
   }
   sessionStorage.removeItem("site-auth-flow");
@@ -194,8 +193,8 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
   if (isAdminEmail(user.email)) {
-    memberButton.textContent = "會員登入";
-    memberButton.title = "管理員請由管理後台專屬網址登入";
+    memberButton.textContent = "進入管理後台";
+    memberButton.title = "前往靈元院管理後台";
     return;
   }
   const displayName = (user.displayName || "會員").trim().split(/\s+/)[0];

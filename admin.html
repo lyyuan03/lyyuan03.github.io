@@ -215,12 +215,17 @@
               <div class="field"><label for="wellness-member-first-joined-at">首次加入日期</label><input id="wellness-member-first-joined-at" type="date"></div>
               <div class="field"><label for="wellness-member-starts-at">本次會期開始日</label><input id="wellness-member-starts-at" type="date"></div>
               <div class="field"><label for="wellness-member-expires-at">到期日</label><input id="wellness-member-expires-at" type="date"></div>
+              <div class="field"><label for="wellness-member-annual-spend">本年度累積消費</label><input id="wellness-member-annual-spend" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="wellness-member-annual-cycle">年度計算起日</label><input id="wellness-member-annual-cycle" type="date"></div>
+              <div class="field"><label for="wellness-member-lingji-from">本期靈極資格起日</label><input id="wellness-member-lingji-from" type="date"></div>
+              <div class="field"><label for="wellness-member-lingji-until">本期靈極資格迄日</label><input id="wellness-member-lingji-until" type="date"></div>
             </div>
             <label class="check-field" for="wellness-member-article-access">
               <input id="wellness-member-article-access" type="checkbox" checked>
               <span><strong>開放付費文章閱讀權限</strong><small>儲存後，會員使用此 Gmail 登入即可閱讀付費文章；靈極會員會自動開啟。</small></span>
             </label>
             <div class="field"><label for="wellness-member-note">行政備註</label><textarea id="wellness-member-note" style="min-height:80px"></textarea></div>
+            <div class="membership-summary">年度累積消費每年 2 月 1 日重新計算。一般會員累積滿新台幣 100,000 元後，系統會標示符合次年度靈極資格，並於次年 2 月 1 日自動切換會員頁面。</div>
             <div class="membership-summary">自動付款方案｜新台幣 6,000 元／4個月。系統會寄出會員專屬綠界付款連結；付款成功後自動開通，不需人工登錄。</div>
             <div class="top-actions">
               <button class="btn primary" type="submit">儲存養生療癒會員</button>
@@ -243,6 +248,6 @@
 
 <script type="module" src="article-admin.js?v=20260801-admin-persistence-2"></script>
 <script type="module" src="membership-admin.js?v=20260730-sponsor-ecpay-1"></script>
-<script type="module" src="wellness-member-admin.js?v=20260730-ecpay-auto-1"></script>
+<script type="module" src="wellness-member-admin.js?v=20260801-annual-spend-1"></script>
 </body>
 </html>
