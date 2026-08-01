@@ -62,8 +62,9 @@ function renderDashboard(member, user) {
   dashboard.dataset.memberLevel = state.effectiveLevel;
   document.getElementById("dashboard-greeting").textContent = `${name}，平安`;
   document.getElementById("dashboard-member-meta").textContent = `會員編號 ${membershipNumber}｜養生療癒頻道會員`;
+  document.getElementById("dashboard-card-number").textContent = String(membershipNumber).toUpperCase();
   document.getElementById("dashboard-level").textContent = isLingji ? "靈極會員" : "一般會員";
-  document.getElementById("dashboard-level-en").textContent = isLingji ? "LINGJI" : "GENERAL";
+  document.getElementById("dashboard-level-en").textContent = isLingji ? "LINGJI PRIVILEGE" : "GENERAL MEMBER";
   document.getElementById("dashboard-spend").textContent = money.format(state.currentSpend);
   document.getElementById("dashboard-spend-note").textContent = state.nextQualified ? "已達次年度門檻" : `距次年度門檻尚差 ${money.format(state.remaining)}`;
   document.getElementById("dashboard-membership-status").textContent = "有效";
@@ -103,6 +104,10 @@ function renderDashboard(member, user) {
   }
 
   const roundedProgress = Math.round(state.progress * 10) / 10;
+  const gaugeAngle = -90 + roundedProgress * 1.8;
+  document.getElementById("dashboard-gauge-progress").style.strokeDasharray = `${roundedProgress} 100`;
+  document.getElementById("dashboard-gauge-needle").style.transform = `rotate(${gaugeAngle}deg)`;
+  document.getElementById("dashboard-gauge").setAttribute("aria-label", `本年度已累積 ${money.format(state.currentSpend)}，達成次年度門檻的 ${roundedProgress}%`);
   document.getElementById("dashboard-ring").style.setProperty("--progress", String(roundedProgress));
   document.getElementById("dashboard-progress").textContent = `${roundedProgress}%`;
   document.getElementById("dashboard-progress-title").textContent = `本年度已累積 ${money.format(state.currentSpend)}`;
