@@ -6,7 +6,7 @@ export const wealthAsWaterArticle = {
   status: "published",
   publishedAt: "2026-08-01T04:45:00.000Z",
   updatedAt: "2026-08-01T04:45:00.000Z",
-  coverImage: "assets/articles/thumbnails/wealth-as-water.jpg",
+  coverImage: "assets/articles/thumbnails/market-crash.jpg?v=20260801-wealth-as-water-restore-1",
   excerpt: "股市下跌時，真正被看見的，往往不是一個人的投資技巧，而是他如何看待金錢、得失與安全感。無極瑤池金母曾以水比喻金錢：重要的不是占有，而是理解它如何流經生命。",
   accessType: "paid",
   bookTitle: "請問財富",
