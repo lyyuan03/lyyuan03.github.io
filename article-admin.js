@@ -54,6 +54,22 @@ function base64ToBytes(value) {
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
+function bytesToBase64Url(bytes) {
+  return bytesToBase64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+async function wrapEventKeyForToken(eventKey, token) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  const wrappingKey = await crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["encrypt"]);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const wrapped = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    wrappingKey,
+    new TextEncoder().encode(eventKey)
+  );
+  return { wrappedKey: bytesToBase64(new Uint8Array(wrapped)), iv: bytesToBase64(iv) };
+}
+
 async function encryptEventContent(content) {
   const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -120,6 +136,22 @@ async function distributeEventKey(eventId, articleId, key) {
     }, { merge: true });
   }));
   return participants.length;
+}
+
+async function buildMagicLinkAccess(eventId, eventKey) {
+  const snapshot = await getDoc(doc(db, "membershipSettings", "eventMagicLinkSecrets"));
+  const records = snapshot.exists() ? Object.values(snapshot.data().links?.[eventId] || {}) : [];
+  const access = {};
+  for (const record of records) {
+    if (!record?.token || !record.tokenHash) continue;
+    const wrapped = await wrapEventKeyForToken(eventKey, record.token);
+    access[record.tokenHash] = {
+      ...wrapped,
+      status: record.status,
+      expiresAt: record.expiresAt
+    };
+  }
+  return access;
 }
 
 const authPersistenceReady = setPersistence(auth, browserLocalPersistence)
@@ -385,11 +417,13 @@ async function saveArticle(event) {
       payload.encryption = "AES-GCM-256";
       await saveAdminEventKey(currentId, protectedContent.key);
       distributedCount = await distributeEventKey(data.eventId, currentId, protectedContent.key);
+      payload.magicLinkAccess = await buildMagicLinkAccess(data.eventId, protectedContent.key);
     } else {
       payload.eventId = "";
       payload.encryptedContent = "";
       payload.eventIv = "";
       payload.encryption = "";
+      payload.magicLinkAccess = {};
     }
 
     if (data.status === "published") payload.publishedAt = serverTimestamp();
