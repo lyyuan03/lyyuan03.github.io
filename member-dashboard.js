@@ -75,6 +75,8 @@ function renderDashboard(member, user) {
   const tierDate = document.getElementById("dashboard-tier-date");
   const lingjiPeriodRow = document.getElementById("dashboard-lingji-period-row");
   const lingjiRights = document.getElementById("dashboard-lingji-rights");
+  const periodHeading = document.getElementById("dashboard-period-heading");
+  const periodSide = document.getElementById("dashboard-period-side");
   if (isLingji) {
     tierLabel.textContent = "本期靈極會員資格";
     tierStatus.textContent = "有效";
@@ -82,6 +84,8 @@ function renderDashboard(member, user) {
     document.getElementById("dashboard-period-lingji").textContent = tierDate.textContent;
     lingjiPeriodRow.hidden = false;
     lingjiRights.hidden = false;
+    periodHeading.textContent = "會籍與靈極資格效期";
+    periodSide.textContent = "兩種效期分開計算";
     document.getElementById("dashboard-rights-summary").textContent = "一般會員權益＋靈極會員加贈權益";
     document.getElementById("dashboard-period-note").textContent = "目前靈極會員身分，是依前一年度消費達標取得；進入新年度後，本年度累積金額由零重新計算，用來判定下一年度是否續享靈極資格。年度資格有效期間內，仍須每四個月完成續會並維持有效會籍。";
   } else {
@@ -90,6 +94,8 @@ function renderDashboard(member, user) {
     tierDate.textContent = state.nextQualified ? `${formatDateKey(state.cycle.nextStart)} 起生效` : `門檻 ${money.format(LINGJI_THRESHOLD)}`;
     lingjiPeriodRow.hidden = true;
     lingjiRights.hidden = true;
+    periodHeading.textContent = "會籍效期";
+    periodSide.textContent = "一般會員每 4 個月續會";
     document.getElementById("dashboard-rights-summary").textContent = "目前為一般會員權益";
     document.getElementById("dashboard-period-note").textContent = state.nextQualified
       ? `您已符合次年度靈極會員資格；於 ${formatDateKey(state.cycle.nextStart)} 登入後，系統將自動顯示靈極會員頁面與完整權益。`
