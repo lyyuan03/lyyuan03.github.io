@@ -823,6 +823,15 @@ loadArticles().catch((error) => {
   root.innerHTML = '<div class="empty">文章暫時無法載入，請稍後再試。</div>';
 });
 
+let lastVisibleRefreshAt = Date.now();
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible") return;
+  const now = Date.now();
+  if (now - lastVisibleRefreshAt < 1500) return;
+  lastVisibleRefreshAt = now;
+  loadArticles().catch((error) => console.error("重新載入文章失敗：", error));
+});
+
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   await loadMemberAccess(user);
