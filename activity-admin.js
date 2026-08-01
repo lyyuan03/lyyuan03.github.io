@@ -21,6 +21,7 @@ const participantButton = document.getElementById("activity-participant-submit")
 const importStatusEl = document.getElementById("activity-import-status");
 const linkExpiryInput = document.getElementById("activity-link-expiry");
 const linkGenerateAllButton = document.getElementById("activity-link-generate-all");
+const linkExportButton = document.getElementById("activity-link-export");
 const linkStatusEl = document.getElementById("activity-link-status");
 const eventForm = document.getElementById("activity-form");
 
@@ -349,6 +350,40 @@ async function disablePersonalLink(email) {
   setLinkStatus(`已停用 ${email} 的專屬連結。`, "success");
 }
 
+function csvCell(value) {
+  return `"${String(value ?? "").replace(/"/g, '""')}"`;
+}
+
+function exportPersonalLinks() {
+  const event = selectedEvent();
+  const participants = members
+    .filter((member) => member.eventAccess?.[event.id]?.status === "active")
+    .map((member) => {
+      const email = normalizeEmail(member.email || member.id);
+      const record = linkRecord(event.id, email);
+      return {
+        email,
+        url: record?.token ? personalLink(event, record) : "",
+        status: !record ? "尚未建立" : record.status === "active" && Date.parse(record.expiresAt || "") > Date.now() ? "啟用" : record.status === "inactive" ? "停用" : "到期",
+        expiresAt: record?.expiresAt || ""
+      };
+    });
+  const rows = [
+    ["Email", "個人專屬免登入連結", "狀態", "有效期限"],
+    ...participants.map((item) => [item.email, item.url, item.status, item.expiresAt])
+  ];
+  const blob = new Blob(["\ufeff" + rows.map((row) => row.map(csvCell).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${event.id}-personal-links.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+  setLinkStatus(`已下載 ${participants.length} 位參加者的專屬連結名單。`, "success");
+}
+
 async function generateMissingLinks() {
   const event = selectedEvent();
   if (!linkExpiryInput?.value) {
@@ -441,6 +476,7 @@ async function refresh() {
 
 eventSelect?.addEventListener("change", renderParticipants);
 linkGenerateAllButton?.addEventListener("click", generateMissingLinks);
+linkExportButton?.addEventListener("click", exportPersonalLinks);
 
 eventForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
