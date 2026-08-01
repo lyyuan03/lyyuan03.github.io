@@ -272,16 +272,48 @@ function newArticle() {
   document.querySelectorAll(".article-item").forEach((item) => item.classList.remove("is-active"));
 }
 
+async function importStaticArticle(articleId) {
+  const article = articles.find((item) => item.id === articleId && item.source === "github-static");
+  if (!article) return;
+  const payload = {
+    title: article.title || "",
+    slug: article.slug || article.id,
+    category: article.category || "spiritual",
+    status: article.status || "published",
+    excerpt: article.excerpt || "",
+    coverImage: article.coverImage || "",
+    bookTitle: article.bookTitle || "",
+    bookAuthor: article.bookAuthor || "",
+    bookPublisher: article.bookPublisher || "",
+    bookPurchaseUrl: article.bookPurchaseUrl || "",
+    accessType: article.accessType || ((article.content || "").includes("<!-- paid-only -->") ? "paid" : "open"),
+    eventId: article.eventId || "",
+    eventName: article.eventName || "",
+    content: article.content || "",
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  };
+  if (payload.status === "published") payload.publishedAt = serverTimestamp();
+  await setDoc(doc(db, "articles", article.id), payload, { merge: true });
+  currentId = article.id;
+  await loadArticles();
+  setSaveStatus("已匯入後台，可直接編輯", "success");
+  showAdminToast("網站文章已匯入後台，現在可以直接編輯與儲存。", "success");
+}
+
 function renderList() {
   if (!articles.length) {
     listEl.innerHTML = '<div class="empty">目前尚無文章</div>';
     return;
   }
   listEl.innerHTML = articles.map((article) => `
-    <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${article.id}">
-      <div class="article-item-title">${escapeHtml(article.title || "未命名文章")}</div>
-      <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}｜${article.source === "github-static" ? "網站文章" : "後台文章"}</div>
-    </button>
+    <div class="article-item-wrap">
+      <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${article.id}">
+        <div class="article-item-title">${escapeHtml(article.title || "未命名文章")}</div>
+        <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}｜${article.source === "github-static" ? "網站文章" : "後台文章"}</div>
+      </button>
+      ${article.source === "github-static" ? `<button class="btn article-import-button" type="button" data-import-id="${article.id}">匯入後台編輯</button>` : ""}
+    </div>
   `).join("");
   listEl.querySelectorAll("[data-id]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -289,7 +321,21 @@ function renderList() {
       const article = articles.find((item) => item.id === currentId);
       setFormData(article);
       renderList();
-      setSaveStatus("尚未修改");
+      setSaveStatus(article?.source === "github-static" ? "網站文章｜請先按「匯入後台編輯」" : "尚未修改");
+    });
+  });
+  listEl.querySelectorAll("[data-import-id]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      button.textContent = "匯入中…";
+      try {
+        await importStaticArticle(button.dataset.importId);
+      } catch (error) {
+        console.error(error);
+        button.disabled = false;
+        button.textContent = "匯入後台編輯";
+        showAdminToast("匯入失敗，請確認管理員權限與網路狀態。", "error");
+      }
     });
   });
 }
@@ -713,127 +759,91 @@ async function exportAllArticles() {
           `文章總數：${allItems.length}`,
           "",
           "all-articles.json：完整結構化文章資料。",
-          "articles/：每篇文章的 Markdown 版本。",
+          "articles/：每篇文章各自的 Markdown 檔。",
           "article-index.csv：文章索引。",
-          "image-manifest.csv：封面與內文圖片網址清單。",
-          "",
-          "注意：圖片本體仍存放在 GitHub assets 或 Firebase Storage；搬遷前請依 image-manifest.csv 下載備份。"
-        ].join("\r\n")
+          "image-index.csv：文章圖片索引。"
+        ].join("\n")
       },
-      {
-        name: "all-articles.json",
-        content: JSON.stringify({ exportedAt, project: "lyyuan03-membership", articles: allItems }, null, 2)
-      },
-      {
-        name: "article-index.csv",
-        content: "\ufeff" + indexRows.map((row) => row.map(csvCell).join(",")).join("\r\n")
-      },
-      {
-        name: "image-manifest.csv",
-        content: "\ufeff" + collectImageRows(allItems)
-      },
-      ...allItems.map((article, index) => ({
-        name: `articles/${String(index + 1).padStart(3, "0")}-${safeFileName(article.slug || article.title)}.md`,
+      { name: "all-articles.json", content: JSON.stringify({ exportedAt, articles: allItems }, null, 2) },
+      { name: "article-index.csv", content: "\ufeff" + indexRows.map((row) => row.map(csvCell).join(",")).join("\r\n") },
+      { name: "image-index.csv", content: "\ufeff" + collectImageRows(allItems) },
+      ...allItems.map((article) => ({
+        name: `articles/${safeFileName(article.id || article.slug || article.title)}-${safeFileName(article.title)}.md`,
         content: articleMarkdown(article)
       }))
     ];
 
-    const zipBytes = buildZip(files);
-    const blob = new Blob([zipBytes], { type: "application/zip" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    const date = new Date().toISOString().slice(0, 10);
-    link.href = url;
-    link.download = `ling-yuan-yuan-articles-${date}.zip`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1500);
-
+    const zip = buildZip(files);
+    const url = URL.createObjectURL(new Blob([zip], { type: "application/zip" }));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `lyyuan-articles-${new Date().toISOString().slice(0, 10)}.zip`;
+    anchor.click();
+    URL.revokeObjectURL(url);
     exportStatus.textContent = `已匯出 ${allItems.length} 篇文章`;
   } catch (error) {
     console.error(error);
     exportStatus.textContent = "匯出失敗，請稍後再試。";
-    alert("文章匯出失敗，請確認網路與 Firebase 權限。");
   } finally {
     exportButton.disabled = false;
     exportButton.textContent = "匯出全部文章";
   }
 }
 
+function markDirty() {
+  if (isSaving) return;
+  setSaveStatus("內容已修改，尚未儲存", "dirty");
+}
+
+form.addEventListener("submit", saveArticle);
+form.addEventListener("input", (event) => {
+  if (event.target === form.content) preview.innerHTML = renderContent(form.content.value);
+  markDirty();
+});
+form.addEventListener("change", markDirty);
+accessTypeInput?.addEventListener("change", toggleEventAccess);
+newButton.addEventListener("click", newArticle);
+deleteButton.addEventListener("click", deleteArticle);
+uploadButton.addEventListener("click", () => imageInput.click());
+imageInput.addEventListener("change", () => uploadImages(imageInput.files).catch(console.error));
+exportButton?.addEventListener("click", () => exportAllArticles());
 loginButton.addEventListener("click", async () => {
-  gateStatus.textContent = "登入中…";
-  loginButton.disabled = true;
-  loginButton.textContent = "登入中…";
+  await authPersistenceReady;
+  gateStatus.textContent = "正在開啟 Google 登入…";
   try {
-    const persistenceEnabled = await authPersistenceReady;
-    if (!persistenceEnabled) {
-      throw new Error("無法啟用瀏覽器登入狀態保存");
-    }
     await signInWithPopup(auth, provider);
   } catch (error) {
     console.error(error);
-    if (error?.code === "auth/popup-closed-by-user" || error?.code === "auth/cancelled-popup-request") {
-      gateStatus.textContent = "登入已取消。";
-    } else {
-      gateStatus.textContent = "登入失敗，請確認瀏覽器允許 Cookie 與網站資料後再試。";
-    }
-  } finally {
-    if (!auth.currentUser) {
-      loginButton.disabled = false;
-      loginButton.textContent = "使用 Google 登入";
-    }
+    gateStatus.textContent = "登入失敗，請確認瀏覽器未封鎖彈出視窗。";
   }
 });
-
 logoutButton.addEventListener("click", () => signOut(auth));
-exportButton.addEventListener("click", exportAllArticles);
-newButton.addEventListener("click", newArticle);
-form.addEventListener("submit", saveArticle);
-deleteButton.addEventListener("click", deleteArticle);
-uploadButton.addEventListener("click", () => imageInput.click());
-imageInput.addEventListener("change", () => uploadImages(imageInput.files).catch((error) => {
-  console.error(error);
-  uploadStatus.textContent = "圖片上傳失敗，請確認 Firebase Storage 權限。";
-  uploadButton.disabled = false;
-}));
-form.content.addEventListener("input", () => {
-  preview.innerHTML = renderContent(form.content.value);
-});
-accessTypeInput?.addEventListener("change", toggleEventAccess);
+
 window.addEventListener("activity-events-updated", (event) => {
   eventOptions = event.detail?.events || [];
   renderEventOptions(eventIdInput?.value || "");
   toggleEventAccess();
 });
-form.addEventListener("input", () => {
-  if (!isSaving) setSaveStatus("內容已修改｜尚未儲存", "dirty");
-});
 
 onAuthStateChanged(auth, async (user) => {
-  const persistenceEnabled = await authPersistenceReady;
+  loginButton.disabled = false;
   if (!user) {
     gate.classList.remove("hidden");
     app.classList.add("hidden");
-    loginButton.disabled = false;
-    loginButton.textContent = "使用 Google 登入";
-    gateStatus.textContent = persistenceEnabled
-      ? "登入狀態已確認，請使用管理員帳號登入。"
-      : "瀏覽器無法保存登入狀態，請確認 Cookie 與網站資料權限。";
+    gateStatus.textContent = "請使用管理員 Gmail 登入。";
+    loginButton.textContent = "使用 Google 帳號登入";
     return;
   }
   if (!isAdminEmail(user.email)) {
     gate.classList.remove("hidden");
     app.classList.add("hidden");
-    loginButton.disabled = false;
-    loginButton.textContent = "改用 Google 帳號登入";
-    gateStatus.textContent = "此帳號沒有文章後台權限，請改用靈元院指定 Gmail 登入。";
+    gateStatus.textContent = "此帳號沒有後台管理權限。";
+    loginButton.textContent = "改用其他帳號登入";
+    await signOut(auth);
     return;
   }
   gate.classList.add("hidden");
   app.classList.remove("hidden");
-  userLabel.textContent = user.email;
-  await loadEventOptions();
-  await loadArticles();
-  if (!currentId && !saveStatus.textContent) newArticle();
+  userLabel.textContent = user.email || "管理員";
+  await Promise.all([loadEventOptions(), loadArticles()]);
 });
