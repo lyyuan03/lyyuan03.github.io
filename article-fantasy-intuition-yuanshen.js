@@ -29,6 +29,8 @@ export const fantasyIntuitionYuanshenArticle = {
 
 到了最後，人聽見的究竟是元神，還是自己替元神寫好的一套說法，往往連自己都無法分辨。
 
+![走在靈修的道路上，需要分辨幻想、直覺與元神訊息](assets/articles/thumbnails/yuanshen-reality.jpg?v=20260801-article-body-1)
+
 感應像是一扇門，門後面是什麼，你其實看不清楚。真正困難的，從來不是要不要推開它，而是推開之後，站在那裡回答你的，究竟是元神，還是你自己扮演出來的元神。
 
 <!-- paid-only -->
