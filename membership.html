@@ -167,6 +167,57 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
 
 @media(max-width:900px){.nav-inner{justify-content:flex-start;overflow-x:auto;padding:0 18px}.nav-links{min-width:max-content;gap:18px}.hero{min-height:510px;padding-top:122px}}
 @media(max-width:680px){body{padding-bottom:67px}main{padding:62px 16px 76px}.hero{min-height:560px;padding:112px 18px 70px}.hero h1{font-size:30px;letter-spacing:.09em}.hero-subtitle{font-size:16px}.hero-promise{gap:7px}.hero-promise span{padding:6px 10px;font-size:12px}.intro{padding:28px 24px;font-size:16.5px}.value-strip{grid-template-columns:1fr}.value-item{min-height:0;padding:22px 23px}.visual-story,.visual-story.reverse{grid-template-columns:1fr;min-height:0}.visual-story.reverse .visual-story-image{order:0}.visual-story-image{height:240px;min-height:0}.visual-story-copy{padding:30px 24px}.visual-story h2{font-size:22px}.section{margin-top:54px}.benefits,.policy-grid{grid-template-columns:1fr}.benefit:last-child{grid-column:auto}.benefit{min-height:0;padding:25px 23px}.policy-card{padding:25px 23px}.channel-box,.reason,.notes{padding:28px 23px}.step{padding:72px 23px 27px}.step:before{left:23px;top:21px}.contact{padding:42px 22px}.nav-links>li>a,.nav-links>li>span{font-size:12.5px}.mobile-join{position:fixed;left:0;right:0;bottom:0;z-index:120;display:flex;align-items:center;justify-content:center;min-height:67px;background:rgba(20,28,17,.97);border-top:1px solid rgba(197,162,111,.42);box-shadow:0 -8px 24px rgba(0,0,0,.24)}.mobile-join a{width:calc(100% - 32px);padding:11px 18px;text-align:center;background:#A58254;color:#17120C;font-family:var(--serif);font-weight:500;letter-spacing:.13em}}
+
+/* Soft 3D membership diagrams */
+.soft-3d-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;perspective:1200px;margin-top:8px}
+.flow-node{position:relative;isolation:isolate;min-height:220px;padding:25px 18px 22px;text-align:center;border:1px solid rgba(255,255,255,.55);border-radius:28px 28px 23px 23px;background:linear-gradient(145deg,#fffaf2 0%,#e8ddcc 100%);box-shadow:0 20px 30px rgba(70,53,34,.16),inset 7px 7px 13px rgba(255,255,255,.72),inset -8px -8px 15px rgba(89,79,71,.12);transform:translateZ(0) rotateX(1.5deg);transition:transform .3s ease,box-shadow .3s ease}
+.flow-node:before{content:'';position:absolute;z-index:-1;left:10%;right:10%;bottom:-10px;height:24px;border-radius:50%;background:rgba(89,79,71,.18);filter:blur(9px)}
+.flow-node:not(:last-child):after{content:'';position:absolute;z-index:4;top:50%;right:-18px;width:20px;height:3px;border-radius:99px;background:linear-gradient(90deg,#A58254,#D0B47F);box-shadow:0 2px 5px rgba(135,104,63,.25)}
+.flow-node:hover{transform:translateY(-7px) rotateX(0);box-shadow:0 28px 38px rgba(70,53,34,.2),inset 7px 7px 13px rgba(255,255,255,.76),inset -8px -8px 15px rgba(89,79,71,.1)}
+.flow-node.tone-brown{background:linear-gradient(145deg,#d2b17d,#98754a);color:#241b12;border-color:rgba(255,242,215,.56)}
+.flow-node.tone-cream{background:linear-gradient(145deg,#fffaf2,#dfd2be);color:#3d332a}
+.flow-node.tone-olive{background:linear-gradient(145deg,#89905d,#555b2e);color:#fffaf2;border-color:rgba(238,231,218,.32)}
+.flow-node.tone-gold{background:linear-gradient(145deg,#d8bd8c,#a37d4b);color:#241b12}
+.flow-index{position:absolute;top:13px;left:16px;font-family:var(--en);font-size:11px;letter-spacing:.18em;opacity:.56}
+.flow-icon{display:grid;place-items:center;width:58px;height:58px;margin:11px auto 16px;border-radius:21px;background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(255,255,255,.2));box-shadow:7px 7px 13px rgba(47,40,31,.18),inset 2px 2px 4px rgba(255,255,255,.65);font-family:var(--serif);font-size:23px}
+.flow-node h3{font-size:17px;line-height:1.55;letter-spacing:.05em;color:inherit}
+.flow-node p{margin-top:9px;font-size:13px;line-height:1.7;color:inherit;opacity:.82}
+.flow-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:34px}
+.flow-actions .button{margin-top:0}
+.rights-3d-map{position:relative;margin:6px 0 30px;padding:8px 0 4px;perspective:1200px}
+.rights-core{position:relative;z-index:2;width:260px;margin:0 auto 55px;padding:25px 25px 23px;text-align:center;border-radius:34px;background:linear-gradient(145deg,#777b43,#4f5528);color:#fffaf2;border:1px solid rgba(255,255,255,.28);box-shadow:0 25px 38px rgba(48,52,36,.25),inset 7px 7px 14px rgba(255,255,255,.13),inset -8px -8px 15px rgba(28,33,15,.18);transform:rotateX(2deg)}
+.rights-core:after{content:'';position:absolute;left:50%;top:100%;width:2px;height:44px;background:linear-gradient(#A58254,#C5A26F);box-shadow:0 2px 5px rgba(135,104,63,.25)}
+.rights-core small,.rights-core span{display:block;font-size:11px;letter-spacing:.14em;opacity:.72}
+.rights-core strong{display:block;margin:5px 0;font-family:var(--serif);font-size:25px;font-weight:500;letter-spacing:.13em}
+.rights-branches{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.rights-branches:before{content:'';position:absolute;top:-17px;left:16.66%;right:16.66%;height:2px;background:linear-gradient(90deg,transparent,#C5A26F 12%,#A58254 50%,#C5A26F 88%,transparent)}
+.rights-branch{position:relative;min-height:205px;padding:29px 24px 24px;text-align:center;border-radius:30px;background:linear-gradient(145deg,#fffaf2,#e3d7c5);color:#3d332a;border:1px solid rgba(255,255,255,.62);box-shadow:0 21px 32px rgba(70,53,34,.15),inset 7px 7px 13px rgba(255,255,255,.75),inset -8px -8px 15px rgba(89,79,71,.11);transition:transform .3s ease}
+.rights-branch:before{content:'';position:absolute;left:50%;top:-17px;width:2px;height:17px;background:#B28E5D}
+.rights-branch:hover{transform:translateY(-6px)}
+.rights-branch.gold{background:linear-gradient(145deg,#dcc394,#a98453);color:#241b12}
+.rights-branch.olive{background:linear-gradient(145deg,#7e8550,#50562c);color:#fffaf2;border-color:rgba(255,255,255,.25)}
+.rights-branch .amount{display:block;font-family:var(--en);font-size:27px;line-height:1.15;letter-spacing:.04em}
+.rights-branch h3{margin:10px 0 8px;color:inherit;font-size:19px;letter-spacing:.08em}
+.rights-branch p{color:inherit;font-size:14px;line-height:1.8;opacity:.86}
+.diagram-note{margin-top:21px;text-align:center;color:#685746;font-size:13.5px;line-height:1.8}
+.contact{background:linear-gradient(145deg,#F8F2E8 0%,#E5E2CD 100%);color:#3D332A;border:1px solid rgba(165,130,84,.26);box-shadow:0 18px 44px rgba(60,42,20,.1)}
+.contact img{opacity:.78;filter:saturate(.7) brightness(.72)}
+.contact h2{color:#463522}
+.contact-note{color:#594F47}
+.contact-actions a{border-color:#606330;color:#50562C;background:rgba(255,255,255,.34)}
+.contact-actions .primary{background:linear-gradient(145deg,#C5A26F,#A58254);color:#20180F;border-color:#A58254;box-shadow:0 10px 22px rgba(135,104,63,.2)}
+footer{background:#303424;border-top:1px solid rgba(165,130,84,.26);padding:36px 0 28px}
+.footer-inner{display:flex;flex-direction:column;align-items:center;gap:14px}
+.footer-links{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;align-items:center}
+.footer-links a{color:rgba(245,240,232,.62);display:flex;align-items:center;transition:color .3s,transform .2s}
+.footer-links a:hover{color:#D3B783;transform:translateY(-2px)}
+.footer-links svg{display:block}
+.footer-brand-mark{opacity:.78;filter:saturate(.78) brightness(.94)}
+.footer-copy{color:rgba(245,240,232,.55)}
+@media(max-width:900px){.soft-3d-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.flow-node:not(:last-child):after{display:none}.flow-node:last-child{grid-column:1/-1;max-width:320px;width:100%;justify-self:center}}
+@media(max-width:680px){.soft-3d-flow{grid-template-columns:1fr;gap:27px}.flow-node,.flow-node:last-child{grid-column:auto;max-width:none;min-height:0}.flow-node:not(:last-child):after{display:block;top:auto;right:50%;bottom:-29px;width:3px;height:29px;background:linear-gradient(#A58254,#D0B47F)}.rights-core{width:230px;margin-bottom:38px}.rights-core:after{height:29px}.rights-branches{grid-template-columns:1fr;gap:27px}.rights-branches:before{display:none}.rights-branch:before{left:50%;top:-28px;height:28px}.flow-actions{flex-direction:column}.flow-actions .button{width:100%}}
+@media(prefers-reduced-motion:reduce){.flow-node,.rights-branch{transition:none}}
+
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -232,17 +283,29 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
 
   <section class="section" id="join">
     <div class="section-heading"><span class="section-kicker">NEW MEMBERS</span><h2>新會員如何加入</h2></div>
-    <p class="detail-intro">依序完成以下三個步驟，即可取得 4 個月會員資格。內容不對外公開，符合資格後由靈元院邀請加入。</p>
-    <div class="steps">
-      <article class="step"><h3>完成指定線上課程</h3><p>先完成「身心養護療遇頻道會員 4 堂必修課」，了解頻道的養護觀念、內容方向與會員使用方式。</p><a class="button" href="https://reurl.cc/5v39nq" target="_blank" rel="noopener">查看 4 堂必修課程</a></article>
-      <article class="step"><h3>單筆訂購營養補品滿 NT$8,000</h3><p>完成指定課程後，單筆訂購營養補品滿 NT$8,000，即符合新會員的基本入會條件。</p><a class="button" href="https://www.beclass.com/rid=305025f6954f8a0496d8" target="_blank" rel="noopener">前往非會員訂購單</a></article>
-      <article class="step"><h3>受邀加入不公開 Telegram 頻道</h3><p>完成上述條件後，將由靈元院邀請加入不公開的「身心養護療遇頻道」，開始 4 個月會員會期。</p></article>
+    <p class="detail-intro">依序完成以下五個步驟，即可取得 4 個月會員資格。內容不對外公開，符合資格後由靈元院邀請加入。</p>
+    <div class="soft-3d-flow" aria-label="新會員加入流程">
+      <article class="flow-node tone-brown"><span class="flow-index">STEP 01</span><div class="flow-icon">課</div><h3>完成四堂必修課</h3><p>先理解頻道的養護觀念、修持方向與會員使用方式。</p></article>
+      <article class="flow-node tone-cream"><span class="flow-index">STEP 02</span><div class="flow-icon">訂</div><h3>單筆訂購滿 NT$8,000</h3><p>完成課程後，單筆訂購營養補品達到入會條件。</p></article>
+      <article class="flow-node tone-gold"><span class="flow-index">STEP 03</span><div class="flow-icon">核</div><h3>靈元院確認資格</h3><p>行政團隊確認課程及訂購紀錄，無須另外申請。</p></article>
+      <article class="flow-node tone-cream"><span class="flow-index">STEP 04</span><div class="flow-icon">邀</div><h3>受邀加入頻道</h3><p>由靈元院邀請加入不公開的 Telegram 會員頻道。</p></article>
+      <article class="flow-node tone-olive"><span class="flow-index">STEP 05</span><div class="flow-icon">會</div><h3>取得四個月會籍</h3><p>從首次加入日期起，開始享有會員內容與相關權益。</p></article>
     </div>
+    <div class="flow-actions"><a class="button" href="https://reurl.cc/5v39nq" target="_blank" rel="noopener">查看四堂必修課</a><a class="button" href="https://www.beclass.com/rid=305025f6954f8a0496d8" target="_blank" rel="noopener">前往非會員訂購單</a></div>
   </section>
 
   <section class="section" id="details">
     <div class="section-heading"><span class="section-kicker">MEMBERSHIP DETAILS</span><h2>會籍與權限說明</h2></div>
     <p class="detail-intro">以下集中說明續會、影片、文章與回饋規則，無須在不同段落之間反覆查找。</p>
+    <div class="rights-3d-map" aria-label="會員消費資格與權益關係">
+      <div class="rights-core"><small>MEMBERSHIP CORE</small><strong>一般會員</strong><span>維持有效會員身分</span></div>
+      <div class="rights-branches">
+        <article class="rights-branch"><span class="amount">NT$6,000</span><h3>舊會員續會</h3><p>單筆購買營養補品滿額，從原到期日往後延長 4 個月。</p></article>
+        <article class="rights-branch gold"><span class="amount">NT$15,000</span><h3>當期雙重回饋</h3><p>單筆滿額，可獲得 NT$1,000 回饋金與贊助專屬文章權限。</p></article>
+        <article class="rights-branch olive"><span class="amount">NT$100,000</span><h3>次年度靈極會員</h3><p>年度累積訂購營養品滿額，次一年度升級為靈極會員。</p></article>
+      </div>
+      <p class="diagram-note">三項條件分別代表續會、當期加開權益與年度升級，並不是三種不同的入會方案。</p>
+    </div>
     <div class="policy-grid">
       <article class="policy-card green"><h3>舊會員續會</h3><p>單筆購買營養補品滿 NT$6,000，即可續會 4 個月；不需重修課程，也不需重新申請。</p><div class="example">續會一律從原到期日往後延長。例：原到期日為 2026/7/30，續會後為 2026/11/30。</div></article>
       <article class="policy-card dark"><h3>影片觀看</h3><p>有效會期內，可不限次數觀看自首次加入日起發布、且符合會員等級的影片。</p><p>會籍到期後權限停止；續會後仍可回看符合資格的累積影片。</p></article>
@@ -276,7 +339,7 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
   <section class="contact"><img src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><h2>從照顧自己開始，走穩每天的修持</h2><p class="contact-note">如果您認同身體、心念與靈性並不是彼此分開的三件事，歡迎從四堂必修課開始，理解這個頻道的養護與修持方向。</p><div class="contact-actions"><a class="primary" href="https://reurl.cc/5v39nq" target="_blank" rel="noopener">開始四堂必修課</a><a href="https://t.me/lyyuan" target="_blank" rel="noopener">詢問靈元院行政團隊</a></div></section>
 </div></main>
 
-<footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>
+<footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" rel="noopener" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5 17 7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>
 <div class="mobile-join"><a href="#join">查看加入方式</a></div>
 <script src="/mobile-nav.js"></script>
 </body>
