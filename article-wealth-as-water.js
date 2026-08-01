@@ -37,6 +37,8 @@ export const wealthAsWaterArticle = {
 
 真正決定財富的，不只是賺錢的方法，而是生命如何與金錢相處。
 
+![股市下跌時，人如何面對金錢、得失與安全感](assets/articles/thumbnails/market-crash.jpg?v=20260801-article-body-1)
+
 <!-- paid-only -->
 
 ## 金錢為什麼會放大人的不安
