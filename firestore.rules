@@ -10,6 +10,24 @@ service cloud.firestore {
       return signedIn() && request.auth.token.email in ["lyyuan03@gmail.com"];
     }
 
+    function wellnessMember() {
+      return get(/databases/$(database)/documents/memberAccess/$(request.auth.token.email));
+    }
+
+    function isActiveWellnessMember() {
+      return signedIn()
+        && wellnessMember().data.status == "active"
+        && (wellnessMember().data.memberType == "wellness-channel"
+          || wellnessMember().data.memberLevel in ["wellness", "lingji"]);
+    }
+
+    function isLingjiMember() {
+      return isActiveWellnessMember()
+        && (wellnessMember().data.memberLevel == "lingji"
+          || wellnessMember().data.wellnessLevel in ["lingji", "wellness-premium"]
+          || wellnessMember().data.annualSpend >= 100000);
+    }
+
     match /articles/{articleId} {
       allow read: if resource.data.status == "published" || isAdmin();
       allow create, update, delete: if isAdmin();
@@ -64,6 +82,16 @@ service cloud.firestore {
     match /memberAccess/{memberEmail} {
       allow read: if isAdmin()
         || (signedIn() && request.auth.token.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /memberVideos/{videoId} {
+      allow read: if isAdmin() || (
+        isActiveWellnessMember()
+        && resource.data.status == "published"
+        && (resource.data.accessLevel == "wellness"
+          || (resource.data.accessLevel == "lingji" && isLingjiMember()))
+      );
       allow create, update, delete: if isAdmin();
     }
 
