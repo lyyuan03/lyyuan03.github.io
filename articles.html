@@ -695,6 +695,14 @@ html{scroll-behavior:smooth}
 .article-toc ol{position:static!important;max-height:none!important;overflow:visible!important}
 .article-toc.is-open{height:auto!important}
 </style>
+<style id="article-card-consistency-v1">
+/* 統一桌面版文章卡片高度與資訊列位置；手機版維持自適應。 */
+.article-card-content{display:flex;flex:1;flex-direction:column}
+.article-card .article-engagement.is-compact{margin-top:auto}
+@media(min-width:761px){
+  .article-card{min-height:507px}
+}
+</style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
 </head>
