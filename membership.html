@@ -142,6 +142,29 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
 .footer-inner{display:flex;flex-direction:column;align-items:center;gap:14px}
 .footer-brand-mark{display:block;width:128px;max-width:34vw;height:auto;opacity:.64;filter:saturate(.72) brightness(.78)}
 .footer-copy{font-size:11px;color:rgba(245,240,232,.22);letter-spacing:.12em}
+
+.hero-logo{display:block;width:132px;max-width:36vw;height:auto;margin:0 auto 22px;opacity:.88;filter:saturate(.78) brightness(.96)}
+.hero-version{display:block;margin-top:13px;color:rgba(245,240,232,.68);font-family:var(--sans);font-size:12px;letter-spacing:.14em}
+.philosophy{margin-top:24px;padding:46px 50px;background:#182017;color:rgba(245,240,232,.9);border:1px solid rgba(165,130,84,.35);box-shadow:0 18px 44px rgba(30,25,16,.12)}
+.philosophy-label{display:block;margin-bottom:14px;color:var(--gold-light);font-family:var(--en);font-size:11px;letter-spacing:.32em}
+.philosophy h2{margin-bottom:18px;color:var(--cream);font-size:27px;line-height:1.65;letter-spacing:.12em}
+.philosophy p{font-family:var(--serif);font-size:17px;line-height:2.15}
+.philosophy-signature{margin-top:18px;color:var(--gold-light);font-family:var(--serif);font-size:14px;letter-spacing:.12em}
+.detail-intro{max-width:690px;margin:-16px auto 30px;text-align:center;color:#594F47;font-family:var(--serif);font-size:16px;line-height:2}
+.comparison-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.comparison-card{padding:34px 32px;background:rgba(255,252,247,.8);border:1px solid rgba(165,130,84,.24);box-shadow:0 12px 30px rgba(60,42,20,.08)}
+.comparison-card.featured{background:#303424;color:#F5F0E8;border-color:rgba(197,162,111,.35)}
+.comparison-card small{display:block;margin-bottom:8px;color:#87683F;font-family:var(--en);font-size:11px;letter-spacing:.26em}
+.comparison-card.featured small{color:var(--gold-light)}
+.comparison-card h3{margin-bottom:17px;color:inherit;font-size:22px;letter-spacing:.1em}
+.comparison-card ul{list-style:none;padding:0}
+.comparison-card li{position:relative;padding:12px 0 12px 23px;border-top:1px solid rgba(89,79,71,.13);font-size:15px;line-height:1.85}
+.comparison-card.featured li{border-color:rgba(245,240,232,.12)}
+.comparison-card li:before{content:'◆';position:absolute;left:0;top:1.35em;color:var(--gold);font-size:8px}
+.contact-note{max-width:650px;margin:0 auto 24px;color:rgba(245,240,232,.72);font-family:var(--serif);font-size:16px;line-height:2}
+.contact-actions .primary{background:#A58254;color:#17120C;border-color:#A58254}
+@media(max-width:680px){.hero-logo{width:112px;margin-bottom:17px}.philosophy{padding:34px 24px}.philosophy h2{font-size:23px}.philosophy p{font-size:16px}.comparison-cards{grid-template-columns:1fr}.comparison-card{padding:27px 23px}.detail-intro{margin-top:-12px;font-size:15px}.contact-actions{flex-direction:column}.contact-actions a{width:100%}}
+
 @media(max-width:900px){.nav-inner{justify-content:flex-start;overflow-x:auto;padding:0 18px}.nav-links{min-width:max-content;gap:18px}.hero{min-height:510px;padding-top:122px}}
 @media(max-width:680px){body{padding-bottom:67px}main{padding:62px 16px 76px}.hero{min-height:560px;padding:112px 18px 70px}.hero h1{font-size:30px;letter-spacing:.09em}.hero-subtitle{font-size:16px}.hero-promise{gap:7px}.hero-promise span{padding:6px 10px;font-size:12px}.intro{padding:28px 24px;font-size:16.5px}.value-strip{grid-template-columns:1fr}.value-item{min-height:0;padding:22px 23px}.visual-story,.visual-story.reverse{grid-template-columns:1fr;min-height:0}.visual-story.reverse .visual-story-image{order:0}.visual-story-image{height:240px;min-height:0}.visual-story-copy{padding:30px 24px}.visual-story h2{font-size:22px}.section{margin-top:54px}.benefits,.policy-grid{grid-template-columns:1fr}.benefit:last-child{grid-column:auto}.benefit{min-height:0;padding:25px 23px}.policy-card{padding:25px 23px}.channel-box,.reason,.notes{padding:28px 23px}.step{padding:72px 23px 27px}.step:before{left:23px;top:21px}.contact{padding:42px 22px}.nav-links>li>a,.nav-links>li>span{font-size:12.5px}.mobile-join{position:fixed;left:0;right:0;bottom:0;z-index:120;display:flex;align-items:center;justify-content:center;min-height:67px;background:rgba(20,28,17,.97);border-top:1px solid rgba(197,162,111,.42);box-shadow:0 -8px 24px rgba(0,0,0,.24)}.mobile-join a{width:calc(100% - 32px);padding:11px 18px;text-align:center;background:#A58254;color:#17120C;font-family:var(--serif);font-weight:500;letter-spacing:.13em}}
 </style>
@@ -160,122 +183,97 @@ footer{background:#080d07;border-top:1px solid rgba(165,130,84,.1);padding:40px 
 </ul></div></nav>
 
 <header class="hero"><div class="hero-inner">
-  <p class="eyebrow">MEMBERSHIP · WELLNESS · SPIRITUAL PRACTICE</p>
+  <img class="hero-logo" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院">
+  <p class="eyebrow">LING YUAN YUAN · MEMBERSHIP</p>
   <h1>身心養護療遇頻道</h1>
-  <p class="hero-subtitle">2026 年 8 月會員制度新版</p>
-  <div class="hero-promise"><span>會期內影片不限次數觀看</span><span>從原到期日往後延長</span><span>滿 NT$15,000 新增雙重回饋</span></div>
-  <a class="hero-cta" href="#join">了解如何加入</a>
-  <div class="hero-rule">◈</div>
+  <p class="hero-subtitle">從身體的照顧開始，讓修持回到每天的生活<span class="hero-version">2026 年 8 月會員制度新版</span></p>
+  <div class="hero-promise"><span>照顧修持的根基</span><span>安住日常的心念</span><span>建立穩定的靈性方向</span></div>
+  <a class="hero-cta" href="#join">查看加入方式</a><div class="hero-rule">◈</div>
 </div></header>
 
 <main><div class="content">
-  <div class="intro">身心養護療遇頻道，是靈元院為重視養生、身心安定與靈性修練的會員所設立。2026 年 8 月起，會員制度將以更清楚的入會、續會及內容權限辦理，讓每一位會員都能明確掌握自己的會期與觀看權益。</div>
+  <div class="intro">修行不只發生在靜坐、誦經與課堂之中。一個人的飲食、睡眠、情緒與生活節奏，都會影響內在感受與修持狀態。身心養護療遇頻道，不把養護與靈修分成兩件事，而是陪伴會員從身體開始，重新整理生活、安住心念，讓修持真正回到每天的日常。</div>
+
   <div class="value-strip" aria-label="會員核心價值">
-    <div class="value-item"><small>BODY</small><strong>讓身體得到更細緻的照顧</strong><p>從養生資訊到營養補品食用諮詢，陪您更有方向地照顧自己。</p></div>
-    <div class="value-item"><small>MIND</small><strong>在日常中安定身心</strong><p>透過影音、文章與練習，把修持真正帶回每天的生活。</p></div>
-    <div class="value-item"><small>SPIRIT</small><strong>讓靈性修練走得更穩</strong><p>建立清楚的觀念與節奏，減少摸索，也避免走入偏差。</p></div>
+    <div class="value-item"><small>BODY</small><strong>照顧身體，穩住修持的根基</strong><p>從飲食、營養補充與生活節奏，學習更細緻地照顧自己。</p></div>
+    <div class="value-item"><small>MIND</small><strong>整理心念，回到內在的安定</strong><p>透過影音、文章與練習，把理解帶回每天的選擇。</p></div>
+    <div class="value-item"><small>SPIRIT</small><strong>建立方向，讓靈性修練走得更穩</strong><p>在清楚的觀念與持續陪伴中，減少摸索，也避免偏離。</p></div>
   </div>
+
   <aside class="visual-story" aria-label="從日常養護開始">
     <img class="visual-story-image" src="/assets/membership/herbal-tea-1410565.jpg" alt="盛裝草本茶飲與香草的杯具" width="1280" height="797" loading="lazy">
-    <div class="visual-story-copy"><span class="visual-story-kicker">EVERYDAY WELLNESS</span><h2>養護，不只是一段課程<br>而是每天的選擇</h2><p>從飲食、營養補充到生活節奏，會員內容陪您把養生觀念落實在日常，慢慢建立適合自己的照顧方式。</p><p class="visual-credit">Photo: congerdesign／<a href="https://pixabay.com/photos/herbal-tea-tea-herbs-cups-teacups-1410565/" target="_blank" rel="noopener">Pixabay</a></p></div>
+    <div class="visual-story-copy"><span class="visual-story-kicker">PRACTICE IN DAILY LIFE</span><h2>養護，是修行進入生活的第一步</h2><p>真正穩定的修持，不只在特定時刻發生。當我們開始留意身體、飲食、睡眠與情緒，便是在為內在整理出一個更安定的空間。</p><p class="visual-credit">Photo: congerdesign／<a href="https://pixabay.com/photos/herbal-tea-tea-herbs-cups-teacups-1410565/" target="_blank" rel="noopener">Pixabay</a></p></div>
   </aside>
 
   <section class="section" id="benefits">
     <div class="section-heading"><span class="section-kicker">MEMBER BENEFITS</span><h2>新版會員七大權益</h2></div>
     <div class="benefits">
-      <article class="benefit"><span class="number">BENEFIT 01</span><h3>4 個月會員資格</h3><ul><li><strong>新會員：</strong>符合入會條件後，自首次加入日期起享有 4 個月會員資格。</li><li><strong>舊會員：</strong>符合續會條件後，自原會員到期日往後延長 4 個月。</li></ul></article>
-      <article class="benefit"><span class="number">BENEFIT 02</span><h3>會期內影片不限次數觀看</h3><p>只要會員資格有效，符合會員等級與加入日期的影片皆可不限次數觀看。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 03</span><h3>養生健康與靈性修練內容</h3><p>不定期分享養生健康資訊、靈性修練影音、音檔與文章，陪伴會員在日常中照顧身心。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 04</span><h3>會員本人專屬諮詢</h3><p>提供會員本人養生、健康與營養補品食用相關諮詢，協助釐清個人使用上的疑問。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 05</span><h3>課程、旅行團與促銷專屬優惠</h3><p>部分課程、靈元院旅行團及促銷活動，會員可享專屬優惠價或優先報名資格；實際內容依各次公告為準。</p></article>
-      <article class="benefit"><span class="number">BENEFIT 06</span><h3>滿額回饋與文章權限</h3><p>一般會員於當期會員資格有效期間內，單筆消費滿 NT$15,000，即可享有以下權益：</p><ul><li><strong>NT$1,000 回饋金：</strong>限下次消費使用，並須於當期會員資格有效期間內使用完畢。</li><li><strong>「贊助專屬文章」免費瀏覽權限：</strong>可於當期會員資格有效期間內，免費瀏覽靈元院官網文選的「贊助專屬文章」。本項權益於當期會期屆滿後即失效；續會後如欲繼續瀏覽，須於新一期會期內再次單筆消費滿 NT$15,000。</li></ul></article>
-      <article class="benefit"><span class="number">BENEFIT 07</span><h3>升級靈極會員</h3><p>一般會員於年度結算區間內訂購營養品累積滿 NT$100,000，次一年度可升級為「靈極會員」。</p><ul><li>次一年度訂購會員營養品享 9 折專屬優惠。</li><li>享有年度健康運勢預測。</li><li>享有靈極會員專屬影片。</li><li>享有靈元院官網文選「贊助專屬文章」免費瀏覽權限。</li><li>結算區間為每年 2 月 1 日至次年 1 月 31 日；享有上述權益期間，須持續維持有效會員身分。</li></ul></article>
+      <article class="benefit"><span class="number">BENEFIT 01</span><h3>4 個月會員資格</h3><p>新會員自首次加入日起算；舊會員續會則從原到期日往後延長，不會損失尚未使用完的會期。</p></article>
+      <article class="benefit"><span class="number">BENEFIT 02</span><h3>會期內影片不限次數觀看</h3><p>會員資格有效期間內，可不限次數觀看自首次加入日起發布、且符合自身會員等級的影片。</p></article>
+      <article class="benefit"><span class="number">BENEFIT 03</span><h3>養護與靈性修練內容</h3><p>不定期分享宇色老師親錄的影音、音檔與文章，將身體照顧、心念整理與靈性修練帶回日常。</p></article>
+      <article class="benefit"><span class="number">BENEFIT 04</span><h3>會員本人專屬諮詢</h3><p>提供會員本人養護觀念、營養補品食用與生活調整相關諮詢，協助釐清實際使用上的疑問。</p></article>
+      <article class="benefit"><span class="number">BENEFIT 05</span><h3>課程、旅行團與促銷專屬優惠</h3><p>部分課程、靈元院旅行團及促銷活動，可享會員專屬優惠價或優先報名資格，依各次公告為準。</p></article>
+      <article class="benefit"><span class="number">BENEFIT 06</span><h3>滿額回饋與文章權限</h3><p>一般會員於有效會期內單筆消費滿 NT$15,000，可獲得 NT$1,000 回饋金，並開通當期「贊助專屬文章」免費瀏覽權限。</p></article>
+      <article class="benefit"><span class="number">BENEFIT 07</span><h3>升級靈極會員</h3><p>年度結算區間內訂購營養品累積滿 NT$100,000，次一年度可升級為靈極會員，享有 9 折、年度健康運勢預測、專屬影片及贊助專屬文章等權益。</p></article>
     </div>
   </section>
 
-  <section class="section">
-    <div class="channel-box"><h3>「靈元院＿身心養護療遇頻道」是什麼？</h3><p>「靈元院＿身心養護療遇頻道」由靈元院行政團隊主持。符合資格並受邀加入不公開會員頻道後，您將獲得一個有助於身心靈全方位療遇的空間。</p><p>我們提供各種不對外公開、由宇色老師親錄的音檔與文章，內容包括冥想、營養補品食用方式、課程與產品會員專屬優先訂購資格等，協助會員在快速變化的生活中保持平衡、照顧健康。</p></div>
+  <section class="philosophy" aria-label="宇色老師的身心修持觀">
+    <span class="philosophy-label">THE WAY OF CULTIVATION</span>
+    <h2>身體不是修行之外的事<br>而是承載修行的所在</h2>
+    <p>這個頻道不是只談健康，也不是把靈修變成抽象的道理。內容由宇色老師親自規劃與錄製，從身體的訊息、生活的節奏到心念的變化，陪伴會員看見：真正的修持，往往就藏在每天如何吃飯、休息、選擇與安頓自己的過程裡。</p>
+    <div class="philosophy-signature">宇色老師內容規劃｜靈元院行政團隊協助營運</div>
   </section>
 
   <aside class="visual-story reverse olive" aria-label="在日常中安定身心">
     <img class="visual-story-image" src="/assets/membership/woman-yoga-meditation-5380651.jpg" alt="女性在自然環境中靜坐調息" width="1280" height="853" loading="lazy">
-    <div class="visual-story-copy"><span class="visual-story-kicker">A STEADIER PRACTICE</span><h2>有人陪伴，更容易把修練走穩</h2><p>透過持續更新的影音、文章與練習，在需要時回來觀看，讓身心安定與靈性修練不再只是偶爾想起的事。</p><p class="visual-credit">Photo: Juuucy／<a href="https://pixabay.com/photos/woman-yoga-meditation-relaxation-5380651/" target="_blank" rel="noopener">Pixabay</a></p></div>
+    <div class="visual-story-copy"><span class="visual-story-kicker">A STEADIER PRACTICE</span><h2>有人陪伴，更容易把修練走穩</h2><p>透過持續更新的影音、文章與練習，在需要時回來觀看。讓安定不再只是偶爾想起的事，而能逐漸成為生活的一部分。</p><p class="visual-credit">Photo: Juuucy／<a href="https://pixabay.com/photos/woman-yoga-meditation-relaxation-5380651/" target="_blank" rel="noopener">Pixabay</a></p></div>
   </aside>
 
   <section class="section" id="join">
     <div class="section-heading"><span class="section-kicker">NEW MEMBERS</span><h2>新會員如何加入</h2></div>
+    <p class="detail-intro">依序完成以下三個步驟，即可取得 4 個月會員資格。內容不對外公開，符合資格後由靈元院邀請加入。</p>
     <div class="steps">
-      <article class="step"><h3>完成指定線上課程</h3><p>新會員須先完成「身心療遇養護頻道會員 4 堂必修課」，了解頻道的養護觀念、內容方向與會員使用方式，再進入後續入會流程。</p><a class="button" href="https://reurl.cc/5v39nq" target="_blank" rel="noopener">查看 4 堂必修課程</a></article>
+      <article class="step"><h3>完成指定線上課程</h3><p>先完成「身心養護療遇頻道會員 4 堂必修課」，了解頻道的養護觀念、內容方向與會員使用方式。</p><a class="button" href="https://reurl.cc/5v39nq" target="_blank" rel="noopener">查看 4 堂必修課程</a></article>
       <article class="step"><h3>單筆訂購營養補品滿 NT$8,000</h3><p>完成指定課程後，單筆訂購營養補品滿 NT$8,000，即符合新會員的基本入會條件。</p><a class="button" href="https://www.beclass.com/rid=305025f6954f8a0496d8" target="_blank" rel="noopener">前往非會員訂購單</a></article>
-      <article class="step"><h3>受邀加入不公開 Telegram 頻道</h3><p>完成上述條件後，您將受邀加入不公開 Telegram「LYY＿身心養護療遇頻道」，享有 4 個月期會員資格及相關優惠。</p></article>
+      <article class="step"><h3>受邀加入不公開 Telegram 頻道</h3><p>完成上述條件後，將由靈元院邀請加入不公開的「身心養護療遇頻道」，開始 4 個月會員會期。</p></article>
     </div>
   </section>
 
-  <section class="section" id="renew">
-    <div class="section-heading"><span class="section-kicker">MEMBERSHIP RENEWAL</span><h2>舊會員續會方式</h2></div>
+  <section class="section" id="details">
+    <div class="section-heading"><span class="section-kicker">MEMBERSHIP DETAILS</span><h2>會籍與權限說明</h2></div>
+    <p class="detail-intro">以下集中說明續會、影片、文章與回饋規則，無須在不同段落之間反覆查找。</p>
     <div class="policy-grid">
-      <article class="policy-card green"><h3>消費滿 NT$6,000，續會 4 個月</h3><p>舊會員購買營養補品滿 NT$6,000，即可延長會員資格 4 個月。</p><ul><li>不需重新完成線上課程。</li><li>不需重新申請會員資格。</li><li>提前續會不會損失尚未使用完的會期。</li></ul></article>
-      <article class="policy-card"><h3>從原到期日往後延長</h3><p>續會一律以原會員到期日往後延長 4 個月，不會從提前消費當日重新計算。</p><div class="example">例如：原到期日為 2026/7/30，續會後到期日為 2026/11/30。</div></article>
+      <article class="policy-card green"><h3>舊會員續會</h3><p>單筆購買營養補品滿 NT$6,000，即可續會 4 個月；不需重修課程，也不需重新申請。</p><div class="example">續會一律從原到期日往後延長。例：原到期日為 2026/7/30，續會後為 2026/11/30。</div></article>
+      <article class="policy-card dark"><h3>影片觀看</h3><p>有效會期內，可不限次數觀看自首次加入日起發布、且符合會員等級的影片。</p><p>會籍到期後權限停止；續會後仍可回看符合資格的累積影片。</p></article>
+      <article class="policy-card gold"><h3>單筆滿 NT$15,000</h3><p>保留信用卡付款優惠，並獲得 NT$1,000 回饋金及當期「贊助專屬文章」免費瀏覽權限。</p><p>回饋金限下次消費使用，不得折抵當次訂單或兌換現金，須於當期有效會期內使用完畢。</p></article>
+      <article class="policy-card"><h3>靈極會員</h3><p>結算區間為每年 2 月 1 日至次年 1 月 31 日。一般會員於區間內訂購營養品累積滿 NT$100,000，次一年度可升級。</p><p>享有營養品 9 折、年度健康運勢預測、靈極會員專屬影片及贊助專屬文章；享有權益期間須持續維持有效會員身分。</p></article>
     </div>
-  </section>
-
-  <section class="section" id="video-rights">
-    <div class="section-heading"><span class="section-kicker">VIDEO ACCESS</span><h2>會員影片觀看制度</h2></div>
-    <div class="policy-grid">
-      <article class="policy-card dark"><h3>有效會期內不限次數觀看</h3><p>一般會員與靈極會員影片，在會員資格有效期間內皆可不限次數觀看，不再限制觀看兩週。</p><p>會員到期後，所有會員影片的觀看權限將停止。</p></article>
-      <article class="policy-card gold"><h3>從首次加入日期開始累積</h3><p>會員可觀看首次加入日期之後發布，且符合自身會員等級的影片；首次加入前發布的影片不列入觀看範圍。</p><p>續會後，仍可回看自首次加入日起累積的符合資格影片，首次加入日期不會重新計算。</p></article>
-    </div>
-  </section>
-
-  <section class="section" id="article-rights">
-    <div class="section-heading"><span class="section-kicker">ARTICLE ACCESS</span><h2>官網文章閱讀權限</h2></div>
-    <div class="policy-grid">
-      <article class="policy-card"><h3>一般會員</h3><p>可閱讀免費公開文章；一般會員資格本身不包含官網付費文章。</p></article>
-      <article class="policy-card green"><h3>一般會員單筆滿 NT$15,000</h3><p>除原有會員權益外，新增官網付費文章閱讀權限，並享有 NT$1,000 回饋金。</p></article>
-      <article class="policy-card dark"><h3>靈極會員</h3><p>在會員資格有效期間內，可閱讀官網全部付費文章，並可觀看一般會員及靈極會員專屬影片。</p></article>
-      <article class="policy-card gold"><h3>影片與文章分開計算</h3><p>會員可觀看哪些影片，以及能否閱讀付費文章，會依會員等級與消費權益分別判定，兩者互不影響。</p></article>
-    </div>
-  </section>
-
-  <section class="section" id="spending">
-    <div class="section-heading"><span class="section-kicker">MEMBER REWARDS</span><h2>會員消費與回饋</h2></div>
-    <div class="policy-grid">
-      <article class="policy-card"><h3>單筆消費滿 NT$6,000</h3><p>不提供商品折扣，可作為舊會員續會 4 個月的資格。</p></article>
-      <article class="policy-card green"><h3>單筆消費滿 NT$15,000</h3><ul><li>保留信用卡付款優惠。</li><li>贈送 NT$1,000 回饋金。</li><li>開放官網付費文章閱讀權限。</li></ul></article>
-    </div>
-    <div class="notice-banner"><strong>NT$1,000 回饋金使用方式</strong><p>回饋金不得折抵當次訂單，僅限下一次消費使用；不得兌換現金，並須於會員資格有效期間內使用。會員到期後，尚未使用的回饋金將無法繼續使用。</p></div>
   </section>
 
   <section class="section" id="comparison">
-    <div class="section-heading"><span class="section-kicker">MEMBERSHIP COMPARISON</span><h2>會員權益比較</h2></div>
-    <div class="rights-table-wrap"><table class="rights-table">
-      <thead><tr><th>會員權益</th><th>一般會員</th><th>一般會員<br>單筆滿 NT$15,000</th><th>靈極會員</th></tr></thead>
-      <tbody>
-        <tr><td>一般會員影片</td><td class="yes">可觀看</td><td class="yes">可觀看</td><td class="yes">可觀看</td></tr>
-        <tr><td>靈極會員專屬影片</td><td class="no">不可觀看</td><td class="no">不可觀看</td><td class="yes">可觀看</td></tr>
-        <tr><td>免費公開文章</td><td class="yes">可閱讀</td><td class="yes">可閱讀</td><td class="yes">可閱讀</td></tr>
-        <tr><td>官網付費文章</td><td class="no">不可閱讀</td><td class="yes">可閱讀</td><td class="yes">可閱讀</td></tr>
-        <tr><td>信用卡付款優惠</td><td class="condition">單筆滿 NT$15,000</td><td class="yes">適用</td><td class="condition">單筆滿 NT$15,000</td></tr>
-        <tr><td>NT$1,000 回饋金</td><td class="condition">單筆滿 NT$15,000</td><td class="yes">贈送</td><td class="condition">單筆滿 NT$15,000 贈送</td></tr>
-        <tr><td>影片觀看期限</td><td>有效會期內不限次數</td><td>有效會期內不限次數</td><td>有效會期內不限次數</td></tr>
-        <tr><td>舊會員續會</td><td>滿 NT$6,000 延長 4 個月</td><td>相同</td><td>相同</td></tr>
-      </tbody>
-    </table></div>
+    <div class="section-heading"><span class="section-kicker">MEMBERSHIP COMPARISON</span><h2>兩種會員身分，一次看清楚</h2></div>
+    <div class="comparison-cards">
+      <article class="comparison-card"><small>GENERAL MEMBER</small><h3>一般會員</h3><ul>
+        <li>新會員完成必修課並單筆滿 NT$8,000</li><li>會期 4 個月，舊會員單筆滿 NT$6,000 可續會</li><li>觀看一般會員影片</li><li>閱讀免費公開文章</li><li>當期單筆滿 NT$15,000，可加開贊助專屬文章並獲得 NT$1,000 回饋金</li>
+      </ul></article>
+      <article class="comparison-card featured"><small>LINGJI MEMBER</small><h3>靈極會員</h3><ul>
+        <li>年度累積訂購營養品滿 NT$100,000</li><li>須持續維持有效會員身分</li><li>觀看一般會員及靈極會員專屬影片</li><li>閱讀贊助專屬文章</li><li>次一年度營養品 9 折及年度健康運勢預測</li>
+      </ul></article>
+    </div>
   </section>
 
   <section class="section" id="notes">
-    <div class="section-heading"><span class="section-kicker">MEMBERSHIP NOTES</span><h2>會員頻道注意事項</h2></div>
+    <div class="section-heading"><span class="section-kicker">MEMBERSHIP NOTES</span><h2>會員注意事項</h2></div>
     <div class="notes"><ol>
-      <li>請務必依照上述步驟正確加入頻道，才能享有會員權益。</li>
-      <li>新會員必須完成指定線上課程，並單筆訂購營養補品滿 NT$8,000，符合資格後由靈元院邀請加入。</li>
-      <li>舊會員購買營養補品滿 NT$6,000，可自原到期日往後延長會員資格 4 個月。</li>
-      <li>若會員期限已屆，您將自動退出會員頻道，恕不另行個別通知。</li>
+      <li>會員期限屆滿後，將自動退出會員頻道，恕不另行個別通知。</li>
+      <li>一般會員於新一期會期內如欲再次取得贊助專屬文章權限，須於該期再次單筆消費滿 NT$15,000。</li>
       <li>會員促銷活動原則上每年規劃約 2 次，其餘時間依正常會員制度辦理。</li>
-      <li>靈元院保有會員頻道相關細節及活動辦法修改之權利，若有異動，將以公告方式通知。</li>
+      <li>靈元院保有會員頻道相關細節及活動辦法修改之權利；若有異動，將以公告方式通知。</li>
     </ol></div>
   </section>
 
-  <section class="contact"><img src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><h2>會員加入與相關詢問</h2><p>如對課程、訂購方式或會員資格有任何疑問，請透過靈元院行政團隊聯繫帳號洽詢。</p><div class="contact-actions"><a href="https://t.me/lyyuan" target="_blank" rel="noopener">Telegram 聯繫帳號</a><a href="https://reurl.cc/RObGjg" target="_blank" rel="noopener">最新活動行事曆</a></div></section>
+  <section class="contact"><img src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><h2>從照顧自己開始，走穩每天的修持</h2><p class="contact-note">如果您認同身體、心念與靈性並不是彼此分開的三件事，歡迎從四堂必修課開始，理解這個頻道的養護與修持方向。</p><div class="contact-actions"><a class="primary" href="https://reurl.cc/5v39nq" target="_blank" rel="noopener">開始四堂必修課</a><a href="https://t.me/lyyuan" target="_blank" rel="noopener">詢問靈元院行政團隊</a></div></section>
 </div></main>
 
 <footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>
