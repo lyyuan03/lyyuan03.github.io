@@ -24,6 +24,23 @@ const THUMBNAIL_SETTING_KEYS = [
   "thumbnailImage"
 ];
 
+const RECOVERY_SETTINGS = {
+  "2026-guanyin-vow-lamp-record-v2": {
+    thumbnailFit: "cover",
+    thumbnailPositionX: 0,
+    thumbnailPositionY: 5,
+    thumbnailScale: 116,
+    thumbnailTitleAlign: "left"
+  },
+  "reading-you-can-not-fear-death": {
+    thumbnailFit: "cover",
+    thumbnailPositionX: 50,
+    thumbnailPositionY: 28,
+    thumbnailScale: 218,
+    thumbnailTitleAlign: "center"
+  }
+};
+
 function numberValue(value, fallback, min, max) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;
@@ -106,7 +123,9 @@ function adjustSystemCounts() {
 function applyCard(card) {
   const articleId = card.dataset.articleId || "";
   if (!articleId || articleId === SETTINGS_DOC_ID) return;
-  const saved = settingsByArticle.get(articleId) || legacySettingsByArticle.get(articleId);
+  const saved = settingsByArticle.get(articleId)
+    || legacySettingsByArticle.get(articleId)
+    || RECOVERY_SETTINGS[articleId];
   if (!saved) return;
 
   const image = card.querySelector(".article-card-media img");
