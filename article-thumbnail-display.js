@@ -19,6 +19,14 @@ const ARTICLE_DEFAULTS = {
   }
 };
 
+const SETTING_KEYS = [
+  "thumbnailFit",
+  "thumbnailPositionX",
+  "thumbnailPositionY",
+  "thumbnailScale",
+  "thumbnailTitleAlign"
+];
+
 function numberValue(value, fallback, min, max) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;
@@ -56,12 +64,15 @@ async function loadSettings() {
 function applyCard(card) {
   const articleId = card.dataset.articleId || "";
   if (!articleId) return;
+  const source = settingsByArticle.get(articleId) || {};
+  const hasStoredSettings = SETTING_KEYS.some((key) => Object.prototype.hasOwnProperty.call(source, key));
+  if (!hasStoredSettings && !ARTICLE_DEFAULTS[articleId]) return;
+
   const image = card.querySelector(".article-card-media img");
   const media = card.querySelector(".article-card-media");
   const title = card.querySelector(".article-list-title");
   if (!image || !media) return;
 
-  const source = settingsByArticle.get(articleId) || {};
   const settings = normalizeSettings(source, articleId);
   image.style.setProperty("position", "absolute", "important");
   image.style.setProperty("inset", "0", "important");
