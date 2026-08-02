@@ -3,9 +3,9 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/f
 import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const ARTICLE_ID = "2026-guanyin-vow-lamp-record-v2";
-const IMAGE_ONE = "![真正的信仰，不是祈求改變一切](/assets/articles/guanyin-vow-lamp/guanyin-vow-lamp-1.svg?v=20260802-1)";
-const IMAGE_TWO = "![真正需要培養的，不是更強的感應，而是更深的耐心](/assets/articles/guanyin-vow-lamp/guanyin-vow-lamp-2.svg?v=20260802-1)";
-const IMAGE_THREE = "![符合天命的路，不是毫無阻礙的路](/assets/articles/guanyin-vow-lamp/guanyin-vow-lamp-3.svg?v=20260802-1)";
+const IMAGE_ONE = "![每一封疏文，都是一份交付給觀世音菩薩的修行託付](/assets/articles/2026-guanyin-vow-lamp-record/vow-sheets-before-guanyin.webp?v=20260802-1)";
+const IMAGE_TWO = "![真正的感應不急著證明，會在時間裡慢慢證明自己](/assets/articles/2026-guanyin-vow-lamp-record/patience-in-practice.webp?v=20260802-1)";
+const IMAGE_THREE = "![符合天命的路不是沒有阻礙，而是在阻礙中依然感覺篤定](/assets/articles/2026-guanyin-vow-lamp-record/path-with-obstacles.webp?v=20260802-1)";
 
 function base64ToBytes(value) {
   const binary = atob(value);
@@ -49,7 +49,10 @@ function insertBeforeHeading(content, heading, imageMarkdown) {
 }
 
 function addArticleImages(content) {
-  let next = content;
+  let next = content.replace(
+    /^!\[[^\]]*\]\(\/?assets\/articles\/guanyin-vow-lamp\/guanyin-vow-lamp-[123]\.svg(?:\?[^)]*)?\)\s*$/gm,
+    ""
+  );
   next = insertBeforeHeading(next, "我知道方法，但我做不到", IMAGE_ONE);
   next = insertBeforeHeading(next, "我聽見最重的兩段話，是關於生死與親情", IMAGE_TWO);
   next = insertBeforeHeading(next, "一連串巧合，其實就證明了你走在對的路上", IMAGE_THREE);
@@ -79,7 +82,7 @@ async function updateArticle() {
     content: "",
     encryptedContent: protectedContent.encryptedContent,
     eventIv: protectedContent.eventIv,
-    imageLayoutVersion: "guanyin-vow-lamp-3-banners-v1",
+    imageLayoutVersion: "guanyin-vow-lamp-3-editorial-photos-v2",
     updatedAt: serverTimestamp()
   }, { merge: true });
 

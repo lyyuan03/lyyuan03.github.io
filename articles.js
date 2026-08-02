@@ -228,6 +228,40 @@ function renderContent(value = "") {
     .join("");
 }
 
+function addGuanyinVowLampImages(content = "", articleId = "") {
+  if (articleId !== "2026-guanyin-vow-lamp-record-v2") return content;
+  const withoutManagedImages = content
+    .replace(
+      /^!\[[^\]]*\]\(\/?assets\/articles\/guanyin-vow-lamp\/guanyin-vow-lamp-[123]\.svg(?:\?[^)]*)?\)\s*$/gm,
+      ""
+    )
+    .replace(
+      /^!\[[^\]]*\]\(\/?assets\/articles\/2026-guanyin-vow-lamp-record\/(?:vow-sheets-before-guanyin|patience-in-practice|path-with-obstacles)\.webp(?:\?[^)]*)?\)\s*$/gm,
+      ""
+    );
+  const placements = [
+    {
+      heading: "## 我知道方法，但我做不到",
+      image: "![每一封疏文，都是一份交付給觀世音菩薩的修行託付](assets/articles/2026-guanyin-vow-lamp-record/vow-sheets-before-guanyin.webp?v=20260802-1)"
+    },
+    {
+      heading: "## 我聽見最重的兩段話，是關於生死與親情",
+      image: "![真正的感應不急著證明，會在時間裡慢慢證明自己](assets/articles/2026-guanyin-vow-lamp-record/patience-in-practice.webp?v=20260802-1)"
+    },
+    {
+      heading: "## 一連串巧合，其實就證明了你走在對的路上",
+      image: "![符合天命的路不是沒有阻礙，而是在阻礙中依然感覺篤定](assets/articles/2026-guanyin-vow-lamp-record/path-with-obstacles.webp?v=20260802-1)"
+    }
+  ];
+  return placements.reduce((result, placement) => {
+    if (result.includes(placement.image)) return result;
+    return result.replace(
+      `\n\n${placement.heading}`,
+      `\n\n${placement.image}\n\n${placement.heading}`
+    );
+  }, withoutManagedImages);
+}
+
 function getTimeValue(value) {
   if (!value) return 0;
   if (typeof value?.toMillis === "function") return value.toMillis();
@@ -876,14 +910,15 @@ function renderArticle(article) {
     bindEventLogin();
     return;
   }
-  const { publicContent, lockedContent, accessType } = splitMemberContent(article.content || "", articleKey);
+  const articleContent = addGuanyinVowLampImages(article.content || "", articleKey);
+  const { publicContent, lockedContent, accessType } = splitMemberContent(articleContent, articleKey);
   root.innerHTML = `
     <article class="article-view" data-article-id="${escapeHtml(articleKey)}">
       <a class="article-back" href="articles.html">← 返回全部文選</a>
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${renderArticleGuide(article)}
-      ${renderLimitedReadingCountdown(article.id || article.slug || activeId, (article.content || "").includes(paidMarker))}
+      ${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}
       ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKey) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}
       <div class="article-body">${renderContent(publicContent)}</div>
       ${accessType === "member" ? renderSupportGate(lockedContent) : ""}
