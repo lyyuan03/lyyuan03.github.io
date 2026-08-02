@@ -95,13 +95,19 @@ function renderDashboard(member, user) {
   const qualificationExpiry = toDate(member.expiresAt);
   const activeQualification = member.status === "active" && (!qualificationExpiry || qualificationExpiry > new Date());
   const articleActive = activeQualification && (member.articleAccess === true || member.memberType === "sponsor-member" || isLingji);
+  const sponsorOnly = articleActive && !wellnessActive;
 
   dashboard.dataset.memberLevel = state.effectiveLevel;
+  dashboard.dataset.memberKind = sponsorOnly ? "sponsor" : "wellness";
   document.getElementById("dashboard-greeting").textContent = `${name}，平安`;
-  document.getElementById("dashboard-member-meta").textContent = `會員編號 ${membershipNumber}｜靈元院會員帳號`;
+  document.querySelector(".identity .eyebrow").textContent = sponsorOnly ? "SPONSORED ARTICLE MEMBERSHIP" : "WELLNESS CHANNEL MEMBERSHIP";
+  document.getElementById("dashboard-member-meta").textContent = sponsorOnly
+    ? `會員編號 ${membershipNumber}｜贊助專屬文章會員`
+    : `會員編號 ${membershipNumber}｜養生療癒頻道會員`;
   document.getElementById("dashboard-card-number").textContent = String(membershipNumber).toUpperCase();
-  document.getElementById("dashboard-level").textContent = isLingji ? "靈極會員" : "一般會員";
-  document.getElementById("dashboard-level-en").textContent = isLingji ? "LINGJI PRIVILEGE" : "GENERAL MEMBER";
+  document.getElementById("dashboard-level").textContent = sponsorOnly ? "贊助專屬文章會員" : isLingji ? "養生療癒頻道｜靈極會員" : "養生療癒頻道｜一般會員";
+  document.getElementById("dashboard-level-en").textContent = sponsorOnly ? "SPONSORED READING" : isLingji ? "WELLNESS · LINGJI" : "WELLNESS · GENERAL";
+  document.querySelector(".tier-card-bottom span:last-child").textContent = sponsorOnly ? "ARTICLE" : "WELLNESS";
   document.getElementById("dashboard-spend").textContent = money.format(state.currentSpend);
   document.getElementById("dashboard-spend-note").textContent = state.nextQualified ? "已達次年度門檻" : `距次年度門檻尚差 ${money.format(state.remaining)}`;
   document.getElementById("dashboard-membership-status").textContent = "有效";
