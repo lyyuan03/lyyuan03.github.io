@@ -9,6 +9,10 @@ if (/(^|\/)articles\.html$/i.test(location.pathname)) {
   import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
 }
 
+if (/(^|\/)admin\.html$/i.test(location.pathname)) {
+  import("./article-admin-event-static-fix.js?v=20260802-event-admin-fix-1");
+}
+
 export const firebaseConfig = {
   apiKey: "AIzaSyAgHy-nPOErzs7NDJossVGPITbenXOfjQY",
   authDomain: "lyyuan03-membership.firebaseapp.com",
