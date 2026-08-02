@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const SCALE_MIN = 100;
@@ -14,6 +14,15 @@ const DEFAULT_SETTINGS = {
   thumbnailTitleAlign: "left",
   thumbnailImage: ""
 };
+
+const THUMBNAIL_SETTING_KEYS = [
+  "thumbnailFit",
+  "thumbnailPositionX",
+  "thumbnailPositionY",
+  "thumbnailScale",
+  "thumbnailTitleAlign",
+  "thumbnailImage"
+];
 
 function numberValue(value, fallback, min, max) {
   const parsed = Number(value);
@@ -35,7 +44,28 @@ function normalizeSettings(source = {}, articleId = "") {
 }
 
 let settingsByArticle = new Map();
+let legacySettingsByArticle = new Map();
 let hasSettingsDocument = false;
+
+async function loadLegacySettings() {
+  try {
+    const publishedArticles = query(collection(db, "articles"), where("status", "==", "published"));
+    const snapshot = await getDocs(publishedArticles);
+    legacySettingsByArticle = new Map(snapshot.docs
+      .filter((item) => item.id !== SETTINGS_DOC_ID
+        && THUMBNAIL_SETTING_KEYS.some((key) => Object.prototype.hasOwnProperty.call(item.data(), key)))
+      .map((item) => {
+        const data = item.data();
+        return [item.id, {
+          ...data,
+          thumbnailImage: data.thumbnailImage || data.coverImage || ""
+        }];
+      }));
+  } catch (error) {
+    console.warn("舊版文章縮圖設定暫時無法載入。", error);
+    legacySettingsByArticle = new Map();
+  }
+}
 
 function updateSettingsFromSnapshot(snapshot) {
   hasSettingsDocument = snapshot.exists();
@@ -76,7 +106,7 @@ function adjustSystemCounts() {
 function applyCard(card) {
   const articleId = card.dataset.articleId || "";
   if (!articleId || articleId === SETTINGS_DOC_ID) return;
-  const saved = settingsByArticle.get(articleId);
+  const saved = settingsByArticle.get(articleId) || legacySettingsByArticle.get(articleId);
   if (!saved) return;
 
   const image = card.querySelector(".article-card-media img");
@@ -118,7 +148,10 @@ function applyAllCards() {
   document.querySelectorAll(".article-card[data-article-id]").forEach(applyCard);
 }
 
-function initialize() {
+async function initialize() {
+  await loadLegacySettings();
+  applyAllCards();
+
   const settingsRef = doc(db, "articles", SETTINGS_DOC_ID);
   onSnapshot(settingsRef, (snapshot) => {
     updateSettingsFromSnapshot(snapshot);
