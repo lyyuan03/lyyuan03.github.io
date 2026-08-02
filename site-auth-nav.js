@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const AUTH_VERSION = "20260801-account-menu-1";
+const AUTH_VERSION = "20260802-reading-cover-centered-1";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -41,6 +41,10 @@ function installStyles() {
     .member-google-button:hover{background:rgba(165,130,84,.2)}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
+    .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media{display:flex;align-items:center;justify-content:center;background:#EEE9DF!important}
+    .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media img{inset:0!important;width:100%!important;height:100%!important;padding:10px!important;object-fit:contain!important;object-position:center!important;filter:none!important;transform:none!important}
+    .article-card[data-article-id="reading-you-can-not-fear-death"]:hover .article-card-media img{transform:none!important}
+    .article-card[data-article-id="reading-you-can-not-fear-death"] .article-list-title{text-align:center}
     @media(max-width:768px){
       :root{--site-auth-height:52px}
       #site-auth-bar{padding:0 12px;justify-content:center}
@@ -48,6 +52,7 @@ function installStyles() {
       .site-auth-button{flex:1;min-width:0;padding:6px 8px;font-size:11.5px}
       .site-account-menu{left:0;right:0;width:100%}
       .member-login-card{padding:38px 24px 30px}
+      .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media img{padding:6px!important}
     }
   `;
   document.head.appendChild(style);
