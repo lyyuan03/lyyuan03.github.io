@@ -74,6 +74,7 @@ function applyCard(card) {
   if (!image || !media) return;
 
   const settings = normalizeSettings(source, articleId);
+  const position = `${settings.thumbnailPositionX}% ${settings.thumbnailPositionY}%`;
   image.style.setProperty("position", "absolute", "important");
   image.style.setProperty("inset", "0", "important");
   image.style.setProperty("width", "100%", "important");
@@ -83,10 +84,11 @@ function applyCard(card) {
   image.style.setProperty("padding", "0", "important");
   image.style.setProperty("margin", "0", "important");
   image.style.setProperty("object-fit", settings.thumbnailFit, "important");
-  image.style.setProperty("object-position", `${settings.thumbnailPositionX}% ${settings.thumbnailPositionY}%`, "important");
+  image.style.setProperty("object-position", position, "important");
   image.style.setProperty("transform", `scale(${settings.thumbnailScale / 100})`, "important");
-  image.style.setProperty("transform-origin", "center", "important");
+  image.style.setProperty("transform-origin", position, "important");
   image.style.setProperty("filter", "none", "important");
+  image.style.setProperty("will-change", "transform", "important");
   media.style.setProperty("overflow", "hidden", "important");
   media.style.setProperty("background", settings.thumbnailFit === "contain" ? "#EEE9DF" : "rgba(7,17,6,.7)", "important");
   if (title) title.style.setProperty("text-align", settings.thumbnailTitleAlign, "important");
