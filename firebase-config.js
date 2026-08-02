@@ -9,7 +9,7 @@ if (/(^|\/)articles\.html$/i.test(currentPath)) {
   import("./article-protection.js?v=20260723-member-watermark-1");
   import("./article-paid-badge.js?v=20260722-3");
   import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
-  window.setTimeout(() => import("./article-thumbnail-display.js?v=20260802-thumbnail-no-black-border-1"), 0);
+  window.setTimeout(() => import("./article-thumbnail-display.js?v=20260802-thumbnail-live-sync-1"), 0);
 }
 
 if (/(^|\/)admin\.html$/i.test(currentPath)) {
