@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const SCALE_MIN = 100;
@@ -47,17 +47,10 @@ function normalizeSettings(source = {}, articleId = "") {
 let settingsByArticle = new Map();
 let hasSettingsDocument = false;
 
-async function loadSettings() {
-  try {
-    const snapshot = await getDoc(doc(db, "articles", SETTINGS_DOC_ID));
-    hasSettingsDocument = snapshot.exists();
-    const settings = hasSettingsDocument && snapshot.data().settings ? snapshot.data().settings : {};
-    settingsByArticle = new Map(Object.entries(settings));
-  } catch (error) {
-    console.warn("文章縮圖設定暫時無法載入。", error);
-    settingsByArticle = new Map();
-    hasSettingsDocument = false;
-  }
+function updateSettingsFromSnapshot(snapshot) {
+  hasSettingsDocument = snapshot.exists();
+  const settings = hasSettingsDocument && snapshot.data().settings ? snapshot.data().settings : {};
+  settingsByArticle = new Map(Object.entries(settings));
 }
 
 function removeSystemCard() {
@@ -123,6 +116,7 @@ function applyCard(card) {
   image.style.setProperty("filter", "none", "important");
   image.style.setProperty("will-change", "transform", "important");
 
+  media.style.setProperty("position", "relative", "important");
   media.style.setProperty("overflow", "hidden", "important");
   media.style.setProperty("background", MEDIA_BACKGROUND, "important");
   if (title) title.style.setProperty("text-align", settings.thumbnailTitleAlign, "important");
@@ -135,13 +129,26 @@ function applyAllCards() {
   document.querySelectorAll(".article-card[data-article-id]").forEach(applyCard);
 }
 
-async function initialize() {
-  await loadSettings();
-  applyAllCards();
+function initialize() {
+  const settingsRef = doc(db, "articles", SETTINGS_DOC_ID);
+  onSnapshot(settingsRef, (snapshot) => {
+    updateSettingsFromSnapshot(snapshot);
+    applyAllCards();
+  }, (error) => {
+    console.warn("文章縮圖設定即時同步失敗。", error);
+    settingsByArticle = new Map();
+    hasSettingsDocument = false;
+    applyAllCards();
+  });
+
   const root = document.getElementById("article-root") || document.body;
   new MutationObserver(() => applyAllCards()).observe(root, { childList: true, subtree: true });
   const tabs = document.getElementById("category-tabs");
   if (tabs) new MutationObserver(() => adjustSystemCounts()).observe(tabs, { childList: true, subtree: true });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") applyAllCards();
+  });
 }
 
 if (document.readyState === "loading") {
