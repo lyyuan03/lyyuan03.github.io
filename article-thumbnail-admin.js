@@ -2,6 +2,10 @@ import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
+const SCALE_MIN = 100;
+const SCALE_MAX = 300;
+const PREVIEW_BACKGROUND = "#E8E1D3";
+
 const DEFAULT_SETTINGS = {
   thumbnailFit: "cover",
   thumbnailPositionX: 50,
@@ -29,11 +33,12 @@ function numberValue(value, fallback, min, max) {
 
 function normalizeSettings(source = {}, articleId = "") {
   const defaults = { ...DEFAULT_SETTINGS, ...(ARTICLE_DEFAULTS[articleId] || {}) };
+  const thumbnailFit = source.thumbnailFit === "contain" ? "contain" : defaults.thumbnailFit;
   return {
-    thumbnailFit: source.thumbnailFit === "contain" ? "contain" : defaults.thumbnailFit,
+    thumbnailFit,
     thumbnailPositionX: numberValue(source.thumbnailPositionX, defaults.thumbnailPositionX, 0, 100),
     thumbnailPositionY: numberValue(source.thumbnailPositionY, defaults.thumbnailPositionY, 0, 100),
-    thumbnailScale: numberValue(source.thumbnailScale, defaults.thumbnailScale, 50, 300),
+    thumbnailScale: numberValue(source.thumbnailScale, defaults.thumbnailScale, SCALE_MIN, SCALE_MAX),
     thumbnailTitleAlign: source.thumbnailTitleAlign === "center" ? "center" : defaults.thumbnailTitleAlign,
     thumbnailImage: String(source.thumbnailImage || defaults.thumbnailImage || "").trim()
   };
@@ -68,7 +73,7 @@ function initialize() {
     <div class="thumbnail-control-head">
       <div>
         <strong>文章列表縮圖</strong>
-        <small>縮圖設定會獨立儲存，不會再被文章內容儲存或同步程序覆蓋。</small>
+        <small>需要看見整張圖片時請選「完整顯示」；「裁切填滿」從 100% 開始放大，不會再縮出黑色邊框。</small>
       </div>
       <span id="thumbnail-control-status" role="status" aria-live="polite">選擇文章後即可調整</span>
     </div>
@@ -101,9 +106,10 @@ function initialize() {
           <div class="thumbnail-range-labels"><span>上</span><span>中</span><span>下</span></div>
         </div>
         <div class="field thumbnail-range-field">
-          <label for="thumbnail-scale">縮放比例 <output id="thumbnail-scale-value">100%</output></label>
-          <input id="thumbnail-scale" type="range" min="50" max="300" step="1" value="100">
-          <div class="thumbnail-range-labels"><span>縮小</span><span>原始</span><span>放大</span></div>
+          <label for="thumbnail-scale">放大比例 <output id="thumbnail-scale-value">100%</output></label>
+          <input id="thumbnail-scale" type="range" min="100" max="300" step="1" value="100">
+          <div class="thumbnail-range-labels"><span>原始顯示</span><span>放大</span><span>最大</span></div>
+          <small class="thumbnail-scale-help">想看完整圖片，請選「完整顯示」；縮放不再低於 100%，避免圖片四周出現空白或黑邊。</small>
         </div>
         <div class="thumbnail-control-actions">
           <button id="thumbnail-use-first-image" class="btn" type="button">使用內文第一張圖</button>
@@ -132,10 +138,11 @@ function initialize() {
     .thumbnail-control-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:start}
     .thumbnail-control-fields{display:grid;gap:13px}.thumbnail-range-field label{display:flex;justify-content:space-between}.thumbnail-range-field input{padding:0;border:0;background:transparent}
     .thumbnail-range-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(245,240,232,.38)}
+    .thumbnail-scale-help{display:block;color:rgba(245,240,232,.46);font-size:10px;line-height:1.65}
     .thumbnail-control-actions{display:flex;gap:8px;flex-wrap:wrap}.thumbnail-control-actions .btn{padding:8px 11px;font-size:12px}
     .thumbnail-preview-wrap{padding:12px;border:1px solid rgba(165,130,84,.2);background:rgba(4,8,3,.34)}
     .thumbnail-preview-wrap>span{display:block;margin-bottom:8px;font-size:10px;color:rgba(245,240,232,.45);letter-spacing:.1em}
-    .thumbnail-preview-media{position:relative;overflow:hidden;aspect-ratio:16/9;background:#EEE9DF}
+    .thumbnail-preview-media{position:relative;overflow:hidden;aspect-ratio:16/9;background:${PREVIEW_BACKGROUND}}
     .thumbnail-preview-media img{position:absolute;inset:0;width:100%;height:100%;display:block;will-change:transform}
     .thumbnail-preview-wrap>strong{display:block;margin-top:10px;font-family:var(--serif);font-size:14px;font-weight:500;line-height:1.55;color:#F5F0E8}
     @media(max-width:980px){.thumbnail-control-layout{grid-template-columns:1fr}.thumbnail-preview-wrap{max-width:360px}}
@@ -171,12 +178,13 @@ function initialize() {
   }
 
   function applySettings(settings) {
-    fitInput.value = settings.thumbnailFit;
-    xInput.value = String(settings.thumbnailPositionX);
-    yInput.value = String(settings.thumbnailPositionY);
-    scaleInput.value = String(settings.thumbnailScale);
-    alignInput.value = settings.thumbnailTitleAlign;
-    if (settings.thumbnailImage) coverInput.value = settings.thumbnailImage;
+    const normalized = normalizeSettings(settings, loadedId || activeArticleId());
+    fitInput.value = normalized.thumbnailFit;
+    xInput.value = String(normalized.thumbnailPositionX);
+    yInput.value = String(normalized.thumbnailPositionY);
+    scaleInput.value = String(normalized.thumbnailScale);
+    alignInput.value = normalized.thumbnailTitleAlign;
+    if (normalized.thumbnailImage) coverInput.value = normalized.thumbnailImage;
     updatePreview();
   }
 
@@ -192,7 +200,7 @@ function initialize() {
     previewImage.style.objectPosition = position;
     previewImage.style.transform = `scale(${settings.thumbnailScale / 100})`;
     previewImage.style.transformOrigin = position;
-    previewMedia.style.background = settings.thumbnailFit === "contain" ? "#EEE9DF" : "rgba(7,17,6,.7)";
+    previewMedia.style.background = PREVIEW_BACKGROUND;
     previewTitle.textContent = titleInput?.value.trim() || "文章標題";
     previewTitle.style.textAlign = settings.thumbnailTitleAlign;
   }
@@ -220,9 +228,14 @@ function initialize() {
       if (serial !== loadSerial) return;
       const saved = settingsSnapshot.exists() ? settingsSnapshot.data().settings?.[articleId] : null;
       const fallback = articleSnapshot.exists() ? articleSnapshot.data() : {};
-      applySettings(normalizeSettings(saved || fallback, articleId));
-      status.textContent = saved ? "已載入獨立縮圖設定" : "尚未獨立儲存，可直接調整";
-      delete status.dataset.state;
+      const source = saved || fallback;
+      const hadInvalidScale = Number(source?.thumbnailScale) < SCALE_MIN;
+      applySettings(normalizeSettings(source, articleId));
+      status.textContent = hadInvalidScale
+        ? "舊縮放比例低於 100%，已自動修正；請重新儲存縮圖設定"
+        : saved ? "已載入獨立縮圖設定" : "尚未獨立儲存，可直接調整";
+      status.dataset.state = hadInvalidScale ? "error" : "";
+      if (!hadInvalidScale) delete status.dataset.state;
       saveButton.disabled = false;
     } catch (error) {
       console.error("縮圖設定載入失敗：", error);
@@ -264,7 +277,7 @@ function initialize() {
         settingsUpdatedAt: serverTimestamp()
       }, { merge: true });
       applySettings(saved);
-      status.textContent = "縮圖設定已獨立儲存，前台重新整理後生效";
+      status.textContent = "縮圖設定已儲存，前台重新整理後生效";
       status.dataset.state = "success";
       window.setTimeout(() => {
         if (status.dataset.state === "success") {
@@ -281,9 +294,18 @@ function initialize() {
     }
   }
 
-  [fitInput, xInput, yInput, scaleInput, alignInput, coverInput, titleInput].filter(Boolean).forEach((input) => {
+  [xInput, yInput, scaleInput, alignInput, coverInput, titleInput].filter(Boolean).forEach((input) => {
     input.addEventListener("input", updatePreview);
     input.addEventListener("change", updatePreview);
+  });
+
+  fitInput.addEventListener("change", () => {
+    scaleInput.value = "100";
+    updatePreview();
+    status.textContent = fitInput.value === "contain"
+      ? "已切換為完整顯示；圖片會以 100% 顯示整張內容"
+      : "已切換為裁切填滿；可從 100% 開始放大與調整位置";
+    delete status.dataset.state;
   });
 
   panel.querySelector("#thumbnail-use-first-image").addEventListener("click", () => {
