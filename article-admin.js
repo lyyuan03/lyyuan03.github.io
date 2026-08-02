@@ -32,6 +32,7 @@ const preview = document.getElementById("preview");
 const saveStatus = document.getElementById("save-status");
 const saveStatusInline = document.getElementById("save-status-inline");
 const saveButton = document.getElementById("save-article");
+const importButton = document.getElementById("import-static-article");
 const adminToast = document.getElementById("admin-toast");
 const deleteButton = document.getElementById("delete-article");
 const newButton = document.getElementById("new-article");
@@ -313,6 +314,7 @@ async function syncRevisedStaticArticles(snapshot) {
 }
 
 function setFormData(article = {}) {
+  const isStaticArticle = article.source === "github-static";
   form.title.value = article.title || "";
   form.slug.value = article.slug || "";
   form.category.value = article.category || "spiritual";
@@ -328,7 +330,11 @@ function setFormData(article = {}) {
   toggleEventAccess();
   form.content.value = article.content || "";
   preview.innerHTML = renderContent(form.content.value);
-  deleteButton.disabled = !currentId;
+  importButton?.classList.toggle("hidden", !isStaticArticle);
+  saveButton.classList.toggle("hidden", isStaticArticle);
+  saveButton.disabled = isStaticArticle;
+  deleteButton.classList.toggle("hidden", isStaticArticle);
+  deleteButton.disabled = !currentId || isStaticArticle;
 }
 
 function newArticle() {
@@ -363,6 +369,9 @@ async function importStaticArticle(articleId) {
   await setDoc(doc(db, "articles", article.id), payload, { merge: true });
   currentId = article.id;
   await loadArticles();
+  const importedArticle = articles.find((item) => item.id === currentId);
+  setFormData(importedArticle);
+  renderList();
   setSaveStatus("已匯入後台，可直接編輯", "success");
   showAdminToast("網站文章已匯入後台，現在可以直接編輯與儲存。", "success");
 }
@@ -373,13 +382,10 @@ function renderList() {
     return;
   }
   listEl.innerHTML = articles.map((article) => `
-    <div class="article-item-wrap">
-      <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${article.id}">
-        <div class="article-item-title">${escapeHtml(article.title || "未命名文章")}</div>
-        <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}｜${article.source === "github-static" ? "網站文章" : "後台文章"}</div>
-      </button>
-      ${article.source === "github-static" ? `<button class="btn article-import-button" type="button" data-import-id="${article.id}">匯入後台編輯</button>` : ""}
-    </div>
+    <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${article.id}">
+      <div class="article-item-title">${escapeHtml(article.title || "未命名文章")}</div>
+      <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}｜${article.source === "github-static" ? "網站文章" : "後台文章"}</div>
+    </button>
   `).join("");
   listEl.querySelectorAll("[data-id]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -387,21 +393,7 @@ function renderList() {
       const article = articles.find((item) => item.id === currentId);
       setFormData(article);
       renderList();
-      setSaveStatus(article?.source === "github-static" ? "網站文章｜請先按「匯入後台編輯」" : "尚未修改");
-    });
-  });
-  listEl.querySelectorAll("[data-import-id]").forEach((button) => {
-    button.addEventListener("click", async () => {
-      button.disabled = true;
-      button.textContent = "匯入中…";
-      try {
-        await importStaticArticle(button.dataset.importId);
-      } catch (error) {
-        console.error(error);
-        button.disabled = false;
-        button.textContent = "匯入後台編輯";
-        showAdminToast("匯入失敗，請確認管理員權限與網路狀態。", "error");
-      }
+      setSaveStatus(article?.source === "github-static" ? "網站文章｜請在右側按「匯入後台編輯」" : "尚未修改");
     });
   });
 }
@@ -478,15 +470,10 @@ async function loadArticles() {
       }
       return article;
     }));
-    const mergedArticles = new Map(firestoreArticles.map((article) => [article.id, article]));
-    staticArticles.forEach((article) => {
-      const firestoreArticle = mergedArticles.get(article.id);
-      const staticTime = articleTime(article.updatedAt || article.publishedAt);
-      const firestoreTime = articleTime(firestoreArticle?.updatedAt || firestoreArticle?.publishedAt);
-      if (!firestoreArticle || staticTime > firestoreTime) {
-        mergedArticles.set(article.id, { ...article, source: "github-static" });
-      }
-    });
+    const mergedArticles = new Map(
+      staticArticles.map((article) => [article.id, { ...article, source: "github-static" }])
+    );
+    firestoreArticles.forEach((article) => mergedArticles.set(article.id, article));
     articles = [...mergedArticles.values()].sort((a, b) =>
       articleTime(b.updatedAt || b.publishedAt) - articleTime(a.updatedAt || a.publishedAt)
     );
@@ -872,6 +859,20 @@ form.addEventListener("input", (event) => {
 form.addEventListener("change", markDirty);
 accessTypeInput?.addEventListener("change", toggleEventAccess);
 newButton.addEventListener("click", newArticle);
+importButton?.addEventListener("click", async () => {
+  if (!currentId) return;
+  importButton.disabled = true;
+  importButton.textContent = "匯入中…";
+  try {
+    await importStaticArticle(currentId);
+  } catch (error) {
+    console.error(error);
+    showAdminToast("匯入失敗，請確認管理員權限與網路狀態。", "error");
+  } finally {
+    importButton.disabled = false;
+    importButton.textContent = "匯入後台編輯";
+  }
+});
 deleteButton.addEventListener("click", deleteArticle);
 uploadButton.addEventListener("click", () => imageInput.click());
 imageInput.addEventListener("change", () => uploadImages(imageInput.files).catch(console.error));
