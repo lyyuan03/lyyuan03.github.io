@@ -1,5 +1,5 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js";
+import { staticArticles } from "./static-articles.js?v=20260802-backend-sync-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -10,6 +10,10 @@ const categoryLabels = {
   "spirit-world": "異．靈界",
   reading: "思．讀物"
 };
+
+const staticArticleSyncRevisions = new Map([
+  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
+]);
 
 let articles = [];
 let currentId = null;
@@ -246,6 +250,68 @@ function getFormData() {
   };
 }
 
+function normalizeAdminAccessType(article = {}) {
+  if (["open", "paid", "event"].includes(article.accessType)) return article.accessType;
+  if (article.accessType === "free") return "open";
+  return (article.content || "").includes("<!-- paid-only -->") ? "paid" : "open";
+}
+
+function articleTime(value) {
+  if (!value) return 0;
+  if (typeof value?.toMillis === "function") return value.toMillis();
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function staticArticlePayload(article, revision) {
+  return {
+    title: article.title || "",
+    slug: article.slug || article.id,
+    category: article.category || "spiritual",
+    displayCategory: article.displayCategory || "",
+    series: article.series || "",
+    status: article.status || "published",
+    excerpt: article.excerpt || "",
+    coverImage: article.coverImage || "",
+    bookTitle: article.bookTitle || "",
+    bookAuthor: article.bookAuthor || "",
+    bookPublisher: article.bookPublisher || "",
+    bookPurchaseUrl: article.bookPurchaseUrl || "",
+    accessType: normalizeAdminAccessType(article),
+    eventId: "",
+    eventName: "",
+    encryptedContent: "",
+    eventIv: "",
+    encryption: "",
+    magicLinkAccess: {},
+    content: article.content || "",
+    readingLevel: article.readingLevel || "",
+    topics: Array.isArray(article.topics) ? article.topics : [],
+    staticSyncRevision: revision,
+    staticSourceUpdatedAt: article.updatedAt || "",
+    updatedAt: serverTimestamp()
+  };
+}
+
+async function syncRevisedStaticArticles(snapshot) {
+  const firestoreById = new Map(snapshot.docs.map((item) => [item.id, item.data()]));
+  let didSync = false;
+  for (const [articleId, revision] of staticArticleSyncRevisions) {
+    const current = firestoreById.get(articleId);
+    if (current?.staticSyncRevision === revision) continue;
+    const article = staticArticles.find((item) => item.id === articleId);
+    if (!article) continue;
+    const payload = staticArticlePayload(article, revision);
+    if (!current) {
+      payload.createdAt = serverTimestamp();
+      if (payload.status === "published") payload.publishedAt = serverTimestamp();
+    }
+    await setDoc(doc(db, "articles", articleId), payload, { merge: true });
+    didSync = true;
+  }
+  return didSync;
+}
+
 function setFormData(article = {}) {
   form.title.value = article.title || "";
   form.slug.value = article.slug || "";
@@ -257,7 +323,7 @@ function setFormData(article = {}) {
   form.bookAuthor.value = article.bookAuthor || "";
   form.bookPublisher.value = article.bookPublisher || "";
   form.bookPurchaseUrl.value = article.bookPurchaseUrl || "";
-  form.accessType.value = article.accessType || ((article.content || "").includes("<!-- paid-only -->") ? "paid" : "open");
+  form.accessType.value = normalizeAdminAccessType(article);
   renderEventOptions(article.eventId || "");
   toggleEventAccess();
   form.content.value = article.content || "";
@@ -286,7 +352,7 @@ async function importStaticArticle(articleId) {
     bookAuthor: article.bookAuthor || "",
     bookPublisher: article.bookPublisher || "",
     bookPurchaseUrl: article.bookPurchaseUrl || "",
-    accessType: article.accessType || ((article.content || "").includes("<!-- paid-only -->") ? "paid" : "open"),
+    accessType: normalizeAdminAccessType(article),
     eventId: article.eventId || "",
     eventName: article.eventName || "",
     content: article.content || "",
@@ -387,7 +453,11 @@ function showFirestoreError(error) {
 async function loadArticles() {
   listEl.innerHTML = '<div class="empty">載入中…</div>';
   try {
-    const snapshot = await getDocs(collection(db, "articles"));
+    let snapshot = await getDocs(collection(db, "articles"));
+    if (await syncRevisedStaticArticles(snapshot)) {
+      snapshot = await getDocs(collection(db, "articles"));
+      showAdminToast("《你可以不怕死》前後台內容已完成同步。", "success");
+    }
     try {
       const metricsSnapshot = await getDocs(collection(db, "articleMetrics"));
       metricsByArticle = new Map(metricsSnapshot.docs.map((item) => [item.id, item.data()]));
@@ -408,16 +478,15 @@ async function loadArticles() {
       }
       return article;
     }));
-    const mergedArticles = new Map(
-      staticArticles.map((article) => [article.id, { ...article, source: "github-static" }])
-    );
-    firestoreArticles.forEach((article) => mergedArticles.set(article.id, article));
-    const articleTime = (value) => {
-      if (!value) return 0;
-      if (typeof value?.toMillis === "function") return value.toMillis();
-      const parsed = Date.parse(value);
-      return Number.isNaN(parsed) ? 0 : parsed;
-    };
+    const mergedArticles = new Map(firestoreArticles.map((article) => [article.id, article]));
+    staticArticles.forEach((article) => {
+      const firestoreArticle = mergedArticles.get(article.id);
+      const staticTime = articleTime(article.updatedAt || article.publishedAt);
+      const firestoreTime = articleTime(firestoreArticle?.updatedAt || firestoreArticle?.publishedAt);
+      if (!firestoreArticle || staticTime > firestoreTime) {
+        mergedArticles.set(article.id, { ...article, source: "github-static" });
+      }
+    });
     articles = [...mergedArticles.values()].sort((a, b) =>
       articleTime(b.updatedAt || b.publishedAt) - articleTime(a.updatedAt || a.publishedAt)
     );

@@ -7,7 +7,7 @@ export const youCanNotFearDeathArticle = {
   series: "生命轉化",
   status: "published",
   publishedAt: "2026-08-02T08:00:00.000Z",
-  updatedAt: "2026-08-02T10:00:00.000Z",
+  updatedAt: "2026-08-02T01:56:37.000Z",
   coverImage: "assets/articles/you-can-not-fear-death/book-cover.webp?v=20260802-1",
   excerpt: "讀《你可以不怕死》，真正令我停下來的，不只是死亡，而是余德慧對觀照的追問：我們理解的道理，能否在死亡真正到來時，成為活在生命裡的力量？",
   accessType: "free",

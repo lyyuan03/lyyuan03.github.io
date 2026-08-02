@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260802-you-can-not-fear-death-2";
+import { staticArticles } from "./static-articles.js?v=20260802-you-can-not-fear-death-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -971,9 +971,6 @@ async function loadArticles() {
   });
   const merged = [...mergedById.values()];
   const normalizedArticles = merged.map((article) => {
-    if (article.id === "reading-you-can-not-fear-death") {
-      return staticArticles.find((item) => item.id === article.id) || article;
-    }
     if (article.id === "celebrity-death-dream-spirit-five-checks") {
       return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
     }
