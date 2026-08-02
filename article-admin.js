@@ -14,6 +14,7 @@ const categoryLabels = {
 const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
 ]);
+const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings"]);
 
 let articles = [];
 let currentId = null;
@@ -458,7 +459,9 @@ async function loadArticles() {
       metricsByArticle = new Map();
     }
     const adminKeys = await loadAdminEventKeys();
-    const firestoreArticles = await Promise.all(snapshot.docs.map(async (item) => {
+    const firestoreArticles = await Promise.all(snapshot.docs
+      .filter((item) => !SYSTEM_ARTICLE_IDS.has(item.id) && item.data().systemType !== "article-thumbnail-settings")
+      .map(async (item) => {
       const article = { id: item.id, ...item.data(), source: "firestore" };
       if (article.accessType === "event" && article.encryptedContent && article.eventIv && adminKeys[item.id]) {
         try {
@@ -532,11 +535,29 @@ async function saveArticle(event) {
     if (!articles.some((article) => article.id === currentId)) payload.createdAt = serverTimestamp();
     await setDoc(articleRef, payload, { merge: true });
 
+    let thumbnailSaved = false;
+    let thumbnailSaveError = null;
+    try {
+      if (typeof window.articleThumbnailAdmin?.saveForArticle === "function") {
+        await window.articleThumbnailAdmin.saveForArticle(currentId, { announce: false });
+        thumbnailSaved = true;
+      }
+    } catch (error) {
+      thumbnailSaveError = error;
+      console.error("文章已儲存，但縮圖設定同步失敗：", error);
+    }
+
     await loadArticles();
     const savedAt = savedTimeLabel();
-    const note = data.accessType === "event" ? `｜已授權 ${distributedCount} 位活動參加者` : "";
-    setSaveStatus(`已儲存｜${savedAt}${note}`, "success");
-    showAdminToast(`文章已成功儲存｜${savedAt}${note}`, "success");
+    const accessNote = data.accessType === "event" ? `｜已授權 ${distributedCount} 位活動參加者` : "";
+    const thumbnailNote = thumbnailSaved ? "｜縮圖位置已同步" : "";
+    if (thumbnailSaveError) {
+      setSaveStatus(`文章已儲存｜${savedAt}｜縮圖位置儲存失敗`, "error");
+      showAdminToast("文章內容已儲存，但縮圖位置未能同步，請再按一次「儲存縮圖設定」。", "error");
+    } else {
+      setSaveStatus(`已儲存｜${savedAt}${accessNote}${thumbnailNote}`, "success");
+      showAdminToast(`文章與縮圖設定已成功儲存｜${savedAt}${accessNote}`, "success");
+    }
   } catch (error) {
     console.error(error);
     setSaveStatus("儲存失敗｜內容尚未更新", "error");
@@ -786,7 +807,9 @@ async function exportAllArticles() {
 
   try {
     const snapshot = await getDocs(collection(db, "articles"));
-    const firestoreItems = snapshot.docs.map((item) => articleForExport({ id: item.id, ...item.data() }, "firestore"));
+    const firestoreItems = snapshot.docs
+      .filter((item) => !SYSTEM_ARTICLE_IDS.has(item.id) && item.data().systemType !== "article-thumbnail-settings")
+      .map((item) => articleForExport({ id: item.id, ...item.data() }, "firestore"));
     const staticItems = staticArticles.map((item) => articleForExport(item, "github-static"));
     const allItems = [...firestoreItems, ...staticItems].sort((a, b) =>
       String(b.publishedAt || b.updatedAt).localeCompare(String(a.publishedAt || a.updatedAt))
@@ -851,12 +874,19 @@ function markDirty() {
   setSaveStatus("內容已修改，尚未儲存", "dirty");
 }
 
+function isThumbnailControlTarget(target) {
+  return target instanceof Element && Boolean(target.closest("#thumbnail-control-panel"));
+}
+
 form.addEventListener("submit", saveArticle);
 form.addEventListener("input", (event) => {
+  if (isThumbnailControlTarget(event.target)) return;
   if (event.target === form.content) preview.innerHTML = renderContent(form.content.value);
   markDirty();
 });
-form.addEventListener("change", markDirty);
+form.addEventListener("change", (event) => {
+  if (!isThumbnailControlTarget(event.target)) markDirty();
+});
 accessTypeInput?.addEventListener("change", toggleEventAccess);
 newButton.addEventListener("click", newArticle);
 importButton?.addEventListener("click", async () => {
