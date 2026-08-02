@@ -291,26 +291,26 @@ function initialize() {
       if (serial !== loadSerial) return;
       const saved = settingsSnapshot.exists() ? settingsSnapshot.data().settings?.[articleId] : null;
       const fallback = articleSnapshot.exists() ? articleSnapshot.data() : {};
-      const legacy = !saved && hasLegacySettings(fallback)
-        ? normalizeSettings({
-            ...fallback,
-            thumbnailImage: fallback.thumbnailImage || fallback.coverImage || ""
-          }, articleId)
-        : null;
-      const recovery = !saved && !legacy && RECOVERY_SETTINGS[articleId]
+      const recovery = !saved && RECOVERY_SETTINGS[articleId]
         ? normalizeSettings({
             ...RECOVERY_SETTINGS[articleId],
             thumbnailImage: fallback.thumbnailImage || fallback.coverImage || ""
           }, articleId)
         : null;
-      const source = saved || legacy || recovery || {};
+      const legacy = !saved && !recovery && hasLegacySettings(fallback)
+        ? normalizeSettings({
+            ...fallback,
+            thumbnailImage: fallback.thumbnailImage || fallback.coverImage || ""
+          }, articleId)
+        : null;
+      const source = saved || recovery || legacy || {};
       const hadInvalidScale = Number(source?.thumbnailScale) < SCALE_MIN;
       if (legacy || recovery) await writeSettings(articleId, source);
       applySettings(source, articleId);
       status.textContent = hadInvalidScale
         ? "舊縮放比例低於 100%，已自動修正並儲存"
-        : legacy ? "原本的縮圖位置已自動轉移並儲存"
-          : recovery ? "已依先前調整紀錄還原位置並儲存"
+        : recovery ? "已依先前調整紀錄還原位置並儲存"
+          : legacy ? "原本的縮圖位置已自動轉移並儲存"
             : saved ? "已載入縮圖設定" : "尚未設定縮圖，可直接調整";
       status.dataset.state = hadInvalidScale ? "error" : legacy || recovery ? "success" : "";
       if (!hadInvalidScale && !legacy && !recovery) delete status.dataset.state;
