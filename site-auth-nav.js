@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const AUTH_VERSION = "20260802-reading-cover-centered-1";
+const AUTH_VERSION = "20260802-all-member-account-menu-1";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -26,6 +26,7 @@ function installStyles() {
     .site-auth-button:disabled{opacity:.55;cursor:wait;transform:none}
     .site-account-menu{position:absolute;top:calc(100% + 9px);right:0;z-index:1300;width:220px;padding:7px;background:rgba(12,18,10,.99);border:1px solid rgba(165,130,84,.34);box-shadow:0 16px 42px rgba(0,0,0,.46)}
     .site-account-menu[hidden]{display:none!important}
+    .site-account-menu [hidden]{display:none!important}
     .site-account-menu:before{content:'';position:absolute;left:0;right:0;top:-10px;height:10px}
     .site-account-menu a,.site-account-menu button{display:block;width:100%;padding:11px 14px;border:0;background:transparent;color:rgba(245,240,232,.78);font-family:'Noto Sans TC','Arial',sans-serif;font-size:13px;line-height:1.5;letter-spacing:.08em;text-align:left;text-decoration:none;cursor:pointer}
     .site-account-menu a:hover,.site-account-menu button:hover{background:rgba(165,130,84,.12);color:#C5A26F}
@@ -69,7 +70,7 @@ function installBar() {
       <button id="member-login-button" class="site-auth-button" type="button" aria-haspopup="false" aria-expanded="false">會員登入</button>
       <div id="site-account-menu" class="site-account-menu" hidden>
         <a href="/member-dashboard.html">我的會員中心</a>
-        <a href="/member-videos.html">養生會員影片</a>
+        <a href="/member-videos.html" data-wellness-video-link>養生會員影片</a>
         <button type="button" data-member-sign-out>登出</button>
       </div>
     </div>`;
@@ -109,11 +110,13 @@ const modal = installMemberModal();
 const memberButton = bar.querySelector("#member-login-button");
 const accountMenu = bar.querySelector("#site-account-menu");
 const signOutButton = accountMenu.querySelector("[data-member-sign-out]");
+const wellnessVideoLink = accountMenu.querySelector("[data-wellness-video-link]");
 const googleButton = modal.querySelector(".member-google-button");
 const browserNote = modal.querySelector(".member-login-browser-note");
 const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
 const isMobile = window.matchMedia("(max-width:768px), (pointer:coarse)").matches;
 let hasWellnessAccess = false;
+let hasMemberAccess = false;
 if (isInAppBrowser) browserNote.style.display = "block";
 
 function toDate(value) {
@@ -124,9 +127,16 @@ function toDate(value) {
 }
 
 function isActiveWellnessMember(member = {}) {
-  const isWellness = member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
+  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
   const expiry = toDate(member.expiresAt);
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
+}
+
+function isActiveMember(member = {}) {
+  const expiry = toDate(member.expiresAt);
+  const activeQualification = member.status === "active" && (!expiry || expiry > new Date());
+  const hasCourses = Array.isArray(member.purchasedCourses) && member.purchasedCourses.length > 0;
+  return Boolean(activeQualification || Number(member.cashbackBalance) > 0 || hasCourses);
 }
 
 function closeAccountMenu() {
@@ -149,7 +159,7 @@ memberButton.addEventListener("click", async (event) => {
     location.href = "/admin.html";
     return;
   }
-  if (auth.currentUser && hasWellnessAccess) {
+  if (auth.currentUser && hasMemberAccess) {
     toggleAccountMenu();
     return;
   }
@@ -207,6 +217,8 @@ googleButton.addEventListener("click", async () => {
 onAuthStateChanged(auth, async (user) => {
   closeAccountMenu();
   hasWellnessAccess = false;
+  hasMemberAccess = false;
+  wellnessVideoLink.hidden = true;
   memberButton.disabled = false;
   memberButton.setAttribute("aria-haspopup", "false");
   if (user && sessionStorage.getItem("site-auth-flow") === "member" && isAdminEmail(user.email)) {
@@ -235,19 +247,21 @@ onAuthStateChanged(auth, async (user) => {
     const member = snapshot.exists() ? snapshot.data() : null;
     if (auth.currentUser?.uid !== user.uid) return;
     hasWellnessAccess = Boolean(member && isActiveWellnessMember(member));
-    if (hasWellnessAccess) {
+    hasMemberAccess = Boolean(member && isActiveMember(member));
+    wellnessVideoLink.hidden = !hasWellnessAccess;
+    if (hasMemberAccess) {
       memberButton.textContent = `${displayName} ▾`;
       memberButton.title = "開啟個人會員選單";
       memberButton.setAttribute("aria-haspopup", "menu");
     } else {
       memberButton.textContent = `${displayName}｜登出`;
-      memberButton.title = "目前帳號沒有有效的養生療癒頻道會籍；按此登出";
+      memberButton.title = "目前帳號沒有有效會員資格；按此登出";
     }
   } catch (error) {
     console.error("會員導覽資格確認失敗：", error);
     if (auth.currentUser?.uid === user.uid) {
       memberButton.textContent = `${displayName}｜登出`;
-      memberButton.title = "暫時無法確認養生會員資格；按此登出";
+      memberButton.title = "暫時無法確認會員資格；按此登出";
     }
   } finally {
     if (auth.currentUser?.uid === user.uid) memberButton.disabled = false;
