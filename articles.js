@@ -935,11 +935,15 @@ async function loadArticles() {
     if (!staticArticle || firestoreTime >= staticTime) mergedById.set(article.id, article);
   });
   const merged = [...mergedById.values()];
-  const normalizedArticles = merged.map((article) =>
-    article.id === "celebrity-death-dream-spirit-five-checks"
-      ? { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" }
-      : article
-  );
+  const normalizedArticles = merged.map((article) => {
+    if (article.id === "reading-you-can-not-fear-death") {
+      return staticArticles.find((item) => item.id === article.id) || article;
+    }
+    if (article.id === "celebrity-death-dream-spirit-five-checks") {
+      return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
+    }
+    return article;
+  });
   const hydratedArticles = await Promise.all(normalizedArticles.map((article) =>
     activeId && (article.id === activeId || article.slug === activeId) ? hydrateEventArticle(article) : article
   ));
