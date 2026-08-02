@@ -6,10 +6,7 @@ import {
   signOut,
   onAuthStateChanged,
   setPersistence,
-  browserLocalPersistence,
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -43,18 +40,6 @@ function installStyles() {
     .member-login-card p{font-size:14px;line-height:1.9;color:rgba(245,240,232,.7);margin:0 0 26px}
     .member-google-button{width:100%;border:1px solid rgba(165,130,84,.58);background:rgba(165,130,84,.12);color:#C5A26F;padding:13px 18px;font-family:'Noto Sans TC','Arial',sans-serif;font-size:14px;letter-spacing:.1em;cursor:pointer}
     .member-google-button:hover{background:rgba(165,130,84,.2)}
-    .member-login-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:rgba(245,240,232,.4);font-size:12px;letter-spacing:.12em}
-    .member-login-divider:before,.member-login-divider:after{content:'';height:1px;flex:1;background:rgba(165,130,84,.25)}
-    .member-email-form{display:grid;gap:10px;text-align:left}
-    .member-email-form label{font-size:13px;color:rgba(245,240,232,.74);letter-spacing:.08em}
-    .member-email-form input{width:100%;border:1px solid rgba(165,130,84,.38);background:rgba(255,255,255,.055);color:#F5F0E8;padding:12px 13px;font:14px 'Noto Sans TC','Arial',sans-serif;outline:none}
-    .member-email-form input:focus{border-color:rgba(197,162,111,.78);box-shadow:0 0 0 2px rgba(165,130,84,.12)}
-    .member-email-button{width:100%;border:1px solid rgba(165,130,84,.44);background:transparent;color:#D7BE96;padding:12px 16px;font:13px 'Noto Sans TC','Arial',sans-serif;letter-spacing:.1em;cursor:pointer}
-    .member-email-button:hover{background:rgba(165,130,84,.12)}
-    .member-email-button:disabled{opacity:.55;cursor:wait}
-    .member-email-status{display:none;margin:13px 0 0!important;padding:10px 12px;border:1px solid rgba(197,162,111,.25);background:rgba(165,130,84,.08);font-size:12px!important;line-height:1.7!important;color:#D7BE96!important;text-align:left}
-    .member-email-status.is-visible{display:block}
-    .member-email-status.is-error{border-color:rgba(190,100,90,.5);color:#E5B5AE!important}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
     .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media{display:block;overflow:hidden;background:#EEE9DF!important}
@@ -108,15 +93,8 @@ function installMemberModal() {
       <button class="member-login-close" type="button" aria-label="關閉">×</button>
       <div class="member-login-mark">LING · YUAN · YUAN</div>
       <h2 id="member-login-title">靈元院會員登入</h2>
-      <p>請使用登記會員資格或活動報名時使用的 Email 登入，系統將依照該 Email 確認閱讀權限。</p>
+      <p>請使用登記會員資格的 Google 帳號登入。登入後將回到目前頁面，並依帳號取得相應閱讀權限。</p>
       <button class="member-google-button" type="button">選擇會員 Google 帳號</button>
-      <div class="member-login-divider"><span>或</span></div>
-      <form class="member-email-form">
-        <label for="member-email-input">使用其他電子郵件登入</label>
-        <input id="member-email-input" name="email" type="email" inputmode="email" autocomplete="email" placeholder="請輸入活動報名時登記的 Email" required>
-        <button class="member-email-button" type="submit">寄送 Email 驗證連結</button>
-      </form>
-      <p class="member-email-status" role="status" aria-live="polite"></p>
       <p class="member-login-browser-note">目前正在社群軟體的內建瀏覽器中開啟。若 Google 登入長時間沒有反應，請改用 Safari 或 Chrome 開啟本頁。</p>
     </div>`;
   document.body.appendChild(modal);
@@ -135,58 +113,12 @@ const accountMenu = bar.querySelector("#site-account-menu");
 const signOutButton = accountMenu.querySelector("[data-member-sign-out]");
 const wellnessVideoLink = accountMenu.querySelector("[data-wellness-video-link]");
 const googleButton = modal.querySelector(".member-google-button");
-const emailForm = modal.querySelector(".member-email-form");
-const emailInput = modal.querySelector("#member-email-input");
-const emailButton = modal.querySelector(".member-email-button");
-const emailStatus = modal.querySelector(".member-email-status");
 const browserNote = modal.querySelector(".member-login-browser-note");
 const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
 const isMobile = window.matchMedia("(max-width:768px), (pointer:coarse)").matches;
 let hasWellnessAccess = false;
 let hasMemberAccess = false;
-const EMAIL_STORAGE_KEY = "lyyuan-email-link-address";
-let completingEmailLink = isSignInWithEmailLink(auth, location.href);
 if (isInAppBrowser) browserNote.style.display = "block";
-
-function normalizeEmail(value) {
-  return String(value || "").trim().toLowerCase();
-}
-
-function setEmailStatus(message, type = "info") {
-  emailStatus.textContent = message;
-  emailStatus.classList.toggle("is-visible", Boolean(message));
-  emailStatus.classList.toggle("is-error", type === "error");
-}
-
-function emailActionUrl() {
-  const url = new URL(location.href);
-  ["apiKey", "oobCode", "mode", "lang", "continueUrl"].forEach((key) => url.searchParams.delete(key));
-  return url.toString();
-}
-
-async function completeEmailLink(email) {
-  emailButton.disabled = true;
-  emailInput.disabled = true;
-  emailButton.textContent = "正在驗證…";
-  setEmailStatus("正在確認您的 Email 與閱讀資格，請稍候。");
-  try {
-    await signInWithEmailLink(auth, email, location.href);
-    localStorage.removeItem(EMAIL_STORAGE_KEY);
-    completingEmailLink = false;
-    setEmailStatus("Email 驗證完成，正在開啟您的閱讀權限。");
-    const clean = new URL(location.href);
-    ["apiKey", "oobCode", "mode", "lang", "continueUrl"].forEach((key) => clean.searchParams.delete(key));
-    history.replaceState({}, document.title, clean.toString());
-    modal.classList.remove("is-open");
-  } catch (error) {
-    console.error("Email 驗證登入失敗：", error);
-    setEmailStatus("驗證連結可能已使用或逾期，請重新寄送一封驗證信。", "error");
-  } finally {
-    emailButton.disabled = false;
-    emailInput.disabled = false;
-    emailButton.textContent = completingEmailLink ? "完成 Email 驗證登入" : "寄送 Email 驗證連結";
-  }
-}
 
 function toDate(value) {
   if (!value) return null;
@@ -222,19 +154,6 @@ function toggleAccountMenu() {
 
 setPersistence(auth, browserLocalPersistence).catch(console.error);
 getRedirectResult(auth).catch((error) => console.error("Google 重新導向登入失敗：", error));
-
-if (completingEmailLink) {
-  modal.classList.add("is-open");
-  const savedEmail = normalizeEmail(localStorage.getItem(EMAIL_STORAGE_KEY));
-  emailButton.textContent = "完成 Email 驗證登入";
-  setEmailStatus(savedEmail
-    ? "已收到驗證連結，正在完成登入。"
-    : "請再次輸入收到這封驗證信的 Email，以完成身分確認。");
-  if (savedEmail) {
-    emailInput.value = savedEmail;
-    completeEmailLink(savedEmail);
-  }
-}
 
 memberButton.addEventListener("click", async (event) => {
   event.stopPropagation();
@@ -297,41 +216,6 @@ googleButton.addEventListener("click", async () => {
   }
 });
 
-emailForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const email = normalizeEmail(emailInput.value);
-  if (!email || !emailInput.checkValidity()) {
-    emailInput.reportValidity();
-    return;
-  }
-  if (completingEmailLink) {
-    await completeEmailLink(email);
-    return;
-  }
-  emailButton.disabled = true;
-  emailInput.disabled = true;
-  emailButton.textContent = "正在寄送…";
-  setEmailStatus("正在寄送驗證信，請稍候。");
-  try {
-    await sendSignInLinkToEmail(auth, email, {
-      url: emailActionUrl(),
-      handleCodeInApp: true
-    });
-    localStorage.setItem(EMAIL_STORAGE_KEY, email);
-    setEmailStatus(`驗證信已寄至 ${email}。請開啟信件並點選驗證連結；若未收到，也請查看垃圾郵件匣。`);
-  } catch (error) {
-    console.error("Email 驗證信寄送失敗：", error);
-    const message = error?.code === "auth/operation-not-allowed"
-      ? "Email 驗證登入尚未在 Firebase 後台啟用，請聯絡網站管理人員。"
-      : "目前無法寄出驗證信，請確認 Email 是否正確，稍後再試。";
-    setEmailStatus(message, "error");
-  } finally {
-    emailButton.disabled = false;
-    emailInput.disabled = false;
-    emailButton.textContent = "寄送 Email 驗證連結";
-  }
-});
-
 onAuthStateChanged(auth, async (user) => {
   closeAccountMenu();
   hasWellnessAccess = false;
@@ -347,7 +231,7 @@ onAuthStateChanged(auth, async (user) => {
   sessionStorage.removeItem("site-auth-flow");
   if (!user) {
     memberButton.textContent = "會員登入";
-    memberButton.title = "使用 Google 帳號或一般 Email 登入";
+    memberButton.title = "使用會員 Google 帳號登入";
     return;
   }
   if (isAdminEmail(user.email)) {
