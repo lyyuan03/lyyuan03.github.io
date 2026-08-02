@@ -16,6 +16,7 @@ if (/(^|\/)admin\.html$/i.test(currentPath)) {
   import("./seed-guanyin-vow-lamp-v2.js?v=20260802-seed-1");
   import("./article-guanyin-v2-images.js?v=20260802-images-2");
   import("./activity-admin-bulk.js?v=20260802-bulk-selection-1");
+  import("./member-admin-bulk.js?v=20260802-all-member-bulk-1");
 }
 
 export const firebaseConfig = {
