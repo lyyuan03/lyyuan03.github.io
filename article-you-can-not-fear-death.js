@@ -7,14 +7,14 @@ export const youCanNotFearDeathArticle = {
   series: "生命轉化",
   status: "published",
   publishedAt: "2026-08-02T08:00:00.000Z",
-  updatedAt: "2026-08-02T08:00:00.000Z",
-  coverImage: "assets/articles/you-can-not-fear-death/cover.webp?v=20260802-1",
+  updatedAt: "2026-08-02T09:10:00.000Z",
+  coverImage: "assets/articles/you-can-not-fear-death/cover.webp?v=20260802-2",
   excerpt: "讀《你可以不怕死》，真正令我停下來的，不只是死亡，而是余德慧對觀照的追問：我們理解的道理，能否在死亡真正到來時，成為活在生命裡的力量？",
   accessType: "free",
-  bookTitle: "你可以不怕死",
+  bookTitle: "一行禪師你可以不怕死【暢銷23週年紀念版】",
   bookAuthor: "一行禪師；胡因夢譯",
   bookPublisher: "橡樹林文化",
-  bookPurchaseUrl: "https://www.books.com.tw/products/0010224447",
+  bookPurchaseUrl: "https://www.books.com.tw/products/0011056002",
   content: `# 一本談死亡的書，卻讓我重新理解了修行
 
 ### ——讀《你可以不怕死》後的生命反思
@@ -43,7 +43,7 @@ export const youCanNotFearDeathArticle = {
 
 ![雲化為雨，死亡不只是消失，而是生命形式的轉變](assets/articles/you-can-not-fear-death/cloud-and-rain.webp?v=20260802-1)
 
-余德慧真正關心的，卻是另一層問題。
+余德慧進一步將這個問題帶回具體的生命經驗。
 
 理解雲會成為雨，與自己在死亡面前不再恐懼，仍然不是同一件事。一個人可以熟悉無常、無我與緣起的道理，也能清楚說明死亡只是形式的轉變；可是，當疾病進入身體、摯愛即將離去，或自己的生命走向盡頭時，這些理解是否仍然站得住？
 
@@ -55,9 +55,7 @@ export const youCanNotFearDeathArticle = {
 
 如果有，什麼時候才算飽滿？修行十年、二十年，還是臨終之前？
 
-思考很久之後，我發現，我與余德慧教授有一個不同的答案。
-
-我不認為觀照有一天會真正飽滿。因為生命本身就是不斷展開的。今天需要觀照的可能是親情，明天是金錢，再過幾年也許是疾病與衰老，最後才輪到死亡。
+沿著這個提問繼續思考，我逐漸理解，觀照或許並不是一個終有一天可以宣告完成的狀態。因為生命本身就是不斷展開的。今天需要觀照的可能是親情，明天是金錢，再過幾年也許是疾病與衰老，最後才輪到死亡。
 
 同一個人在不同年齡面對同一件事，也會看見完全不同的層次。二十歲時理解的失去，與五十歲時經歷的失去，不會只是同一個答案的重複；它會帶出新的依戀、新的恐懼，也會暴露先前不曾察覺的自己。
 
@@ -89,7 +87,7 @@ export const youCanNotFearDeathArticle = {
 
 余德慧所追問的是：轉化究竟如何發生？
 
-我的回答則逐漸變成：人不能命令自己轉化，但可以讓自己長期處於較容易發生轉化的狀態。
+沿著這個提問，我逐漸形成一個體會：人不能命令自己轉化，但可以讓自己長期處於較容易發生轉化的狀態。
 
 我們無法要求自己今天想通，明天就不再痛苦；也不能靠一句「我已經放下」，跳過尚未走完的哀傷。意識愈急著控制，生命有時反而愈難鬆動。
 
