@@ -7,6 +7,35 @@ const accessPanel = document.getElementById("dashboard-access-panel");
 const dashboard = document.getElementById("member-dashboard");
 const money = new Intl.NumberFormat("zh-TW", { style: "currency", currency: "TWD", maximumFractionDigits: 0 });
 
+const treeBackgroundStyle = document.createElement("style");
+treeBackgroundStyle.id = "member-dashboard-tree-background";
+treeBackgroundStyle.textContent = `
+.lyy-sacred-atmosphere,
+body.member-tier-general .lyy-sacred-atmosphere {
+  background:
+    radial-gradient(circle at 50% 4%,rgba(216,184,120,.24),transparent 37%),
+    radial-gradient(circle at 13% 55%,rgba(96,99,48,.11),transparent 36%),
+    linear-gradient(145deg,rgba(245,239,228,.78) 0%,rgba(231,223,209,.82) 100%),
+    url('/forest-path.jpg') center center / cover no-repeat fixed !important;
+}
+body.member-tier-lingji .lyy-sacred-atmosphere {
+  background:
+    radial-gradient(circle at 50% 4%,rgba(229,196,126,.3),transparent 31%),
+    radial-gradient(circle at 18% 65%,rgba(78,104,57,.24),transparent 34%),
+    radial-gradient(circle at 86% 42%,rgba(165,130,84,.15),transparent 33%),
+    linear-gradient(155deg,rgba(11,18,13,.84) 0%,rgba(23,36,26,.8) 48%,rgba(12,20,14,.86) 100%),
+    url('/forest-path.jpg') center center / cover no-repeat fixed !important;
+}
+body.member-tier-sponsor .lyy-sacred-atmosphere {
+  background:
+    radial-gradient(circle at 50% 8%,rgba(198,166,126,.2),transparent 35%),
+    radial-gradient(circle at 15% 65%,rgba(118,86,106,.13),transparent 33%),
+    linear-gradient(145deg,rgba(242,234,229,.78),rgba(231,222,220,.82)),
+    url('/forest-path.jpg') center center / cover no-repeat fixed !important;
+}
+`;
+document.head.appendChild(treeBackgroundStyle);
+
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
