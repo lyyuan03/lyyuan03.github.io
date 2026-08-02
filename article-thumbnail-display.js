@@ -40,20 +40,49 @@ function normalizeSettings(source = {}, articleId = "") {
 }
 
 let settingsByArticle = new Map();
+let hasSettingsDocument = false;
 
 async function loadSettings() {
   try {
     const snapshot = await getDoc(doc(db, "articles", SETTINGS_DOC_ID));
-    const settings = snapshot.exists() && snapshot.data().settings ? snapshot.data().settings : {};
+    hasSettingsDocument = snapshot.exists();
+    const settings = hasSettingsDocument && snapshot.data().settings ? snapshot.data().settings : {};
     settingsByArticle = new Map(Object.entries(settings));
   } catch (error) {
     console.warn("文章縮圖設定暫時無法載入。", error);
     settingsByArticle = new Map();
+    hasSettingsDocument = false;
   }
 }
 
 function removeSystemCard() {
   document.querySelectorAll(`.article-card[data-article-id="${SETTINGS_DOC_ID}"]`).forEach((node) => node.remove());
+}
+
+function subtractOne(node) {
+  if (!node || node.dataset.thumbnailSystemAdjusted === "true") return;
+  const value = Number((node.textContent || "").trim());
+  if (!Number.isFinite(value) || value < 1) return;
+  node.textContent = String(value - 1);
+  node.dataset.thumbnailSystemAdjusted = "true";
+}
+
+function adjustSystemCounts() {
+  if (!hasSettingsDocument) return;
+  document.querySelectorAll(".access-filter a").forEach((link) => {
+    const label = (link.textContent || "").trim();
+    if (label.startsWith("全部文章") || label.startsWith("免費閱讀")) subtractOne(link.querySelector("small"));
+  });
+
+  const params = new URLSearchParams(location.search);
+  const category = params.get("category") || "";
+  const access = params.get("access") || "all";
+  const summary = document.querySelector(".article-result-summary span");
+  if (!summary || summary.dataset.thumbnailSystemAdjusted === "true" || category || !["all", "free"].includes(access)) return;
+  const match = summary.textContent.match(/共\s*(\d+)\s*篇文章/);
+  if (!match) return;
+  summary.textContent = `共 ${Math.max(0, Number(match[1]) - 1)} 篇文章`;
+  summary.dataset.thumbnailSystemAdjusted = "true";
 }
 
 function applyCard(card) {
@@ -95,6 +124,7 @@ function applyCard(card) {
 
 function applyAllCards() {
   removeSystemCard();
+  adjustSystemCounts();
   document.querySelectorAll(".article-card[data-article-id]").forEach(applyCard);
 }
 
@@ -103,6 +133,8 @@ async function initialize() {
   applyAllCards();
   const root = document.getElementById("article-root") || document.body;
   new MutationObserver(() => applyAllCards()).observe(root, { childList: true, subtree: true });
+  const tabs = document.getElementById("category-tabs");
+  if (tabs) new MutationObserver(() => adjustSystemCounts()).observe(tabs, { childList: true, subtree: true });
 }
 
 if (document.readyState === "loading") {
