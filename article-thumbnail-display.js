@@ -1,31 +1,25 @@
 import { db } from "./firebase-config.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const DEFAULT_SETTINGS = {
   thumbnailFit: "cover",
   thumbnailPositionX: 50,
   thumbnailPositionY: 50,
   thumbnailScale: 100,
-  thumbnailTitleAlign: "left"
+  thumbnailTitleAlign: "left",
+  thumbnailImage: ""
 };
 
 const ARTICLE_DEFAULTS = {
   "reading-you-can-not-fear-death": {
     thumbnailFit: "cover",
-    thumbnailPositionX: 50,
-    thumbnailPositionY: 28,
-    thumbnailScale: 218,
+    thumbnailPositionX: 48,
+    thumbnailPositionY: 18,
+    thumbnailScale: 111,
     thumbnailTitleAlign: "center"
   }
 };
-
-const SETTING_KEYS = [
-  "thumbnailFit",
-  "thumbnailPositionX",
-  "thumbnailPositionY",
-  "thumbnailScale",
-  "thumbnailTitleAlign"
-];
 
 function numberValue(value, fallback, min, max) {
   const parsed = Number(value);
@@ -40,41 +34,45 @@ function normalizeSettings(source = {}, articleId = "") {
     thumbnailPositionX: numberValue(source.thumbnailPositionX, defaults.thumbnailPositionX, 0, 100),
     thumbnailPositionY: numberValue(source.thumbnailPositionY, defaults.thumbnailPositionY, 0, 100),
     thumbnailScale: numberValue(source.thumbnailScale, defaults.thumbnailScale, 50, 300),
-    thumbnailTitleAlign: source.thumbnailTitleAlign === "center" ? "center" : defaults.thumbnailTitleAlign
+    thumbnailTitleAlign: source.thumbnailTitleAlign === "center" ? "center" : defaults.thumbnailTitleAlign,
+    thumbnailImage: String(source.thumbnailImage || defaults.thumbnailImage || "").trim()
   };
 }
 
 let settingsByArticle = new Map();
-let loadPromise = null;
 
 async function loadSettings() {
-  if (loadPromise) return loadPromise;
-  loadPromise = getDocs(collection(db, "articles"))
-    .then((snapshot) => {
-      settingsByArticle = new Map(snapshot.docs.map((item) => [item.id, item.data()]));
-      return settingsByArticle;
-    })
-    .catch((error) => {
-      console.warn("文章縮圖設定暫時無法載入。", error);
-      return settingsByArticle;
-    });
-  return loadPromise;
+  try {
+    const snapshot = await getDoc(doc(db, "articles", SETTINGS_DOC_ID));
+    const settings = snapshot.exists() && snapshot.data().settings ? snapshot.data().settings : {};
+    settingsByArticle = new Map(Object.entries(settings));
+  } catch (error) {
+    console.warn("文章縮圖設定暫時無法載入。", error);
+    settingsByArticle = new Map();
+  }
+}
+
+function removeSystemCard() {
+  document.querySelectorAll(`.article-card[data-article-id="${SETTINGS_DOC_ID}"]`).forEach((node) => node.remove());
 }
 
 function applyCard(card) {
   const articleId = card.dataset.articleId || "";
-  if (!articleId) return;
-  const source = settingsByArticle.get(articleId) || {};
-  const hasStoredSettings = SETTING_KEYS.some((key) => Object.prototype.hasOwnProperty.call(source, key));
-  if (!hasStoredSettings && !ARTICLE_DEFAULTS[articleId]) return;
+  if (!articleId || articleId === SETTINGS_DOC_ID) return;
+  const saved = settingsByArticle.get(articleId) || {};
+  const hasSavedSettings = settingsByArticle.has(articleId);
+  if (!hasSavedSettings && !ARTICLE_DEFAULTS[articleId]) return;
 
   const image = card.querySelector(".article-card-media img");
   const media = card.querySelector(".article-card-media");
   const title = card.querySelector(".article-list-title");
   if (!image || !media) return;
 
-  const settings = normalizeSettings(source, articleId);
+  const settings = normalizeSettings(saved, articleId);
   const position = `${settings.thumbnailPositionX}% ${settings.thumbnailPositionY}%`;
+  if (settings.thumbnailImage && image.getAttribute("src") !== settings.thumbnailImage) {
+    image.setAttribute("src", settings.thumbnailImage);
+  }
   image.style.setProperty("position", "absolute", "important");
   image.style.setProperty("inset", "0", "important");
   image.style.setProperty("width", "100%", "important");
@@ -96,6 +94,7 @@ function applyCard(card) {
 }
 
 function applyAllCards() {
+  removeSystemCard();
   document.querySelectorAll(".article-card[data-article-id]").forEach(applyCard);
 }
 
