@@ -32,8 +32,8 @@ function formatDateKey(value) {
 }
 
 function isActiveWellnessMember(member = {}) {
-  const legacyWellness = member.memberType !== "sponsor-member" && ["wellness", "lingji"].includes(member.memberLevel);
-  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || legacyWellness;
+  if (member.memberType === "sponsor-member") return false;
+  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
   const expiry = toDate(member.expiresAt);
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
 }
@@ -96,7 +96,7 @@ function renderDashboard(member, user) {
   const qualificationExpiry = toDate(member.expiresAt);
   const activeQualification = member.status === "active" && (!qualificationExpiry || qualificationExpiry > new Date());
   const articleActive = activeQualification && (member.articleAccess === true || member.memberType === "sponsor-member" || isLingji);
-  const sponsorOnly = articleActive && !wellnessActive;
+  const sponsorOnly = member.memberType === "sponsor-member" && activeQualification;
 
   dashboard.dataset.memberLevel = state.effectiveLevel;
   dashboard.dataset.memberKind = sponsorOnly ? "sponsor" : "wellness";

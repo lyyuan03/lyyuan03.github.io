@@ -17,10 +17,10 @@ service cloud.firestore {
     function isActiveWellnessMember() {
       return signedIn()
         && wellnessMember().data.status == "active"
+        && wellnessMember().data.memberType != "sponsor-member"
         && (wellnessMember().data.wellnessAccess == true
           || wellnessMember().data.memberType == "wellness-channel"
-          || (wellnessMember().data.memberType != "sponsor-member"
-            && wellnessMember().data.memberLevel in ["wellness", "lingji"]));
+          || wellnessMember().data.memberLevel in ["wellness", "lingji"]);
     }
 
     function isLingjiMember() {

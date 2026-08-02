@@ -57,8 +57,8 @@ function membershipLevel(member = {}) {
 }
 
 function isActiveWellnessMember(member = {}) {
-  const legacyWellness = member.memberType !== "sponsor-member" && ["wellness", "lingji"].includes(member.memberLevel);
-  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || legacyWellness;
+  if (member.memberType === "sponsor-member") return false;
+  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
   const expiry = toDate(member.expiresAt);
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
 }
