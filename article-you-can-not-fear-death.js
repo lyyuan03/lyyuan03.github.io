@@ -31,8 +31,6 @@ export const youCanNotFearDeathArticle = {
 
 因為它不是在否定一行禪師，而是在追問每一位修行者：當死亡真正降臨時，我們平日所說的觀照，究竟仍只是一套理解生命的概念，還是已經成為一種活在生命裡的力量？
 
-![《你可以不怕死》舊版書封與閱讀空間](assets/articles/you-can-not-fear-death/cover.webp?v=20260802-1)
-
 ## 死亡不是消失，而是形式的轉變
 
 一行禪師認為，對死亡的恐懼，可以透過深觀而逐漸鬆開。
