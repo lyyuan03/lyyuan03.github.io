@@ -15,16 +15,6 @@ const DEFAULT_SETTINGS = {
   thumbnailImage: ""
 };
 
-const ARTICLE_DEFAULTS = {
-  "reading-you-can-not-fear-death": {
-    thumbnailFit: "cover",
-    thumbnailPositionX: 48,
-    thumbnailPositionY: 18,
-    thumbnailScale: 111,
-    thumbnailTitleAlign: "center"
-  }
-};
-
 function numberValue(value, fallback, min, max) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;
@@ -32,7 +22,7 @@ function numberValue(value, fallback, min, max) {
 }
 
 function normalizeSettings(source = {}, articleId = "") {
-  const defaults = { ...DEFAULT_SETTINGS, ...(ARTICLE_DEFAULTS[articleId] || {}) };
+  const defaults = DEFAULT_SETTINGS;
   const thumbnailFit = source.thumbnailFit === "contain" ? "contain" : defaults.thumbnailFit;
   return {
     thumbnailFit,
@@ -86,9 +76,8 @@ function adjustSystemCounts() {
 function applyCard(card) {
   const articleId = card.dataset.articleId || "";
   if (!articleId || articleId === SETTINGS_DOC_ID) return;
-  const saved = settingsByArticle.get(articleId) || {};
-  const hasSavedSettings = settingsByArticle.has(articleId);
-  if (!hasSavedSettings && !ARTICLE_DEFAULTS[articleId]) return;
+  const saved = settingsByArticle.get(articleId);
+  if (!saved) return;
 
   const image = card.querySelector(".article-card-media img");
   const media = card.querySelector(".article-card-media");
