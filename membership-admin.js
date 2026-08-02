@@ -118,6 +118,9 @@ function memberPayload(paymentStatus = null, extendMembership = false) {
   return {
     email,
     name: document.getElementById("member-name").value.trim(),
+    memberType: "sponsor-member",
+    articleAccess: true,
+    wellnessAccess: false,
     planMonths: selectedMonths(),
     amount: Number(amountEl.value || 0),
     paymentUrl: paymentUrlEl.value.trim(),

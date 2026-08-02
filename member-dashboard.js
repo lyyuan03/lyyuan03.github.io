@@ -95,8 +95,8 @@ function renderDashboard(member, user) {
   const wellnessActive = isActiveWellnessMember(member);
   const qualificationExpiry = toDate(member.expiresAt);
   const activeQualification = member.status === "active" && (!qualificationExpiry || qualificationExpiry > new Date());
-  const articleActive = activeQualification && (member.articleAccess === true || member.memberType === "sponsor-member" || isLingji);
-  const sponsorOnly = member.memberType === "sponsor-member" && activeQualification;
+  const sponsorOnly = activeQualification && !wellnessActive;
+  const articleActive = activeQualification && (sponsorOnly || member.articleAccess === true || isLingji);
 
   dashboard.dataset.memberLevel = state.effectiveLevel;
   dashboard.dataset.memberKind = sponsorOnly ? "sponsor" : "wellness";
@@ -106,7 +106,7 @@ function renderDashboard(member, user) {
     ? `會員編號 ${membershipNumber}｜贊助專屬文章會員`
     : `會員編號 ${membershipNumber}｜養生療癒頻道會員`;
   document.getElementById("dashboard-card-number").textContent = String(membershipNumber).toUpperCase();
-  document.getElementById("dashboard-level").textContent = sponsorOnly ? "贊助專屬文章會員" : isLingji ? "養生療癒頻道｜靈極會員" : "養生療癒頻道｜一般會員";
+  document.getElementById("dashboard-level").textContent = sponsorOnly ? "贊助文章會員" : isLingji ? "養生療癒頻道｜靈極會員" : "養生療癒頻道｜一般會員";
   document.getElementById("dashboard-level-en").textContent = sponsorOnly ? "SPONSORED READING" : isLingji ? "WELLNESS · LINGJI" : "WELLNESS · GENERAL";
   document.querySelector(".tier-card-bottom span:last-child").textContent = sponsorOnly ? "ARTICLE" : "WELLNESS";
   const generalSymbol = document.querySelector(".tier-card-symbol.general");
