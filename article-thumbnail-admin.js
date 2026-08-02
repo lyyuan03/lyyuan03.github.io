@@ -15,15 +15,14 @@ const DEFAULT_SETTINGS = {
   thumbnailImage: ""
 };
 
-const ARTICLE_DEFAULTS = {
-  "reading-you-can-not-fear-death": {
-    thumbnailFit: "cover",
-    thumbnailPositionX: 48,
-    thumbnailPositionY: 18,
-    thumbnailScale: 111,
-    thumbnailTitleAlign: "center"
-  }
-};
+const THUMBNAIL_SETTING_KEYS = [
+  "thumbnailFit",
+  "thumbnailPositionX",
+  "thumbnailPositionY",
+  "thumbnailScale",
+  "thumbnailTitleAlign",
+  "thumbnailImage"
+];
 
 function numberValue(value, fallback, min, max) {
   const parsed = Number(value);
@@ -32,7 +31,7 @@ function numberValue(value, fallback, min, max) {
 }
 
 function normalizeSettings(source = {}, articleId = "") {
-  const defaults = { ...DEFAULT_SETTINGS, ...(ARTICLE_DEFAULTS[articleId] || {}) };
+  const defaults = DEFAULT_SETTINGS;
   const thumbnailFit = source.thumbnailFit === "contain" ? "contain" : defaults.thumbnailFit;
   return {
     thumbnailFit,
@@ -73,7 +72,7 @@ function initialize() {
     <div class="thumbnail-control-head">
       <div>
         <strong>文章列表縮圖</strong>
-        <small>需要看見整張圖片時請選「完整顯示」；「裁切填滿」從 100% 開始放大，不會再縮出黑色邊框。</small>
+        <small>調整完成後，按下「儲存文章」會連同縮圖位置一起儲存；也可單獨按「儲存縮圖設定」。</small>
       </div>
       <span id="thumbnail-control-status" role="status" aria-live="polite">選擇文章後即可調整</span>
     </div>
@@ -134,7 +133,7 @@ function initialize() {
     .thumbnail-control-head strong{display:block;color:#CBAA77;font-family:var(--serif);font-size:16px;font-weight:500;letter-spacing:.1em}
     .thumbnail-control-head small{display:block;margin-top:4px;color:rgba(245,240,232,.5);font-size:11px;line-height:1.7}
     #thumbnail-control-status{font-size:11px;color:rgba(245,240,232,.55);white-space:nowrap}
-    #thumbnail-control-status[data-state="success"]{color:#BFD39C}#thumbnail-control-status[data-state="error"]{color:#F1AAA2}#thumbnail-control-status[data-state="saving"]{color:#D8BD91}
+    #thumbnail-control-status[data-state="success"]{color:#BFD39C}#thumbnail-control-status[data-state="error"]{color:#F1AAA2}#thumbnail-control-status[data-state="saving"]{color:#D8BD91}#thumbnail-control-status[data-state="dirty"]{color:#E3CEAA}
     .thumbnail-control-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:start}
     .thumbnail-control-fields{display:grid;gap:13px}.thumbnail-range-field label{display:flex;justify-content:space-between}.thumbnail-range-field input{padding:0;border:0;background:transparent}
     .thumbnail-range-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(245,240,232,.38)}
@@ -165,8 +164,9 @@ function initialize() {
   const saveButton = panel.querySelector("#thumbnail-save");
   let loadedId = "";
   let loadSerial = 0;
+  let thumbnailDirty = false;
 
-  function currentSettings() {
+  function currentSettings(articleId = loadedId || activeArticleId()) {
     return normalizeSettings({
       thumbnailFit: fitInput.value,
       thumbnailPositionX: xInput.value,
@@ -174,17 +174,18 @@ function initialize() {
       thumbnailScale: scaleInput.value,
       thumbnailTitleAlign: alignInput.value,
       thumbnailImage: coverInput.value.trim()
-    }, loadedId || activeArticleId());
+    }, articleId);
   }
 
-  function applySettings(settings) {
-    const normalized = normalizeSettings(settings, loadedId || activeArticleId());
+  function applySettings(settings, articleId = loadedId || activeArticleId()) {
+    const normalized = normalizeSettings(settings, articleId);
     fitInput.value = normalized.thumbnailFit;
     xInput.value = String(normalized.thumbnailPositionX);
     yInput.value = String(normalized.thumbnailPositionY);
     scaleInput.value = String(normalized.thumbnailScale);
     alignInput.value = normalized.thumbnailTitleAlign;
     if (normalized.thumbnailImage) coverInput.value = normalized.thumbnailImage;
+    thumbnailDirty = false;
     updatePreview();
   }
 
@@ -203,6 +204,51 @@ function initialize() {
     previewMedia.style.background = PREVIEW_BACKGROUND;
     previewTitle.textContent = titleInput?.value.trim() || "文章標題";
     previewTitle.style.textAlign = settings.thumbnailTitleAlign;
+  }
+
+  function hasLegacySettings(source = {}) {
+    return THUMBNAIL_SETTING_KEYS.some((key) => Object.prototype.hasOwnProperty.call(source, key));
+  }
+
+  async function writeSettings(articleId, saved) {
+    await setDoc(doc(db, "articles", SETTINGS_DOC_ID), {
+      title: "系統縮圖設定",
+      slug: SETTINGS_DOC_ID,
+      category: "system",
+      status: "published",
+      accessType: "system",
+      content: "",
+      excerpt: "",
+      publishedAt: "2000-01-01T00:00:00.000Z",
+      systemType: "article-thumbnail-settings",
+      settings: { [articleId]: saved },
+      settingsUpdatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
+  async function persistSettings(articleId, { announce = true } = {}) {
+    if (!articleId || !isAdminEmail(auth.currentUser?.email)) {
+      throw new Error("請先選擇文章並確認管理員登入");
+    }
+    if (announce) {
+      saveButton.disabled = true;
+      status.textContent = "正在儲存縮圖設定…";
+      status.dataset.state = "saving";
+    }
+    const saved = currentSettings(articleId);
+    await writeSettings(articleId, saved);
+    loadedId = articleId;
+    applySettings(saved, articleId);
+    status.textContent = announce ? "縮圖設定已儲存，前台會自動同步" : "縮圖設定已隨文章一併儲存";
+    status.dataset.state = "success";
+    return saved;
+  }
+
+  function markThumbnailDirty() {
+    if (!loadedId && !activeArticleId()) return;
+    thumbnailDirty = true;
+    status.textContent = "縮圖位置已修改，按「儲存文章」即可一併儲存";
+    status.dataset.state = "dirty";
   }
 
   async function loadForActiveArticle() {
@@ -228,14 +274,22 @@ function initialize() {
       if (serial !== loadSerial) return;
       const saved = settingsSnapshot.exists() ? settingsSnapshot.data().settings?.[articleId] : null;
       const fallback = articleSnapshot.exists() ? articleSnapshot.data() : {};
-      const source = saved || fallback;
+      const legacy = !saved && hasLegacySettings(fallback)
+        ? normalizeSettings({
+            ...fallback,
+            thumbnailImage: fallback.thumbnailImage || fallback.coverImage || ""
+          }, articleId)
+        : null;
+      const source = saved || legacy || {};
       const hadInvalidScale = Number(source?.thumbnailScale) < SCALE_MIN;
-      applySettings(normalizeSettings(source, articleId));
+      if (legacy) await writeSettings(articleId, legacy);
+      applySettings(source, articleId);
       status.textContent = hadInvalidScale
-        ? "舊縮放比例低於 100%，已自動修正；請重新儲存縮圖設定"
-        : saved ? "已載入獨立縮圖設定" : "尚未獨立儲存，可直接調整";
-      status.dataset.state = hadInvalidScale ? "error" : "";
-      if (!hadInvalidScale) delete status.dataset.state;
+        ? "舊縮放比例低於 100%，已自動修正並儲存"
+        : legacy ? "原本的縮圖位置已自動轉移並儲存"
+          : saved ? "已載入縮圖設定" : "尚未設定縮圖，可直接調整";
+      status.dataset.state = hadInvalidScale ? "error" : legacy ? "success" : "";
+      if (!hadInvalidScale && !legacy) delete status.dataset.state;
       saveButton.disabled = false;
     } catch (error) {
       console.error("縮圖設定載入失敗：", error);
@@ -249,55 +303,42 @@ function initialize() {
   async function saveSettings(event) {
     event?.preventDefault();
     event?.stopPropagation();
-    const articleId = activeArticleId();
-    if (!articleId || !isAdminEmail(auth.currentUser?.email)) {
-      status.textContent = "請先選擇文章並確認管理員登入";
-      status.dataset.state = "error";
-      return;
-    }
-    saveButton.disabled = true;
-    status.textContent = "正在儲存縮圖設定…";
-    status.dataset.state = "saving";
     try {
-      const settingsRef = doc(db, "articles", SETTINGS_DOC_ID);
-      const snapshot = await getDoc(settingsRef);
-      const existing = snapshot.exists() && snapshot.data().settings ? snapshot.data().settings : {};
-      const saved = currentSettings();
-      await setDoc(settingsRef, {
-        title: "系統縮圖設定",
-        slug: SETTINGS_DOC_ID,
-        category: "system",
-        status: "published",
-        accessType: "system",
-        content: "",
-        excerpt: "",
-        publishedAt: "2000-01-01T00:00:00.000Z",
-        systemType: "article-thumbnail-settings",
-        settings: { ...existing, [articleId]: saved },
-        settingsUpdatedAt: serverTimestamp()
-      }, { merge: true });
-      applySettings(saved);
-      status.textContent = "縮圖設定已儲存，前台重新整理後生效";
-      status.dataset.state = "success";
-      window.setTimeout(() => {
-        if (status.dataset.state === "success") {
-          status.textContent = "已儲存，可繼續調整";
-          delete status.dataset.state;
-        }
-      }, 3500);
+      await persistSettings(activeArticleId());
     } catch (error) {
       console.error("縮圖設定儲存失敗：", error);
-      status.textContent = "縮圖設定儲存失敗";
+      status.textContent = error?.message || "縮圖設定儲存失敗";
       status.dataset.state = "error";
     } finally {
       saveButton.disabled = false;
     }
   }
 
-  [xInput, yInput, scaleInput, alignInput, coverInput, titleInput].filter(Boolean).forEach((input) => {
+  window.articleThumbnailAdmin = {
+    saveForArticle(articleId, options = {}) {
+      return persistSettings(articleId, options);
+    },
+    hasUnsavedChanges() {
+      return thumbnailDirty;
+    }
+  };
+
+  [xInput, yInput, scaleInput, alignInput].forEach((input) => {
+    input.addEventListener("input", () => {
+      updatePreview();
+      markThumbnailDirty();
+    });
+    input.addEventListener("change", () => {
+      updatePreview();
+      markThumbnailDirty();
+    });
+  });
+  [coverInput, titleInput].filter(Boolean).forEach((input) => {
     input.addEventListener("input", updatePreview);
     input.addEventListener("change", updatePreview);
   });
+  coverInput.addEventListener("input", markThumbnailDirty);
+  coverInput.addEventListener("change", markThumbnailDirty);
 
   fitInput.addEventListener("change", () => {
     scaleInput.value = "100";
@@ -305,7 +346,7 @@ function initialize() {
     status.textContent = fitInput.value === "contain"
       ? "已切換為完整顯示；圖片會以 100% 顯示整張內容"
       : "已切換為裁切填滿；可從 100% 開始放大與調整位置";
-    delete status.dataset.state;
+    markThumbnailDirty();
   });
 
   panel.querySelector("#thumbnail-use-first-image").addEventListener("click", () => {
@@ -317,14 +358,12 @@ function initialize() {
     }
     coverInput.value = image;
     updatePreview();
-    status.textContent = "已帶入內文第一張圖，請按「儲存縮圖設定」";
-    delete status.dataset.state;
+    markThumbnailDirty();
   });
 
   panel.querySelector("#thumbnail-reset").addEventListener("click", () => {
-    applySettings(normalizeSettings({ thumbnailImage: coverInput.value }, activeArticleId()));
-    status.textContent = "已重設為預設位置，尚未儲存";
-    delete status.dataset.state;
+    applySettings(normalizeSettings({ thumbnailImage: coverInput.value }, activeArticleId()), activeArticleId());
+    markThumbnailDirty();
   });
   saveButton.addEventListener("click", saveSettings);
 
