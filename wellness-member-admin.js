@@ -62,6 +62,17 @@ function levelLabel(level) {
   return level === "lingji" ? "靈極會員" : "一般會員";
 }
 
+function parseCourses(value = "") {
+  return value.split("\n").map((line) => line.trim()).filter(Boolean).map((line) => {
+    const [title = "", startsAt = "", expiresAt = "", url = ""] = line.split(/[｜|]/).map((item) => item.trim());
+    return { title, startsAt, expiresAt, url };
+  }).filter((course) => course.title);
+}
+
+function coursesToText(courses = []) {
+  return (Array.isArray(courses) ? courses : []).map((course) => [course.title, course.startsAt, course.expiresAt, course.url].join("｜")).join("\n");
+}
+
 function syncArticleAccess() {
   if (levelEl.value === "lingji") {
     articleAccessEl.checked = true;
@@ -78,6 +89,8 @@ function resetForm() {
   articleAccessEl.checked = true;
   articleAccessEl.disabled = false;
   document.getElementById("wellness-member-annual-spend").value = "0";
+  document.getElementById("wellness-member-cashback").value = "0";
+  document.getElementById("wellness-member-courses").value = "";
   document.getElementById("wellness-member-annual-cycle").value = currentCycleDefaults().start;
   document.getElementById("wellness-member-lingji-from").value = "";
   document.getElementById("wellness-member-lingji-until").value = "";
@@ -102,6 +115,9 @@ function payload() {
     startsAt: dateInputToIso(document.getElementById("wellness-member-starts-at").value),
     expiresAt: dateInputToIso(document.getElementById("wellness-member-expires-at").value, true),
     annualSpend,
+    cashbackBalance: Math.max(0, Number(document.getElementById("wellness-member-cashback").value) || 0),
+    purchasedCourses: parseCourses(document.getElementById("wellness-member-courses").value),
+    wellnessAccess: true,
     annualSpendCycleStart: dateInputToIso(cycleStart),
     nextLingjiQualified: annualSpend >= LINGJI_THRESHOLD,
     lingjiValidFrom: dateInputToIso(lingjiFromInput || (level === "lingji" ? currentCycleDefaults().start : "")),
@@ -180,7 +196,9 @@ function renderMembers() {
     const articleLabel = member.articleAccess === true || level === "lingji" ? "可閱讀付費文章" : "未開放付費文章";
     const annualSpend = Math.max(0, Number(member.annualSpend) || 0);
     const qualificationLabel = annualSpend >= LINGJI_THRESHOLD ? "符合次年度靈極資格" : `距次年度門檻 NT$${(LINGJI_THRESHOLD - annualSpend).toLocaleString("zh-TW")}`;
-    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(levelLabel(level))}｜${escapeHtml(stateLabel)}</strong><small>${escapeHtml(member.email)}｜${articleLabel}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}<br>本年度累積 NT$${annualSpend.toLocaleString("zh-TW")}｜${escapeHtml(qualificationLabel)}</small></div><div class="member-row-actions"><button class="btn" type="button" data-wellness-edit="${escapeHtml(member.email)}">編輯</button><button class="btn danger" type="button" data-wellness-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
+    const cashback = Math.max(0, Number(member.cashbackBalance) || 0);
+    const courseCount = Array.isArray(member.purchasedCourses) ? member.purchasedCourses.length : 0;
+    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(levelLabel(level))}｜${escapeHtml(stateLabel)}</strong><small>${escapeHtml(member.email)}｜${articleLabel}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}<br>本年度累積 NT$${annualSpend.toLocaleString("zh-TW")}｜可用回饋金 NT$${cashback.toLocaleString("zh-TW")}｜線上課程 ${courseCount} 門<br>${escapeHtml(qualificationLabel)}</small></div><div class="member-row-actions"><button class="btn" type="button" data-wellness-edit="${escapeHtml(member.email)}">編輯</button><button class="btn danger" type="button" data-wellness-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
   }).join("");
   listEl.querySelectorAll("[data-wellness-edit]").forEach((button) => button.addEventListener("click", () => editMember(button.dataset.wellnessEdit)));
   listEl.querySelectorAll("[data-wellness-delete]").forEach((button) => button.addEventListener("click", () => removeMember(button.dataset.wellnessDelete)));
@@ -198,6 +216,8 @@ function editMember(email) {
   document.getElementById("wellness-member-starts-at").value = toDateInput(member.startsAt);
   document.getElementById("wellness-member-expires-at").value = toDateInput(member.expiresAt);
   document.getElementById("wellness-member-annual-spend").value = Math.max(0, Number(member.annualSpend) || 0);
+  document.getElementById("wellness-member-cashback").value = Math.max(0, Number(member.cashbackBalance) || 0);
+  document.getElementById("wellness-member-courses").value = coursesToText(member.purchasedCourses);
   document.getElementById("wellness-member-annual-cycle").value = toDateInput(member.annualSpendCycleStart) || currentCycleDefaults().start;
   document.getElementById("wellness-member-lingji-from").value = toDateInput(member.lingjiValidFrom);
   document.getElementById("wellness-member-lingji-until").value = toDateInput(member.lingjiValidUntil);
@@ -218,7 +238,7 @@ async function loadMembers() {
   const snapshot = await getDocs(collection(db, "memberAccess"));
   members = snapshot.docs
     .map((item) => ({ id: item.id, ...item.data() }))
-    .filter((item) => item.memberType === "wellness-channel" || ["wellness", "lingji"].includes(item.memberLevel))
+    .filter((item) => item.wellnessAccess === true || item.memberType === "wellness-channel" || ["wellness", "lingji"].includes(item.memberLevel))
     .sort((a, b) => String(a.email).localeCompare(String(b.email), "zh-TW"));
   renderMembers();
 }

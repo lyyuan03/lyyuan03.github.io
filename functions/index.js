@@ -535,6 +535,7 @@ exports.ecpayMembershipCallback = onRequest(
           updatedAt: nowTimestamp
         };
         if (order.memberType !== "sponsor-member") {
+          activeMember.wellnessAccess = true;
           activeMember.memberLevel = order.memberLevel;
           activeMember.wellnessLevel = order.memberLevel;
           activeMember.articleAccess = order.memberLevel === "lingji" || order.articleAccess === true;

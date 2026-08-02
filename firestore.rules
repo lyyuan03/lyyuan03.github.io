@@ -17,7 +17,8 @@ service cloud.firestore {
     function isActiveWellnessMember() {
       return signedIn()
         && wellnessMember().data.status == "active"
-        && (wellnessMember().data.memberType == "wellness-channel"
+        && (wellnessMember().data.wellnessAccess == true
+          || wellnessMember().data.memberType == "wellness-channel"
           || wellnessMember().data.memberLevel in ["wellness", "lingji"]);
     }
 

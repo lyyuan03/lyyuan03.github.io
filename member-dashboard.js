@@ -32,9 +32,42 @@ function formatDateKey(value) {
 }
 
 function isActiveWellnessMember(member = {}) {
-  const isWellness = member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
+  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
   const expiry = toDate(member.expiresAt);
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
+}
+
+function hasMemberCenterAccess(member = {}) {
+  if (!member) return false;
+  const expiry = toDate(member.expiresAt);
+  const activeQualification = member.status === "active" && (!expiry || expiry > new Date());
+  return Boolean(activeQualification || Number(member.cashbackBalance) > 0 || (Array.isArray(member.purchasedCourses) && member.purchasedCourses.length));
+}
+
+function safeCourseUrl(value = "") {
+  try {
+    const url = new URL(value);
+    return ["https:", "http:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function renderCourses(courses = []) {
+  const list = document.getElementById("dashboard-course-list");
+  const validCourses = Array.isArray(courses) ? courses.filter((course) => course?.title) : [];
+  document.getElementById("dashboard-course-count").textContent = `${validCourses.length} 門課程`;
+  if (!validCourses.length) {
+    list.innerHTML = '<div class="empty-benefit">目前沒有已購買的線上課程</div>';
+    return;
+  }
+  list.innerHTML = validCourses.map((course) => {
+    const startsAt = course.startsAt ? formatDateKey(course.startsAt) : "未設定";
+    const expiresAt = course.expiresAt === "永久" ? "永久觀看" : course.expiresAt ? formatDateKey(course.expiresAt) : "未設定";
+    const courseUrl = safeCourseUrl(course.url);
+    const action = courseUrl ? `<a class="course-link" href="${escapeHtml(courseUrl)}" target="_blank" rel="noopener">前往課程</a>` : "";
+    return `<article class="course-item"><div><h3>${escapeHtml(course.title)}</h3><div class="course-meta">觀看期間：${escapeHtml(startsAt)}－${escapeHtml(expiresAt)}</div></div>${action}</article>`;
+  }).join("");
 }
 
 function showAccessState(title, message, actions = "") {
@@ -58,10 +91,14 @@ function renderDashboard(member, user) {
   const expiry = formatDate(member.expiresAt);
   const startsAt = formatDate(member.startsAt || member.firstJoinedAt);
   const membershipNumber = member.memberNumber || member.id || (user.email || "").split("@")[0];
+  const wellnessActive = isActiveWellnessMember(member);
+  const qualificationExpiry = toDate(member.expiresAt);
+  const activeQualification = member.status === "active" && (!qualificationExpiry || qualificationExpiry > new Date());
+  const articleActive = activeQualification && (member.articleAccess === true || member.memberType === "sponsor-member" || isLingji);
 
   dashboard.dataset.memberLevel = state.effectiveLevel;
   document.getElementById("dashboard-greeting").textContent = `${name}，平安`;
-  document.getElementById("dashboard-member-meta").textContent = `會員編號 ${membershipNumber}｜養生療癒頻道會員`;
+  document.getElementById("dashboard-member-meta").textContent = `會員編號 ${membershipNumber}｜靈元院會員帳號`;
   document.getElementById("dashboard-card-number").textContent = String(membershipNumber).toUpperCase();
   document.getElementById("dashboard-level").textContent = isLingji ? "靈極會員" : "一般會員";
   document.getElementById("dashboard-level-en").textContent = isLingji ? "LINGJI PRIVILEGE" : "GENERAL MEMBER";
@@ -70,6 +107,16 @@ function renderDashboard(member, user) {
   document.getElementById("dashboard-membership-status").textContent = "有效";
   document.getElementById("dashboard-membership-date").textContent = `${startsAt}－${expiry}`;
   document.getElementById("dashboard-period-membership").textContent = `${startsAt}－${expiry}`;
+  document.getElementById("dashboard-cashback").textContent = money.format(Math.max(0, Number(member.cashbackBalance) || 0));
+  document.getElementById("dashboard-wellness-access").textContent = wellnessActive ? `有效｜至 ${expiry}` : "尚未開通或已到期";
+  document.getElementById("dashboard-article-access").textContent = articleActive ? `閱讀資格有效｜至 ${expiry}` : "尚未開通";
+  ["dashboard-spend", "dashboard-membership-status", "dashboard-tier-status", "dashboard-period-heading", "dashboard-progress", "dashboard-rights-summary"].forEach((id) => {
+    const section = document.getElementById(id)?.closest("section");
+    if (section) section.hidden = !wellnessActive;
+  });
+  const upgradeSection = [...document.querySelectorAll(".upgrade-section")][0];
+  if (upgradeSection) upgradeSection.hidden = !wellnessActive;
+  renderCourses(member.purchasedCourses);
 
   const tierLabel = document.getElementById("dashboard-tier-label");
   const tierStatus = document.getElementById("dashboard-tier-status");
@@ -124,7 +171,7 @@ function renderDashboard(member, user) {
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    showAccessState("請先登入養生會員帳號", "本頁僅限養生療癒頻道有效會員使用，請以登記會籍的 Google 帳號登入。", '<button class="access-button" type="button" data-dashboard-login>會員登入</button><a class="access-link" href="/membership.html">查看會員制度</a>');
+    showAccessState("請先登入會員帳號", "請以登記會員資格、文章權限或線上課程的 Google 帳號登入。", '<button class="access-button" type="button" data-dashboard-login>會員登入</button><a class="access-link" href="/membership.html">查看會員制度</a>');
     return;
   }
   if (isAdminEmail(user.email)) {
@@ -135,9 +182,9 @@ onAuthStateChanged(auth, async (user) => {
     const email = (user.email || "").trim().toLowerCase();
     const snapshot = await getDoc(doc(db, "memberAccess", email));
     const member = snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
-    if (!member || !isActiveWellnessMember(member)) {
-      const expired = member?.expiresAt ? `目前紀錄的會籍到期日為 ${formatDate(member.expiresAt)}。` : "系統目前查無有效的養生療癒頻道會員資格。";
-      showAccessState("目前無法進入會員中心", `${expired} 本頁不開放僅登記閱讀贊助文章的會員使用，如需確認資料，請聯繫靈元院行政團隊。`, '<a class="access-link" href="/membership.html">查看續會方式</a>');
+    if (!member || !hasMemberCenterAccess(member)) {
+      const expired = member?.expiresAt ? `目前紀錄的資格到期日為 ${formatDate(member.expiresAt)}。` : "系統目前查無可顯示的會員資格、文章權限或已購課程。";
+      showAccessState("目前沒有有效的會員資料", `${expired} 如需確認資料，請聯繫靈元院行政團隊。`, '<a class="access-link" href="/membership.html">查看會員制度</a>');
       return;
     }
     renderDashboard(member, user);

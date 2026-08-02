@@ -284,6 +284,7 @@
               <div class="field"><label for="wellness-member-starts-at">本次會期開始日</label><input id="wellness-member-starts-at" type="date"></div>
               <div class="field"><label for="wellness-member-expires-at">到期日</label><input id="wellness-member-expires-at" type="date"></div>
               <div class="field"><label for="wellness-member-annual-spend">本年度累積消費</label><input id="wellness-member-annual-spend" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="wellness-member-cashback">目前可用回饋金</label><input id="wellness-member-cashback" type="number" min="0" step="1000" value="0"></div>
               <div class="field"><label for="wellness-member-annual-cycle">年度計算起日</label><input id="wellness-member-annual-cycle" type="date"></div>
               <div class="field"><label for="wellness-member-lingji-from">本期靈極資格起日</label><input id="wellness-member-lingji-from" type="date"></div>
               <div class="field"><label for="wellness-member-lingji-until">本期靈極資格迄日</label><input id="wellness-member-lingji-until" type="date"></div>
@@ -292,6 +293,8 @@
               <input id="wellness-member-article-access" type="checkbox" checked>
               <span><strong>開放付費文章閱讀權限</strong><small>儲存後，會員使用此 Gmail 登入即可閱讀付費文章；靈極會員會自動開啟。</small></span>
             </label>
+            <div class="field"><label for="wellness-member-courses">已購線上課程</label><textarea id="wellness-member-courses" style="min-height:120px" placeholder="每行一門：課程名稱｜開始日｜到期日｜課程網址&#10;例：靈性養護入門｜2026-08-01｜2026-12-01｜https://..."></textarea></div>
+            <p class="membership-help">日期請使用 YYYY-MM-DD；永久觀看的課程請將到期日填「永久」。沒有購買課程可留白。</p>
             <div class="field"><label for="wellness-member-note">行政備註</label><textarea id="wellness-member-note" style="min-height:80px"></textarea></div>
             <div class="membership-summary">年度累積消費每年 2 月 1 日重新計算。一般會員累積滿新台幣 100,000 元後，系統會標示符合次年度靈極資格，並於次年 2 月 1 日自動切換會員頁面。</div>
             <div class="membership-summary">自動付款方案｜新台幣 6,000 元／4個月。系統會寄出會員專屬綠界付款連結；付款成功後自動開通，不需人工登錄。</div>
