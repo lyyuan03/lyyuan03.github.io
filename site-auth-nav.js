@@ -128,7 +128,8 @@ function toDate(value) {
 }
 
 function isActiveWellnessMember(member = {}) {
-  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
+  const legacyWellness = member.memberType !== "sponsor-member" && ["wellness", "lingji"].includes(member.memberLevel);
+  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || legacyWellness;
   const expiry = toDate(member.expiresAt);
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
 }

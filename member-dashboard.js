@@ -32,7 +32,8 @@ function formatDateKey(value) {
 }
 
 function isActiveWellnessMember(member = {}) {
-  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
+  const legacyWellness = member.memberType !== "sponsor-member" && ["wellness", "lingji"].includes(member.memberLevel);
+  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || legacyWellness;
   const expiry = toDate(member.expiresAt);
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
 }
@@ -108,6 +109,12 @@ function renderDashboard(member, user) {
   document.getElementById("dashboard-level").textContent = sponsorOnly ? "贊助專屬文章會員" : isLingji ? "養生療癒頻道｜靈極會員" : "養生療癒頻道｜一般會員";
   document.getElementById("dashboard-level-en").textContent = sponsorOnly ? "SPONSORED READING" : isLingji ? "WELLNESS · LINGJI" : "WELLNESS · GENERAL";
   document.querySelector(".tier-card-bottom span:last-child").textContent = sponsorOnly ? "ARTICLE" : "WELLNESS";
+  const generalSymbol = document.querySelector(".tier-card-symbol.general");
+  if (generalSymbol) {
+    generalSymbol.innerHTML = sponsorOnly
+      ? '<rect x="10" y="9" width="28" height="30" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M16 17h16M16 23h16M16 29h11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+      : '<circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M24 34V20M24 26c-7 0-11-4-11-10 7 0 11 4 11 10Zm0-2c7 0 11-4 11-10-7 0-11 4-11 10Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>';
+  }
   document.getElementById("dashboard-spend").textContent = money.format(state.currentSpend);
   document.getElementById("dashboard-spend-note").textContent = state.nextQualified ? "已達次年度門檻" : `距次年度門檻尚差 ${money.format(state.remaining)}`;
   document.getElementById("dashboard-membership-status").textContent = "有效";
