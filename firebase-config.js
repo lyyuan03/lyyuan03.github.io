@@ -3,16 +3,20 @@ import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-if (/(^|\/)articles\.html$/i.test(location.pathname)) {
+const currentPath = location.pathname;
+
+if (/(^|\/)articles\.html$/i.test(currentPath)) {
   import("./article-protection.js?v=20260723-member-watermark-1");
   import("./article-paid-badge.js?v=20260722-3");
   import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
+  window.setTimeout(() => import("./article-thumbnail-display.js?v=20260802-thumbnail-control-1"), 0);
 }
 
-if (/(^|\/)admin\.html$/i.test(location.pathname)) {
+if (/(^|\/)admin\.html$/i.test(currentPath)) {
   import("./article-admin-event-static-fix.js?v=20260802-event-admin-fix-1");
   import("./seed-guanyin-vow-lamp-v2.js?v=20260802-seed-1");
   import("./article-guanyin-v2-images.js?v=20260802-images-2");
+  window.setTimeout(() => import("./article-thumbnail-admin.js?v=20260802-thumbnail-control-1"), 0);
 }
 
 export const firebaseConfig = {
