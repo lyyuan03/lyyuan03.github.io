@@ -124,8 +124,8 @@ function applyCard(card) {
   const articleId = card.dataset.articleId || "";
   if (!articleId || articleId === SETTINGS_DOC_ID) return;
   const saved = settingsByArticle.get(articleId)
-    || legacySettingsByArticle.get(articleId)
-    || RECOVERY_SETTINGS[articleId];
+    || RECOVERY_SETTINGS[articleId]
+    || legacySettingsByArticle.get(articleId);
   if (!saved) return;
 
   const image = card.querySelector(".article-card-media img");
