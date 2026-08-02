@@ -1,20 +1,22 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const DEFAULT_SETTINGS = {
   thumbnailFit: "cover",
   thumbnailPositionX: 50,
   thumbnailPositionY: 50,
   thumbnailScale: 100,
-  thumbnailTitleAlign: "left"
+  thumbnailTitleAlign: "left",
+  thumbnailImage: ""
 };
 
 const ARTICLE_DEFAULTS = {
   "reading-you-can-not-fear-death": {
     thumbnailFit: "cover",
-    thumbnailPositionX: 50,
-    thumbnailPositionY: 28,
-    thumbnailScale: 218,
+    thumbnailPositionX: 48,
+    thumbnailPositionY: 18,
+    thumbnailScale: 111,
     thumbnailTitleAlign: "center"
   }
 };
@@ -32,16 +34,22 @@ function normalizeSettings(source = {}, articleId = "") {
     thumbnailPositionX: numberValue(source.thumbnailPositionX, defaults.thumbnailPositionX, 0, 100),
     thumbnailPositionY: numberValue(source.thumbnailPositionY, defaults.thumbnailPositionY, 0, 100),
     thumbnailScale: numberValue(source.thumbnailScale, defaults.thumbnailScale, 50, 300),
-    thumbnailTitleAlign: source.thumbnailTitleAlign === "center" ? "center" : defaults.thumbnailTitleAlign
+    thumbnailTitleAlign: source.thumbnailTitleAlign === "center" ? "center" : defaults.thumbnailTitleAlign,
+    thumbnailImage: String(source.thumbnailImage || defaults.thumbnailImage || "").trim()
   };
 }
 
 function activeArticleId() {
-  return document.querySelector("#article-list .article-item.is-active")?.dataset.id || "";
+  const id = document.querySelector("#article-list .article-item.is-active")?.dataset.id || "";
+  return id === SETTINGS_DOC_ID ? "" : id;
 }
 
 function firstMarkdownImage(content = "") {
   return content.match(/!\[[^\]]*\]\(([^)\s]+)\)/)?.[1] || "";
+}
+
+function removeSystemArticleEntry() {
+  document.querySelectorAll(`#article-list .article-item[data-id="${SETTINGS_DOC_ID}"]`).forEach((node) => node.remove());
 }
 
 function initialize() {
@@ -60,7 +68,7 @@ function initialize() {
     <div class="thumbnail-control-head">
       <div>
         <strong>文章列表縮圖</strong>
-        <small>可選擇完整顯示或裁切填滿；放大後，水平與垂直位置會控制縮放中心。</small>
+        <small>縮圖設定會獨立儲存，不會再被文章內容儲存或同步程序覆蓋。</small>
       </div>
       <span id="thumbnail-control-status" role="status" aria-live="polite">選擇文章後即可調整</span>
     </div>
@@ -157,7 +165,8 @@ function initialize() {
       thumbnailPositionX: xInput.value,
       thumbnailPositionY: yInput.value,
       thumbnailScale: scaleInput.value,
-      thumbnailTitleAlign: alignInput.value
+      thumbnailTitleAlign: alignInput.value,
+      thumbnailImage: coverInput.value.trim()
     }, loadedId || activeArticleId());
   }
 
@@ -167,6 +176,7 @@ function initialize() {
     yInput.value = String(settings.thumbnailPositionY);
     scaleInput.value = String(settings.thumbnailScale);
     alignInput.value = settings.thumbnailTitleAlign;
+    if (settings.thumbnailImage) coverInput.value = settings.thumbnailImage;
     updatePreview();
   }
 
@@ -188,13 +198,14 @@ function initialize() {
   }
 
   async function loadForActiveArticle() {
+    removeSystemArticleEntry();
     const articleId = activeArticleId();
     const serial = ++loadSerial;
     loadedId = articleId;
     if (!articleId) {
       applySettings(normalizeSettings());
       saveButton.disabled = true;
-      status.textContent = "請先選擇或儲存文章";
+      status.textContent = "請先選擇文章";
       delete status.dataset.state;
       return;
     }
@@ -202,26 +213,29 @@ function initialize() {
     status.textContent = "正在讀取縮圖設定…";
     status.dataset.state = "saving";
     try {
-      const snapshot = await getDoc(doc(db, "articles", articleId));
+      const [settingsSnapshot, articleSnapshot] = await Promise.all([
+        getDoc(doc(db, "articles", SETTINGS_DOC_ID)),
+        getDoc(doc(db, "articles", articleId))
+      ]);
       if (serial !== loadSerial) return;
-      if (!snapshot.exists()) {
-        applySettings(normalizeSettings({}, articleId));
-        status.textContent = "請先按「匯入後台編輯」";
-        status.dataset.state = "error";
-        return;
-      }
-      applySettings(normalizeSettings(snapshot.data(), articleId));
-      status.textContent = "可直接調整並儲存";
+      const saved = settingsSnapshot.exists() ? settingsSnapshot.data().settings?.[articleId] : null;
+      const fallback = articleSnapshot.exists() ? articleSnapshot.data() : {};
+      applySettings(normalizeSettings(saved || fallback, articleId));
+      status.textContent = saved ? "已載入獨立縮圖設定" : "尚未獨立儲存，可直接調整";
       delete status.dataset.state;
       saveButton.disabled = false;
     } catch (error) {
       console.error("縮圖設定載入失敗：", error);
+      applySettings(normalizeSettings({}, articleId));
       status.textContent = "縮圖設定載入失敗";
       status.dataset.state = "error";
+      saveButton.disabled = false;
     }
   }
 
-  async function saveSettings() {
+  async function saveSettings(event) {
+    event?.preventDefault();
+    event?.stopPropagation();
     const articleId = activeArticleId();
     if (!articleId || !isAdminEmail(auth.currentUser?.email)) {
       status.textContent = "請先選擇文章並確認管理員登入";
@@ -232,25 +246,35 @@ function initialize() {
     status.textContent = "正在儲存縮圖設定…";
     status.dataset.state = "saving";
     try {
-      const articleRef = doc(db, "articles", articleId);
-      const snapshot = await getDoc(articleRef);
-      if (!snapshot.exists()) throw new Error("文章尚未匯入後台");
-      await setDoc(articleRef, {
-        ...currentSettings(),
-        coverImage: coverInput.value.trim(),
-        updatedAt: serverTimestamp()
+      const settingsRef = doc(db, "articles", SETTINGS_DOC_ID);
+      const snapshot = await getDoc(settingsRef);
+      const existing = snapshot.exists() && snapshot.data().settings ? snapshot.data().settings : {};
+      const saved = currentSettings();
+      await setDoc(settingsRef, {
+        title: "系統縮圖設定",
+        slug: SETTINGS_DOC_ID,
+        category: "system",
+        status: "published",
+        accessType: "system",
+        content: "",
+        excerpt: "",
+        publishedAt: "2000-01-01T00:00:00.000Z",
+        systemType: "article-thumbnail-settings",
+        settings: { ...existing, [articleId]: saved },
+        settingsUpdatedAt: serverTimestamp()
       }, { merge: true });
-      status.textContent = "縮圖設定已儲存";
+      applySettings(saved);
+      status.textContent = "縮圖設定已獨立儲存，前台重新整理後生效";
       status.dataset.state = "success";
       window.setTimeout(() => {
         if (status.dataset.state === "success") {
-          status.textContent = "可繼續調整";
+          status.textContent = "已儲存，可繼續調整";
           delete status.dataset.state;
         }
-      }, 3000);
+      }, 3500);
     } catch (error) {
       console.error("縮圖設定儲存失敗：", error);
-      status.textContent = error.message === "文章尚未匯入後台" ? "請先匯入後台編輯" : "縮圖設定儲存失敗";
+      status.textContent = "縮圖設定儲存失敗";
       status.dataset.state = "error";
     } finally {
       saveButton.disabled = false;
@@ -270,25 +294,27 @@ function initialize() {
       return;
     }
     coverInput.value = image;
-    coverInput.dispatchEvent(new Event("input", { bubbles: true }));
-    status.textContent = "已帶入內文第一張圖，請儲存文章與縮圖設定";
+    updatePreview();
+    status.textContent = "已帶入內文第一張圖，請按「儲存縮圖設定」";
     delete status.dataset.state;
   });
 
   panel.querySelector("#thumbnail-reset").addEventListener("click", () => {
-    applySettings(normalizeSettings({}, activeArticleId()));
+    applySettings(normalizeSettings({ thumbnailImage: coverInput.value }, activeArticleId()));
     status.textContent = "已重設為預設位置，尚未儲存";
     delete status.dataset.state;
   });
   saveButton.addEventListener("click", saveSettings);
 
-  articleList.addEventListener("click", () => window.setTimeout(loadForActiveArticle, 0));
+  articleList.addEventListener("click", () => window.setTimeout(loadForActiveArticle, 40));
   new MutationObserver(() => {
+    removeSystemArticleEntry();
     const nextId = activeArticleId();
-    if (nextId !== loadedId) loadForActiveArticle();
+    if (nextId !== loadedId) window.setTimeout(loadForActiveArticle, 0);
   }).observe(articleList, { subtree: true, attributes: true, attributeFilter: ["class"], childList: true });
 
   form.addEventListener("reset", () => window.setTimeout(loadForActiveArticle, 0));
+  removeSystemArticleEntry();
   updatePreview();
   loadForActiveArticle();
 }
