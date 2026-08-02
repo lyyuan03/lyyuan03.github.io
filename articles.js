@@ -884,7 +884,7 @@ function renderArticle(article) {
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${renderArticleGuide(article)}
       ${renderLimitedReadingCountdown(article.id || article.slug || activeId, (article.content || "").includes(paidMarker))}
-      ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${articleKey === "wealth-discipline-investing-and-self-mastery" ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}
+      ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKey) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}
       <div class="article-body">${renderContent(publicContent)}</div>
       ${accessType === "member" ? renderSupportGate(lockedContent) : ""}
       ${accessType === "paid" ? renderPaidGate(article) : ""}
