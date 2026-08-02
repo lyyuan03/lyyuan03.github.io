@@ -7,8 +7,8 @@ export const youCanNotFearDeathArticle = {
   series: "生命轉化",
   status: "published",
   publishedAt: "2026-08-02T08:00:00.000Z",
-  updatedAt: "2026-08-02T09:10:00.000Z",
-  coverImage: "assets/articles/you-can-not-fear-death/cover.webp?v=20260802-2",
+  updatedAt: "2026-08-02T09:30:00.000Z",
+  coverImage: "assets/articles/you-can-not-fear-death/book-cover.webp?v=20260802-1",
   excerpt: "讀《你可以不怕死》，真正令我停下來的，不只是死亡，而是余德慧對觀照的追問：我們理解的道理，能否在死亡真正到來時，成為活在生命裡的力量？",
   accessType: "free",
   bookTitle: "一行禪師你可以不怕死【暢銷23週年紀念版】",
@@ -30,6 +30,8 @@ export const youCanNotFearDeathArticle = {
 這個問題令我停了很久。
 
 因為它不是在否定一行禪師，而是在追問每一位修行者：當死亡真正降臨時，我們平日所說的觀照，究竟仍只是一套理解生命的概念，還是已經成為一種活在生命裡的力量？
+
+![閱讀《你可以不怕死》，重新思考死亡、生命與修行](assets/articles/you-can-not-fear-death/cover.webp?v=20260802-2)
 
 ## 死亡不是消失，而是形式的轉變
 
