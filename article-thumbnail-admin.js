@@ -60,7 +60,7 @@ function initialize() {
     <div class="thumbnail-control-head">
       <div>
         <strong>文章列表縮圖</strong>
-        <small>可選擇完整顯示或裁切填滿，並調整書名與主體所在位置。</small>
+        <small>可選擇完整顯示或裁切填滿；放大後，水平與垂直位置會控制縮放中心。</small>
       </div>
       <span id="thumbnail-control-status" role="status" aria-live="polite">選擇文章後即可調整</span>
     </div>
@@ -128,7 +128,7 @@ function initialize() {
     .thumbnail-preview-wrap{padding:12px;border:1px solid rgba(165,130,84,.2);background:rgba(4,8,3,.34)}
     .thumbnail-preview-wrap>span{display:block;margin-bottom:8px;font-size:10px;color:rgba(245,240,232,.45);letter-spacing:.1em}
     .thumbnail-preview-media{position:relative;overflow:hidden;aspect-ratio:16/9;background:#EEE9DF}
-    .thumbnail-preview-media img{position:absolute;inset:0;width:100%;height:100%;display:block}
+    .thumbnail-preview-media img{position:absolute;inset:0;width:100%;height:100%;display:block;will-change:transform}
     .thumbnail-preview-wrap>strong{display:block;margin-top:10px;font-family:var(--serif);font-size:14px;font-weight:500;line-height:1.55;color:#F5F0E8}
     @media(max-width:980px){.thumbnail-control-layout{grid-template-columns:1fr}.thumbnail-preview-wrap{max-width:360px}}
     @media(max-width:560px){.thumbnail-control-head{display:grid}.thumbnail-control-layout{gap:13px}}
@@ -172,15 +172,16 @@ function initialize() {
 
   function updatePreview() {
     const settings = currentSettings();
+    const position = `${settings.thumbnailPositionX}% ${settings.thumbnailPositionY}%`;
     xValue.value = `${settings.thumbnailPositionX}%`;
     yValue.value = `${settings.thumbnailPositionY}%`;
     scaleValue.value = `${settings.thumbnailScale}%`;
     previewImage.src = coverInput.value.trim() || "";
     previewImage.hidden = !previewImage.src;
     previewImage.style.objectFit = settings.thumbnailFit;
-    previewImage.style.objectPosition = `${settings.thumbnailPositionX}% ${settings.thumbnailPositionY}%`;
+    previewImage.style.objectPosition = position;
     previewImage.style.transform = `scale(${settings.thumbnailScale / 100})`;
-    previewImage.style.transformOrigin = "center";
+    previewImage.style.transformOrigin = position;
     previewMedia.style.background = settings.thumbnailFit === "contain" ? "#EEE9DF" : "rgba(7,17,6,.7)";
     previewTitle.textContent = titleInput?.value.trim() || "文章標題";
     previewTitle.style.textAlign = settings.thumbnailTitleAlign;
