@@ -2,6 +2,10 @@ import { db } from "./firebase-config.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
+const SCALE_MIN = 100;
+const SCALE_MAX = 300;
+const MEDIA_BACKGROUND = "#E8E1D3";
+
 const DEFAULT_SETTINGS = {
   thumbnailFit: "cover",
   thumbnailPositionX: 50,
@@ -29,11 +33,12 @@ function numberValue(value, fallback, min, max) {
 
 function normalizeSettings(source = {}, articleId = "") {
   const defaults = { ...DEFAULT_SETTINGS, ...(ARTICLE_DEFAULTS[articleId] || {}) };
+  const thumbnailFit = source.thumbnailFit === "contain" ? "contain" : defaults.thumbnailFit;
   return {
-    thumbnailFit: source.thumbnailFit === "contain" ? "contain" : defaults.thumbnailFit,
+    thumbnailFit,
     thumbnailPositionX: numberValue(source.thumbnailPositionX, defaults.thumbnailPositionX, 0, 100),
     thumbnailPositionY: numberValue(source.thumbnailPositionY, defaults.thumbnailPositionY, 0, 100),
-    thumbnailScale: numberValue(source.thumbnailScale, defaults.thumbnailScale, 50, 300),
+    thumbnailScale: numberValue(source.thumbnailScale, defaults.thumbnailScale, SCALE_MIN, SCALE_MAX),
     thumbnailTitleAlign: source.thumbnailTitleAlign === "center" ? "center" : defaults.thumbnailTitleAlign,
     thumbnailImage: String(source.thumbnailImage || defaults.thumbnailImage || "").trim()
   };
@@ -102,6 +107,7 @@ function applyCard(card) {
   if (settings.thumbnailImage && image.getAttribute("src") !== settings.thumbnailImage) {
     image.setAttribute("src", settings.thumbnailImage);
   }
+
   image.style.setProperty("position", "absolute", "important");
   image.style.setProperty("inset", "0", "important");
   image.style.setProperty("width", "100%", "important");
@@ -116,8 +122,9 @@ function applyCard(card) {
   image.style.setProperty("transform-origin", position, "important");
   image.style.setProperty("filter", "none", "important");
   image.style.setProperty("will-change", "transform", "important");
+
   media.style.setProperty("overflow", "hidden", "important");
-  media.style.setProperty("background", settings.thumbnailFit === "contain" ? "#EEE9DF" : "rgba(7,17,6,.7)", "important");
+  media.style.setProperty("background", MEDIA_BACKGROUND, "important");
   if (title) title.style.setProperty("text-align", settings.thumbnailTitleAlign, "important");
   card.dataset.thumbnailConfigured = "true";
 }
