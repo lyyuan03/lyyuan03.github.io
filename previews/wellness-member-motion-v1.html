@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>靈元院養生療癒頻道｜會員中心動態預覽 V1</title>
+<title>靈元院養生療癒頻道｜會員中心動態預覽 V2</title>
 <style>
 :root{--ink:#2d2c27;--brown:#594f47;--tan:#a58254;--green:#606330;--gold:#a48748;--paper:#f5f1e8;--white:#fffdf7}
 *{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:"Noto Serif TC","PingFang TC",serif;background:radial-gradient(circle at 80% 0%,#e8e1ce 0,transparent 35%),linear-gradient(135deg,#f9f6ef,#ece8dc);min-height:100vh}
@@ -18,17 +18,34 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;ba
 @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}@keyframes drift{to{background-position:64px 32px}}@keyframes shine{0%,55%{left:-35%}80%,100%{left:130%}}@keyframes breathe{50%{transform:scale(1.08);box-shadow:0 0 32px #d6bd7544}}@keyframes fill{to{width:68.5%}}
 @media(max-width:780px){.hero,.grid{grid-template-columns:1fr}.member-pill{justify-self:start}.stats,.benefits{grid-template-columns:1fr}.stat.wide{grid-column:auto}.hero{padding-top:34px}.meta{display:block}.idcard{min-height:350px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.progress i{width:68.5%}}
+
+/* V2：神聖儀式動態 */
+#sacredCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.ritual{position:fixed;inset:0;z-index:99;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at center,#747641 0,#343923 32%,#171b13 72%);animation:ritualAway 3.8s 1.7s cubic-bezier(.7,0,.2,1) forwards;pointer-events:none}
+.ritual:before,.ritual:after{content:"";position:absolute;top:0;bottom:0;width:51%;background:linear-gradient(90deg,#11150e,#343a23);box-shadow:0 0 80px #0008;animation:openGate 2.2s 1.15s cubic-bezier(.72,0,.25,1) forwards}.ritual:before{left:0;border-right:1px solid #d9be6d77}.ritual:after{right:0;border-left:1px solid #d9be6d77;animation-name:openGateR}
+.ritual-core{z-index:2;text-align:center;color:#f4e9c6;text-shadow:0 0 25px #ddc475aa;animation:coreReveal 2.8s both}.ritual-symbol{width:124px;height:124px;margin:auto;border:1px solid #ddc475;border-radius:50%;display:grid;place-items:center;font-size:41px;position:relative;box-shadow:0 0 28px #ddc47555,inset 0 0 28px #ddc47533;animation:pulseSacred 2s ease-in-out infinite}
+.ritual-symbol:before,.ritual-symbol:after{content:"";position:absolute;border:1px solid #ddc47566;border-radius:50%;inset:-18px;animation:spinHalo 12s linear infinite}.ritual-symbol:after{inset:-38px;border-style:dashed;animation-direction:reverse;animation-duration:20s}.ritual h2{font-weight:500;letter-spacing:.34em;margin:38px 0 10px}.ritual p{font-size:13px;letter-spacing:.18em;color:#d6cba9}
+.sanctuary{position:relative;height:280px;margin:28px 0 34px;border-radius:26px;overflow:hidden;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 80%,#e6cf8955 0,transparent 38%),linear-gradient(180deg,#333923,#5e6337 70%,#797242);box-shadow:0 22px 65px #31372233;isolation:isolate}
+.sanctuary:before{content:"";position:absolute;left:50%;top:-90px;width:340px;height:460px;transform:translateX(-50%);background:linear-gradient(100deg,transparent 35%,#fff1b055 50%,transparent 65%);filter:blur(12px);animation:lightSweep 6s ease-in-out infinite}
+.halo{width:190px;height:190px;border:1px solid #f3dc9566;border-radius:50%;position:absolute;animation:spinHalo 18s linear infinite;box-shadow:0 0 45px #eed58d44,inset 0 0 45px #eed58d22}.halo:before,.halo:after{content:"";position:absolute;border:1px solid #f3dc9544;border-radius:50%;inset:20px}.halo:after{inset:-24px;border-style:dashed}
+.sacred-copy{z-index:2;text-align:center;color:#fff8df;text-shadow:0 2px 30px #17200e}.sacred-copy small{display:block;letter-spacing:.35em;color:#e8d494}.sacred-copy strong{display:block;font-size:clamp(24px,4vw,40px);font-weight:500;letter-spacing:.14em;margin:16px 0}.sacred-copy span{font-size:13px;letter-spacing:.12em;color:#e8e2ce}
+.card{transition:transform .35s ease,box-shadow .35s ease}.card:hover{box-shadow:0 24px 75px #584c2f35}.idcard{box-shadow:0 0 0 1px #ddc47544,0 24px 70px #35401e55}.idcard:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),#f7df8f45,transparent 27%);opacity:.8;pointer-events:none}
+.mark,.name,.meta,.level{position:relative;z-index:2}.seal{z-index:2;box-shadow:0 0 22px #e8ca7144}
+.reveal{opacity:0;transform:translateY(38px) scale(.97);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+@keyframes ritualAway{75%{opacity:1}100%{opacity:0;visibility:hidden}}@keyframes openGate{to{transform:translateX(-105%)}}@keyframes openGateR{to{transform:translateX(105%)}}@keyframes coreReveal{0%{opacity:0;transform:scale(.68)}55%{opacity:1;transform:scale(1.05)}100%{transform:scale(1)}}@keyframes pulseSacred{50%{transform:scale(1.08);box-shadow:0 0 70px #f0d47b99,inset 0 0 45px #f0d47b55}}@keyframes spinHalo{to{transform:rotate(360deg)}}@keyframes lightSweep{50%{transform:translateX(-50%) rotate(12deg);opacity:.55}}
+@media(max-width:780px){.sanctuary{height:230px}.ritual h2{font-size:19px}.ritual-symbol{width:96px;height:96px}.halo{width:150px;height:150px}}
+@media(prefers-reduced-motion:reduce){.ritual{display:none}.reveal{opacity:1;transform:none}}
 </style>
 </head>
-<body>
+<body><canvas id="sacredCanvas"></canvas><div class="ritual"><div class="ritual-core"><div class="ritual-symbol">📗</div><h2>靈元院</h2><p>養生・療癒・回歸內在</p></div></div>
 <main class="wrap">
-<div class="notice"><span><b>內部預覽 V1</b>｜尚未連結正式前端</span><span>養生療癒頻道會員中心</span></div>
+<div class="notice"><span><b>內部預覽 V2</b>｜尚未連結正式前端</span><span>養生療癒頻道會員中心</span></div>
 <header class="hero"><div><div class="eyebrow">📗 靈元院</div><h1>養生療癒頻道會員中心</h1><p>將會籍、觀看內容與會員權益安放在同一個清楚而沉穩的空間。</p></div><div class="member-pill">一般會員・資格有效</div></header>
-<section class="grid">
-<article class="card idcard" id="idcard"><div class="mark">📗 靈元院</div><div class="level">養生療癒頻道・一般會員</div><div class="name">林怡君 師姐</div><div class="meta"><span>會員編號<br>LYH-2026-0188</span><span>有效期限<br>2026.11.30</span></div><div class="seal">養生</div></article>
-<article class="card"><h2 class="section-title">我的會籍</h2><div class="stats"><div class="stat"><small>會籍狀態</small><strong>有效</strong></div><div class="stat"><small>滿額回饋金</small><strong>NT$1,000</strong></div><div class="stat wide"><small>本年度累積消費</small><strong>NT$68,500</strong><div class="progress"><i></i></div><div class="goal"><span>目前進度 68.5%</span><span>距靈極會員 NT$31,500</span></div></div></div></article>
-<article class="card"><h2 class="section-title">本期會員權益</h2><div class="benefits"><div class="benefit"><b>會員影片不限次數觀看</b><span>依會員等級及加入日期開放內容。</span></div><div class="benefit"><b>專屬文章免費瀏覽</b><span>當期會籍有效期間內開放。</span></div><div class="benefit"><b>課程與旅行團禮遇</b><span>部分活動享優惠或優先報名。</span></div><div class="benefit"><b>本人專屬養護諮詢</b><span>營養補品及身心養護問題可洽行政團隊。</span></div></div></article>
-<article class="card"><h2 class="section-title">繼續觀看與學習</h2><div class="content-list"><div class="content"><div class="icon">▶</div><div><b>本月養護：睡眠與修復</b><small>會員影片・觀看至 42%</small></div></div><div class="content"><div class="icon">文</div><div><b>贊助專屬文章</b><small>本期免費瀏覽權限已開通</small></div></div><div class="content"><div class="icon">課</div><div><b>已購買線上課程</b><small>2 門課程可觀看</small></div></div></div></article>
+<section class="sanctuary"><div class="halo"></div><div class="sacred-copy"><small>WELCOME HOME</small><strong>歡迎回到養生療癒頻道</strong><span>願每一次觀看，都成為照顧身心的安定力量</span></div></section><section class="grid">
+<article class="card reveal idcard" id="idcard"><div class="mark">📗 靈元院</div><div class="level">養生療癒頻道・一般會員</div><div class="name">林怡君 師姐</div><div class="meta"><span>會員編號<br>LYH-2026-0188</span><span>有效期限<br>2026.11.30</span></div><div class="seal">養生</div></article>
+<article class="card reveal"><h2 class="section-title">我的會籍</h2><div class="stats"><div class="stat"><small>會籍狀態</small><strong>有效</strong></div><div class="stat"><small>滿額回饋金</small><strong>NT$1,000</strong></div><div class="stat wide"><small>本年度累積消費</small><strong>NT$68,500</strong><div class="progress"><i></i></div><div class="goal"><span>目前進度 68.5%</span><span>距靈極會員 NT$31,500</span></div></div></div></article>
+<article class="card reveal"><h2 class="section-title">本期會員權益</h2><div class="benefits"><div class="benefit"><b>會員影片不限次數觀看</b><span>依會員等級及加入日期開放內容。</span></div><div class="benefit"><b>專屬文章免費瀏覽</b><span>當期會籍有效期間內開放。</span></div><div class="benefit"><b>課程與旅行團禮遇</b><span>部分活動享優惠或優先報名。</span></div><div class="benefit"><b>本人專屬養護諮詢</b><span>營養補品及身心養護問題可洽行政團隊。</span></div></div></article>
+<article class="card reveal"><h2 class="section-title">繼續觀看與學習</h2><div class="content-list"><div class="content"><div class="icon">▶</div><div><b>本月養護：睡眠與修復</b><small>會員影片・觀看至 42%</small></div></div><div class="content"><div class="icon">文</div><div><b>贊助專屬文章</b><small>本期免費瀏覽權限已開通</small></div></div><div class="content"><div class="icon">課</div><div><b>已購買線上課程</b><small>2 門課程可觀看</small></div></div></div></article>
 </section>
 <div class="footer">此頁僅供設計方向確認，不代表正式上線版本</div>
 </main>
@@ -36,5 +53,12 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;ba
 const c=document.getElementById('idcard');
 c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform='perspective(900px) rotateY('+x*6+'deg) rotateX('+(-y*5)+'deg)'});
 c.addEventListener('pointerleave',()=>c.style.transform='');
+
+const cards=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.15});cards.forEach(x=>io.observe(x));
+c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')});
+const cv=document.getElementById('sacredCanvas'),ctx=cv.getContext('2d');let motes=[];
+function size(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);motes=Array.from({length:Math.min(90,Math.floor(innerWidth/12))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2+.4,s:Math.random()*.32+.08,a:Math.random()*.55+.12}))}
+function draw(){ctx.clearRect(0,0,innerWidth,innerHeight);for(const m of motes){m.y-=m.s;if(m.y<-5){m.y=innerHeight+5;m.x=Math.random()*innerWidth}ctx.beginPath();ctx.fillStyle='rgba(184,151,72,'+m.a+')';ctx.shadowBlur=9;ctx.shadowColor='#d8bc72';ctx.arc(m.x,m.y,m.r,0,Math.PI*2);ctx.fill()}requestAnimationFrame(draw)}addEventListener('resize',size);size();draw();
 </script>
 </body></html>
