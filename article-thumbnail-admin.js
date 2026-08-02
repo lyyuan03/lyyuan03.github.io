@@ -24,6 +24,23 @@ const THUMBNAIL_SETTING_KEYS = [
   "thumbnailImage"
 ];
 
+const RECOVERY_SETTINGS = {
+  "2026-guanyin-vow-lamp-record-v2": {
+    thumbnailFit: "cover",
+    thumbnailPositionX: 0,
+    thumbnailPositionY: 5,
+    thumbnailScale: 116,
+    thumbnailTitleAlign: "left"
+  },
+  "reading-you-can-not-fear-death": {
+    thumbnailFit: "cover",
+    thumbnailPositionX: 50,
+    thumbnailPositionY: 28,
+    thumbnailScale: 218,
+    thumbnailTitleAlign: "center"
+  }
+};
+
 function numberValue(value, fallback, min, max) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;
@@ -280,16 +297,23 @@ function initialize() {
             thumbnailImage: fallback.thumbnailImage || fallback.coverImage || ""
           }, articleId)
         : null;
-      const source = saved || legacy || {};
+      const recovery = !saved && !legacy && RECOVERY_SETTINGS[articleId]
+        ? normalizeSettings({
+            ...RECOVERY_SETTINGS[articleId],
+            thumbnailImage: fallback.thumbnailImage || fallback.coverImage || ""
+          }, articleId)
+        : null;
+      const source = saved || legacy || recovery || {};
       const hadInvalidScale = Number(source?.thumbnailScale) < SCALE_MIN;
-      if (legacy) await writeSettings(articleId, legacy);
+      if (legacy || recovery) await writeSettings(articleId, source);
       applySettings(source, articleId);
       status.textContent = hadInvalidScale
         ? "舊縮放比例低於 100%，已自動修正並儲存"
         : legacy ? "原本的縮圖位置已自動轉移並儲存"
-          : saved ? "已載入縮圖設定" : "尚未設定縮圖，可直接調整";
-      status.dataset.state = hadInvalidScale ? "error" : legacy ? "success" : "";
-      if (!hadInvalidScale && !legacy) delete status.dataset.state;
+          : recovery ? "已依先前調整紀錄還原位置並儲存"
+            : saved ? "已載入縮圖設定" : "尚未設定縮圖，可直接調整";
+      status.dataset.state = hadInvalidScale ? "error" : legacy || recovery ? "success" : "";
+      if (!hadInvalidScale && !legacy && !recovery) delete status.dataset.state;
       saveButton.disabled = false;
     } catch (error) {
       console.error("縮圖設定載入失敗：", error);
