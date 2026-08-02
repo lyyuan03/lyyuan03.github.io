@@ -11,6 +11,7 @@ if (/(^|\/)articles\.html$/i.test(location.pathname)) {
 
 if (/(^|\/)admin\.html$/i.test(location.pathname)) {
   import("./article-admin-event-static-fix.js?v=20260802-event-admin-fix-1");
+  import("./seed-guanyin-vow-lamp-v2.js?v=20260802-seed-1");
 }
 
 export const firebaseConfig = {
