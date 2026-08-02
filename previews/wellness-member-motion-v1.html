@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>靈元院養生療癒頻道｜會員中心動態預覽 V1</title>
+<style>
+:root{--ink:#2d2c27;--brown:#594f47;--tan:#a58254;--green:#606330;--gold:#a48748;--paper:#f5f1e8;--white:#fffdf7}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:"Noto Serif TC","PingFang TC",serif;background:radial-gradient(circle at 80% 0%,#e8e1ce 0,transparent 35%),linear-gradient(135deg,#f9f6ef,#ece8dc);min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;background-image:radial-gradient(circle,#a4874833 1px,transparent 1.5px);background-size:32px 32px;animation:drift 24s linear infinite}
+.wrap{width:min(1160px,calc(100% - 32px));margin:auto;padding:34px 0 70px}.notice{display:flex;justify-content:space-between;gap:12px;align-items:center;background:#594f47;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;letter-spacing:.08em}.notice b{color:#dfc78c}
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:24px;padding:54px 8px 28px;align-items:end}.eyebrow{color:var(--green);font-weight:700;letter-spacing:.22em}.hero h1{margin:12px 0 10px;font-size:clamp(30px,4vw,52px);font-weight:600;letter-spacing:.08em}.hero p{margin:0;color:#6e685f;line-height:1.9}.member-pill{justify-self:end;border:1px solid #a4874866;border-radius:999px;padding:10px 16px;background:#fff9;backdrop-filter:blur(8px);box-shadow:0 10px 30px #594f4712}
+.grid{display:grid;grid-template-columns:1.12fr .88fr;gap:22px}.card{position:relative;overflow:hidden;background:#fffdf7df;border:1px solid #fff;border-radius:22px;padding:26px;box-shadow:0 18px 48px #554b3f16;backdrop-filter:blur(14px);animation:rise .8s both}.card:nth-child(2){animation-delay:.12s}.card:nth-child(3){animation-delay:.22s}.card:nth-child(4){animation-delay:.32s}
+.idcard{min-height:330px;color:#f8f3e7;background:linear-gradient(145deg,#4d5531,#656a39 60%,#3f4328);border-color:#777b4d;transform-style:preserve-3d;transition:transform .22s ease}.idcard:after{content:"";position:absolute;inset:-70% auto -70% -35%;width:28%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,#fff5c766,transparent);animation:shine 5.5s ease-in-out infinite}.mark{font-size:20px;letter-spacing:.12em}.level{margin-top:52px;color:#e3ce91;font-size:14px;letter-spacing:.22em}.name{font-size:34px;margin:8px 0}.meta{display:flex;gap:30px;color:#e7e1cc;font-size:14px;line-height:1.7}.seal{position:absolute;right:28px;bottom:25px;width:64px;height:64px;border:1px solid #d6bd75;border-radius:50%;display:grid;place-items:center;color:#dfc779;animation:breathe 3s ease-in-out infinite}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}.stat{background:#f3efe6;border-radius:16px;padding:18px}.stat small{color:#7c7468}.stat strong{display:block;font-size:25px;margin-top:8px;color:var(--brown)}.stat.wide{grid-column:1/-1}
+.progress{height:9px;margin-top:16px;background:#ded8ca;border-radius:99px;overflow:hidden}.progress i{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:99px;animation:fill 1.6s .5s forwards}.goal{display:flex;justify-content:space-between;margin-top:9px;font-size:12px;color:#81796d}
+.section-title{font-size:19px;margin:0 0 17px;letter-spacing:.08em}.benefits{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.benefit{padding:16px;border:1px solid #ded8c9;border-radius:14px;transition:.25s;background:#fffaf2}.benefit:hover{transform:translateY(-4px);border-color:#a48748;box-shadow:0 10px 20px #594f4715}.benefit b{display:block;color:var(--green);margin-bottom:6px}.benefit span{font-size:13px;color:#766f65;line-height:1.6}
+.content-list{display:grid;gap:11px}.content{display:flex;gap:14px;align-items:center;padding:13px;border-radius:14px;background:#f3efe6;transition:.25s}.content:hover{background:#ebe3d1;transform:translateX(5px)}.icon{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;background:var(--green);color:#fff}.content b{display:block;font-size:14px}.content small{color:#81786c}.footer{text-align:center;margin-top:26px;color:#81796c;font-size:12px;letter-spacing:.1em}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}@keyframes drift{to{background-position:64px 32px}}@keyframes shine{0%,55%{left:-35%}80%,100%{left:130%}}@keyframes breathe{50%{transform:scale(1.08);box-shadow:0 0 32px #d6bd7544}}@keyframes fill{to{width:68.5%}}
+@media(max-width:780px){.hero,.grid{grid-template-columns:1fr}.member-pill{justify-self:start}.stats,.benefits{grid-template-columns:1fr}.stat.wide{grid-column:auto}.hero{padding-top:34px}.meta{display:block}.idcard{min-height:350px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.progress i{width:68.5%}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="notice"><span><b>內部預覽 V1</b>｜尚未連結正式前端</span><span>養生療癒頻道會員中心</span></div>
+<header class="hero"><div><div class="eyebrow">📗 靈元院</div><h1>養生療癒頻道會員中心</h1><p>將會籍、觀看內容與會員權益安放在同一個清楚而沉穩的空間。</p></div><div class="member-pill">一般會員・資格有效</div></header>
+<section class="grid">
+<article class="card idcard" id="idcard"><div class="mark">📗 靈元院</div><div class="level">養生療癒頻道・一般會員</div><div class="name">林怡君 師姐</div><div class="meta"><span>會員編號<br>LYH-2026-0188</span><span>有效期限<br>2026.11.30</span></div><div class="seal">養生</div></article>
+<article class="card"><h2 class="section-title">我的會籍</h2><div class="stats"><div class="stat"><small>會籍狀態</small><strong>有效</strong></div><div class="stat"><small>滿額回饋金</small><strong>NT$1,000</strong></div><div class="stat wide"><small>本年度累積消費</small><strong>NT$68,500</strong><div class="progress"><i></i></div><div class="goal"><span>目前進度 68.5%</span><span>距靈極會員 NT$31,500</span></div></div></div></article>
+<article class="card"><h2 class="section-title">本期會員權益</h2><div class="benefits"><div class="benefit"><b>會員影片不限次數觀看</b><span>依會員等級及加入日期開放內容。</span></div><div class="benefit"><b>專屬文章免費瀏覽</b><span>當期會籍有效期間內開放。</span></div><div class="benefit"><b>課程與旅行團禮遇</b><span>部分活動享優惠或優先報名。</span></div><div class="benefit"><b>本人專屬養護諮詢</b><span>營養補品及身心養護問題可洽行政團隊。</span></div></div></article>
+<article class="card"><h2 class="section-title">繼續觀看與學習</h2><div class="content-list"><div class="content"><div class="icon">▶</div><div><b>本月養護：睡眠與修復</b><small>會員影片・觀看至 42%</small></div></div><div class="content"><div class="icon">文</div><div><b>贊助專屬文章</b><small>本期免費瀏覽權限已開通</small></div></div><div class="content"><div class="icon">課</div><div><b>已購買線上課程</b><small>2 門課程可觀看</small></div></div></div></article>
+</section>
+<div class="footer">此頁僅供設計方向確認，不代表正式上線版本</div>
+</main>
+<script>
+const c=document.getElementById('idcard');
+c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform='perspective(900px) rotateY('+x*6+'deg) rotateX('+(-y*5)+'deg)'});
+c.addEventListener('pointerleave',()=>c.style.transform='');
+</script>
+</body></html>
