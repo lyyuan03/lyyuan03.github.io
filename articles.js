@@ -746,7 +746,7 @@ function renderEventGate(article) {
         <h3>本文為活動限定文章</h3>
         <p>${magicToken ? "此個人專屬連結已失效、逾期，或不適用於本篇文章。" : `此文章限 ${escapeHtml(eventName)}參加者閱讀。`}</p>
         <div class="paid-inquiry-actions">
-          <button class="paid-inquiry-primary" id="article-event-login-button" type="button">${currentUser ? "重新確認活動資格" : "使用報名 Email 的 Google 帳號登入"}</button>
+          <button class="paid-inquiry-primary" id="article-event-login-button" type="button">${currentUser ? "重新確認活動資格" : "使用活動報名 Email 登入"}</button>
         </div>
         <small>一般會員或贊助會員不會自動取得本活動文章權限</small>
       </div>
