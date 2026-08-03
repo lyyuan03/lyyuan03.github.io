@@ -1,0 +1,45 @@
+name: Harden membership access PR
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/harden_membership_access_once.py"
+      - ".github/workflows/harden-membership-access-pr.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Apply hardening patch
+        run: python3 scripts/harden_membership_access_once.py
+
+      - name: Validate syntax and access rules
+        run: |
+          node --check articles.js
+          node --check membership-admin.js
+          node --check functions/index.js
+          grep -q 'paymentStatus !== "paid"' articles.js
+          grep -q 'articleAccess = true' functions/index.js
+          grep -q 'email_verified == true' firestore.rules
+
+      - name: Commit changes to pull request branch
+        run: |
+          if git diff --quiet; then
+            echo "No changes were necessary."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add articles.js articles.html membership-admin.js admin.html functions/index.js firestore.rules
+          git commit -m "fix: harden paid article membership authorization"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
