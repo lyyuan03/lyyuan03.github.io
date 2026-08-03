@@ -10,7 +10,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const AUTH_VERSION = "20260802-reading-cover-title-crop-1";
+const AUTH_VERSION = "20260803-sponsor-offer-1";
+const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -42,6 +43,19 @@ function installStyles() {
     .member-google-button:hover{background:rgba(165,130,84,.2)}
     .member-login-note{margin-top:17px!important;margin-bottom:0!important;font-size:12px!important;color:rgba(245,240,232,.42)!important}
     .member-login-browser-note{display:none;margin:14px 0 0!important;padding:11px 12px;border:1px solid rgba(197,162,111,.28);background:rgba(165,130,84,.08);color:#d8bd91!important;font-size:12px!important;line-height:1.75!important}
+    .member-login-offer{margin:-10px 0 20px;padding:13px 14px;border:1px solid rgba(165,130,84,.36);background:rgba(165,130,84,.08);font-family:'Noto Sans TC','Arial',sans-serif;text-align:left}
+    .member-login-offer strong{display:block;margin-bottom:5px;color:#D8BD91;font-size:13px;letter-spacing:.08em}
+    .member-login-offer span{display:block;color:rgba(245,240,232,.72);font-size:12px;line-height:1.7}
+    .sponsor-offer-panel{margin:12px auto 13px;padding:12px 13px;border:1px solid rgba(125,94,55,.32);background:rgba(255,255,255,.18);color:#2E251C;font-family:'Noto Sans TC','Arial',sans-serif;text-align:left}
+    .sponsor-offer-panel strong{display:block;margin-bottom:7px;color:#654825;font-size:13px;letter-spacing:.06em;text-align:center}
+    .sponsor-offer-prices{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .sponsor-offer-price{padding:8px;border:1px solid rgba(89,79,71,.18);background:rgba(255,255,255,.24);text-align:center}
+    .sponsor-offer-price span{display:block;font-size:10px;color:rgba(46,37,28,.66)}
+    .sponsor-offer-price b{display:block;margin:2px 0;color:#4F361D;font-size:17px;font-weight:700}
+    .sponsor-offer-price del{font-size:10px;color:rgba(46,37,28,.48)}
+    .sponsor-offer-status{margin-top:8px;font-size:10px;line-height:1.6;color:rgba(46,37,28,.68);text-align:center}
+    .sponsor-offer-progress{height:5px;margin-top:7px;border:1px solid rgba(89,79,71,.2);background:rgba(89,79,71,.08)}
+    .sponsor-offer-progress span{display:block;height:100%;background:#A58254}
     .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media{display:block;overflow:hidden;background:#EEE9DF!important}
     .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media img{position:absolute!important;inset:0!important;width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;padding:0!important;margin:0!important;object-fit:cover!important;object-position:50% 47%!important;filter:none!important;transform:scale(2.18)!important;transform-origin:center!important}
     .article-card[data-article-id="reading-you-can-not-fear-death"]:hover .article-card-media img{transform:scale(2.23)!important}
@@ -94,6 +108,7 @@ function installMemberModal() {
       <div class="member-login-mark">LING · YUAN · YUAN</div>
       <h2 id="member-login-title">靈元院會員登入</h2>
       <p>請使用登記會員資格的 Google 帳號登入。登入後將回到目前頁面，並依帳號取得相應閱讀權限。</p>
+      <div id="member-login-offer" class="member-login-offer" hidden></div>
       <button class="member-google-button" type="button">選擇會員 Google 帳號</button>
       <p class="member-login-browser-note">目前正在社群軟體的內建瀏覽器中開啟。若 Google 登入長時間沒有反應，請改用 Safari 或 Chrome 開啟本頁。</p>
     </div>`;
@@ -114,10 +129,12 @@ const signOutButton = accountMenu.querySelector("[data-member-sign-out]");
 const wellnessVideoLink = accountMenu.querySelector("[data-wellness-video-link]");
 const googleButton = modal.querySelector(".member-google-button");
 const browserNote = modal.querySelector(".member-login-browser-note");
+const loginOffer = modal.querySelector("#member-login-offer");
 const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
 const isMobile = window.matchMedia("(max-width:768px), (pointer:coarse)").matches;
 let hasWellnessAccess = false;
 let hasMemberAccess = false;
+let sponsorOffer = null;
 if (isInAppBrowser) browserNote.style.display = "block";
 
 function toDate(value) {
@@ -151,6 +168,64 @@ function toggleAccountMenu() {
   accountMenu.hidden = !willOpen;
   memberButton.setAttribute("aria-expanded", String(willOpen));
 }
+
+function formatMoney(value) {
+  return Number(value || 0).toLocaleString("zh-TW");
+}
+
+function sponsorOfferMarkup() {
+  if (!sponsorOffer) return "";
+  const promo = sponsorOffer.promotionAvailable === true;
+  const used = Number(sponsorOffer.occupiedCount || 0);
+  const limit = Number(sponsorOffer.promoLimit || 200);
+  const progress = Math.min(100, Math.max(0, used / Math.max(1, limit) * 100));
+  const price1 = promo ? sponsorOffer.promoPrice1 : sponsorOffer.regularPrice1;
+  const price3 = promo ? sponsorOffer.promoPrice3 : sponsorOffer.regularPrice3;
+  return `
+    <strong>${promo ? `前${limit}名贊助閱讀優惠` : "贊助閱讀一般方案"}</strong>
+    <div class="sponsor-offer-prices">
+      <div class="sponsor-offer-price"><span>一個月觀看權限</span><b>NT$${formatMoney(price1)}</b>${promo ? `<del>原價 NT$${formatMoney(sponsorOffer.regularPrice1)}</del>` : ""}</div>
+      <div class="sponsor-offer-price"><span>三個月觀看權限</span><b>NT$${formatMoney(price3)}</b>${promo ? `<del>原價 NT$${formatMoney(sponsorOffer.regularPrice3)}</del>` : ""}</div>
+    </div>
+    <div class="sponsor-offer-status">${promo ? `尚餘 ${Number(sponsorOffer.remaining || 0)} 個優惠名額；一個月與三個月合併計算。` : "前200名優惠已額滿，現採一般方案價格。"}</div>
+    <div class="sponsor-offer-progress" aria-hidden="true"><span style="width:${progress}%"></span></div>
+  `;
+}
+
+function applySponsorOfferToPage() {
+  if (!sponsorOffer) return;
+  const gate = document.querySelector('.paid-lock-zone[aria-label="贊助會員專屬"] .paid-lock-card');
+  if (gate) {
+    let panel = gate.querySelector(".sponsor-offer-panel");
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.className = "sponsor-offer-panel";
+      const actions = gate.querySelector(".paid-inquiry-actions");
+      gate.insertBefore(panel, actions || null);
+    }
+    panel.innerHTML = sponsorOfferMarkup();
+  }
+  loginOffer.hidden = false;
+  loginOffer.innerHTML = sponsorOffer.promotionAvailable
+    ? `<strong>目前仍有前${Number(sponsorOffer.promoLimit || 200)}名優惠</strong><span>一個月 NT$${formatMoney(sponsorOffer.promoPrice1)}｜三個月 NT$${formatMoney(sponsorOffer.promoPrice3)}｜尚餘 ${Number(sponsorOffer.remaining || 0)} 名</span>`
+    : `<strong>贊助閱讀方案</strong><span>一個月 NT$${formatMoney(sponsorOffer.regularPrice1)}｜三個月 NT$${formatMoney(sponsorOffer.regularPrice3)}</span>`;
+}
+
+async function loadSponsorOffer() {
+  try {
+    const response = await fetch(`${SPONSOR_OFFER_STATUS_URL}?t=${Date.now()}`, { cache: "no-store" });
+    const result = await response.json();
+    if (!response.ok || result.ready !== true) throw new Error("offer-not-ready");
+    sponsorOffer = result;
+    applySponsorOfferToPage();
+  } catch (error) {
+    console.warn("贊助閱讀優惠狀態暫時無法取得。", error);
+  }
+}
+
+const sponsorOfferObserver = new MutationObserver(() => applySponsorOfferToPage());
+sponsorOfferObserver.observe(document.body, { childList: true, subtree: true });
+loadSponsorOffer();
 
 setPersistence(auth, browserLocalPersistence).catch(console.error);
 getRedirectResult(auth).catch((error) => console.error("Google 重新導向登入失敗：", error));
