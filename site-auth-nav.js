@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const AUTH_VERSION = "20260803-sponsor-offer-2";
+const AUTH_VERSION = "20260803-sponsor-authoritative-1";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 
 function installStyles() {
@@ -149,6 +149,21 @@ function isActiveWellnessMember(member = {}) {
   const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
   const expiry = toDate(member.expiresAt);
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
+}
+
+function isActiveSponsorMember(member = {}) {
+  const expiry = toDate(member.expiresAt);
+  return member.memberType === "sponsor-member"
+    && member.status === "active"
+    && member.paymentStatus === "paid"
+    && member.articleAccess === true
+    && member.accessScope === "sponsor-paid-articles"
+    && Number(member.accessVersion || 0) >= 2
+    && Boolean(String(member.lastOrderNo || "").trim())
+    && member.disabled !== true
+    && member.suspended !== true
+    && !member.revokedAt
+    && Boolean(expiry && expiry > new Date());
 }
 
 function isActiveMember(member = {}) {
@@ -343,11 +358,18 @@ onAuthStateChanged(auth, async (user) => {
   memberButton.disabled = true;
   try {
     const email = (user.email || "").trim().toLowerCase();
-    const snapshot = await getDoc(doc(db, "memberAccess", email));
+    const [snapshot, sponsorSnapshot] = await Promise.all([
+      getDoc(doc(db, "memberAccess", email)),
+      getDoc(doc(db, "sponsorMemberAccess", email))
+    ]);
     const member = snapshot.exists() ? snapshot.data() : null;
+    const sponsorMember = sponsorSnapshot.exists() ? sponsorSnapshot.data() : null;
     if (auth.currentUser?.uid !== user.uid) return;
     hasWellnessAccess = Boolean(member && isActiveWellnessMember(member));
-    hasMemberAccess = Boolean(member && isActiveMember(member));
+    hasMemberAccess = Boolean(
+      (member && isActiveMember(member))
+      || (sponsorMember && isActiveSponsorMember(sponsorMember))
+    );
     wellnessVideoLink.hidden = !hasWellnessAccess;
     if (hasMemberAccess) {
       memberButton.textContent = `${displayName} ▾`;

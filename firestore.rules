@@ -96,6 +96,15 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    match /sponsorMemberAccess/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail
+          && resource.data.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
     match /memberVideos/{videoId} {
       allow read: if isAdmin() || (
         isActiveWellnessMember()

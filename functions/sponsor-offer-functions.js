@@ -135,7 +135,7 @@ async function readSponsorOfferStatus(reader = null) {
     : (target) => target.get();
   const settingsRef = db.doc("membershipSettings/default");
   const ordersQuery = db.collection("membershipOrders").where("memberType", "==", "sponsor-member");
-  const membersQuery = db.collection("memberAccess").where("memberType", "==", "sponsor-member");
+  const membersQuery = db.collection("sponsorMemberAccess").where("memberType", "==", "sponsor-member");
 
   const settingsSnapshot = await get(settingsRef);
   const ordersSnapshot = await get(ordersQuery);
@@ -239,7 +239,7 @@ exports.createSponsorMembershipCheckout = onCall(
     const paymentToken = crypto.randomBytes(24).toString("base64url");
     const paymentUrl = `${FUNCTIONS_BASE_URL}/membershipPayment?order=${encodeURIComponent(tradeNo)}&token=${encodeURIComponent(paymentToken)}`;
     const orderRef = db.doc(`membershipOrders/${tradeNo}`);
-    const memberRef = db.doc(`memberAccess/${email}`);
+    const memberRef = db.doc(`sponsorMemberAccess/${email}`);
 
     const checkout = await db.runTransaction(async (transaction) => {
       const status = await readSponsorOfferStatus(transaction);
@@ -374,7 +374,7 @@ exports.activateSponsorMembershipManually = onCall(
 
     const tradeNo = createMerchantTradeNo();
     const orderRef = db.doc(`membershipOrders/${tradeNo}`);
-    const memberRef = db.doc(`memberAccess/${email}`);
+    const memberRef = db.doc(`sponsorMemberAccess/${email}`);
 
     const activation = await db.runTransaction(async (transaction) => {
       const status = await readSponsorOfferStatus(transaction);
@@ -416,6 +416,8 @@ exports.activateSponsorMembershipManually = onCall(
         memberType: "sponsor-member",
         articleAccess: true,
         wellnessAccess: false,
+        accessScope: "sponsor-paid-articles",
+        accessVersion: 2,
         planMonths,
         amount,
         priceTier,

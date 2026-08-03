@@ -67,6 +67,21 @@ function isActiveWellnessMember(member = {}) {
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
 }
 
+function isActiveSponsorMember(member = {}) {
+  const expiry = toDate(member.expiresAt);
+  return member.memberType === "sponsor-member"
+    && member.status === "active"
+    && member.paymentStatus === "paid"
+    && member.articleAccess === true
+    && member.accessScope === "sponsor-paid-articles"
+    && Number(member.accessVersion || 0) >= 2
+    && Boolean(String(member.lastOrderNo || "").trim())
+    && member.disabled !== true
+    && member.suspended !== true
+    && !member.revokedAt
+    && Boolean(expiry && expiry > new Date());
+}
+
 function hasMemberCenterAccess(member = {}) {
   if (!member) return false;
   const expiry = toDate(member.expiresAt);
@@ -114,7 +129,7 @@ document.addEventListener("click", (event) => {
   if (event.target.closest("[data-dashboard-login]")) openMemberLogin();
 });
 
-function renderDashboard(member, user) {
+function renderDashboard(member, user, sponsorMember = null) {
   const state = evaluateMember(member);
   const isLingji = state.effectiveLevel === "lingji";
   const name = member.name || user.displayName || "會員";
@@ -122,10 +137,11 @@ function renderDashboard(member, user) {
   const startsAt = formatDate(member.startsAt || member.firstJoinedAt);
   const membershipNumber = member.memberNumber || member.id || (user.email || "").split("@")[0];
   const wellnessActive = isActiveWellnessMember(member);
-  const qualificationExpiry = toDate(member.expiresAt);
-  const activeQualification = member.status === "active" && (!qualificationExpiry || qualificationExpiry > new Date());
-  const sponsorOnly = activeQualification && !wellnessActive;
-  const articleActive = activeQualification && (sponsorOnly || member.articleAccess === true || isLingji);
+  const sponsorRecord = sponsorMember || (member.memberType === "sponsor-member" ? member : null);
+  const sponsorActive = Boolean(sponsorRecord && isActiveSponsorMember(sponsorRecord));
+  const sponsorOnly = sponsorActive && !wellnessActive;
+  const articleActive = sponsorActive;
+  const articleExpiry = sponsorActive ? formatDate(sponsorRecord.expiresAt) : "未設定";
 
   dashboard.dataset.memberLevel = state.effectiveLevel;
   dashboard.dataset.memberKind = sponsorOnly ? "sponsor" : "wellness";
@@ -151,7 +167,7 @@ function renderDashboard(member, user) {
   document.getElementById("dashboard-period-membership").textContent = `${startsAt}－${expiry}`;
   document.getElementById("dashboard-cashback").textContent = money.format(Math.max(0, Number(member.cashbackBalance) || 0));
   document.getElementById("dashboard-wellness-access").textContent = wellnessActive ? `有效｜至 ${expiry}` : "尚未開通或已到期";
-  document.getElementById("dashboard-article-access").textContent = articleActive ? `閱讀資格有效｜至 ${expiry}` : "尚未開通";
+  document.getElementById("dashboard-article-access").textContent = articleActive ? `閱讀資格有效｜至 ${articleExpiry}` : "尚未開通";
   ["dashboard-spend", "dashboard-membership-status", "dashboard-tier-status", "dashboard-period-heading", "dashboard-progress", "dashboard-rights-summary"].forEach((id) => {
     const section = document.getElementById(id)?.closest("section");
     if (section) section.hidden = !wellnessActive;
@@ -222,14 +238,25 @@ onAuthStateChanged(auth, async (user) => {
   }
   try {
     const email = (user.email || "").trim().toLowerCase();
-    const snapshot = await getDoc(doc(db, "memberAccess", email));
+    const [snapshot, sponsorSnapshot] = await Promise.all([
+      getDoc(doc(db, "memberAccess", email)),
+      getDoc(doc(db, "sponsorMemberAccess", email))
+    ]);
     const member = snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
-    if (!member || !hasMemberCenterAccess(member)) {
-      const expired = member?.expiresAt ? `目前紀錄的資格到期日為 ${formatDate(member.expiresAt)}。` : "系統目前查無可顯示的會員資格、文章權限或已購課程。";
+    const sponsorMember = sponsorSnapshot.exists() ? { id: sponsorSnapshot.id, ...sponsorSnapshot.data() } : null;
+    const sponsorActive = Boolean(sponsorMember && isActiveSponsorMember(sponsorMember));
+    const primaryMember = member && hasMemberCenterAccess(member)
+      ? member
+      : sponsorActive
+        ? sponsorMember
+        : null;
+    if (!primaryMember) {
+      const latestRecord = sponsorMember || member;
+      const expired = latestRecord?.expiresAt ? `目前紀錄的資格到期日為 ${formatDate(latestRecord.expiresAt)}。` : "系統目前查無可顯示的會員資格、文章權限或已購課程。";
       showAccessState("目前沒有有效的會員資料", `${expired} 如需確認資料，請聯繫靈元院行政團隊。`, '<a class="access-link" href="/membership.html">查看會員制度</a>');
       return;
     }
-    renderDashboard(member, user);
+    renderDashboard(primaryMember, user, sponsorMember);
   } catch (error) {
     console.error("會員中心資料載入失敗：", error);
     showAccessState("暫時無法載入會員資料", "系統目前無法完成資料核對，請稍後重新整理頁面再試。", "");

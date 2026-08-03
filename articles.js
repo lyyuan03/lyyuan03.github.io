@@ -151,6 +151,7 @@ let loadedArticles = [];
 let articleMetrics = new Map();
 let currentUser = null;
 let currentMemberAccess = null;
+let currentSponsorAccess = null;
 let visibleArticleCount = window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
 
 function base64ToBytes(value) {
@@ -615,38 +616,33 @@ function memberAccessDate(value) {
 
 function hasPaidAccess(articleId = "") {
   if (isAdminEmail(currentUser?.email)) return true;
-  if (!currentUser?.email || !currentMemberAccess) return false;
+  if (!currentUser?.email || !currentSponsorAccess) return false;
 
   const userEmail = currentUser.email.trim().toLowerCase();
-  const recordEmail = String(currentMemberAccess.email || "").trim().toLowerCase();
+  const recordEmail = String(currentSponsorAccess.email || "").trim().toLowerCase();
   if (!recordEmail || recordEmail !== userEmail) return false;
-  if (currentMemberAccess.status !== "active") return false;
-  if (currentMemberAccess.paymentStatus !== "paid") return false;
-  if (currentMemberAccess.revokedAt || currentMemberAccess.suspended === true || currentMemberAccess.disabled === true) return false;
-
-  const memberType = currentMemberAccess.memberType;
-  const isSponsorMember = memberType === "sponsor-member";
-  const isWellnessMember = memberType === "wellness-channel"
-    || currentMemberAccess.wellnessAccess === true
-    || ["wellness", "lingji"].includes(currentMemberAccess.memberLevel);
-  if (!isSponsorMember && !isWellnessMember) return false;
-
-  // 新資料一律以 articleAccess 明確授權；既有贊助會員僅在身分類型、付款、狀態與效期均正確時相容放行。
-  if (currentMemberAccess.articleAccess !== true && !isSponsorMember) return false;
+  if (currentSponsorAccess.memberType !== "sponsor-member") return false;
+  if (currentSponsorAccess.status !== "active") return false;
+  if (currentSponsorAccess.paymentStatus !== "paid") return false;
+  if (currentSponsorAccess.articleAccess !== true) return false;
+  if (currentSponsorAccess.accessScope !== "sponsor-paid-articles") return false;
+  if (Number(currentSponsorAccess.accessVersion || 0) < 2) return false;
+  if (!String(currentSponsorAccess.lastOrderNo || "").trim()) return false;
+  if (currentSponsorAccess.revokedAt || currentSponsorAccess.suspended === true || currentSponsorAccess.disabled === true) return false;
 
   const now = new Date();
-  const startsAt = memberAccessDate(currentMemberAccess.startsAt);
-  const expiresAt = memberAccessDate(currentMemberAccess.expiresAt);
+  const startsAt = memberAccessDate(currentSponsorAccess.startsAt);
+  const expiresAt = memberAccessDate(currentSponsorAccess.expiresAt);
   if (startsAt && startsAt > now) return false;
   if (!expiresAt || expiresAt <= now) return false;
 
-  const deniedArticleIds = Array.isArray(currentMemberAccess.deniedArticleIds)
-    ? currentMemberAccess.deniedArticleIds.map(String)
+  const deniedArticleIds = Array.isArray(currentSponsorAccess.deniedArticleIds)
+    ? currentSponsorAccess.deniedArticleIds.map(String)
     : [];
   if (articleId && deniedArticleIds.includes(String(articleId))) return false;
 
-  const allowedArticleIds = Array.isArray(currentMemberAccess.allowedArticleIds)
-    ? currentMemberAccess.allowedArticleIds.map(String)
+  const allowedArticleIds = Array.isArray(currentSponsorAccess.allowedArticleIds)
+    ? currentSponsorAccess.allowedArticleIds.map(String)
     : [];
   if (allowedArticleIds.length > 0 && (!articleId || !allowedArticleIds.includes(String(articleId)))) return false;
 
@@ -655,20 +651,32 @@ function hasPaidAccess(articleId = "") {
 
 async function loadMemberAccess(user) {
   currentMemberAccess = null;
+  currentSponsorAccess = null;
   if (!user?.email || isAdminEmail(user.email)) return;
   try {
     const email = user.email.trim().toLowerCase();
-    const snapshot = await getDoc(doc(db, "memberAccess", email));
-    if (!snapshot.exists()) return;
-    const record = snapshot.data() || {};
-    const recordEmail = String(record.email || snapshot.id || "").trim().toLowerCase();
-    if (recordEmail !== email) {
-      console.warn("會員閱讀資格 Email 與登入帳號不一致，已拒絕授權。");
-      return;
+    const [memberSnapshot, sponsorSnapshot] = await Promise.all([
+      getDoc(doc(db, "memberAccess", email)),
+      getDoc(doc(db, "sponsorMemberAccess", email))
+    ]);
+
+    if (memberSnapshot.exists()) {
+      const record = memberSnapshot.data() || {};
+      const recordEmail = String(record.email || memberSnapshot.id || "").trim().toLowerCase();
+      if (recordEmail === email) currentMemberAccess = { ...record, email: recordEmail };
+      else console.warn("一般會員資料 Email 與登入帳號不一致，已拒絕載入。");
     }
-    currentMemberAccess = { ...record, email: recordEmail };
+
+    if (sponsorSnapshot.exists()) {
+      const record = sponsorSnapshot.data() || {};
+      const recordEmail = String(record.email || sponsorSnapshot.id || "").trim().toLowerCase();
+      if (recordEmail === email) currentSponsorAccess = { ...record, email: recordEmail };
+      else console.warn("贊助會員資料 Email 與登入帳號不一致，已拒絕授權。");
+    }
   } catch (error) {
     console.warn("會員閱讀資格暫時無法確認。", error);
+    currentMemberAccess = null;
+    currentSponsorAccess = null;
   }
 }
 

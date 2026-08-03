@@ -279,8 +279,8 @@ async function saveMember(event) {
 
   const payload = memberPayload(alreadyActivePaid ? "paid" : "pending");
   if (!payload.email) return;
-  await setDoc(doc(db, "memberAccess", payload.email), payload, { merge: true });
-  if (original && original !== payload.email) await deleteDoc(doc(db, "memberAccess", original));
+  await setDoc(doc(db, "sponsorMemberAccess", payload.email), payload, { merge: true });
+  if (original && original !== payload.email) await deleteDoc(doc(db, "sponsorMemberAccess", original));
   statusEl.textContent = alreadyActivePaid ? "會員基本資料已更新，既有閱讀資格與效期維持不變" : "待付款會員資料已儲存，尚未開放閱讀權限";
   await loadMembers();
   resetMemberForm();
@@ -369,19 +369,30 @@ function openPaymentEmail() {
   location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
+function hasAuthoritativeSponsorAccess(member = {}) {
+  const expiry = dateValue(member.expiresAt);
+  return member.memberType === "sponsor-member"
+    && member.status === "active"
+    && member.paymentStatus === "paid"
+    && member.articleAccess === true
+    && member.accessScope === "sponsor-paid-articles"
+    && Number(member.accessVersion || 0) >= 2
+    && Boolean(String(member.lastOrderNo || "").trim())
+    && member.disabled !== true
+    && member.suspended !== true
+    && !member.revokedAt
+    && Boolean(expiry && expiry > new Date());
+}
+
 function renderMembers() {
   if (!members.length) {
-    listEl.innerHTML = '<div class="empty">目前尚無贊助會員資料</div>';
+    listEl.innerHTML = '<div class="empty">目前尚無贊助會員資料；此時任何一般登入帳號都不會取得贊助文章閱讀權限。</div>';
     return;
   }
   const now = new Date();
   listEl.innerHTML = members.map((member) => {
     const expiry = dateValue(member.expiresAt);
-    const active = member.status === "active"
-      && member.paymentStatus === "paid"
-      && member.articleAccess === true
-      && expiry
-      && expiry > now;
+    const active = hasAuthoritativeSponsorAccess(member);
     const label = member.paymentStatus === "pending"
       ? "待付款／未開權限"
       : active
@@ -427,13 +438,13 @@ function editMember(email) {
 
 async function removeMember(email) {
   if (!confirm(`確定要刪除 ${email} 的會員資料嗎？`)) return;
-  await deleteDoc(doc(db, "memberAccess", email));
+  await deleteDoc(doc(db, "sponsorMemberAccess", email));
   statusEl.textContent = "會員資料已刪除；歷史付款人次仍會保留在訂單紀錄中";
   await Promise.all([loadMembers(), loadOfferStatus()]);
 }
 
 async function loadMembers() {
-  const snapshot = await getDocs(collection(db, "memberAccess"));
+  const snapshot = await getDocs(collection(db, "sponsorMemberAccess"));
   members = snapshot.docs
     .map((item) => ({ id: item.id, ...item.data() }))
     .filter((item) => item.memberType === "sponsor-member")
