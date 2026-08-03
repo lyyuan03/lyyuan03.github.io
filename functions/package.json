@@ -2,13 +2,13 @@
   "name": "lyyuan-membership-functions",
   "version": "1.0.0",
   "private": true,
-  "main": "index.js",
+  "main": "main.js",
   "engines": {
     "node": "22"
   },
   "scripts": {
     "test": "node --test",
-    "lint": "node --check index.js && node --check ecpay.js"
+    "lint": "node --check main.js && node --check index.js && node --check sponsor-offer-functions.js && node --check ecpay.js"
   },
   "dependencies": {
     "firebase-admin": "^14.2.0",
