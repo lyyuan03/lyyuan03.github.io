@@ -42,7 +42,7 @@ if (location.pathname.endsWith("/fahui.html")) {
 
 if (location.pathname.endsWith("/membership.html")) {
   const eightBenefitsScript = document.createElement("script");
-  eightBenefitsScript.src = "/membership-eight-benefits.js?v=20260803-1";
+  eightBenefitsScript.src = "/membership-eight-benefits.js?v=20260803-2";
   eightBenefitsScript.defer = true;
   document.head.appendChild(eightBenefitsScript);
 }
