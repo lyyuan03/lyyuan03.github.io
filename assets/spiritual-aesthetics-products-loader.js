@@ -50,4 +50,12 @@
 
   const note = document.querySelector('.note-box');
   if (note) note.textContent = '本頁已置入靈元院提供的商品實拍圖。商品庫存、最終售價、會員優惠與出貨規範，仍以綠界表單當下內容為準。';
+
+  if (!document.querySelector('script[data-result-interaction-loader]')) {
+    const interaction = document.createElement('script');
+    interaction.src = 'assets/spiritual-aesthetics-result-interaction.js?v=1';
+    interaction.async = false;
+    interaction.dataset.resultInteractionLoader = 'true';
+    document.body.appendChild(interaction);
+  }
 })();
