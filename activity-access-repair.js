@@ -115,7 +115,9 @@ async function loadRepairContext() {
   const groups = new Map();
   memberSnapshot.docs.forEach((memberDoc) => {
     const data = memberDoc.data();
-    const email = normalizeEmail(data.email || memberDoc.id);
+    const documentEmail = normalizeEmail(memberDoc.id);
+    const storedEmail = normalizeEmail(data.email);
+    const email = emailIsValid(documentEmail) ? documentEmail : storedEmail;
     if (!emailIsValid(email)) return;
     if (!groups.has(email)) groups.set(email, []);
     groups.get(email).push({ id: memberDoc.id, ref: memberDoc.ref, data });
