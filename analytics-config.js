@@ -32,3 +32,10 @@ if (location.pathname.endsWith("/admin.html")) {
   accessAuditScript.src = "/activity-access-audit-v2.js?v=20260803-2";
   document.head.appendChild(accessAuditScript);
 }
+
+if (location.pathname.endsWith("/fahui.html")) {
+  const registrationClosedScript = document.createElement("script");
+  registrationClosedScript.src = "/fahui-registration-closed.js?v=20260803-1";
+  registrationClosedScript.defer = true;
+  document.head.appendChild(registrationClosedScript);
+}
