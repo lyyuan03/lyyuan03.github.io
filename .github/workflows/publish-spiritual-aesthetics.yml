@@ -27,6 +27,8 @@ jobs:
 
           production = Path('spiritual-aesthetics.html')
           html = source.read_text(encoding='utf-8')
+          html = html.replace('assets/spiritual-aesthetics-products-loader.js?v=2', 'assets/spiritual-aesthetics-products-loader.js?v=3')
+          source.write_text(html, encoding='utf-8')
           html = html.replace('靈性美學館｜靈運六象測驗預覽', '靈性美學館｜靈元院')
           html = html.replace('靈性美學館靈運六象測驗預覽', '靈性美學館')
           html = html.replace("doc.title='靈性美學館｜靈運六象測驗預覽';", "doc.title='靈性美學館｜靈元院';")
@@ -55,7 +57,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add spiritual-aesthetics.html spiritual-aesthetics-preview.html '*.html'
+          git add spiritual-aesthetics.html spiritual-aesthetics-quiz-preview.html spiritual-aesthetics-preview.html '*.html'
           git diff --cached --quiet && exit 0
           git commit -m "Publish spiritual aesthetics gallery"
           git push
