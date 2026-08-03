@@ -1,0 +1,51 @@
+name: Separate sponsor access once
+
+on:
+  push:
+    branches:
+      - fix/sponsor-list-authoritative
+    paths:
+      - scripts/separate_sponsor_access_once.py
+      - .github/workflows/separate-sponsor-access-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/sponsor-list-authoritative
+          fetch-depth: 0
+
+      - name: Apply authoritative sponsor access patch
+        run: python3 scripts/separate_sponsor_access_once.py
+
+      - name: Validate JavaScript and authorization markers
+        run: |
+          node --check articles.js
+          node --check membership-admin.js
+          node --check wellness-member-admin.js
+          node --check site-auth-nav.js
+          node --check member-dashboard.js
+          node --check functions/index.js
+          node --check functions/sponsor-offer-functions.js
+          node --check functions/public-sponsor-checkout-functions.js
+          grep -q 'sponsorMemberAccess' articles.js
+          grep -q 'accessScope !== "sponsor-paid-articles"' articles.js
+          grep -q 'accessVersion = 2' functions/index.js
+          grep -q 'match /sponsorMemberAccess/' firestore.rules
+
+      - name: Commit generated changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes were necessary."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add articles.js articles.html membership-admin.js wellness-member-admin.js admin.html site-auth-nav.js member-dashboard.js member-dashboard.html firestore.rules functions/index.js functions/sponsor-offer-functions.js functions/public-sponsor-checkout-functions.js
+          git commit -m "fix: make sponsor member list authoritative"
+          git push origin HEAD:fix/sponsor-list-authoritative
