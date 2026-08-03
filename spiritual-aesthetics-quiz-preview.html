@@ -19,7 +19,21 @@ html,body{width:100%;height:100%;margin:0;background:#0b1209;overflow:hidden}
 const frame=document.getElementById('preview');
 const loading=document.getElementById('loading');
 
-frame.addEventListener('load',()=>{
+function loadInto(doc,src,marker){
+  return new Promise((resolve,reject)=>{
+    const old=doc.querySelector(`script[data-preview-script="${marker}"]`);
+    if(old)old.remove();
+    const script=doc.createElement('script');
+    script.src=src;
+    script.async=false;
+    script.dataset.previewScript=marker;
+    script.onload=resolve;
+    script.onerror=()=>reject(new Error(`無法載入：${src}`));
+    doc.body.appendChild(script);
+  });
+}
+
+frame.addEventListener('load',async()=>{
   try{
     const doc=frame.contentDocument;
     if(!doc||!doc.body)return;
@@ -34,7 +48,7 @@ frame.addEventListener('load',()=>{
     if(!doc.querySelector('link[data-energy-quiz]')){
       const link=doc.createElement('link');
       link.rel='stylesheet';
-      link.href='assets/spiritual-aesthetics-quiz.css';
+      link.href='assets/spiritual-aesthetics-quiz.css?v=4';
       link.dataset.energyQuiz='true';
       doc.head.appendChild(link);
     }
@@ -144,12 +158,16 @@ frame.addEventListener('load',()=>{
       if(copy)copy.textContent='六個生活狀態形成能量雷達圖，再依照需求輪廓推薦此刻較適合的御守祈願方向。';
     }
 
-    const oldScript=doc.querySelector('script[data-energy-quiz]');
-    if(oldScript)oldScript.remove();
-    const script=doc.createElement('script');
-    script.src='assets/spiritual-aesthetics-quiz.js?v=3';
-    script.dataset.energyQuiz='true';
-    doc.body.appendChild(script);
+    const sources=[
+      ['assets/spiritual-aesthetics-products-loader.js?v=2','products-loader'],
+      ['assets/product-spirit-photo.js?v=2','product-spirit'],
+      ['assets/product-wealth-photo.js?v=2','product-wealth'],
+      ['assets/product-career-photo.js?v=2','product-career'],
+      ['assets/product-love-photo.js?v=2','product-love'],
+      ['assets/product-incense-photo.js?v=2','product-incense'],
+      ['assets/spiritual-aesthetics-quiz.js?v=4','energy-quiz']
+    ];
+    for(const [src,marker] of sources)await loadInto(doc,src,marker);
 
     doc.title='靈性美學館｜六角能量測驗預覽';
     setTimeout(()=>loading.classList.add('hidden'),180);
