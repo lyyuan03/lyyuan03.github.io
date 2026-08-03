@@ -57,6 +57,9 @@
     visual.replaceChildren(svg);
   };
 
+  const incensePrice = document.querySelector('[data-product="incense"] .price');
+  if (incensePrice) incensePrice.textContent = 'NT$ 680';
+
   if (!document.querySelector('script[data-aesthetics-copy-polish]')) {
     const copyScript = document.createElement('script');
     copyScript.src = 'assets/spiritual-aesthetics-copy-polish.js?v=1';
