@@ -4,8 +4,8 @@ const ARTICLE_ID = "how-to-judge-true-lingxiu-understanding";
 const RELATED_ID = "fantasy-intuition-or-yuanshen";
 const PREVIEW_END = "這兩件事，決定了一個人只是接觸過靈修，還是真正走進了修行。";
 const OLD_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/mind-expansion.jpg?v=20260803-1";
-const DISCERNMENT_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/discernment.webp?v=20260803-1";
-const REALITY_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/reality-test.webp?v=20260803-1";
+const DISCERNMENT_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/discernment-modern.svg?v=20260803-2";
+const REALITY_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/reality-test-modern.svg?v=20260803-2";
 
 function prepareContent(content = "") {
   let next = content
@@ -32,8 +32,8 @@ export const howToJudgeTrueLingxiuUnderstandingArticle = {
   category: "spiritual",
   accessType: "paid",
   publishedAt: "2026-08-03T01:38:00.000Z",
-  updatedAt: "2026-08-03T01:38:00.000Z",
-  coverImage: "assets/articles/how-to-judge-true-lingxiu-understanding/cover.jpg?v=20260803-1",
+  updatedAt: "2026-08-03T02:12:00.000Z",
+  coverImage: "assets/articles/how-to-judge-true-lingxiu-understanding/cover-modern.svg?v=20260803-2",
   sharePath: "articles.html?id=how-to-judge-true-lingxiu-understanding",
   excerpt: "真正的理解，不只是能說出答案；而是當人生把熟悉的答案拿走之後，那份理解仍然能在生命裡運作。",
   topics: ["元神覺醒", "修行辨識", "生命驗證"],
