@@ -2,6 +2,15 @@ name: Deploy Firebase Membership Backend
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'functions/**'
+      - 'firebase.json'
+      - 'firestore.rules'
+      - '.firebaserc'
+      - '.github/workflows/firebase-functions.yml'
 
 jobs:
   deploy-functions:
@@ -27,7 +36,7 @@ jobs:
         run: npm install --global firebase-tools
 
       - name: Verify backend
-        run: npm --prefix functions ci && npm --prefix functions test
+        run: npm --prefix functions ci && npm --prefix functions test && npm --prefix functions run lint
 
       - name: Deploy membership functions and rules
         run: firebase deploy --only functions,firestore:rules --project lyyuan03-membership --non-interactive
