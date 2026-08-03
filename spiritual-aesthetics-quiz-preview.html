@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1209">
-<title>靈性美學館｜六角能量測驗預覽</title>
+<title>靈性美學館｜靈運六象測驗預覽</title>
 <style>
 html,body{width:100%;height:100%;margin:0;background:#0b1209;overflow:hidden}
 #preview{display:block;width:100%;height:100%;border:0;background:#0b1209}
@@ -14,7 +14,7 @@ html,body{width:100%;height:100%;margin:0;background:#0b1209;overflow:hidden}
 </head>
 <body>
 <div id="loading">靈性美學館載入中</div>
-<iframe id="preview" src="spiritual-aesthetics-preview.html" title="靈性美學館六角能量測驗預覽"></iframe>
+<iframe id="preview" src="spiritual-aesthetics-preview.html" title="靈性美學館靈運六象測驗預覽"></iframe>
 <script>
 const frame=document.getElementById('preview');
 const loading=document.getElementById('loading');
@@ -61,15 +61,15 @@ frame.addEventListener('load',async()=>{
         <section class="energy-quiz" id="energyQuiz" aria-labelledby="quizTitle">
           <div class="quiz-inner">
             <img class="quiz-mark" src="logo.png" alt="靈元院">
-            <p class="quiz-kicker">INNER ENERGY · OMAMORI</p>
-            <h2 class="quiz-title" id="quizTitle">此刻，你需要哪一種守護？</h2>
-            <p class="quiz-sub">六個生活狀態，形成專屬能量輪廓，再找出此刻最需要的御守祈願方向。</p>
+            <p class="quiz-kicker">SPIRITUAL FORTUNE · OMAMORI</p>
+            <h2 class="quiz-title" id="quizTitle">此刻，你的靈運需要哪一種護持？</h2>
+            <p class="quiz-sub">透過六個生命面向，觀察元神、福祿、願行與因緣的流動，再找出此刻較需要的守護。</p>
             <div class="quiz-rule"></div>
 
             <div class="quiz-panel quiz-start active" data-panel="start">
               <div class="quiz-start-symbol"><i></i></div>
-              <button class="quiz-start-btn" type="button" id="quizStart">開始能量檢測</button>
-              <p class="quiz-notice">約 1 分鐘完成。請依照最近一個月最常出現的感受作答。</p>
+              <button class="quiz-start-btn" type="button" id="quizStart">開始靈運檢測</button>
+              <p class="quiz-notice">請先收心一念，依照最近一個月最常出現的狀態作答。</p>
             </div>
 
             <div class="quiz-panel" data-panel="question">
@@ -83,10 +83,10 @@ frame.addEventListener('load',async()=>{
 
             <div class="quiz-panel" data-panel="result">
               <div class="result-stage active" data-result-stage="radar">
-                <h3 class="radar-heading">你的能量需求輪廓</h3>
-                <p class="radar-copy">圖形越向外延伸，代表此刻越需要補足該項能量。</p>
+                <h3 class="radar-heading">你的靈運與願力輪廓</h3>
+                <p class="radar-copy">圖形越向外延伸，代表此刻越需要神明護持與願力補足的面向。</p>
                 <div class="radar-shell">
-                  <svg class="energy-radar" id="energyRadar" viewBox="0 0 320 320" role="img" aria-label="六角能量雷達圖">
+                  <svg class="energy-radar" id="energyRadar" viewBox="0 0 320 320" role="img" aria-label="靈運六象雷達圖">
                     <g class="radar-grid">
                       <polygon points="160,137 179.9,148.5 179.9,171.5 160,183 140.1,171.5 140.1,148.5"></polygon>
                       <polygon points="160,114 199.8,137 199.8,183 160,206 120.2,183 120.2,137"></polygon>
@@ -109,17 +109,17 @@ frame.addEventListener('load',async()=>{
                     <circle class="radar-point" cx="160" cy="160" r="4"></circle>
                     <circle class="radar-point" cx="160" cy="160" r="4"></circle>
                     <circle class="radar-point" cx="160" cy="160" r="4"></circle>
-                    <text class="radar-label" x="160" y="28" text-anchor="middle">心神安定</text>
-                    <text class="radar-label" x="272" y="94" text-anchor="start">豐盛安全</text>
-                    <text class="radar-label" x="272" y="232" text-anchor="start">行動推進</text>
-                    <text class="radar-label" x="160" y="301" text-anchor="middle">關係和合</text>
-                    <text class="radar-label" x="48" y="232" text-anchor="end">環境防護</text>
-                    <text class="radar-label" x="48" y="94" text-anchor="end">願力聚焦</text>
+                    <text class="radar-label" x="160" y="28" text-anchor="middle">元神安定</text>
+                    <text class="radar-label" x="272" y="94" text-anchor="start">福祿承接</text>
+                    <text class="radar-label" x="272" y="232" text-anchor="start">願行開展</text>
+                    <text class="radar-label" x="160" y="301" text-anchor="middle">因緣和合</text>
+                    <text class="radar-label" x="48" y="232" text-anchor="end">護身結界</text>
+                    <text class="radar-label" x="48" y="94" text-anchor="end">天命願力</text>
                   </svg>
                   <span class="radar-scan"></span><span class="radar-core"></span>
                 </div>
                 <div class="axis-summary" id="axisSummary"></div>
-                <button class="quiz-reveal-btn" type="button" id="quizReveal" disabled>揭曉守護御守</button>
+                <button class="quiz-reveal-btn" type="button" id="quizReveal" disabled>揭曉此刻守護御守</button>
                 <button class="quiz-restart" type="button" data-quiz-restart>重新檢測</button>
               </div>
 
@@ -130,14 +130,14 @@ frame.addEventListener('load',async()=>{
                 <p class="result-lead" id="resultLead"></p>
                 <p class="result-copy" id="resultCopy"></p>
                 <div class="result-actions">
-                  <button class="quiz-result-btn" type="button" id="resultProduct">查看適合我的御守</button>
-                  <button class="quiz-restart" type="button" id="resultChartBack">返回能量圖</button>
+                  <button class="quiz-result-btn" type="button" id="resultProduct">前往查看守護御守</button>
+                  <button class="quiz-restart" type="button" id="resultChartBack">返回靈運圖</button>
                   <button class="quiz-restart" type="button" data-quiz-restart>重新檢測</button>
                 </div>
               </div>
             </div>
 
-            <p class="quiz-disclaimer">本測驗為日常自我覺察與選物參考，不屬於醫療、心理或宗教認證診斷。</p>
+            <p class="quiz-disclaimer">本測驗為靈性自我觀照與祈願選物參考，不等同神諭、問事、命理定論或醫療診斷。</p>
           </div>
         </section>`;
     }
@@ -154,8 +154,8 @@ frame.addEventListener('load',async()=>{
     if(promises[1]){
       const heading=promises[1].querySelector('b');
       const copy=promises[1].querySelector('span');
-      if(heading)heading.textContent='六角能量自我覺察';
-      if(copy)copy.textContent='六個生活狀態形成能量雷達圖，再依照需求輪廓推薦此刻較適合的御守祈願方向。';
+      if(heading)heading.textContent='靈運六象自我觀照';
+      if(copy)copy.textContent='從元神、福祿、願行、因緣、護身與天命六個面向，觀察近期氣運，再依照結果推薦相應的御守祈願方向。';
     }
 
     const sources=[
@@ -165,11 +165,11 @@ frame.addEventListener('load',async()=>{
       ['assets/product-career-photo.js?v=2','product-career'],
       ['assets/product-love-photo.js?v=2','product-love'],
       ['assets/product-incense-photo.js?v=2','product-incense'],
-      ['assets/spiritual-aesthetics-quiz.js?v=4','energy-quiz']
+      ['assets/spiritual-aesthetics-quiz.js?v=5','energy-quiz']
     ];
     for(const [src,marker] of sources)await loadInto(doc,src,marker);
 
-    doc.title='靈性美學館｜六角能量測驗預覽';
+    doc.title='靈性美學館｜靈運六象測驗預覽';
     setTimeout(()=>loading.classList.add('hidden'),180);
   }catch(error){
     loading.textContent='預覽載入失敗，請重新整理頁面';
