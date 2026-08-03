@@ -122,6 +122,13 @@ function millis(value) {
   return Number.isNaN(parsed) ? 0 : parsed;
 }
 
+function dateValue(value) {
+  if (!value) return null;
+  if (typeof value?.toDate === "function") return value.toDate();
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 async function readSponsorOfferStatus(reader = null) {
   const get = reader
     ? (target) => reader.get(target)
@@ -236,17 +243,20 @@ exports.createSponsorMembershipCheckout = onCall(
 
     const checkout = await db.runTransaction(async (transaction) => {
       const status = await readSponsorOfferStatus(transaction);
+      const memberSnapshot = await transaction.get(memberRef);
+      const member = memberSnapshot.data() || {};
       const priceTier = status.promotionAvailable ? "promo" : "regular";
       const amount = sponsorPlanAmount(planMonths, priceTier, status.settings);
       const now = Timestamp.now();
+      const nowDate = now.toDate();
+      const existingExpiry = dateValue(member.expiresAt);
+      const preserveActiveMembership = member.status === "active"
+        && existingExpiry
+        && existingExpiry > nowDate;
       const paymentLinkExpiresAt = Timestamp.fromMillis(
         now.toMillis() + status.settings.paymentDays * 24 * 60 * 60 * 1000
       );
       const promotionSequence = priceTier === "promo" ? status.occupiedCount + 1 : null;
-      const existingMember = status.legacyPaidCount >= 0
-        ? status
-        : null;
-      void existingMember;
 
       transaction.create(orderRef, {
         merchantTradeNo: tradeNo,
@@ -268,20 +278,29 @@ exports.createSponsorMembershipCheckout = onCall(
         updatedAt: now
       });
 
-      transaction.set(memberRef, {
+      const pendingMember = {
         email,
         name,
         memberType: "sponsor-member",
         articleAccess: true,
-        planMonths,
-        amount,
-        priceTier,
-        promotionSequence,
-        paymentStatus: "pending",
-        status: "pending",
+        pendingPlanMonths: planMonths,
+        pendingAmount: amount,
+        pendingPriceTier: priceTier,
+        pendingPromotionSequence: promotionSequence,
         pendingOrderNo: tradeNo,
         updatedAt: now
-      }, { merge: true });
+      };
+      if (!preserveActiveMembership) {
+        Object.assign(pendingMember, {
+          planMonths,
+          amount,
+          priceTier,
+          promotionSequence,
+          paymentStatus: "pending",
+          status: "pending"
+        });
+      }
+      transaction.set(memberRef, pendingMember, { merge: true });
 
       return {
         amount,
@@ -363,8 +382,7 @@ exports.activateSponsorMembershipManually = onCall(
       const amount = sponsorPlanAmount(planMonths, priceTier, status.settings);
       const promotionSequence = priceTier === "promo" ? status.occupiedCount + 1 : null;
       const now = new Date();
-      const existingExpiry = member.expiresAt?.toDate?.()
-        || (member.expiresAt ? new Date(member.expiresAt) : null);
+      const existingExpiry = dateValue(member.expiresAt);
       const startAt = existingExpiry && existingExpiry > now ? existingExpiry : now;
       const expiresAt = addMonths(startAt, planMonths);
       const nowTimestamp = Timestamp.fromDate(now);
@@ -407,6 +425,10 @@ exports.activateSponsorMembershipManually = onCall(
         paidAt: nowTimestamp,
         lastOrderNo: tradeNo,
         pendingOrderNo: FieldValue.delete(),
+        pendingPlanMonths: FieldValue.delete(),
+        pendingAmount: FieldValue.delete(),
+        pendingPriceTier: FieldValue.delete(),
+        pendingPromotionSequence: FieldValue.delete(),
         note,
         updatedAt: nowTimestamp
       }, { merge: true });
