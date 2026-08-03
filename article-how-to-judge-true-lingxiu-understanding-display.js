@@ -3,21 +3,16 @@ import { howToJudgeTrueLingxiuUnderstandingArticle as baseArticle } from "./arti
 const ARTICLE_ID = "how-to-judge-true-lingxiu-understanding";
 const RELATED_ID = "fantasy-intuition-or-yuanshen";
 const PREVIEW_END = "這兩件事，決定了一個人只是接觸過靈修，還是真正走進了修行。";
-const OLD_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/mind-expansion.jpg?v=20260803-1";
-const DISCERNMENT_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/discernment-modern.svg?v=20260803-2";
-const REALITY_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/reality-test-modern.svg?v=20260803-2";
+const FIRST_OLD_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/mind-expansion.jpg?v=20260803-1";
+const SECOND_OLD_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/humility-compassion.jpg?v=20260803-1";
+const FIRST_INLINE_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/discernment-modern.svg?v=20260803-2";
+const SECOND_INLINE_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/reality-test-modern.svg?v=20260803-2";
 
 function prepareContent(content = "") {
   let next = content
     .replace(/\n*<!-- paid-only -->\n*/g, "\n\n")
-    .replace(OLD_IMAGE, DISCERNMENT_IMAGE);
-
-  if (!next.includes(`![真正的覺醒，最後仍要回到現實生活接受檢驗](${REALITY_IMAGE})`)) {
-    next = next.replace(
-      "\n\n## 元神出竅真正打開的，是心智結構",
-      `\n\n![真正的覺醒，最後仍要回到現實生活接受檢驗](${REALITY_IMAGE})\n\n## 元神出竅真正打開的，是心智結構`
-    );
-  }
+    .replace(FIRST_OLD_IMAGE, FIRST_INLINE_IMAGE)
+    .replace(SECOND_OLD_IMAGE, SECOND_INLINE_IMAGE);
 
   if (next.includes(PREVIEW_END)) {
     next = next.replace(PREVIEW_END, `${PREVIEW_END}\n\n<!-- paid-only -->`);
@@ -32,7 +27,7 @@ export const howToJudgeTrueLingxiuUnderstandingArticle = {
   category: "spiritual",
   accessType: "paid",
   publishedAt: "2026-08-03T01:38:00.000Z",
-  updatedAt: "2026-08-03T02:12:00.000Z",
+  updatedAt: "2026-08-03T02:36:00.000Z",
   coverImage: "assets/articles/how-to-judge-true-lingxiu-understanding/cover-modern.svg?v=20260803-2",
   sharePath: "articles.html?id=how-to-judge-true-lingxiu-understanding",
   excerpt: "真正的理解，不只是能說出答案；而是當人生把熟悉的答案拿走之後，那份理解仍然能在生命裡運作。",
