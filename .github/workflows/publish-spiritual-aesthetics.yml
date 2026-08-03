@@ -1,0 +1,61 @@
+name: Publish spiritual aesthetics gallery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-spiritual-aesthetics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish production page and update navigation
+        shell: python
+        run: |
+          from pathlib import Path
+
+          source = Path('spiritual-aesthetics-quiz-preview.html')
+          if not source.exists():
+              raise SystemExit('Missing spiritual-aesthetics-quiz-preview.html')
+
+          production = Path('spiritual-aesthetics.html')
+          html = source.read_text(encoding='utf-8')
+          html = html.replace('靈性美學館｜靈運六象測驗預覽', '靈性美學館｜靈元院')
+          html = html.replace('靈性美學館靈運六象測驗預覽', '靈性美學館')
+          html = html.replace("doc.title='靈性美學館｜靈運六象測驗預覽';", "doc.title='靈性美學館｜靈元院';")
+          production.write_text(html, encoding='utf-8')
+
+          old_external = '<a href="https://reurl.cc/vv1k5e" target="_blank">靈性美學館</a>'
+          old_external_rel = '<a href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener">靈性美學館</a>'
+          new_internal = '<a href="spiritual-aesthetics.html">靈性美學館</a>'
+
+          changed = []
+          for path in Path('.').rglob('*.html'):
+              if any(part in {'.git', 'node_modules'} for part in path.parts):
+                  continue
+              text = path.read_text(encoding='utf-8')
+              original = text
+              text = text.replace(old_external, new_internal)
+              text = text.replace(old_external_rel, new_internal)
+              text = text.replace('<a class="current" href="spiritual-aesthetics-preview.html">靈性美學館</a>', '<a class="current" href="spiritual-aesthetics.html">靈性美學館</a>')
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+                  changed.append(str(path))
+
+          print('Updated:', ', '.join(changed) if changed else 'production page only')
+
+      - name: Commit published gallery
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add spiritual-aesthetics.html spiritual-aesthetics-preview.html '*.html'
+          git diff --cached --quiet && exit 0
+          git commit -m "Publish spiritual aesthetics gallery"
+          git push
