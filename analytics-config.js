@@ -19,11 +19,16 @@ if (location.pathname.endsWith("/articles.html")) {
   tocPolicyScript.src = "/article-toc-policy.js?v=20260730-1";
   tocPolicyScript.defer = true;
   document.head.appendChild(tocPolicyScript);
+
+  const eventDiagnosticsScript = document.createElement("script");
+  eventDiagnosticsScript.type = "module";
+  eventDiagnosticsScript.src = "/event-access-diagnostics-v2.js?v=20260803-2";
+  document.head.appendChild(eventDiagnosticsScript);
 }
 
 if (location.pathname.endsWith("/admin.html")) {
-  const accessRepairScript = document.createElement("script");
-  accessRepairScript.type = "module";
-  accessRepairScript.src = "/activity-access-repair.js?v=20260803-1";
-  document.head.appendChild(accessRepairScript);
+  const accessAuditScript = document.createElement("script");
+  accessAuditScript.type = "module";
+  accessAuditScript.src = "/activity-access-audit-v2.js?v=20260803-2";
+  document.head.appendChild(accessAuditScript);
 }
