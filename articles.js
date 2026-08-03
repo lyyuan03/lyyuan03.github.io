@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260803-restore-1";
+import { staticArticles } from "./static-articles.js?v=20260802-you-can-not-fear-death-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -196,10 +196,10 @@ async function decryptEventContent(encryptedContent, iv, rawKey) {
 
 function escapeHtml(value = "") {
   return value.replace(/[&<>"']/g, (char) => ({
-    "&": "&",
-    "<": "<",
-    ">": ">",
-    '"': """,
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
     "'": "&#039;"
   }[char]));
 }
