@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1209">
+<title>靈性美學館｜靈元院</title>
+<style>
+html,body{width:100%;height:100%;margin:0;background:#0b1209;overflow:hidden}
+#preview{display:block;width:100%;height:100%;border:0;background:#0b1209}
+#loading{position:fixed;inset:0;display:grid;place-items:center;color:#c8a66f;background:#0b1209;font-family:serif;letter-spacing:.2em;z-index:2;transition:opacity .35s}
+#loading.hidden{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="loading">靈性美學館載入中</div>
+<iframe id="preview" src="spiritual-aesthetics-preview.html" title="靈性美學館"></iframe>
+<script>
+const frame=document.getElementById('preview');
+const loading=document.getElementById('loading');
+
+function loadInto(doc,src,marker){
+  return new Promise((resolve,reject)=>{
+    const old=doc.querySelector(`script[data-preview-script="${marker}"]`);
+    if(old)old.remove();
+    const script=doc.createElement('script');
+    script.src=src;
+    script.async=false;
+    script.dataset.previewScript=marker;
+    script.onload=resolve;
+    script.onerror=()=>reject(new Error(`無法載入：${src}`));
+    doc.body.appendChild(script);
+  });
+}
+
+frame.addEventListener('load',async()=>{
+  try{
+    const doc=frame.contentDocument;
+    if(!doc||!doc.body)return;
+
+    if(!doc.querySelector('base[data-preview-base]')){
+      const base=doc.createElement('base');
+      base.target='_top';
+      base.dataset.previewBase='true';
+      doc.head.prepend(base);
+    }
+
+    if(!doc.querySelector('link[data-energy-quiz]')){
+      const link=doc.createElement('link');
+      link.rel='stylesheet';
+      link.href='assets/spiritual-aesthetics-quiz.css?v=4';
+      link.dataset.energyQuiz='true';
+      doc.head.appendChild(link);
+    }
+
+    const heroArt=doc.querySelector('.hero-art');
+    if(heroArt){
+      heroArt.removeAttribute('aria-hidden');
+      heroArt.innerHTML=`
+        <div class="orbit one"></div><div class="orbit two"></div>
+        <section class="energy-quiz" id="energyQuiz" aria-labelledby="quizTitle">
+          <div class="quiz-inner">
+            <img class="quiz-mark" src="logo.png" alt="靈元院">
+            <p class="quiz-kicker">SPIRITUAL FORTUNE · OMAMORI</p>
+            <h2 class="quiz-title" id="quizTitle">此刻，你的靈運需要哪一種護持？</h2>
+            <p class="quiz-sub">透過六個生命面向，觀察元神、福祿、願行與因緣的流動，再找出此刻較需要的守護。</p>
+            <div class="quiz-rule"></div>
+
+            <div class="quiz-panel quiz-start active" data-panel="start">
+              <div class="quiz-start-symbol"><i></i></div>
+              <button class="quiz-start-btn" type="button" id="quizStart">開始靈運檢測</button>
+              <p class="quiz-notice">請先收心一念，依照最近一個月最常出現的狀態作答。</p>
+            </div>
+
+            <div class="quiz-panel" data-panel="question">
+              <div class="quiz-progress-row"><span id="quizStep">第 1 題</span><span>共 6 題</span></div>
+              <div class="quiz-progress"><i id="quizProgress"></i></div>
+              <div class="quiz-beads" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <h3 class="quiz-question" id="quizQuestion"></h3>
+              <div class="quiz-options" id="quizOptions"></div>
+              <button class="quiz-next-btn" type="button" id="quizNext" disabled>下一題</button>
+            </div>
+
+            <div class="quiz-panel" data-panel="result">
+              <div class="result-stage active" data-result-stage="radar">
+                <h3 class="radar-heading">你的靈運與願力輪廓</h3>
+                <p class="radar-copy">圖形越向外延伸，代表此刻越需要神明護持與願力補足的面向。</p>
+                <div class="radar-shell">
+                  <svg class="energy-radar" id="energyRadar" viewBox="0 0 320 320" role="img" aria-label="靈運六象雷達圖">
+                    <g class="radar-grid">
+                      <polygon points="160,137 179.9,148.5 179.9,171.5 160,183 140.1,171.5 140.1,148.5"></polygon>
+                      <polygon points="160,114 199.8,137 199.8,183 160,206 120.2,183 120.2,137"></polygon>
+                      <polygon points="160,91 219.8,125.5 219.8,194.5 160,229 100.2,194.5 100.2,125.5"></polygon>
+                      <polygon points="160,68 239.7,114 239.7,206 160,252 80.3,206 80.3,114"></polygon>
+                      <polygon points="160,45 259.6,102.5 259.6,217.5 160,275 60.4,217.5 60.4,102.5"></polygon>
+                    </g>
+                    <g class="radar-axis">
+                      <line x1="160" y1="160" x2="160" y2="45"></line>
+                      <line x1="160" y1="160" x2="259.6" y2="102.5"></line>
+                      <line x1="160" y1="160" x2="259.6" y2="217.5"></line>
+                      <line x1="160" y1="160" x2="160" y2="275"></line>
+                      <line x1="160" y1="160" x2="60.4" y2="217.5"></line>
+                      <line x1="160" y1="160" x2="60.4" y2="102.5"></line>
+                    </g>
+                    <polygon class="radar-shape" id="radarShape" points="160,160 160,160 160,160 160,160 160,160 160,160"></polygon>
+                    <circle class="radar-point" cx="160" cy="160" r="4"></circle>
+                    <circle class="radar-point" cx="160" cy="160" r="4"></circle>
+                    <circle class="radar-point" cx="160" cy="160" r="4"></circle>
+                    <circle class="radar-point" cx="160" cy="160" r="4"></circle>
+                    <circle class="radar-point" cx="160" cy="160" r="4"></circle>
+                    <circle class="radar-point" cx="160" cy="160" r="4"></circle>
+                    <text class="radar-label" x="160" y="28" text-anchor="middle">元神安定</text>
+                    <text class="radar-label" x="272" y="94" text-anchor="start">福祿承接</text>
+                    <text class="radar-label" x="272" y="232" text-anchor="start">願行開展</text>
+                    <text class="radar-label" x="160" y="301" text-anchor="middle">因緣和合</text>
+                    <text class="radar-label" x="48" y="232" text-anchor="end">護身結界</text>
+                    <text class="radar-label" x="48" y="94" text-anchor="end">天命願力</text>
+                  </svg>
+                  <span class="radar-scan"></span><span class="radar-core"></span>
+                </div>
+                <div class="axis-summary" id="axisSummary"></div>
+                <button class="quiz-reveal-btn" type="button" id="quizReveal" disabled>揭曉此刻守護御守</button>
+                <button class="quiz-restart" type="button" data-quiz-restart>重新檢測</button>
+              </div>
+
+              <div class="result-stage omamori-stage" data-result-stage="omamori">
+                <span class="result-energy" id="resultEnergy"></span>
+                <h3 class="result-name" id="resultName"></h3>
+                <div class="result-visual-wrap"><div class="result-visual" id="resultVisual"></div></div>
+                <p class="result-lead" id="resultLead"></p>
+                <p class="result-copy" id="resultCopy"></p>
+                <div class="result-actions">
+                  <button class="quiz-result-btn" type="button" id="resultProduct">前往查看守護御守</button>
+                  <button class="quiz-restart" type="button" id="resultChartBack">返回靈運圖</button>
+                  <button class="quiz-restart" type="button" data-quiz-restart>重新檢測</button>
+                </div>
+              </div>
+            </div>
+
+            <p class="quiz-disclaimer">本測驗為靈性自我觀照與祈願選物參考，不等同神諭、問事、命理定論或醫療診斷。</p>
+          </div>
+        </section>`;
+    }
+
+    const cards=[...doc.querySelectorAll('.product-card')];
+    const ids=['product-spirit','product-wealth','product-career','product-love','product-incense'];
+    const keys=['spirit','wealth','career','love','incense'];
+    cards.slice(0,5).forEach((card,index)=>{
+      card.id=ids[index];
+      card.dataset.product=keys[index];
+    });
+
+    const promises=doc.querySelectorAll('.promise');
+    if(promises[1]){
+      const heading=promises[1].querySelector('b');
+      const copy=promises[1].querySelector('span');
+      if(heading)heading.textContent='靈運六象自我觀照';
+      if(copy)copy.textContent='從元神、福祿、願行、因緣、護身與天命六個面向，觀察近期氣運，再依照結果推薦相應的御守祈願方向。';
+    }
+
+    const sources=[
+      ['assets/spiritual-aesthetics-products-loader.js?v=2','products-loader'],
+      ['assets/product-spirit-photo.js?v=2','product-spirit'],
+      ['assets/product-wealth-photo.js?v=2','product-wealth'],
+      ['assets/product-career-photo.js?v=2','product-career'],
+      ['assets/product-love-photo.js?v=2','product-love'],
+      ['assets/product-incense-photo.js?v=2','product-incense'],
+      ['assets/spiritual-aesthetics-quiz.js?v=5','energy-quiz']
+    ];
+    for(const [src,marker] of sources)await loadInto(doc,src,marker);
+
+    doc.title='靈性美學館｜靈元院';
+    setTimeout(()=>loading.classList.add('hidden'),180);
+  }catch(error){
+    loading.textContent='預覽載入失敗，請重新整理頁面';
+    console.error(error);
+  }
+});
+</script>
+</body>
+</html>
