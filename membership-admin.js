@@ -241,11 +241,12 @@ function memberPayload(paymentStatus = null, extendMembership = false) {
   const email = normalizeEmail(document.getElementById("member-email").value);
   const existing = members.find((item) => item.email === normalizeEmail(document.getElementById("member-original-email").value));
   const status = paymentStatus || document.getElementById("member-payment-status").value;
+  const isPaid = status === "paid";
   return {
     email,
     name: document.getElementById("member-name").value.trim(),
     memberType: "sponsor-member",
-    articleAccess: true,
+    articleAccess: isPaid,
     wellnessAccess: false,
     planMonths: selectedMonths(),
     amount: Number(amountEl.value || 0),
@@ -267,12 +268,20 @@ function memberPayload(paymentStatus = null, extendMembership = false) {
 
 async function saveMember(event) {
   event.preventDefault();
-  const payload = memberPayload();
-  if (!payload.email) return;
   const original = normalizeEmail(document.getElementById("member-original-email").value);
+  const existing = members.find((item) => item.email === original);
+  const selectedPaymentStatus = document.getElementById("member-payment-status").value;
+  const alreadyActivePaid = existing?.paymentStatus === "paid" && existing?.status === "active";
+  if (selectedPaymentStatus === "paid" && !alreadyActivePaid) {
+    statusEl.textContent = "為避免誤開權限，新增或待付款會員不能用「儲存會員資料」直接改成已付款；請使用「確認付款並開通」。";
+    return;
+  }
+
+  const payload = memberPayload(alreadyActivePaid ? "paid" : "pending");
+  if (!payload.email) return;
   await setDoc(doc(db, "memberAccess", payload.email), payload, { merge: true });
   if (original && original !== payload.email) await deleteDoc(doc(db, "memberAccess", original));
-  statusEl.textContent = payload.paymentStatus === "paid" ? "會員資料已更新；若要新增一筆付費人次，請使用「確認付款並開通」" : "會員資料已儲存";
+  statusEl.textContent = alreadyActivePaid ? "會員基本資料已更新，既有閱讀資格與效期維持不變" : "待付款會員資料已儲存，尚未開放閱讀權限";
   await loadMembers();
   resetMemberForm();
 }
@@ -368,8 +377,18 @@ function renderMembers() {
   const now = new Date();
   listEl.innerHTML = members.map((member) => {
     const expiry = dateValue(member.expiresAt);
-    const active = member.status === "active" && expiry && expiry > now;
-    const label = member.paymentStatus === "pending" ? "待付款" : active ? "有效" : "已到期";
+    const active = member.status === "active"
+      && member.paymentStatus === "paid"
+      && member.articleAccess === true
+      && expiry
+      && expiry > now;
+    const label = member.paymentStatus === "pending"
+      ? "待付款／未開權限"
+      : active
+        ? "有效"
+        : member.status === "active"
+          ? "權限資料不完整"
+          : "已到期";
     const tier = member.priceTier === "regular"
       ? "一般價"
       : member.promotionSequence

@@ -592,7 +592,7 @@ function splitMemberContent(content = "", articleId = "") {
     : content.includes(memberMarker)
       ? "member"
       : "open";
-  if (accessType === "paid" && hasPaidAccess()) {
+  if (accessType === "paid" && hasPaidAccess(articleId)) {
     return { publicContent: content.replace(paidMarker, ""), lockedContent: "", accessType: "open" };
   }
   if (accessType === "open") {
@@ -607,12 +607,50 @@ function splitMemberContent(content = "", articleId = "") {
   };
 }
 
-function hasPaidAccess() {
+function memberAccessDate(value) {
+  if (!value) return null;
+  const date = value?.toDate?.() || new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function hasPaidAccess(articleId = "") {
   if (isAdminEmail(currentUser?.email)) return true;
-  if (!currentMemberAccess || currentMemberAccess.status !== "active") return false;
-  const expiry = currentMemberAccess.expiresAt?.toDate?.()
-    || (currentMemberAccess.expiresAt ? new Date(currentMemberAccess.expiresAt) : null);
-  return Boolean(expiry && !Number.isNaN(expiry.getTime()) && expiry > new Date());
+  if (!currentUser?.email || !currentMemberAccess) return false;
+
+  const userEmail = currentUser.email.trim().toLowerCase();
+  const recordEmail = String(currentMemberAccess.email || "").trim().toLowerCase();
+  if (!recordEmail || recordEmail !== userEmail) return false;
+  if (currentMemberAccess.status !== "active") return false;
+  if (currentMemberAccess.paymentStatus !== "paid") return false;
+  if (currentMemberAccess.revokedAt || currentMemberAccess.suspended === true || currentMemberAccess.disabled === true) return false;
+
+  const memberType = currentMemberAccess.memberType;
+  const isSponsorMember = memberType === "sponsor-member";
+  const isWellnessMember = memberType === "wellness-channel"
+    || currentMemberAccess.wellnessAccess === true
+    || ["wellness", "lingji"].includes(currentMemberAccess.memberLevel);
+  if (!isSponsorMember && !isWellnessMember) return false;
+
+  // 新資料一律以 articleAccess 明確授權；既有贊助會員僅在身分類型、付款、狀態與效期均正確時相容放行。
+  if (currentMemberAccess.articleAccess !== true && !isSponsorMember) return false;
+
+  const now = new Date();
+  const startsAt = memberAccessDate(currentMemberAccess.startsAt);
+  const expiresAt = memberAccessDate(currentMemberAccess.expiresAt);
+  if (startsAt && startsAt > now) return false;
+  if (!expiresAt || expiresAt <= now) return false;
+
+  const deniedArticleIds = Array.isArray(currentMemberAccess.deniedArticleIds)
+    ? currentMemberAccess.deniedArticleIds.map(String)
+    : [];
+  if (articleId && deniedArticleIds.includes(String(articleId))) return false;
+
+  const allowedArticleIds = Array.isArray(currentMemberAccess.allowedArticleIds)
+    ? currentMemberAccess.allowedArticleIds.map(String)
+    : [];
+  if (allowedArticleIds.length > 0 && (!articleId || !allowedArticleIds.includes(String(articleId)))) return false;
+
+  return true;
 }
 
 async function loadMemberAccess(user) {
@@ -621,7 +659,14 @@ async function loadMemberAccess(user) {
   try {
     const email = user.email.trim().toLowerCase();
     const snapshot = await getDoc(doc(db, "memberAccess", email));
-    if (snapshot.exists()) currentMemberAccess = snapshot.data();
+    if (!snapshot.exists()) return;
+    const record = snapshot.data() || {};
+    const recordEmail = String(record.email || snapshot.id || "").trim().toLowerCase();
+    if (recordEmail !== email) {
+      console.warn("會員閱讀資格 Email 與登入帳號不一致，已拒絕授權。");
+      return;
+    }
+    currentMemberAccess = { ...record, email: recordEmail };
   } catch (error) {
     console.warn("會員閱讀資格暫時無法確認。", error);
   }
@@ -988,12 +1033,19 @@ loadArticles().catch((error) => {
 });
 
 let lastVisibleRefreshAt = Date.now();
-document.addEventListener("visibilitychange", () => {
+document.addEventListener("visibilitychange", async () => {
   if (document.visibilityState !== "visible") return;
   const now = Date.now();
   if (now - lastVisibleRefreshAt < 1500) return;
   lastVisibleRefreshAt = now;
-  loadArticles().catch((error) => console.error("重新載入文章失敗：", error));
+  try {
+    await loadMemberAccess(auth.currentUser);
+    await loadArticles();
+  } catch (error) {
+    console.error("重新確認會員資格失敗：", error);
+    currentMemberAccess = null;
+    renderCurrentView();
+  }
 });
 
 onAuthStateChanged(auth, async (user) => {
