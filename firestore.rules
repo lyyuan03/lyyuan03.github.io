@@ -16,8 +16,14 @@ service cloud.firestore {
 
     function isActiveWellnessMember() {
       return signedIn()
+        && request.auth.token.email_verified == true
+        && wellnessMember().data.email == request.auth.token.email
         && wellnessMember().data.status == "active"
+        && wellnessMember().data.paymentStatus == "paid"
+        && wellnessMember().data.expiresAt > request.time
         && wellnessMember().data.memberType != "sponsor-member"
+        && wellnessMember().data.disabled != true
+        && wellnessMember().data.suspended != true
         && (wellnessMember().data.wellnessAccess == true
           || wellnessMember().data.memberType == "wellness-channel"
           || wellnessMember().data.memberLevel in ["wellness", "lingji"]);
@@ -83,7 +89,10 @@ service cloud.firestore {
 
     match /memberAccess/{memberEmail} {
       allow read: if isAdmin()
-        || (signedIn() && request.auth.token.email == memberEmail);
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail
+          && resource.data.email == memberEmail);
       allow create, update, delete: if isAdmin();
     }
 

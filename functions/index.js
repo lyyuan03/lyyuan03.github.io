@@ -373,6 +373,8 @@ exports.createSponsorMembershipCheckout = onCall(
       email,
       name,
       memberType: "sponsor-member",
+      articleAccess: false,
+      wellnessAccess: false,
       planMonths,
       amount,
       paymentStatus: "pending",
@@ -534,7 +536,10 @@ exports.ecpayMembershipCallback = onRequest(
           pendingOrderNo: FieldValue.delete(),
           updatedAt: nowTimestamp
         };
-        if (order.memberType !== "sponsor-member") {
+        if (order.memberType === "sponsor-member") {
+          activeMember.articleAccess = true;
+          activeMember.wellnessAccess = false;
+        } else {
           activeMember.wellnessAccess = true;
           activeMember.memberLevel = order.memberLevel;
           activeMember.wellnessLevel = order.memberLevel;
