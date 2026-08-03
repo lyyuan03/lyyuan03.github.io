@@ -169,6 +169,7 @@ footer p{font-size:12px;letter-spacing:.12em}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-bg,.orbit,.ema-frame,.particle{animation:none!important}.reveal{opacity:1;transform:none;transition:none}.product-card,.product-visual svg,.primary-btn,.ghost-btn{transition:none}}
 </style>
+<link rel="stylesheet" href="assets/spiritual-aesthetics-quiz.css">
 </head>
 <body>
 <nav class="site-nav" id="siteNav">
@@ -198,9 +199,40 @@ footer p{font-size:12px;letter-spacing:.12em}
       <p class="hero-desc">以靈元院的法脈精神為核心，選入御守與護香。保留宗教器物應有的莊重，也讓每一件作品能自然融入當代生活。</p>
       <div class="hero-actions"><a class="primary-btn" href="#products">瀏覽館藏</a><a class="ghost-btn" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener">直接前往綠界</a></div>
     </div>
-    <div class="hero-art reveal" aria-hidden="true">
+    <div class="hero-art reveal">
       <div class="orbit one"></div><div class="orbit two"></div>
-      <div class="ema-frame"><img class="ema-logo" src="logo.png" alt=""><p class="ema-title">靈性美學館</p><div class="ema-rule"></div><p class="ema-copy">一念祈願<br>一物承心<br>讓守護回到日常</p></div>
+      <section class="energy-quiz" id="energyQuiz" aria-labelledby="quizTitle">
+        <div class="quiz-inner">
+          <img class="quiz-mark" src="logo.png" alt="靈元院">
+          <p class="quiz-kicker">INNER ENERGY · OMAMORI</p>
+          <h2 class="quiz-title" id="quizTitle">此刻，你需要哪一種守護？</h2>
+          <p class="quiz-sub">以四個生活狀態進行自我覺察，找出此刻最需要補足的能量。</p>
+          <div class="quiz-rule"></div>
+          <div class="quiz-panel quiz-start active" data-panel="start">
+            <div class="quiz-start-symbol"></div>
+            <button class="quiz-start-btn" type="button" id="quizStart">開始能量檢測</button>
+            <p class="quiz-notice">約 1 分鐘完成。請依照最近一個月最常出現的感受作答。</p>
+          </div>
+          <div class="quiz-panel" data-panel="question">
+            <div class="quiz-progress-row"><span id="quizStep">第 1 題</span><span>共 4 題</span></div>
+            <div class="quiz-progress"><i id="quizProgress"></i></div>
+            <h3 class="quiz-question" id="quizQuestion"></h3>
+            <div class="quiz-options" id="quizOptions"></div>
+            <button class="quiz-next-btn" type="button" id="quizNext" disabled>下一題</button>
+          </div>
+          <div class="quiz-panel" data-panel="result">
+            <span class="result-energy" id="resultEnergy"></span>
+            <h3 class="result-name" id="resultName"></h3>
+            <p class="result-lead" id="resultLead"></p>
+            <p class="result-copy" id="resultCopy"></p>
+            <div class="result-actions">
+              <button class="quiz-result-btn" type="button" id="resultProduct">查看適合我的御守</button>
+              <button class="quiz-restart" type="button" id="quizRestart">重新檢測</button>
+            </div>
+          </div>
+          <p class="quiz-disclaimer">本測驗為日常自我覺察與選物參考，不屬於醫療、心理或宗教認證診斷。</p>
+        </div>
+      </section>
     </div>
   </div>
 </header>
@@ -210,7 +242,7 @@ footer p{font-size:12px;letter-spacing:.12em}
     <div class="section-head reveal"><p class="section-en">OBJECTS · PRAYER · DAILY LIFE</p><h2>靜穆之物，承載一念之心</h2><p>延續「宇色靈修著作」的留白、紙張質感與沉穩色系，加入日式神社、繪馬、金箔與幽玄森林的視覺語彙，形成靈元院一致而獨立的選物空間。</p></div>
     <div class="promise-grid">
       <article class="promise reveal"><b>法脈與美學並存</b><span>不以喧鬧促銷為主，而以莊重、清楚的方式呈現每件商品的祈願意義。</span></article>
-      <article class="promise reveal"><b>商品資訊一目了然</b><span>御守與護香分區呈現，點選商品圖片或按鈕，即可前往綠界表單選購。</span></article>
+      <article class="promise reveal"><b>御守能量自我覺察</b><span>首頁測驗依照近期生活狀態，提供四款御守之中較適合此刻的祈願方向。</span></article>
       <article class="promise reveal"><b>細緻而克制的動態</b><span>採用霧氣、浮光、卡片微浮與捲動淡入，維持日式幽玄感，不做過度花俏效果。</span></article>
     </div>
   </div>
@@ -222,7 +254,7 @@ footer p{font-size:12px;letter-spacing:.12em}
     <div class="filter-bar reveal" aria-label="商品分類"><button class="filter-btn active" data-filter="all">全部</button><button class="filter-btn" data-filter="omamori">御守</button><button class="filter-btn" data-filter="incense">護香</button></div>
     <div class="product-grid">
 
-      <article class="product-card reveal" data-category="omamori">
+      <article class="product-card reveal" id="product-spirit" data-category="omamori" data-product="spirit">
         <span class="badge">元神守護</span>
         <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購元神光彩御守">
           <div class="product-visual">
@@ -238,7 +270,7 @@ footer p{font-size:12px;letter-spacing:.12em}
         </a>
       </article>
 
-      <article class="product-card reveal" data-category="omamori">
+      <article class="product-card reveal" id="product-wealth" data-category="omamori" data-product="wealth">
         <span class="badge">財運祈願</span>
         <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購財富滿堂御守">
           <div class="product-visual">
@@ -252,7 +284,7 @@ footer p{font-size:12px;letter-spacing:.12em}
         </a>
       </article>
 
-      <article class="product-card reveal" data-category="omamori">
+      <article class="product-card reveal" id="product-career" data-category="omamori" data-product="career">
         <span class="badge">志業成就</span>
         <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購事業成就御守">
           <div class="product-visual">
@@ -266,7 +298,7 @@ footer p{font-size:12px;letter-spacing:.12em}
         </a>
       </article>
 
-      <article class="product-card reveal" data-category="omamori">
+      <article class="product-card reveal" id="product-love" data-category="omamori" data-product="love">
         <span class="badge">善緣和合</span>
         <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購感情緣滿御守">
           <div class="product-visual">
@@ -280,7 +312,7 @@ footer p{font-size:12px;letter-spacing:.12em}
         </a>
       </article>
 
-      <article class="product-card reveal" data-category="incense">
+      <article class="product-card reveal" id="product-incense" data-category="incense" data-product="incense">
         <span class="badge">家宅護安</span>
         <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購鎮煞護安香粉">
           <div class="product-visual">
@@ -337,5 +369,6 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches){
 document.querySelectorAll('.nav-links>li>span.has-dropdown').forEach(trigger=>trigger.addEventListener('click',e=>{if(innerWidth<=760){e.stopPropagation();const li=trigger.parentElement;document.querySelectorAll('.nav-links>li.open').forEach(x=>x!==li&&x.classList.remove('open'));li.classList.toggle('open')}}));
 document.addEventListener('click',()=>document.querySelectorAll('.nav-links>li.open').forEach(x=>x.classList.remove('open')));
 </script>
+<script src="assets/spiritual-aesthetics-quiz.js" defer></script>
 </body>
 </html>
