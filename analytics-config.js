@@ -20,3 +20,10 @@ if (location.pathname.endsWith("/articles.html")) {
   tocPolicyScript.defer = true;
   document.head.appendChild(tocPolicyScript);
 }
+
+if (location.pathname.endsWith("/admin.html")) {
+  const accessRepairScript = document.createElement("script");
+  accessRepairScript.type = "module";
+  accessRepairScript.src = "/activity-access-repair.js?v=20260803-1";
+  document.head.appendChild(accessRepairScript);
+}
