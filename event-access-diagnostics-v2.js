@@ -5,12 +5,15 @@ import { doc, getDoc, getDocs, query, collection, where } from "https://www.gsta
 const params = new URLSearchParams(location.search);
 const activeId = params.get("id") || "";
 const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
-const RELOAD_KEY = `lyyuan-event-access-reload:${activeId}`;
 let currentArticle = null;
 let latestDiagnosis = null;
 
 function normalizeEmail(value = "") {
   return String(value).trim().toLowerCase();
+}
+
+function reloadKey(email = "") {
+  return `lyyuan-event-access-reload:${activeId}:${normalizeEmail(email)}`;
 }
 
 function base64ToBytes(value) {
@@ -60,6 +63,14 @@ function diagnosisMessage(diagnosis) {
   return messages[diagnosis.code] || "目前無法確認活動閱讀資格，請稍後再試。";
 }
 
+function setText(node, value) {
+  if (node && node.textContent !== value) node.textContent = value;
+}
+
+function setHtml(node, value) {
+  if (node && node.innerHTML !== value) node.innerHTML = value;
+}
+
 function updateGate(diagnosis) {
   latestDiagnosis = diagnosis;
   const gate = document.querySelector('[aria-label="活動限定文章"]');
@@ -68,25 +79,27 @@ function updateGate(diagnosis) {
   const paragraph = gate.querySelector(".paid-lock-card p");
   const button = gate.querySelector("#article-event-login-button");
   const small = gate.querySelector("small");
-  if (paragraph) paragraph.innerHTML = diagnosisMessage(diagnosis);
+  setHtml(paragraph, diagnosisMessage(diagnosis));
 
   if (button) {
+    let label = "重新讀取活動資格";
+    let disabled = false;
     if (diagnosis.code === "signed-out" || diagnosis.code === "in-app-browser") {
-      button.textContent = "使用活動報名 Email 登入";
+      label = "使用活動報名 Email 登入";
     } else if (diagnosis.code === "granted") {
-      button.textContent = "正在開啟文章…";
-      button.disabled = true;
-    } else {
-      button.textContent = "重新讀取活動資格";
-      button.disabled = false;
+      label = "正在開啟文章…";
+      disabled = true;
     }
+    setText(button, label);
+    if (button.disabled !== disabled) button.disabled = disabled;
   }
 
-  if (small) {
-    small.textContent = diagnosis.code === "granted"
+  setText(
+    small,
+    diagnosis.code === "granted"
       ? "活動閱讀資格已通過"
-      : `資格檢查代碼：${diagnosis.code}`;
-  }
+      : `資格檢查代碼：${diagnosis.code}`
+  );
   return true;
 }
 
@@ -166,8 +179,9 @@ async function diagnose(user = auth.currentUser) {
 
     const diagnosis = { code: "granted", email };
     updateGateWhenReady(diagnosis);
-    if (!sessionStorage.getItem(RELOAD_KEY)) {
-      sessionStorage.setItem(RELOAD_KEY, "1");
+    const keyName = reloadKey(email);
+    if (!sessionStorage.getItem(keyName)) {
+      sessionStorage.setItem(keyName, "1");
       window.setTimeout(() => location.reload(), 350);
     }
     return diagnosis;
@@ -195,7 +209,7 @@ document.addEventListener("click", (event) => {
   event.stopImmediatePropagation();
   button.disabled = true;
   button.textContent = "正在重新讀取資格…";
-  sessionStorage.removeItem(RELOAD_KEY);
+  sessionStorage.removeItem(reloadKey(auth.currentUser.email));
   diagnose(auth.currentUser).then((diagnosis) => {
     if (diagnosis?.code !== "granted") {
       button.disabled = false;
