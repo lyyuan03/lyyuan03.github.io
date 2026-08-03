@@ -37,6 +37,16 @@ export const storage = getStorage(app);
 export const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
-export function isAdminEmail(email) {
-  return ADMIN_EMAILS.includes((email || "").toLowerCase());
+export function normalizeEmail(email) {
+  return String(email || "").trim().toLowerCase();
 }
+
+export function isAdminEmail(email) {
+  return ADMIN_EMAILS.includes(normalizeEmail(email));
+}
+
+// 所有使用 Firebase 的頁面都載入同一套登入相容處理，
+// 讓 iPhone、iPad、Android 與桌機使用一致的 Email 判讀與登入狀態。
+import("./auth-mobile-compat.js?v=20260803-mobile-login-1").catch((error) => {
+  console.error("跨裝置登入相容模組載入失敗：", error);
+});
