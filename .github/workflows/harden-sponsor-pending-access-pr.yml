@@ -1,0 +1,45 @@
+name: Harden sponsor pending access PR
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/harden_sponsor_pending_access_once.py"
+      - ".github/workflows/harden-sponsor-pending-access-pr.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Apply sponsor access patch
+        run: python3 scripts/harden_sponsor_pending_access_once.py
+
+      - name: Validate syntax and access markers
+        run: |
+          node --check functions/index.js
+          node --check functions/sponsor-offer-functions.js
+          node --check functions/public-sponsor-checkout-functions.js
+          grep -q 'articleAccess: preserveActiveMembership' functions/sponsor-offer-functions.js
+          grep -q 'articleAccess: preserveActiveMembership' functions/public-sponsor-checkout-functions.js
+          grep -q 'revokedAt: FieldValue.delete()' functions/index.js
+
+      - name: Commit changes to pull request branch
+        run: |
+          if git diff --quiet; then
+            echo "No changes were necessary."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add functions/index.js functions/sponsor-offer-functions.js functions/public-sponsor-checkout-functions.js
+          git commit -m "fix: keep unpaid sponsor reservations locked"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
