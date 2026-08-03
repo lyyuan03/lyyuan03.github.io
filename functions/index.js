@@ -242,7 +242,7 @@ exports.createMembershipCheckout = onCall(
     const email = normalizeEmail(request.data?.email);
     const name = cleanText(request.data?.name, 60);
     const memberLevel = request.data?.memberLevel === "lingji" ? "lingji" : "wellness";
-    const articleAccess = memberLevel === "lingji" || request.data?.articleAccess !== false;
+    const articleAccess = false;
     if (!email || !email.includes("@")) {
       throw new HttpsError("invalid-argument", "請填寫有效的會員 Gmail。");
     }
@@ -369,7 +369,7 @@ exports.createSponsorMembershipCheckout = onCall(
       updatedAt: now
     });
 
-    await db.doc(`memberAccess/${email}`).set({
+    await db.doc(`sponsorMemberAccess/${email}`).set({
       email,
       name,
       memberType: "sponsor-member",
@@ -509,7 +509,8 @@ exports.ecpayMembershipCallback = onRequest(
         if (Number(parameters.TradeAmt) !== Number(order.amount)) throw new Error("AMOUNT_MISMATCH");
         if (order.status === "paid") return null;
 
-        const memberRef = db.doc(`memberAccess/${order.email}`);
+        const memberCollection = order.memberType === "sponsor-member" ? "sponsorMemberAccess" : "memberAccess";
+        const memberRef = db.doc(`${memberCollection}/${order.email}`);
         const memberSnapshot = await transaction.get(memberRef);
         const member = memberSnapshot.data() || {};
         const now = new Date();
@@ -542,11 +543,13 @@ exports.ecpayMembershipCallback = onRequest(
         if (order.memberType === "sponsor-member") {
           activeMember.articleAccess = true;
           activeMember.wellnessAccess = false;
+          activeMember.accessScope = "sponsor-paid-articles";
+          activeMember.accessVersion = 2;
         } else {
           activeMember.wellnessAccess = true;
           activeMember.memberLevel = order.memberLevel;
           activeMember.wellnessLevel = order.memberLevel;
-          activeMember.articleAccess = order.memberLevel === "lingji" || order.articleAccess === true;
+          activeMember.articleAccess = false;
         }
         transaction.set(memberRef, activeMember, { merge: true });
         transaction.update(orderRef, {

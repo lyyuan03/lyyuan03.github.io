@@ -105,7 +105,7 @@ async function sendReservationEmail({ email, name, amount, months, paymentUrl, p
 async function readOfferStatus(transaction, excludedOrderNo = "") {
   const settingsRef = db.doc("membershipSettings/default");
   const ordersQuery = db.collection("membershipOrders").where("memberType", "==", "sponsor-member");
-  const membersQuery = db.collection("memberAccess").where("memberType", "==", "sponsor-member");
+  const membersQuery = db.collection("sponsorMemberAccess").where("memberType", "==", "sponsor-member");
 
   const [settingsSnapshot, ordersSnapshot, membersSnapshot] = await Promise.all([
     transaction.get(settingsRef),
@@ -173,7 +173,7 @@ exports.createPublicSponsorCheckout = onCall(
       throw new HttpsError("failed-precondition", "綠界金流尚未完成安全設定。");
     }
 
-    const memberRef = db.doc(`memberAccess/${email}`);
+    const memberRef = db.doc(`sponsorMemberAccess/${email}`);
     const newTradeNo = createMerchantTradeNo();
     const newPaymentToken = crypto.randomBytes(24).toString("base64url");
     const newOrderRef = db.doc(`membershipOrders/${newTradeNo}`);
@@ -366,7 +366,7 @@ exports.expireSponsorCheckoutReservations = onSchedule(
       const chunk = expiredOrders.slice(start, start + 200);
       const memberSnapshots = await Promise.all(chunk.map((item) => {
         const email = normalizeEmail(item.data().email);
-        return email ? db.doc(`memberAccess/${email}`).get() : Promise.resolve(null);
+        return email ? db.doc(`sponsorMemberAccess/${email}`).get() : Promise.resolve(null);
       }));
       const batch = db.batch();
       const expiredAt = Timestamp.now();

@@ -74,20 +74,16 @@ function coursesToText(courses = []) {
 }
 
 function syncArticleAccess() {
-  if (levelEl.value === "lingji") {
-    articleAccessEl.checked = true;
-    articleAccessEl.disabled = true;
-  } else {
-    articleAccessEl.disabled = false;
-  }
+  articleAccessEl.checked = false;
+  articleAccessEl.disabled = true;
 }
 
 function resetForm() {
   form.reset();
   document.getElementById("wellness-member-original-email").value = "";
   levelEl.value = "wellness";
-  articleAccessEl.checked = true;
-  articleAccessEl.disabled = false;
+  articleAccessEl.checked = false;
+  articleAccessEl.disabled = true;
   document.getElementById("wellness-member-annual-spend").value = "0";
   document.getElementById("wellness-member-cashback").value = "0";
   document.getElementById("wellness-member-courses").value = "";
@@ -122,7 +118,7 @@ function payload() {
     nextLingjiQualified: annualSpend >= LINGJI_THRESHOLD,
     lingjiValidFrom: dateInputToIso(lingjiFromInput || (level === "lingji" ? currentCycleDefaults().start : "")),
     lingjiValidUntil: dateInputToIso(lingjiUntilInput || (level === "lingji" ? currentCycleDefaults().end : ""), true),
-    articleAccess: level === "lingji" || articleAccessEl.checked,
+    articleAccess: false,
     note: document.getElementById("wellness-member-note").value.trim(),
     updatedAt: serverTimestamp()
   };
@@ -137,7 +133,7 @@ async function saveMember(event) {
   if (originalEmail && originalEmail !== data.email) {
     await deleteDoc(doc(db, "memberAccess", originalEmail));
   }
-  statusEl.textContent = "養生療癒會員資料已儲存，文章權限已同步";
+  statusEl.textContent = "養生療癒會員資料已儲存；贊助文章權限由贊助會員名單獨立管理";
   await loadMembers();
   resetForm();
 }
@@ -153,7 +149,7 @@ async function createPaymentOrder() {
       email: normalizeEmail(document.getElementById("wellness-member-email").value),
       name: document.getElementById("wellness-member-name").value.trim(),
       memberLevel: levelEl.value === "lingji" ? "lingji" : "wellness",
-      articleAccess: levelEl.value === "lingji" || articleAccessEl.checked
+      articleAccess: false
     });
     statusEl.textContent = `繳費信已寄出｜訂單 ${result.data.merchantTradeNo}｜NT$${Number(result.data.amount).toLocaleString("zh-TW")}／${result.data.planMonths}個月`;
     await loadMembers();
@@ -193,7 +189,7 @@ function renderMembers() {
     const expiry = toDate(member.expiresAt);
     const active = member.status === "active" && (!expiry || expiry > now);
     const stateLabel = active ? "有效" : member.status === "active" ? "已到期" : "未啟用";
-    const articleLabel = member.articleAccess === true || level === "lingji" ? "可閱讀付費文章" : "未開放付費文章";
+    const articleLabel = "不含贊助文章權限";
     const annualSpend = Math.max(0, Number(member.annualSpend) || 0);
     const qualificationLabel = annualSpend >= LINGJI_THRESHOLD ? "符合次年度靈極資格" : `距次年度門檻 NT$${(LINGJI_THRESHOLD - annualSpend).toLocaleString("zh-TW")}`;
     const cashback = Math.max(0, Number(member.cashbackBalance) || 0);
@@ -221,7 +217,7 @@ function editMember(email) {
   document.getElementById("wellness-member-annual-cycle").value = toDateInput(member.annualSpendCycleStart) || currentCycleDefaults().start;
   document.getElementById("wellness-member-lingji-from").value = toDateInput(member.lingjiValidFrom);
   document.getElementById("wellness-member-lingji-until").value = toDateInput(member.lingjiValidUntil);
-  articleAccessEl.checked = member.articleAccess === true || levelEl.value === "lingji";
+  articleAccessEl.checked = false;
   document.getElementById("wellness-member-note").value = member.note || "";
   syncArticleAccess();
   form.scrollIntoView({ behavior: "smooth", block: "start" });
