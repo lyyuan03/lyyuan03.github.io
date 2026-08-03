@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1209">
+<meta name="description" content="靈元院靈性美學館預覽頁。以日式幽玄美學呈現御守與護安香品，點選商品前往綠界選購。">
+<title>靈性美學館｜靈元院</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap">
+<style>
+:root{
+  --deep:#0b1209;
+  --deep-2:#111a0e;
+  --brown:#594f47;
+  --gold:#a58254;
+  --gold-light:#c8a66f;
+  --olive:#606330;
+  --paper:#eee7da;
+  --paper-2:#f7f1e7;
+  --ink:#211a13;
+  --cream:#f5f0e8;
+  --serif:'Noto Serif TC','Songti TC','PMingLiU',serif;
+  --sans:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --en:'Cormorant Garamond',serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.8;letter-spacing:.045em;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+img,svg{display:block;max-width:100%}
+.wrap{width:min(1160px,calc(100% - 48px));margin-inline:auto}
+
+/* NAV */
+.site-nav{position:fixed;inset:0 0 auto;z-index:1000;background:rgba(8,13,7,.86);border-bottom:1px solid rgba(165,130,84,.15);backdrop-filter:blur(18px);transition:.35s var(--ease)}
+.site-nav.scrolled{background:rgba(7,12,6,.96);border-color:rgba(165,130,84,.3);box-shadow:0 12px 34px rgba(0,0,0,.22)}
+.nav-inner{height:58px;display:flex;align-items:center;justify-content:center;padding:0 28px}
+.nav-links{display:flex;gap:28px;align-items:center;list-style:none}
+.nav-links>li{position:relative}
+.nav-links>li>a,.nav-links>li>span{display:flex;align-items:center;gap:5px;color:rgba(245,240,232,.78);font-size:13.5px;letter-spacing:.14em;white-space:nowrap;cursor:pointer;transition:.2s}
+.nav-links>li>a:hover,.nav-links>li>span:hover,.nav-links>li.active>span{color:var(--gold-light)}
+.has-dropdown:after{content:'▾';font-size:9px;opacity:.52}
+.dropdown{display:none;position:absolute;top:calc(100% + 15px);left:50%;transform:translateX(-50%);min-width:190px;padding:6px 0;list-style:none;background:rgba(14,20,12,.98);border:1px solid rgba(165,130,84,.22);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.dropdown:before{content:'';position:absolute;left:0;right:0;top:-16px;height:16px}
+.dropdown a{display:block;padding:11px 20px;color:rgba(245,240,232,.72);font-size:13px;letter-spacing:.1em;transition:.2s}
+.dropdown a:hover,.dropdown a.current{color:var(--gold-light);background:rgba(165,130,84,.12)}
+.nav-links>li:hover .dropdown{display:block}
+.member-link{position:absolute;right:30px;top:50%;transform:translateY(-50%);padding:8px 18px;border:1px solid rgba(165,130,84,.55);color:var(--gold-light);font-family:var(--serif);font-size:13px;letter-spacing:.14em;transition:.25s}
+.member-link:hover{background:rgba(165,130,84,.12);transform:translateY(calc(-50% - 2px))}
+
+/* HERO */
+.hero{position:relative;min-height:760px;display:grid;place-items:center;padding:130px 0 96px;color:var(--cream);overflow:hidden;background:var(--deep)}
+.hero-bg{position:absolute;inset:-5%;background:url('forest-path.jpg') center/cover no-repeat;filter:saturate(.62) brightness(.5);animation:forestBreath 16s ease-in-out infinite alternate}
+.hero-shade{position:absolute;inset:0;background:
+linear-gradient(180deg,rgba(4,8,4,.25),rgba(4,8,4,.22) 45%,rgba(4,8,4,.88)),
+radial-gradient(circle at 70% 30%,rgba(165,130,84,.14),transparent 38%),
+linear-gradient(90deg,rgba(5,10,5,.77),rgba(5,10,5,.18) 56%,rgba(5,10,5,.58));}
+.hero:before{content:'';position:absolute;inset:0;opacity:.13;background-image:linear-gradient(rgba(197,162,111,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(197,162,111,.12) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(to bottom,black,transparent 80%)}
+.hero-inner{position:relative;z-index:3;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);gap:70px;align-items:center}
+.hero-copy{max-width:650px}
+.eyebrow{font-family:var(--en);font-size:12px;letter-spacing:.48em;color:var(--gold-light);margin-bottom:20px}
+.hero h1{font-family:var(--serif);font-size:clamp(48px,6vw,76px);font-weight:300;line-height:1.18;letter-spacing:.18em;color:#e1bd80;text-shadow:0 8px 28px rgba(0,0,0,.5)}
+.hero-kana{font-family:var(--en);font-size:18px;letter-spacing:.32em;color:rgba(245,240,232,.56);margin-top:6px}
+.hero-lead{font-family:var(--serif);font-size:21px;line-height:2.05;letter-spacing:.13em;margin-top:30px;max-width:610px}
+.hero-desc{margin-top:17px;color:rgba(245,240,232,.69);font-size:15px;line-height:2;max-width:610px}
+.hero-actions{display:flex;gap:13px;flex-wrap:wrap;margin-top:34px}
+.primary-btn,.ghost-btn{display:inline-flex;align-items:center;justify-content:center;min-height:49px;padding:12px 25px;font-family:var(--serif);font-size:14px;letter-spacing:.15em;transition:.25s var(--ease)}
+.primary-btn{background:linear-gradient(135deg,#8f7048,#c6a36b,#94734b);color:#161108;box-shadow:0 14px 32px rgba(0,0,0,.23)}
+.ghost-btn{border:1px solid rgba(197,162,111,.48);color:var(--gold-light);background:rgba(8,14,7,.28)}
+.primary-btn:hover,.ghost-btn:hover{transform:translateY(-3px)}
+
+.hero-art{position:relative;height:470px;display:grid;place-items:center;perspective:1000px}
+.orbit{position:absolute;border:1px solid rgba(197,162,111,.24);border-radius:50%;animation:orbitSpin 26s linear infinite}
+.orbit.one{width:420px;height:420px}
+.orbit.two{width:320px;height:320px;animation-direction:reverse;animation-duration:19s}
+.orbit:before,.orbit:after{content:'✦';position:absolute;color:rgba(219,184,125,.68);font-size:12px;text-shadow:0 0 18px rgba(197,162,111,.9)}
+.orbit:before{top:9%;left:18%}.orbit:after{right:8%;bottom:22%}
+.ema-frame{position:relative;width:330px;min-height:365px;padding:46px 42px;background:linear-gradient(155deg,rgba(18,27,15,.87),rgba(7,13,7,.72));border:1px solid rgba(197,162,111,.38);box-shadow:0 34px 80px rgba(0,0,0,.48),inset 0 0 56px rgba(165,130,84,.08);backdrop-filter:blur(8px);transform:rotateY(-5deg) rotateX(2deg);animation:cardFloat 6s ease-in-out infinite}
+.ema-frame:before,.ema-frame:after{content:'';position:absolute;inset:14px;border:1px solid rgba(197,162,111,.16);pointer-events:none}
+.ema-frame:after{inset:25px;opacity:.6}
+.ema-logo{width:112px;margin:0 auto 22px;filter:drop-shadow(0 8px 22px rgba(0,0,0,.5)) brightness(1.08)}
+.ema-title{text-align:center;font-family:var(--serif);font-size:25px;letter-spacing:.19em;color:#e0bc7e}
+.ema-rule{width:1px;height:46px;background:linear-gradient(transparent,rgba(197,162,111,.8),transparent);margin:20px auto}
+.ema-copy{text-align:center;font-family:var(--serif);font-size:15px;line-height:2.15;letter-spacing:.14em;color:rgba(245,240,232,.78)}
+.particle{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(223,189,128,.78);box-shadow:0 0 16px rgba(223,189,128,.85);animation:particleRise var(--dur) linear infinite;left:var(--x);bottom:-20px;opacity:0}
+
+/* INTRO */
+.intro{position:relative;padding:92px 0 74px;background:linear-gradient(180deg,#eee7da,#f8f3ea)}
+.intro:before{content:'靈';position:absolute;right:4%;top:5%;font-family:var(--serif);font-size:240px;line-height:1;color:rgba(96,99,48,.045);pointer-events:none}
+.section-head{text-align:center;max-width:780px;margin:0 auto 42px}
+.section-en{font-family:var(--en);font-size:12px;letter-spacing:.43em;color:var(--gold);margin-bottom:9px}
+.section-head h2{font-family:var(--serif);font-size:clamp(31px,4vw,42px);font-weight:400;letter-spacing:.15em;color:#35291d}
+.section-head p{color:#6e5a44;margin-top:14px;line-height:2}
+.promise-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.promise{background:rgba(255,252,246,.72);border:1px solid rgba(165,130,84,.18);padding:27px 26px;position:relative;overflow:hidden;transition:.35s var(--ease)}
+.promise:before{content:'';position:absolute;top:0;left:0;width:54px;height:2px;background:var(--gold)}
+.promise:hover{transform:translateY(-5px);box-shadow:0 22px 48px rgba(77,56,34,.1)}
+.promise b{display:block;font-family:var(--serif);font-weight:400;font-size:19px;letter-spacing:.1em;color:#3e2f20;margin-bottom:8px}
+.promise span{font-size:14px;color:#766047;line-height:1.9}
+
+/* PRODUCTS */
+.products{padding:94px 0 110px;background:
+radial-gradient(circle at 0 0,rgba(96,99,48,.09),transparent 30%),
+linear-gradient(180deg,#f7f1e7,#eee5d8)}
+.filter-bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:34px}
+.filter-btn{border:1px solid rgba(165,130,84,.3);background:rgba(255,252,246,.62);color:#6d573d;padding:9px 21px;cursor:pointer;letter-spacing:.12em;transition:.25s var(--ease)}
+.filter-btn:hover,.filter-btn.active{background:#182015;color:#e7c487;border-color:#7f8050;transform:translateY(-2px)}
+.product-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px}
+.product-card{grid-column:span 4;background:rgba(255,252,246,.9);border:1px solid rgba(165,130,84,.2);position:relative;overflow:hidden;box-shadow:0 20px 44px rgba(77,56,34,.08);transition:transform .35s var(--ease),box-shadow .35s,border-color .35s;transform-style:preserve-3d}
+.product-card:nth-child(4),.product-card:nth-child(5){grid-column:span 6}
+.product-card:hover{border-color:rgba(165,130,84,.5);box-shadow:0 30px 70px rgba(66,46,25,.17)}
+.product-link{display:block;height:100%}
+.product-visual{position:relative;height:330px;display:grid;place-items:center;overflow:hidden;background:
+radial-gradient(circle at 50% 34%,rgba(255,255,255,.88),rgba(237,228,211,.72) 54%,rgba(190,166,126,.24)),
+repeating-linear-gradient(135deg,rgba(165,130,84,.035) 0 1px,transparent 1px 12px)}
+.product-visual:before{content:'';position:absolute;inset:18px;border:1px solid rgba(165,130,84,.16)}
+.product-visual:after{content:'前往綠界選購';position:absolute;inset:auto 18px 18px auto;padding:7px 12px;background:rgba(13,20,11,.82);color:#e1bd80;font-size:11px;letter-spacing:.12em;opacity:0;transform:translateY(8px);transition:.25s}
+.product-card:hover .product-visual:after{opacity:1;transform:none}
+.product-visual svg{width:74%;height:74%;filter:drop-shadow(0 22px 22px rgba(68,48,27,.2));transition:transform .55s var(--ease),filter .55s}
+.product-card:hover .product-visual svg{transform:translateY(-8px) scale(1.025);filter:drop-shadow(0 30px 26px rgba(68,48,27,.28))}
+.product-info{padding:24px 25px 27px}
+.product-meta{font-family:var(--en);color:var(--gold);font-size:11px;letter-spacing:.29em;margin-bottom:5px}
+.product-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.product-card h3{font-family:var(--serif);font-weight:400;font-size:23px;letter-spacing:.1em;color:#382a1d}
+.price{font-family:var(--serif);white-space:nowrap;color:#765a35;font-size:16px}
+.product-desc{font-size:14px;color:#725c42;line-height:1.9;margin-top:10px}
+.product-cta{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:17px;border-top:1px solid rgba(165,130,84,.18);color:#6c5438;font-size:13px;letter-spacing:.1em}
+.product-cta i{font-style:normal;transition:.25s}.product-card:hover .product-cta i{transform:translateX(6px)}
+.product-card.hidden{display:none}
+.badge{position:absolute;z-index:4;left:19px;top:19px;background:rgba(20,30,16,.9);border:1px solid rgba(197,162,111,.34);color:#dfbc7e;padding:7px 12px;font-size:11px;letter-spacing:.13em}
+.note-box{margin-top:30px;padding:19px 22px;border-left:2px solid rgba(165,130,84,.62);background:rgba(255,252,246,.55);color:#6d573f;font-size:13.5px;line-height:1.9}
+
+/* EXPERIENCE */
+.experience{position:relative;padding:96px 0;color:var(--cream);background:#0b1209;overflow:hidden}
+.experience:before{content:'';position:absolute;inset:0;background:url('forest-path.jpg') center/cover fixed;filter:brightness(.32) saturate(.48);opacity:.56}
+.experience:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,11,6,.92),rgba(6,11,6,.52),rgba(6,11,6,.88))}
+.experience-inner{position:relative;z-index:2;display:grid;grid-template-columns:.85fr 1.15fr;gap:74px;align-items:center}
+.vertical-title{justify-self:center;writing-mode:vertical-rl;font-family:var(--serif);font-size:30px;letter-spacing:.26em;color:#e0bd80;min-height:270px}
+.steps{display:grid;gap:22px}
+.step{display:grid;grid-template-columns:52px 1fr;gap:20px;padding:24px 25px;border:1px solid rgba(197,162,111,.19);background:rgba(10,16,9,.5);backdrop-filter:blur(5px);transition:.3s var(--ease)}
+.step:hover{transform:translateX(7px);border-color:rgba(197,162,111,.38)}
+.step-no{font-family:var(--en);font-size:29px;color:#c8a66f;line-height:1}
+.step h3{font-family:var(--serif);font-size:20px;font-weight:400;letter-spacing:.12em;margin-bottom:7px}
+.step p{font-size:14px;color:rgba(245,240,232,.65);line-height:1.9}
+
+/* FOOTER */
+footer{background:#070c06;color:rgba(245,240,232,.5);padding:46px 24px 38px;border-top:1px solid rgba(165,130,84,.15);text-align:center}
+.footer-logo{width:130px;margin:0 auto 15px;opacity:.72;filter:saturate(.8) brightness(.85)}
+footer p{font-size:12px;letter-spacing:.12em}
+.footer-links{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin:16px 0}
+.footer-links a{font-size:12px;transition:.2s}.footer-links a:hover{color:var(--gold-light)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.reveal.on{opacity:1;transform:none}
+@keyframes forestBreath{from{transform:scale(1.04) translate3d(-.4%,0,0)}to{transform:scale(1.1) translate3d(.6%,-.5%,0)}}
+@keyframes orbitSpin{to{transform:rotate(360deg)}}
+@keyframes cardFloat{0%,100%{transform:rotateY(-5deg) rotateX(2deg) translateY(0)}50%{transform:rotateY(-2deg) rotateX(1deg) translateY(-10px)}}
+@keyframes particleRise{0%{transform:translateY(0) scale(.7);opacity:0}12%{opacity:.8}82%{opacity:.35}100%{transform:translateY(-780px) translateX(35px) scale(1.3);opacity:0}}
+
+@media(max-width:980px){
+  .member-link{display:none}.nav-links{gap:18px}.hero{min-height:auto}.hero-inner{grid-template-columns:1fr;gap:24px}.hero-copy{text-align:center;margin:auto}.hero-actions{justify-content:center}.hero-art{height:400px}.product-card{grid-column:span 6}.product-card:nth-child(5){grid-column:span 12}.experience-inner{grid-template-columns:1fr;gap:38px}.vertical-title{writing-mode:horizontal-tb;min-height:0;justify-self:start}
+}
+@media(max-width:760px){
+  .wrap{width:min(100% - 30px,1160px)}.nav-inner{height:56px;padding:0 10px;justify-content:flex-start}.nav-links{width:100%;gap:7px;justify-content:space-between}.nav-links>li>a,.nav-links>li>span{font-size:11.5px;letter-spacing:.04em}.dropdown{position:fixed;top:56px;left:12px;right:12px;transform:none;min-width:0}.nav-links>li:hover .dropdown{display:none}.nav-links>li.open .dropdown{display:block}.hero{padding:105px 0 70px}.hero h1{font-size:46px}.hero-lead{font-size:18px}.hero-art{height:350px}.orbit.one{width:330px;height:330px}.orbit.two{width:250px;height:250px}.ema-frame{width:280px;min-height:315px;padding:37px 32px}.ema-logo{width:92px}.promise-grid{grid-template-columns:1fr}.product-grid{display:block}.product-card,.product-card:nth-child(4),.product-card:nth-child(5){margin-bottom:18px}.product-visual{height:300px}.experience{padding:75px 0}.step{grid-template-columns:40px 1fr;padding:21px 18px;gap:14px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-bg,.orbit,.ema-frame,.particle{animation:none!important}.reveal{opacity:1;transform:none;transition:none}.product-card,.product-visual svg,.primary-btn,.ghost-btn{transition:none}}
+</style>
+</head>
+<body>
+<nav class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <ul class="nav-links">
+      <li><a href="index.html">首頁</a></li>
+      <li><span class="has-dropdown">活動</span><ul class="dropdown"><li><a href="niandian.html">年度點燈</a></li><li><a href="dizhi.html">奠基法會</a></li><li><a href="lixing.html">例行法儀</a></li><li><a href="fahui.html">報名法儀</a></li></ul></li>
+      <li><a class="has-dropdown" href="articles.html">文選</a><ul class="dropdown"><li><a href="articles.html">全部</a></li><li><a href="articles.html?category=spiritual">靈．修行</a></li><li><a href="articles.html?category=worldly">人．俗世</a></li><li><a href="articles.html?category=spirit-world">異．靈界</a></li><li><a href="articles.html?category=reading">思．讀物</a></li></ul></li>
+      <li><a href="membership.html">會員</a></li>
+      <li class="active"><span class="has-dropdown">選物</span><ul class="dropdown"><li><a href="books.html">宇色靈修著作</a></li><li><a class="current" href="spiritual-aesthetics-preview.html">靈性美學館</a></li></ul></li>
+      <li><span class="has-dropdown">影像</span><ul class="dropdown"><li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener">YT｜靈元院</a></li><li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener">YT｜宇色心養生</a></li></ul></li>
+      <li><span class="has-dropdown">社群</span><ul class="dropdown"><li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener">FB｜靈元院</a></li><li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener">IG｜靈元院</a></li></ul></li>
+    </ul>
+    <a class="member-link" href="membership.html">會員登入</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-bg"></div><div class="hero-shade"></div>
+  <span class="particle" style="--x:12%;--dur:13s"></span><span class="particle" style="--x:28%;--dur:18s"></span><span class="particle" style="--x:47%;--dur:15s"></span><span class="particle" style="--x:66%;--dur:20s"></span><span class="particle" style="--x:82%;--dur:16s"></span><span class="particle" style="--x:93%;--dur:22s"></span>
+  <div class="wrap hero-inner">
+    <div class="hero-copy reveal">
+      <p class="eyebrow">SPIRITUAL · AESTHETICS · GALLERY</p>
+      <h1>靈性美學館</h1>
+      <p class="hero-kana">祈りを、日々の暮らしへ</p>
+      <p class="hero-lead">將祈願、守護與日常美學，<br>安放於生活之中。</p>
+      <p class="hero-desc">以靈元院的法脈精神為核心，選入御守與護香。保留宗教器物應有的莊重，也讓每一件作品能自然融入當代生活。</p>
+      <div class="hero-actions"><a class="primary-btn" href="#products">瀏覽館藏</a><a class="ghost-btn" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener">直接前往綠界</a></div>
+    </div>
+    <div class="hero-art reveal" aria-hidden="true">
+      <div class="orbit one"></div><div class="orbit two"></div>
+      <div class="ema-frame"><img class="ema-logo" src="logo.png" alt=""><p class="ema-title">靈性美學館</p><div class="ema-rule"></div><p class="ema-copy">一念祈願<br>一物承心<br>讓守護回到日常</p></div>
+    </div>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="wrap">
+    <div class="section-head reveal"><p class="section-en">OBJECTS · PRAYER · DAILY LIFE</p><h2>靜穆之物，承載一念之心</h2><p>延續「宇色靈修著作」的留白、紙張質感與沉穩色系，加入日式神社、繪馬、金箔與幽玄森林的視覺語彙，形成靈元院一致而獨立的選物空間。</p></div>
+    <div class="promise-grid">
+      <article class="promise reveal"><b>法脈與美學並存</b><span>不以喧鬧促銷為主，而以莊重、清楚的方式呈現每件商品的祈願意義。</span></article>
+      <article class="promise reveal"><b>商品資訊一目了然</b><span>御守與護香分區呈現，點選商品圖片或按鈕，即可前往綠界表單選購。</span></article>
+      <article class="promise reveal"><b>細緻而克制的動態</b><span>採用霧氣、浮光、卡片微浮與捲動淡入，維持日式幽玄感，不做過度花俏效果。</span></article>
+    </div>
+  </div>
+</section>
+
+<main class="products" id="products">
+  <div class="wrap">
+    <div class="section-head reveal"><p class="section-en">CURATED COLLECTION</p><h2>靈性館藏</h2><p>目前預覽收錄四款御守與鎮煞護安香粉。點選商品圖或商品卡，即會開啟綠界選購表單。</p></div>
+    <div class="filter-bar reveal" aria-label="商品分類"><button class="filter-btn active" data-filter="all">全部</button><button class="filter-btn" data-filter="omamori">御守</button><button class="filter-btn" data-filter="incense">護香</button></div>
+    <div class="product-grid">
+
+      <article class="product-card reveal" data-category="omamori">
+        <span class="badge">元神守護</span>
+        <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購元神光彩御守">
+          <div class="product-visual">
+            <svg viewBox="0 0 320 320" role="img" aria-label="元神光彩御守視覺示意">
+              <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#17233a"/><stop offset=".55" stop-color="#314d69"/><stop offset="1" stop-color="#0d1724"/></linearGradient><pattern id="p1" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M0 10h20M10 0v20" stroke="#d8b677" stroke-opacity=".15" stroke-width="1"/></pattern></defs>
+              <path d="M129 72c-16-18 1-41 19-29 10 7 10 22 0 31l-13 11" fill="none" stroke="#d7b77b" stroke-width="9" stroke-linecap="round"/>
+              <path d="M191 72c16-18-1-41-19-29-10 7-10 22 0 31l13 11" fill="none" stroke="#d7b77b" stroke-width="9" stroke-linecap="round"/>
+              <path d="M111 82h98l20 29-10 145-59 34-59-34-10-145z" fill="url(#g1)" stroke="#d8b677" stroke-width="3"/><path d="M100 112h120" stroke="#d8b677" stroke-width="2"/><path d="M111 82h98l20 29H91z" fill="#20344e"/><path d="M101 112h118v144l-59 34-59-34z" fill="url(#p1)"/>
+              <circle cx="160" cy="167" r="43" fill="none" stroke="#d8b677" stroke-width="2" opacity=".75"/><path d="M160 134l9 22 24 2-18 15 6 24-21-13-21 13 6-24-18-15 24-2z" fill="#d8b677" opacity=".85"/><text x="160" y="230" text-anchor="middle" fill="#f5ead3" font-family="serif" font-size="21" letter-spacing="5">元神光彩</text>
+            </svg>
+          </div>
+          <div class="product-info"><p class="product-meta">OMAMORI · 01</p><div class="product-title-row"><h3>元神光彩御守</h3><span class="price">NT$ 888</span></div><p class="product-desc">祈願安定心神、守護元神，在環境轉換與修持之中保持清明。</p><div class="product-cta"><span>查看商品與選購</span><i>→</i></div></div>
+        </a>
+      </article>
+
+      <article class="product-card reveal" data-category="omamori">
+        <span class="badge">財運祈願</span>
+        <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購財富滿堂御守">
+          <div class="product-visual">
+            <svg viewBox="0 0 320 320" role="img" aria-label="財富滿堂御守視覺示意">
+              <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5b351f"/><stop offset=".5" stop-color="#a66d35"/><stop offset="1" stop-color="#452719"/></linearGradient><pattern id="p2" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="14" cy="14" r="8" fill="none" stroke="#f0c985" stroke-opacity=".18"/></pattern></defs>
+              <path d="M129 72c-16-18 1-41 19-29 10 7 10 22 0 31l-13 11M191 72c16-18-1-41-19-29-10 7-10 22 0 31l13 11" fill="none" stroke="#e1bd7e" stroke-width="9" stroke-linecap="round"/>
+              <path d="M111 82h98l20 29-10 145-59 34-59-34-10-145z" fill="url(#g2)" stroke="#e1bd7e" stroke-width="3"/><path d="M101 112h118v144l-59 34-59-34z" fill="url(#p2)"/><path d="M100 112h120" stroke="#e1bd7e" stroke-width="2"/><circle cx="160" cy="165" r="45" fill="none" stroke="#f0c985" stroke-width="2"/><path d="M132 163h56M160 135v58M145 148c8-12 22-12 30 0M145 180c8 12 22 12 30 0" fill="none" stroke="#f0c985" stroke-width="4" stroke-linecap="round"/><text x="160" y="230" text-anchor="middle" fill="#fff1d2" font-family="serif" font-size="21" letter-spacing="5">財富滿堂</text>
+            </svg>
+          </div>
+          <div class="product-info"><p class="product-meta">OMAMORI · 02</p><div class="product-title-row"><h3>財富滿堂御守</h3><span class="price">NT$ 688</span></div><p class="product-desc">祈願財氣流轉、心念安定，在金錢決策與生活選擇中保持穩健。</p><div class="product-cta"><span>查看商品與選購</span><i>→</i></div></div>
+        </a>
+      </article>
+
+      <article class="product-card reveal" data-category="omamori">
+        <span class="badge">志業成就</span>
+        <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購事業成就御守">
+          <div class="product-visual">
+            <svg viewBox="0 0 320 320" role="img" aria-label="事業成就御守視覺示意">
+              <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#314326"/><stop offset=".5" stop-color="#6b7139"/><stop offset="1" stop-color="#26331f"/></linearGradient><pattern id="p3" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M0 17h34M17 0v34M5 5l24 24M29 5L5 29" stroke="#dfc386" stroke-opacity=".1"/></pattern></defs>
+              <path d="M129 72c-16-18 1-41 19-29 10 7 10 22 0 31l-13 11M191 72c16-18-1-41-19-29-10 7 10 22 0 31l13 11" fill="none" stroke="#d8bd82" stroke-width="9" stroke-linecap="round"/>
+              <path d="M111 82h98l20 29-10 145-59 34-59-34-10-145z" fill="url(#g3)" stroke="#d8bd82" stroke-width="3"/><path d="M101 112h118v144l-59 34-59-34z" fill="url(#p3)"/><path d="M100 112h120" stroke="#d8bd82" stroke-width="2"/><path d="M128 195l32-66 32 66-32-16z" fill="none" stroke="#e4cb91" stroke-width="4"/><circle cx="160" cy="160" r="10" fill="#e4cb91"/><text x="160" y="230" text-anchor="middle" fill="#f8edd3" font-family="serif" font-size="21" letter-spacing="5">事業成就</text>
+            </svg>
+          </div>
+          <div class="product-info"><p class="product-meta">OMAMORI · 03</p><div class="product-title-row"><h3>事業成就御守</h3><span class="price">NT$ 688</span></div><p class="product-desc">護持志業、決策與行動，祈願方向清楚、步履安穩，所行有所成。</p><div class="product-cta"><span>查看商品與選購</span><i>→</i></div></div>
+        </a>
+      </article>
+
+      <article class="product-card reveal" data-category="omamori">
+        <span class="badge">善緣和合</span>
+        <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購感情緣滿御守">
+          <div class="product-visual">
+            <svg viewBox="0 0 320 320" role="img" aria-label="感情緣滿御守視覺示意">
+              <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6b3e45"/><stop offset=".52" stop-color="#a36b72"/><stop offset="1" stop-color="#4e2d34"/></linearGradient><pattern id="p4" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M16 4c8 0 12 10 0 18C4 14 8 4 16 4z" fill="none" stroke="#efd4b2" stroke-opacity=".13"/></pattern></defs>
+              <path d="M129 72c-16-18 1-41 19-29 10 7 10 22 0 31l-13 11M191 72c16-18-1-41-19-29-10 7 10 22 0 31l13 11" fill="none" stroke="#ead0aa" stroke-width="9" stroke-linecap="round"/>
+              <path d="M111 82h98l20 29-10 145-59 34-59-34-10-145z" fill="url(#g4)" stroke="#ead0aa" stroke-width="3"/><path d="M101 112h118v144l-59 34-59-34z" fill="url(#p4)"/><path d="M100 112h120" stroke="#ead0aa" stroke-width="2"/><path d="M160 198c-45-26-48-62-25-72 14-6 25 2 25 14 0-12 11-20 25-14 23 10 20 46-25 72z" fill="none" stroke="#f0d3ad" stroke-width="4"/><text x="160" y="230" text-anchor="middle" fill="#fff0dc" font-family="serif" font-size="21" letter-spacing="5">感情緣滿</text>
+            </svg>
+          </div>
+          <div class="product-info"><p class="product-meta">OMAMORI · 04</p><div class="product-title-row"><h3>感情緣滿御守</h3><span class="price">NT$ 688</span></div><p class="product-desc">祈願善緣圓滿、關係和合，在人際與情感互動中保有理解與溫柔。</p><div class="product-cta"><span>查看商品與選購</span><i>→</i></div></div>
+        </a>
+      </article>
+
+      <article class="product-card reveal" data-category="incense">
+        <span class="badge">家宅護安</span>
+        <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購鎮煞護安香粉">
+          <div class="product-visual">
+            <svg viewBox="0 0 520 320" role="img" aria-label="鎮煞護安香粉視覺示意">
+              <defs><linearGradient id="bag" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e4d6bf"/><stop offset=".55" stop-color="#f4ead9"/><stop offset="1" stop-color="#c8b394"/></linearGradient><linearGradient id="inkg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#26321f"/><stop offset="1" stop-color="#596139"/></linearGradient></defs>
+              <ellipse cx="260" cy="279" rx="168" ry="23" fill="#5b422b" opacity=".14"/>
+              <path d="M144 52h210l22 36-16 179H139L123 88z" fill="url(#bag)" stroke="#a58254" stroke-width="3"/><path d="M123 88h253" stroke="#a58254" stroke-width="3"/><path d="M144 52h210l22 36H123z" fill="#d6c3a4"/><rect x="182" y="104" width="134" height="132" fill="none" stroke="#6b6b3b" stroke-width="2"/><rect x="194" y="116" width="110" height="108" fill="url(#inkg)" opacity=".94"/><text x="249" y="155" text-anchor="middle" fill="#e6c994" font-family="serif" font-size="21" letter-spacing="6">鎮煞</text><text x="249" y="190" text-anchor="middle" fill="#f4ead8" font-family="serif" font-size="20" letter-spacing="5">護安香粉</text><path d="M352 239c50-33 89-18 91 11 2 25-28 41-75 25" fill="none" stroke="#6d5438" stroke-width="12" stroke-linecap="round"/><path d="M383 232c-12-30 13-43 3-66M410 231c-4-24 15-34 11-53" fill="none" stroke="#9b8b6c" stroke-width="4" opacity=".62" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="product-info"><p class="product-meta">INCENSE · 01</p><div class="product-title-row"><h3>鎮煞護安香粉</h3><span class="price">會員 NT$ 1,673 起</span></div><p class="product-desc">用於空間淨化、家宅護安與日常結界。預覽價格依三包套組呈現，一般與會員方案以綠界表單為準。</p><div class="product-cta"><span>查看套組與選購</span><i>→</i></div></div>
+        </a>
+      </article>
+
+    </div>
+    <div class="note-box reveal">本頁為設計預覽：商品名稱與目前公開選購資訊一致；商品實拍照片、庫存、最終售價、會員優惠與出貨規範，均以綠界表單當下內容為準。正式上線前，可再將五張商品實拍照替換進卡片。</div>
+  </div>
+</main>
+
+<section class="experience">
+  <div class="wrap experience-inner">
+    <h2 class="vertical-title reveal">從看見，到請回日常</h2>
+    <div class="steps">
+      <article class="step reveal"><span class="step-no">01</span><div><h3>認識祈願</h3><p>先閱讀商品用途與祈願方向，選擇與此刻生命狀態相應的御守或護香。</p></div></article>
+      <article class="step reveal"><span class="step-no">02</span><div><h3>前往綠界</h3><p>點選商品圖片、名稱或按鈕，於新視窗開啟綠界表單，完成品項與數量選擇。</p></div></article>
+      <article class="step reveal"><span class="step-no">03</span><div><h3>安放於生活</h3><p>讓宗教器物回到生活本身，成為提醒自己安住、慎念與行願的一份陪伴。</p></div></article>
+    </div>
+  </div>
+</section>
+
+<footer><img class="footer-logo" src="logo.png" alt="靈元院"><div class="footer-links"><a href="index.html">回首頁</a><a href="books.html">宇色靈修著作</a><a href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener">綠界選購表單</a></div><p>© LING YUAN YUAN · SPIRITUAL AESTHETICS GALLERY</p></footer>
+
+<script>
+const nav=document.getElementById('siteNav');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>24),{passive:true});
+
+const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('on');observer.unobserve(entry.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+const filters=document.querySelectorAll('.filter-btn');
+const cards=document.querySelectorAll('.product-card');
+filters.forEach(btn=>btn.addEventListener('click',()=>{
+  filters.forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+  const key=btn.dataset.filter;
+  cards.forEach(card=>card.classList.toggle('hidden',key!=='all'&&card.dataset.category!==key));
+}));
+
+if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+  cards.forEach(card=>{
+    card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateY(${x*3.2}deg) rotateX(${-y*3.2}deg) translateY(-7px)`});
+    card.addEventListener('pointerleave',()=>card.style.transform='');
+  });
+}
+
+document.querySelectorAll('.nav-links>li>span.has-dropdown').forEach(trigger=>trigger.addEventListener('click',e=>{if(innerWidth<=760){e.stopPropagation();const li=trigger.parentElement;document.querySelectorAll('.nav-links>li.open').forEach(x=>x!==li&&x.classList.remove('open'));li.classList.toggle('open')}}));
+document.addEventListener('click',()=>document.querySelectorAll('.nav-links>li.open').forEach(x=>x.classList.remove('open')));
+</script>
+</body>
+</html>
