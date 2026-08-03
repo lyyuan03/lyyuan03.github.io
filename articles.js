@@ -21,13 +21,9 @@ const magicEventId = params.get("event") || "";
 const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
-const limitedReadingDeadlines = new Map([
-  ["japan-temple-faith-and-decline", Date.parse("2026-07-28T15:15:12.000Z")],
-  ["shenming-yinlu-ganying-budengyu-xiuwei", Date.parse("2026-07-28T10:30:00.000Z")],
-  ["good-fortune-believe-in-yourself-choices", Date.parse("2026-07-26T16:19:35.857Z")],
-  ["jitong-shenming-fushen", Date.parse("2026-07-24T22:28:58.068Z")],
-  ["market-crash-money-self-control", Date.parse("2026-07-24T01:00:00.000Z")]
-]);
+// 限時免費 deadline 已全部過期（2026-07 月底），清空後這些文章固定以贊助專屬運作。
+// 若未來需要再開放限時免費，直接在此 Map 新增 [文章ID, Date.parse("...Z")] 即可。
+const limitedReadingDeadlines = new Map();
 const articleGuides = {
   "wealth-as-water": {
     topics: ["金錢意識", "安全感"],
@@ -600,7 +596,7 @@ function splitMemberContent(content = "", articleId = "") {
     return { publicContent: content.replace(paidMarker, ""), lockedContent: "", accessType: "open" };
   }
   if (accessType === "open") {
-    return { publicContent: content, lockedContent: "", accessType };
+    return { publicContent: content, lockedContent: "", accessType: "open" };
   }
   const marker = accessType === "paid" ? paidMarker : memberMarker;
   const [publicContent, ...rest] = content.split(marker);
