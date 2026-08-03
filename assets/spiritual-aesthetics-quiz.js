@@ -209,8 +209,11 @@
   }
 
   function calculateRadarValues() {
-    const values = axisKeys.map(key => Math.min(96, Math.round(axisScores[key])));
-    return values;
+    const rawValues = axisKeys.map(key => axisScores[key]);
+    const minValue = Math.min(...rawValues);
+    const maxValue = Math.max(...rawValues);
+    if (maxValue === minValue) return rawValues.map(() => 62);
+    return rawValues.map(value => Math.round(34 + ((value - minValue) / (maxValue - minValue)) * 62));
   }
 
   function radarPoint(vertex, value) {
@@ -313,7 +316,7 @@
     if (!selectedOption) return;
     productScores[selectedOption.key] += 1;
     axisKeys.forEach((key, index) => {
-      axisScores[key] += selectedOption.boost[index] / questions.length;
+      axisScores[key] += selectedOption.boost[index];
     });
 
     if (questionIndex < questions.length - 1) {
