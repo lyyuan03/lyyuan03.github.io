@@ -81,7 +81,7 @@
         <div class="product-visual"><div class="mother-card-placeholder">無極瑤池金母護身卡</div></div>
         <div class="product-info">
           <p class="product-meta">BLESSED CARD · 01</p>
-          <div class="product-title-row"><h3>無極瑤池金母護身卡</h3><span class="price">詳見綠界</span></div>
+          <div class="product-title-row"><h3>無極瑤池金母護身卡</h3><span class="price">隨喜功德</span></div>
           <p class="product-desc">雙面護身卡三張一套，恭印無極瑤池金母聖像與護念文字，可隨身攜帶或敬慎安奉，作為收攝心念、守正祈安的日常提醒。</p>
           <div class="product-cta"><span>查看護身卡與選購</span><i>→</i></div>
         </div>
