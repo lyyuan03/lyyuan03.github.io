@@ -4,6 +4,7 @@ import { celebrityDreamSpiritArticle } from "./article-celebrity-dream-spirit.js
 import { fantasyIntuitionYuanshenArticle } from "./article-fantasy-intuition-yuanshen-display.js?v=20260801-fantasy-full-1";
 import { wealthAsWaterArticle } from "./article-wealth-as-water.js?v=20260801-wealth-consciousness-1";
 import { youCanNotFearDeathArticle } from "./article-you-can-not-fear-death.js?v=20260802-3";
+import { howToJudgeTrueLingxiuUnderstandingArticle } from "./article-how-to-judge-true-lingxiu-understanding.js?v=20260803-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -25,6 +26,7 @@ const seriesById = {
   "yuanshen-awakening-eleven-principles": "靈修辨證",
   "lingxiu-yuanshen-reality": "靈修辨證",
   "lingxiu-zouhuo-rumo": "靈修辨證",
+  "how-to-judge-true-lingxiu-understanding": "靈修辨證",
   "celebrity-death-dream-spirit-five-checks": "靈界辨證",
   "wealth-discipline-investing-and-self-mastery": "宇色書房",
   "wealth-as-water": "財富與生命",
@@ -41,6 +43,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
+  howToJudgeTrueLingxiuUnderstandingArticle,
   youCanNotFearDeathArticle,
   wealthAsWaterArticle,
   fantasyIntuitionYuanshenArticle,
