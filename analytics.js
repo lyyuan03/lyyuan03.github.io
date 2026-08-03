@@ -14,11 +14,12 @@
 
   window.lyyuanTrack = push;
 
-  const loadScript = (src, id) => {
+  const loadScript = (src, id, type = "") => {
     if (id && document.getElementById(id)) return;
     const script = document.createElement("script");
     script.async = true;
     script.src = src;
+    if (type) script.type = type;
     if (id) script.id = id;
     document.head.appendChild(script);
   };
@@ -127,6 +128,12 @@
     addEventListener("scroll", onScroll, { passive: true });
   };
 
+  const loadSponsorCheckout = () => {
+    if (!location.pathname.endsWith("/articles.html")) return;
+    if (!new URLSearchParams(location.search).has("id")) return;
+    loadScript("/sponsor-checkout.js?v=20260803-public-checkout-1", "lyyuan-sponsor-checkout", "module");
+  };
+
   document.addEventListener("click", (event) => {
     const loginButton = event.target.closest("#member-login-button,[data-member-login]");
     if (loginButton) push("member_login", { button_text: normalizeText(loginButton.textContent), button_location: location.pathname });
@@ -142,6 +149,7 @@
     fixBookCovers();
     trackPageType();
     trackReading();
+    loadSponsorCheckout();
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
