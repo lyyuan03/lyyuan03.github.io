@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260803-how-to-judge-1";
+import { staticArticles } from "./static-articles.js?v=20260803-restore-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -25,11 +25,6 @@ const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh
 // 若未來需要再開放限時免費，直接在此 Map 新增 [文章ID, Date.parse("...Z")] 即可。
 const limitedReadingDeadlines = new Map();
 const articleGuides = {
-  "how-to-judge-true-lingxiu-understanding": {
-    topics: ["元神覺醒", "修行辨識", "經驗驗證"],
-    level: "深度",
-    nextId: "yuanshen-awakening-eleven-principles"
-  },
   "wealth-as-water": {
     topics: ["金錢意識", "安全感"],
     level: "深度",
@@ -118,7 +113,6 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
-  "how-to-judge-true-lingxiu-understanding": "assets/articles/thumbnails/yuanshen-reality.jpg?v=20260803-temp-1",
   "celebrity-death-dream-spirit-five-checks": "assets/articles/thumbnails/celebrity-dream-spirit.svg?v=20260731-clean-1",
   "japan-temple-faith-and-decline": "assets/articles/thumbnails/japan-temple.jpg",
   "spiritual-practice-cannot-be-outsourced-to-gods": "assets/articles/thumbnails/spiritual-practice.jpg",
@@ -138,7 +132,6 @@ const articleThumbnailImages = {
 };
 
 const articleHooks = {
-  "how-to-judge-true-lingxiu-understanding": "真正的理解，不是能不能說出答案，而是當人生把所有熟悉的答案拿走之後，那份理解仍然能在你的生命裡運作。",
   "celebrity-death-dream-spirit-five-checks": "有人說亡者托夢、名人指定自己傳話。比起急著判斷真假，我更在意的是：這段接觸，究竟讓活著的人更清明，還是更依賴另一個故事？",
   "japan-temple-faith-and-decline": "如果有一天，信仰的人都不在了，這些神佛又會去哪裡？寺院還在，信仰卻可能早已離開。",
   "spiritual-practice-cannot-be-outsourced-to-gods": "神明可以引路，也可能給你感應；但神明離開之後，你是否仍能清醒做人，才是修為真正開始被檢驗的時刻。",
