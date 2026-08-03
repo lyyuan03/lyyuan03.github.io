@@ -39,3 +39,10 @@ if (location.pathname.endsWith("/fahui.html")) {
   registrationClosedScript.defer = true;
   document.head.appendChild(registrationClosedScript);
 }
+
+if (location.pathname.endsWith("/membership.html")) {
+  const eightBenefitsScript = document.createElement("script");
+  eightBenefitsScript.src = "/membership-eight-benefits.js?v=20260803-1";
+  eightBenefitsScript.defer = true;
+  document.head.appendChild(eightBenefitsScript);
+}
