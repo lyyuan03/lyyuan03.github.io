@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const AUTH_VERSION = "20260803-sponsor-offer-1";
+const AUTH_VERSION = "20260803-sponsor-offer-2";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 
 function installStyles() {
@@ -173,6 +173,20 @@ function formatMoney(value) {
   return Number(value || 0).toLocaleString("zh-TW");
 }
 
+function sponsorOfferSignature() {
+  if (!sponsorOffer) return "";
+  return [
+    sponsorOffer.promotionAvailable,
+    sponsorOffer.promoLimit,
+    sponsorOffer.promoPrice1,
+    sponsorOffer.promoPrice3,
+    sponsorOffer.regularPrice1,
+    sponsorOffer.regularPrice3,
+    sponsorOffer.occupiedCount,
+    sponsorOffer.remaining
+  ].join(":");
+}
+
 function sponsorOfferMarkup() {
   if (!sponsorOffer) return "";
   const promo = sponsorOffer.promotionAvailable === true;
@@ -194,6 +208,7 @@ function sponsorOfferMarkup() {
 
 function applySponsorOfferToPage() {
   if (!sponsorOffer) return;
+  const signature = sponsorOfferSignature();
   const gate = document.querySelector('.paid-lock-zone[aria-label="贊助會員專屬"] .paid-lock-card');
   if (gate) {
     let panel = gate.querySelector(".sponsor-offer-panel");
@@ -203,12 +218,20 @@ function applySponsorOfferToPage() {
       const actions = gate.querySelector(".paid-inquiry-actions");
       gate.insertBefore(panel, actions || null);
     }
-    panel.innerHTML = sponsorOfferMarkup();
+    if (panel.dataset.offerSignature !== signature) {
+      panel.innerHTML = sponsorOfferMarkup();
+      panel.dataset.offerSignature = signature;
+    }
   }
-  loginOffer.hidden = false;
-  loginOffer.innerHTML = sponsorOffer.promotionAvailable
+
+  const loginMarkup = sponsorOffer.promotionAvailable
     ? `<strong>目前仍有前${Number(sponsorOffer.promoLimit || 200)}名優惠</strong><span>一個月 NT$${formatMoney(sponsorOffer.promoPrice1)}｜三個月 NT$${formatMoney(sponsorOffer.promoPrice3)}｜尚餘 ${Number(sponsorOffer.remaining || 0)} 名</span>`
     : `<strong>贊助閱讀方案</strong><span>一個月 NT$${formatMoney(sponsorOffer.regularPrice1)}｜三個月 NT$${formatMoney(sponsorOffer.regularPrice3)}</span>`;
+  loginOffer.hidden = false;
+  if (loginOffer.dataset.offerSignature !== signature) {
+    loginOffer.innerHTML = loginMarkup;
+    loginOffer.dataset.offerSignature = signature;
+  }
 }
 
 async function loadSponsorOffer() {
