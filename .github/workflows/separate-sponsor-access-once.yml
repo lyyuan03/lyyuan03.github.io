@@ -1,9 +1,9 @@
 name: Separate sponsor access once
 
 on:
-  push:
+  pull_request:
     branches:
-      - fix/sponsor-list-authoritative
+      - main
     paths:
       - scripts/separate_sponsor_access_once.py
       - .github/workflows/separate-sponsor-access-once.yml
@@ -13,11 +13,12 @@ permissions:
 
 jobs:
   patch:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix/sponsor-list-authoritative
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
 
       - name: Apply authoritative sponsor access patch
@@ -48,4 +49,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add articles.js articles.html membership-admin.js wellness-member-admin.js admin.html site-auth-nav.js member-dashboard.js member-dashboard.html firestore.rules functions/index.js functions/sponsor-offer-functions.js functions/public-sponsor-checkout-functions.js
           git commit -m "fix: make sponsor member list authoritative"
-          git push origin HEAD:fix/sponsor-list-authoritative
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
