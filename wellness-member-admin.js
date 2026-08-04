@@ -234,7 +234,9 @@ async function loadMembers() {
   const snapshot = await getDocs(collection(db, "memberAccess"));
   members = snapshot.docs
     .map((item) => ({ id: item.id, ...item.data() }))
-    .filter((item) => item.wellnessAccess === true || item.memberType === "wellness-channel" || ["wellness", "lingji"].includes(item.memberLevel))
+    .filter((item) => item.memberType === "wellness-channel"
+      && item.wellnessAccess === true
+      && ["wellness", "lingji"].includes(item.memberLevel))
     .sort((a, b) => String(a.email).localeCompare(String(b.email), "zh-TW"));
   renderMembers();
 }

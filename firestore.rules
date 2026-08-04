@@ -21,12 +21,12 @@ service cloud.firestore {
         && wellnessMember().data.status == "active"
         && wellnessMember().data.paymentStatus == "paid"
         && wellnessMember().data.expiresAt > request.time
-        && wellnessMember().data.memberType != "sponsor-member"
+        && wellnessMember().data.memberType == "wellness-channel"
+        && wellnessMember().data.wellnessAccess == true
+        && wellnessMember().data.memberLevel in ["wellness", "lingji"]
         && wellnessMember().data.disabled != true
         && wellnessMember().data.suspended != true
-        && (wellnessMember().data.wellnessAccess == true
-          || wellnessMember().data.memberType == "wellness-channel"
-          || wellnessMember().data.memberLevel in ["wellness", "lingji"]);
+        && wellnessMember().data.revokedAt == null;
     }
 
     function isLingjiMember() {
