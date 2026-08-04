@@ -1,3 +1,4 @@
+# Triggered after workflow registration.
 name: Wellness article benefit once
 
 on:
