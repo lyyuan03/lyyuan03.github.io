@@ -73,6 +73,41 @@ function coursesToText(courses = []) {
   return (Array.isArray(courses) ? courses : []).map((course) => [course.title, course.startsAt, course.expiresAt, course.url].join("｜")).join("\n");
 }
 
+function wellnessHistoryRecord(member = {}, historicalStatus = "verified") {
+  const startsAt = member.startsAt || member.firstJoinedAt || null;
+  if (member.memberType !== "wellness-channel"
+      || member.wellnessAccess !== true
+      || !["wellness", "lingji"].includes(member.memberLevel)
+      || member.paymentStatus !== "paid"
+      || !startsAt
+      || !member.expiresAt) return null;
+  const record = {
+    memberType: "wellness-channel",
+    memberLevel: member.memberLevel,
+    wellnessAccess: true,
+    paymentStatus: "paid",
+    startsAt,
+    expiresAt: member.expiresAt,
+    lastOrderNo: member.lastOrderNo || "",
+    verified: true,
+    historicalStatus,
+    verificationSource: member.lastOrderNo ? "payment" : "admin",
+    recordedAt: serverTimestamp()
+  };
+  if (historicalStatus === "ended") record.endedAt = serverTimestamp();
+  return record;
+}
+
+async function writeWellnessHistory(email, member, historicalStatus = "verified") {
+  const record = wellnessHistoryRecord(member, historicalStatus);
+  if (!record) return;
+  await setDoc(doc(db, "membershipHistory", email), {
+    email,
+    wellness: record,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
 function syncArticleAccess() {
   articleAccessEl.checked = false;
   articleAccessEl.disabled = true;
@@ -130,6 +165,7 @@ async function saveMember(event) {
   if (!data.email) return;
   const originalEmail = normalizeEmail(document.getElementById("wellness-member-original-email").value);
   await setDoc(doc(db, "memberAccess", data.email), data, { merge: true });
+  await writeWellnessHistory(data.email, data, "verified");
   if (originalEmail && originalEmail !== data.email) {
     await deleteDoc(doc(db, "memberAccess", originalEmail));
   }
@@ -225,8 +261,10 @@ function editMember(email) {
 
 async function removeMember(email) {
   if (!confirm(`確定要刪除 ${email} 的養生療癒會員資料嗎？`)) return;
+  const member = members.find((item) => item.email === email);
+  if (member) await writeWellnessHistory(email, member, "ended");
   await deleteDoc(doc(db, "memberAccess", email));
-  statusEl.textContent = "養生療癒會員資料已刪除";
+  statusEl.textContent = "養生療癒會員資料已刪除；符合條件的前期資格已保留於歷史紀錄";
   await loadMembers();
 }
 

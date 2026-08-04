@@ -552,6 +552,31 @@ exports.ecpayMembershipCallback = onRequest(
           activeMember.articleAccess = false;
         }
         transaction.set(memberRef, activeMember, { merge: true });
+        const historyKey = order.memberType === "sponsor-member" ? "sponsor" : "wellness";
+        const historyRecord = {
+          memberType: activeMember.memberType,
+          paymentStatus: "paid",
+          startsAt: nowTimestamp,
+          expiresAt: expiryTimestamp,
+          lastOrderNo: tradeNo,
+          verified: true,
+          historicalStatus: "verified",
+          verificationSource: "payment",
+          recordedAt: nowTimestamp
+        };
+        if (historyKey === "sponsor") {
+          historyRecord.articleAccess = true;
+          historyRecord.accessScope = "sponsor-paid-articles";
+          historyRecord.accessVersion = 2;
+        } else {
+          historyRecord.wellnessAccess = true;
+          historyRecord.memberLevel = order.memberLevel;
+        }
+        transaction.set(db.doc(`membershipHistory/${order.email}`), {
+          email: order.email,
+          [historyKey]: historyRecord,
+          updatedAt: nowTimestamp
+        }, { merge: true });
         transaction.update(orderRef, {
           status: "paid",
           paidAt: nowTimestamp,
