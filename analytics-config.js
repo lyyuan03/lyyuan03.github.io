@@ -31,6 +31,11 @@ if (location.pathname.endsWith("/admin.html")) {
   accessAuditScript.type = "module";
   accessAuditScript.src = "/activity-access-audit-v2.js?v=20260803-2";
   document.head.appendChild(accessAuditScript);
+
+  const emailAccessCheckScript = document.createElement("script");
+  emailAccessCheckScript.type = "module";
+  emailAccessCheckScript.src = "/activity-email-access-check.js?v=20260804-1";
+  document.head.appendChild(emailAccessCheckScript);
 }
 
 if (location.pathname.endsWith("/fahui.html")) {
