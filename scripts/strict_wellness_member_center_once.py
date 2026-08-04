@@ -1,3 +1,4 @@
+# One-time fail-closed wellness membership repair.
 from pathlib import Path
 import re
 
@@ -124,7 +125,6 @@ new_rules = '''        && wellnessMember().data.expiresAt > request.time
 '''
 changed |= replace_once("firestore.rules", old_rules, new_rules)
 
-# Bust browser caches everywhere this shared member navigation is loaded.
 for file in Path(".").glob("*.html"):
     text = file.read_text(encoding="utf-8")
     updated = re.sub(
