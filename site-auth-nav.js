@@ -144,11 +144,21 @@ function toDate(value) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+function isWellnessMemberRecord(member = {}) {
+  return member.memberType === "wellness-channel"
+    && member.wellnessAccess === true
+    && ["wellness", "lingji"].includes(member.memberLevel)
+    && member.disabled !== true
+    && member.suspended !== true
+    && !member.revokedAt;
+}
+
 function isActiveWellnessMember(member = {}) {
-  if (member.memberType === "sponsor-member") return false;
-  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
   const expiry = toDate(member.expiresAt);
-  return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
+  return isWellnessMemberRecord(member)
+    && member.status === "active"
+    && member.paymentStatus === "paid"
+    && Boolean(expiry && expiry > new Date());
 }
 
 function isActiveSponsorMember(member = {}) {
@@ -167,10 +177,9 @@ function isActiveSponsorMember(member = {}) {
 }
 
 function isActiveMember(member = {}) {
-  const expiry = toDate(member.expiresAt);
-  const activeQualification = member.status === "active" && (!expiry || expiry > new Date());
+  if (!isWellnessMemberRecord(member)) return false;
   const hasCourses = Array.isArray(member.purchasedCourses) && member.purchasedCourses.length > 0;
-  return Boolean(activeQualification || Number(member.cashbackBalance) > 0 || hasCourses);
+  return Boolean(isActiveWellnessMember(member) || Number(member.cashbackBalance) > 0 || hasCourses);
 }
 
 function closeAccountMenu() {
