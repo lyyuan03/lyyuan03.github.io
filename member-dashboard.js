@@ -92,6 +92,23 @@ function isActiveSponsorMember(member = {}) {
     && Boolean(expiry && expiry > new Date());
 }
 
+function activeWellnessArticleBenefit(sponsorMember = {}, member = {}) {
+  const benefit = sponsorMember?.wellnessBenefit;
+  if (!benefit || benefit.active !== true || benefit.articleAccess !== true || benefit.status !== "active") return null;
+  if (benefit.accessScope !== "sponsor-paid-articles" || Number(benefit.accessVersion || 0) < 1) return null;
+  if (!isActiveWellnessMember(member) || benefit.linkedMemberLevel !== member.memberLevel) return null;
+  const memberExpiry = toDate(member.expiresAt);
+  const benefitExpiry = toDate(benefit.expiresAt);
+  if (!memberExpiry || !benefitExpiry || benefitExpiry <= new Date()) return null;
+  if (benefitExpiry.getTime() > memberExpiry.getTime() + 60000) return null;
+  if (benefit.source === "lingji-member" && member.memberLevel === "lingji") return benefit;
+  if (benefit.source === "single-purchase-15000"
+      && Number(benefit.qualifyingPurchaseAmount || 0) >= 15000
+      && benefit.confirmedBy
+      && benefit.confirmedAt) return benefit;
+  return null;
+}
+
 function hasMemberCenterAccess(member = {}) {
   if (!isWellnessMemberRecord(member)) return false;
   const hasCourses = Array.isArray(member.purchasedCourses) && member.purchasedCourses.length > 0;
@@ -213,9 +230,21 @@ function renderDashboard(member, user, sponsorMember = null) {
   const wellnessActive = isActiveWellnessMember(member);
   const sponsorRecord = sponsorMember || (member.memberType === "sponsor-member" ? member : null);
   const sponsorActive = Boolean(sponsorRecord && isActiveSponsorMember(sponsorRecord));
+  const wellnessArticleBenefit = activeWellnessArticleBenefit(sponsorRecord, member);
   const sponsorOnly = sponsorActive && !wellnessActive;
-  const articleActive = sponsorActive;
-  const articleExpiry = sponsorActive ? formatDate(sponsorRecord.expiresAt) : "未設定";
+  const articleActive = sponsorActive || Boolean(wellnessArticleBenefit);
+  const articleExpiry = sponsorActive
+    ? formatDate(sponsorRecord.expiresAt)
+    : wellnessArticleBenefit
+      ? formatDate(wellnessArticleBenefit.expiresAt)
+      : "未設定";
+  const articleSource = sponsorActive
+    ? "贊助閱讀方案"
+    : wellnessArticleBenefit?.source === "lingji-member"
+      ? "靈極會員加贈"
+      : wellnessArticleBenefit
+        ? "一般會員單筆滿額加贈"
+        : "";
 
   dashboard.dataset.memberLevel = state.effectiveLevel;
   dashboard.dataset.memberKind = sponsorOnly ? "sponsor" : "wellness";
@@ -241,7 +270,7 @@ function renderDashboard(member, user, sponsorMember = null) {
   document.getElementById("dashboard-period-membership").textContent = `${startsAt}－${expiry}`;
   document.getElementById("dashboard-cashback").textContent = money.format(Math.max(0, Number(member.cashbackBalance) || 0));
   document.getElementById("dashboard-wellness-access").textContent = wellnessActive ? `有效｜至 ${expiry}` : "尚未開通或已到期";
-  document.getElementById("dashboard-article-access").textContent = articleActive ? `閱讀資格有效｜至 ${articleExpiry}` : "尚未開通";
+  document.getElementById("dashboard-article-access").textContent = articleActive ? `${articleSource}｜至 ${articleExpiry}` : "尚未開通";
   ["dashboard-spend", "dashboard-membership-status", "dashboard-tier-status", "dashboard-period-heading", "dashboard-progress", "dashboard-rights-summary"].forEach((id) => {
     const section = document.getElementById(id)?.closest("section");
     if (section) section.hidden = !wellnessActive;
