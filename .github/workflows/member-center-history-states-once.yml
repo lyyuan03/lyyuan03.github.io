@@ -1,3 +1,4 @@
+# Triggered after workflow registration.
 name: Member center history states once
 
 on:
