@@ -1,4 +1,4 @@
-# Triggered after workflow registration and layout refinement.
+# Triggered after workflow registration, layout refinement and validation.
 name: Wellness article benefit once
 
 on:
@@ -8,6 +8,7 @@ on:
     paths:
       - scripts/wellness_article_benefit_once.py
       - scripts/wellness_admin_layout_once.py
+      - scripts/wellness_article_benefit_validation_once.py
       - .github/workflows/wellness-article-benefit-once.yml
 
 permissions:
@@ -26,6 +27,7 @@ jobs:
         run: |
           python3 scripts/wellness_article_benefit_once.py
           python3 scripts/wellness_admin_layout_once.py
+          python3 scripts/wellness_article_benefit_validation_once.py
 
       - name: Validate benefit authorization
         run: |
@@ -37,6 +39,7 @@ jobs:
           grep -q 'membership-subsection-head' admin.html
           grep -q 'wellness-lingji-period-fields' admin.html
           grep -q 'syncWellnessArticleBenefit' wellness-member-admin.js
+          grep -q '啟用會員前，請先填寫本次會期開始日與到期日' wellness-member-admin.js
           grep -q 'hasWellnessArticleBenefit' articles.js
           grep -q 'activeWellnessArticleBenefit' member-dashboard.js
           grep -q 'ARTICLE_BENEFIT_THRESHOLD = 15000' functions/index.js
