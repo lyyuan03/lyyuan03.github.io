@@ -23,6 +23,7 @@ const REGION = "asia-east1";
 const ADMIN_EMAILS = new Set(["lyyuan03@gmail.com"]);
 const DEFAULT_PRICE = 6000;
 const DEFAULT_MONTHS = 4;
+const ARTICLE_BENEFIT_THRESHOLD = 15000;
 const SITE_URL = "https://lyyuan.tw";
 const FUNCTIONS_BASE_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net";
 
@@ -242,6 +243,13 @@ exports.createMembershipCheckout = onCall(
     const email = normalizeEmail(request.data?.email);
     const name = cleanText(request.data?.name, 60);
     const memberLevel = request.data?.memberLevel === "lingji" ? "lingji" : "wellness";
+    const qualifyingSinglePurchaseAmount = Math.max(0, Number(request.data?.qualifyingSinglePurchaseAmount) || 0);
+    const articleBenefitReference = cleanText(request.data?.articleBenefitReference, 100);
+    const articleBenefitSource = memberLevel === "lingji"
+      ? "lingji-member"
+      : qualifyingSinglePurchaseAmount >= ARTICLE_BENEFIT_THRESHOLD
+        ? "single-purchase-15000"
+        : "none";
     const articleAccess = false;
     if (!email || !email.includes("@")) {
       throw new HttpsError("invalid-argument", "請填寫有效的會員 Gmail。");
@@ -269,6 +277,9 @@ exports.createMembershipCheckout = onCall(
       name,
       memberLevel,
       articleAccess,
+      articleBenefitSource,
+      qualifyingSinglePurchaseAmount,
+      articleBenefitReference,
       memberType: "wellness-channel",
       amount,
       planMonths,
@@ -288,6 +299,10 @@ exports.createMembershipCheckout = onCall(
       memberLevel,
       wellnessLevel: memberLevel,
       articleAccess,
+      articleBenefitSource,
+      articleBenefitEligible: articleBenefitSource !== "none",
+      qualifyingSinglePurchaseAmount,
+      articleBenefitReference,
       planMonths,
       amount,
       paymentStatus: "pending",
@@ -546,10 +561,41 @@ exports.ecpayMembershipCallback = onRequest(
           activeMember.accessScope = "sponsor-paid-articles";
           activeMember.accessVersion = 2;
         } else {
+          const qualifyingSinglePurchaseAmount = Math.max(0, Number(order.qualifyingSinglePurchaseAmount) || 0);
+          const articleBenefitSource = order.memberLevel === "lingji"
+            ? "lingji-member"
+            : qualifyingSinglePurchaseAmount >= ARTICLE_BENEFIT_THRESHOLD
+              ? "single-purchase-15000"
+              : "none";
+          const articleBenefitEligible = articleBenefitSource !== "none";
           activeMember.wellnessAccess = true;
           activeMember.memberLevel = order.memberLevel;
           activeMember.wellnessLevel = order.memberLevel;
-          activeMember.articleAccess = false;
+          activeMember.qualifyingSinglePurchaseAmount = qualifyingSinglePurchaseAmount;
+          activeMember.articleBenefitReference = order.articleBenefitReference || "";
+          activeMember.articleBenefitSource = articleBenefitSource;
+          activeMember.articleBenefitEligible = articleBenefitEligible;
+          activeMember.articleAccess = articleBenefitEligible;
+
+          transaction.set(db.doc(`sponsorMemberAccess/${order.email}`), {
+            email: order.email,
+            wellnessBenefit: {
+              active: articleBenefitEligible,
+              articleAccess: articleBenefitEligible,
+              accessScope: "sponsor-paid-articles",
+              accessVersion: 1,
+              source: articleBenefitSource,
+              status: articleBenefitEligible ? "active" : "inactive",
+              linkedMemberLevel: order.memberLevel,
+              qualifyingPurchaseAmount: qualifyingSinglePurchaseAmount,
+              qualificationReference: order.articleBenefitReference || "",
+              confirmedBy: normalizeEmail(order.createdBy || "system-payment"),
+              confirmedAt: nowTimestamp,
+              startsAt: nowTimestamp,
+              expiresAt: expiryTimestamp
+            },
+            updatedAt: nowTimestamp
+          }, { merge: true });
         }
         transaction.set(memberRef, activeMember, { merge: true });
         const historyKey = order.memberType === "sponsor-member" ? "sponsor" : "wellness";
@@ -571,6 +617,10 @@ exports.ecpayMembershipCallback = onRequest(
         } else {
           historyRecord.wellnessAccess = true;
           historyRecord.memberLevel = order.memberLevel;
+          historyRecord.articleAccess = activeMember.articleAccess === true;
+          historyRecord.articleBenefitSource = activeMember.articleBenefitSource || "none";
+          historyRecord.qualifyingSinglePurchaseAmount = Math.max(0, Number(activeMember.qualifyingSinglePurchaseAmount) || 0);
+          historyRecord.articleBenefitReference = activeMember.articleBenefitReference || "";
         }
         transaction.set(db.doc(`membershipHistory/${order.email}`), {
           email: order.email,

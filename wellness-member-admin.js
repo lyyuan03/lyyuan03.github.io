@@ -9,8 +9,13 @@ const listEl = document.getElementById("wellness-member-list");
 const statusEl = document.getElementById("wellness-member-status");
 const resetButton = document.getElementById("wellness-member-reset");
 const levelEl = document.getElementById("wellness-member-level");
-const articleAccessEl = document.getElementById("wellness-member-article-access");
+const stateEl = document.getElementById("wellness-member-state");
+const qualifyingPurchaseEl = document.getElementById("wellness-member-qualifying-purchase");
+const articleReferenceEl = document.getElementById("wellness-member-article-reference");
+const articleBenefitTitleEl = document.getElementById("wellness-article-benefit-title");
+const articleBenefitDetailEl = document.getElementById("wellness-article-benefit-detail");
 const sendPaymentButton = document.getElementById("wellness-member-send-payment");
+const ARTICLE_BENEFIT_THRESHOLD = 15000;
 const functions = getFunctions(app, "asia-east1");
 const createMembershipCheckout = httpsCallable(functions, "createMembershipCheckout");
 const backendStatusUrl = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/membershipBackendStatus";
@@ -89,6 +94,10 @@ function wellnessHistoryRecord(member = {}, historicalStatus = "verified") {
     startsAt,
     expiresAt: member.expiresAt,
     lastOrderNo: member.lastOrderNo || "",
+    articleAccess: member.articleAccess === true,
+    articleBenefitSource: member.articleBenefitSource || "none",
+    qualifyingSinglePurchaseAmount: Math.max(0, Number(member.qualifyingSinglePurchaseAmount) || 0),
+    articleBenefitReference: member.articleBenefitReference || "",
     verified: true,
     historicalStatus,
     verificationSource: member.lastOrderNo ? "payment" : "admin",
@@ -108,23 +117,111 @@ async function writeWellnessHistory(email, member, historicalStatus = "verified"
   }, { merge: true });
 }
 
-function syncArticleAccess() {
-  articleAccessEl.checked = false;
-  articleAccessEl.disabled = true;
+function articleBenefitDecision({ memberLevel, status, qualifyingSinglePurchaseAmount }) {
+  const amount = Math.max(0, Number(qualifyingSinglePurchaseAmount) || 0);
+  const source = memberLevel === "lingji"
+    ? "lingji-member"
+    : amount >= ARTICLE_BENEFIT_THRESHOLD
+      ? "single-purchase-15000"
+      : "none";
+  const qualified = source !== "none";
+  return {
+    source,
+    qualified,
+    active: status === "active" && qualified,
+    amount
+  };
+}
+
+function updateArticleBenefitPreview() {
+  if (!articleBenefitTitleEl || !articleBenefitDetailEl) return;
+  const level = levelEl.value === "lingji" ? "lingji" : "wellness";
+  const status = stateEl.value;
+  const decision = articleBenefitDecision({
+    memberLevel: level,
+    status,
+    qualifyingSinglePurchaseAmount: qualifyingPurchaseEl.value
+  });
+  const startsAt = document.getElementById("wellness-member-starts-at").value || "未設定";
+  const expiresAt = document.getElementById("wellness-member-expires-at").value || "未設定";
+
+  if (decision.source === "lingji-member") {
+    articleBenefitTitleEl.textContent = decision.active
+      ? "贊助文章閱讀權限：靈極會員自動開通"
+      : "贊助文章閱讀權限：待會員啟用";
+    articleBenefitDetailEl.textContent = `資格來源：靈極會員加贈｜權限期間：${startsAt}－${expiresAt}`;
+    return;
+  }
+  if (decision.source === "single-purchase-15000") {
+    articleBenefitTitleEl.textContent = decision.active
+      ? "贊助文章閱讀權限：一般會員單筆滿額開通"
+      : "贊助文章閱讀權限：單筆滿額，待會員啟用";
+    articleBenefitDetailEl.textContent = `本次單筆消費 NT$${decision.amount.toLocaleString("zh-TW")}｜權限期間：${startsAt}－${expiresAt}`;
+    return;
+  }
+  articleBenefitTitleEl.textContent = "贊助文章閱讀權限：尚未符合";
+  articleBenefitDetailEl.textContent = `一般會員尚差 NT$${Math.max(0, ARTICLE_BENEFIT_THRESHOLD - decision.amount).toLocaleString("zh-TW")} 達單筆滿額門檻；靈極會員則會自動開通。`;
+}
+
+async function syncWellnessArticleBenefit(member) {
+  const decision = articleBenefitDecision({
+    memberLevel: member.memberLevel,
+    status: member.status,
+    qualifyingSinglePurchaseAmount: member.qualifyingSinglePurchaseAmount
+  });
+  await setDoc(doc(db, "sponsorMemberAccess", member.email), {
+    email: member.email,
+    wellnessBenefit: {
+      active: decision.active,
+      articleAccess: decision.active,
+      accessScope: "sponsor-paid-articles",
+      accessVersion: 1,
+      source: decision.source,
+      status: decision.active ? "active" : "inactive",
+      linkedMemberLevel: member.memberLevel,
+      qualifyingPurchaseAmount: decision.amount,
+      qualificationReference: member.articleBenefitReference || "",
+      confirmedBy: auth.currentUser?.email || "",
+      confirmedAt: serverTimestamp(),
+      startsAt: member.startsAt || member.firstJoinedAt || null,
+      expiresAt: member.expiresAt || null
+    },
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
+async function disableWellnessArticleBenefit(email, reason = "membership-ended") {
+  if (!email) return;
+  await setDoc(doc(db, "sponsorMemberAccess", email), {
+    email,
+    wellnessBenefit: {
+      active: false,
+      articleAccess: false,
+      accessScope: "sponsor-paid-articles",
+      accessVersion: 1,
+      source: "none",
+      status: "ended",
+      reason,
+      endedAt: serverTimestamp()
+    },
+    updatedAt: serverTimestamp()
+  }, { merge: true });
 }
 
 function resetForm() {
   form.reset();
   document.getElementById("wellness-member-original-email").value = "";
   levelEl.value = "wellness";
-  articleAccessEl.checked = false;
-  articleAccessEl.disabled = true;
+  stateEl.value = "active";
+  qualifyingPurchaseEl.value = "0";
+  articleReferenceEl.value = "";
   document.getElementById("wellness-member-annual-spend").value = "0";
   document.getElementById("wellness-member-cashback").value = "0";
   document.getElementById("wellness-member-courses").value = "";
   document.getElementById("wellness-member-annual-cycle").value = currentCycleDefaults().start;
   document.getElementById("wellness-member-lingji-from").value = "";
   document.getElementById("wellness-member-lingji-until").value = "";
+  updateArticleBenefitPreview();
 }
 
 function payload() {
@@ -134,6 +231,8 @@ function payload() {
   const cycleStart = document.getElementById("wellness-member-annual-cycle").value || currentCycleDefaults().start;
   const lingjiFromInput = document.getElementById("wellness-member-lingji-from").value;
   const lingjiUntilInput = document.getElementById("wellness-member-lingji-until").value;
+  const qualifyingSinglePurchaseAmount = Math.max(0, Number(qualifyingPurchaseEl.value) || 0);
+  const decision = articleBenefitDecision({ memberLevel: level, status, qualifyingSinglePurchaseAmount });
   return {
     email: normalizeEmail(document.getElementById("wellness-member-email").value),
     name: document.getElementById("wellness-member-name").value.trim(),
@@ -153,7 +252,11 @@ function payload() {
     nextLingjiQualified: annualSpend >= LINGJI_THRESHOLD,
     lingjiValidFrom: dateInputToIso(lingjiFromInput || (level === "lingji" ? currentCycleDefaults().start : "")),
     lingjiValidUntil: dateInputToIso(lingjiUntilInput || (level === "lingji" ? currentCycleDefaults().end : ""), true),
-    articleAccess: false,
+    qualifyingSinglePurchaseAmount,
+    articleBenefitReference: articleReferenceEl.value.trim(),
+    articleBenefitSource: decision.source,
+    articleBenefitEligible: decision.qualified,
+    articleAccess: decision.active,
     note: document.getElementById("wellness-member-note").value.trim(),
     updatedAt: serverTimestamp()
   };
@@ -165,11 +268,20 @@ async function saveMember(event) {
   if (!data.email) return;
   const originalEmail = normalizeEmail(document.getElementById("wellness-member-original-email").value);
   await setDoc(doc(db, "memberAccess", data.email), data, { merge: true });
+  await syncWellnessArticleBenefit(data);
   await writeWellnessHistory(data.email, data, "verified");
   if (originalEmail && originalEmail !== data.email) {
+    await disableWellnessArticleBenefit(originalEmail, "email-changed");
     await deleteDoc(doc(db, "memberAccess", originalEmail));
   }
-  statusEl.textContent = "養生療癒會員資料已儲存；贊助文章權限由贊助會員名單獨立管理";
+  const decision = articleBenefitDecision({
+    memberLevel: data.memberLevel,
+    status: data.status,
+    qualifyingSinglePurchaseAmount: data.qualifyingSinglePurchaseAmount
+  });
+  statusEl.textContent = decision.active
+    ? "養生療癒會員資料已儲存，贊助文章閱讀權限已同步開通"
+    : "養生療癒會員資料已儲存，目前未開通贊助文章閱讀權限";
   await loadMembers();
   resetForm();
 }
@@ -185,7 +297,8 @@ async function createPaymentOrder() {
       email: normalizeEmail(document.getElementById("wellness-member-email").value),
       name: document.getElementById("wellness-member-name").value.trim(),
       memberLevel: levelEl.value === "lingji" ? "lingji" : "wellness",
-      articleAccess: false
+      qualifyingSinglePurchaseAmount: Math.max(0, Number(qualifyingPurchaseEl.value) || 0),
+      articleBenefitReference: articleReferenceEl.value.trim()
     });
     statusEl.textContent = `繳費信已寄出｜訂單 ${result.data.merchantTradeNo}｜NT$${Number(result.data.amount).toLocaleString("zh-TW")}／${result.data.planMonths}個月`;
     await loadMembers();
@@ -225,7 +338,16 @@ function renderMembers() {
     const expiry = toDate(member.expiresAt);
     const active = member.status === "active" && (!expiry || expiry > now);
     const stateLabel = active ? "有效" : member.status === "active" ? "已到期" : "未啟用";
-    const articleLabel = "不含贊助文章權限";
+    const benefit = articleBenefitDecision({
+      memberLevel: level,
+      status: member.status,
+      qualifyingSinglePurchaseAmount: member.qualifyingSinglePurchaseAmount
+    });
+    const articleLabel = benefit.source === "lingji-member"
+      ? benefit.active ? "贊助文章：靈極自動開通" : "贊助文章：待啟用"
+      : benefit.source === "single-purchase-15000"
+        ? benefit.active ? "贊助文章：單筆滿額開通" : "贊助文章：滿額待啟用"
+        : "贊助文章：未符合";
     const annualSpend = Math.max(0, Number(member.annualSpend) || 0);
     const qualificationLabel = annualSpend >= LINGJI_THRESHOLD ? "符合次年度靈極資格" : `距次年度門檻 NT$${(LINGJI_THRESHOLD - annualSpend).toLocaleString("zh-TW")}`;
     const cashback = Math.max(0, Number(member.cashbackBalance) || 0);
@@ -253,9 +375,10 @@ function editMember(email) {
   document.getElementById("wellness-member-annual-cycle").value = toDateInput(member.annualSpendCycleStart) || currentCycleDefaults().start;
   document.getElementById("wellness-member-lingji-from").value = toDateInput(member.lingjiValidFrom);
   document.getElementById("wellness-member-lingji-until").value = toDateInput(member.lingjiValidUntil);
-  articleAccessEl.checked = false;
+  qualifyingPurchaseEl.value = Math.max(0, Number(member.qualifyingSinglePurchaseAmount) || 0);
+  articleReferenceEl.value = member.articleBenefitReference || "";
   document.getElementById("wellness-member-note").value = member.note || "";
-  syncArticleAccess();
+  updateArticleBenefitPreview();
   form.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -263,6 +386,7 @@ async function removeMember(email) {
   if (!confirm(`確定要刪除 ${email} 的養生療癒會員資料嗎？`)) return;
   const member = members.find((item) => item.email === email);
   if (member) await writeWellnessHistory(email, member, "ended");
+  await disableWellnessArticleBenefit(email, "membership-deleted");
   await deleteDoc(doc(db, "memberAccess", email));
   statusEl.textContent = "養生療癒會員資料已刪除；符合條件的前期資格已保留於歷史紀錄";
   await loadMembers();
@@ -286,7 +410,13 @@ function showError(error) {
 
 form?.addEventListener("submit", (event) => saveMember(event).catch(showError));
 resetButton?.addEventListener("click", resetForm);
-levelEl?.addEventListener("change", syncArticleAccess);
+[levelEl, stateEl, qualifyingPurchaseEl,
+  document.getElementById("wellness-member-starts-at"),
+  document.getElementById("wellness-member-expires-at")
+].forEach((element) => {
+  element?.addEventListener("change", updateArticleBenefitPreview);
+  element?.addEventListener("input", updateArticleBenefitPreview);
+});
 sendPaymentButton?.addEventListener("click", () => createPaymentOrder().catch(showError));
 
 onAuthStateChanged(auth, async (user) => {

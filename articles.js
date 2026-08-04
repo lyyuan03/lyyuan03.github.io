@@ -614,35 +614,69 @@ function memberAccessDate(value) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+function hasDirectSponsorAccess(record, userEmail) {
+  if (!record || record.memberType !== "sponsor-member") return false;
+  if (record.status !== "active" || record.paymentStatus !== "paid") return false;
+  if (record.articleAccess !== true || record.accessScope !== "sponsor-paid-articles") return false;
+  if (Number(record.accessVersion || 0) < 2 || !String(record.lastOrderNo || "").trim()) return false;
+  if (record.revokedAt || record.suspended === true || record.disabled === true) return false;
+  const recordEmail = String(record.email || "").trim().toLowerCase();
+  if (!recordEmail || recordEmail !== userEmail) return false;
+  const now = new Date();
+  const startsAt = memberAccessDate(record.startsAt);
+  const expiresAt = memberAccessDate(record.expiresAt);
+  return (!startsAt || startsAt <= now) && Boolean(expiresAt && expiresAt > now);
+}
+
+function hasWellnessArticleBenefit(record, member, userEmail) {
+  const benefit = record?.wellnessBenefit;
+  if (!benefit || benefit.active !== true || benefit.articleAccess !== true) return false;
+  if (benefit.status !== "active" || benefit.accessScope !== "sponsor-paid-articles") return false;
+  if (Number(benefit.accessVersion || 0) < 1) return false;
+  if (String(record.email || "").trim().toLowerCase() !== userEmail) return false;
+  if (!member || String(member.email || "").trim().toLowerCase() !== userEmail) return false;
+  if (member.memberType !== "wellness-channel" || member.wellnessAccess !== true) return false;
+  if (!["wellness", "lingji"].includes(member.memberLevel)) return false;
+  if (member.status !== "active" || member.paymentStatus !== "paid") return false;
+  if (member.revokedAt || member.suspended === true || member.disabled === true) return false;
+
+  const now = new Date();
+  const memberStart = memberAccessDate(member.startsAt || member.firstJoinedAt);
+  const memberExpiry = memberAccessDate(member.expiresAt);
+  const benefitStart = memberAccessDate(benefit.startsAt);
+  const benefitExpiry = memberAccessDate(benefit.expiresAt);
+  if (memberStart && memberStart > now) return false;
+  if (!memberExpiry || memberExpiry <= now || !benefitExpiry || benefitExpiry <= now) return false;
+  if (benefitStart && benefitStart > now) return false;
+  if (benefitExpiry.getTime() > memberExpiry.getTime() + 60000) return false;
+  if (benefit.linkedMemberLevel !== member.memberLevel) return false;
+
+  if (benefit.source === "lingji-member") return member.memberLevel === "lingji";
+  if (benefit.source === "single-purchase-15000") {
+    return Number(benefit.qualifyingPurchaseAmount || 0) >= 15000
+      && Boolean(String(benefit.confirmedBy || "").trim())
+      && Boolean(memberAccessDate(benefit.confirmedAt));
+  }
+  return false;
+}
+
 function hasPaidAccess(articleId = "") {
   if (isAdminEmail(currentUser?.email)) return true;
   if (!currentUser?.email || !currentSponsorAccess) return false;
 
   const userEmail = currentUser.email.trim().toLowerCase();
-  const recordEmail = String(currentSponsorAccess.email || "").trim().toLowerCase();
-  if (!recordEmail || recordEmail !== userEmail) return false;
-  if (currentSponsorAccess.memberType !== "sponsor-member") return false;
-  if (currentSponsorAccess.status !== "active") return false;
-  if (currentSponsorAccess.paymentStatus !== "paid") return false;
-  if (currentSponsorAccess.articleAccess !== true) return false;
-  if (currentSponsorAccess.accessScope !== "sponsor-paid-articles") return false;
-  if (Number(currentSponsorAccess.accessVersion || 0) < 2) return false;
-  if (!String(currentSponsorAccess.lastOrderNo || "").trim()) return false;
-  if (currentSponsorAccess.revokedAt || currentSponsorAccess.suspended === true || currentSponsorAccess.disabled === true) return false;
+  const directAccess = hasDirectSponsorAccess(currentSponsorAccess, userEmail);
+  const wellnessAccess = hasWellnessArticleBenefit(currentSponsorAccess, currentMemberAccess, userEmail);
+  if (!directAccess && !wellnessAccess) return false;
 
-  const now = new Date();
-  const startsAt = memberAccessDate(currentSponsorAccess.startsAt);
-  const expiresAt = memberAccessDate(currentSponsorAccess.expiresAt);
-  if (startsAt && startsAt > now) return false;
-  if (!expiresAt || expiresAt <= now) return false;
-
-  const deniedArticleIds = Array.isArray(currentSponsorAccess.deniedArticleIds)
-    ? currentSponsorAccess.deniedArticleIds.map(String)
+  const entitlement = directAccess ? currentSponsorAccess : currentSponsorAccess.wellnessBenefit;
+  const deniedArticleIds = Array.isArray(entitlement.deniedArticleIds)
+    ? entitlement.deniedArticleIds.map(String)
     : [];
   if (articleId && deniedArticleIds.includes(String(articleId))) return false;
 
-  const allowedArticleIds = Array.isArray(currentSponsorAccess.allowedArticleIds)
-    ? currentSponsorAccess.allowedArticleIds.map(String)
+  const allowedArticleIds = Array.isArray(entitlement.allowedArticleIds)
+    ? entitlement.allowedArticleIds.map(String)
     : [];
   if (allowedArticleIds.length > 0 && (!articleId || !allowedArticleIds.includes(String(articleId)))) return false;
 

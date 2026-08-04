@@ -290,10 +290,15 @@
               <div class="field"><label for="wellness-member-lingji-from">本期靈極資格起日</label><input id="wellness-member-lingji-from" type="date"></div>
               <div class="field"><label for="wellness-member-lingji-until">本期靈極資格迄日</label><input id="wellness-member-lingji-until" type="date"></div>
             </div>
-            <label class="check-field" for="wellness-member-article-access">
-              <input id="wellness-member-article-access" type="checkbox" disabled>
-              <span><strong>贊助文章權限採獨立管理</strong><small>養生療癒會員不會自動取得贊助文章權限；如需開放，請至上方「贊助會員管理」完成付款與開通。</small></span>
-            </label>
+            <div id="wellness-article-benefit-summary" class="membership-summary">
+              <strong id="wellness-article-benefit-title" style="display:block;color:#D8BD91;margin-bottom:4px">贊助文章閱讀權限：尚未符合</strong>
+              <span id="wellness-article-benefit-detail">靈極會員自動開通；一般會員單筆消費滿新台幣 15,000 元後自動開通。</span>
+            </div>
+            <div class="grid">
+              <div class="field"><label for="wellness-member-qualifying-purchase">本次符合權益的單筆消費</label><input id="wellness-member-qualifying-purchase" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="wellness-member-article-reference">消費／訂單編號</label><input id="wellness-member-article-reference" placeholder="選填，方便日後核對"></div>
+            </div>
+            <p class="membership-help">權限由系統自動判讀，不需人工勾選：靈極會員於會籍有效期間自動開通；一般會員本次單筆消費達新台幣 15,000 元時開通。文章權限效期一律跟隨本次養生療癒會員會期。</p>
             <div class="field"><label for="wellness-member-courses">已購線上課程</label><textarea id="wellness-member-courses" style="min-height:120px" placeholder="每行一門：課程名稱｜開始日｜到期日｜課程網址&#10;例：靈性養護入門｜2026-08-01｜2026-12-01｜https://..."></textarea></div>
             <p class="membership-help">日期請使用 YYYY-MM-DD；永久觀看的課程請將到期日填「永久」。沒有購買課程可留白。</p>
             <div class="field"><label for="wellness-member-note">行政備註</label><textarea id="wellness-member-note" style="min-height:80px"></textarea></div>
@@ -308,7 +313,7 @@
         </div>
         <div class="membership-card">
           <h3>一般會員／靈極會員名單</h3>
-          <p class="membership-help">此區只管理「靈元院養生療癒頻道」的一般會員、靈極會員與會期；贊助文章閱讀權限一律由上方贊助會員名單獨立判讀。</p>
+          <p class="membership-help">此區同時管理養生療癒會員會籍與其加贈的贊助文章權限。靈極會員自動開通；一般會員須有單筆滿新台幣 15,000 元的紀錄。直接購買贊助閱讀方案者，仍由上方「贊助會員」名單獨立管理。</p>
           <div id="wellness-member-list" class="membership-list"><div class="empty">載入中…</div></div>
         </div>
       </div>
@@ -356,7 +361,7 @@
 <script type="module" src="article-admin.js?v=20260802-thumbnail-save-1"></script>
 <script type="module" src="article-thumbnail-admin.js?v=20260802-thumbnail-recovery-2"></script>
 <script type="module" src="membership-admin.js?v=20260804-membership-history-1"></script>
-<script type="module" src="wellness-member-admin.js?v=20260804-membership-history-1"></script>
+<script type="module" src="wellness-member-admin.js?v=20260804-article-benefit-1"></script>
 <script type="module" src="member-video-admin.js?v=20260801-private-youtube-1"></script>
 </body>
 </html>
