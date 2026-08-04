@@ -98,6 +98,71 @@ function hasMemberCenterAccess(member = {}) {
   return Boolean(isActiveWellnessMember(member) || Number(member.cashbackBalance) > 0 || hasCourses);
 }
 
+function wellnessHistorySchema(record = {}) {
+  return record.memberType === "wellness-channel"
+    && record.wellnessAccess === true
+    && ["wellness", "lingji"].includes(record.memberLevel)
+    && record.paymentStatus === "paid"
+    && Boolean(toDate(record.startsAt || record.firstJoinedAt))
+    && Boolean(toDate(record.expiresAt));
+}
+
+function sponsorHistorySchema(record = {}) {
+  return record.memberType === "sponsor-member"
+    && record.paymentStatus === "paid"
+    && record.articleAccess === true
+    && record.accessScope === "sponsor-paid-articles"
+    && Number(record.accessVersion || 0) >= 2
+    && Boolean(String(record.lastOrderNo || "").trim())
+    && Boolean(toDate(record.startsAt || record.firstJoinedAt))
+    && Boolean(toDate(record.expiresAt));
+}
+
+function formerPeriodEnded(record = {}, explicitHistory = false) {
+  const end = toDate(record.endedAt || record.expiresAt);
+  if (!end) return false;
+  if (explicitHistory && record.verified !== true) return false;
+  return record.historicalStatus === "ended" || end <= new Date();
+}
+
+function formerMembershipLabel(record = {}) {
+  if (record.memberType === "sponsor-member") return "贊助專屬文章會員";
+  return record.memberLevel === "lingji"
+    ? "養生療癒頻道｜靈極會員"
+    : "養生療癒頻道｜一般會員";
+}
+
+function findFormerMembership(member, sponsorMember, history = {}) {
+  const candidates = [];
+  const add = (record, kind, explicitHistory = false) => {
+    if (!record) return;
+    const validSchema = kind === "sponsor"
+      ? sponsorHistorySchema(record)
+      : wellnessHistorySchema(record);
+    if (!validSchema || !formerPeriodEnded(record, explicitHistory)) return;
+    const endedAt = toDate(record.endedAt || record.expiresAt);
+    candidates.push({ record, endedAt });
+  };
+
+  add(history.wellness, "wellness", true);
+  add(history.sponsor, "sponsor", true);
+  add(member, "wellness", false);
+  add(sponsorMember, "sponsor", false);
+  candidates.sort((a, b) => b.endedAt.getTime() - a.endedAt.getTime());
+  return candidates[0]?.record || null;
+}
+
+function showFormerMembership(record) {
+  const start = formatDate(record.startsAt || record.firstJoinedAt);
+  const end = formatDate(record.endedAt || record.expiresAt);
+  const label = formerMembershipLabel(record);
+  showAccessState(
+    "前期會員資格已結束",
+    `此帳號曾登記為「${label}」。前期資格期間：${start}至${end}。目前尚無有效會員資格。`,
+    '<a class="access-link" href="/membership.html">查看會員制度</a>'
+  );
+}
+
 function safeCourseUrl(value = "") {
   try {
     const url = new URL(value);
@@ -247,12 +312,14 @@ onAuthStateChanged(auth, async (user) => {
   }
   try {
     const email = (user.email || "").trim().toLowerCase();
-    const [snapshot, sponsorSnapshot] = await Promise.all([
+    const [snapshot, sponsorSnapshot, historySnapshot] = await Promise.all([
       getDoc(doc(db, "memberAccess", email)),
-      getDoc(doc(db, "sponsorMemberAccess", email))
+      getDoc(doc(db, "sponsorMemberAccess", email)),
+      getDoc(doc(db, "membershipHistory", email))
     ]);
     const member = snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
     const sponsorMember = sponsorSnapshot.exists() ? { id: sponsorSnapshot.id, ...sponsorSnapshot.data() } : null;
+    const history = historySnapshot.exists() ? historySnapshot.data() : {};
     const sponsorActive = Boolean(sponsorMember && isActiveSponsorMember(sponsorMember));
     const primaryMember = member && hasMemberCenterAccess(member)
       ? member
@@ -260,9 +327,16 @@ onAuthStateChanged(auth, async (user) => {
         ? sponsorMember
         : null;
     if (!primaryMember) {
-      const latestRecord = sponsorMember || member;
-      const expired = latestRecord?.expiresAt ? `目前紀錄的資格到期日為 ${formatDate(latestRecord.expiresAt)}。` : "系統目前查無可顯示的會員資格、文章權限或已購課程。";
-      showAccessState("目前沒有有效的會員資料", `${expired} 如需確認資料，請聯繫靈元院行政團隊。`, '<a class="access-link" href="/membership.html">查看會員制度</a>');
+      const former = findFormerMembership(member, sponsorMember, history);
+      if (former) {
+        showFormerMembership(former);
+      } else {
+        showAccessState(
+          "此帳號目前沒有會員資料",
+          "您登入的 Google 帳號尚未登記任何靈元院會員資格。如曾使用其他 Email 登記，請登出後改用原登記帳號登入。",
+          '<a class="access-link" href="/membership.html">查看會員制度</a>'
+        );
+      }
       return;
     }
     renderDashboard(primaryMember, user, sponsorMember);

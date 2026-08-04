@@ -440,6 +440,24 @@ exports.activateSponsorMembershipManually = onCall(
         note,
         updatedAt: nowTimestamp
       }, { merge: true });
+      transaction.set(db.doc(`membershipHistory/${email}`), {
+        email,
+        sponsor: {
+          memberType: "sponsor-member",
+          articleAccess: true,
+          accessScope: "sponsor-paid-articles",
+          accessVersion: 2,
+          paymentStatus: "paid",
+          startsAt: nowTimestamp,
+          expiresAt: expiryTimestamp,
+          lastOrderNo: tradeNo,
+          verified: true,
+          historicalStatus: "verified",
+          verificationSource: "manual-admin",
+          recordedAt: nowTimestamp
+        },
+        updatedAt: nowTimestamp
+      }, { merge: true });
 
       return {
         email,

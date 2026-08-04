@@ -60,6 +60,44 @@ function formatDate(value) {
   return date ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(date) : "尚未開通";
 }
 
+function sponsorHistoryRecord(member = {}, historicalStatus = "verified") {
+  const startsAt = member.startsAt || member.firstJoinedAt || null;
+  if (member.memberType !== "sponsor-member"
+      || member.paymentStatus !== "paid"
+      || member.articleAccess !== true
+      || member.accessScope !== "sponsor-paid-articles"
+      || Number(member.accessVersion || 0) < 2
+      || !String(member.lastOrderNo || "").trim()
+      || !startsAt
+      || !member.expiresAt) return null;
+  const record = {
+    memberType: "sponsor-member",
+    articleAccess: true,
+    accessScope: "sponsor-paid-articles",
+    accessVersion: 2,
+    paymentStatus: "paid",
+    startsAt,
+    expiresAt: member.expiresAt,
+    lastOrderNo: member.lastOrderNo,
+    verified: true,
+    historicalStatus,
+    verificationSource: "payment",
+    recordedAt: serverTimestamp()
+  };
+  if (historicalStatus === "ended") record.endedAt = serverTimestamp();
+  return record;
+}
+
+async function writeSponsorHistory(email, member, historicalStatus = "verified") {
+  const record = sponsorHistoryRecord(member, historicalStatus);
+  if (!record) return;
+  await setDoc(doc(db, "membershipHistory", email), {
+    email,
+    sponsor: record,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
 function addMonths(date, months) {
   const result = new Date(date);
   const originalDay = result.getDate();
@@ -438,8 +476,10 @@ function editMember(email) {
 
 async function removeMember(email) {
   if (!confirm(`確定要刪除 ${email} 的會員資料嗎？`)) return;
+  const member = members.find((item) => item.email === email);
+  if (member) await writeSponsorHistory(email, member, "ended");
   await deleteDoc(doc(db, "sponsorMemberAccess", email));
-  statusEl.textContent = "會員資料已刪除；歷史付款人次仍會保留在訂單紀錄中";
+  statusEl.textContent = "會員資料已刪除；符合條件的前期資格已保留於歷史紀錄";
   await Promise.all([loadMembers(), loadOfferStatus()]);
 }
 
