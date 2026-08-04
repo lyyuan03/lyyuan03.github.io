@@ -14,6 +14,7 @@ const qualifyingPurchaseEl = document.getElementById("wellness-member-qualifying
 const articleReferenceEl = document.getElementById("wellness-member-article-reference");
 const articleBenefitTitleEl = document.getElementById("wellness-article-benefit-title");
 const articleBenefitDetailEl = document.getElementById("wellness-article-benefit-detail");
+const lingjiPeriodFieldsEl = document.getElementById("wellness-lingji-period-fields");
 const sendPaymentButton = document.getElementById("wellness-member-send-payment");
 const ARTICLE_BENEFIT_THRESHOLD = 15000;
 const functions = getFunctions(app, "asia-east1");
@@ -142,6 +143,7 @@ function updateArticleBenefitPreview() {
     status,
     qualifyingSinglePurchaseAmount: qualifyingPurchaseEl.value
   });
+  if (lingjiPeriodFieldsEl) lingjiPeriodFieldsEl.hidden = level !== "lingji";
   const startsAt = document.getElementById("wellness-member-starts-at").value || "未設定";
   const expiresAt = document.getElementById("wellness-member-expires-at").value || "未設定";
 
@@ -352,7 +354,12 @@ function renderMembers() {
     const qualificationLabel = annualSpend >= LINGJI_THRESHOLD ? "符合次年度靈極資格" : `距次年度門檻 NT$${(LINGJI_THRESHOLD - annualSpend).toLocaleString("zh-TW")}`;
     const cashback = Math.max(0, Number(member.cashbackBalance) || 0);
     const courseCount = Array.isArray(member.purchasedCourses) ? member.purchasedCourses.length : 0;
-    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(levelLabel(level))}｜${escapeHtml(stateLabel)}</strong><small>${escapeHtml(member.email)}｜${articleLabel}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}<br>本年度累積 NT$${annualSpend.toLocaleString("zh-TW")}｜可用回饋金 NT$${cashback.toLocaleString("zh-TW")}｜線上課程 ${courseCount} 門<br>${escapeHtml(qualificationLabel)}</small></div><div class="member-row-actions"><button class="btn" type="button" data-wellness-edit="${escapeHtml(member.email)}">編輯</button><button class="btn danger" type="button" data-wellness-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
+    const benefitAudit = benefit.source === "single-purchase-15000"
+      ? `單筆 NT$${benefit.amount.toLocaleString("zh-TW")}${member.articleBenefitReference ? `｜編號 ${escapeHtml(member.articleBenefitReference)}` : ""}`
+      : benefit.source === "lingji-member"
+        ? "依靈極會員資格自動開通"
+        : "尚無符合紀錄";
+    return `<div class="member-row"><div><strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(levelLabel(level))}｜${escapeHtml(stateLabel)}</strong><small>${escapeHtml(member.email)}｜${articleLabel}<br>${benefitAudit}｜首次加入 ${escapeHtml(formatDate(member.firstJoinedAt))}｜到期 ${escapeHtml(formatDate(member.expiresAt))}<br>本年度累積 NT$${annualSpend.toLocaleString("zh-TW")}｜可用回饋金 NT$${cashback.toLocaleString("zh-TW")}｜線上課程 ${courseCount} 門<br>${escapeHtml(qualificationLabel)}</small></div><div class="member-row-actions"><button class="btn" type="button" data-wellness-edit="${escapeHtml(member.email)}">編輯</button><button class="btn danger" type="button" data-wellness-delete="${escapeHtml(member.email)}">刪除</button></div></div>`;
   }).join("");
   listEl.querySelectorAll("[data-wellness-edit]").forEach((button) => button.addEventListener("click", () => editMember(button.dataset.wellnessEdit)));
   listEl.querySelectorAll("[data-wellness-delete]").forEach((button) => button.addEventListener("click", () => removeMember(button.dataset.wellnessDelete)));
