@@ -1,0 +1,50 @@
+name: Member center history states once
+
+on:
+  push:
+    branches:
+      - fix/member-center-history-states
+    paths:
+      - scripts/member_center_history_states_once.py
+      - .github/workflows/member-center-history-states-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/member-center-history-states
+          fetch-depth: 0
+
+      - name: Apply membership state migration
+        run: python3 scripts/member_center_history_states_once.py
+
+      - name: Validate member state logic
+        run: |
+          node --check member-dashboard.js
+          node --check membership-admin.js
+          node --check wellness-member-admin.js
+          node --check functions/index.js
+          node --check functions/sponsor-offer-functions.js
+          grep -q 'membershipHistory' member-dashboard.js
+          grep -q '前期會員資格已結束' member-dashboard.js
+          grep -q '此帳號目前沒有會員資料' member-dashboard.js
+          grep -q 'match /membershipHistory/' firestore.rules
+          grep -q '20260804-membership-states-1' member-dashboard.html
+          grep -q '20260804-membership-history-1' admin.html
+
+      - name: Commit generated changes
+        run: |
+          if git diff --quiet; then
+            echo "No generated changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add member-dashboard.js member-dashboard.html membership-admin.js wellness-member-admin.js admin.html firestore.rules functions/index.js functions/sponsor-offer-functions.js
+          git commit -m "fix: distinguish active former and non-member states"
+          git push origin HEAD:fix/member-center-history-states
