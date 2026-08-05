@@ -217,7 +217,7 @@ function editVideo(id) {
 async function uploadCoverImage(videoId) {
   if (!pendingCoverFile) return safeCoverUrl(coverUrlInput?.value.trim());
   const safeName = pendingCoverFile.name.replace(/[^a-zA-Z0-9._-]/g, "-") || "cover-image";
-  const storagePath = `member-videos/${videoId}/${Date.now()}-${safeName}`;
+  const storagePath = `articles/member-videos/${videoId}/${Date.now()}-${safeName}`;
   const imageRef = ref(storage, storagePath);
   const snapshot = await uploadBytes(imageRef, pendingCoverFile, {
     contentType: pendingCoverFile.type,
