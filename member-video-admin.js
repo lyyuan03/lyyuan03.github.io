@@ -200,7 +200,7 @@ function editVideo(id) {
   document.getElementById("member-video-youtube-url").value = video.youtubeUrl || "";
   document.getElementById("member-video-description").value = video.description || "";
   document.getElementById("member-video-category").value = video.category || "";
-  coverUrlInput.value = safeCoverUrl(video.coverImageUrl || "");
+  coverUrlInput.value = safeCoverUrl(video.coverImageUrl || video.coverUrl || video.thumbnailUrl || video.coverImage || "");
   pendingCoverFile = null;
   if (coverFileInput) coverFileInput.value = "";
   revokeCoverPreviewUrl();

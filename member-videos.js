@@ -109,7 +109,7 @@ function renderVideos(videos, email) {
   }
   videoGrid.innerHTML = videos.map((video) => {
     const watchUrl = safeYouTubeUrl(video.youtubeUrl);
-    const coverUrl = safeHttpsUrl(video.coverImageUrl);
+    const coverUrl = safeHttpsUrl(video.coverImageUrl || video.coverUrl || video.thumbnailUrl || video.coverImage || "");
     const accessLabel = video.accessLevel === "lingji" ? "靈極會員專屬" : "養生會員專屬";
     const date = toDate(video.publishedAt);
     return `<article class="video-card">
