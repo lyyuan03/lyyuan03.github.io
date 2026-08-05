@@ -1040,6 +1040,7 @@ async function loadArticles() {
     const snapshot = await getDocs(publishedQuery);
     articles = snapshot.docs
       .map((item) => ({ id: item.id, ...item.data() }))
+      .filter((article) => article.hidden !== true && article.systemRecord !== true)
       .sort(sortPublished);
   } catch (error) {
     console.warn("Firebase 文章暫時無法載入，改顯示靜態文章。", error);

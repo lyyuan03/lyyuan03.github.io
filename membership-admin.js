@@ -1,7 +1,6 @@
-import { app, auth, db, isAdminEmail } from "./firebase-config.js";
+import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const settingsForm = document.getElementById("membership-settings-form");
 const memberForm = document.getElementById("member-form");
@@ -15,11 +14,6 @@ const activateButton = document.getElementById("member-activate");
 const emailButton = document.getElementById("member-email-payment");
 const sendPaymentButton = document.getElementById("member-send-payment");
 const resetButton = document.getElementById("member-form-reset");
-const functions = getFunctions(app, "asia-east1");
-const createSponsorMembershipCheckout = httpsCallable(functions, "createSponsorMembershipCheckout");
-const activateSponsorMembershipManually = httpsCallable(functions, "activateSponsorMembershipManually");
-const backendStatusUrl = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/membershipBackendStatus";
-const offerStatusUrl = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 
 let settings = {
   sponsorPromoLimit: 200,
@@ -123,12 +117,61 @@ function currentTier() {
   return promotionAvailable() ? "promo" : "regular";
 }
 
-function planAmount(months) {
+function planAmountForTier(months, tier = currentTier()) {
   const isThreeMonths = Number(months) === 3;
-  if (currentTier() === "regular") {
+  if (tier === "regular") {
     return isThreeMonths ? settings.sponsorRegularPrice3 : settings.sponsorRegularPrice1;
   }
   return isThreeMonths ? settings.sponsorPromoPrice3 : settings.sponsorPromoPrice1;
+}
+
+function planAmount(months) {
+  return planAmountForTier(months, currentTier());
+}
+
+function isPaidMember(member = {}) {
+  return member.memberType === "sponsor-member"
+    && member.paymentStatus === "paid"
+    && member.status === "active";
+}
+
+function calculateOfferStatus() {
+  const paidCount = members.filter(isPaidMember).length;
+  const promoLimit = Number(settings.sponsorPromoLimit || 200);
+  const remaining = Math.max(0, promoLimit - paidCount);
+  return {
+    ready: true,
+    paidCount,
+    pendingCount: 0,
+    occupiedCount: paidCount,
+    promoLimit,
+    remaining,
+    promotionAvailable: remaining > 0,
+    currentTier: remaining > 0 ? "promo" : "regular",
+    promoPrice1: Number(settings.sponsorPromoPrice1 || 120),
+    promoPrice3: Number(settings.sponsorPromoPrice3 || 300),
+    regularPrice1: Number(settings.sponsorRegularPrice1 || 150),
+    regularPrice3: Number(settings.sponsorRegularPrice3 || 400)
+  };
+}
+
+async function publishOfferStatus() {
+  offerStatus = calculateOfferStatus();
+  const currentPaymentUrl = offerStatus.promotionAvailable
+    ? settings.sponsorPromoPaymentUrl
+    : settings.sponsorRegularPaymentUrl;
+  await setDoc(doc(db, "articles", "sponsor-offer-status"), {
+    status: "published",
+    hidden: true,
+    systemRecord: true,
+    title: "贊助閱讀方案名額狀態",
+    category: "system",
+    content: "",
+    excerpt: "",
+    ...offerStatus,
+    currentPaymentUrl: String(currentPaymentUrl || "").trim(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
 }
 
 function installOfferAdminUi() {
@@ -150,7 +193,7 @@ function installOfferAdminUi() {
     <div id="sponsor-offer-admin-status" class="membership-summary" style="display:grid;gap:8px">
       <strong style="color:#CBAA77">前200名優惠進度載入中…</strong>
     </div>
-    <p class="membership-help">優惠名額以「已完成付款」加上「尚未逾期的待付款訂單」合併計算；待付款連結逾期後，名額會自動釋出。第201人次起，系統將自動改用一般價格。</p>
+    <p class="membership-help">優惠名額直接依「已確認付款並開通」的正式會員名單計算。前200名使用優惠連結，第201名起自動改用一般價連結；不建立綠界訂單，也不需要 Firebase Functions 或機密金鑰。</p>
   `);
 }
 
@@ -180,7 +223,7 @@ function renderOfferStatus() {
       <span>${offerStatus.promotionAvailable ? `尚餘 ${remaining} 名` : "優惠名額已額滿"}</span>
     </div>
     <div style="height:8px;border:1px solid rgba(165,130,84,.26);background:rgba(4,8,3,.5)"><span style="display:block;width:${percentage}%;height:100%;background:#A58254"></span></div>
-    <small style="color:rgba(245,240,232,.58)">已付款 ${Number(offerStatus.paidCount || 0)}｜待付款保留 ${Number(offerStatus.pendingCount || 0)}｜目前套用${offerStatus.promotionAvailable ? "優惠價" : "一般價"}</small>
+    <small style="color:rgba(245,240,232,.58)">正式會員 ${Number(offerStatus.paidCount || 0)}｜目前套用${offerStatus.promotionAvailable ? "優惠價連結" : "一般價連結"}</small>
   `;
 }
 
@@ -231,7 +274,6 @@ async function loadSettings() {
   document.getElementById("regular-price-1").value = String(settings.sponsorRegularPrice1);
   document.getElementById("regular-price-3").value = String(settings.sponsorRegularPrice3);
   document.getElementById("sponsor-promo-limit").value = String(settings.sponsorPromoLimit);
-  document.getElementById("sponsor-reservation-hours").value = String(settings.reservationHours || 24);
   document.getElementById("ecpay-url").value = settings.sponsorPromoPaymentUrl || "";
   document.getElementById("regular-ecpay-url").value = settings.sponsorRegularPaymentUrl || "";
   updatePlanOptions();
@@ -249,7 +291,6 @@ async function saveSettings(event) {
     sponsorRegularPrice1: positiveInteger(document.getElementById("regular-price-1").value, 150),
     sponsorRegularPrice3: positiveInteger(document.getElementById("regular-price-3").value, 400),
     sponsorPromoLimit: positiveInteger(document.getElementById("sponsor-promo-limit").value, 200),
-    sponsorReservationHours: positiveInteger(document.getElementById("sponsor-reservation-hours").value, 24),
     sponsorPromoPaymentUrl: document.getElementById("ecpay-url").value.trim(),
     sponsorRegularPaymentUrl: document.getElementById("regular-ecpay-url").value.trim(),
     ecpayUrl: document.getElementById("ecpay-url").value.trim(),
@@ -262,26 +303,15 @@ async function saveSettings(event) {
 }
 
 async function loadOfferStatus() {
-  try {
-    const response = await fetch(`${offerStatusUrl}?t=${Date.now()}`, { cache: "no-store" });
-    const result = await response.json();
-    if (!response.ok || result.ready !== true) throw new Error("offer-status-not-ready");
-    offerStatus = result;
-    settings = {
-      ...settings,
-      sponsorPromoLimit: result.promoLimit,
-      sponsorPromoPrice1: result.promoPrice1,
-      sponsorPromoPrice3: result.promoPrice3,
-      sponsorRegularPrice1: result.regularPrice1,
-      sponsorRegularPrice3: result.regularPrice3
-    };
-  } catch (error) {
-    console.warn("贊助會員優惠名額暫時無法取得。", error);
-    offerStatus = null;
-  }
+  offerStatus = calculateOfferStatus();
   renderOfferStatus();
   updatePlanOptions();
   updatePlanPreview(true);
+  try {
+    await publishOfferStatus();
+  } catch (error) {
+    console.warn("公開優惠名額狀態暫時無法更新。", error);
+  }
 }
 
 function memberPayload(paymentStatus = null, extendMembership = false) {
@@ -339,17 +369,63 @@ async function activateMember() {
   const originalLabel = activateButton.textContent;
   activateButton.textContent = "正在開通…";
   try {
-    const result = await activateSponsorMembershipManually({
-      email: normalizeEmail(document.getElementById("member-email").value),
-      name: document.getElementById("member-name").value.trim(),
-      planMonths: selectedMonths(),
-      pendingOrderNo: members.find((item) => item.email === normalizeEmail(document.getElementById("member-email").value))?.pendingOrderNo || "",
-      note: document.getElementById("member-note").value.trim()
-    });
-    const data = result.data;
-    const tierText = data.priceTier === "promo" ? `前200名優惠第 ${data.promotionSequence} 名` : "一般價格";
-    statusEl.textContent = `付款已確認並開通｜${tierText}｜NT$${Number(data.amount).toLocaleString("zh-TW")}／${data.planMonths}個月`;
-    await Promise.all([loadMembers(), loadOfferStatus()]);
+    const email = normalizeEmail(document.getElementById("member-email").value);
+    const name = document.getElementById("member-name").value.trim();
+    const months = selectedMonths();
+    const existing = members.find((item) => item.email === email) || {};
+    offerStatus = calculateOfferStatus();
+    const tier = existing.priceTier === "regular" || existing.pendingPriceTier === "regular"
+      ? "regular"
+      : existing.priceTier === "promo" || existing.pendingPriceTier === "promo"
+        ? "promo"
+        : currentTier();
+    const amount = planAmountForTier(months, tier);
+    const now = new Date();
+    const currentExpiry = dateValue(existing.expiresAt);
+    const base = currentExpiry && currentExpiry > now ? currentExpiry : now;
+    const expiresAt = addMonths(base, months);
+    const orderNo = String(existing.lastOrderNo || existing.pendingOrderNo || `MAN${Date.now().toString(36).toUpperCase()}`);
+    const sequence = tier === "promo"
+      ? Number(existing.promotionSequence || existing.pendingPromotionSequence || offerStatus.paidCount + 1)
+      : null;
+    const payload = {
+      email,
+      name,
+      memberType: "sponsor-member",
+      articleAccess: true,
+      wellnessAccess: false,
+      accessScope: "sponsor-paid-articles",
+      accessVersion: 2,
+      planMonths: months,
+      amount,
+      priceTier: tier,
+      promotionSequence: sequence,
+      paymentStatus: "paid",
+      status: "active",
+      disabled: false,
+      suspended: false,
+      revokedAt: deleteField(),
+      firstJoinedAt: existing.firstJoinedAt || now.toISOString(),
+      startsAt: now.toISOString(),
+      expiresAt: expiresAt.toISOString(),
+      paidAt: now.toISOString(),
+      lastOrderNo: orderNo,
+      pendingOrderNo: deleteField(),
+      pendingPlanMonths: deleteField(),
+      pendingAmount: deleteField(),
+      pendingPriceTier: deleteField(),
+      pendingPromotionSequence: deleteField(),
+      pendingPaymentUrl: deleteField(),
+      pendingPaymentDeadline: deleteField(),
+      confirmedBy: auth.currentUser?.email || "",
+      confirmedAt: serverTimestamp(),
+      note: document.getElementById("member-note").value.trim(),
+      updatedAt: serverTimestamp()
+    };
+    await setDoc(doc(db, "sponsorMemberAccess", email), payload, { merge: true });
+    await writeSponsorHistory(email, payload, "verified");
+    statusEl.textContent = `付款已確認並開通｜${tier === "promo" ? `前200名優惠第 ${sequence} 名` : "一般價格"}｜NT$${Number(amount).toLocaleString("zh-TW")}／${months}個月`;
+    await loadMembers();
     resetMemberForm();
   } finally {
     activateButton.disabled = false;
@@ -359,39 +435,10 @@ async function activateMember() {
 
 async function createPaymentOrder() {
   if (!memberForm.reportValidity()) return;
-  sendPaymentButton.disabled = true;
-  const originalLabel = sendPaymentButton.textContent;
-  sendPaymentButton.textContent = "正在建立訂單並寄信…";
-  statusEl.textContent = "";
-  try {
-    const result = await createSponsorMembershipCheckout({
-      email: normalizeEmail(document.getElementById("member-email").value),
-      name: document.getElementById("member-name").value.trim(),
-      planMonths: selectedMonths()
-    });
-    const data = result.data;
-    const tierText = data.priceTier === "promo" ? `前200名優惠第 ${data.promotionSequence} 名` : "一般價格";
-    statusEl.textContent = `繳費信已寄出｜${tierText}｜訂單 ${data.merchantTradeNo}｜NT$${Number(data.amount).toLocaleString("zh-TW")}／${data.planMonths}個月`;
-    await Promise.all([loadMembers(), loadOfferStatus()]);
-    resetMemberForm();
-  } finally {
-    sendPaymentButton.disabled = false;
-    sendPaymentButton.textContent = originalLabel;
-  }
-}
-
-async function loadPaymentBackendStatus() {
-  try {
-    const response = await fetch(backendStatusUrl, { cache: "no-store" });
-    const result = await response.json();
-    if (!response.ok || result.ready !== true) throw new Error("backend-not-ready");
-    sendPaymentButton.disabled = false;
-    sendPaymentButton.textContent = "建立綠界訂單並寄出繳費信";
-  } catch (error) {
-    console.warn("贊助會員金流後端尚未啟用。", error);
-    sendPaymentButton.disabled = true;
-    sendPaymentButton.textContent = "金流後端待完成安全設定";
-  }
+  offerStatus = calculateOfferStatus();
+  updatePlanOptions();
+  updatePlanPreview(true);
+  openPaymentEmail();
 }
 
 function paymentDeadline() {
@@ -401,18 +448,38 @@ function paymentDeadline() {
 
 function openPaymentEmail() {
   if (!memberForm.reportValidity()) return;
+  offerStatus = calculateOfferStatus();
   const email = normalizeEmail(document.getElementById("member-email").value);
   const name = document.getElementById("member-name").value.trim() || "會員";
   const months = selectedMonths();
-  const amount = Number(amountEl.value || 0).toLocaleString("zh-TW");
-  const paymentUrl = paymentUrlEl.value.trim();
+  const tier = currentTier();
+  const amount = Number(planAmountForTier(months, tier)).toLocaleString("zh-TW");
+  const paymentUrl = tier === "promo"
+    ? String(settings.sponsorPromoPaymentUrl || "").trim()
+    : String(settings.sponsorRegularPaymentUrl || "").trim();
   if (!paymentUrl) {
-    alert("請先填寫綠界付款連結。");
+    alert(tier === "promo" ? "請先設定前200名優惠付款連結。" : "請先設定第201名起一般價格付款連結。");
     return;
   }
-  const tierText = currentTier() === "promo" ? "前200名優惠" : "一般價格";
-  const subject = `靈元院贊助會員｜${months}個月方案繳費通知`;
-  const body = `${name}您好：\n\n感謝您申請靈元院贊助會員。\n\n方案：${tierText}\n會員期間：${months}個月\n應繳金額：新台幣 ${amount} 元\n付款期限：${paymentDeadline()}\n\n請由以下綠界連結完成付款：\n${paymentUrl}\n\n完成付款後，我們將於確認款項後開通會員閱讀資格。請使用本信收件 Email（${email}）登入官網。\n\n靈元院行政團隊`;
+  paymentUrlEl.value = paymentUrl;
+  amountEl.value = String(planAmountForTier(months, tier));
+  const tierText = tier === "promo"
+    ? `前${offerStatus.promoLimit}名優惠（目前尚餘 ${offerStatus.remaining} 名）`
+    : "第201名起一般價格";
+  const subject = `靈元院贊助專屬文章｜${months}個月方案付款連結`;
+  const body = `${name}您好：
+
+您本次適用：${tierText}
+觀看期間：${months}個月
+應繳金額：新台幣 ${amount} 元
+
+請由以下綠界連結完成付款：
+${paymentUrl}
+
+付款完成後，靈元院行政團隊核對款項，再以本信收件 Email（${email}）開通贊助專屬文章會員資格。
+
+靈元院行政團隊`;
+  statusEl.textContent = `已依正式會員名單判讀為「${tierText}」，正在開啟付款通知 Email。`;
   location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
@@ -501,7 +568,16 @@ async function loadMembers() {
     .map((item) => ({ id: item.id, ...item.data() }))
     .filter((item) => item.memberType === "sponsor-member")
     .sort((a, b) => String(a.email).localeCompare(String(b.email), "zh-TW"));
+  offerStatus = calculateOfferStatus();
   renderMembers();
+  renderOfferStatus();
+  updatePlanOptions();
+  updatePlanPreview(true);
+  try {
+    await publishOfferStatus();
+  } catch (error) {
+    console.warn("公開優惠名額狀態暫時無法更新。", error);
+  }
 }
 
 installOfferAdminUi();
@@ -510,7 +586,6 @@ memberForm?.addEventListener("submit", (event) => saveMember(event).catch(showEr
 monthsEl?.addEventListener("change", () => updatePlanPreview(true));
 amountEl?.addEventListener("input", () => updatePlanPreview(false));
 activateButton?.addEventListener("click", () => activateMember().catch(showError));
-emailButton?.addEventListener("click", openPaymentEmail);
 sendPaymentButton?.addEventListener("click", () => createPaymentOrder().catch(showError));
 resetButton?.addEventListener("click", resetMemberForm);
 
@@ -523,7 +598,7 @@ onAuthStateChanged(auth, async (user) => {
   if (!user || !isAdminEmail(user.email)) return;
   try {
     await loadSettings();
-    await Promise.all([loadMembers(), loadPaymentBackendStatus(), loadOfferStatus()]);
+    await loadMembers();
   } catch (error) {
     showError(error);
     listEl.innerHTML = '<div class="empty">會員資料暫時無法載入，請確認 Firebase 規則與 Functions 已發布。</div>';
