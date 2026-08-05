@@ -1,0 +1,50 @@
+name: One-time member money display fix
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/one-time-disable-member-money-animation.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: one-time-member-money-display-fix
+  cancel-in-progress: false
+
+jobs:
+  fix-money-display:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Disable animation on authoritative money values
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("member-dashboard.html")
+          text = path.read_text(encoding="utf-8")
+          old = 'const numericIds = ["dashboard-spend", "dashboard-cashback"];'
+          new = 'const numericIds = []; // 金額直接顯示後台實際值，避免動畫覆寫或停在中間數字'
+          if old not in text:
+              raise SystemExit("Expected member money animation selector not found")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/one-time-disable-member-money-animation.yml
+          git add member-dashboard.html
+          git commit -m "修正會員中心金額動畫覆寫實際金額"
+          for attempt in 1 2 3 4 5 6; do
+            git pull --rebase origin main && git push origin main && exit 0
+            sleep $((attempt * 2))
+          done
+          exit 1
