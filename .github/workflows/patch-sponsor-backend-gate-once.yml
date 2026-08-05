@@ -1,0 +1,49 @@
+name: Patch sponsor backend gate once
+
+on:
+  push:
+    branches:
+      - fix/sponsor-backend-gate
+    paths:
+      - scripts/patch_sponsor_backend_gate_once.py
+      - .github/workflows/patch-sponsor-backend-gate-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/sponsor-backend-gate
+          fetch-depth: 0
+
+      - name: Preserve patch script and switch to main
+        run: |
+          cp scripts/patch_sponsor_backend_gate_once.py /tmp/patch_sponsor_backend_gate_once.py
+          git fetch origin main
+          git checkout -B main origin/main
+
+      - name: Apply backend compatibility gate
+        run: python3 /tmp/patch_sponsor_backend_gate_once.py
+
+      - name: Validate JavaScript
+        run: |
+          node --check sponsor-checkout.js
+          node --check functions/sponsor-offer-functions.js
+          grep -q 'manualPaymentReview: true' functions/sponsor-offer-functions.js
+          grep -q '新版後端尚未發布' sponsor-checkout.js
+
+      - name: Commit to main
+        run: |
+          if git diff --quiet; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sponsor-checkout.js functions/sponsor-offer-functions.js
+          git commit -m "避免新版後端未發布時啟用贊助付款流程"
+          git push origin HEAD:main
