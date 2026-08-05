@@ -226,11 +226,12 @@
               <div class="grid">
                 <div class="field"><label for="price-1">一個月費用</label><input id="price-1" type="number" value="120" readonly></div>
                 <div class="field"><label for="price-3">三個月費用</label><input id="price-3" type="number" value="300" readonly></div>
-                <div class="field"><label for="payment-days">付款期限（天）</label><input id="payment-days" type="number" min="1" max="30" value="3"></div>
+                <div class="field"><label for="sponsor-reservation-hours">優惠名額保留期限（小時）</label><input id="sponsor-reservation-hours" type="number" min="1" max="168" value="24"></div>
               </div>
-              <div class="field"><label for="ecpay-url">綠界付款連結</label><input id="ecpay-url" type="url" placeholder="https://..."></div>
+              <div class="field"><label for="ecpay-url">前200名優惠付款連結</label><input id="ecpay-url" type="url" placeholder="https://p.ecpay.com.tw/..."></div>
+              <div class="field"><label for="regular-ecpay-url">第201名起一般價格付款連結</label><input id="regular-ecpay-url" type="url" placeholder="https://p.ecpay.com.tw/..."></div>
               <button class="btn primary" type="submit">儲存方案設定</button>
-              <p class="membership-help">綠界若為不同金額提供不同連結，可在建立單一會員時改填該筆專用網址。</p>
+              <p class="membership-help">兩個綠界連結內都需可選擇一個月與三個月方案。系統會在會員按下付款時重新確認名額，前200人次導向優惠連結，第201人次起自動導向一般價格連結。</p>
             </form>
           </div>
 
@@ -385,7 +386,7 @@
 <script type="module" src="activity-admin.js?v=20260801-personal-links-v2"></script>
 <script type="module" src="article-admin.js?v=20260802-thumbnail-save-1"></script>
 <script type="module" src="article-thumbnail-admin.js?v=20260802-thumbnail-recovery-2"></script>
-<script type="module" src="membership-admin.js?v=20260804-membership-history-1"></script>
+<script type="module" src="membership-admin.js?v=20260805-manual-ecpay-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20260804-article-benefit-1"></script>
 <script type="module" src="member-video-admin.js?v=20260801-private-youtube-1"></script>
 </body>

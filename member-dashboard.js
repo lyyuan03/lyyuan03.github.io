@@ -109,6 +109,33 @@ function activeWellnessArticleBenefit(sponsorMember = {}, member = {}) {
   return null;
 }
 
+function isPendingSponsorReservation(member = {}) {
+  const deadline = toDate(member.pendingPaymentDeadline);
+  return member.memberType === "sponsor-member"
+    && member.paymentStatus === "pending"
+    && member.status === "pending"
+    && Boolean(String(member.pendingOrderNo || "").trim())
+    && [1, 3].includes(Number(member.pendingPlanMonths || member.planMonths))
+    && Number(member.pendingAmount || member.amount || 0) > 0
+    && Boolean(deadline && deadline > new Date());
+}
+
+function showPendingSponsorReservation(member) {
+  const months = Number(member.pendingPlanMonths || member.planMonths || 0);
+  const amount = money.format(Number(member.pendingAmount || member.amount || 0));
+  const tier = (member.pendingPriceTier || member.priceTier) === "promo" ? "前200名優惠" : "一般價格";
+  const deadline = formatDate(member.pendingPaymentDeadline);
+  const paymentUrl = String(member.pendingPaymentUrl || "");
+  const action = paymentUrl.startsWith("https://")
+    ? `<a class="access-link" href="${escapeHtml(paymentUrl)}">返回綠界付款頁面</a>`
+    : '<a class="access-link" href="/articles.html">返回贊助文章</a>';
+  showAccessState(
+    "付款資料待核對",
+    `您已選擇${months}個月贊助閱讀方案，金額為${amount}，本次適用${tier}。名額保留至${deadline}。完成付款後，行政團隊將於核對款項後開通閱讀資格。`,
+    action
+  );
+}
+
 function hasMemberCenterAccess(member = {}) {
   if (!isWellnessMemberRecord(member)) return false;
   const hasCourses = Array.isArray(member.purchasedCourses) && member.purchasedCourses.length > 0;
@@ -356,6 +383,10 @@ onAuthStateChanged(auth, async (user) => {
         ? sponsorMember
         : null;
     if (!primaryMember) {
+      if (sponsorMember && isPendingSponsorReservation(sponsorMember)) {
+        showPendingSponsorReservation(sponsorMember);
+        return;
+      }
       const former = findFormerMembership(member, sponsorMember, history);
       if (former) {
         showFormerMembership(former);
