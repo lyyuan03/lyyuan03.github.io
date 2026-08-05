@@ -7,9 +7,11 @@ function numberOrZero(value) {
 
 function dateKey(value) {
   if (!value) return "";
-  if (typeof value === "string") {
-    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (match) return `${match[1]}-${match[2]}-${match[3]}`;
+  // 只有純日期字串可以直接使用。Firebase 後台儲存的 ISO 時間
+  // 例如 2026-01-31T16:00:00.000Z，實際在台灣是 2026-02-01；
+  // 若直接截取字串前十碼，會被錯誤歸入上一年度。
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
   }
   const date = typeof value?.toDate === "function" ? value.toDate() : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
