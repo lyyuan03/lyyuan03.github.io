@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
       - name: Change gauge scale to yuan amounts
         run: |
           python - <<'PY'
@@ -43,4 +44,5 @@ jobs:
           git rm .github/workflows/one-time-fix-gauge-scale.yml
           git add member-dashboard.html
           git commit -m '將會員中心指針刻度改為元'
-          git push
+          git pull --rebase origin main
+          git push origin main
