@@ -1,0 +1,45 @@
+name: Compare live article freeze
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/compare-live-article-freeze.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare Chrome rendering
+        shell: bash
+        run: |
+          REPORT=debug-article-freeze-report.txt
+          : > "$REPORT"
+          test_url() {
+            name="$1"; url="$2"
+            out="/tmp/${name}.html"
+            echo "=== $name ===" >> "$REPORT"
+            echo "$url" >> "$REPORT"
+            set +e
+            timeout 35s google-chrome --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --dump-dom "$url" > "$out" 2>> "$REPORT"
+            code=$?
+            set -e
+            echo "exit=$code bytes=$(wc -c < "$out")" >> "$REPORT"
+            grep -o 'article-root[^>]*>.*' "$out" | head -c 800 >> "$REPORT" || true
+            echo >> "$REPORT"
+            grep -o '<title>[^<]*' "$out" | head -1 >> "$REPORT" || true
+            echo >> "$REPORT"
+          }
+          test_url list 'https://lyyuan.tw/articles.html?probe=202608051730'
+          test_url target 'https://lyyuan.tw/articles.html?id=how-to-judge-true-lingxiu-understanding&probe=202608051730'
+          test_url other 'https://lyyuan.tw/articles.html?id=fantasy-intuition-or-yuanshen&probe=202608051730'
+          test_url free 'https://lyyuan.tw/articles.html?id=spiritual-practice-cannot-be-outsourced-to-gods&probe=202608051730'
+          rm .github/workflows/compare-live-article-freeze.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT" .github/workflows/compare-live-article-freeze.yml
+          git commit -m 'Record live article freeze comparison'
+          git push
