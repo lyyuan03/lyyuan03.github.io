@@ -95,6 +95,13 @@ async function loadMemberVideos(level, isAdmin = false) {
     .sort(videoSort);
 }
 
+function replaceBrokenCover(image) {
+  const placeholder = document.createElement("span");
+  placeholder.className = "video-cover-placeholder";
+  placeholder.textContent = "PRIVATE MEMBER VIDEO";
+  image.replaceWith(placeholder);
+}
+
 function renderVideos(videos, email) {
   if (!videos.length) {
     videoGrid.innerHTML = `<div class="empty-library"><span class="empty-symbol">◇</span><h3>會員影片即將上架</h3><p>新的養護與靈性修練內容，將依本期進度陸續放入這裡。</p></div>`;
@@ -106,10 +113,17 @@ function renderVideos(videos, email) {
     const accessLabel = video.accessLevel === "lingji" ? "靈極會員專屬" : "養生會員專屬";
     const date = toDate(video.publishedAt);
     return `<article class="video-card">
-      <div class="video-cover">${coverUrl ? `<img src="${escapeHtml(coverUrl)}" alt="${escapeHtml(video.title)}影片封面" loading="lazy">` : '<span class="video-cover-placeholder">PRIVATE MEMBER VIDEO</span>'}<span class="video-access-badge">${escapeHtml(accessLabel)}</span></div>
+      <div class="video-cover">${coverUrl ? `<img src="${escapeHtml(coverUrl)}" alt="${escapeHtml(video.title)}影片封面" loading="lazy" data-member-video-cover>` : '<span class="video-cover-placeholder">PRIVATE MEMBER VIDEO</span>'}<span class="video-access-badge">${escapeHtml(accessLabel)}</span></div>
       <div class="video-copy"><div class="video-meta"><span class="video-tag">${escapeHtml(video.category || "MEMBER VIDEO")}</span><span class="video-date">${escapeHtml(video.duration || (date ? formatDate(date) : ""))}</span></div><h3>${escapeHtml(video.title)}</h3><p>${escapeHtml(video.description || "")}</p>${watchUrl ? `<a class="video-watch" href="${escapeHtml(watchUrl)}" target="_blank" rel="noopener noreferrer">前往 YouTube 觀看私人影片</a><p class="video-account">請以 ${escapeHtml(email)} 登入 YouTube</p>` : ""}</div>
     </article>`;
   }).join("");
+  videoGrid.querySelectorAll("[data-member-video-cover]").forEach((image) => {
+    if (image.complete && image.naturalWidth === 0) {
+      replaceBrokenCover(image);
+      return;
+    }
+    image.addEventListener("error", () => replaceBrokenCover(image), { once: true });
+  });
 }
 
 function openMemberLogin() {
