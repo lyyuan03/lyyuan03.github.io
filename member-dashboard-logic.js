@@ -64,14 +64,17 @@ export function evaluateMember(member = {}, value = new Date()) {
   const today = dateKey(value);
   const cycle = annualCycle(value);
   const recordedCycleYear = cycleYearFromValue(member.annualSpendCycleStart);
+  const updatedCycleYear = cycleYearFromValue(member.annualSpendUpdatedAt || member.updatedAt);
+  const effectiveSpendCycleYear = recordedCycleYear ?? updatedCycleYear;
   const recordedSpend = numberOrZero(member.annualSpend);
-  const currentSpend = recordedCycleYear === cycle.year ? recordedSpend : 0;
+  const currentSpend = effectiveSpendCycleYear === cycle.year ? recordedSpend : 0;
   const nextQualified = currentSpend >= LINGJI_THRESHOLD;
   const remaining = Math.max(0, LINGJI_THRESHOLD - currentSpend);
   const progress = Math.min(100, currentSpend / LINGJI_THRESHOLD * 100);
 
-  const recordedQualificationStart = recordedCycleYear === null ? "" : `${recordedCycleYear + 1}-02-01`;
-  const recordedQualificationEnd = recordedCycleYear === null ? "" : `${recordedCycleYear + 2}-01-31`;
+  const qualificationCycleYear = recordedCycleYear ?? effectiveSpendCycleYear;
+  const recordedQualificationStart = qualificationCycleYear === null ? "" : `${qualificationCycleYear + 1}-02-01`;
+  const recordedQualificationEnd = qualificationCycleYear === null ? "" : `${qualificationCycleYear + 2}-01-31`;
   const autoLingjiActive = recordedSpend >= LINGJI_THRESHOLD
     && isWithin(today, recordedQualificationStart, recordedQualificationEnd);
   const explicitLingjiActive = storedLevel(member) === "lingji"
