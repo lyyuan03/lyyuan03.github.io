@@ -236,24 +236,22 @@
 
           <div class="membership-card" style="margin-top:20px">
             <h3>新增／編輯會員</h3>
-            <form id="member-form" class="membership-form">
+            <form id="member-form" class="membership-form" onsubmit="return false;">
               <input id="member-original-email" type="hidden">
               <div class="grid">
                 <div class="field"><label for="member-name">會員姓名</label><input id="member-name"></div>
                 <div class="field"><label for="member-email">登入 Gmail</label><input id="member-email" type="email" required></div>
                 <div class="field"><label for="member-months">會員方案</label><select id="member-months"><option value="1">一個月｜NT$120</option><option value="3">三個月｜NT$300</option></select></div>
-                <div class="field"><label for="member-amount">應繳金額</label><input id="member-amount" type="number" min="0" step="1" required></div>
-                <div class="field"><label for="member-payment-status">付款狀態</label><select id="member-payment-status"><option value="pending">待付款</option><option value="paid">已付款</option></select></div>
+                <div class="field"><label for="member-amount">本次實收金額</label><input id="member-amount" type="number" min="0" step="1" required readonly></div>
               </div>
-              <div class="field"><label for="member-payment-url">本次付款連結</label><input id="member-payment-url" type="url" placeholder="預設帶入綠界付款連結"></div>
               <div class="field"><label for="member-note">行政備註</label><textarea id="member-note" style="min-height:80px"></textarea></div>
               <div id="member-summary" class="membership-summary">選擇方案後，系統將自動計算金額與效期。</div>
               <div class="top-actions">
-                <button class="btn primary" type="submit">儲存會員資料</button>
-                <button id="member-send-payment" class="btn primary" type="button">依名單判讀並開啟付款通知</button>
-                <button id="member-activate" class="btn" type="button">確認付款並開通</button>
+                <button id="member-send-payment" class="btn primary" type="button">開啟付款通知 Email</button>
+                <button id="member-activate" class="btn" type="button">付款成功，加入／續期會員</button>
                 <button id="member-form-reset" class="btn" type="button">清除</button>
               </div>
+              <p class="membership-help">流程只有兩步：先依目前人數寄出正確付款連結；確認收到款項後，再按「付款成功，加入／續期會員」。只有這一步完成後，前台倒數人數才會更新。</p>
             </form>
           </div>
         </div>
@@ -384,8 +382,8 @@
 <script type="module" src="activity-admin.js?v=20260801-personal-links-v2"></script>
 <script type="module" src="article-admin.js?v=20260802-thumbnail-save-1"></script>
 <script type="module" src="article-thumbnail-admin.js?v=20260802-thumbnail-recovery-2"></script>
-<script type="module" src="membership-admin.js?v=20260805-simple-links-1"></script>
+<script type="module" src="membership-admin.js?v=20260805-simple-manual-2"></script>
 <script type="module" src="wellness-member-admin.js?v=20260804-article-benefit-1"></script>
-<script type="module" src="member-video-admin.js?v=20260805-cover-upload-4"></script>
+<script type="module" src="member-video-admin.js?v=20260801-private-youtube-1"></script>
 </body>
 </html>
