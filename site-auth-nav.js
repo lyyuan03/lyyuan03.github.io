@@ -176,6 +176,15 @@ function isActiveSponsorMember(member = {}) {
     && Boolean(expiry && expiry > new Date());
 }
 
+function isPendingSponsorReservation(member = {}) {
+  const deadline = toDate(member.pendingPaymentDeadline);
+  return member.memberType === "sponsor-member"
+    && member.paymentStatus === "pending"
+    && member.status === "pending"
+    && Boolean(String(member.pendingOrderNo || "").trim())
+    && Boolean(deadline && deadline > new Date());
+}
+
 function isActiveMember(member = {}) {
   if (!isWellnessMemberRecord(member)) return false;
   const hasCourses = Array.isArray(member.purchasedCourses) && member.purchasedCourses.length > 0;
@@ -377,7 +386,7 @@ onAuthStateChanged(auth, async (user) => {
     hasWellnessAccess = Boolean(member && isActiveWellnessMember(member));
     hasMemberAccess = Boolean(
       (member && isActiveMember(member))
-      || (sponsorMember && isActiveSponsorMember(sponsorMember))
+      || (sponsorMember && (isActiveSponsorMember(sponsorMember) || isPendingSponsorReservation(sponsorMember)))
     );
     wellnessVideoLink.hidden = !hasWellnessAccess;
     if (hasMemberAccess) {

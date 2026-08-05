@@ -24,7 +24,8 @@ function normalizeSponsorOfferSettings(settings = {}) {
     promoPrice3: positiveInteger(settings.sponsorPromoPrice3 ?? settings.price3, SPONSOR_PROMO_PLANS[3]),
     regularPrice1: positiveInteger(settings.sponsorRegularPrice1, SPONSOR_REGULAR_PLANS[1]),
     regularPrice3: positiveInteger(settings.sponsorRegularPrice3, SPONSOR_REGULAR_PLANS[3]),
-    paymentDays: positiveInteger(settings.paymentDays, 3)
+    paymentDays: positiveInteger(settings.paymentDays, 3),
+    reservationHours: positiveInteger(settings.sponsorReservationHours, 24)
   };
 }
 

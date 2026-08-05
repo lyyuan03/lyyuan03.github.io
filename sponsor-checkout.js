@@ -173,15 +173,15 @@ function showConfirmation(planMonths) {
   const promo = offer?.promotionAvailable === true;
   modalContent.innerHTML = `
     <h2>確認贊助閱讀方案</h2>
-    <p>系統將以您目前登入的 Email 建立專屬訂單，並在建立當下自動判斷是否仍在前 200 名優惠內。</p>
+    <p>系統會以您目前登入的 Email 保留方案，並在按下付款時重新確認是否仍在前 200 名優惠內；接著直接前往綠界付款。</p>
     <div class="sponsor-checkout-summary">
       <div><span>登入帳號</span><strong>${escapeHtml(currentUser.email)}</strong></div>
       <div><span>觀看期間</span><strong>${planMonths} 個月</strong></div>
       <div><span>目前顯示金額</span><strong>NT$${formatMoney(currentPrice(planMonths))}</strong></div>
       <div><span>目前名額狀態</span><strong>${promo ? `尚餘 ${Number(offer?.remaining || 0)} 名` : "優惠已額滿"}</strong></div>
     </div>
-    <div id="sponsor-checkout-status" class="sponsor-checkout-status">建立訂單後，系統會顯示您實際取得的價格與優惠序號。</div>
-    <button class="sponsor-checkout-primary" type="button" data-sponsor-confirm>建立專屬訂單並保留名額</button>
+    <div id="sponsor-checkout-status" class="sponsor-checkout-status">付款完成後，靈元院行政團隊核對款項，才會正式開通閱讀資格。</div>
+    <button class="sponsor-checkout-primary" type="button" data-sponsor-confirm>立即前往綠界付款</button>
     <button class="sponsor-checkout-secondary" type="button" data-sponsor-cancel>返回文章</button>
   `;
   openModal();
@@ -198,7 +198,7 @@ function showCheckoutResult(result) {
       應繳金額：<strong>NT$${formatMoney(result.amount)}</strong><br>
       付款期限：${escapeHtml(formatDeadline(result.paymentDeadline))}
     </div>
-    <p style="margin-top:14px">請在期限內完成綠界付款。付款成功後，系統會自動開通文章閱讀資格；逾期未付款，優惠名額將自動釋出。</p>
+    <p style="margin-top:14px">請在期限內完成綠界付款。付款完成後，行政團隊核對款項並開通文章閱讀資格；逾期未付款，優惠名額將自動釋出。</p>
     <a class="sponsor-checkout-primary" href="${escapeHtml(paymentUrl)}">前往綠界安全付款</a>
     <button class="sponsor-checkout-secondary" type="button" data-sponsor-cancel>稍後再付款</button>
   `;
@@ -220,7 +220,10 @@ async function createOrder() {
       planMonths: activePlan,
       name: currentUser.displayName || ""
     });
-    showCheckoutResult(response.data || {});
+    const result = response.data || {};
+    if (!result.paymentUrl) throw new Error("系統尚未設定此方案的綠界付款連結。");
+    if (status) status.textContent = `${result.priceTier === "promo" ? "優惠名額已保留" : "目前適用一般價格"}，正在前往綠界付款…`;
+    window.location.assign(result.paymentUrl);
   } catch (error) {
     console.error("建立贊助閱讀訂單失敗：", error);
     const message = error?.code === "functions/unauthenticated"

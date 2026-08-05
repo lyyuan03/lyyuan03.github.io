@@ -365,6 +365,7 @@ exports.activateSponsorMembershipManually = onCall(
     const name = cleanText(request.data?.name, 60);
     const note = cleanText(request.data?.note, 500);
     const planMonths = Number(request.data?.planMonths);
+    const requestedPendingOrderNo = cleanText(request.data?.pendingOrderNo, 20);
     if (!email || !email.includes("@")) {
       throw new HttpsError("invalid-argument", "請填寫有效的會員 Email。");
     }
@@ -372,17 +373,32 @@ exports.activateSponsorMembershipManually = onCall(
       throw new HttpsError("invalid-argument", "贊助會員目前僅提供一個月或三個月方案。");
     }
 
-    const tradeNo = createMerchantTradeNo();
-    const orderRef = db.doc(`membershipOrders/${tradeNo}`);
+    const fallbackTradeNo = createMerchantTradeNo();
     const memberRef = db.doc(`sponsorMemberAccess/${email}`);
 
     const activation = await db.runTransaction(async (transaction) => {
-      const status = await readSponsorOfferStatus(transaction);
       const memberSnapshot = await transaction.get(memberRef);
       const member = memberSnapshot.data() || {};
-      const priceTier = status.promotionAvailable ? "promo" : "regular";
+      const pendingOrderNo = requestedPendingOrderNo || cleanText(member.pendingOrderNo, 20);
+      const pendingOrderRef = pendingOrderNo ? db.doc(`membershipOrders/${pendingOrderNo}`) : null;
+      const pendingOrderSnapshot = pendingOrderRef ? await transaction.get(pendingOrderRef) : null;
+      const pendingOrder = pendingOrderSnapshot?.exists ? pendingOrderSnapshot.data() : null;
+      const lockedReservation = Boolean(
+        pendingOrder
+        && pendingOrder.memberType === "sponsor-member"
+        && normalizeEmail(pendingOrder.email) === email
+        && ["pending", "expired"].includes(pendingOrder.status)
+      );
+      const status = await readSponsorOfferStatus(transaction);
+      const priceTier = lockedReservation
+        ? (pendingOrder.priceTier === "regular" ? "regular" : "promo")
+        : (status.promotionAvailable ? "promo" : "regular");
       const amount = sponsorPlanAmount(planMonths, priceTier, status.settings);
-      const promotionSequence = priceTier === "promo" ? status.occupiedCount + 1 : null;
+      const promotionSequence = lockedReservation
+        ? (pendingOrder.promotionSequence || null)
+        : (priceTier === "promo" ? status.occupiedCount + 1 : null);
+      const tradeNo = lockedReservation ? pendingOrderNo : fallbackTradeNo;
+      const orderRef = lockedReservation ? pendingOrderRef : db.doc(`membershipOrders/${tradeNo}`);
       const now = new Date();
       const existingExpiry = dateValue(member.expiresAt);
       const startAt = existingExpiry && existingExpiry > now ? existingExpiry : now;
@@ -390,7 +406,7 @@ exports.activateSponsorMembershipManually = onCall(
       const nowTimestamp = Timestamp.fromDate(now);
       const expiryTimestamp = Timestamp.fromDate(expiresAt);
 
-      transaction.create(orderRef, {
+      const paidOrder = {
         merchantTradeNo: tradeNo,
         email,
         name,
@@ -403,12 +419,21 @@ exports.activateSponsorMembershipManually = onCall(
         sponsorPromoLimit: status.settings.promoLimit,
         status: "paid",
         paidAt: nowTimestamp,
-        paymentType: "manual-admin",
+        paymentType: lockedReservation ? "manual-confirm-fixed-link" : "manual-admin",
         manualActivation: true,
-        createdBy: normalizeEmail(request.auth.token.email),
-        createdAt: nowTimestamp,
+        manualPaymentReview: lockedReservation,
+        confirmedBy: normalizeEmail(request.auth.token.email),
         updatedAt: nowTimestamp
-      });
+      };
+      if (lockedReservation) {
+        transaction.set(orderRef, paidOrder, { merge: true });
+      } else {
+        transaction.create(orderRef, {
+          ...paidOrder,
+          createdBy: normalizeEmail(request.auth.token.email),
+          createdAt: nowTimestamp
+        });
+      }
 
       transaction.set(memberRef, {
         email,
@@ -437,6 +462,8 @@ exports.activateSponsorMembershipManually = onCall(
         pendingAmount: FieldValue.delete(),
         pendingPriceTier: FieldValue.delete(),
         pendingPromotionSequence: FieldValue.delete(),
+        pendingPaymentUrl: FieldValue.delete(),
+        pendingPaymentDeadline: FieldValue.delete(),
         note,
         updatedAt: nowTimestamp
       }, { merge: true });
@@ -453,7 +480,7 @@ exports.activateSponsorMembershipManually = onCall(
           lastOrderNo: tradeNo,
           verified: true,
           historicalStatus: "verified",
-          verificationSource: "manual-admin",
+          verificationSource: lockedReservation ? "manual-confirm-fixed-link" : "manual-admin",
           recordedAt: nowTimestamp
         },
         updatedAt: nowTimestamp
@@ -467,11 +494,12 @@ exports.activateSponsorMembershipManually = onCall(
         planMonths,
         priceTier,
         promotionSequence,
-        offerRemaining: Math.max(0, status.remaining - (priceTier === "promo" ? 1 : 0)),
+        offerRemaining: lockedReservation ? status.remaining : Math.max(0, status.remaining - (priceTier === "promo" ? 1 : 0)),
         merchantTradeNo: tradeNo
       };
     });
 
+    const orderRef = db.doc(`membershipOrders/${activation.merchantTradeNo}`);
     try {
       await sendSponsorActivationEmail(activation);
       await orderRef.update({
@@ -479,7 +507,7 @@ exports.activateSponsorMembershipManually = onCall(
         activationEmailSentAt: FieldValue.serverTimestamp()
       });
     } catch (error) {
-      console.error("Manual sponsor activation email failed", { tradeNo, error });
+      console.error("Manual sponsor activation email failed", { tradeNo: activation.merchantTradeNo, error });
       await orderRef.update({
         activationEmailStatus: "error",
         activationEmailError: cleanText(error.message, 300)

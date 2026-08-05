@@ -13,6 +13,17 @@ def replace_once(path: str, old: str, new: str) -> None:
     p.write_text(text.replace(old, new, 1), encoding="utf-8")
 
 
+def replace_all_exact(path: str, old: str, new: str, expected: int) -> None:
+    p = Path(path)
+    text = p.read_text(encoding="utf-8")
+    if new in text and old not in text:
+        return
+    count = text.count(old)
+    if count != expected:
+        raise SystemExit(f"{path}: expected {expected} exact matches, found {count}")
+    p.write_text(text.replace(old, new), encoding="utf-8")
+
+
 def sub_once(path: str, pattern: str, replacement: str) -> None:
     p = Path(path)
     text = p.read_text(encoding="utf-8")
@@ -224,15 +235,11 @@ function safePaymentUrl(value = "") {
 }
 '''
 )
-replace_once(
+replace_all_exact(
     "functions/public-sponsor-checkout-functions.js",
     '付款成功後，系統會自動開通閱讀資格。請使用本信收件 Email 登入靈元院官網。',
-    '付款完成後，靈元院行政團隊會核對款項並開通閱讀資格。請使用本信收件 Email 登入靈元院官網。'
-)
-replace_once(
-    "functions/public-sponsor-checkout-functions.js",
-    '      <p>付款成功後，系統會自動開通閱讀資格。請使用本信收件 Email 登入靈元院官網。</p>',
-    '      <p>付款完成後，靈元院行政團隊會核對款項並開通閱讀資格。請使用本信收件 Email 登入靈元院官網。</p>'
+    '付款完成後，靈元院行政團隊會核對款項並開通閱讀資格。請使用本信收件 Email 登入靈元院官網。',
+    2
 )
 replace_once(
     "functions/public-sponsor-checkout-functions.js",

@@ -28,6 +28,9 @@ let settings = {
   sponsorRegularPrice1: 150,
   sponsorRegularPrice3: 400,
   paymentDays: 3,
+  reservationHours: 24,
+  sponsorPromoPaymentUrl: "",
+  sponsorRegularPaymentUrl: "",
   ecpayUrl: ""
 };
 let offerStatus = null;
@@ -190,7 +193,7 @@ function previewExpiry(existingExpiry = null) {
 
 function updatePlanPreview(forceAmount = false) {
   if (forceAmount || !amountEl.value) amountEl.value = String(planAmount(selectedMonths()) || "");
-  if (!paymentUrlEl.value) paymentUrlEl.value = settings.ecpayUrl || "";
+  if (!paymentUrlEl.value) paymentUrlEl.value = currentTier() === "promo" ? settings.sponsorPromoPaymentUrl : settings.sponsorRegularPaymentUrl;
   const originalEmail = normalizeEmail(document.getElementById("member-original-email").value);
   const existing = members.find((item) => item.email === originalEmail);
   const tierText = currentTier() === "promo"
@@ -203,7 +206,7 @@ function resetMemberForm() {
   memberForm.reset();
   document.getElementById("member-original-email").value = "";
   monthsEl.value = "1";
-  paymentUrlEl.value = settings.ecpayUrl || "";
+  paymentUrlEl.value = currentTier() === "promo" ? settings.sponsorPromoPaymentUrl : settings.sponsorRegularPaymentUrl;
   updatePlanOptions();
   updatePlanPreview(true);
 }
@@ -218,15 +221,19 @@ async function loadSettings() {
     sponsorPromoPrice3: positiveInteger(stored.sponsorPromoPrice3 ?? stored.price3, 300),
     sponsorRegularPrice1: positiveInteger(stored.sponsorRegularPrice1, 150),
     sponsorRegularPrice3: positiveInteger(stored.sponsorRegularPrice3, 400),
-    sponsorPromoLimit: positiveInteger(stored.sponsorPromoLimit, 200)
+    sponsorPromoLimit: positiveInteger(stored.sponsorPromoLimit, 200),
+    reservationHours: positiveInteger(stored.sponsorReservationHours, 24),
+    sponsorPromoPaymentUrl: String(stored.sponsorPromoPaymentUrl || stored.ecpayUrl || "").trim(),
+    sponsorRegularPaymentUrl: String(stored.sponsorRegularPaymentUrl || "").trim()
   };
   document.getElementById("price-1").value = String(settings.sponsorPromoPrice1);
   document.getElementById("price-3").value = String(settings.sponsorPromoPrice3);
   document.getElementById("regular-price-1").value = String(settings.sponsorRegularPrice1);
   document.getElementById("regular-price-3").value = String(settings.sponsorRegularPrice3);
   document.getElementById("sponsor-promo-limit").value = String(settings.sponsorPromoLimit);
-  document.getElementById("payment-days").value = settings.paymentDays || 3;
-  document.getElementById("ecpay-url").value = settings.ecpayUrl || "";
+  document.getElementById("sponsor-reservation-hours").value = String(settings.reservationHours || 24);
+  document.getElementById("ecpay-url").value = settings.sponsorPromoPaymentUrl || "";
+  document.getElementById("regular-ecpay-url").value = settings.sponsorRegularPaymentUrl || "";
   updatePlanOptions();
   updatePlanPreview(true);
 }
@@ -242,12 +249,14 @@ async function saveSettings(event) {
     sponsorRegularPrice1: positiveInteger(document.getElementById("regular-price-1").value, 150),
     sponsorRegularPrice3: positiveInteger(document.getElementById("regular-price-3").value, 400),
     sponsorPromoLimit: positiveInteger(document.getElementById("sponsor-promo-limit").value, 200),
-    paymentDays: positiveInteger(document.getElementById("payment-days").value, 3),
+    sponsorReservationHours: positiveInteger(document.getElementById("sponsor-reservation-hours").value, 24),
+    sponsorPromoPaymentUrl: document.getElementById("ecpay-url").value.trim(),
+    sponsorRegularPaymentUrl: document.getElementById("regular-ecpay-url").value.trim(),
     ecpayUrl: document.getElementById("ecpay-url").value.trim(),
     updatedAt: serverTimestamp()
   };
   await setDoc(doc(db, "membershipSettings", "default"), settings, { merge: true });
-  statusEl.textContent = "方案與前200名優惠設定已儲存";
+  statusEl.textContent = "方案、優惠名額與兩組綠界付款連結已儲存";
   await loadOfferStatus();
   updatePlanPreview(true);
 }
@@ -334,6 +343,7 @@ async function activateMember() {
       email: normalizeEmail(document.getElementById("member-email").value),
       name: document.getElementById("member-name").value.trim(),
       planMonths: selectedMonths(),
+      pendingOrderNo: members.find((item) => item.email === normalizeEmail(document.getElementById("member-email").value))?.pendingOrderNo || "",
       note: document.getElementById("member-note").value.trim()
     });
     const data = result.data;
@@ -385,8 +395,7 @@ async function loadPaymentBackendStatus() {
 }
 
 function paymentDeadline() {
-  const date = new Date();
-  date.setDate(date.getDate() + Number(settings.paymentDays || 3));
+  const date = new Date(Date.now() + Number(settings.reservationHours || 24) * 60 * 60 * 1000);
   return formatDate(date);
 }
 
@@ -427,33 +436,36 @@ function renderMembers() {
     listEl.innerHTML = '<div class="empty">目前尚無贊助會員資料；此時任何一般登入帳號都不會取得贊助文章閱讀權限。</div>';
     return;
   }
-  const now = new Date();
-  listEl.innerHTML = members.map((member) => {
-    const expiry = dateValue(member.expiresAt);
+  const pendingMembers = members.filter((member) => member.paymentStatus === "pending" || member.status === "pending");
+  const formalMembers = members.filter((member) => !pendingMembers.includes(member));
+  const renderRow = (member, pending = false) => {
     const active = hasAuthoritativeSponsorAccess(member);
-    const label = member.paymentStatus === "pending"
-      ? "待付款／未開權限"
-      : active
-        ? "有效"
-        : member.status === "active"
-          ? "權限資料不完整"
-          : "已到期";
-    const tier = member.priceTier === "regular"
-      ? "一般價"
-      : member.promotionSequence
-        ? `優惠第${Number(member.promotionSequence)}名`
-        : "優惠價／舊資料";
+    const label = pending ? "待核對付款" : active ? "有效" : member.status === "active" ? "權限資料不完整" : "已到期";
+    const months = Number(pending ? member.pendingPlanMonths || member.planMonths : member.planMonths || 0);
+    const amount = Number(pending ? member.pendingAmount || member.amount : member.amount || 0);
+    const priceTier = pending ? member.pendingPriceTier || member.priceTier : member.priceTier;
+    const sequence = pending ? member.pendingPromotionSequence || member.promotionSequence : member.promotionSequence;
+    const tier = priceTier === "regular" ? "一般價" : sequence ? `優惠第${Number(sequence)}名` : "優惠價／舊資料";
+    const deadline = pending && member.pendingPaymentDeadline ? `｜名額保留至 ${escapeHtml(formatDate(member.pendingPaymentDeadline))}` : "";
     return `<div class="member-row">
       <div>
         <strong>${escapeHtml(member.name || "未填姓名")}｜${escapeHtml(label)}</strong>
-        <small>${escapeHtml(member.email)}｜${Number(member.planMonths || 0)}個月｜NT$${Number(member.amount || 0).toLocaleString("zh-TW")}｜${escapeHtml(tier)}｜到期 ${escapeHtml(formatDate(member.expiresAt))}</small>
+        <small>${escapeHtml(member.email)}｜${months}個月｜NT$${amount.toLocaleString("zh-TW")}｜${escapeHtml(tier)}${deadline}${pending ? "" : `｜到期 ${escapeHtml(formatDate(member.expiresAt))}`}</small>
       </div>
       <div class="member-row-actions">
-        <button class="btn" type="button" data-edit="${escapeHtml(member.email)}">編輯</button>
+        <button class="btn" type="button" data-edit="${escapeHtml(member.email)}">${pending ? "核對／開通" : "編輯"}</button>
         <button class="btn danger" type="button" data-delete="${escapeHtml(member.email)}">刪除</button>
       </div>
     </div>`;
-  }).join("");
+  };
+  const section = (title, note, items, pending) => `
+    <section style="margin-bottom:24px">
+      <h4 style="margin:0 0 6px;color:#CBAA77;font-size:17px">${title}（${items.length}）</h4>
+      <p class="membership-help" style="margin-top:0">${note}</p>
+      ${items.length ? items.map((member) => renderRow(member, pending)).join("") : '<div class="empty">目前沒有資料</div>'}
+    </section>`;
+  listEl.innerHTML = section("待核對付款", "收到綠界付款通知後，按「核對／開通」，確認 Email、方案及金額，再按「確認付款並開通」。", pendingMembers, true)
+    + section("正式會員名單", "只有完成付款確認的會員，才會取得贊助文章閱讀權限與會員卡。", formalMembers, false);
   listEl.querySelectorAll("[data-edit]").forEach((button) => button.addEventListener("click", () => editMember(button.dataset.edit)));
   listEl.querySelectorAll("[data-delete]").forEach((button) => button.addEventListener("click", () => removeMember(button.dataset.delete)));
 }
@@ -467,7 +479,7 @@ function editMember(email) {
   monthsEl.value = Number(member.planMonths) === 3 ? "3" : "1";
   amountEl.value = String(member.amount || "");
   document.getElementById("member-payment-status").value = member.paymentStatus || "pending";
-  paymentUrlEl.value = member.paymentUrl || settings.ecpayUrl || "";
+  paymentUrlEl.value = member.pendingPaymentUrl || member.paymentUrl || (member.pendingPriceTier === "regular" ? settings.sponsorRegularPaymentUrl : settings.sponsorPromoPaymentUrl) || "";
   document.getElementById("member-note").value = member.note || "";
   updatePlanOptions();
   updatePlanPreview(false);

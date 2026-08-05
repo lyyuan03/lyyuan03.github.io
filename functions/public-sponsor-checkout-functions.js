@@ -31,6 +31,20 @@ function cleanText(value = "", maximum = 100) {
   return String(value).replace(/[\u0000-\u001f\u007f<>]/g, " ").trim().slice(0, maximum);
 }
 
+function positiveInteger(value, fallback) {
+  const number = Number(value);
+  return Number.isInteger(number) && number > 0 ? number : fallback;
+}
+
+function safePaymentUrl(value = "") {
+  try {
+    const url = new URL(String(value).trim());
+    return url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
 function tokenHash(token) {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
@@ -91,12 +105,12 @@ async function sendReservationEmail({ email, name, amount, months, paymentUrl, p
     from,
     to: email,
     subject: `靈元院贊助閱讀｜${months}個月方案付款連結`,
-    text: `${displayName}您好：\n\n${offerLine}\n會員期間：${months}個月\n應繳金額：新台幣 ${amount.toLocaleString("zh-TW")} 元\n付款期限：${expiry}\n\n請由以下專屬連結前往綠界安全付款：\n${paymentUrl}\n\n付款成功後，系統會自動開通閱讀資格。請使用本信收件 Email 登入靈元院官網。\n\nLYY靈元院行政團隊`,
+    text: `${displayName}您好：\n\n${offerLine}\n會員期間：${months}個月\n應繳金額：新台幣 ${amount.toLocaleString("zh-TW")} 元\n付款期限：${expiry}\n\n請由以下專屬連結前往綠界安全付款：\n${paymentUrl}\n\n付款完成後，靈元院行政團隊會核對款項並開通閱讀資格。請使用本信收件 Email 登入靈元院官網。\n\nLYY靈元院行政團隊`,
     html: `<p>${htmlEscape(displayName)}您好：</p>
       <p><strong>${htmlEscape(offerLine)}</strong></p>
       <p>會員期間：<strong>${months}個月</strong><br>應繳金額：<strong>新台幣 ${amount.toLocaleString("zh-TW")} 元</strong><br>付款期限：<strong>${htmlEscape(expiry)}</strong></p>
       <p><a href="${htmlEscape(paymentUrl)}" style="display:inline-block;padding:12px 20px;background:#606330;color:#fff;text-decoration:none">前往綠界安全付款</a></p>
-      <p>付款成功後，系統會自動開通閱讀資格。請使用本信收件 Email 登入靈元院官網。</p>
+      <p>付款完成後，靈元院行政團隊會核對款項並開通閱讀資格。請使用本信收件 Email 登入靈元院官網。</p>
       <p><a href="${SITE_URL}/articles.html">返回靈元院文選</a></p>
       <p>LYY靈元院行政團隊</p>`
   });
@@ -112,7 +126,13 @@ async function readOfferStatus(transaction, excludedOrderNo = "") {
     transaction.get(ordersQuery),
     transaction.get(membersQuery)
   ]);
-  const settings = normalizeSponsorOfferSettings(settingsSnapshot.data() || {});
+  const rawSettings = settingsSnapshot.data() || {};
+  const settings = {
+    ...normalizeSponsorOfferSettings(rawSettings),
+    reservationHours: positiveInteger(rawSettings.sponsorReservationHours, 24),
+    promoPaymentUrl: safePaymentUrl(rawSettings.sponsorPromoPaymentUrl || rawSettings.ecpayUrl),
+    regularPaymentUrl: safePaymentUrl(rawSettings.sponsorRegularPaymentUrl)
+  };
   const now = Date.now();
 
   let paidCount = 0;
@@ -142,14 +162,14 @@ async function readOfferStatus(transaction, excludedOrderNo = "") {
   };
 }
 
-function paymentUrlFor(tradeNo, paymentToken) {
-  return `${FUNCTIONS_BASE_URL}/membershipPayment?order=${encodeURIComponent(tradeNo)}&token=${encodeURIComponent(paymentToken)}`;
+function paymentUrlForTier(settings, priceTier) {
+  return priceTier === "promo" ? settings.promoPaymentUrl : settings.regularPaymentUrl;
 }
 
 exports.createPublicSponsorCheckout = onCall(
   {
     region: REGION,
-    secrets: [ecpayConfig, smtpConfig],
+    secrets: [smtpConfig],
     enforceAppCheck: false
   },
   async (request) => {
@@ -162,20 +182,14 @@ exports.createPublicSponsorCheckout = onCall(
       throw new HttpsError("unauthenticated", "請先使用將來閱讀文章的 Email 登入會員帳號。");
     }
     if (request.auth.token.email_verified === false) {
-      throw new HttpsError("failed-precondition", "請先完成 Email 驗證後再建立付款訂單。");
+      throw new HttpsError("failed-precondition", "請先完成 Email 驗證後再建立付款申請。");
     }
     if (![1, 3].includes(planMonths)) {
       throw new HttpsError("invalid-argument", "目前僅提供一個月或三個月方案。");
     }
 
-    const config = ecpayConfig.value();
-    if (!config.merchantId || !config.hashKey || !config.hashIV) {
-      throw new HttpsError("failed-precondition", "綠界金流尚未完成安全設定。");
-    }
-
     const memberRef = db.doc(`sponsorMemberAccess/${email}`);
     const newTradeNo = createMerchantTradeNo();
-    const newPaymentToken = crypto.randomBytes(24).toString("base64url");
     const newOrderRef = db.doc(`membershipOrders/${newTradeNo}`);
 
     const checkout = await db.runTransaction(async (transaction) => {
@@ -197,14 +211,14 @@ exports.createPublicSponsorCheckout = onCall(
         && existingOrder.status === "pending"
         && millis(existingOrder.paymentLinkExpiresAt) > Date.now()
         && Number(existingOrder.planMonths) === planMonths
-        && existingOrder.paymentAccessToken
+        && safePaymentUrl(existingOrder.externalPaymentUrl)
       );
 
       if (existingIsReusable) {
         const status = await readOfferStatus(transaction);
         return {
           merchantTradeNo: existingOrderNo,
-          paymentToken: existingOrder.paymentAccessToken,
+          paymentUrl: safePaymentUrl(existingOrder.externalPaymentUrl),
           amount: Number(existingOrder.amount),
           planMonths: Number(existingOrder.planMonths),
           priceTier: existingOrder.priceTier || "regular",
@@ -222,10 +236,17 @@ exports.createPublicSponsorCheckout = onCall(
         : "";
       const status = await readOfferStatus(transaction, excludeExistingOrder);
       const priceTier = status.promotionAvailable ? "promo" : "regular";
+      const paymentUrl = paymentUrlForTier(status.settings, priceTier);
+      if (!paymentUrl) {
+        throw new HttpsError(
+          "failed-precondition",
+          priceTier === "promo" ? "優惠價綠界付款連結尚未設定。" : "一般價綠界付款連結尚未設定。"
+        );
+      }
       const amount = sponsorPlanAmount(planMonths, priceTier, status.settings);
       const now = Timestamp.now();
       const paymentLinkExpiresAt = Timestamp.fromMillis(
-        now.toMillis() + status.settings.paymentDays * 24 * 60 * 60 * 1000
+        now.toMillis() + status.settings.reservationHours * 60 * 60 * 1000
       );
       const promotionSequence = priceTier === "promo" ? status.occupiedCount + 1 : null;
       const existingExpiry = dateValue(member.expiresAt);
@@ -254,10 +275,10 @@ exports.createPublicSponsorCheckout = onCall(
         promotionSequence,
         sponsorPromoLimit: status.settings.promoLimit,
         status: "pending",
-        paymentTokenHash: tokenHash(newPaymentToken),
-        paymentAccessToken: newPaymentToken,
+        manualPaymentReview: true,
+        paymentProvider: "ecpay-fixed-link",
+        externalPaymentUrl: paymentUrl,
         paymentLinkExpiresAt,
-        ecpayEnvironment: config.environment === "production" ? "production" : "stage",
         createdBy: `self-service:${uid || email}`,
         createdAt: now,
         updatedAt: now
@@ -274,6 +295,8 @@ exports.createPublicSponsorCheckout = onCall(
         pendingPriceTier: priceTier,
         pendingPromotionSequence: promotionSequence,
         pendingOrderNo: newTradeNo,
+        pendingPaymentUrl: paymentUrl,
+        pendingPaymentDeadline: paymentLinkExpiresAt,
         updatedAt: now
       };
       if (!preserveActiveMembership) {
@@ -290,7 +313,7 @@ exports.createPublicSponsorCheckout = onCall(
 
       return {
         merchantTradeNo: newTradeNo,
-        paymentToken: newPaymentToken,
+        paymentUrl,
         amount,
         planMonths,
         priceTier,
@@ -301,7 +324,6 @@ exports.createPublicSponsorCheckout = onCall(
       };
     });
 
-    const paymentUrl = paymentUrlFor(checkout.merchantTradeNo, checkout.paymentToken);
     let emailSent = false;
     if (!checkout.reused) {
       try {
@@ -310,7 +332,7 @@ exports.createPublicSponsorCheckout = onCall(
           name,
           amount: checkout.amount,
           months: checkout.planMonths,
-          paymentUrl,
+          paymentUrl: checkout.paymentUrl,
           priceTier: checkout.priceTier,
           promotionSequence: checkout.promotionSequence,
           expiresAt: checkout.paymentLinkExpiresAt.toDate()
@@ -336,13 +358,14 @@ exports.createPublicSponsorCheckout = onCall(
 
     return {
       merchantTradeNo: checkout.merchantTradeNo,
-      paymentUrl,
+      paymentUrl: checkout.paymentUrl,
       amount: checkout.amount,
       planMonths: checkout.planMonths,
       priceTier: checkout.priceTier,
       promotionSequence: checkout.promotionSequence,
       offerRemaining: checkout.offerRemaining,
       paymentDeadline: checkout.paymentLinkExpiresAt.toDate().toISOString(),
+      manualPaymentReview: true,
       reused: checkout.reused,
       emailSent
     };
