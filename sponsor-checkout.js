@@ -239,6 +239,11 @@ async function loadOffer() {
     const response = await fetch(`${OFFER_STATUS_URL}?t=${Date.now()}`, { cache: "no-store" });
     const data = await response.json();
     if (!response.ok || data.ready !== true) throw new Error("offer-not-ready");
+    if (data.manualPaymentReview !== true) {
+      offer = null;
+      console.warn("贊助閱讀新版後端尚未發布，暫時保留原本的聯絡申請方式。");
+      return;
+    }
     offer = data;
     enhancePaidGates();
   } catch (error) {

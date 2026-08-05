@@ -177,6 +177,7 @@ async function readSponsorOfferStatus(reader = null) {
 function publicOfferPayload(status) {
   const { settings } = status;
   return {
+    manualPaymentReview: true,
     promoLimit: settings.promoLimit,
     promoPrice1: settings.promoPrice1,
     promoPrice3: settings.promoPrice3,
