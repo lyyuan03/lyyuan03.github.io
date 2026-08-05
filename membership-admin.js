@@ -129,11 +129,7 @@ function planAmount(months) {
 
 function isCountedSponsorMember(member = {}) {
   return member.memberType === "sponsor-member"
-    && member.paymentStatus === "paid"
-    && member.articleAccess === true
-    && member.accessScope === "sponsor-paid-articles"
-    && Number(member.accessVersion || 0) >= 2
-    && Boolean(String(member.lastOrderNo || "").trim());
+    && member.paymentStatus === "paid";
 }
 
 function calculateOfferStatus() {
@@ -188,7 +184,7 @@ function installOfferAdminUi() {
   grid.insertAdjacentHTML("beforeend", `
     <div class="field"><label for="regular-price-1">第201名起｜一個月</label><input id="regular-price-1" type="number" min="1" step="1" value="150"></div>
     <div class="field"><label for="regular-price-3">第201名起｜三個月</label><input id="regular-price-3" type="number" min="1" step="1" value="400"></div>
-    <div class="field"><label for="sponsor-promo-limit">優惠名額上限（人次）</label><input id="sponsor-promo-limit" type="number" min="1" step="1" value="200"></div>
+    <div class="field"><label for="sponsor-promo-limit">優惠會員人數上限</label><input id="sponsor-promo-limit" type="number" min="1" step="1" value="200"></div>
   `);
   grid.insertAdjacentHTML("afterend", `
     <div id="sponsor-offer-admin-status" class="membership-summary" style="display:grid;gap:8px">
@@ -220,7 +216,7 @@ function renderOfferStatus() {
   const percentage = Math.min(100, Math.max(0, (used / Math.max(1, limit)) * 100));
   target.innerHTML = `
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <strong style="color:#CBAA77">前${limit}名優惠｜已占用 ${used} 人次</strong>
+      <strong style="color:#CBAA77">前${limit}名優惠｜已加入 ${used} 人</strong>
       <span>${offerStatus.promotionAvailable ? `尚餘 ${remaining} 名` : "優惠名額已額滿"}</span>
     </div>
     <div style="height:8px;border:1px solid rgba(165,130,84,.26);background:rgba(4,8,3,.5)"><span style="display:block;width:${percentage}%;height:100%;background:#A58254"></span></div>
@@ -455,7 +451,12 @@ function renderMembers() {
       <p class="membership-help" style="margin-top:0">此名單就是前台優惠倒數的統計依據。同一個 Gmail 只計算一人，續期不會重複增加名額。</p>
       ${members.map((member) => {
         const active = hasAuthoritativeSponsorAccess(member);
-        const label = active ? "有效" : "已到期";
+        const expiry = dateValue(member.expiresAt);
+        const label = active
+          ? "有效"
+          : member.status === "active" && expiry && expiry > new Date()
+            ? "權限資料待補齊"
+            : "已到期";
         const tier = member.priceTier === "regular"
           ? "一般價"
           : member.promotionSequence
