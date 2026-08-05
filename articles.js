@@ -1065,9 +1065,12 @@ async function loadArticles() {
   ));
   loadedArticles = hydratedArticles.sort(sortPublished);
   renderTabs();
-  await loadArticleMetrics();
 
+  // 文章內容優先顯示；閱讀統計改為背景載入，避免統計請求延遲時整頁卡在「文章載入中」。
   renderCurrentView();
+  void loadArticleMetrics().then(() => {
+    loadedArticles.forEach((article) => updateMetricSummary(articleKey(article)));
+  });
 }
 
 loadArticles().catch((error) => {
