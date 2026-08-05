@@ -37,6 +37,15 @@ function safeHttpsUrl(value = "") {
   }
 }
 
+function safeImageData(value = "") {
+  return /^data:image\/(?:jpeg|png|webp|gif);base64,[A-Za-z0-9+/=\r\n]+$/.test(value) ? value : "";
+}
+
+function safeCoverSource(video = {}) {
+  return safeImageData(video.coverImageData || "")
+    || safeHttpsUrl(video.coverImageUrl || video.coverUrl || video.thumbnailUrl || video.coverImage || "");
+}
+
 function safeYouTubeUrl(value = "") {
   try {
     const url = new URL(value);
@@ -58,7 +67,9 @@ function membershipLevel(member = {}) {
 
 function isActiveWellnessMember(member = {}) {
   if (member.memberType === "sponsor-member") return false;
-  const isWellness = member.wellnessAccess === true || member.memberType === "wellness-channel" || ["wellness", "lingji"].includes(member.memberLevel);
+  const isWellness = member.wellnessAccess === true
+    || member.memberType === "wellness-channel"
+    || ["wellness", "lingji"].includes(member.memberLevel);
   const expiry = toDate(member.expiresAt);
   return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
 }
@@ -107,16 +118,18 @@ function renderVideos(videos, email) {
     videoGrid.innerHTML = `<div class="empty-library"><span class="empty-symbol">◇</span><h3>會員影片即將上架</h3><p>新的養護與靈性修練內容，將依本期進度陸續放入這裡。</p></div>`;
     return;
   }
+
   videoGrid.innerHTML = videos.map((video) => {
     const watchUrl = safeYouTubeUrl(video.youtubeUrl);
-    const coverUrl = safeHttpsUrl(video.coverImageUrl || video.coverUrl || video.thumbnailUrl || video.coverImage || "");
+    const coverSource = safeCoverSource(video);
     const accessLabel = video.accessLevel === "lingji" ? "靈極會員專屬" : "養生會員專屬";
     const date = toDate(video.publishedAt);
     return `<article class="video-card">
-      <div class="video-cover">${coverUrl ? `<img src="${escapeHtml(coverUrl)}" alt="${escapeHtml(video.title)}影片封面" loading="lazy" data-member-video-cover>` : '<span class="video-cover-placeholder">PRIVATE MEMBER VIDEO</span>'}<span class="video-access-badge">${escapeHtml(accessLabel)}</span></div>
+      <div class="video-cover">${coverSource ? `<img src="${escapeHtml(coverSource)}" alt="${escapeHtml(video.title)}影片封面" loading="lazy" data-member-video-cover>` : '<span class="video-cover-placeholder">PRIVATE MEMBER VIDEO</span>'}<span class="video-access-badge">${escapeHtml(accessLabel)}</span></div>
       <div class="video-copy"><div class="video-meta"><span class="video-tag">${escapeHtml(video.category || "MEMBER VIDEO")}</span><span class="video-date">${escapeHtml(video.duration || (date ? formatDate(date) : ""))}</span></div><h3>${escapeHtml(video.title)}</h3><p>${escapeHtml(video.description || "")}</p>${watchUrl ? `<a class="video-watch" href="${escapeHtml(watchUrl)}" target="_blank" rel="noopener noreferrer">前往 YouTube 觀看私人影片</a><p class="video-account">請以 ${escapeHtml(email)} 登入 YouTube</p>` : ""}</div>
     </article>`;
   }).join("");
+
   videoGrid.querySelectorAll("[data-member-video-cover]").forEach((image) => {
     if (image.complete && image.naturalWidth === 0) {
       replaceBrokenCover(image);
@@ -160,7 +173,9 @@ onAuthStateChanged(auth, async (user) => {
     const snapshot = await getDoc(doc(db, "memberAccess", email));
     const member = snapshot.exists() ? snapshot.data() : null;
     if (!member || !isActiveWellnessMember(member)) {
-      const expired = member?.expiresAt ? `目前紀錄的會籍到期日為 ${formatDate(member.expiresAt)}。` : "系統目前查無有效的養生會員資格。";
+      const expired = member?.expiresAt
+        ? `目前紀錄的會籍到期日為 ${formatDate(member.expiresAt)}。`
+        : "系統目前查無有效的養生會員資格。";
       showAccessState(
         "目前沒有有效的影片權限",
         `${expired} 如需確認續會或會員資料，請聯繫靈元院行政團隊。`,
@@ -168,6 +183,7 @@ onAuthStateChanged(auth, async (user) => {
       );
       return;
     }
+
     const level = evaluateMember(member).effectiveLevel;
     const videos = await loadMemberVideos(level);
     accessPanel.hidden = true;
