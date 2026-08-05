@@ -226,12 +226,11 @@
               <div class="grid">
                 <div class="field"><label for="price-1">一個月費用</label><input id="price-1" type="number" value="120" readonly></div>
                 <div class="field"><label for="price-3">三個月費用</label><input id="price-3" type="number" value="300" readonly></div>
-                <div class="field"><label for="sponsor-reservation-hours">優惠名額保留期限（小時）</label><input id="sponsor-reservation-hours" type="number" min="1" max="168" value="24"></div>
-              </div>
+                              </div>
               <div class="field"><label for="ecpay-url">前200名優惠付款連結</label><input id="ecpay-url" type="url" placeholder="https://p.ecpay.com.tw/..."></div>
               <div class="field"><label for="regular-ecpay-url">第201名起一般價格付款連結</label><input id="regular-ecpay-url" type="url" placeholder="https://p.ecpay.com.tw/..."></div>
               <button class="btn primary" type="submit">儲存方案設定</button>
-              <p class="membership-help">兩個綠界連結內都需可選擇一個月與三個月方案。系統會在會員按下付款時重新確認名額，前200人次導向優惠連結，第201人次起自動導向一般價格連結。</p>
+              <p class="membership-help">兩個綠界連結內都需可選擇一個月與三個月方案。系統直接依已確認付款的正式會員名單計算：前200名使用優惠連結，第201名起使用一般價連結；不需金流後端或機密金鑰。</p>
             </form>
           </div>
 
@@ -251,9 +250,8 @@
               <div id="member-summary" class="membership-summary">選擇方案後，系統將自動計算金額與效期。</div>
               <div class="top-actions">
                 <button class="btn primary" type="submit">儲存會員資料</button>
-                <button id="member-send-payment" class="btn primary" type="button" disabled>正在確認金流後端…</button>
+                <button id="member-send-payment" class="btn primary" type="button">依名單判讀並開啟付款通知</button>
                 <button id="member-activate" class="btn" type="button">確認付款並開通</button>
-                <button id="member-email-payment" class="btn" type="button">開啟繳費通知 Email</button>
                 <button id="member-form-reset" class="btn" type="button">清除</button>
               </div>
             </form>
@@ -386,7 +384,7 @@
 <script type="module" src="activity-admin.js?v=20260801-personal-links-v2"></script>
 <script type="module" src="article-admin.js?v=20260802-thumbnail-save-1"></script>
 <script type="module" src="article-thumbnail-admin.js?v=20260802-thumbnail-recovery-2"></script>
-<script type="module" src="membership-admin.js?v=20260805-manual-ecpay-1"></script>
+<script type="module" src="membership-admin.js?v=20260805-simple-links-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20260804-article-benefit-1"></script>
 <script type="module" src="member-video-admin.js?v=20260801-private-youtube-1"></script>
 </body>
