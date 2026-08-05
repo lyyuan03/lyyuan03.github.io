@@ -18,27 +18,32 @@ jobs:
       - name: Force new member dashboard modules
         run: |
           python - <<'PY'
+          import re
           from pathlib import Path
 
           dashboard_js = Path('member-dashboard.js')
           text = dashboard_js.read_text(encoding='utf-8')
-          old = 'from "./member-dashboard-logic.js";'
-          new = 'from "./member-dashboard-logic.js?v=20260805-taipei-cycle-1";'
-          if new not in text:
-              if old not in text:
-                  raise SystemExit('member-dashboard.js import not found')
-              text = text.replace(old, new, 1)
-              dashboard_js.write_text(text, encoding='utf-8')
+          text, import_count = re.subn(
+              r'from "\./member-dashboard-logic\.js(?:\?v=[^"]+)?";',
+              'from "./member-dashboard-logic.js?v=20260805-taipei-cycle-1";',
+              text,
+              count=1
+          )
+          if import_count != 1:
+              raise SystemExit('member-dashboard.js import not found')
+          dashboard_js.write_text(text, encoding='utf-8')
 
           dashboard_html = Path('member-dashboard.html')
           html = dashboard_html.read_text(encoding='utf-8')
-          old_html = '/member-dashboard.js?v=20260804-article-benefit-1'
-          new_html = '/member-dashboard.js?v=20260805-taipei-cycle-1'
-          if new_html not in html:
-              if old_html not in html:
-                  raise SystemExit('member-dashboard.html script version not found')
-              html = html.replace(old_html, new_html, 1)
-              dashboard_html.write_text(html, encoding='utf-8')
+          html, script_count = re.subn(
+              r'/member-dashboard\.js\?v=[^"\']+',
+              '/member-dashboard.js?v=20260805-taipei-cycle-1',
+              html,
+              count=1
+          )
+          if script_count != 1:
+              raise SystemExit('member-dashboard.html script version not found')
+          dashboard_html.write_text(html, encoding='utf-8')
           PY
       - name: Commit cache version update
         run: |
