@@ -161,12 +161,16 @@ async function publishOfferStatus() {
     status: "published",
     hidden: true,
     systemRecord: true,
+    publicVersion: 2,
     title: "贊助閱讀方案名額狀態",
     category: "system",
     content: "",
     excerpt: "",
     ...offerStatus,
+    promoPaymentUrl: String(settings.sponsorPromoPaymentUrl || "").trim(),
+    regularPaymentUrl: String(settings.sponsorRegularPaymentUrl || "").trim(),
     currentPaymentUrl: String(currentPaymentUrl || "").trim(),
+    publicUpdatedAt: new Date().toISOString(),
     updatedAt: serverTimestamp()
   }, { merge: true });
 }
@@ -191,6 +195,9 @@ function installOfferAdminUi() {
       <strong style="color:#CBAA77">前200名優惠進度載入中…</strong>
     </div>
     <p class="membership-help">優惠名額直接依「付款成功後，已加入正式名單的 Gmail 人數」計算。前200名使用優惠連結，第201名起使用一般價連結；同一個 Gmail 續期不會重複增加人數。</p>
+    <div class="top-actions" style="margin-top:12px">
+      <button id="sync-sponsor-public-offer" class="btn" type="button">立即同步前台名額與付款連結</button>
+    </div>
   `);
 }
 
@@ -297,15 +304,23 @@ async function saveSettings(event) {
   updatePlanPreview(true);
 }
 
-async function loadOfferStatus() {
+async function syncPublicOfferStatus(showMessage = false) {
   offerStatus = calculateOfferStatus();
+  await publishOfferStatus();
   renderOfferStatus();
   updatePlanOptions();
   updatePlanPreview(true);
+  if (showMessage) {
+    statusEl.textContent = `前台已同步｜已加入 ${offerStatus.paidCount} 人｜尚餘 ${offerStatus.remaining} 名｜目前套用${offerStatus.promotionAvailable ? "優惠價" : "一般價"}付款連結`;
+  }
+}
+
+async function loadOfferStatus() {
   try {
-    await publishOfferStatus();
+    await syncPublicOfferStatus(false);
   } catch (error) {
     console.warn("公開優惠名額狀態暫時無法更新。", error);
+    renderOfferStatus();
   }
 }
 
@@ -513,7 +528,7 @@ async function loadMembers() {
   updatePlanOptions();
   updatePlanPreview(true);
   try {
-    await publishOfferStatus();
+    await syncPublicOfferStatus(false);
   } catch (error) {
     console.warn("公開優惠名額狀態暫時無法更新。", error);
   }
@@ -525,6 +540,9 @@ monthsEl?.addEventListener("change", () => updatePlanPreview(true));
 activateButton?.addEventListener("click", () => activateMember().catch(showError));
 sendPaymentButton?.addEventListener("click", () => createPaymentOrder().catch(showError));
 resetButton?.addEventListener("click", resetMemberForm);
+document.getElementById("sync-sponsor-public-offer")?.addEventListener("click", () => {
+  syncPublicOfferStatus(true).catch(showError);
+});
 
 function showError(error) {
   console.error(error);
@@ -536,6 +554,7 @@ onAuthStateChanged(auth, async (user) => {
   try {
     await loadSettings();
     await loadMembers();
+    await syncPublicOfferStatus(true);
   } catch (error) {
     showError(error);
     listEl.innerHTML = '<div class="empty">會員資料暫時無法載入，請確認管理員登入狀態與 Firebase 規則。</div>';
