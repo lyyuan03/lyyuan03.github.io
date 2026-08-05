@@ -19,67 +19,82 @@ function installStyles() {
   const style = document.createElement("style");
   style.id = "sponsor-checkout-styles";
   style.textContent = `
-    .sponsor-offer-panel{margin:14px 0;padding:16px;border:1px solid rgba(165,130,84,.36);background:rgba(255,255,255,.42);text-align:center}
-    .sponsor-offer-panel strong{display:block;color:#604426;font-size:15px}
-    .sponsor-offer-panel span{display:block;margin-top:5px;color:#78654f;font-size:11px;line-height:1.7}
-    .sponsor-checkout-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
-    .sponsor-plan-button{min-height:68px;padding:10px;border:1px solid rgba(125,94,55,.42);background:#A58254;color:#fff;cursor:pointer;font-family:'Noto Sans TC',sans-serif}
-    .sponsor-plan-button:hover{background:#8f6c43}
-    .sponsor-plan-button span,.sponsor-plan-button strong{display:block;color:#fff}
-    .sponsor-plan-button strong{font-size:16px}
-    .sponsor-offer-note{margin:10px 0 0;color:rgba(46,37,28,.62);font-size:9px;line-height:1.65}
-    @media(max-width:520px){.sponsor-checkout-actions{grid-template-columns:1fr}}
+    .sponsor-offer-panel{margin:18px 0 12px;padding:18px 16px;border:1px solid rgba(165,130,84,.35);background:rgba(255,255,255,.46);text-align:center}
+    .sponsor-offer-count{display:grid;gap:4px;margin-bottom:14px}
+    .sponsor-offer-count span{font-size:10px;letter-spacing:.16em;color:#8a6d49}
+    .sponsor-offer-count strong{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:#5f4529}
+    .sponsor-offer-prices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
+    .sponsor-offer-price{padding:12px 8px;border:1px solid rgba(125,94,55,.25);background:rgba(248,243,234,.78)}
+    .sponsor-offer-price span{display:block;margin:0 0 4px;font-size:10px;color:#776550}
+    .sponsor-offer-price strong{display:block;font-size:18px;color:#5a4127}
+    .sponsor-payment-button{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:10px 16px;border:1px solid #9a774d;background:#A58254;color:#fff;font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:600;letter-spacing:.08em;cursor:pointer}
+    .sponsor-payment-button:hover{background:#8f6c43}
+    .sponsor-offer-note{margin:10px 0 0;color:rgba(46,37,28,.64);font-size:9px;line-height:1.7}
+    .sponsor-offer-loading{padding:16px 12px;border:1px solid rgba(165,130,84,.25);color:#7b684f;font-size:11px;text-align:center}
+    @media(max-width:520px){.sponsor-offer-prices{grid-template-columns:1fr}.sponsor-offer-count strong{font-size:18px}}
   `;
   document.head.appendChild(style);
 }
 
 function offerMarkup() {
-  if (!offer) return '';
+  if (!offer) {
+    return '<div class="sponsor-offer-loading">方案與優惠名額載入中，請稍候。</div>';
+  }
+  const limit = Number(offer.promoLimit || 200);
+  const remaining = Number(offer.remaining || 0);
   const status = offer.promotionAvailable
-    ? `前${Number(offer.promoLimit || 200)}名優惠尚餘 ${Number(offer.remaining || 0)} 名`
-    : `前${Number(offer.promoLimit || 200)}名優惠已額滿，目前適用一般價格`;
+    ? `前 ${limit} 名優惠｜目前尚餘 ${remaining} 名`
+    : `前 ${limit} 名優惠已額滿｜目前適用一般價格`;
+  const eyebrow = offer.promotionAvailable ? "LIMITED OFFER" : "REGULAR PRICE";
   return `<div class="sponsor-offer-panel">
-    <strong>${status}</strong>
-    <span>一個月 NT$${formatMoney(currentPrice(1))}｜三個月 NT$${formatMoney(currentPrice(3))}</span>
-    <div class="sponsor-checkout-actions">
-      <button class="sponsor-plan-button" type="button" data-sponsor-pay="1"><span>一個月觀看權限</span><strong>NT$${formatMoney(currentPrice(1))}</strong></button>
-      <button class="sponsor-plan-button" type="button" data-sponsor-pay="3"><span>三個月觀看權限</span><strong>NT$${formatMoney(currentPrice(3))}</strong></button>
+    <div class="sponsor-offer-count">
+      <span>${eyebrow}</span>
+      <strong>${status}</strong>
     </div>
-    <p class="sponsor-offer-note">點選後直接前往目前適用的綠界付款頁面。付款完成後，行政團隊核對款項並將您的 Gmail 加入會員名單。</p>
+    <div class="sponsor-offer-prices" aria-label="贊助閱讀方案價格">
+      <div class="sponsor-offer-price"><span>一個月觀看權限</span><strong>NT$${formatMoney(currentPrice(1))}</strong></div>
+      <div class="sponsor-offer-price"><span>三個月觀看權限</span><strong>NT$${formatMoney(currentPrice(3))}</strong></div>
+    </div>
+    <button class="sponsor-payment-button" type="button" data-sponsor-pay>立即前往綠界付款</button>
+    <p class="sponsor-offer-note">付款頁面可選擇一個月或三個月方案。完成付款後，行政團隊核對款項並以付款資料中的 Gmail 開通閱讀資格。</p>
   </div>`;
 }
 
 function enhancePaidGates(root = document) {
-  if (!offer) return;
-  root.querySelectorAll?.('.paid-lock-zone[aria-label="贊助會員專屬"] .paid-lock-card').forEach((card) => {
-    const current = card.querySelector('.sponsor-offer-panel');
-    if (current) current.outerHTML = offerMarkup();
-    else card.querySelector('.paid-inquiry-actions')?.insertAdjacentHTML('beforebegin', offerMarkup());
+  root.querySelectorAll?.('[data-sponsor-offer-slot]').forEach((slot) => {
+    slot.innerHTML = offerMarkup();
   });
 }
 
 async function loadOffer() {
-  const snapshot = await getDoc(doc(db, 'articles', 'sponsor-offer-status'));
+  const snapshot = await getDoc(doc(db, "articles", "sponsor-offer-status"));
   const data = snapshot.exists() ? snapshot.data() || {} : {};
-  offer = data.status === 'published' && data.systemRecord === true ? data : null;
+  offer = data.status === "published" && data.systemRecord === true ? data : null;
   enhancePaidGates();
 }
 
-function goToPayment() {
-  const paymentUrl = String(offer?.currentPaymentUrl || '').trim();
-  if (!paymentUrl.startsWith('https://')) {
-    alert(offer?.promotionAvailable ? '優惠付款連結尚未設定。' : '一般價付款連結尚未設定。');
-    return;
+async function goToPayment() {
+  try {
+    await loadOffer();
+    const paymentUrl = String(offer?.currentPaymentUrl || "").trim();
+    if (!paymentUrl.startsWith("https://")) {
+      alert(offer?.promotionAvailable ? "優惠付款連結尚未設定。" : "一般價付款連結尚未設定。");
+      return;
+    }
+    window.location.assign(paymentUrl);
+  } catch (error) {
+    console.warn("付款連結暫時無法取得。", error);
+    alert("付款連結暫時無法取得，請稍後重新整理頁面。");
   }
-  window.location.assign(paymentUrl);
 }
 
 installStyles();
-loadOffer().catch((error) => console.warn('贊助方案名額暫時無法取得。', error));
+enhancePaidGates();
+loadOffer().catch((error) => console.warn("贊助方案名額暫時無法取得。", error));
 setInterval(() => loadOffer().catch(() => {}), 60000);
 
-document.addEventListener('click', (event) => {
-  if (!event.target.closest('[data-sponsor-pay]')) return;
+document.addEventListener("click", (event) => {
+  if (!event.target.closest("[data-sponsor-pay]")) return;
   event.preventDefault();
   goToPayment();
 });
