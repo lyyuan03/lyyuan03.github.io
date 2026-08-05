@@ -1,0 +1,46 @@
+name: Inspect live article cache
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/inspect-live-cache.yml
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect live files
+        shell: bash
+        run: |
+          set -e
+          REPORT=debug-live-report.txt
+          : > "$REPORT"
+          URL='https://lyyuan.tw/articles.html?id=how-to-judge-true-lingxiu-understanding&cacheprobe=202608051720'
+          {
+            echo '=== DATE ==='
+            date -u
+            echo '=== PAGE HEADERS ==='
+            curl -sSIL "$URL"
+            echo '=== SCRIPT TAGS ==='
+            curl -sS "$URL" | grep -oE 'src="[^"]+"' | tail -n 20 || true
+            echo '=== PAGE CONTAINS LOADING FIX VERSION ==='
+            curl -sS "$URL" | grep -n 'articles.js?v=' || true
+            echo '=== LIVE JS HEADERS ==='
+            curl -sSIL 'https://lyyuan.tw/articles.js?v=20260805-loading-fix-1'
+            echo '=== LIVE JS FIX BLOCK ==='
+            curl -sS 'https://lyyuan.tw/articles.js?v=20260805-loading-fix-1' | grep -A10 -B4 '文章內容優先顯示' || true
+            echo '=== LIVE JS OLD BLOCK ==='
+            curl -sS 'https://lyyuan.tw/articles.js?v=20260805-loading-fix-1' | grep -A4 -B2 'await loadArticleMetrics' || true
+          } >> "$REPORT" 2>&1
+          rm .github/workflows/inspect-live-cache.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT" .github/workflows/inspect-live-cache.yml
+          git commit -m 'Record live article cache inspection'
+          git push
