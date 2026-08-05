@@ -14,11 +14,24 @@ function currentPrice(planMonths) {
     : (Number(planMonths) === 3 ? offer.regularPrice3 : offer.regularPrice1);
 }
 
+function offerSignature() {
+  if (!offer) return "loading";
+  return [
+    offer.promotionAvailable ? "promo" : "regular",
+    Number(offer.promoLimit || 200),
+    Number(offer.remaining || 0),
+    currentPrice(1),
+    currentPrice(3),
+    String(offer.currentPaymentUrl || "")
+  ].join("|");
+}
+
 function installStyles() {
   if (document.getElementById("sponsor-checkout-styles")) return;
   const style = document.createElement("style");
   style.id = "sponsor-checkout-styles";
   style.textContent = `
+    .sponsor-join-card>p{max-width:520px;margin-left:auto;margin-right:auto}
     .sponsor-offer-panel{margin:18px 0 12px;padding:18px 16px;border:1px solid rgba(165,130,84,.35);background:rgba(255,255,255,.46);text-align:center}
     .sponsor-offer-count{display:grid;gap:4px;margin-bottom:14px}
     .sponsor-offer-count span{font-size:10px;letter-spacing:.16em;color:#8a6d49}
@@ -31,7 +44,12 @@ function installStyles() {
     .sponsor-payment-button:hover{background:#8f6c43}
     .sponsor-offer-note{margin:10px 0 0;color:rgba(46,37,28,.64);font-size:9px;line-height:1.7}
     .sponsor-offer-loading{padding:16px 12px;border:1px solid rgba(165,130,84,.25);color:#7b684f;font-size:11px;text-align:center}
-    @media(max-width:520px){.sponsor-offer-prices{grid-template-columns:1fr}.sponsor-offer-count strong{font-size:18px}}
+    .paid-member-return{display:grid;grid-template-columns:auto minmax(150px,220px);align-items:center;justify-content:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(125,94,55,.18)}
+    .paid-member-return span{font-size:11px;color:#75634f}
+    .paid-member-return .paid-inquiry-primary{width:100%;min-height:40px}
+    .paid-help-link{display:inline-block;margin-top:12px;color:#7d6040;font-size:10px;text-decoration:underline;text-underline-offset:4px}
+    .sponsor-join-card>small{display:block;margin-top:10px}
+    @media(max-width:520px){.sponsor-offer-prices{grid-template-columns:1fr}.sponsor-offer-count strong{font-size:18px}.paid-member-return{grid-template-columns:1fr}.paid-member-return span{text-align:center}}
   `;
   document.head.appendChild(style);
 }
@@ -61,7 +79,10 @@ function offerMarkup() {
 }
 
 function enhancePaidGates(root = document) {
-  root.querySelectorAll?.('[data-sponsor-offer-slot]').forEach((slot) => {
+  const signature = offerSignature();
+  root.querySelectorAll?.("[data-sponsor-offer-slot]").forEach((slot) => {
+    if (slot.dataset.offerSignature === signature) return;
+    slot.dataset.offerSignature = signature;
     slot.innerHTML = offerMarkup();
   });
 }
@@ -99,5 +120,8 @@ document.addEventListener("click", (event) => {
   goToPayment();
 });
 
-const observer = new MutationObserver(() => enhancePaidGates());
+const observer = new MutationObserver((mutations) => {
+  if (!mutations.some((mutation) => mutation.addedNodes.length > 0)) return;
+  enhancePaidGates();
+});
 observer.observe(document.body, { childList: true, subtree: true });
