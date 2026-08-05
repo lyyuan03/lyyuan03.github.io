@@ -1,0 +1,52 @@
+name: Manual ECPay sponsor flow once
+
+on:
+  push:
+    branches:
+      - feat/manual-ecpay-sponsor-flow
+    paths:
+      - scripts/manual_ecpay_sponsor_flow_once.py
+      - .github/workflows/manual-ecpay-sponsor-flow-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/manual-ecpay-sponsor-flow
+          fetch-depth: 0
+
+      - name: Apply fixed-link manual-review sponsor flow
+        run: python3 scripts/manual_ecpay_sponsor_flow_once.py
+
+      - name: Validate JavaScript and flow markers
+        run: |
+          node --check membership-admin.js
+          node --check sponsor-checkout.js
+          node --check member-dashboard.js
+          node --check site-auth-nav.js
+          node --check functions/public-sponsor-checkout-functions.js
+          node --check functions/sponsor-offer-functions.js
+          node --check functions/membership-plans.js
+          grep -q 'sponsorRegularPaymentUrl' membership-admin.js
+          grep -q 'manualPaymentReview' functions/public-sponsor-checkout-functions.js
+          grep -q '立即前往綠界付款' sponsor-checkout.js
+          grep -q '付款資料待核對' member-dashboard.js
+          grep -q 'sponsor-checkout.js?v=20260805-manual-ecpay-1' articles.html
+          grep -q 'pendingOrderNo' functions/sponsor-offer-functions.js
+
+      - name: Commit generated changes
+        run: |
+          if git diff --quiet; then
+            echo "No generated changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin.html articles.html membership-admin.js sponsor-checkout.js member-dashboard.js member-dashboard.html site-auth-nav.js functions/membership-plans.js functions/public-sponsor-checkout-functions.js functions/sponsor-offer-functions.js
+          git commit -m "feat: add fixed-link sponsor checkout with manual payment review"
+          git push origin HEAD:feat/manual-ecpay-sponsor-flow
