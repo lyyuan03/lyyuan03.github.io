@@ -1,0 +1,30 @@
+name: Preserve member video cache once
+
+on:
+  push:
+    branches:
+      - fix/simple-sponsor-manual-final
+    paths:
+      - scripts/preserve_member_video_cache_once.py
+      - .github/workflows/preserve-member-video-cache-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/simple-sponsor-manual-final
+          fetch-depth: 0
+      - run: python3 scripts/preserve_member_video_cache_once.py
+      - run: grep -q 'member-video-admin.js?v=20260805-cover-upload-4' admin.html
+      - run: rm -f scripts/preserve_member_video_cache_once.py .github/workflows/preserve-member-video-cache-once.yml
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "preserve member video cache version"
+          git push origin HEAD:fix/simple-sponsor-manual-final
