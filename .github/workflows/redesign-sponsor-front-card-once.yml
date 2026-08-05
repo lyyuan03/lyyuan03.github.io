@@ -1,0 +1,35 @@
+name: Redesign sponsor front card once
+
+on:
+  push:
+    branches:
+      - fix/sponsor-front-card-redesign
+    paths:
+      - scripts/redesign_sponsor_front_card_once.py
+      - .github/workflows/redesign-sponsor-front-card-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/sponsor-front-card-redesign
+          fetch-depth: 0
+      - run: python3 scripts/redesign_sponsor_front_card_once.py
+      - run: |
+          node --check articles.js
+          node --check sponsor-checkout.js
+          grep -q '閱讀全文｜加入贊助會員' articles.js
+          grep -q '前往綠界付款' sponsor-checkout.js
+          grep -q '20260805-sponsor-front-card-1' articles.html
+      - run: rm -f scripts/redesign_sponsor_front_card_once.py .github/workflows/redesign-sponsor-front-card-once.yml
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "redesign sponsor article signup card"
+          git push origin HEAD:fix/sponsor-front-card-redesign
