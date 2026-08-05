@@ -1,0 +1,1 @@
+Deploy member annual spend timezone and cache fix at 2026-08-05 16:27 Asia/Taipei.
