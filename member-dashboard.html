@@ -468,7 +468,7 @@ body.lyy-lingji-awaken .lyy-tier-awakening{animation:lyyAwaken 2.8s cubic-bezier
   attachTilt(tierCard, 6);
   dashboard.querySelectorAll(".stat,.rights-card,.course-item").forEach(element => attachTilt(element, 1.7));
 
-  const numericIds = ["dashboard-spend", "dashboard-cashback"];
+  const numericIds = []; // 金額直接顯示後台實際值，避免動畫覆寫或停在中間數字
   const numberAnimations = new WeakMap();
   function animateNumber(element) {
     if (!element || dashboard.hidden) return;
