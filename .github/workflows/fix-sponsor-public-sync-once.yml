@@ -1,0 +1,36 @@
+name: Fix sponsor public sync once
+
+on:
+  push:
+    branches:
+      - fix/sponsor-offer-public-sync
+    paths:
+      - scripts/fix_sponsor_public_sync_once.py
+      - .github/workflows/fix-sponsor-public-sync-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/sponsor-offer-public-sync
+          fetch-depth: 0
+      - run: python3 scripts/fix_sponsor_public_sync_once.py
+      - run: |
+          node --check membership-admin.js
+          node --check sponsor-checkout.js
+          grep -q '立即同步前台名額與付款連結' membership-admin.js
+          grep -q 'publicVersion: 2' membership-admin.js
+          grep -q '20260805-public-sync-1' admin.html
+          grep -q '20260805-public-sync-1' articles.html
+      - run: rm -f scripts/fix_sponsor_public_sync_once.py .github/workflows/fix-sponsor-public-sync-once.yml
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix sponsor public offer synchronization"
+          git push origin HEAD:fix/sponsor-offer-public-sync
