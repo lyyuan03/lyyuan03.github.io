@@ -22,30 +22,35 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
+          import re
 
           articles_js = Path("articles.js")
           source = articles_js.read_text(encoding="utf-8")
-          old = '''  loadedArticles = hydratedArticles.sort(sortPublished);
-          renderTabs();
-          await loadArticleMetrics();
-
-          renderCurrentView();'''
-          new = '''  loadedArticles = hydratedArticles.sort(sortPublished);
-          renderTabs();
-
-          // 文章內容優先顯示；閱讀統計改為背景載入，避免統計請求延遲時整頁卡在「文章載入中」。
-          renderCurrentView();
-          void loadArticleMetrics().then(() => {
-            loadedArticles.forEach((article) => updateMetricSummary(articleKey(article)));
-          });'''
-          if old not in source:
+          pattern = re.compile(
+              r"(?m)^\s{2}loadedArticles = hydratedArticles\.sort\(sortPublished\);\n"
+              r"\s{2}renderTabs\(\);\n"
+              r"\s{2}await loadArticleMetrics\(\);\n\n"
+              r"\s{2}renderCurrentView\(\);"
+          )
+          replacement = "\n".join([
+              "  loadedArticles = hydratedArticles.sort(sortPublished);",
+              "  renderTabs();",
+              "",
+              "  // 文章內容優先顯示；閱讀統計改為背景載入，避免統計請求延遲時整頁卡在「文章載入中」。",
+              "  renderCurrentView();",
+              "  void loadArticleMetrics().then(() => {",
+              "    loadedArticles.forEach((article) => updateMetricSummary(articleKey(article)));",
+              "  });",
+          ])
+          source, count = pattern.subn(replacement, source, count=1)
+          if count != 1:
               raise SystemExit("找不到預期的 articles.js 程式區段，已停止修改。")
-          articles_js.write_text(source.replace(old, new, 1), encoding="utf-8")
+          articles_js.write_text(source, encoding="utf-8")
 
           articles_html = Path("articles.html")
           html = articles_html.read_text(encoding="utf-8")
-          old_version = 'articles.js?v=20260805-simple-links-1'
-          new_version = 'articles.js?v=20260805-loading-fix-1'
+          old_version = "articles.js?v=20260805-simple-links-1"
+          new_version = "articles.js?v=20260805-loading-fix-1"
           if old_version not in html:
               raise SystemExit("找不到 articles.html 的舊版快取參數，已停止修改。")
           articles_html.write_text(html.replace(old_version, new_version, 1), encoding="utf-8")
