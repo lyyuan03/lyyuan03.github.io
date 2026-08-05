@@ -1,0 +1,45 @@
+name: Simplify sponsor manual once
+
+on:
+  push:
+    branches:
+      - fix/simple-sponsor-links-no-functions
+    paths:
+      - scripts/simplify_sponsor_manual_once.py
+      - .github/workflows/simplify-sponsor-manual-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/simple-sponsor-links-no-functions
+          fetch-depth: 0
+
+      - name: Apply simpler sponsor workflow
+        run: python3 scripts/simplify_sponsor_manual_once.py
+
+      - name: Validate JavaScript
+        run: |
+          node --check membership-admin.js
+          node --check sponsor-checkout.js
+          node --check articles.js
+          grep -q '付款成功，加入／續期會員' admin.html
+          grep -q 'data-sponsor-pay' sponsor-checkout.js
+          grep -q '同一個 Gmail 只計算一人' membership-admin.js
+          grep -q '20260805-simple-manual-2' articles.html
+
+      - name: Remove one-time patch files
+        run: rm -f scripts/simplify_sponsor_manual_once.py .github/workflows/simplify-sponsor-manual-once.yml
+
+      - name: Commit generated changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "simplify sponsor membership to manual paid-member counting"
+          git push origin HEAD:fix/simple-sponsor-links-no-functions
