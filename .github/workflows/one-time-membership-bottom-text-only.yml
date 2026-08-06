@@ -70,11 +70,39 @@ jobs:
               raise SystemExit("backend date logic target not found exactly once")
           backend = backend.replace(current_logic, original_logic, 1)
 
-          replacements = [
-              ('          startsAt: order.memberType === "sponsor-member" ? nowTimestamp : startTimestamp,', '          startsAt: nowTimestamp,'),
-              ('              startsAt: startTimestamp,', '              startsAt: nowTimestamp,'),
+          timestamp_replacements = [
+              (
+                  "\n".join([
+                      '          firstJoinedAt: member.firstJoinedAt || nowTimestamp,',
+                      '          startsAt: order.memberType === "sponsor-member" ? nowTimestamp : startTimestamp,',
+                  ]),
+                  "\n".join([
+                      '          firstJoinedAt: member.firstJoinedAt || nowTimestamp,',
+                      '          startsAt: nowTimestamp,',
+                  ]),
+              ),
+              (
+                  "\n".join([
+                      '              confirmedAt: nowTimestamp,',
+                      '              startsAt: startTimestamp,',
+                  ]),
+                  "\n".join([
+                      '              confirmedAt: nowTimestamp,',
+                      '              startsAt: nowTimestamp,',
+                  ]),
+              ),
+              (
+                  "\n".join([
+                      '          paymentStatus: "paid",',
+                      '          startsAt: order.memberType === "sponsor-member" ? nowTimestamp : startTimestamp,',
+                  ]),
+                  "\n".join([
+                      '          paymentStatus: "paid",',
+                      '          startsAt: nowTimestamp,',
+                  ]),
+              ),
           ]
-          for old_text, new_text in replacements:
+          for old_text, new_text in timestamp_replacements:
               if backend.count(old_text) != 1:
                   raise SystemExit("backend timestamp target not found exactly once")
               backend = backend.replace(old_text, new_text, 1)
