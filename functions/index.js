@@ -531,15 +531,9 @@ exports.ecpayMembershipCallback = onRequest(
         const now = new Date();
         const existingExpiry = member.expiresAt?.toDate?.()
           || (member.expiresAt ? new Date(member.expiresAt) : null);
-        const orderDate = order.createdAt?.toDate?.()
-          || (order.createdAt ? new Date(order.createdAt) : now);
-        const validOrderDate = Number.isNaN(orderDate.getTime()) ? now : orderDate;
-        const startAt = order.memberType === "sponsor-member"
-          ? (existingExpiry && existingExpiry > now ? existingExpiry : now)
-          : validOrderDate;
+        const startAt = existingExpiry && existingExpiry > now ? existingExpiry : now;
         const expiresAt = addMonths(startAt, Number(order.planMonths));
         const nowTimestamp = Timestamp.fromDate(now);
-        const startTimestamp = Timestamp.fromDate(startAt);
         const expiryTimestamp = Timestamp.fromDate(expiresAt);
 
         const activeMember = {
@@ -554,7 +548,7 @@ exports.ecpayMembershipCallback = onRequest(
           suspended: false,
           revokedAt: FieldValue.delete(),
           firstJoinedAt: member.firstJoinedAt || nowTimestamp,
-          startsAt: order.memberType === "sponsor-member" ? nowTimestamp : startTimestamp,
+          startsAt: nowTimestamp,
           expiresAt: expiryTimestamp,
           paidAt: nowTimestamp,
           lastOrderNo: tradeNo,
@@ -597,7 +591,7 @@ exports.ecpayMembershipCallback = onRequest(
               qualificationReference: order.articleBenefitReference || "",
               confirmedBy: normalizeEmail(order.createdBy || "system-payment"),
               confirmedAt: nowTimestamp,
-              startsAt: startTimestamp,
+              startsAt: nowTimestamp,
               expiresAt: expiryTimestamp
             },
             updatedAt: nowTimestamp
@@ -608,7 +602,7 @@ exports.ecpayMembershipCallback = onRequest(
         const historyRecord = {
           memberType: activeMember.memberType,
           paymentStatus: "paid",
-          startsAt: order.memberType === "sponsor-member" ? nowTimestamp : startTimestamp,
+          startsAt: nowTimestamp,
           expiresAt: expiryTimestamp,
           lastOrderNo: tradeNo,
           verified: true,
