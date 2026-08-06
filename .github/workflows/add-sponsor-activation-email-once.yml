@@ -1,0 +1,35 @@
+name: Add sponsor activation email once
+
+on:
+  push:
+    branches:
+      - feature/sponsor-activation-email
+    paths:
+      - scripts/add_sponsor_activation_email_once.py
+      - .github/workflows/add-sponsor-activation-email-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/sponsor-activation-email
+          fetch-depth: 0
+      - run: python3 scripts/add_sponsor_activation_email_once.py
+      - run: |
+          node --check membership-admin.js
+          grep -q '付款成功，開通並建立通知信' admin.html
+          grep -q '寄發開通通知' membership-admin.js
+          grep -q '資格到期日' membership-admin.js
+          grep -q '20260806-activation-email-1' admin.html
+      - run: rm -f scripts/add_sponsor_activation_email_once.py .github/workflows/add-sponsor-activation-email-once.yml
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "add sponsor activation email workflow"
+          git push origin HEAD:feature/sponsor-activation-email
