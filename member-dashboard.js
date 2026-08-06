@@ -298,7 +298,7 @@ function renderDashboard(member, user, sponsorMember = null) {
   document.getElementById("dashboard-cashback").textContent = money.format(Math.max(0, Number(member.cashbackBalance) || 0));
   document.getElementById("dashboard-wellness-access").textContent = wellnessActive ? `有效｜至 ${expiry}` : "尚未開通或已到期";
   document.getElementById("dashboard-article-access").textContent = articleActive ? `${articleSource}｜至 ${articleExpiry}` : "尚未開通";
-  ["dashboard-spend", "dashboard-membership-status", "dashboard-tier-status", "dashboard-period-heading", "dashboard-progress", "dashboard-rights-summary"].forEach((id) => {
+  ["dashboard-spend", "dashboard-membership-status", "dashboard-tier-status", "dashboard-period-heading", "dashboard-progress", "dashboard-rights-summary", "dashboard-cashback"].forEach((id) => {
     const section = document.getElementById(id)?.closest("section");
     if (section) section.hidden = !wellnessActive;
   });
