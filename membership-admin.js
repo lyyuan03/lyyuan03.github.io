@@ -63,7 +63,7 @@ function activationEmailContent(member = {}) {
   const months = Number(member.planMonths) === 3 ? 3 : 1;
   const priceLabel = member.priceTier === "regular" ? "一般價格" : "前200名優惠";
   const subject = `靈元院贊助專屬文章會員｜開通通知`;
-  const body = `${name}您好：
+  const body = `${name}　師兄/師姐您好：
 
 您的「靈元院贊助專屬文章會員」已完成開通。
 
@@ -84,7 +84,7 @@ https://lyyuan.tw/articles.html
 
 如已完成付款但登入後仍未顯示資格，請直接回覆本信，由行政團隊協助確認。
 
-祝福吉祥
+祝福吉祥　母娘保佑
 靈元院行政團隊`;
   return { email, subject, body };
 }
