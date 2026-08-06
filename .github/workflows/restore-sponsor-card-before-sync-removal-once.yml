@@ -1,3 +1,4 @@
+# Trigger restoration after workflow registration.
 name: Restore sponsor card before sync removal once
 
 on:
