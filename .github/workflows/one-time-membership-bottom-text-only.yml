@@ -1,0 +1,87 @@
+name: One-time membership bottom text correction
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/one-time-membership-bottom-text-only.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Keep only the requested text change
+        shell: python
+        run: |
+          from pathlib import Path
+
+          membership_path = Path('membership.html')
+          membership = membership_path.read_text(encoding='utf-8')
+          old_block = '''          <h3>自訂購日起算 4 個月</h3>
+          <p>單筆購買營養補品滿額，不需重修課程，也不需重新申請。新會期以本次訂購日為起日。</p>
+          <div class="branch-rule">不沿用原到期日，改由訂購日起算<br>例：原到期 2026/8/6，訂購日 2026/8/1<br>新會期：2026/8/1－2026/12/1</div>'''
+          new_block = '''          <h3>延長 4 個月會籍</h3>
+          <p>單筆購買營養補品滿額，不需重修課程，也不需重新申請。</p>
+          <div class="branch-rule">以訂購日起算往後延四個月。<br>例如：原到期日為2026/8/6，訂購日為2026/8/1，新的會期資格為2026/8/1-12/1</div>'''
+          if membership.count(old_block) != 1:
+              raise SystemExit('membership target block not found exactly once')
+          membership_path.write_text(membership.replace(old_block, new_block, 1), encoding='utf-8')
+
+          backend_path = Path('functions/index.js')
+          backend = backend_path.read_text(encoding='utf-8')
+          current_logic = '''        const now = new Date();
+        const existingExpiry = member.expiresAt?.toDate?.()
+          || (member.expiresAt ? new Date(member.expiresAt) : null);
+        const orderDate = order.createdAt?.toDate?.()
+          || (order.createdAt ? new Date(order.createdAt) : now);
+        const validOrderDate = Number.isNaN(orderDate.getTime()) ? now : orderDate;
+        const startAt = order.memberType === "sponsor-member"
+          ? (existingExpiry && existingExpiry > now ? existingExpiry : now)
+          : validOrderDate;
+        const expiresAt = addMonths(startAt, Number(order.planMonths));
+        const nowTimestamp = Timestamp.fromDate(now);
+        const startTimestamp = Timestamp.fromDate(startAt);
+        const expiryTimestamp = Timestamp.fromDate(expiresAt);'''
+          original_logic = '''        const now = new Date();
+        const existingExpiry = member.expiresAt?.toDate?.()
+          || (member.expiresAt ? new Date(member.expiresAt) : null);
+        const startAt = existingExpiry && existingExpiry > now ? existingExpiry : now;
+        const expiresAt = addMonths(startAt, Number(order.planMonths));
+        const nowTimestamp = Timestamp.fromDate(now);
+        const expiryTimestamp = Timestamp.fromDate(expiresAt);'''
+          if backend.count(current_logic) != 1:
+              raise SystemExit('backend date logic target not found exactly once')
+          backend = backend.replace(current_logic, original_logic, 1)
+
+          replacements = [
+            ('          startsAt: order.memberType === "sponsor-member" ? nowTimestamp : startTimestamp,', '          startsAt: nowTimestamp,'),
+            ('              startsAt: startTimestamp,', '              startsAt: nowTimestamp,'),
+          ]
+          for old_text, new_text in replacements:
+              if backend.count(old_text) != 1:
+                  raise SystemExit(f'backend timestamp target not found exactly once: {old_text}')
+              backend = backend.replace(old_text, new_text, 1)
+          backend_path.write_text(backend, encoding='utf-8')
+
+      - name: Remove one-time workflow
+        run: rm .github/workflows/one-time-membership-bottom-text-only.yml
+
+      - name: Verify JavaScript syntax
+        run: node --check functions/index.js
+
+      - name: Commit correction
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add membership.html functions/index.js .github/workflows/one-time-membership-bottom-text-only.yml
+          git commit -m "fix: change only membership renewal note text"
+          git push origin HEAD:main
