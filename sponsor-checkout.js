@@ -62,9 +62,6 @@ function installStyles() {
     .sponsor-offer-count{display:grid;gap:4px;margin-bottom:14px}
     .sponsor-offer-count span{font-size:10px;letter-spacing:.16em;color:#8a6d49}
     .sponsor-offer-count strong{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:#5f4529}
-    .sponsor-offer-sync{display:inline-flex;align-items:center;justify-content:center;gap:5px;margin-top:3px;font-size:9px;color:#8a765e}
-    .sponsor-offer-sync::before{content:'';width:5px;height:5px;border-radius:50%;background:#9d8058}
-    .sponsor-offer-sync.is-live::before{background:#657247}
     .sponsor-offer-prices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
     .sponsor-offer-price{padding:12px 8px;border:1px solid rgba(125,94,55,.25);background:rgba(248,243,234,.78)}
     .sponsor-offer-price span{display:block;margin:0 0 4px;font-size:10px;color:#776550}
@@ -90,12 +87,10 @@ function offerMarkup() {
     ? `前 ${limit} 名優惠｜目前尚餘 ${remaining} 名`
     : `前 ${limit} 名優惠已額滿｜目前適用一般價格`;
   const eyebrow = offer.promotionAvailable ? "LIMITED OFFER" : "REGULAR PRICE";
-  const syncText = offerIsLive ? "名額與付款連結已同步" : "正在取得最新名額與付款連結";
   return `<div class="sponsor-offer-panel">
     <div class="sponsor-offer-count">
       <span>${eyebrow}</span>
       <strong>${status}</strong>
-      <small class="sponsor-offer-sync${offerIsLive ? " is-live" : ""}">${syncText}</small>
     </div>
     <div class="sponsor-offer-prices" aria-label="贊助閱讀方案價格">
       <div class="sponsor-offer-price"><span>一個月觀看權限</span><strong>NT$${formatMoney(currentPrice(1))}</strong></div>

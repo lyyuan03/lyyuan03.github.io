@@ -43,7 +43,7 @@
 <script>(()=>{const nav=document.querySelector('nav');if(!nav)return;const triggers=[...nav.querySelectorAll('.has-dropdown')];const mq=window.matchMedia('(max-width:768px)');const close=()=>nav.querySelectorAll('.open').forEach(i=>i.classList.remove('open'));triggers.forEach(t=>{if(t.matches('a[href]'))return;const li=t.closest('li');t.addEventListener('click',e=>{if(!mq.matches)return;e.preventDefault();const is=li.classList.contains('open');close();if(!is)li.classList.add('open')})});document.addEventListener('click',e=>{if(!nav.contains(e.target))close()})})();</script>
 <script type="module" src="articles.js?v=20260806-ci-links-fix-2"></script>
 <script src="/article-destination-links.js?v=20260806-ci-links-fix-2" defer></script>
-<script type="module" src="/sponsor-checkout.js?v=20260805-public-sync-1"></script>
+<script type="module" src="/sponsor-checkout.js?v=20260806-remove-sync-text-1"></script>
 <script type="module" src="/site-auth-nav.js?v=20260805-manual-ecpay-1"></script>
 </body>
 </html>
