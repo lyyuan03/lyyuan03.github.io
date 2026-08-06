@@ -25,11 +25,21 @@
     const style = document.createElement('style');
     style.dataset.productPhotos = 'true';
     style.textContent = `
-      .product-visual svg.product-photo-svg{position:relative;z-index:2;width:92%!important;height:92%!important;filter:drop-shadow(0 20px 22px rgba(50,35,20,.24));transition:transform .55s var(--ease),filter .55s var(--ease)}
-      .product-card:hover .product-visual svg.product-photo-svg{transform:translateY(-8px) scale(1.025);filter:drop-shadow(0 28px 28px rgba(50,35,20,.32))}
+      .product-visual{position:relative;isolation:isolate;overflow:hidden;background:
+        radial-gradient(circle at 50% 32%,rgba(255,255,255,.96) 0,rgba(250,246,237,.86) 28%,rgba(231,222,203,.48) 62%,rgba(196,177,142,.2) 100%),
+        linear-gradient(145deg,rgba(255,255,255,.88),rgba(226,215,195,.62));
+        border:1px solid rgba(165,130,84,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -28px 50px rgba(111,92,64,.06)}
+      .product-visual::before{content:'';position:absolute;inset:7% 10% 14%;z-index:0;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95) 0,rgba(255,248,232,.58) 38%,rgba(205,169,105,.12) 64%,transparent 76%);filter:blur(2px);opacity:.92;pointer-events:none}
+      .product-visual::after{content:'';position:absolute;left:13%;right:13%;bottom:7%;height:14%;z-index:1;border-radius:50%;background:radial-gradient(ellipse,rgba(43,31,19,.26) 0,rgba(43,31,19,.12) 38%,transparent 72%);filter:blur(12px);transform:scaleX(.9);opacity:.58;pointer-events:none}
+      .product-visual svg.product-photo-svg{position:relative;z-index:2;width:88%!important;height:88%!important;overflow:visible;filter:drop-shadow(0 10px 8px rgba(255,255,255,.42)) drop-shadow(0 22px 24px rgba(45,31,18,.24));transition:transform .65s var(--ease),filter .65s var(--ease);will-change:transform,filter}
+      .product-visual svg.product-photo-svg image{filter:saturate(.92) contrast(1.045) brightness(1.035)}
+      .product-card:hover .product-visual svg.product-photo-svg{transform:translateY(-9px) scale(1.022);filter:drop-shadow(0 12px 10px rgba(255,255,255,.5)) drop-shadow(0 30px 30px rgba(45,31,18,.31))}
+      .product-card:hover .product-visual::before{opacity:1;transform:scale(1.035)}
+      .product-card .product-visual::before{transition:opacity .6s var(--ease),transform .6s var(--ease)}
       .result-visual svg.product-photo-svg{display:block;width:auto!important;height:255px!important;max-width:190px!important;max-height:255px!important;filter:drop-shadow(0 18px 28px rgba(0,0,0,.38));animation:realOmamoriReveal .72s cubic-bezier(.2,.8,.2,1) both,realOmamoriFloat 2.8s .72s ease-in-out infinite}
-      .product-card[data-product="motherCard"] .product-visual svg.product-photo-svg{width:94%!important;height:auto!important;max-height:260px!important;filter:drop-shadow(0 18px 22px rgba(50,35,20,.2))}
-      .product-card[data-product="motherCard"]:hover .product-visual svg.product-photo-svg{transform:translateY(-5px) scale(1.018)}
+      .product-card[data-product="incense"] .product-visual svg.product-photo-svg{width:82%!important;height:82%!important}
+      .product-card[data-product="motherCard"] .product-visual svg.product-photo-svg{width:88%!important;height:auto!important;max-height:240px!important;filter:drop-shadow(0 9px 7px rgba(255,255,255,.42)) drop-shadow(0 18px 22px rgba(50,35,20,.22))}
+      .product-card[data-product="motherCard"]:hover .product-visual svg.product-photo-svg{transform:translateY(-6px) scale(1.015)}
       .mother-card-placeholder{position:relative;z-index:2;display:grid;place-items:center;width:86%;height:58%;border:1px solid rgba(165,130,84,.25);color:#8b704c;font-family:var(--serif);font-size:22px;letter-spacing:.16em;background:rgba(255,252,246,.36)}
       .quiz-invocation{position:relative;margin:0 auto 17px;padding:12px 15px 13px;border-top:1px solid rgba(197,162,111,.2);border-bottom:1px solid rgba(197,162,111,.2);background:linear-gradient(90deg,transparent,rgba(165,130,84,.08),transparent);color:rgba(245,240,232,.73);font-family:var(--serif);font-size:12px;line-height:1.85;letter-spacing:.07em;text-align:center}
       .quiz-invocation p{margin:0}
@@ -38,8 +48,8 @@
       @media(min-width:981px){.product-grid .product-card:nth-child(4),.product-grid .product-card:nth-child(5),.product-grid .product-card:nth-child(6){grid-column:span 4!important}}
       @keyframes realOmamoriReveal{from{opacity:0;transform:translateY(25px) scale(.72) rotate(-3deg);filter:blur(7px) brightness(1.5)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0) brightness(1)}}
       @keyframes realOmamoriFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.025)}}
-      @media(max-width:760px){.product-visual svg.product-photo-svg{width:96%!important;height:96%!important}.product-card[data-product="motherCard"] .product-visual svg.product-photo-svg{width:96%!important;height:auto!important;max-height:230px!important}.result-visual svg.product-photo-svg{height:220px!important;max-width:165px!important;max-height:220px!important}.quiz-invocation{font-size:11.5px;padding:10px 11px}.quiz-invocation strong{font-size:14px}}
-      @media(prefers-reduced-motion:reduce){.result-visual svg.product-photo-svg{animation:none!important}}
+      @media(max-width:760px){.product-visual svg.product-photo-svg{width:92%!important;height:92%!important}.product-card[data-product="incense"] .product-visual svg.product-photo-svg{width:86%!important;height:86%!important}.product-card[data-product="motherCard"] .product-visual svg.product-photo-svg{width:92%!important;height:auto!important;max-height:220px!important}.result-visual svg.product-photo-svg{height:220px!important;max-width:165px!important;max-height:220px!important}.quiz-invocation{font-size:11.5px;padding:10px 11px}.quiz-invocation strong{font-size:14px}}
+      @media(prefers-reduced-motion:reduce){.result-visual svg.product-photo-svg{animation:none!important}.product-visual svg.product-photo-svg,.product-visual::before{transition:none!important}}
     `;
     document.head.appendChild(style);
   }
