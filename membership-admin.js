@@ -2,6 +2,8 @@ import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+const OFFICIAL_SENDER_EMAIL = "lyyuan03@gmail.com";
+
 const settingsForm = document.getElementById("membership-settings-form");
 const memberForm = document.getElementById("member-form");
 const statusEl = document.getElementById("membership-status");
@@ -87,21 +89,20 @@ https://lyyuan.tw/articles.html
   return { email, subject, body };
 }
 
-function gmailComposeUrl(member = {}) {
-  const { email, subject, body } = activationEmailContent(member);
-  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+function officialGmailComposeUrl(to, subject, body) {
+  return `https://mail.google.com/mail/u/?authuser=${encodeURIComponent(OFFICIAL_SENDER_EMAIL)}&view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-function mailtoUrl(member = {}) {
+function gmailComposeUrl(member = {}) {
   const { email, subject, body } = activationEmailContent(member);
-  return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return officialGmailComposeUrl(email, subject, body);
 }
 
 function prepareNotificationWindow() {
   const draftWindow = window.open("about:blank", "_blank");
   if (!draftWindow) return null;
   draftWindow.document.title = "準備會員開通通知信";
-  draftWindow.document.body.innerHTML = '<div style="font-family:sans-serif;padding:32px;color:#594F47">正在建立會員開通通知信，請稍候…</div>';
+  draftWindow.document.body.innerHTML = `<div style="font-family:sans-serif;padding:32px;color:#594F47">正在以靈元院官方信箱 ${OFFICIAL_SENDER_EMAIL} 建立會員開通通知信，請稍候…</div>`;
   return draftWindow;
 }
 
@@ -113,7 +114,7 @@ function openActivationEmail(member = {}, draftWindow = null) {
     return;
   }
   const opened = window.open(url, "_blank", "noopener,noreferrer");
-  if (!opened) location.href = mailtoUrl(member);
+  if (!opened) location.href = url;
 }
 
 function sponsorHistoryRecord(member = {}, historicalStatus = "verified") {
@@ -446,7 +447,7 @@ async function activateMember() {
     await writeSponsorHistory(email, payload, "verified");
     await loadMembers();
     openActivationEmail(payload, notificationWindow);
-    statusEl.textContent = `付款已確認並開通｜到期日 ${formatDate(payload.expiresAt)}｜開通通知信已建立，請在 Gmail 確認後按下寄送`;
+    statusEl.textContent = `付款已確認並開通｜到期日 ${formatDate(payload.expiresAt)}｜已用 ${OFFICIAL_SENDER_EMAIL} 建立通知草稿，請確認後按下寄送`;
     resetMemberForm();
   } catch (error) {
     if (notificationWindow && !notificationWindow.closed) notificationWindow.close();
@@ -502,8 +503,10 @@ ${paymentUrl}
 付款完成後，靈元院行政團隊核對款項，再以本信收件 Email（${email}）開通贊助專屬文章會員資格。
 
 靈元院行政團隊`;
-  statusEl.textContent = `已依正式會員名單判讀為「${tierText}」，正在開啟付款通知 Email。`;
-  location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  statusEl.textContent = `已依正式會員名單判讀為「${tierText}」，正在以 ${OFFICIAL_SENDER_EMAIL} 開啟付款通知 Gmail 草稿。`;
+  const url = officialGmailComposeUrl(email, subject, body);
+  const opened = window.open(url, "_blank", "noopener,noreferrer");
+  if (!opened) location.href = url;
 }
 
 function hasAuthoritativeSponsorAccess(member = {}) {
