@@ -1,0 +1,34 @@
+name: Update member email wording once
+
+on:
+  push:
+    branches:
+      - fix/member-email-salutation-blessing
+    paths:
+      - scripts/update_member_email_wording_once.py
+      - .github/workflows/update-member-email-wording-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/member-email-salutation-blessing
+          fetch-depth: 0
+      - run: python3 scripts/update_member_email_wording_once.py
+      - run: |
+          node --check membership-admin.js
+          grep -q '師兄/師姐您好' membership-admin.js
+          grep -q '祝福吉祥　母娘保佑' membership-admin.js
+          grep -q '20260806-email-wording-1' admin.html
+      - run: rm -f scripts/update_member_email_wording_once.py .github/workflows/update-member-email-wording-once.yml
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "update member email salutation and blessing"
+          git push origin HEAD:fix/member-email-salutation-blessing
