@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" role="img" aria-labelledby="title desc">
+<title id="title">家族的根與新的選擇</title>
+<desc id="desc">一棵由金色線條構成的家族樹，根系深入深色土地，其中一條枝幹轉向光亮處，象徵後代能選擇轉化。</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b160a"/><stop offset=".55" stop-color="#28301f"/><stop offset="1" stop-color="#5b4d40"/></linearGradient>
+  <linearGradient id="earth" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#332a23"/><stop offset="1" stop-color="#160f0b"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0d9a0"/><stop offset="1" stop-color="#88643a"/></linearGradient>
+  <radialGradient id="light" cx="77%" cy="27%" r="45%"><stop stop-color="#e9d4a4" stop-opacity=".52"/><stop offset="1" stop-color="#e9d4a4" stop-opacity="0"/></radialGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="20"/></filter>
+</defs>
+<rect width="1536" height="1024" fill="url(#bg)"/>
+<ellipse cx="1140" cy="280" rx="430" ry="340" fill="url(#light)" filter="url(#blur)"/>
+<path d="M0 650 Q380 610 768 650 T1536 634V1024H0Z" fill="url(#earth)"/>
+<g fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M758 676 C742 586 750 498 768 418 C782 354 792 288 790 208" stroke-width="18"/>
+  <path d="M766 474 C674 398 598 344 500 286" stroke-width="10"/>
+  <path d="M776 424 C858 350 938 302 1040 250" stroke-width="10"/>
+  <path d="M754 540 C660 514 586 480 520 424" stroke-width="7"/>
+  <path d="M780 520 C878 490 960 442 1030 376" stroke-width="7"/>
+  <path d="M790 334 C870 282 948 224 1060 180" stroke-width="7"/>
+  <path d="M1060 180 C1126 142 1196 132 1278 140" stroke-width="6"/>
+  <path d="M758 676 C700 742 624 778 558 834 C510 874 472 930 440 1024" stroke-width="9"/>
+  <path d="M760 682 C718 770 698 860 690 1024" stroke-width="6"/>
+  <path d="M772 684 C830 746 912 782 982 844 C1032 888 1068 944 1100 1024" stroke-width="9"/>
+  <path d="M770 700 C818 796 836 896 842 1024" stroke-width="6"/>
+</g>
+<g fill="#d8bd80" opacity=".9">
+  <circle cx="500" cy="286" r="15"/><circle cx="520" cy="424" r="12"/><circle cx="1040" cy="250" r="15"/><circle cx="1030" cy="376" r="12"/><circle cx="790" cy="208" r="14"/><circle cx="1278" cy="140" r="18"/>
+</g>
+<g opacity=".34" stroke="#ede1c8" fill="none">
+  <circle cx="1278" cy="140" r="42"/><circle cx="1278" cy="140" r="68"/>
+</g>
+<rect x="78" y="72" width="1380" height="880" fill="none" stroke="#c3a56f" stroke-opacity=".2"/>
+</svg>
