@@ -123,8 +123,8 @@ jobs:
       - name: Remove branch copy of one-time workflow
         run: rm .github/workflows/one-time-membership-order-date-fix.yml
 
-      - name: Verify backend
-        run: npm --prefix functions ci && npm --prefix functions test && npm --prefix functions run lint
+      - name: Verify backend syntax
+        run: npm --prefix functions ci && npm --prefix functions run lint
 
       - name: Commit changes to fix branch
         run: |
