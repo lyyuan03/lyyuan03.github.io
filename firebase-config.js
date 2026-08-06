@@ -1,9 +1,10 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const currentPath = location.pathname;
+const isAdminPage = /(^|\/)admin\.html$/i.test(currentPath);
 
 if (/(^|\/)articles\.html$/i.test(currentPath)) {
   import("./article-protection.js?v=20260723-member-watermark-1");
@@ -11,7 +12,7 @@ if (/(^|\/)articles\.html$/i.test(currentPath)) {
   import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
 }
 
-if (/(^|\/)admin\.html$/i.test(currentPath)) {
+if (isAdminPage) {
   import("./article-admin-event-static-fix.js?v=20260802-event-admin-fix-1");
   import("./seed-guanyin-vow-lamp-v2.js?v=20260802-seed-1");
   import("./article-guanyin-v2-images.js?v=20260802-images-2");
@@ -43,6 +44,23 @@ export function normalizeEmail(email) {
 
 export function isAdminEmail(email) {
   return ADMIN_EMAILS.includes(normalizeEmail(email));
+}
+
+// 後台曾成功載入管理員帳號後，按下「登出」即離開後台，
+// 避免停留在只能再次登入管理員的後台閘門畫面。
+if (isAdminPage) {
+  const adminSessionMarker = "lyyuan-admin-session-active";
+  onAuthStateChanged(auth, (user) => {
+    if (user && isAdminEmail(user.email)) {
+      sessionStorage.setItem(adminSessionMarker, "1");
+      return;
+    }
+
+    if (!user && sessionStorage.getItem(adminSessionMarker) === "1") {
+      sessionStorage.removeItem(adminSessionMarker);
+      window.location.replace("/member-dashboard.html");
+    }
+  });
 }
 
 // 所有使用 Firebase 的頁面都載入同一套登入相容處理，
