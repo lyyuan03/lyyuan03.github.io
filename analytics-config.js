@@ -9,6 +9,13 @@ window.LYY_ANALYTICS_CONFIG = Object.freeze({
   measurementId: ""
 });
 
+if (location.pathname.endsWith("/books.html")) {
+  const latestBookScript = document.createElement("script");
+  latestBookScript.src = "/books-latest-feature-2026.js?v=20260806-1731";
+  latestBookScript.defer = true;
+  document.head.appendChild(latestBookScript);
+}
+
 if (location.pathname.endsWith("/articles.html")) {
   const filterScript = document.createElement("script");
   filterScript.src = "/article-filter-fix.js?v=20260730-1";
