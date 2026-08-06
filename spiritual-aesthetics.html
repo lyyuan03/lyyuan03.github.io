@@ -14,7 +14,7 @@ html,body{width:100%;height:100%;margin:0;background:#0b1209;overflow:hidden}
 </head>
 <body>
 <div id="loading">靈性美學館載入中</div>
-<iframe id="preview" src="spiritual-aesthetics-preview.html?v=20260806-products-1" title="靈性美學館"></iframe>
+<iframe id="preview" src="spiritual-aesthetics-preview.html?v=20260806-products-2" title="靈性美學館"></iframe>
 <script>
 const frame=document.getElementById('preview');
 const loading=document.getElementById('loading');
@@ -48,7 +48,7 @@ frame.addEventListener('load',async()=>{
     if(!doc.querySelector('link[data-energy-quiz]')){
       const link=doc.createElement('link');
       link.rel='stylesheet';
-      link.href='assets/spiritual-aesthetics-quiz.css?v=4';
+      link.href='assets/spiritual-aesthetics-quiz.css?v=5';
       link.dataset.energyQuiz='true';
       doc.head.appendChild(link);
     }
@@ -68,8 +68,13 @@ frame.addEventListener('load',async()=>{
 
             <div class="quiz-panel quiz-start active" data-panel="start">
               <div class="quiz-start-symbol"><i></i></div>
+              <div class="quiz-invocation" aria-label="檢測前祈請詞">
+                <p>請專心合掌，收攝心念，恭念</p>
+                <p class="quiz-invocation-main">「無極瑤池金母大天尊」三稱</p>
+                <p>祈請靈元院堂上眾仙佛指點迷津。</p>
+              </div>
               <button class="quiz-start-btn" type="button" id="quizStart">開始靈運檢測</button>
-              <p class="quiz-notice">請先收攝心念，依照最近一個月最常出現的狀態作答。</p>
+              <p class="quiz-notice">念誦完成後，請依照最近一個月最常出現的狀態作答。</p>
             </div>
 
             <div class="quiz-panel" data-panel="question">
