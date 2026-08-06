@@ -111,7 +111,7 @@
     section.innerHTML = `
       <div class="latest-book-wrap">
         <a class="latest-book-banner" href="https://www.books.com.tw/products/0011060075?sloc=main" target="_blank" rel="noopener noreferrer" aria-label="前往博客來預購《我在人間的元神覺醒》">
-          <img src="/assets/latest-book-2026-banner.png?v=20260806-1" alt="《我在人間的元神覺醒》2026 新書 Banner" loading="eager">
+          <img id="latest-book-2026-banner-image" alt="《我在人間的元神覺醒》2026 新書 Banner" loading="eager">
         </a>
         <div class="latest-book-actions">
           <a class="latest-book-button" href="https://www.books.com.tw/products/0011060075?sloc=main" target="_blank" rel="noopener noreferrer">前往博客來立即預購</a>
@@ -119,6 +119,20 @@
       </div>`;
 
     target.parentNode.insertBefore(section, target);
+
+    const bannerImage = section.querySelector("#latest-book-2026-banner-image");
+    fetch("/assets/latest-book-2026-banner.png?v=20260806-2", { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Banner load failed: ${response.status}`);
+        return response.text();
+      })
+      .then((base64Text) => {
+        const cleanBase64 = base64Text.replace(/\s+/g, "").trim();
+        bannerImage.src = `data:image/png;base64,${cleanBase64}`;
+      })
+      .catch(() => {
+        bannerImage.alt = "《我在人間的元神覺醒》2026 新書 Banner 載入失敗";
+      });
   };
 
   const fixBookCovers = () => {
