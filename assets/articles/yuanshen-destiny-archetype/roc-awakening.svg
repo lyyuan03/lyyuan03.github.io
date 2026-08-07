@@ -1,9 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="大鵬鳥元神覺醒">
-  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#101820"/><stop offset="1" stop-color="#4c5a5d"/></linearGradient></defs>
-  <rect width="1600" height="900" fill="url(#sky)"/>
-  <circle cx="800" cy="250" r="155" fill="#d8b45d" opacity=".14"/>
-  <path d="M790 430c-170-180-360-165-560-45 120 20 235 75 330 170-100 5-185 42-250 105 190-15 340 30 480 150 140-120 290-165 480-150-65-63-150-100-250-105 95-95 210-150 330-170-200-120-390-135-560 45Z" fill="#151719" stroke="#d0ad55" stroke-width="10"/>
-  <path d="M770 470l30-95 30 95-30 55Z" fill="#d0ad55"/>
-  <path d="M760 520c20 20 60 20 80 0" fill="none" stroke="#d0ad55" stroke-width="8"/>
-  <g fill="#f0d889"><circle cx="675" cy="205" r="5"/><circle cx="930" cy="180" r="6"/><circle cx="1120" cy="280" r="4"/><circle cx="480" cy="315" r="4"/></g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 405" role="img" aria-label="大鵬鳥元神與其本身"><image width="720" height="405" preserveAspectRatio="xMidYMid slice" href="roc-awakening.jpg" xlink:href="roc-awakening.jpg"/></svg>

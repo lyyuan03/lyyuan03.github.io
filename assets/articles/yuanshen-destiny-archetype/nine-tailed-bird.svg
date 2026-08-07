@@ -1,17 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="九尾七彩神鳥元神">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101518"/><stop offset="1" stop-color="#3b2d45"/></linearGradient>
-    <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dcaa42"/><stop offset=".35" stop-color="#73b7a6"/><stop offset=".7" stop-color="#7b6cc9"/><stop offset="1" stop-color="#d86b7f"/></linearGradient>
-  </defs>
-  <rect width="1600" height="900" fill="url(#bg)"/>
-  <path d="M800 160c-170 45-285 170-330 315 125-80 235-92 330-25 95-67 205-55 330 25-45-145-160-270-330-315Z" fill="url(#wing)" opacity=".88"/>
-  <path d="M800 260c-75 85-92 180-52 290h104c40-110 23-205-52-290Z" fill="#e8c56e"/>
-  <path d="M760 325l40-90 40 90-40 65Z" fill="#f5df9d"/>
-  <g fill="none" stroke="url(#wing)" stroke-width="18" stroke-linecap="round">
-    <path d="M760 520c-120 80-155 190-110 295"/><path d="M785 520c-75 110-85 210-25 300"/><path d="M800 520v305"/><path d="M815 520c75 110 85 210 25 300"/><path d="M840 520c120 80 155 190 110 295"/>
-    <path d="M735 525c-165 60-225 150-205 265"/><path d="M865 525c165 60 225 150 205 265"/>
-    <path d="M710 535c-205 35-285 110-300 220"/><path d="M890 535c205 35 285 110 300 220"/>
-  </g>
-  <path d="M560 760c110-80 370-80 480 0" fill="none" stroke="#d8b45e" stroke-width="6" opacity=".75"/>
-  <g fill="#f4dd91"><circle cx="510" cy="210" r="6"/><circle cx="1080" cy="175" r="5"/><circle cx="1260" cy="330" r="5"/><circle cx="350" cy="370" r="4"/></g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 405" role="img" aria-label="九尾七彩神鳥元神與其本身"><image width="720" height="405" preserveAspectRatio="xMidYMid slice" href="nine-tailed-bird.jpg" xlink:href="nine-tailed-bird.jpg"/></svg>
