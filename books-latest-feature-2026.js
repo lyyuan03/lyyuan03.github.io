@@ -1,8 +1,39 @@
 (() => {
   "use strict";
 
+  const bookUrl = "https://www.books.com.tw/products/0011060075?sloc=main";
+  const originalCover = "https://www.books.com.tw/img/001/106/00/0011060075.jpg";
+  const coverUrl = `https://wsrv.nl/?url=${encodeURIComponent(originalCover)}&w=900&output=webp&q=92`;
+
+  const installTimelineCover = () => {
+    const futureCover = document.querySelector("#worksGrid .future-cover");
+    if (!futureCover) {
+      setTimeout(installTimelineCover, 250);
+      return;
+    }
+
+    const oldBook = futureCover.closest(".era-book");
+    if (!oldBook || oldBook.dataset.latest2026Installed === "true") return;
+
+    const link = document.createElement("a");
+    link.className = "era-book";
+    link.dataset.latest2026Installed = "true";
+    link.href = bookUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.setAttribute("aria-label", "前往博客來購買《我在人間的元神覺醒》");
+    link.innerHTML = `
+      <img src="${coverUrl}" alt="《我在人間的元神覺醒》書封" loading="lazy">
+      <span>我在人間的元神覺醒</span>`;
+
+    oldBook.replaceWith(link);
+  };
+
   const install = () => {
     if (!location.pathname.endsWith("/books.html")) return;
+
+    installTimelineCover();
+
     if (document.getElementById("latest-book-2026")) return;
 
     const target = document.querySelector("section.sec#books") || document.querySelector("#books");
@@ -40,10 +71,6 @@
       `;
       document.head.appendChild(style);
     }
-
-    const bookUrl = "https://www.books.com.tw/products/0011060075?sloc=main";
-    const originalCover = "https://www.books.com.tw/img/001/106/00/0011060075.jpg";
-    const coverUrl = `https://wsrv.nl/?url=${encodeURIComponent(originalCover)}&w=900&output=webp&q=92`;
 
     const section = document.createElement("section");
     section.id = "latest-book-2026";
