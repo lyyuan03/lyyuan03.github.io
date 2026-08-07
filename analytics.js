@@ -121,14 +121,22 @@
     target.parentNode.insertBefore(section, target);
 
     const bannerImage = section.querySelector("#latest-book-2026-banner-image");
-    fetch("/assets/latest-book-2026-banner.png?v=20260806-2", { cache: "no-store" })
-      .then((response) => {
-        if (!response.ok) throw new Error(`Banner load failed: ${response.status}`);
-        return response.text();
-      })
-      .then((base64Text) => {
-        const cleanBase64 = base64Text.replace(/\s+/g, "").trim();
-        bannerImage.src = `data:image/png;base64,${cleanBase64}`;
+    const bannerParts = [
+      "/assets/latest-book-2026-banner-avif-01.txt?v=20260807-0950",
+      "/assets/latest-book-2026-banner-avif-02.txt?v=20260807-0950",
+      "/assets/latest-book-2026-banner-avif-03.txt?v=20260807-0950",
+      "/assets/latest-book-2026-banner-avif-04.txt?v=20260807-0950",
+      "/assets/latest-book-2026-banner-avif-05.txt?v=20260807-0950",
+      "/assets/latest-book-2026-banner-avif-06.txt?v=20260807-0950"
+    ];
+
+    Promise.all(bannerParts.map((url) => fetch(url, { cache: "no-store" }).then((response) => {
+      if (!response.ok) throw new Error(`Banner load failed: ${response.status}`);
+      return response.text();
+    })))
+      .then((parts) => {
+        const cleanBase64 = parts.join("").replace(/\s+/g, "").trim();
+        bannerImage.src = `data:image/avif;base64,${cleanBase64}`;
       })
       .catch(() => {
         bannerImage.alt = "《我在人間的元神覺醒》2026 新書 Banner 載入失敗";
