@@ -62,5 +62,5 @@ exports.syncArticlePublicationStatus = onDocumentWritten(
     });
   }
 );
-''' + "\n"
-functions_path.write_text(source, encoding="utf-8")
+'''
+functions_path.write_text(source.rstrip() + "\n", encoding="utf-8")
