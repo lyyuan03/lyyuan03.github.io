@@ -1,6 +1,9 @@
 (() => {
   const STYLE_ID = "article-destination-links-style-v1";
   const ROOT_SELECTOR = "#article-root";
+  const YUANSHEN_ARTICLE_ID = "yuanshen-destiny-archetype";
+  const YUANSHEN_IMAGE_VERSION = "20260807-yuanshen-live-3";
+  const YUANSHEN_IMAGE_BASE = "assets/articles/yuanshen-destiny-archetype/";
 
   const bookIcon = `
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -180,11 +183,58 @@
     });
   }
 
+  function fixYuanshenArticleImages() {
+    const params = new URLSearchParams(location.search);
+    if (params.get("id") !== YUANSHEN_ARTICLE_ID) return;
+
+    const version = `?v=${YUANSHEN_IMAGE_VERSION}`;
+    const root = document.querySelector(ROOT_SELECTOR);
+    if (!root) return;
+
+    const cover = root.querySelector(".article-cover");
+    if (cover) {
+      const expected = `${YUANSHEN_IMAGE_BASE}book-cover.jpg${version}`;
+      if (!cover.src.includes("book-cover.jpg") || !cover.src.includes(YUANSHEN_IMAGE_VERSION)) {
+        cover.src = expected;
+      }
+      cover.alt = "我在人間的元神覺醒";
+      cover.style.maxHeight = "none";
+      cover.style.height = "auto";
+      cover.style.objectFit = "contain";
+      cover.style.objectPosition = "center";
+    }
+
+    const imageMap = [
+      { match: /天庭巨石|stone-origin/i, file: "stone-origin.jpg", alt: "天庭巨石所化的元神" },
+      { match: /大鵬鳥|roc-awakening/i, file: "roc-awakening.jpg", alt: "大鵬鳥元神" },
+      { match: /九尾七彩神鳥|nine-tailed-bird/i, file: "nine-tailed-bird.jpg", alt: "九尾七彩神鳥元神" }
+    ];
+
+    const bodyImages = [...root.querySelectorAll(".article-body img")];
+    bodyImages.forEach((img, index) => {
+      const signature = `${img.alt || ""} ${img.getAttribute("src") || ""}`;
+      const mapped = imageMap.find((item) => item.match.test(signature)) || imageMap[index];
+      if (!mapped) return;
+      const expected = `${YUANSHEN_IMAGE_BASE}${mapped.file}${version}`;
+      if (!img.src.includes(mapped.file) || !img.src.includes(YUANSHEN_IMAGE_VERSION)) {
+        img.src = expected;
+      }
+      img.alt = mapped.alt;
+      img.loading = "eager";
+      img.decoding = "async";
+    });
+  }
+
+  function enhanceArticlePage() {
+    enhanceDestinationLinks();
+    fixYuanshenArticleImages();
+  }
+
   installStyles();
-  enhanceDestinationLinks();
+  enhanceArticlePage();
 
   const root = document.querySelector(ROOT_SELECTOR) || document.body;
-  new MutationObserver(enhanceDestinationLinks).observe(root, {
+  new MutationObserver(enhanceArticlePage).observe(root, {
     childList: true,
     subtree: true
   });
