@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = '20260807-photo-fix-1';
+  const VERSION = '20260807-spirit-fit-2';
   if (document.documentElement.dataset.spiritualProductsReady === VERSION) return;
   document.documentElement.dataset.spiritualProductsReady = VERSION;
 
@@ -46,6 +46,12 @@
         object-position:center;
         transition:transform .65s var(--ease),filter .65s var(--ease);
         filter:drop-shadow(0 20px 24px rgba(45,31,18,.18));
+      }
+      .product-card[data-product="spirit"] .product-visual img.product-photo{
+        width:88%;
+        height:88%;
+        object-fit:contain;
+        object-position:center;
       }
       .product-card:hover .product-visual img.product-photo{
         transform:translateY(-6px) scale(1.018);
@@ -97,6 +103,7 @@
         50%{transform:translateY(-5px)}
       }
       @media(max-width:760px){
+        .product-card[data-product="spirit"] .product-visual img.product-photo{width:92%;height:92%}
         .product-card[data-product="motherCard"] .product-visual img.product-photo{padding:10px}
       }
       @media(prefers-reduced-motion:reduce){
