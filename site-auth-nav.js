@@ -56,10 +56,6 @@ function installStyles() {
     .sponsor-offer-status{margin-top:8px;font-size:10px;line-height:1.6;color:rgba(46,37,28,.68);text-align:center}
     .sponsor-offer-progress{height:5px;margin-top:7px;border:1px solid rgba(89,79,71,.2);background:rgba(89,79,71,.08)}
     .sponsor-offer-progress span{display:block;height:100%;background:#A58254}
-    .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media{display:block;overflow:hidden;background:#EEE9DF!important}
-    .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media img{position:absolute!important;inset:0!important;width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;padding:0!important;margin:0!important;object-fit:cover!important;object-position:50% 47%!important;filter:none!important;transform:scale(2.18)!important;transform-origin:center!important}
-    .article-card[data-article-id="reading-you-can-not-fear-death"]:hover .article-card-media img{transform:scale(2.23)!important}
-    .article-card[data-article-id="reading-you-can-not-fear-death"] .article-list-title{text-align:center}
     @media(max-width:768px){
       :root{--site-auth-height:52px}
       #site-auth-bar{padding:0 12px;justify-content:center}
@@ -67,8 +63,6 @@ function installStyles() {
       .site-auth-button{flex:1;min-width:0;padding:6px 8px;font-size:11.5px}
       .site-account-menu{left:0;right:0;width:100%}
       .member-login-card{padding:38px 24px 30px}
-      .article-card[data-article-id="reading-you-can-not-fear-death"] .article-card-media img{object-position:center!important;transform:scale(1.04)!important}
-      .article-card[data-article-id="reading-you-can-not-fear-death"]:hover .article-card-media img{transform:scale(1.04)!important}
     }
   `;
   document.head.appendChild(style);
