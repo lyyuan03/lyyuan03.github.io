@@ -6,7 +6,7 @@ export const yuanshenDestinyArchetypeArticle = {
   status: "published",
   publishedAt: "2026-08-07T01:35:00.000Z",
   updatedAt: "2026-08-07T09:10:00.000Z",
-  coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-clean",
+  coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-final-1",
   sharePath: "article/yuanshen-destiny-archetype.html",
   excerpt: "三個真實顯化案例，揭開元神如何決定心性、困境與人生天花板。",
   accessType: "open",
@@ -24,6 +24,8 @@ export const yuanshenDestinyArchetypeArticle = {
 
 ## 天庭巨石所化的元神
 
+![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260807-final-1)
+
 曾有一位原住民學員，性格頑固、難以溝通，特別嗜酒。他的元神本源，是天庭遠古時期的一顆巨石所化。這乍看沒什麼特別，卻道出了他這一生最核心的命題。石頭的本質就是固執、不易撼動，就算知道了真相、就算有人告訴他該怎麼做，他也不會輕易改變。這不是缺點，而是他元神帶來的本質烙印。
 
 沒喝酒時，他懦弱、逃避，不敢承擔責任，遇衝突即退縮；只有在酒精的作用下，受壓抑的本性才會短暫流露，憤怒、指責、批判，喊出平時不敢說的話，這就是身、口、意尚未合一。
@@ -32,6 +34,8 @@ export const yuanshenDestinyArchetypeArticle = {
 
 ## 大鵬鳥元神──與岳飛的奇妙連結
 
+![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260807-final-1)
+
 這位學員從未加入過任何宮廟或宮壇，他的啟靈沒有任何儀式、沒有任何人引導，甚至沒有任何預兆。某一個深夜，才剛躺上床不久，他的雙手雙腳就緩緩地浮起來。他的頭腦還無法理解眼前發生的事，下一瞬間，全身就開始不由自主地抖動，從手腳蔓延到全身，沒有辦法停止。那是覺醒之力，在沒有人召喚之下，它自己發生了。
 
 他的元神是一隻極為巨大的大鵬鳥，威嚴而神祕，翱翔於高空之間。這個元神與北宋名將岳飛有著奇妙的連結──岳飛的元神同樣是一隻金色的大鵬鳥，形態雖有所不同，但來源相近，都代表著極高靈格的元神。
@@ -39,6 +43,8 @@ export const yuanshenDestinyArchetypeArticle = {
 大鵬鳥本性孤傲，不喜群居，習慣獨自飛行於高空。這位學員的性格也如出一轍，孤僻，難以親近，不喜歡社交。他的眼神銳利而深邃，與他初次見面者，常常不自覺地不敢直視其眼睛。他屬於先天自我啟靈，元神已然覺醒，覺醒的清晰度比前一位深得多。
 
 ## 九尾七彩神鳥──活在天命裡而不自知
+
+![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260807-final-1)
 
 這是我見過最震撼的一次元神顯化，但震撼我的，不只是那個畫面。
 
