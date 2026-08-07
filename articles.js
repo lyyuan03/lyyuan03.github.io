@@ -1135,7 +1135,7 @@ async function loadArticles() {
         .replace(/stone-origin\.svg(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260807-direct-2")
         .replace(/roc-awakening\.svg(?:\?[^)\s"']*)?/g, "roc-awakening.jpg?v=20260807-direct-2")
         .replace(/nine-tailed-bird\.svg(?:\?[^)\s"']*)?/g, "nine-tailed-bird.jpg?v=20260807-direct-2");
-      return { ...article, coverImage: "https://www.books.com.tw/img/001/106/00/0011060075.jpg?utm_source=chatgpt.com", content: fixedContent };
+      return { ...article, coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-cover-local-2", content: fixedContent };
     }
     if (article.id === "celebrity-death-dream-spirit-five-checks") {
       return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };

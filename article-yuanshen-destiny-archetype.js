@@ -6,7 +6,7 @@ export const yuanshenDestinyArchetypeArticle = {
   status: "published",
   publishedAt: "2026-08-07T01:35:00.000Z",
   updatedAt: "2026-08-07T01:35:00.000Z",
-  coverImage: "https://www.books.com.tw/img/001/106/00/0011060075.jpg?utm_source=chatgpt.com",
+  coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-cover-local-2",
   sharePath: "article/yuanshen-destiny-archetype.html",
   excerpt: "三個真實顯化案例，揭開元神如何決定心性、困境與人生天花板。",
   accessType: "open",
