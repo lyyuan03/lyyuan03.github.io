@@ -1,5 +1,5 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260802-backend-sync-1";
+import { staticArticles } from "./static-articles.js?v=20260807-article-sync-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
