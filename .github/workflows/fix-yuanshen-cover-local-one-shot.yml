@@ -1,0 +1,62 @@
+name: One-shot local yuanshen cover fix
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-yuanshen-cover-local-one-shot.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fix cover source and display
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          local_cover = 'assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-cover-local-2'
+          external_cover = 'https://www.books.com.tw/img/001/106/00/0011060075.jpg?utm_source=chatgpt.com'
+
+          p = Path('article-yuanshen-destiny-archetype.js')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace(external_cover, local_cover)
+          s = re.sub(r'assets/articles/yuanshen-destiny-archetype/book-cover\.svg\?v=[^"\']+', local_cover, s)
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('articles.js')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace(external_cover, local_cover)
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('static-articles.js')
+          s = p.read_text(encoding='utf-8')
+          s = re.sub(r'(article-yuanshen-destiny-archetype\.js\?v=)[^"\']+', r'\g<1>20260807-cover-local-2', s)
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('articles.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '.article-cover{width:100%;max-height:460px;object-fit:cover;margin:22px 0;border:1px solid var(--line)}'
+          extra = marker + '.article-view[data-article-id="yuanshen-destiny-archetype"]>.article-cover{width:min(100%,420px);max-height:none;height:auto;object-fit:contain;object-position:center;display:block;margin:22px auto}'
+          if 'yuanshen-destiny-archetype"]>.article-cover' not in s:
+              s = s.replace(marker, extra)
+          s = re.sub(r'(articles\.js\?v=)[^"\']+', r'\g<1>20260807-cover-local-2', s)
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('article/yuanshen-destiny-archetype.html')
+          s = p.read_text(encoding='utf-8')
+          s = re.sub(r'https://lyyuan\.tw/assets/articles/yuanshen-destiny-archetype/book-cover\.svg\?v=[^"\']+', 'https://lyyuan.tw/assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-cover-local-2', s)
+          s = s.replace(external_cover, 'https://lyyuan.tw/' + local_cover)
+          p.write_text(s, encoding='utf-8')
+
+          Path('.github/workflows/fix-yuanshen-cover-local-one-shot.yml').unlink()
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Use local book cover and preserve portrait ratio" || exit 0
+          git push
