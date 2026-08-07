@@ -1,7 +1,7 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260802-you-can-not-fear-death-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -24,6 +24,9 @@ const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh
 // 限時免費 deadline 已全部過期（2026-07 月底），清空後這些文章固定以贊助專屬運作。
 // 若未來需要再開放限時免費，直接在此 Map 新增 [文章ID, Date.parse("...Z")] 即可。
 const limitedReadingDeadlines = new Map();
+const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
+// 這篇已由 Firestore 後台接管；索引首次建立前也不得退回顯示靜態 published 版本。
+const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype"]);
 const articleGuides = {
   "wealth-as-water": {
     topics: ["金錢意識", "安全感"],
@@ -415,7 +418,9 @@ function updateMetricSummary(articleId) {
 async function loadArticleMetrics() {
   try {
     const snapshot = await getDocs(collection(db, "articleMetrics"));
-    articleMetrics = new Map(snapshot.docs.map((item) => [item.id, item.data()]));
+    articleMetrics = new Map(snapshot.docs
+      .filter((item) => item.id !== ARTICLE_STATUS_INDEX_ID)
+      .map((item) => [item.id, item.data()]));
   } catch (error) {
     console.warn("文章統計暫時無法載入。", error);
     articleMetrics = new Map();
@@ -1033,28 +1038,95 @@ function renderCurrentView() {
   }
 }
 
+function publicationStatusMap(snapshot) {
+  const statuses = {};
+  snapshot.docs.forEach((item) => {
+    const article = item.data() || {};
+    if (article.systemType === "article-thumbnail-settings") return;
+    statuses[item.id] = {
+      status: article.status === "published" ? "published" : "draft",
+      hidden: article.hidden === true,
+      systemRecord: article.systemRecord === true
+    };
+  });
+  return statuses;
+}
+
+async function writePublicationStatusIndex(statuses) {
+  const indexRef = doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID);
+  const current = await getDoc(indexRef);
+  if (!current.exists()) {
+    // 先以符合既有公開建立規則的統計格式建立，再由管理員寫入狀態索引。
+    await setDoc(indexRef, {
+      articleId: ARTICLE_STATUS_INDEX_ID,
+      views: 1,
+      shares: 0,
+      copies: 0,
+      updatedAt: serverTimestamp()
+    });
+  }
+  await setDoc(indexRef, {
+    articleId: ARTICLE_STATUS_INDEX_ID,
+    views: 0,
+    shares: 0,
+    copies: 0,
+    statuses,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
+async function syncPublicationStatusIndexForAdmin() {
+  if (!isAdminEmail(auth.currentUser?.email)) return false;
+  const snapshot = await getDocs(collection(db, "articles"));
+  await writePublicationStatusIndex(publicationStatusMap(snapshot));
+  return true;
+}
+
 async function loadArticles() {
   renderTabs();
-  let articles = [];
-  try {
-    const publishedQuery = query(collection(db, "articles"), where("status", "==", "published"));
-    const snapshot = await getDocs(publishedQuery);
-    articles = snapshot.docs
-      .map((item) => ({ id: item.id, ...item.data() }))
-      .filter((article) => article.hidden !== true && article.systemRecord !== true)
-      .sort(sortPublished);
-  } catch (error) {
-    console.warn("Firebase 文章暫時無法載入，改顯示靜態文章。", error);
+  const publishedRequest = getDocs(
+    query(collection(db, "articles"), where("status", "==", "published"))
+  );
+  const statusRequest = getDoc(doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID));
+  const [publishedResult, statusResult] = await Promise.allSettled([
+    publishedRequest,
+    statusRequest
+  ]);
+
+  const firestoreArticles = publishedResult.status === "fulfilled"
+    ? publishedResult.value.docs
+        .map((item) => ({ id: item.id, ...item.data() }))
+        .filter((article) => article.hidden !== true && article.systemRecord !== true)
+    : [];
+  if (publishedResult.status === "rejected") {
+    console.warn("Firebase 已發布文章暫時無法載入，改顯示靜態文章。", publishedResult.reason);
   }
-  // 同 ID 文章採最後更新版本；時間相同時以 Firestore 為準，靜態文章仍可作為備援。
-  const mergedById = new Map(staticArticles.map((article) => [article.id, article]));
-  articles.forEach((article) => {
-    const staticArticle = mergedById.get(article.id);
-    const firestoreTime = getTimeValue(article.updatedAt) || getTimeValue(article.publishedAt);
-    const staticTime = getTimeValue(staticArticle?.updatedAt) || getTimeValue(staticArticle?.publishedAt);
-    if (!staticArticle || firestoreTime >= staticTime) mergedById.set(article.id, article);
+
+  const indexedStatuses = statusResult.status === "fulfilled" && statusResult.value.exists()
+    ? statusResult.value.data().statuses || {}
+    : {};
+  const statusById = new Map(Object.entries(indexedStatuses));
+  if (statusResult.status === "rejected") {
+    console.warn("文章狀態索引暫時無法載入。", statusResult.reason);
+  }
+
+  // Firestore 有同 ID 文件時，靜態資料不得回補；靜態檔只備援尚未進入 Firestore 的文章。
+  const mergedById = new Map();
+  staticArticles.forEach((article) => {
+    const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
+    if (!managedByFirestore) mergedById.set(article.id, article);
   });
-  const merged = [...mergedById.values()];
+  firestoreArticles.forEach((article) => mergedById.set(article.id, article));
+  statusById.forEach((status, articleId) => {
+    if (status.status !== "published" || status.hidden === true || status.systemRecord === true) {
+      mergedById.delete(articleId);
+    }
+  });
+  const merged = [...mergedById.values()].filter((article) =>
+    article.status === "published"
+    && article.hidden !== true
+    && article.systemRecord !== true
+  );
   const normalizedArticles = merged.map((article) => {
     if (article.id === "celebrity-death-dream-spirit-five-checks") {
       return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
@@ -1098,6 +1170,13 @@ document.addEventListener("visibilitychange", async () => {
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   await loadMemberAccess(user);
+  if (isAdminEmail(user?.email)) {
+    try {
+      if (await syncPublicationStatusIndexForAdmin()) await loadArticles();
+    } catch (error) {
+      console.warn("文章狀態索引同步失敗。", error);
+    }
+  }
   if (loadedArticles.length && activeId) {
     const index = loadedArticles.findIndex((article) => article.id === activeId || article.slug === activeId);
     if (index >= 0) loadedArticles[index] = await hydrateEventArticle(loadedArticles[index]);

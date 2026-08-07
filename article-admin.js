@@ -15,6 +15,7 @@ const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
 ]);
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings"]);
+const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 
 let articles = [];
 let currentId = null;
@@ -295,6 +296,42 @@ function staticArticlePayload(article, revision) {
   };
 }
 
+function publicationStatusMap(snapshot) {
+  const statuses = {};
+  snapshot.docs.forEach((item) => {
+    const article = item.data() || {};
+    if (SYSTEM_ARTICLE_IDS.has(item.id) || article.systemType === "article-thumbnail-settings") return;
+    statuses[item.id] = {
+      status: article.status === "published" ? "published" : "draft",
+      hidden: article.hidden === true,
+      systemRecord: article.systemRecord === true
+    };
+  });
+  return statuses;
+}
+
+async function syncPublicationStatusIndex(snapshot) {
+  const indexRef = doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID);
+  const current = await getDoc(indexRef);
+  if (!current.exists()) {
+    await setDoc(indexRef, {
+      articleId: ARTICLE_STATUS_INDEX_ID,
+      views: 1,
+      shares: 0,
+      copies: 0,
+      updatedAt: serverTimestamp()
+    });
+  }
+  await setDoc(indexRef, {
+    articleId: ARTICLE_STATUS_INDEX_ID,
+    views: 0,
+    shares: 0,
+    copies: 0,
+    statuses: publicationStatusMap(snapshot),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
 async function syncRevisedStaticArticles(snapshot) {
   const firestoreById = new Map(snapshot.docs.map((item) => [item.id, item.data()]));
   let didSync = false;
@@ -451,9 +488,12 @@ async function loadArticles() {
       snapshot = await getDocs(collection(db, "articles"));
       showAdminToast("《你可以不怕死》前後台內容已完成同步。", "success");
     }
+    await syncPublicationStatusIndex(snapshot);
     try {
       const metricsSnapshot = await getDocs(collection(db, "articleMetrics"));
-      metricsByArticle = new Map(metricsSnapshot.docs.map((item) => [item.id, item.data()]));
+      metricsByArticle = new Map(metricsSnapshot.docs
+        .filter((item) => item.id !== ARTICLE_STATUS_INDEX_ID)
+        .map((item) => [item.id, item.data()]));
     } catch (metricsError) {
       console.warn("文章統計暫時無法載入。", metricsError);
       metricsByArticle = new Map();
