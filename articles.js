@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260807-article-sync-1";
+import { staticArticles } from "./static-articles.js?v=20260807-yuanshen-images-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -1130,6 +1130,13 @@ async function loadArticles() {
     && article.systemRecord !== true
   );
   const normalizedArticles = merged.map((article) => {
+    if (article.id === "yuanshen-destiny-archetype") {
+      const fixedContent = String(article.content || "")
+        .replace(/stone-origin\.svg(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260807-direct-2")
+        .replace(/roc-awakening\.svg(?:\?[^)\s"']*)?/g, "roc-awakening.jpg?v=20260807-direct-2")
+        .replace(/nine-tailed-bird\.svg(?:\?[^)\s"']*)?/g, "nine-tailed-bird.jpg?v=20260807-direct-2");
+      return { ...article, coverImage: "https://www.books.com.tw/img/001/106/00/0011060075.jpg?utm_source=chatgpt.com", content: fixedContent };
+    }
     if (article.id === "celebrity-death-dream-spirit-five-checks") {
       return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
     }

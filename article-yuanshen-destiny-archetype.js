@@ -6,7 +6,7 @@ export const yuanshenDestinyArchetypeArticle = {
   status: "published",
   publishedAt: "2026-08-07T01:35:00.000Z",
   updatedAt: "2026-08-07T01:35:00.000Z",
-  coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.svg?v=20260807-1",
+  coverImage: "https://www.books.com.tw/img/001/106/00/0011060075.jpg?utm_source=chatgpt.com",
   sharePath: "article/yuanshen-destiny-archetype.html",
   excerpt: "三個真實顯化案例，揭開元神如何決定心性、困境與人生天花板。",
   accessType: "open",
@@ -24,7 +24,7 @@ export const yuanshenDestinyArchetypeArticle = {
 
 ## 天庭巨石所化的元神
 
-![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.svg?v=20260807-1)
+![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260807-direct-2)
 
 曾有一位原住民學員，性格頑固、難以溝通，特別嗜酒。他的元神本源，是天庭遠古時期的一顆巨石所化。這乍看沒什麼特別，卻道出了他這一生最核心的命題。石頭的本質就是固執、不易撼動，就算知道了真相、就算有人告訴他該怎麼做，他也不會輕易改變。這不是缺點，而是他元神帶來的本質烙印。
 
@@ -34,7 +34,7 @@ export const yuanshenDestinyArchetypeArticle = {
 
 ## 大鵬鳥元神──與岳飛的奇妙連結
 
-![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.svg?v=20260807-1)
+![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260807-direct-2)
 
 這位學員從未加入過任何宮廟或宮壇，他的啟靈沒有任何儀式、沒有任何人引導，甚至沒有任何預兆。某一個深夜，才剛躺上床不久，他的雙手雙腳就緩緩地浮起來。他的頭腦還無法理解眼前發生的事，下一瞬間，全身就開始不由自主地抖動，從手腳蔓延到全身，沒有辦法停止。那是覺醒之力，在沒有人召喚之下，它自己發生了。
 
@@ -44,7 +44,7 @@ export const yuanshenDestinyArchetypeArticle = {
 
 ## 九尾七彩神鳥──活在天命裡而不自知
 
-![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.svg?v=20260807-1)
+![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260807-direct-2)
 
 這是我見過最震撼的一次元神顯化，但震撼我的，不只是那個畫面。
 
