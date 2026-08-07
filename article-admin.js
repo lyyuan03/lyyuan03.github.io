@@ -17,6 +17,17 @@ const staticArticleSyncRevisions = new Map([
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 
+// 系統狀態文件，不應出現在文章列表
+function isSystemStatusArticle(item) {
+  const data = item.data ? item.data() : item;
+  const title = (data.title || "").trim();
+  return title.includes("贊助閱讀方案名額狀態") ||
+         title.includes("名額狀態") ||
+         SYSTEM_ARTICLE_IDS.has(item.id) ||
+         data.systemType === "article-thumbnail-settings" ||
+         data.systemRecord === true;
+}
+
 let articles = [];
 let currentId = null;
 let metricsByArticle = new Map();
@@ -208,10 +219,10 @@ function slugify(value) {
 
 function escapeHtml(value = "") {
   return value.replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
+    "&": "&",
+    "<": "<",
+    ">": ">",
+    '"': """,
     "'": "&#039;"
   }[char]));
 }
@@ -299,8 +310,8 @@ function staticArticlePayload(article, revision) {
 function publicationStatusMap(snapshot) {
   const statuses = {};
   snapshot.docs.forEach((item) => {
+    if (isSystemStatusArticle(item)) return;
     const article = item.data() || {};
-    if (SYSTEM_ARTICLE_IDS.has(item.id) || article.systemType === "article-thumbnail-settings") return;
     statuses[item.id] = {
       status: article.status === "published" ? "published" : "draft",
       hidden: article.hidden === true,
@@ -500,7 +511,7 @@ async function loadArticles() {
     }
     const adminKeys = await loadAdminEventKeys();
     const firestoreArticles = await Promise.all(snapshot.docs
-      .filter((item) => !SYSTEM_ARTICLE_IDS.has(item.id) && item.data().systemType !== "article-thumbnail-settings")
+      .filter((item) => !isSystemStatusArticle(item))
       .map(async (item) => {
       const article = { id: item.id, ...item.data(), source: "firestore" };
       if (article.accessType === "event" && article.encryptedContent && article.eventIv && adminKeys[item.id]) {
@@ -848,7 +859,7 @@ async function exportAllArticles() {
   try {
     const snapshot = await getDocs(collection(db, "articles"));
     const firestoreItems = snapshot.docs
-      .filter((item) => !SYSTEM_ARTICLE_IDS.has(item.id) && item.data().systemType !== "article-thumbnail-settings")
+      .filter((item) => !isSystemStatusArticle(item))
       .map((item) => articleForExport({ id: item.id, ...item.data() }, "firestore"));
     const staticItems = staticArticles.map((item) => articleForExport(item, "github-static"));
     const allItems = [...firestoreItems, ...staticItems].sort((a, b) =>
