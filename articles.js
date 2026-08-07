@@ -271,8 +271,10 @@ function getTimeValue(value) {
 }
 
 function sortPublished(a, b) {
-  const at = getTimeValue(a.publishedAt) || getTimeValue(a.updatedAt);
-  const bt = getTimeValue(b.publishedAt) || getTimeValue(b.updatedAt);
+  // 排序優先序須與後台 article-admin.js 的 articleTime() 一致（updatedAt 優先），
+  // 否則文章一經編輯（updatedAt 比 publishedAt 新），前後台顯示順序就會不同步。
+  const at = getTimeValue(a.updatedAt) || getTimeValue(a.publishedAt);
+  const bt = getTimeValue(b.updatedAt) || getTimeValue(b.publishedAt);
   return bt - at;
 }
 
