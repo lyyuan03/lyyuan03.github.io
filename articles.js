@@ -1,7 +1,7 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260802-you-can-not-fear-death-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, getDocs, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -1035,24 +1035,26 @@ function renderCurrentView() {
 
 async function loadArticles() {
   renderTabs();
-  let firestoreArticles = [];
+  let articles = [];
   try {
-    const snapshot = await getDocs(collection(db, "articles"));
-    firestoreArticles = snapshot.docs
-      .map((item) => ({ id: item.id, ...item.data() }));
+    const publishedQuery = query(collection(db, "articles"), where("status", "==", "published"));
+    const snapshot = await getDocs(publishedQuery);
+    articles = snapshot.docs
+      .map((item) => ({ id: item.id, ...item.data() }))
+      .filter((article) => article.hidden !== true && article.systemRecord !== true)
+      .sort(sortPublished);
   } catch (error) {
     console.warn("Firebase 文章暫時無法載入，改顯示靜態文章。", error);
   }
-  // Firestore 只要存在同 ID 文件，就一律覆蓋靜態資料；靜態文章僅在 Firestore 無該文件時備援。
+  // 同 ID 文章採最後更新版本；時間相同時以 Firestore 為準，靜態文章仍可作為備援。
   const mergedById = new Map(staticArticles.map((article) => [article.id, article]));
-  firestoreArticles.forEach((article) => {
-    mergedById.set(article.id, article);
+  articles.forEach((article) => {
+    const staticArticle = mergedById.get(article.id);
+    const firestoreTime = getTimeValue(article.updatedAt) || getTimeValue(article.publishedAt);
+    const staticTime = getTimeValue(staticArticle?.updatedAt) || getTimeValue(staticArticle?.publishedAt);
+    if (!staticArticle || firestoreTime >= staticTime) mergedById.set(article.id, article);
   });
-  const merged = [...mergedById.values()].filter((article) =>
-    article.status === "published"
-    && article.hidden !== true
-    && article.systemRecord !== true
-  );
+  const merged = [...mergedById.values()];
   const normalizedArticles = merged.map((article) => {
     if (article.id === "celebrity-death-dream-spirit-five-checks") {
       return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
