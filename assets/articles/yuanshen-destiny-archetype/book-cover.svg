@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-label="我在人間的元神覺醒書封">
+  <rect width="900" height="1200" fill="#050505"/>
+  <rect x="42" y="42" width="816" height="1116" rx="8" fill="none" stroke="#b58a45" stroke-width="2" opacity=".5"/>
+  <text x="450" y="170" text-anchor="middle" fill="#ef5b17" font-size="72" font-family="serif">我在人間的</text>
+  <text x="450" y="300" text-anchor="middle" fill="#ef5b17" font-size="118" font-family="serif">元・神・覺・醒</text>
+  <text x="450" y="390" text-anchor="middle" fill="#f3efe7" font-size="36" font-family="serif">靈修這些年走過的彎路、</text>
+  <text x="450" y="438" text-anchor="middle" fill="#f3efe7" font-size="36" font-family="serif">看清的陷阱、體悟到的核心原則</text>
+  <g fill="none" stroke="#d9ad53" stroke-width="5">
+    <path d="M130 810c45-250 170-310 320-120 150-190 275-130 320 120-80 135-195 235-320 275-125-40-240-140-320-275Z"/>
+    <path d="M450 565v420"/>
+    <path d="M225 735c110-160 230-145 225-20"/>
+    <path d="M675 735c-110-160-230-145-225-20"/>
+  </g>
+  <g fill="#d9ad53">
+    <circle cx="450" cy="610" r="10"/><circle cx="420" cy="650" r="5"/><circle cx="480" cy="650" r="5"/>
+    <circle cx="390" cy="700" r="4"/><circle cx="510" cy="700" r="4"/>
+    <path d="M450 770l14 32 34 2-27 22 8 34-29-18-29 18 8-34-27-22 34-2Z"/>
+  </g>
+  <text x="450" y="1080" text-anchor="middle" fill="#f3efe7" font-size="34" font-family="serif">宇色 Osel 著</text>
+</svg>
