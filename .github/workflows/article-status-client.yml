@@ -1,0 +1,34 @@
+name: Apply Article Status Client Fix
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/article-status-client.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply patch
+        run: python3 scripts/patch_article_status_client.py
+
+      - name: Validate JavaScript
+        run: |
+          node --check articles.js
+          node --check article-admin.js
+          git diff --check
+          grep -F 'ARTICLE_STATUS_INDEX_ID' articles.js
+          grep -F 'LEGACY_FIRESTORE_MANAGED_IDS' articles.js
+          grep -F 'syncPublicationStatusIndex(snapshot)' article-admin.js
+          grep -F 'where("status", "==", "published")' articles.js
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'fix: make Firestore article status authoritative'
+          file_pattern: 'articles.js article-admin.js'
