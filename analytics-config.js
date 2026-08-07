@@ -11,7 +11,7 @@ window.LYY_ANALYTICS_CONFIG = Object.freeze({
 
 if (location.pathname.endsWith("/books.html")) {
   const latestBookScript = document.createElement("script");
-  latestBookScript.src = "/books-latest-feature-2026.js?v=20260806-1731";
+  latestBookScript.src = "/books-latest-feature-2026.js?v=20260807-1505";
   latestBookScript.defer = true;
   document.head.appendChild(latestBookScript);
 }
