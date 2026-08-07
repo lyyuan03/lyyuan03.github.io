@@ -2,7 +2,8 @@ name: Finalize yuanshen article images
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -23,19 +24,22 @@ jobs:
           VERSION = "20260807-final-1"
           BASE = "assets/articles/yuanshen-destiny-archetype"
 
-          # 1) Static article source: restore all three case images and local book cover.
           article_path = Path("article-yuanshen-destiny-archetype.js")
           s = article_path.read_text(encoding="utf-8")
-          s = re.sub(r'coverImage:\s*"[^"]*book-cover\.jpg(?:\?[^\"]*)?"',
-                     f'coverImage: "{BASE}/book-cover.jpg?v={VERSION}"', s, count=1)
+          s = re.sub(
+              r'coverImage:\s*"[^"]*book-cover\.jpg(?:\?[^\"]*)?"',
+              f'coverImage: "{BASE}/book-cover.jpg?v={VERSION}"',
+              s,
+              count=1,
+          )
           sections = [
               ("## 天庭巨石所化的元神", "天庭巨石所化的元神", "stone-origin.jpg"),
               ("## 大鵬鳥元神──與岳飛的奇妙連結", "大鵬鳥元神", "roc-awakening.jpg"),
               ("## 九尾七彩神鳥──活在天命裡而不自知", "九尾七彩神鳥元神", "nine-tailed-bird.jpg"),
           ]
           for heading, alt, filename in sections:
-              # Normalize any old reference first.
-              s = re.sub(rf'{re.escape(filename)}(?:\?[^)\s"\']*)?', f'{filename}?v={VERSION}', s)
+              pattern = re.escape(filename) + r'(?:\?[^)\s"\x27]*)?'
+              s = re.sub(pattern, f'{filename}?v={VERSION}', s)
               if filename not in s:
                   markdown = f'![{alt}]({BASE}/{filename}?v={VERSION})'
                   needle = heading + "\n\n"
@@ -44,59 +48,68 @@ jobs:
                   s = s.replace(needle, needle + markdown + "\n\n", 1)
           article_path.write_text(s, encoding="utf-8")
 
-          # 2) Ensure static-articles imports the refreshed article module.
           static_path = Path("static-articles.js")
           s = static_path.read_text(encoding="utf-8")
-          s = re.sub(r'article-yuanshen-destiny-archetype\.js\?v=[^"\']+',
-                     f'article-yuanshen-destiny-archetype.js?v={VERSION}', s)
+          s = re.sub(
+              r'article-yuanshen-destiny-archetype\.js\?v=[^"\x27]+',
+              f'article-yuanshen-destiny-archetype.js?v={VERSION}',
+              s,
+          )
           static_path.write_text(s, encoding="utf-8")
 
-          # 3) Firestore is the source of truth. Inject a normalization guard before any old
-          #    article-specific compatibility code so missing Firestore markdown is restored.
           articles_path = Path("articles.js")
           s = articles_path.read_text(encoding="utf-8")
-          s = re.sub(r'static-articles\.js\?v=[^"\']+', f'static-articles.js?v={VERSION}', s, count=1)
+          s = re.sub(
+              r'static-articles\.js\?v=[^"\x27]+',
+              f'static-articles.js?v={VERSION}',
+              s,
+              count=1,
+          )
           marker = "YUANSHEN_FINAL_IMAGE_SYNC_20260807"
           if marker not in s:
               anchor = "const normalizedArticles = merged.map((article) => {"
               if anchor not in s:
                   raise SystemExit("Could not find normalizedArticles anchor")
               block = r'''
-    // YUANSHEN_FINAL_IMAGE_SYNC_20260807
-    if (article.id === "yuanshen-destiny-archetype") {
-      let fixedContent = String(article.content || "")
-        .replace(/stone-origin\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260807-final-1")
-        .replace(/roc-awakening\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "roc-awakening.jpg?v=20260807-final-1")
-        .replace(/nine-tailed-bird\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "nine-tailed-bird.jpg?v=20260807-final-1");
-      const imageSections = [
-        ["## 天庭巨石所化的元神", "stone-origin.jpg", "![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260807-final-1)"],
-        ["## 大鵬鳥元神──與岳飛的奇妙連結", "roc-awakening.jpg", "![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260807-final-1)"],
-        ["## 九尾七彩神鳥──活在天命裡而不自知", "nine-tailed-bird.jpg", "![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260807-final-1)"],
-      ];
-      imageSections.forEach(([heading, filename, markdown]) => {
-        if (fixedContent.includes(heading) && !fixedContent.includes(filename)) {
-          fixedContent = fixedContent.replace(`${heading}\n\n`, `${heading}\n\n${markdown}\n\n`);
-        }
-      });
-      return {
-        ...article,
-        coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-final-1",
-        content: fixedContent,
-      };
-    }
-'''
+              // YUANSHEN_FINAL_IMAGE_SYNC_20260807
+              if (article.id === "yuanshen-destiny-archetype") {
+                let fixedContent = String(article.content || "")
+                  .replace(/stone-origin\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260807-final-1")
+                  .replace(/roc-awakening\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "roc-awakening.jpg?v=20260807-final-1")
+                  .replace(/nine-tailed-bird\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "nine-tailed-bird.jpg?v=20260807-final-1");
+                const imageSections = [
+                  ["## 天庭巨石所化的元神", "stone-origin.jpg", "![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260807-final-1)"],
+                  ["## 大鵬鳥元神──與岳飛的奇妙連結", "roc-awakening.jpg", "![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260807-final-1)"],
+                  ["## 九尾七彩神鳥──活在天命裡而不自知", "nine-tailed-bird.jpg", "![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260807-final-1)"],
+                ];
+                imageSections.forEach(([heading, filename, markdown]) => {
+                  if (fixedContent.includes(heading) && !fixedContent.includes(filename)) {
+                    fixedContent = fixedContent.replace(`${heading}\n\n`, `${heading}\n\n${markdown}\n\n`);
+                  }
+                });
+                return {
+                  ...article,
+                  coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-final-1",
+                  content: fixedContent,
+                };
+              }
+              '''
+              block = "\n".join(line[12:] if line.startswith("            ") else line for line in block.splitlines())
               s = s.replace(anchor, anchor + block, 1)
           articles_path.write_text(s, encoding="utf-8")
 
-          # 4) Force browsers/GitHub Pages to load the new article logic.
           html_path = Path("articles.html")
           s = html_path.read_text(encoding="utf-8")
-          s, n = re.subn(r'src="articles\.js\?v=[^"]+"', f'src="articles.js?v={VERSION}"', s, count=1)
+          s, n = re.subn(
+              r'src="articles\.js\?v=[^"]+"',
+              f'src="articles.js?v={VERSION}"',
+              s,
+              count=1,
+          )
           if n != 1:
               raise SystemExit("Could not update articles.js cache buster")
           html_path.write_text(s, encoding="utf-8")
 
-          # Remove this one-shot workflow from the repository in the same commit.
           Path(".github/workflows/finalize-yuanshen-images-20260807.yml").unlink(missing_ok=True)
           PY
       - name: Commit final article image wiring
