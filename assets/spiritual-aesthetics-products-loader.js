@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = '20260807-photo-fit-5';
+  const VERSION = '20260807-photo-fit-6';
   if (document.documentElement.dataset.spiritualProductsReady === VERSION) return;
   document.documentElement.dataset.spiritualProductsReady = VERSION;
 
@@ -16,7 +16,7 @@
     spirit: 'assets/product-spirit-photo.js?v=20260807-fit-4',
     wealth: 'assets/product-wealth-photo.js?v=20260807-photo-4',
     career: 'assets/product-career-photo.js?v=20260807-career-photo-2',
-    love: 'assets/product-love-photo.js?v=20260807-1',
+    love: 'assets/product-love-photo.js?v=20260807-love-photo-1',
     incense: 'assets/product-incense-photo.js?v=20260807-1',
     motherCard: 'assets/product-mother-card-photo.js?v=20260807-1'
   };
@@ -49,7 +49,8 @@
       }
       .product-card[data-product="spirit"] .product-visual,
       .product-card[data-product="wealth"] .product-visual,
-      .product-card[data-product="career"] .product-visual{
+      .product-card[data-product="career"] .product-visual,
+      .product-card[data-product="love"] .product-visual{
         display:flex!important;
         align-items:center!important;
         justify-content:center!important;
@@ -58,7 +59,8 @@
       }
       .product-card[data-product="spirit"] .product-visual img.product-photo,
       .product-card[data-product="wealth"] .product-visual img.product-photo,
-      .product-card[data-product="career"] .product-visual img.product-photo{
+      .product-card[data-product="career"] .product-visual img.product-photo,
+      .product-card[data-product="love"] .product-visual img.product-photo{
         position:relative!important;
         inset:auto!important;
         display:block!important;
@@ -77,7 +79,8 @@
       }
       .product-card[data-product="spirit"]:hover .product-visual img.product-photo,
       .product-card[data-product="wealth"]:hover .product-visual img.product-photo,
-      .product-card[data-product="career"]:hover .product-visual img.product-photo{
+      .product-card[data-product="career"]:hover .product-visual img.product-photo,
+      .product-card[data-product="love"]:hover .product-visual img.product-photo{
         transform:none!important;
       }
       .product-card[data-product="motherCard"] .product-visual img.product-photo{
@@ -128,10 +131,12 @@
       @media(max-width:760px){
         .product-card[data-product="spirit"] .product-visual,
         .product-card[data-product="wealth"] .product-visual,
-        .product-card[data-product="career"] .product-visual{padding:8px!important}
+        .product-card[data-product="career"] .product-visual,
+        .product-card[data-product="love"] .product-visual{padding:8px!important}
         .product-card[data-product="spirit"] .product-visual img.product-photo,
         .product-card[data-product="wealth"] .product-visual img.product-photo,
-        .product-card[data-product="career"] .product-visual img.product-photo{
+        .product-card[data-product="career"] .product-visual img.product-photo,
+        .product-card[data-product="love"] .product-visual img.product-photo{
           max-width:98%!important;
           max-height:98%!important;
         }
@@ -156,7 +161,7 @@
     const image = new Image();
     image.className = 'product-photo';
     image.alt = names[key] || '靈元院商品';
-    image.loading = key === 'spirit' || key === 'wealth' || key === 'career' ? 'eager' : 'lazy';
+    image.loading = key === 'spirit' || key === 'wealth' || key === 'career' || key === 'love' ? 'eager' : 'lazy';
     image.decoding = 'async';
     image.onload = () => visual.replaceChildren(image);
     image.onerror = () => console.warn(`商品圖片載入失敗，保留原始示意圖：${key}`);
