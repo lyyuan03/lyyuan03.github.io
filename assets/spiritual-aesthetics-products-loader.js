@@ -1,6 +1,7 @@
 (() => {
-  if (document.documentElement.dataset.spiritualProductsReady === '20260806') return;
-  document.documentElement.dataset.spiritualProductsReady = '20260806';
+  const VERSION = '20260807-photo-fix-1';
+  if (document.documentElement.dataset.spiritualProductsReady === VERSION) return;
+  document.documentElement.dataset.spiritualProductsReady = VERSION;
 
   const names = {
     spirit: '元神光彩御守',
@@ -11,18 +12,20 @@
     motherCard: '無極瑤池金母護身卡'
   };
 
-  const productPhotos = {
-    spirit: 'assets/products/spirit-omamori-20260806.webp?v=1',
-    wealth: 'assets/products/wealth-omamori-20260806.webp?v=1',
-    career: 'assets/products/career-omamori-20260806.webp?v=1',
-    love: 'assets/products/love-omamori-20260806.webp?v=1',
-    incense: 'assets/products/incense-20260806.webp?v=1',
-    motherCard: 'assets/products/mother-card-20260806.webp?v=1'
+  const photoScripts = {
+    spirit: 'assets/product-spirit-photo.js?v=20260807-1',
+    wealth: 'assets/product-wealth-photo.js?v=20260807-1',
+    career: 'assets/product-career-photo.js?v=20260807-1',
+    love: 'assets/product-love-photo.js?v=20260807-1',
+    incense: 'assets/product-incense-photo.js?v=20260807-1',
+    motherCard: 'assets/product-mother-card-photo.js?v=20260807-1'
   };
 
-  if (!document.querySelector('style[data-product-photos-20260806]')) {
+  window.LYYProductImages = window.LYYProductImages || {};
+
+  if (!document.querySelector('style[data-product-photos-20260807]')) {
     const style = document.createElement('style');
-    style.dataset.productPhotos20260806 = 'true';
+    style.dataset.productPhotos20260807 = 'true';
     style.textContent = `
       .product-visual{
         position:relative;
@@ -62,7 +65,24 @@
         animation:realOmamoriReveal .72s cubic-bezier(.2,.8,.2,1) both,
                   realOmamoriFloat 2.8s .72s ease-in-out infinite;
       }
-      .mother-card-placeholder{display:none!important}
+      .mother-card-fallback{
+        width:210px;
+        height:270px;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+        color:#d8b777;
+        background:linear-gradient(155deg,#27301d,#10170d);
+        border:1px solid rgba(216,183,119,.7);
+        box-shadow:0 22px 34px rgba(45,31,18,.24),inset 0 0 0 9px rgba(216,183,119,.08);
+        font-family:var(--serif);
+        letter-spacing:.12em;
+      }
+      .mother-card-fallback::before{content:'✦';font-size:32px}
+      .mother-card-fallback strong{font-weight:400;font-size:18px}
+      .mother-card-fallback em{font-style:normal;font-size:14px;color:#f0dbad}
       @media(min-width:981px){
         .product-grid .product-card:nth-child(4),
         .product-grid .product-card:nth-child(5),
@@ -87,17 +107,22 @@
     document.head.appendChild(style);
   }
 
+  function getCard(key) {
+    return document.querySelector(`[data-product="${key}"]`) || document.getElementById(`product-${key}`);
+  }
+
   window.LYYApplyProductPhoto = (key, src) => {
-    const card = document.querySelector(`[data-product="${key}"]`) || document.getElementById(`product-${key}`);
-    const visual = card?.querySelector('.product-visual');
+    const visual = getCard(key)?.querySelector('.product-visual');
     if (!visual || !src) return;
-    const image = document.createElement('img');
+
+    const image = new Image();
     image.className = 'product-photo';
-    image.src = src;
     image.alt = names[key] || '靈元院商品';
     image.loading = key === 'spirit' ? 'eager' : 'lazy';
     image.decoding = 'async';
-    visual.replaceChildren(image);
+    image.onload = () => visual.replaceChildren(image);
+    image.onerror = () => console.warn(`商品圖片載入失敗，保留原始示意圖：${key}`);
+    image.src = src;
   };
 
   function installMotherCard() {
@@ -113,7 +138,11 @@
       <span class="badge">金母護持</span>
       <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener"
          aria-label="前往綠界選購無極瑤池金母護身卡">
-        <div class="product-visual"></div>
+        <div class="product-visual">
+          <div class="mother-card-fallback" role="img" aria-label="無極瑤池金母護身卡">
+            <strong>無極瑤池金母</strong><em>護身卡</em>
+          </div>
+        </div>
         <div class="product-info">
           <p class="product-meta">BLESSED CARD · 01</p>
           <div class="product-title-row">
@@ -152,10 +181,6 @@
     });
   }
 
-  function applyAllPhotos() {
-    Object.entries(productPhotos).forEach(([key, src]) => window.LYYApplyProductPhoto(key, src));
-  }
-
   function applyExpandedCopy() {
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.content = '靈元院靈性美學館，收錄祈願御守、無極瑤池金母護身卡與鎮煞護安香粉，讓虔敬、守護與日常修持安住於生活之中。';
@@ -176,26 +201,48 @@
     if (secondStep) secondStep.textContent = '閱讀各款御守、護身卡與護安香品的用途，選定相應品項後，前往綠界完成數量、方案與訂購資料。';
   }
 
+  function loadPhotoScript(key, src) {
+    if (window.LYYProductImages[key]) return Promise.resolve();
+    return new Promise(resolve => {
+      const existing = document.querySelector(`script[data-product-photo="${key}"]`);
+      if (existing) {
+        existing.addEventListener('load', resolve, { once: true });
+        existing.addEventListener('error', resolve, { once: true });
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.dataset.productPhoto = key;
+      script.onload = resolve;
+      script.onerror = () => {
+        console.warn(`無法載入商品圖片資料：${key}`);
+        resolve();
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  function applyLoadedPhotos() {
+    Object.entries(window.LYYProductImages || {}).forEach(([key, src]) => {
+      window.LYYApplyProductPhoto(key, src);
+    });
+  }
+
   installMotherCard();
   bindFilters();
 
   const incensePrice = document.querySelector('[data-product="incense"] .price');
   if (incensePrice) incensePrice.textContent = 'NT$ 680';
 
-  applyAllPhotos();
+  applyExpandedCopy();
 
-  if (!document.querySelector('script[data-aesthetics-copy-polish]')) {
-    const copyScript = document.createElement('script');
-    copyScript.src = 'assets/spiritual-aesthetics-copy-polish.js?v=1';
-    copyScript.async = false;
-    copyScript.dataset.aestheticsCopyPolish = 'true';
-    copyScript.addEventListener('load', applyExpandedCopy, { once: true });
-    document.body.appendChild(copyScript);
-  }
+  Promise.all(Object.entries(photoScripts).map(([key, src]) => loadPhotoScript(key, src)))
+    .then(() => {
+      applyLoadedPhotos();
+      window.setTimeout(applyLoadedPhotos, 350);
+    });
 
-  // 防止舊快取或舊商品圖程式稍後覆蓋新版圖片。
-  window.setTimeout(applyAllPhotos, 200);
-  window.setTimeout(applyAllPhotos, 900);
   window.setTimeout(applyExpandedCopy, 450);
   window.setTimeout(applyExpandedCopy, 1400);
 })();
