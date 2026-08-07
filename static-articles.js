@@ -6,6 +6,7 @@ import { wealthAsWaterArticle } from "./article-wealth-as-water.js?v=20260801-we
 import { youCanNotFearDeathArticle } from "./article-you-can-not-fear-death.js?v=20260802-3";
 import { howToJudgeTrueLingxiuUnderstandingArticle } from "./article-how-to-judge-true-lingxiu-understanding-display.js?v=20260803-publish-1";
 import { loveBeyondFilialPietyArticle } from "./article-love-beyond-filial-piety-photo.js?v=20260806-photo-1";
+import { yuanshenDestinyArchetypeArticle } from "./article-yuanshen-destiny-archetype.js?v=20260807-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -22,6 +23,7 @@ const categoryNames = {
 };
 
 const seriesById = {
+  "yuanshen-destiny-archetype": "靈修辨證",
   "love-beyond-filial-piety-and-ancestor-worship": "家族與靈魂",
   "how-to-judge-true-lingxiu-understanding": "靈修辨證",
   "reading-you-can-not-fear-death": "生命轉化",
@@ -45,6 +47,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
+  yuanshenDestinyArchetypeArticle,
   loveBeyondFilialPietyArticle,
   howToJudgeTrueLingxiuUnderstandingArticle,
   youCanNotFearDeathArticle,
