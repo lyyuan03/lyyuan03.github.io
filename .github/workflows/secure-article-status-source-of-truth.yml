@@ -1,0 +1,275 @@
+name: Secure article status source of truth
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/secure-article-status-source-of-truth.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch article loading, admin writes, rules, and sync trigger
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          # Public article loader: published content query + public status index.
+          path = Path('articles.js')
+          text = path.read_text(encoding='utf-8')
+          old_import = 'import { collection, doc, getDoc, getDocs, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";'
+          new_import = 'import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";'
+          if text.count(old_import) != 1:
+            raise SystemExit(f'articles.js import mismatch: {text.count(old_import)}')
+          text = text.replace(old_import, new_import, 1)
+
+          function_start = text.index('async function loadArticles()')
+          start = text.index('  let firestoreArticles = [];', function_start)
+          end = text.index('  const normalizedArticles = merged.map', start)
+          loader_block = '''  const publishedRequest = getDocs(
+    query(collection(db, "articles"), where("status", "==", "published"))
+  );
+  const statusRequest = getDocs(collection(db, "articlePublicationStatus"));
+  const [publishedResult, statusResult] = await Promise.allSettled([
+    publishedRequest,
+    statusRequest
+  ]);
+
+  const firestoreArticles = publishedResult.status === "fulfilled"
+    ? publishedResult.value.docs.map((item) => ({ id: item.id, ...item.data() }))
+    : [];
+  const statusById = statusResult.status === "fulfilled"
+    ? new Map(statusResult.value.docs.map((item) => [item.id, item.data()]))
+    : new Map();
+
+  if (publishedResult.status === "rejected") {
+    console.warn("Firebase 已發布文章暫時無法載入。", publishedResult.reason);
+  }
+  if (statusResult.status === "rejected") {
+    console.warn("文章狀態索引暫時無法載入；為避免草稿誤顯示，本次停用靜態備援。", statusResult.reason);
+  }
+
+  // 只有狀態索引確認 Firestore 沒有同 ID 文件時，才使用靜態文章。
+  const mergedById = new Map();
+  if (statusResult.status === "fulfilled") {
+    staticArticles.forEach((article) => {
+      if (!statusById.has(article.id)) mergedById.set(article.id, article);
+    });
+  }
+
+  // Firestore 的已發布版本一律覆蓋同 ID 靜態資料。
+  firestoreArticles.forEach((article) => {
+    mergedById.set(article.id, article);
+  });
+
+  // Firestore 狀態為草稿、隱藏或系統資料時，前台一律移除同 ID 文章。
+  statusById.forEach((status, articleId) => {
+    if (status.status !== "published" || status.hidden === true || status.systemRecord === true) {
+      mergedById.delete(articleId);
+    }
+  });
+
+  const merged = [...mergedById.values()].filter((article) =>
+    article.status === "published"
+    && article.hidden !== true
+    && article.systemRecord !== true
+  );
+'''
+          text = text[:start] + loader_block + text[end:]
+          path.write_text(text, encoding='utf-8')
+
+          # Admin: atomically write article content and its public status metadata.
+          path = Path('article-admin.js')
+          text = path.read_text(encoding='utf-8')
+          old_import = 'import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";'
+          new_import = 'import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";'
+          if text.count(old_import) != 1:
+            raise SystemExit(f'article-admin.js import mismatch: {text.count(old_import)}')
+          text = text.replace(old_import, new_import, 1)
+
+          marker = 'async function syncRevisedStaticArticles(snapshot) {'
+          if marker not in text:
+            raise SystemExit('syncRevisedStaticArticles marker missing')
+          helpers = '''function articlePublicationStatusPayload(article = {}) {
+  return {
+    status: article.status === "published" ? "published" : "draft",
+    hidden: article.hidden === true,
+    systemRecord: article.systemRecord === true,
+    updatedAt: serverTimestamp()
+  };
+}
+
+async function saveArticleWithPublicationStatus(articleRef, payload, statusSource = payload) {
+  const batch = writeBatch(db);
+  batch.set(articleRef, payload, { merge: true });
+  batch.set(
+    doc(db, "articlePublicationStatus", articleRef.id),
+    articlePublicationStatusPayload(statusSource)
+  );
+  await batch.commit();
+}
+
+async function deleteArticleWithPublicationStatus(articleId) {
+  const batch = writeBatch(db);
+  batch.delete(doc(db, "articles", articleId));
+  batch.delete(doc(db, "articlePublicationStatus", articleId));
+  await batch.commit();
+}
+
+'''
+          text = text.replace(marker, helpers + marker, 1)
+
+          replacements = {
+            '    await setDoc(doc(db, "articles", articleId), payload, { merge: true });':
+              '    await saveArticleWithPublicationStatus(doc(db, "articles", articleId), payload);',
+            '  await setDoc(doc(db, "articles", article.id), payload, { merge: true });':
+              '  await saveArticleWithPublicationStatus(doc(db, "articles", article.id), payload);',
+            '    await setDoc(articleRef, payload, { merge: true });':
+              '    const existingArticle = articles.find((article) => article.id === currentId) || {};\n    await saveArticleWithPublicationStatus(articleRef, payload, { ...existingArticle, ...data });',
+            '  await deleteDoc(doc(db, "articles", currentId));':
+              '  await deleteArticleWithPublicationStatus(currentId);'
+          }
+          for old, new in replacements.items():
+            if text.count(old) != 1:
+              raise SystemExit(f'article-admin.js replacement mismatch for {old!r}: {text.count(old)}')
+            text = text.replace(old, new, 1)
+          path.write_text(text, encoding='utf-8')
+
+          # Firestore rules: expose status metadata only, never draft article content.
+          path = Path('firestore.rules')
+          text = path.read_text(encoding='utf-8')
+          articles_rule = '''    match /articles/{articleId} {
+      allow read: if resource.data.status == "published" || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+'''
+          status_rule = '''
+    match /articlePublicationStatus/{articleId} {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasAll(["status", "updatedAt"])
+        && request.resource.data.keys().hasOnly(["status", "hidden", "systemRecord", "updatedAt"])
+        && request.resource.data.status in ["draft", "published"];
+      allow delete: if isAdmin();
+    }
+'''
+          if text.count(articles_rule) != 1:
+            raise SystemExit(f'firestore.rules article block mismatch: {text.count(articles_rule)}')
+          if 'match /articlePublicationStatus/' not in text:
+            text = text.replace(articles_rule, articles_rule + status_rule, 1)
+          path.write_text(text, encoding='utf-8')
+
+          # Cloud Function: keep status metadata synchronized even for console/API writes.
+          path = Path('functions/index.js')
+          text = path.read_text(encoding='utf-8')
+          firestore_import = 'const { onDocumentWritten } = require("firebase-functions/v2/firestore");\n'
+          anchor = 'const { onRequest } = require("firebase-functions/v2/https");\n'
+          if firestore_import not in text:
+            if text.count(anchor) != 1:
+              raise SystemExit('functions/index.js import anchor mismatch')
+            text = text.replace(anchor, anchor + firestore_import, 1)
+
+          function_code = '''
+
+exports.syncArticlePublicationStatus = onDocumentWritten(
+  {
+    document: "articles/{articleId}",
+    region: REGION
+  },
+  async (event) => {
+    const articleId = event.params.articleId;
+    const statusRef = db.doc(`articlePublicationStatus/${articleId}`);
+    const after = event.data?.after;
+
+    if (!after?.exists) {
+      const statusSnapshot = await statusRef.get();
+      if (statusSnapshot.exists) await statusRef.delete();
+      return;
+    }
+
+    const article = after.data() || {};
+    await statusRef.set({
+      status: article.status === "published" ? "published" : "draft",
+      hidden: article.hidden === true,
+      systemRecord: article.systemRecord === true,
+      updatedAt: FieldValue.serverTimestamp()
+    });
+  }
+);
+'''
+          if 'exports.syncArticlePublicationStatus' not in text:
+            text = text.rstrip() + function_code + '\n'
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Validate patched code
+        run: |
+          node --check articles.js
+          node --check article-admin.js
+          node --check functions/index.js
+          git diff --check
+          grep -F 'collection(db, "articlePublicationStatus")' articles.js
+          grep -F 'saveArticleWithPublicationStatus' article-admin.js
+          grep -F 'match /articlePublicationStatus/' firestore.rules
+          grep -F 'exports.syncArticlePublicationStatus' functions/index.js
+
+      - name: Install function dependencies
+        run: npm --prefix functions ci
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy secure rules and status sync function
+        run: firebase deploy --only firestore:rules,functions:syncArticlePublicationStatus --project lyyuan03-membership --non-interactive
+
+      - name: Backfill status metadata for existing articles
+        working-directory: functions
+        run: |
+          node - <<'NODE'
+          const { applicationDefault, initializeApp } = require("firebase-admin/app");
+          const { FieldValue, getFirestore } = require("firebase-admin/firestore");
+
+          initializeApp({
+            credential: applicationDefault(),
+            projectId: "lyyuan03-membership"
+          });
+          const db = getFirestore();
+
+          (async () => {
+            const snapshot = await db.collection("articles").get();
+            const documents = snapshot.docs;
+            for (let offset = 0; offset < documents.length; offset += 400) {
+              const batch = db.batch();
+              documents.slice(offset, offset + 400).forEach((item) => {
+                const article = item.data() || {};
+                batch.set(db.collection("articlePublicationStatus").doc(item.id), {
+                  status: article.status === "published" ? "published" : "draft",
+                  hidden: article.hidden === true,
+                  systemRecord: article.systemRecord === true,
+                  updatedAt: FieldValue.serverTimestamp()
+                });
+              });
+              await batch.commit();
+            }
+            console.log(`Backfilled ${documents.length} article status documents.`);
+          })().then(() => process.exit(0)).catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'fix: securely enforce Firestore article status'
+          file_pattern: 'articles.js article-admin.js firestore.rules functions/index.js'
