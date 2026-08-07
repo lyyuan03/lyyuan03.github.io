@@ -1,0 +1,54 @@
+name: Rebuild yuanshen binary assets
+
+on:
+  push:
+    branches:
+      - repair-yuanshen-binaries-complete-20260807
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: repair-yuanshen-binaries-complete-20260807
+          fetch-depth: 0
+      - name: Rebuild JPEG files from safe chunks
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+
+          root = Path('.tmp-yuanshen')
+          out = Path('assets/articles/yuanshen-destiny-archetype')
+          out.mkdir(parents=True, exist_ok=True)
+
+          jobs = {
+              'book-cover.jpg': ['book-cover.p1', 'book-cover.p2'],
+              'roc-awakening.jpg': ['roc-awakening.p1', 'roc-awakening.p2'],
+          }
+          expected = {'book-cover.jpg': 13196, 'roc-awakening.jpg': 12020}
+
+          for filename, parts in jobs.items():
+              payload = ''.join((root / p).read_text(encoding='utf-8').strip() for p in parts)
+              data = base64.b64decode(payload, validate=True)
+              if len(data) != expected[filename] or not data.startswith(b'\xff\xd8') or not data.endswith(b'\xff\xd9'):
+                  raise SystemExit(f'Invalid reconstructed JPEG: {filename}, size={len(data)}')
+              (out / filename).write_bytes(data)
+              print(filename, len(data), 'OK')
+
+          for path in root.glob('*'):
+              path.unlink()
+          root.rmdir()
+          Path('.github/workflows/rebuild-yuanshen-missing-binaries.yml').unlink()
+          PY
+      - name: Commit rebuilt assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Rebuild complete book cover and roc JPEG assets"
+          git push origin HEAD:repair-yuanshen-binaries-complete-20260807
