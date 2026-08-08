@@ -14,7 +14,7 @@ html,body{width:100%;height:100%;margin:0;background:#0b1209;overflow:hidden}
 </head>
 <body>
 <div id="loading">靈性美學館載入中</div>
-<iframe id="preview" src="spiritual-aesthetics-preview.html?v=20260807-products-6" title="靈性美學館"></iframe>
+<iframe id="preview" src="spiritual-aesthetics-preview.html?v=20260808-products-7" title="靈性美學館"></iframe>
 <script>
 const frame=document.getElementById('preview');
 const loading=document.getElementById('loading');
@@ -164,11 +164,11 @@ frame.addEventListener('load',async()=>{
     }
 
     const sources=[
-      ['assets/spiritual-aesthetics-products-loader.js?v=20260807-photo-fit-7','products-loader'],
+      ['assets/spiritual-aesthetics-products-loader.js?v=20260808-photo-fit-8','products-loader'],
       ['assets/product-career-photo.js?v=20260807-career-photo-2','career-photo-refresh'],
       ['assets/product-love-photo.js?v=20260807-love-photo-1','love-photo-refresh'],
-      ['assets/product-incense-photo.js?v=20260807-incense-photo-1','incense-photo-refresh'],
-      ['assets/spiritual-aesthetics-incense-fit.js?v=20260807-incense-fit-1','incense-fit'],
+      ['assets/product-incense-photo.js?v=20260808-incense-direct-2','incense-photo-refresh'],
+      ['assets/spiritual-aesthetics-incense-fit.js?v=20260808-incense-direct-2','incense-fit'],
       ['assets/spiritual-aesthetics-copy-polish.js?v=1','copy-polish'],
       ['assets/spiritual-aesthetics-quiz.js?v=5','energy-quiz']
     ];
@@ -182,6 +182,18 @@ frame.addEventListener('load',async()=>{
     }
     if(window.LYYProductImages?.incense && window.LYYApplyProductPhoto){
       window.LYYApplyProductPhoto('incense',window.LYYProductImages.incense);
+    }
+
+    const incenseVisual=doc.querySelector('[data-product="incense"] .product-visual');
+    if(incenseVisual){
+      const incenseImage=doc.createElement('img');
+      incenseImage.className='product-photo';
+      incenseImage.alt='鎮煞護安香粉';
+      incenseImage.loading='eager';
+      incenseImage.decoding='async';
+      incenseImage.style.cssText='display:block;width:auto;height:auto;max-width:96%;max-height:96%;margin:auto;object-fit:contain;object-position:center;opacity:1;visibility:visible;transform:none;';
+      incenseImage.src='assets/products/incense-photo-20260807.webp?v=20260808-incense-direct-2';
+      incenseVisual.replaceChildren(incenseImage);
     }
 
     doc.title='靈性美學館｜靈元院';
