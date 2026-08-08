@@ -69,9 +69,8 @@ function firstMarkdownImage(content = "") {
   return content.match(/!\[[^\]]*\]\(([^)\s]+)\)/)?.[1] || "";
 }
 
-async function validateCoverImageUrl(input) {
+async function validateCoverImageUrl(input, status) {
   const url = String(input?.value || "").trim();
-  const status = document.getElementById("thumbnail-control-status");
   if (!url) return true;
   try {
     const dimensions = await new Promise((resolve, reject) => {
@@ -87,7 +86,6 @@ async function validateCoverImageUrl(input) {
         status.dataset.state = "error";
       }
       input.value = "";
-      updatePreview?.();
       return false;
     }
     if (status) {
@@ -218,6 +216,7 @@ function initialize() {
   let loadedId = "";
   let loadSerial = 0;
   let thumbnailDirty = false;
+  let validatedCoverUrl = coverInput.value.trim();
 
   function currentSettings(articleId = loadedId || activeArticleId()) {
     return normalizeSettings({
@@ -238,6 +237,7 @@ function initialize() {
     scaleInput.value = String(normalized.thumbnailScale);
     alignInput.value = normalized.thumbnailTitleAlign;
     if (normalized.thumbnailImage) coverInput.value = normalized.thumbnailImage;
+    validatedCoverUrl = coverInput.value.trim();
     thumbnailDirty = false;
     updatePreview();
   }
@@ -257,6 +257,15 @@ function initialize() {
     previewMedia.style.background = PREVIEW_BACKGROUND;
     previewTitle.textContent = titleInput?.value.trim() || "文章標題";
     previewTitle.style.textAlign = settings.thumbnailTitleAlign;
+  }
+
+  async function ensureCoverResolution() {
+    const url = coverInput.value.trim();
+    if (!url || url === validatedCoverUrl) return true;
+    const valid = await validateCoverImageUrl(coverInput, status);
+    if (valid) validatedCoverUrl = url;
+    updatePreview();
+    return valid;
   }
 
   function hasLegacySettings(source = {}) {
@@ -282,6 +291,9 @@ function initialize() {
   async function persistSettings(articleId, { announce = true } = {}) {
     if (!articleId || !isAdminEmail(auth.currentUser?.email)) {
       throw new Error("請先選擇文章並確認管理員登入");
+    }
+    if (!(await ensureCoverResolution())) {
+      throw new Error(status.textContent || "封面圖解析度不符合要求");
     }
     if (announce) {
       saveButton.disabled = true;
@@ -378,6 +390,9 @@ function initialize() {
     saveForArticle(articleId, options = {}) {
       return persistSettings(articleId, options);
     },
+    validateCoverImage() {
+      return ensureCoverResolution();
+    },
     hasUnsavedChanges() {
       return thumbnailDirty;
     }
@@ -398,7 +413,10 @@ function initialize() {
     input.addEventListener("change", updatePreview);
   });
   coverInput.addEventListener("input", markThumbnailDirty);
-  coverInput.addEventListener("change", () => { markThumbnailDirty(); validateCoverImageUrl(coverInput); });
+  coverInput.addEventListener("change", () => {
+    markThumbnailDirty();
+    void ensureCoverResolution();
+  });
 
   fitInput.addEventListener("change", () => {
     scaleInput.value = "100";
