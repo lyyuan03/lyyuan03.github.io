@@ -62,7 +62,7 @@ function activationEmailContent(member = {}) {
   const name = String(member.name || "會員").trim() || "會員";
   const email = normalizeEmail(member.email || "");
   const months = Number(member.planMonths) === 3 ? 3 : 1;
-  const priceLabel = member.priceTier === "regular" ? "一般價格" : "前200名優惠";
+  const priceLabel = member.priceTier === "regular" ? "原價／續期價格" : "首次購買優惠";
   const subject = `靈元院贊助專屬文章會員｜開通通知`;
   const body = `${name}　師兄/師姐您好：
 
@@ -417,7 +417,7 @@ async function saveSettings(event) {
     updatedAt: serverTimestamp()
   };
   await setDoc(doc(db, "membershipSettings", "default"), settings, { merge: true });
-  statusEl.textContent = "方案、優惠名額與兩組綠界付款連結已儲存";
+  statusEl.textContent = "首次優惠、原價／續期價、優惠名額與兩組付款連結已儲存";
   await loadOfferStatus();
   updatePlanPreview(true);
 }
@@ -429,7 +429,7 @@ async function syncPublicOfferStatus(showMessage = false) {
   updatePlanOptions();
   updatePlanPreview(true);
   if (showMessage) {
-    statusEl.textContent = `前台已同步｜已加入 ${offerStatus.paidCount} 人｜尚餘 ${offerStatus.remaining} 名｜目前套用${offerStatus.promotionAvailable ? "優惠價" : "一般價"}付款連結`;
+    statusEl.textContent = `前台已同步｜首次優惠已使用 ${offerStatus.occupiedCount} 人｜尚餘 ${offerStatus.remaining} 名`;
   }
 }
 
@@ -464,7 +464,7 @@ async function activateMember() {
     const orderNo = String(existing.lastOrderNo || existing.pendingOrderNo || `MAN${Date.now().toString(36).toUpperCase()}`);
     const alreadyCounted = isCountedSponsorMember(existing);
     const sequence = tier === "promo"
-      ? Number(existing.promotionSequence || (alreadyCounted ? offerStatus.paidCount : offerStatus.paidCount + 1))
+      ? Number(existing.promotionSequence || (alreadyCounted ? offerStatus.occupiedCount : offerStatus.occupiedCount + 1))
       : null;
     const payload = {
       email,
@@ -595,7 +595,7 @@ function hasAuthoritativeSponsorAccess(member = {}) {
 
 function renderMembers() {
   if (!members.length) {
-    listEl.innerHTML = '<div class="empty">目前尚無已付款的贊助會員。前台會顯示優惠名額尚餘 200 名。</div>';
+    listEl.innerHTML = '<div class="empty">目前尚無已付款的贊助會員。歷史優惠資格仍會獨立保留。</div>';
     return;
   }
   listEl.innerHTML = `
