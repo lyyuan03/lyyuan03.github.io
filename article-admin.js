@@ -530,6 +530,21 @@ async function loadArticles() {
 
 async function saveArticle(event) {
   event.preventDefault();
+  if (typeof window.articleThumbnailAdmin?.validateCoverImage === "function") {
+    try {
+      const coverIsValid = await window.articleThumbnailAdmin.validateCoverImage();
+      if (!coverIsValid) {
+        setSaveStatus("無法儲存｜封面圖解析度不足", "error");
+        showAdminToast("文章尚未儲存：請更換長邊至少 1200px 的封面圖。", "error");
+        return;
+      }
+    } catch (error) {
+      console.error("封面圖解析度驗證失敗：", error);
+      setSaveStatus("無法儲存｜封面圖無法驗證", "error");
+      showAdminToast("文章尚未儲存：請確認封面圖片網址可以正常讀取。", "error");
+      return;
+    }
+  }
   const data = getFormData();
   if (!data.title || !data.content) {
     setSaveStatus("無法儲存｜請填寫標題與內文", "error");
