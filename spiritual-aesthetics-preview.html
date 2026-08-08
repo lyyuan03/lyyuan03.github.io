@@ -133,6 +133,12 @@ repeating-linear-gradient(135deg,rgba(165,130,84,.035) 0 1px,transparent 1px 12p
 .badge{position:absolute;z-index:4;left:19px;top:19px;background:rgba(20,30,16,.9);border:1px solid rgba(197,162,111,.34);color:#dfbc7e;padding:7px 12px;font-size:11px;letter-spacing:.13em}
 .note-box{margin-top:30px;padding:19px 22px;border-left:2px solid rgba(165,130,84,.62);background:rgba(255,252,246,.55);color:#6d573f;font-size:13.5px;line-height:1.9}
 
+/* 御守使用說明圖：停用舊步驟區塊的森林霧面遮罩，依原圖顯示 */
+.omamori-usage-guide:before,
+.omamori-usage-guide:after{content:none!important;display:none!important}
+.omamori-usage-guide>div{position:relative;z-index:1}
+.omamori-usage-guide img{position:relative;z-index:1;filter:none!important;opacity:1!important;mix-blend-mode:normal!important}
+
 /* EXPERIENCE */
 .experience{position:relative;padding:96px 0;color:var(--cream);background:#0b1209;overflow:hidden}
 .experience:before{content:'';position:absolute;inset:0;background:url('forest-path.jpg') center/cover fixed;filter:brightness(.32) saturate(.48);opacity:.56}
