@@ -6,7 +6,7 @@ export const yuanshenDestinyArchetypeArticle = {
   status: "published",
   publishedAt: "2026-08-07T01:35:00.000Z",
   updatedAt: "2026-08-07T09:10:00.000Z",
-  coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260808-final-images-2",
+  coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260808-book-cover-hires-1",
   sharePath: "article/yuanshen-destiny-archetype.html",
   excerpt: "三個真實顯化案例，揭開元神如何決定心性、困境與人生天花板。",
   accessType: "open",
@@ -100,4 +100,5 @@ export const yuanshenDestinyArchetypeArticle = {
 
 靈修只做一件事：讓你活出元神帶來的本來樣貌，然後超越它。活出來，是認清自己；超越它，是不再被它框住。走到最後，宗教的名目、法則、教義，都會一層一層退去。剩下的，是一個與天地合一、無為而行的自己。`
 };
+
 
