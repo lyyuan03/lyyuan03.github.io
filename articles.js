@@ -228,40 +228,6 @@ function renderContent(value = "") {
     .join("");
 }
 
-function addGuanyinVowLampImages(content = "", articleId = "") {
-  if (articleId !== "2026-guanyin-vow-lamp-record-v2") return content;
-  const withoutManagedImages = content
-    .replace(
-      /^!\[[^\]]*\]\(\/?assets\/articles\/guanyin-vow-lamp\/guanyin-vow-lamp-[123]\.svg(?:\?[^)]*)?\)\s*$/gm,
-      ""
-    )
-    .replace(
-      /^!\[[^\]]*\]\(\/?assets\/articles\/2026-guanyin-vow-lamp-record\/(?:vow-sheets-before-guanyin|patience-in-practice|path-with-obstacles)\.webp(?:\?[^)]*)?\)\s*$/gm,
-      ""
-    );
-  const placements = [
-    {
-      heading: "## 我知道方法，但我做不到",
-      image: "![每一封疏文，都是一份交付給觀世音菩薩的修行託付](assets/articles/2026-guanyin-vow-lamp-record/vow-sheets-before-guanyin.webp?v=20260802-1)"
-    },
-    {
-      heading: "## 我聽見最重的兩段話，是關於生死與親情",
-      image: "![真正的感應不急著證明，會在時間裡慢慢證明自己](assets/articles/2026-guanyin-vow-lamp-record/patience-in-practice.webp?v=20260802-1)"
-    },
-    {
-      heading: "## 一連串巧合，其實就證明了你走在對的路上",
-      image: "![符合天命的路不是沒有阻礙，而是在阻礙中依然感覺篤定](assets/articles/2026-guanyin-vow-lamp-record/path-with-obstacles.webp?v=20260802-1)"
-    }
-  ];
-  return placements.reduce((result, placement) => {
-    if (result.includes(placement.image)) return result;
-    return result.replace(
-      `\n\n${placement.heading}`,
-      `\n\n${placement.image}\n\n${placement.heading}`
-    );
-  }, withoutManagedImages);
-}
-
 function getTimeValue(value) {
   if (!value) return 0;
   if (typeof value?.toMillis === "function") return value.toMillis();
@@ -1001,7 +967,7 @@ function renderArticle(article) {
     bindEventLogin();
     return;
   }
-  const articleContent = addGuanyinVowLampImages(article.content || "", articleKey);
+  const articleContent = article.content || "";
   const { publicContent, lockedContent, accessType } = splitMemberContent(articleContent, articleKey);
   root.innerHTML = `
     <article class="article-view" data-article-id="${escapeHtml(articleKey)}">
