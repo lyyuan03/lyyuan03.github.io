@@ -356,11 +356,29 @@ function openLogin() {
   window.location.href = "/member-dashboard.html";
 }
 
+function closePaymentTab(popup) {
+  try {
+    if (popup && !popup.closed) popup.close();
+  } catch {}
+}
+
 async function handlePayment(button) {
   if (!currentUser?.email) {
     openLogin();
     return;
   }
+
+  // 在使用者點擊的當下先建立新分頁，避免資格確認的非同步流程被瀏覽器視為彈出式視窗而封鎖。
+  const popup = window.open("about:blank", "_blank");
+  if (!popup) {
+    alert("瀏覽器阻擋了新的付款分頁，請允許此網站開啟新分頁後再試一次。");
+    return;
+  }
+  try {
+    popup.opener = null;
+    popup.document.title = "正在前往付款頁面…";
+  } catch {}
+
   const original = button.textContent;
   button.disabled = true;
   button.textContent = "正在確認您的適用價格…";
@@ -368,18 +386,21 @@ async function handlePayment(button) {
     await refreshAll();
     const tier = applicableTier();
     if (tier === "unknown") {
+      closePaymentTab(popup);
       alert("會員資料尚未確認完成，請稍後再試。");
       return;
     }
     const paymentUrl = paymentUrlForTier(tier);
     if (!paymentUrl.startsWith("https://")) {
+      closePaymentTab(popup);
       alert(tier === "promo"
         ? "首次優惠付款連結尚未完成設定，請稍後再試或聯繫行政團隊。"
         : "續期／原價付款連結尚未完成設定，請稍後再試或聯繫行政團隊。");
       return;
     }
-    window.location.assign(paymentUrl);
+    popup.location.replace(paymentUrl);
   } catch (error) {
+    closePaymentTab(popup);
     console.warn("付款前資格確認失敗。", error);
     alert("目前無法確認付款資格，請稍後重新整理頁面再試。");
   } finally {
