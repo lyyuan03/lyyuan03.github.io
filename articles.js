@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260807-final-1";
+import { staticArticles } from "./static-articles.js?v=20260808-final-images-2";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -1133,13 +1133,13 @@ async function loadArticles() {
     // YUANSHEN_FINAL_IMAGE_SYNC_20260807
     if (article.id === "yuanshen-destiny-archetype") {
       let fixedContent = String(article.content || "")
-        .replace(/stone-origin\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260807-final-1")
-        .replace(/roc-awakening\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "roc-awakening.jpg?v=20260807-final-1")
-        .replace(/nine-tailed-bird\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "nine-tailed-bird.jpg?v=20260807-final-1");
+        .replace(/stone-origin\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260808-final-images-2")
+        .replace(/roc-awakening\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "roc-awakening.jpg?v=20260808-final-images-2")
+        .replace(/nine-tailed-bird\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "nine-tailed-bird.jpg?v=20260808-final-images-2");
       const imageSections = [
-        ["## 天庭巨石所化的元神", "stone-origin.jpg", "![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260807-final-1)"],
-        ["## 大鵬鳥元神──與岳飛的奇妙連結", "roc-awakening.jpg", "![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260807-final-1)"],
-        ["## 九尾七彩神鳥──活在天命裡而不自知", "nine-tailed-bird.jpg", "![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260807-final-1)"],
+        ["## 天庭巨石所化的元神", "stone-origin.jpg", "![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260808-final-images-2)"],
+        ["## 大鵬鳥元神──與岳飛的奇妙連結", "roc-awakening.jpg", "![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260808-final-images-2)"],
+        ["## 九尾七彩神鳥──活在天命裡而不自知", "nine-tailed-bird.jpg", "![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260808-final-images-2)"],
       ];
       imageSections.forEach(([heading, filename, markdown]) => {
         if (fixedContent.includes(heading) && !fixedContent.includes(filename)) {
@@ -1148,7 +1148,7 @@ async function loadArticles() {
       });
       return {
         ...article,
-        coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-final-1",
+        coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260808-final-images-2",
         content: fixedContent,
       };
     }
