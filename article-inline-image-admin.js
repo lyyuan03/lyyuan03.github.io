@@ -214,9 +214,40 @@ function styles() {
   document.head.appendChild(style);
 }
 
+function readImageDimensions(file) {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve({ width: image.naturalWidth || image.width, height: image.naturalHeight || image.height });
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("image-dimensions-unavailable"));
+    };
+    image.src = objectUrl;
+  });
+}
+
 async function upload(file, input, panel, form, imageInput, button, status) {
   if (!file?.type?.startsWith("image/")) return;
   if (!auth.currentUser || !isAdminEmail(auth.currentUser.email)) return;
+  let dimensions;
+  try {
+    dimensions = await readImageDimensions(file);
+  } catch (error) {
+    console.error("內文圖片解析度讀取失敗：", error);
+    status.textContent = "無法讀取圖片解析度，請重新輸出圖片後再上傳。";
+    imageInput.value = "";
+    return;
+  }
+  if (dimensions.width < 1600 || dimensions.height < 900) {
+    status.textContent = `圖片解析度過低（目前 ${dimensions.width}×${dimensions.height}px），內文圖至少需要 1600×900px，請重新輸出後再上傳。`;
+    imageInput.value = "";
+    return;
+  }
+
   const count = parseImages(input.value).length;
   if (count >= MAX_IMAGES) {
     status.textContent = `每篇文章最多 ${MAX_IMAGES} 張內文圖片；請先移除一張。`;
