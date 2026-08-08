@@ -24,7 +24,7 @@ export const yuanshenDestinyArchetypeArticle = {
 
 ## 天庭巨石所化的元神
 
-![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260808-final-images-2)
+![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260808-hires-merge-1)
 
 曾有一位原住民學員，性格頑固、難以溝通，特別嗜酒。他的元神本源，是天庭遠古時期的一顆巨石所化。這乍看沒什麼特別，卻道出了他這一生最核心的命題。石頭的本質就是固執、不易撼動，就算知道了真相、就算有人告訴他該怎麼做，他也不會輕易改變。這不是缺點，而是他元神帶來的本質烙印。
 
@@ -34,7 +34,7 @@ export const yuanshenDestinyArchetypeArticle = {
 
 ## 大鵬鳥元神──與岳飛的奇妙連結
 
-![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260808-final-images-2)
+![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260808-hires-merge-1)
 
 這位學員從未加入過任何宮廟或宮壇，他的啟靈沒有任何儀式、沒有任何人引導，甚至沒有任何預兆。某一個深夜，才剛躺上床不久，他的雙手雙腳就緩緩地浮起來。他的頭腦還無法理解眼前發生的事，下一瞬間，全身就開始不由自主地抖動，從手腳蔓延到全身，沒有辦法停止。那是覺醒之力，在沒有人召喚之下，它自己發生了。
 
@@ -44,7 +44,7 @@ export const yuanshenDestinyArchetypeArticle = {
 
 ## 九尾七彩神鳥──活在天命裡而不自知
 
-![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260808-final-images-2)
+![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260808-hires-merge-1)
 
 這是我見過最震撼的一次元神顯化，但震撼我的，不只是那個畫面。
 
@@ -100,3 +100,4 @@ export const yuanshenDestinyArchetypeArticle = {
 
 靈修只做一件事：讓你活出元神帶來的本來樣貌，然後超越它。活出來，是認清自己；超越它，是不再被它框住。走到最後，宗教的名目、法則、教義，都會一層一層退去。剩下的，是一個與天地合一、無為而行的自己。`
 };
+
