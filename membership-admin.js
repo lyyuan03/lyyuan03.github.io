@@ -17,10 +17,10 @@ const resetButton = document.getElementById("member-form-reset");
 
 let settings = {
   sponsorPromoLimit: 200,
-  sponsorPromoPrice1: 120,
-  sponsorPromoPrice3: 300,
-  sponsorRegularPrice1: 150,
-  sponsorRegularPrice3: 400,
+  sponsorPromoPrice1: 150,
+  sponsorPromoPrice3: 400,
+  sponsorRegularPrice1: 180,
+  sponsorRegularPrice3: 500,
   paymentDays: 3,
   reservationHours: 24,
   sponsorPromoPaymentUrl: "",
@@ -29,6 +29,7 @@ let settings = {
 };
 let offerStatus = null;
 let members = [];
+let discountHistory = new Map();
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -142,6 +143,13 @@ function sponsorHistoryRecord(member = {}, historicalStatus = "verified") {
     verified: true,
     historicalStatus,
     verificationSource: "payment",
+    priceTier: member.priceTier || "regular",
+    promotionSequence: member.promotionSequence || null,
+    discountUsed: member.discountUsed === true || member.priceTier === "promo",
+    discountUsedAt: member.discountUsedAt || (member.priceTier === "promo" ? member.paidAt || startsAt : null),
+    discountPlan: member.discountPlan || (member.priceTier === "promo" ? `${Number(member.planMonths) === 3 ? 3 : 1}months` : null),
+    discountAmount: Number(member.discountAmount || (member.priceTier === "promo" ? member.amount : 0)) || null,
+    purchaseCount: Math.max(1, Number(member.purchaseCount || 1)),
     recordedAt: serverTimestamp()
   };
   if (historicalStatus === "ended") record.endedAt = serverTimestamp();
@@ -176,7 +184,35 @@ function promotionAvailable() {
   return offerStatus ? offerStatus.promotionAvailable === true : true;
 }
 
-function currentTier() {
+function discountRecordForEmail(email = "") {
+  const normalized = normalizeEmail(email);
+  const activeMember = members.find((item) => item.email === normalized);
+  const historical = discountHistory.get(normalized)?.sponsor || {};
+  const usedByActiveMember = activeMember?.discountUsed === true
+    || activeMember?.priceTier === "promo"
+    || Number(activeMember?.promotionSequence || 0) > 0;
+  const usedByHistory = historical.discountUsed === true
+    || historical.priceTier === "promo"
+    || Number(historical.promotionSequence || 0) > 0
+    || (historical.verified === true && !("discountUsed" in historical));
+  return {
+    activeMember,
+    historical,
+    discountUsed: usedByActiveMember || usedByHistory,
+    purchaseCount: Math.max(
+      Number(activeMember?.purchaseCount || 0),
+      Number(historical.purchaseCount || 0),
+      activeMember || historical.verified ? 1 : 0
+    )
+  };
+}
+
+function selectedEmail() {
+  return normalizeEmail(document.getElementById("member-email")?.value || "");
+}
+
+function currentTier(email = selectedEmail()) {
+  if (discountRecordForEmail(email).discountUsed) return "regular";
   return promotionAvailable() ? "promo" : "regular";
 }
 
@@ -199,21 +235,35 @@ function isCountedSponsorMember(member = {}) {
 
 function calculateOfferStatus() {
   const paidCount = members.filter(isCountedSponsorMember).length;
+  const usedEmails = new Set();
+  members.forEach((member) => {
+    if (member.discountUsed === true || member.priceTier === "promo" || Number(member.promotionSequence || 0) > 0) {
+      usedEmails.add(normalizeEmail(member.email));
+    }
+  });
+  discountHistory.forEach((record, email) => {
+    const sponsor = record?.sponsor || {};
+    if (sponsor.discountUsed === true || sponsor.priceTier === "promo" || Number(sponsor.promotionSequence || 0) > 0
+        || (sponsor.verified === true && !("discountUsed" in sponsor))) {
+      usedEmails.add(normalizeEmail(email));
+    }
+  });
+  const occupiedCount = usedEmails.size;
   const promoLimit = Number(settings.sponsorPromoLimit || 200);
-  const remaining = Math.max(0, promoLimit - paidCount);
+  const remaining = Math.max(0, promoLimit - occupiedCount);
   return {
     ready: true,
     paidCount,
     pendingCount: 0,
-    occupiedCount: paidCount,
+    occupiedCount,
     promoLimit,
     remaining,
     promotionAvailable: remaining > 0,
     currentTier: remaining > 0 ? "promo" : "regular",
-    promoPrice1: Number(settings.sponsorPromoPrice1 || 120),
-    promoPrice3: Number(settings.sponsorPromoPrice3 || 300),
-    regularPrice1: Number(settings.sponsorRegularPrice1 || 150),
-    regularPrice3: Number(settings.sponsorRegularPrice3 || 400)
+    promoPrice1: Number(settings.sponsorPromoPrice1 || 150),
+    promoPrice3: Number(settings.sponsorPromoPrice3 || 400),
+    regularPrice1: Number(settings.sponsorRegularPrice1 || 180),
+    regularPrice3: Number(settings.sponsorRegularPrice3 || 500)
   };
 }
 
@@ -246,20 +296,20 @@ function installOfferAdminUi() {
   const promoPrice3 = document.getElementById("price-3");
   promoPrice1.readOnly = false;
   promoPrice3.readOnly = false;
-  promoPrice1.closest(".field")?.querySelector("label")?.replaceChildren(document.createTextNode("優惠價｜一個月"));
-  promoPrice3.closest(".field")?.querySelector("label")?.replaceChildren(document.createTextNode("優惠價｜三個月"));
+  promoPrice1.closest(".field")?.querySelector("label")?.replaceChildren(document.createTextNode("首次優惠價｜一個月"));
+  promoPrice3.closest(".field")?.querySelector("label")?.replaceChildren(document.createTextNode("首次優惠價｜三個月"));
 
   const grid = promoPrice1.closest(".grid");
   grid.insertAdjacentHTML("beforeend", `
-    <div class="field"><label for="regular-price-1">第201名起｜一個月</label><input id="regular-price-1" type="number" min="1" step="1" value="150"></div>
-    <div class="field"><label for="regular-price-3">第201名起｜三個月</label><input id="regular-price-3" type="number" min="1" step="1" value="400"></div>
-    <div class="field"><label for="sponsor-promo-limit">優惠會員人數上限</label><input id="sponsor-promo-limit" type="number" min="1" step="1" value="200"></div>
+    <div class="field"><label for="regular-price-1">原價／續期價｜一個月</label><input id="regular-price-1" type="number" min="1" step="1" value="180"></div>
+    <div class="field"><label for="regular-price-3">原價／續期價｜三個月</label><input id="regular-price-3" type="number" min="1" step="1" value="500"></div>
+    <div class="field"><label for="sponsor-promo-limit">首次優惠名額上限</label><input id="sponsor-promo-limit" type="number" min="1" step="1" value="200"></div>
   `);
   grid.insertAdjacentHTML("afterend", `
     <div id="sponsor-offer-admin-status" class="membership-summary" style="display:grid;gap:8px">
-      <strong style="color:#CBAA77">前200名優惠進度載入中…</strong>
+      <strong style="color:#CBAA77">首次購買優惠進度載入中…</strong>
     </div>
-    <p class="membership-help">優惠名額直接依「付款成功後，已加入正式名單的 Gmail 人數」計算。前200名使用優惠連結，第201名起使用一般價連結；同一個 Gmail 續期不會重複增加人數。</p>
+    <p class="membership-help">同一個 Email 僅享一次首次購買優惠。系統會同時檢查目前名單與永久歷史紀錄；已使用優惠者，後續購買或續期一律套用原價。</p>
     <div class="top-actions" style="margin-top:12px">
       <button id="sync-sponsor-public-offer" class="btn" type="button">立即同步前台名額與付款連結</button>
     </div>
@@ -268,7 +318,7 @@ function installOfferAdminUi() {
 
 function updatePlanOptions() {
   if (!monthsEl) return;
-  const tierLabel = currentTier() === "promo" ? "前200名優惠" : "一般價格";
+  const tierLabel = currentTier() === "promo" ? "首次購買優惠" : "原價／續期價";
   const one = monthsEl.querySelector('option[value="1"]');
   const three = monthsEl.querySelector('option[value="3"]');
   if (one) one.textContent = `一個月｜${tierLabel} NT$${Number(planAmount(1)).toLocaleString("zh-TW")}`;
@@ -288,11 +338,11 @@ function renderOfferStatus() {
   const percentage = Math.min(100, Math.max(0, (used / Math.max(1, limit)) * 100));
   target.innerHTML = `
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <strong style="color:#CBAA77">前${limit}名優惠｜已加入 ${used} 人</strong>
+      <strong style="color:#CBAA77">前${limit}名首次優惠｜已使用 ${used} 人</strong>
       <span>${offerStatus.promotionAvailable ? `尚餘 ${remaining} 名` : "優惠名額已額滿"}</span>
     </div>
     <div style="height:8px;border:1px solid rgba(165,130,84,.26);background:rgba(4,8,3,.5)"><span style="display:block;width:${percentage}%;height:100%;background:#A58254"></span></div>
-    <small style="color:rgba(245,240,232,.58)">已加入會員 ${Number(offerStatus.paidCount || 0)} 人｜目前套用${offerStatus.promotionAvailable ? "優惠價連結" : "一般價連結"}</small>
+    <small style="color:rgba(245,240,232,.58)">目前正式會員 ${Number(offerStatus.paidCount || 0)} 人｜同一 Email 限享一次；續期固定套用原價</small>
   `;
 }
 
@@ -304,13 +354,16 @@ function previewExpiry(existingExpiry = null) {
 }
 
 function updatePlanPreview(forceAmount = false) {
-  if (forceAmount || !amountEl.value) amountEl.value = String(planAmount(selectedMonths()) || "");
+  const email = selectedEmail();
   const originalEmail = normalizeEmail(document.getElementById("member-original-email").value);
-  const existing = members.find((item) => item.email === originalEmail);
-  const tierText = currentTier() === "promo"
-    ? `前${offerStatus?.promoLimit || settings.sponsorPromoLimit}名優惠${offerStatus ? `｜尚餘 ${offerStatus.remaining} 名` : ""}`
-    : "一般價格";
-  summaryEl.textContent = `${tierText}｜本次 ${selectedMonths()} 個月｜應繳 NT$${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜付款確認後預計到期日 ${formatDate(previewExpiry(existing?.expiresAt))}`;
+  const existing = members.find((item) => item.email === (email || originalEmail));
+  const tier = currentTier(email || originalEmail);
+  if (forceAmount || !amountEl.value) amountEl.value = String(planAmountForTier(selectedMonths(), tier) || "");
+  const used = discountRecordForEmail(email || originalEmail).discountUsed;
+  const tierText = tier === "promo"
+    ? `首次購買優惠｜尚餘 ${offerStatus?.remaining ?? "—"} 名`
+    : used ? "首次優惠：已使用｜本次套用原價／續期價" : "首次優惠名額已滿｜本次套用原價";
+  summaryEl.textContent = `${tierText}｜本次 ${selectedMonths()} 個月｜應繳 NT${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜付款確認後預計到期日 ${formatDate(previewExpiry(existing?.expiresAt))}`;
 }
 
 function resetMemberForm() {
@@ -327,10 +380,10 @@ async function loadSettings() {
   settings = {
     ...settings,
     ...stored,
-    sponsorPromoPrice1: positiveInteger(stored.sponsorPromoPrice1 ?? stored.price1, 120),
-    sponsorPromoPrice3: positiveInteger(stored.sponsorPromoPrice3 ?? stored.price3, 300),
-    sponsorRegularPrice1: positiveInteger(stored.sponsorRegularPrice1, 150),
-    sponsorRegularPrice3: positiveInteger(stored.sponsorRegularPrice3, 400),
+    sponsorPromoPrice1: positiveInteger(stored.sponsorPromoPrice1 ?? stored.price1, 150),
+    sponsorPromoPrice3: positiveInteger(stored.sponsorPromoPrice3 ?? stored.price3, 400),
+    sponsorRegularPrice1: positiveInteger(stored.sponsorRegularPrice1, 180),
+    sponsorRegularPrice3: positiveInteger(stored.sponsorRegularPrice3, 500),
     sponsorPromoLimit: positiveInteger(stored.sponsorPromoLimit, 200),
     reservationHours: positiveInteger(stored.sponsorReservationHours, 24),
     sponsorPromoPaymentUrl: String(stored.sponsorPromoPaymentUrl || stored.ecpayUrl || "").trim(),
@@ -351,12 +404,12 @@ async function saveSettings(event) {
   event.preventDefault();
   settings = {
     ...settings,
-    price1: positiveInteger(document.getElementById("price-1").value, 120),
-    price3: positiveInteger(document.getElementById("price-3").value, 300),
-    sponsorPromoPrice1: positiveInteger(document.getElementById("price-1").value, 120),
-    sponsorPromoPrice3: positiveInteger(document.getElementById("price-3").value, 300),
-    sponsorRegularPrice1: positiveInteger(document.getElementById("regular-price-1").value, 150),
-    sponsorRegularPrice3: positiveInteger(document.getElementById("regular-price-3").value, 400),
+    price1: positiveInteger(document.getElementById("price-1").value, 150),
+    price3: positiveInteger(document.getElementById("price-3").value, 400),
+    sponsorPromoPrice1: positiveInteger(document.getElementById("price-1").value, 150),
+    sponsorPromoPrice3: positiveInteger(document.getElementById("price-3").value, 400),
+    sponsorRegularPrice1: positiveInteger(document.getElementById("regular-price-1").value, 180),
+    sponsorRegularPrice3: positiveInteger(document.getElementById("regular-price-3").value, 500),
     sponsorPromoLimit: positiveInteger(document.getElementById("sponsor-promo-limit").value, 200),
     sponsorPromoPaymentUrl: document.getElementById("ecpay-url").value.trim(),
     sponsorRegularPaymentUrl: document.getElementById("regular-ecpay-url").value.trim(),
@@ -400,8 +453,9 @@ async function activateMember() {
     const name = document.getElementById("member-name").value.trim();
     const months = selectedMonths();
     const existing = members.find((item) => item.email === email) || {};
+    const discountRecord = discountRecordForEmail(email);
     offerStatus = calculateOfferStatus();
-    const tier = currentTier();
+    const tier = currentTier(email);
     const amount = planAmountForTier(months, tier);
     const now = new Date();
     const currentExpiry = dateValue(existing.expiresAt);
@@ -424,6 +478,11 @@ async function activateMember() {
       amount,
       priceTier: tier,
       promotionSequence: sequence,
+      discountUsed: discountRecord.discountUsed || tier === "promo",
+      discountUsedAt: existing.discountUsedAt || discountRecord.historical.discountUsedAt || (tier === "promo" ? now.toISOString() : null),
+      discountPlan: existing.discountPlan || discountRecord.historical.discountPlan || (tier === "promo" ? `${months}months` : null),
+      discountAmount: Number(existing.discountAmount || discountRecord.historical.discountAmount || (tier === "promo" ? amount : 0)) || null,
+      purchaseCount: discountRecord.purchaseCount + 1,
       paymentStatus: "paid",
       status: "active",
       disabled: false,
@@ -480,19 +539,19 @@ function openPaymentEmail() {
   const email = normalizeEmail(document.getElementById("member-email").value);
   const name = document.getElementById("member-name").value.trim() || "會員";
   const months = selectedMonths();
-  const tier = currentTier();
+  const tier = currentTier(email);
   const amount = Number(planAmountForTier(months, tier)).toLocaleString("zh-TW");
   const paymentUrl = tier === "promo"
     ? String(settings.sponsorPromoPaymentUrl || "").trim()
     : String(settings.sponsorRegularPaymentUrl || "").trim();
   if (!paymentUrl) {
-    alert(tier === "promo" ? "請先設定前200名優惠付款連結。" : "請先設定第201名起一般價格付款連結。");
+    alert(tier === "promo" ? "請先設定首次購買優惠付款連結。" : "請先設定原價／續期付款連結。");
     return;
   }
   amountEl.value = String(planAmountForTier(months, tier));
   const tierText = tier === "promo"
-    ? `前${offerStatus.promoLimit}名優惠（目前尚餘 ${offerStatus.remaining} 名）`
-    : "第201名起一般價格";
+    ? `首次購買優惠（目前尚餘 ${offerStatus.remaining} 名）`
+    : discountRecordForEmail(email).discountUsed ? "原價／續期價格（首次優惠已使用）" : "原價（首次優惠名額已滿）";
   const subject = `靈元院贊助專屬文章｜${months}個月方案付款連結`;
   const body = `${name}您好：
 
@@ -542,7 +601,7 @@ function renderMembers() {
   listEl.innerHTML = `
     <section>
       <h4 style="margin:0 0 6px;color:#CBAA77;font-size:17px">已付款贊助會員（${members.length} 人）</h4>
-      <p class="membership-help" style="margin-top:0">此名單就是前台優惠倒數的統計依據。同一個 Gmail 只計算一人，續期不會重複增加名額。</p>
+      <p class="membership-help" style="margin-top:0">系統依 Email 永久記錄首次優惠資格；會員到期或自名單刪除後，優惠使用紀錄仍會保留。</p>
       ${members.map((member) => {
         const active = hasAuthoritativeSponsorAccess(member);
         const expiry = dateValue(member.expiresAt);
@@ -551,11 +610,10 @@ function renderMembers() {
           : member.status === "active" && expiry && expiry > new Date()
             ? "權限資料待補齊"
             : "已到期";
-        const tier = member.priceTier === "regular"
-          ? "一般價"
-          : member.promotionSequence
-            ? `優惠第${Number(member.promotionSequence)}名`
-            : "優惠價";
+        const discountUsed = discountRecordForEmail(member.email).discountUsed;
+        const tier = discountUsed
+          ? `首次優惠：已使用${member.promotionSequence ? `｜優惠序號 #${String(Number(member.promotionSequence)).padStart(3, "0")}` : ""}`
+          : "首次優惠：未使用";
         return `<div class="member-row">
           <div>
             <strong>${escapeHtml(member.name || "未填姓名")}｜${label}</strong>
@@ -601,7 +659,14 @@ async function removeMember(email) {
 }
 
 async function loadMembers() {
-  const snapshot = await getDocs(collection(db, "sponsorMemberAccess"));
+  const [snapshot, historySnapshot] = await Promise.all([
+    getDocs(collection(db, "sponsorMemberAccess")),
+    getDocs(collection(db, "membershipHistory"))
+  ]);
+  discountHistory = new Map(historySnapshot.docs.map((item) => [
+    normalizeEmail(item.id),
+    { id: item.id, ...item.data() }
+  ]));
   members = snapshot.docs
     .map((item) => ({ id: item.id, ...item.data() }))
     .filter((item) => isCountedSponsorMember(item))
@@ -621,6 +686,10 @@ async function loadMembers() {
 installOfferAdminUi();
 settingsForm?.addEventListener("submit", (event) => saveSettings(event).catch(showError));
 monthsEl?.addEventListener("change", () => updatePlanPreview(true));
+document.getElementById("member-email")?.addEventListener("input", () => {
+  updatePlanOptions();
+  updatePlanPreview(true);
+});
 activateButton?.addEventListener("click", () => activateMember().catch(showError));
 sendPaymentButton?.addEventListener("click", () => createPaymentOrder().catch(showError));
 resetButton?.addEventListener("click", resetMemberForm);
