@@ -1,291 +1,122 @@
 (() => {
-  const VERSION = '20260807-photo-fit-7';
-  if (document.documentElement.dataset.spiritualProductsReady === VERSION) return;
-  document.documentElement.dataset.spiritualProductsReady = VERSION;
+  const VERSION='20260808-mothercard-inline-fix-1';
+  document.documentElement.dataset.spiritualProductsReady=VERSION;
 
-  const names = {
-    spirit: '元神光彩御守',
-    wealth: '財富滿堂御守',
-    career: '事業成就御守',
-    love: '感情緣滿御守',
-    incense: '鎮煞護安香粉',
-    motherCard: '無極瑤池金母護身卡'
+  const names={
+    spirit:'元神光彩御守',
+    wealth:'財富滿堂御守',
+    career:'事業成就御守',
+    love:'感情緣滿御守',
+    incense:'鎮煞護安香粉',
+    motherCard:'無極瑤池金母護身卡'
   };
 
-  const photoScripts = {
-    spirit: 'assets/product-spirit-photo.js?v=20260807-fit-4',
-    wealth: 'assets/product-wealth-photo.js?v=20260807-photo-4',
-    career: 'assets/product-career-photo.js?v=20260807-career-photo-2',
-    love: 'assets/product-love-photo.js?v=20260807-love-photo-1',
-    incense: 'assets/product-incense-photo.js?v=20260807-incense-photo-1',
-    motherCard: 'assets/product-mother-card-photo.js?v=20260807-1'
+  const photoScripts={
+    spirit:'assets/product-spirit-photo.js?v=20260807-fit-4',
+    wealth:'assets/product-wealth-photo.js?v=20260807-photo-4',
+    career:'assets/product-career-photo.js?v=20260807-career-photo-2',
+    love:'assets/product-love-photo.js?v=20260807-love-photo-1',
+    incense:'assets/product-incense-photo.js?v=20260808-incense-direct-2'
   };
 
-  window.LYYProductImages = window.LYYProductImages || {};
+  const motherCardInline='data:image/jpeg;base64,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';
 
-  if (!document.querySelector('style[data-product-photos-20260807]')) {
-    const style = document.createElement('style');
-    style.dataset.productPhotos20260807 = 'true';
-    style.textContent = `
-      .product-visual{
-        position:relative;
-        isolation:isolate;
-        overflow:hidden;
-        background:linear-gradient(145deg,#f5ecdc,#dfcaaa);
-        border:1px solid rgba(165,130,84,.18);
-      }
-      .product-visual::before,
-      .product-visual::after{display:none!important}
-      .product-visual img.product-photo{
-        position:relative;
-        z-index:2;
-        display:block;
-        width:100%;
-        height:100%;
-        object-fit:contain;
-        object-position:center;
-        transition:transform .65s var(--ease),filter .65s var(--ease);
-        filter:drop-shadow(0 20px 24px rgba(45,31,18,.18));
-      }
-      .product-card[data-product="spirit"] .product-visual,
-      .product-card[data-product="wealth"] .product-visual,
-      .product-card[data-product="career"] .product-visual,
-      .product-card[data-product="love"] .product-visual,
-      .product-card[data-product="incense"] .product-visual{
-        display:flex!important;
-        align-items:center!important;
-        justify-content:center!important;
-        overflow:hidden!important;
-        padding:12px!important;
-      }
-      .product-card[data-product="spirit"] .product-visual img.product-photo,
-      .product-card[data-product="wealth"] .product-visual img.product-photo,
-      .product-card[data-product="career"] .product-visual img.product-photo,
-      .product-card[data-product="love"] .product-visual img.product-photo,
-      .product-card[data-product="incense"] .product-visual img.product-photo{
-        position:relative!important;
-        inset:auto!important;
-        display:block!important;
-        width:auto!important;
-        height:auto!important;
-        max-width:96%!important;
-        max-height:96%!important;
-        margin:auto!important;
-        object-fit:contain!important;
-        object-position:center!important;
-        transform:none!important;
-      }
-      .product-card:hover .product-visual img.product-photo{
-        transform:translateY(-6px) scale(1.018);
-        filter:drop-shadow(0 28px 30px rgba(45,31,18,.28));
-      }
-      .product-card[data-product="spirit"]:hover .product-visual img.product-photo,
-      .product-card[data-product="wealth"]:hover .product-visual img.product-photo,
-      .product-card[data-product="career"]:hover .product-visual img.product-photo,
-      .product-card[data-product="love"]:hover .product-visual img.product-photo,
-      .product-card[data-product="incense"]:hover .product-visual img.product-photo{
-        transform:none!important;
-      }
-      .product-card[data-product="motherCard"] .product-visual img.product-photo{
-        object-fit:contain;
-        padding:18px;
-        box-sizing:border-box;
-      }
-      .result-visual img.product-photo{
-        display:block;
-        width:100%!important;
-        height:100%!important;
-        object-fit:contain;
-        filter:drop-shadow(0 15px 22px rgba(0,0,0,.32));
-        animation:realOmamoriReveal .72s cubic-bezier(.2,.8,.2,1) both,
-                  realOmamoriFloat 2.8s .72s ease-in-out infinite;
-      }
-      .mother-card-fallback{
-        width:210px;
-        height:270px;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        gap:10px;
-        color:#d8b777;
-        background:linear-gradient(155deg,#27301d,#10170d);
-        border:1px solid rgba(216,183,119,.7);
-        box-shadow:0 22px 34px rgba(45,31,18,.24),inset 0 0 0 9px rgba(216,183,119,.08);
-        font-family:var(--serif);
-        letter-spacing:.12em;
-      }
-      .mother-card-fallback::before{content:'✦';font-size:32px}
-      .mother-card-fallback strong{font-weight:400;font-size:18px}
-      .mother-card-fallback em{font-style:normal;font-size:14px;color:#f0dbad}
-      @media(min-width:981px){
-        .product-grid .product-card:nth-child(4),
-        .product-grid .product-card:nth-child(5),
-        .product-grid .product-card:nth-child(6){grid-column:span 4!important}
-      }
-      @keyframes realOmamoriReveal{
-        from{opacity:0;transform:translateY(18px) scale(.82);filter:blur(5px) brightness(1.3)}
-        to{opacity:1;transform:translateY(0) scale(1);filter:blur(0) brightness(1)}
-      }
-      @keyframes realOmamoriFloat{
-        0%,100%{transform:translateY(0)}
-        50%{transform:translateY(-5px)}
-      }
-      @media(max-width:760px){
-        .product-card[data-product="spirit"] .product-visual,
-        .product-card[data-product="wealth"] .product-visual,
-        .product-card[data-product="career"] .product-visual,
-        .product-card[data-product="love"] .product-visual,
-        .product-card[data-product="incense"] .product-visual{padding:8px!important}
-        .product-card[data-product="spirit"] .product-visual img.product-photo,
-        .product-card[data-product="wealth"] .product-visual img.product-photo,
-        .product-card[data-product="career"] .product-visual img.product-photo,
-        .product-card[data-product="love"] .product-visual img.product-photo,
-        .product-card[data-product="incense"] .product-visual img.product-photo{
-          max-width:98%!important;
-          max-height:98%!important;
-        }
-        .product-card[data-product="motherCard"] .product-visual img.product-photo{padding:10px}
-      }
-      @media(prefers-reduced-motion:reduce){
-        .product-visual img.product-photo,
-        .result-visual img.product-photo{animation:none!important;transition:none!important}
-      }
+  window.LYYProductImages=window.LYYProductImages||{};
+  window.LYYProductImages.motherCard=motherCardInline;
+
+  function ensureStyle(){
+    let style=document.querySelector('style[data-product-photo-layout="20260808"]');
+    if(style)return;
+    style=document.createElement('style');
+    style.dataset.productPhotoLayout='20260808';
+    style.textContent=`
+      .product-visual{position:relative;overflow:hidden;background:linear-gradient(145deg,#f5ecdc,#dfcaaa);border:1px solid rgba(165,130,84,.18)}
+      .product-visual::before,.product-visual::after{display:none!important}
+      .product-card[data-product] .product-visual{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;padding:12px!important}
+      .product-card[data-product] .product-visual img.product-photo{position:relative!important;inset:auto!important;display:block!important;width:auto!important;height:auto!important;max-width:96%!important;max-height:96%!important;margin:auto!important;object-fit:contain!important;object-position:center!important;transform:none!important;filter:drop-shadow(0 18px 22px rgba(45,31,18,.16))}
+      .product-card[data-product]:hover .product-visual img.product-photo{transform:none!important}
+      @media(max-width:760px){.product-card[data-product] .product-visual{padding:8px!important}.product-card[data-product] .product-visual img.product-photo{max-width:98%!important;max-height:98%!important}}
     `;
     document.head.appendChild(style);
   }
 
-  function getCard(key) {
-    return document.querySelector(`[data-product="${key}"]`) || document.getElementById(`product-${key}`);
-  }
+  function getCard(key){return document.querySelector(`[data-product="${key}"]`)||document.getElementById(`product-${key}`)}
 
-  window.LYYApplyProductPhoto = (key, src) => {
-    const visual = getCard(key)?.querySelector('.product-visual');
-    if (!visual || !src) return;
-
-    const image = new Image();
-    image.className = 'product-photo';
-    image.alt = names[key] || '靈元院商品';
-    image.loading = key === 'spirit' || key === 'wealth' || key === 'career' || key === 'love' || key === 'incense' ? 'eager' : 'lazy';
-    image.decoding = 'async';
-    image.onload = () => visual.replaceChildren(image);
-    image.onerror = () => console.warn(`商品圖片載入失敗，保留原始示意圖：${key}`);
-    image.src = src;
+  window.LYYApplyProductPhoto=(key,src)=>{
+    const visual=getCard(key)?.querySelector('.product-visual');
+    if(!visual||!src)return false;
+    const image=new Image();
+    image.className='product-photo';
+    image.alt=names[key]||'靈元院商品';
+    image.loading='eager';
+    image.decoding='async';
+    image.onload=()=>visual.replaceChildren(image);
+    image.onerror=()=>console.warn(`商品圖片載入失敗，保留原始內容：${key}`);
+    image.src=src;
+    return true;
   };
 
-  function installMotherCard() {
-    const grid = document.querySelector('.product-grid');
-    if (!grid || document.querySelector('[data-product="motherCard"]')) return;
-
-    const card = document.createElement('article');
-    card.className = 'product-card reveal on';
-    card.id = 'product-mother-card';
-    card.dataset.category = 'card';
-    card.dataset.product = 'motherCard';
-    card.innerHTML = `
+  function installMotherCard(){
+    const grid=document.querySelector('.product-grid');
+    if(!grid)return null;
+    let card=getCard('motherCard');
+    if(card)return card;
+    card=document.createElement('article');
+    card.className='product-card reveal on';
+    card.id='product-mother-card';
+    card.dataset.category='card';
+    card.dataset.product='motherCard';
+    card.innerHTML=`
       <span class="badge">金母護持</span>
-      <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener"
-         aria-label="前往綠界選購無極瑤池金母護身卡">
-        <div class="product-visual">
-          <div class="mother-card-fallback" role="img" aria-label="無極瑤池金母護身卡">
-            <strong>無極瑤池金母</strong><em>護身卡</em>
-          </div>
-        </div>
+      <a class="product-link" href="https://reurl.cc/vv1k5e" target="_blank" rel="noopener" aria-label="前往綠界選購無極瑤池金母護身卡">
+        <div class="product-visual"><div class="mother-card-fallback" role="img" aria-label="無極瑤池金母護身卡"></div></div>
         <div class="product-info">
           <p class="product-meta">BLESSED CARD · 01</p>
-          <div class="product-title-row">
-            <h3>無極瑤池金母護身卡</h3>
-            <span class="price">隨喜功德</span>
-          </div>
+          <div class="product-title-row"><h3>無極瑤池金母護身卡</h3><span class="price">隨喜功德</span></div>
           <p class="product-desc">雙面護身卡三張一套，恭印無極瑤池金母聖像與護念文字，可隨身攜帶或敬慎安奉，作為收攝心念、守正祈安的日常提醒。</p>
           <div class="product-cta"><span>查看護身卡與選購</span><i>→</i></div>
         </div>
       </a>`;
     grid.appendChild(card);
-
-    const filterBar = document.querySelector('.filter-bar');
-    if (filterBar && !filterBar.querySelector('[data-filter="card"]')) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'filter-btn';
-      button.dataset.filter = 'card';
-      button.textContent = '護身卡';
-      filterBar.appendChild(button);
-    }
+    return card;
   }
 
-  function bindFilters() {
-    document.querySelectorAll('.filter-btn').forEach(button => {
-      if (button.dataset.dynamicFilterBound === 'true') return;
-      button.dataset.dynamicFilterBound = 'true';
-      button.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn')
-          .forEach(item => item.classList.toggle('active', item === button));
-        const key = button.dataset.filter;
-        document.querySelectorAll('.product-card').forEach(item => {
-          item.classList.toggle('hidden', key !== 'all' && item.dataset.category !== key);
-        });
+  function bindFilters(){
+    document.querySelectorAll('.filter-btn').forEach(button=>{
+      if(button.dataset.dynamicFilterBound==='true')return;
+      button.dataset.dynamicFilterBound='true';
+      button.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-btn').forEach(item=>item.classList.toggle('active',item===button));
+        const key=button.dataset.filter;
+        document.querySelectorAll('.product-card').forEach(item=>item.classList.toggle('hidden',key!=='all'&&item.dataset.category!==key));
       });
     });
   }
 
-  function applyExpandedCopy() {
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.content = '靈元院靈性美學館，收錄祈願御守、無極瑤池金母護身卡與鎮煞護安香粉，讓虔敬、守護與日常修持安住於生活之中。';
-
-    const heroDesc = document.querySelector('.hero-copy .hero-desc');
-    if (heroDesc) heroDesc.textContent = '靈性美學館收錄靈元院祈願御守、無極瑤池金母護身卡與護安香品。每一件選物皆以虔敬之心承載願念，提醒我們在日常起心動念之間，守住正念、善念與行願之心。';
-
-    const productsCopy = document.querySelector('.products .section-head p:not(.section-en)');
-    if (productsCopy) productsCopy.textContent = '收錄四款祈願御守、無極瑤池金母護身卡與鎮煞護安香粉。請先閱讀各品項的祈願方向，再依此刻所願與實際需要選擇；點選商品即可前往綠界選購。';
-
-    const firstPromise = document.querySelector('.promise span');
-    if (firstPromise) firstPromise.textContent = '每一款御守與護身卡皆承載不同的祈願方向，提醒持有者守心、正念，並以實際行動回應自己的願。';
-
-    const note = document.querySelector('.note-box');
-    if (note) note.textContent = '御守、護身卡與香品皆為祈願與日常修持之助緣，並非取代個人的判斷、行動與責任。商品價格、會員方案、庫存、使用方式與出貨規範，請以綠界表單當下內容為準。';
-
-    const secondStep = document.querySelectorAll('.experience .step')[1]?.querySelector('p');
-    if (secondStep) secondStep.textContent = '閱讀各款御守、護身卡與護安香品的用途，選定相應品項後，前往綠界完成數量、方案與訂購資料。';
-  }
-
-  function loadPhotoScript(key, src) {
-    return new Promise(resolve => {
-      const existing = document.querySelector(`script[data-product-photo="${key}"]`);
-      if (existing) existing.remove();
-      const script = document.createElement('script');
-      script.src = src;
-      script.async = true;
-      script.dataset.productPhoto = key;
-      script.onload = resolve;
-      script.onerror = () => {
-        console.warn(`無法載入商品圖片資料：${key}`);
-        resolve();
-      };
-      document.body.appendChild(script);
+  function loadPhotoScript(key,src){
+    return new Promise(resolve=>{
+      const old=document.querySelector(`script[data-product-photo="${key}"]`);if(old)old.remove();
+      const script=document.createElement('script');
+      script.src=src;script.async=true;script.dataset.productPhoto=key;
+      script.onload=resolve;script.onerror=resolve;document.body.appendChild(script);
     });
   }
 
-  function applyLoadedPhotos() {
-    Object.entries(window.LYYProductImages || {}).forEach(([key, src]) => {
-      window.LYYApplyProductPhoto(key, src);
-    });
+  function applyKnownPhotos(){
+    Object.entries(window.LYYProductImages||{}).forEach(([key,src])=>window.LYYApplyProductPhoto(key,src));
+    window.LYYApplyProductPhoto('motherCard',motherCardInline);
   }
 
+  ensureStyle();
   installMotherCard();
   bindFilters();
+  const incensePrice=document.querySelector('[data-product="incense"] .price');if(incensePrice)incensePrice.textContent='NT$ 680';
+  window.LYYApplyProductPhoto('motherCard',motherCardInline);
 
-  const incensePrice = document.querySelector('[data-product="incense"] .price');
-  if (incensePrice) incensePrice.textContent = 'NT$ 680';
-
-  applyExpandedCopy();
-
-  Promise.all(Object.entries(photoScripts).map(([key, src]) => loadPhotoScript(key, src)))
-    .then(() => {
-      applyLoadedPhotos();
-      window.setTimeout(applyLoadedPhotos, 350);
-    });
-
-  window.setTimeout(applyExpandedCopy, 450);
-  window.setTimeout(applyExpandedCopy, 1400);
+  Promise.all(Object.entries(photoScripts).map(([key,src])=>loadPhotoScript(key,src))).then(()=>{
+    applyKnownPhotos();
+    setTimeout(applyKnownPhotos,300);
+    setTimeout(applyKnownPhotos,900);
+  });
+  setTimeout(()=>window.LYYApplyProductPhoto('motherCard',motherCardInline),1500);
 })();
