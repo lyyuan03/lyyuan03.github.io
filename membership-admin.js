@@ -329,10 +329,10 @@ function updatePlanOptions() {
   const previousMonths = previousValue === "3" || previousValue.endsWith("-3") ? 3 : 1;
   const promoEligible = currentTier() === "promo";
   const options = [
-    { value: "promo-1", label: `一個月｜首次購買優惠 NT${Number(settings.sponsorPromoPrice1).toLocaleString("zh-TW")}`, disabled: !promoEligible },
-    { value: "promo-3", label: `三個月｜首次購買優惠 NT${Number(settings.sponsorPromoPrice3).toLocaleString("zh-TW")}`, disabled: !promoEligible },
-    { value: "regular-1", label: `一個月｜原價／續期價 NT${Number(settings.sponsorRegularPrice1).toLocaleString("zh-TW")}`, disabled: false },
-    { value: "regular-3", label: `三個月｜原價／續期價 NT${Number(settings.sponsorRegularPrice3).toLocaleString("zh-TW")}`, disabled: false }
+    { value: "promo-1", label: `一個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice1).toLocaleString("zh-TW")}`, disabled: !promoEligible },
+    { value: "promo-3", label: `三個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice3).toLocaleString("zh-TW")}`, disabled: !promoEligible },
+    { value: "regular-1", label: `一個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice1).toLocaleString("zh-TW")}`, disabled: false },
+    { value: "regular-3", label: `三個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice3).toLocaleString("zh-TW")}`, disabled: false }
   ];
   monthsEl.replaceChildren(...options.map((item) => {
     const option = document.createElement("option");
