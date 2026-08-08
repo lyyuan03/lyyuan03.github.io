@@ -14,7 +14,7 @@ const categoryLabels = {
 const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
 ]);
-const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings"]);
+const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 
 let articles = [];
@@ -367,6 +367,7 @@ function setFormData(article = {}) {
   renderEventOptions(article.eventId || "");
   toggleEventAccess();
   form.content.value = article.content || "";
+  form.content.dispatchEvent(new Event("input", { bubbles: true }));
   preview.innerHTML = renderContent(form.content.value);
   importButton?.classList.toggle("hidden", !isStaticArticle);
   saveButton.classList.toggle("hidden", isStaticArticle);
@@ -620,6 +621,22 @@ async function deleteArticle() {
   await loadArticles();
 }
 
+function readImageDimensions(file) {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve({ width: image.naturalWidth || image.width, height: image.naturalHeight || image.height });
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("image-dimensions-unavailable"));
+    };
+    image.src = objectUrl;
+  });
+}
+
 async function uploadImages(files) {
   const user = auth.currentUser;
   if (!user || !isAdminEmail(user.email)) {
@@ -628,6 +645,23 @@ async function uploadImages(files) {
   }
   const selected = Array.from(files || []).filter((file) => file.type.startsWith("image/"));
   if (!selected.length) return;
+
+  for (const file of selected) {
+    let dimensions;
+    try {
+      dimensions = await readImageDimensions(file);
+    } catch (error) {
+      console.error("圖片解析度讀取失敗：", error);
+      uploadStatus.textContent = "無法讀取圖片解析度，請重新輸出圖片後再上傳。";
+      imageInput.value = "";
+      return;
+    }
+    if (dimensions.width < 1600 || dimensions.height < 900) {
+      uploadStatus.textContent = `圖片解析度過低（目前 ${dimensions.width}×${dimensions.height}px），內文圖至少需要 1600×900px，請重新輸出後再上傳。`;
+      imageInput.value = "";
+      return;
+    }
+  }
 
   uploadButton.disabled = true;
   uploadStatus.textContent = `上傳中 0/${selected.length}…`;
