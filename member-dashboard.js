@@ -275,7 +275,7 @@ function renderDashboard(member, user, sponsorMember = null) {
 
   dashboard.dataset.memberLevel = state.effectiveLevel;
   dashboard.dataset.memberKind = sponsorOnly ? "sponsor" : "wellness";
-  document.getElementById("dashboard-greeting").textContent = `${name}，平安`;
+  document.getElementById("dashboard-greeting").textContent = `${name}，吉祥平安 🙏`;
   document.querySelector(".identity .eyebrow").textContent = sponsorOnly ? "SPONSORED ARTICLE MEMBERSHIP" : "WELLNESS CHANNEL MEMBERSHIP";
   document.getElementById("dashboard-member-meta").textContent = sponsorOnly
     ? `會員編號 ${membershipNumber}｜贊助專屬文章會員`
