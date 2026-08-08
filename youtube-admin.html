@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>YouTube 頻道管理｜靈元院</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root{--deep:#071106;--panel:#10180d;--gold:#A58254;--cream:#F5F0E8;--muted:rgba(245,240,232,.62);--line:rgba(165,130,84,.3);--green:#606330}*{box-sizing:border-box}body{margin:0;background:var(--deep);color:var(--cream);font-family:'Noto Sans TC',sans-serif;line-height:1.7}.shell{max-width:1240px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:22px}.brand h1{margin:0;color:#CBAA77;font-family:'Noto Serif TC',serif;font-size:26px;letter-spacing:.12em}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid rgba(165,130,84,.58);background:rgba(165,130,84,.12);color:#E3C697;padding:10px 15px;cursor:pointer;text-decoration:none;font:inherit}.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}.btn.danger{border-color:#a7635c;color:#efb0aa}.btn:disabled{opacity:.45;cursor:not-allowed}.panel{background:var(--panel);border:1px solid var(--line);margin-bottom:20px}.panel-head{padding:17px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.panel-head h2{font:500 18px 'Noto Serif TC',serif;color:#D8BD91;margin:0}.panel-body{padding:20px}.notice{border:1px solid var(--line);padding:14px;background:rgba(165,130,84,.06);color:var(--muted)}.status{color:var(--muted);font-size:13px}.video-list{display:grid;gap:14px}.video{display:grid;grid-template-columns:180px 1fr auto;gap:16px;padding:15px;border:1px solid rgba(165,130,84,.18);background:rgba(4,8,3,.35)}.video img{width:180px;aspect-ratio:16/9;object-fit:cover}.video h3{margin:0 0 8px;font-size:16px}.meta{font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap}.editor{display:grid;gap:14px}.field{display:grid;gap:7px}.field label{font-size:13px;color:var(--muted)}input,textarea{width:100%;background:rgba(4,8,3,.7);border:1px solid var(--line);color:var(--cream);padding:11px;font:inherit}textarea{min-height:180px;resize:vertical}.diff{display:grid;grid-template-columns:1fr 1fr;gap:14px}.diff-box{border:1px solid var(--line);padding:14px;white-space:pre-wrap;overflow-wrap:anywhere}.diff-box strong{display:block;color:#D8BD91;margin-bottom:8px}.hidden{display:none!important}@media(max-width:760px){.top,.panel-head{align-items:flex-start;flex-direction:column}.video{grid-template-columns:1fr}.video img{width:100%}.diff{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand"><h1>YouTube 頻道管理</h1><p>先預覽差異，確認後才寫入 YouTube</p></div>
+    <div class="actions"><a class="btn" href="admin.html">返回網站後台</a><button id="logout" class="btn">登出</button></div>
+  </header>
+
+  <section id="gate" class="panel"><div class="panel-body"><h2>管理員登入</h2><p class="status">請使用靈元院指定 Gmail 登入。</p><button id="login" class="btn primary">使用 Google 登入</button></div></section>
+
+  <main id="app" class="hidden">
+    <section class="panel">
+      <div class="panel-head"><h2>頻道連接</h2><span id="connection-status" class="status">檢查中…</span></div>
+      <div class="panel-body">
+        <div class="notice">OAuth 密鑰與 YouTube refresh token 僅保存在 Firebase 後端，不會寫入 GitHub Pages 或瀏覽器。</div>
+        <div class="actions" style="margin-top:14px"><button id="connect" class="btn primary">連接 YouTube 帳號</button><button id="disconnect" class="btn danger">撤銷連接</button><button id="refresh" class="btn">重新載入影片</button></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>最近影片</h2><span id="video-status" class="status"></span></div>
+      <div class="panel-body"><div id="video-list" class="video-list"><div class="status">連接後即可讀取影片。</div></div></div>
+    </section>
+
+    <section id="editor-panel" class="panel hidden">
+      <div class="panel-head"><h2>修改影片資料</h2><span id="edit-status" class="status"></span></div>
+      <div class="panel-body">
+        <form id="editor" class="editor">
+          <input id="video-id" type="hidden">
+          <div class="field"><label for="title">影片標題</label><input id="title" maxlength="100" required></div>
+          <div class="field"><label for="description">影片說明</label><textarea id="description" maxlength="5000"></textarea></div>
+          <div class="actions"><button class="btn primary" type="submit">產生修改預覽</button><button id="cancel" class="btn" type="button">取消</button></div>
+        </form>
+        <div id="preview" class="hidden" style="margin-top:18px">
+          <div class="diff"><div class="diff-box"><strong>修改前</strong><div id="before"></div></div><div class="diff-box"><strong>修改後</strong><div id="after"></div></div></div>
+          <div class="notice" style="margin-top:14px">按下確認後才會寫入 YouTube，系統會保留修改前後資料與操作紀錄。</div>
+          <button id="apply" class="btn primary" style="margin-top:14px">確認並套用修改</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script type="module" src="youtube-admin.js?v=20260807-1"></script>
+</body>
+</html>
