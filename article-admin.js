@@ -231,7 +231,7 @@ async function migrateGuanyinVowLampArticle(article) {
   ]);
   const participants = participantSnapshot.docs
     .filter((item) => item.data().eventAccess?.[article.eventId]?.status === "active");
-  if (participants.length > 497) {
+  if (participants.length > 498) {
     throw new Error("活動參加者超過單次安全遷移上限，請改用分批遷移。");
   }
 
