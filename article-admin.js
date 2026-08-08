@@ -1,7 +1,7 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260807-article-sync-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const categoryLabels = {
@@ -16,6 +16,22 @@ const staticArticleSyncRevisions = new Map([
 ]);
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
+const GUANYIN_VOW_LAMP_ARTICLE_ID = "2026-guanyin-vow-lamp-record-v2";
+const GUANYIN_VOW_LAMP_CONTENT_REVISION = "20260808-inline-images-v1";
+const GUANYIN_VOW_LAMP_IMAGE_PLACEMENTS = [
+  {
+    heading: "## 我知道方法，但我做不到",
+    image: "![每一封疏文，都是一份交付給觀世音菩薩的修行託付](assets/articles/2026-guanyin-vow-lamp-record/vow-sheets-before-guanyin.webp?v=20260802-1)"
+  },
+  {
+    heading: "## 我聽見最重的兩段話，是關於生死與親情",
+    image: "![真正的感應不急著證明，會在時間裡慢慢證明自己](assets/articles/2026-guanyin-vow-lamp-record/patience-in-practice.webp?v=20260802-1)"
+  },
+  {
+    heading: "## 一連串巧合，其實就證明了你走在對的路上",
+    image: "![符合天命的路不是沒有阻礙，而是在阻礙中依然感覺篤定](assets/articles/2026-guanyin-vow-lamp-record/path-with-obstacles.webp?v=20260802-1)"
+  }
+];
 
 let articles = [];
 let currentId = null;
@@ -49,6 +65,7 @@ const eventAccessField = document.getElementById("event-access-field");
 let toastTimer = null;
 let isSaving = false;
 let eventOptions = [];
+let guanyinVowLampMigrationPromise = null;
 
 function bytesToBase64(bytes) {
   let binary = "";
@@ -159,6 +176,118 @@ async function buildMagicLinkAccess(eventId, eventKey) {
     };
   }
   return access;
+}
+
+function escapeRegExp(value = "") {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function buildGuanyinVowLampContent(content = "") {
+  if (GUANYIN_VOW_LAMP_IMAGE_PLACEMENTS.every(({ image }) => content.includes(image))) return content;
+  const newline = content.includes("\r\n") ? "\r\n" : "\n";
+  let migratedContent = content
+    .replace(
+      /^!\[[^\]]*\]\(\/?assets\/articles\/guanyin-vow-lamp\/guanyin-vow-lamp-[123]\.svg(?:\?[^)]*)?\)[ \t]*\r?$/gm,
+      ""
+    )
+    .replace(
+      /^!\[[^\]]*\]\(\/?assets\/articles\/2026-guanyin-vow-lamp-record\/(?:vow-sheets-before-guanyin|patience-in-practice|path-with-obstacles)\.webp(?:\?[^)]*)?\)[ \t]*\r?$/gm,
+      ""
+    );
+
+  GUANYIN_VOW_LAMP_IMAGE_PLACEMENTS.forEach(({ heading, image }) => {
+    const headingPattern = new RegExp(`(^|\\r?\\n)${escapeRegExp(heading)}(?=\\r?\\n|$)`);
+    if (!headingPattern.test(migratedContent)) {
+      throw new Error(`找不到觀音文章圖片插入位置：${heading}`);
+    }
+    migratedContent = migratedContent.replace(
+      headingPattern,
+      (match, prefix) => `${prefix}${image}${newline}${newline}${heading}`
+    );
+  });
+
+  if (!GUANYIN_VOW_LAMP_IMAGE_PLACEMENTS.every(({ image }) => migratedContent.includes(image))) {
+    throw new Error("觀音文章圖片遷移不完整，已停止寫入。");
+  }
+  return migratedContent;
+}
+
+async function migrateGuanyinVowLampArticle(article) {
+  const migratedContent = buildGuanyinVowLampContent(article.content || "");
+  if (migratedContent === article.content) {
+    await setDoc(doc(db, "articles", article.id), {
+      managedContentRevision: GUANYIN_VOW_LAMP_CONTENT_REVISION,
+      managedContentMigratedAt: serverTimestamp()
+    }, { merge: true });
+    return { ...article, managedContentRevision: GUANYIN_VOW_LAMP_CONTENT_REVISION };
+  }
+  if (!article.eventId) throw new Error("觀音活動文章缺少 eventId，無法重新分發解密金鑰。");
+
+  const protectedContent = await encryptEventContent(migratedContent);
+  const [keySnapshot, participantSnapshot, magicLinkAccess] = await Promise.all([
+    getDoc(doc(db, "membershipSettings", "eventArticleKeys")),
+    getDocs(collection(db, "memberAccess")),
+    buildMagicLinkAccess(article.eventId, protectedContent.key)
+  ]);
+  const participants = participantSnapshot.docs
+    .filter((item) => item.data().eventAccess?.[article.eventId]?.status === "active");
+  if (participants.length > 497) {
+    throw new Error("活動參加者超過單次安全遷移上限，請改用分批遷移。");
+  }
+
+  const keyRef = doc(db, "membershipSettings", "eventArticleKeys");
+  const keys = keySnapshot.exists() ? keySnapshot.data().keys || {} : {};
+  const batch = writeBatch(db);
+  batch.set(keyRef, {
+    keys: { ...keys, [article.id]: protectedContent.key },
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+  participants.forEach((item) => {
+    const data = item.data();
+    batch.set(item.ref, {
+      eventArticleKeys: { ...(data.eventArticleKeys || {}), [article.id]: protectedContent.key },
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  });
+  batch.set(doc(db, "articles", article.id), {
+    content: "",
+    encryptedContent: protectedContent.encryptedContent,
+    eventIv: protectedContent.iv,
+    encryption: "AES-GCM-256",
+    magicLinkAccess,
+    managedContentRevision: GUANYIN_VOW_LAMP_CONTENT_REVISION,
+    managedContentMigratedAt: serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+  showAdminToast(`觀音文章 3 張內文圖已自動遷移，並重新授權 ${participants.length} 位參加者。`, "success");
+
+  return {
+    ...article,
+    content: migratedContent,
+    encryptedContent: protectedContent.encryptedContent,
+    eventIv: protectedContent.iv,
+    encryption: "AES-GCM-256",
+    magicLinkAccess,
+    managedContentRevision: GUANYIN_VOW_LAMP_CONTENT_REVISION
+  };
+}
+
+async function ensureManagedArticleContent(article) {
+  if (article.id !== GUANYIN_VOW_LAMP_ARTICLE_ID
+    || article.accessType !== "event"
+    || !article.content
+    || article.managedContentRevision === GUANYIN_VOW_LAMP_CONTENT_REVISION) {
+    return article;
+  }
+  if (!guanyinVowLampMigrationPromise) {
+    const pending = migrateGuanyinVowLampArticle(article);
+    guanyinVowLampMigrationPromise = pending;
+    pending.then(
+      () => { if (guanyinVowLampMigrationPromise === pending) guanyinVowLampMigrationPromise = null; },
+      () => { if (guanyinVowLampMigrationPromise === pending) guanyinVowLampMigrationPromise = null; }
+    );
+  }
+  return guanyinVowLampMigrationPromise;
 }
 
 const authPersistenceReady = setPersistence(auth, browserLocalPersistence)
@@ -512,7 +641,13 @@ async function loadArticles() {
           article.content = "";
         }
       }
-      return article;
+      try {
+        return await ensureManagedArticleContent(article);
+      } catch (error) {
+        console.error("觀音文章內文圖片自動遷移失敗：", error);
+        showAdminToast("觀音文章圖片尚未遷移：資料未被修改，請重新整理後再試。", "error");
+        return article;
+      }
     }));
     const mergedArticles = new Map(
       staticArticles.map((article) => [article.id, { ...article, source: "github-static" }])
