@@ -177,7 +177,8 @@ function addMonths(date, months) {
 }
 
 function selectedMonths() {
-  return Number(monthsEl.value) === 3 ? 3 : 1;
+  const value = String(monthsEl.value || "");
+  return value === "3" || value.endsWith("-3") ? 3 : 1;
 }
 
 function promotionAvailable() {
@@ -224,8 +225,14 @@ function planAmountForTier(months, tier = currentTier()) {
   return isThreeMonths ? settings.sponsorPromoPrice3 : settings.sponsorPromoPrice1;
 }
 
+function selectedPlanTier(email = selectedEmail()) {
+  const requestedTier = String(monthsEl.value || "").startsWith("regular-") ? "regular" : "promo";
+  if (requestedTier === "regular") return "regular";
+  return currentTier(email);
+}
+
 function planAmount(months) {
-  return planAmountForTier(months, currentTier());
+  return planAmountForTier(months, selectedPlanTier());
 }
 
 function isCountedSponsorMember(member = {}) {
@@ -318,11 +325,26 @@ function installOfferAdminUi() {
 
 function updatePlanOptions() {
   if (!monthsEl) return;
-  const tierLabel = currentTier() === "promo" ? "首次購買優惠" : "原價／續期價";
-  const one = monthsEl.querySelector('option[value="1"]');
-  const three = monthsEl.querySelector('option[value="3"]');
-  if (one) one.textContent = `一個月｜${tierLabel} NT$${Number(planAmount(1)).toLocaleString("zh-TW")}`;
-  if (three) three.textContent = `三個月｜${tierLabel} NT$${Number(planAmount(3)).toLocaleString("zh-TW")}`;
+  const previousValue = String(monthsEl.value || "");
+  const previousMonths = previousValue === "3" || previousValue.endsWith("-3") ? 3 : 1;
+  const promoEligible = currentTier() === "promo";
+  const options = [
+    { value: "promo-1", label: `一個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice1).toLocaleString("zh-TW")}`, disabled: !promoEligible },
+    { value: "promo-3", label: `三個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice3).toLocaleString("zh-TW")}`, disabled: !promoEligible },
+    { value: "regular-1", label: `一個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice1).toLocaleString("zh-TW")}`, disabled: false },
+    { value: "regular-3", label: `三個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice3).toLocaleString("zh-TW")}`, disabled: false }
+  ];
+  monthsEl.replaceChildren(...options.map((item) => {
+    const option = document.createElement("option");
+    option.value = item.value;
+    option.textContent = item.label;
+    option.disabled = item.disabled;
+    return option;
+  }));
+  const requested = options.find((item) => item.value === previousValue && !item.disabled);
+  monthsEl.value = requested
+    ? requested.value
+    : `${promoEligible ? "promo" : "regular"}-${previousMonths}`;
 }
 
 function renderOfferStatus() {
@@ -357,7 +379,7 @@ function updatePlanPreview(forceAmount = false) {
   const email = selectedEmail();
   const originalEmail = normalizeEmail(document.getElementById("member-original-email").value);
   const existing = members.find((item) => item.email === (email || originalEmail));
-  const tier = currentTier(email || originalEmail);
+  const tier = selectedPlanTier(email || originalEmail);
   if (forceAmount || !amountEl.value) amountEl.value = String(planAmountForTier(selectedMonths(), tier) || "");
   const used = discountRecordForEmail(email || originalEmail).discountUsed;
   const tierText = tier === "promo"
@@ -369,7 +391,7 @@ function updatePlanPreview(forceAmount = false) {
 function resetMemberForm() {
   memberForm.reset();
   document.getElementById("member-original-email").value = "";
-  monthsEl.value = "1";
+  monthsEl.value = "promo-1";
   updatePlanOptions();
   updatePlanPreview(true);
 }
@@ -455,7 +477,7 @@ async function activateMember() {
     const existing = members.find((item) => item.email === email) || {};
     const discountRecord = discountRecordForEmail(email);
     offerStatus = calculateOfferStatus();
-    const tier = currentTier(email);
+    const tier = selectedPlanTier(email);
     const amount = planAmountForTier(months, tier);
     const now = new Date();
     const currentExpiry = dateValue(existing.expiresAt);
@@ -539,7 +561,7 @@ function openPaymentEmail() {
   const email = normalizeEmail(document.getElementById("member-email").value);
   const name = document.getElementById("member-name").value.trim() || "會員";
   const months = selectedMonths();
-  const tier = currentTier(email);
+  const tier = selectedPlanTier(email);
   const amount = Number(planAmountForTier(months, tier)).toLocaleString("zh-TW");
   const paymentUrl = tier === "promo"
     ? String(settings.sponsorPromoPaymentUrl || "").trim()
@@ -641,7 +663,7 @@ function editMember(email) {
   document.getElementById("member-original-email").value = member.email;
   document.getElementById("member-name").value = member.name || "";
   document.getElementById("member-email").value = member.email || "";
-  monthsEl.value = Number(member.planMonths) === 3 ? "3" : "1";
+  monthsEl.value = `regular-${Number(member.planMonths) === 3 ? "3" : "1"}`;
   amountEl.value = String(member.amount || "");
   document.getElementById("member-note").value = member.note || "";
   updatePlanOptions();
