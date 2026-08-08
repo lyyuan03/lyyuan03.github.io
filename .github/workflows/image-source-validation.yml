@@ -1,0 +1,50 @@
+name: Validate yuanshen image sources
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - '.github/workflows/image-source-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate staged high-resolution sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://raw.githubusercontent.com/lyyuan03/lyyuan03.github.io/fix-yuanshen-article-20260808/.tmp-yuanshen-hires'
+          mkdir -p /tmp/yuanshen
+          for stem in stone roc; do
+            case "$stem" in
+              stone) parts='00 01 02 03 04 05' ;;
+              roc) parts='00 01 02 03 04' ;;
+            esac
+            : > "/tmp/yuanshen/${stem}.b64"
+            for part in $parts; do
+              curl -fsSL "$BASE/${stem}.${part}.b64" >> "/tmp/yuanshen/${stem}.b64"
+            done
+            base64 -d "/tmp/yuanshen/${stem}.b64" > "/tmp/yuanshen/${stem}.webp"
+            file "/tmp/yuanshen/${stem}.webp"
+          done
+          curl -fsSL "$BASE/bird.00.b64" -o /tmp/yuanshen/bird.b64
+          if base64 -d /tmp/yuanshen/bird.b64 > /tmp/yuanshen/bird.webp 2>/dev/null; then file /tmp/yuanshen/bird.webp; else echo 'bird source incomplete'; fi
+
+      - name: Test official book cover source
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          curl -fL --retry 2 \
+            -A 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/151 Safari/537.36' \
+            -H 'Referer: https://www.books.com.tw/products/0011060075' \
+            -H 'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8' \
+            'https://www.books.com.tw/img/001/106/00/0011060075.jpg' \
+            -o /tmp/yuanshen/book-cover.jpg
+          file /tmp/yuanshen/book-cover.jpg
+          test "$(stat -c%s /tmp/yuanshen/book-cover.jpg)" -gt 50000
