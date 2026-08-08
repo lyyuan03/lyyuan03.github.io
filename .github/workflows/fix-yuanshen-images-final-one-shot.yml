@@ -1,0 +1,56 @@
+name: Final yuanshen image repair
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-yuanshen-images-final-one-shot.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Replace broken images and refresh cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR='assets/articles/yuanshen-destiny-archetype'
+          mkdir -p "$DIR"
+
+          curl -fL --retry 3 -A 'Mozilla/5.0' 'https://www.books.com.tw/img/001/106/00/0011060075.jpg?utm_source=chatgpt.com' -o "$DIR/book-cover.jpg"
+          curl -fL --retry 3 'https://media.canva.com/v2/image-resize/format:JPG/height:112/quality:75/uri:ifs%3A%2F%2FM%2Fb55070fc-ad24-4b2d-9331-7ce4048f3d45/watermark:F/width:200?csig=AAAAAAAAAAAAAAAAAAAAAF6lSloJtZC0HBrro4iTjd_ZRQfzkMj6b1QS99Gsx1Yg&exp=1786170420&osig=AAAAAAAAAAAAAAAAAAAAAHO6tEXGSmv2MVYmNpnYldKTkD5KQz6oYvmlujicETeB&signer=media-rpc&x-canva-quality=thumbnail' -o "$DIR/stone-origin.jpg"
+          curl -fL --retry 3 'https://media.canva.com/v2/image-resize/format:JPG/height:112/quality:75/uri:ifs%3A%2F%2FM%2F607b8f8d-a414-44f4-bff4-1fee575dd659/watermark:F/width:200?csig=AAAAAAAAAAAAAAAAAAAAAAJYe4cKfA1XTqwCpdk7jtMvXj2x0DB1LYE6tjoPBTMG&exp=1786171835&osig=AAAAAAAAAAAAAAAAAAAAAFdtzKEBHGYKNvY89SFNnXBX5Dz46K8yCILT8Yf7GI8N&signer=media-rpc&x-canva-quality=thumbnail' -o "$DIR/roc-awakening.jpg"
+
+          for f in "$DIR/book-cover.jpg" "$DIR/stone-origin.jpg" "$DIR/roc-awakening.jpg"; do
+            test -s "$f"
+            file "$f"
+            file "$f" | grep -qiE 'JPEG|image data'
+          done
+
+          sed -i 's/20260807-final-1/20260808-final-images-2/g' article-yuanshen-destiny-archetype.js articles.js articles.html
+          rm -f "$DIR/test-fix.txt"
+
+      - name: Commit repaired assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/articles/yuanshen-destiny-archetype/book-cover.jpg \
+                  assets/articles/yuanshen-destiny-archetype/stone-origin.jpg \
+                  assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg \
+                  article-yuanshen-destiny-archetype.js articles.js articles.html
+          git add -u assets/articles/yuanshen-destiny-archetype/test-fix.txt || true
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Replace broken yuanshen images with valid JPEG files'
+            git push origin HEAD:main
+          fi
