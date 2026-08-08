@@ -69,6 +69,42 @@ function firstMarkdownImage(content = "") {
   return content.match(/!\[[^\]]*\]\(([^)\s]+)\)/)?.[1] || "";
 }
 
+async function validateCoverImageUrl(input) {
+  const url = String(input?.value || "").trim();
+  const status = document.getElementById("thumbnail-control-status");
+  if (!url) return true;
+  try {
+    const dimensions = await new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve({ width: image.naturalWidth || image.width, height: image.naturalHeight || image.height });
+      image.onerror = () => reject(new Error("cover-image-unavailable"));
+      image.src = url;
+    });
+    const longEdge = Math.max(dimensions.width, dimensions.height);
+    if (longEdge < 1200) {
+      if (status) {
+        status.textContent = `封面圖解析度過低（目前 ${dimensions.width}×${dimensions.height}px），長邊至少需要 1200px，請重新輸出後再設定。`;
+        status.dataset.state = "error";
+      }
+      input.value = "";
+      updatePreview?.();
+      return false;
+    }
+    if (status) {
+      status.textContent = `封面圖解析度檢查通過（${dimensions.width}×${dimensions.height}px）`;
+      status.dataset.state = "success";
+    }
+    return true;
+  } catch (error) {
+    console.warn("封面圖解析度讀取失敗：", error);
+    if (status) {
+      status.textContent = "無法讀取封面圖解析度，請確認圖片網址後再試。";
+      status.dataset.state = "error";
+    }
+    return false;
+  }
+}
+
 function removeSystemArticleEntry() {
   document.querySelectorAll(`#article-list .article-item[data-id="${SETTINGS_DOC_ID}"]`).forEach((node) => node.remove());
 }
@@ -362,7 +398,7 @@ function initialize() {
     input.addEventListener("change", updatePreview);
   });
   coverInput.addEventListener("input", markThumbnailDirty);
-  coverInput.addEventListener("change", markThumbnailDirty);
+  coverInput.addEventListener("change", () => { markThumbnailDirty(); validateCoverImageUrl(coverInput); });
 
   fitInput.addEventListener("change", () => {
     scaleInput.value = "100";
