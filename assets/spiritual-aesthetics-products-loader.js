@@ -37,6 +37,9 @@
       .product-card[data-product] .product-visual img.product-photo{position:relative!important;inset:auto!important;display:block!important;width:auto!important;height:auto!important;max-width:96%!important;max-height:96%!important;margin:auto!important;object-fit:contain!important;object-position:center!important;transform:none!important;filter:drop-shadow(0 18px 22px rgba(45,31,18,.16))}
       .product-card[data-product]:hover .product-visual img.product-photo{transform:none!important}
       @media(min-width:981px){#product-love,#product-incense,#product-mother-card{grid-column:span 4}}
+      .product-status-notice{margin-top:16px;padding:13px 15px;border-left:3px solid #a58254;background:rgba(165,130,84,.1);color:#594f47;font-size:13px;line-height:1.75;letter-spacing:.055em}
+      .product-status-notice strong{display:block;color:#765a35;font-family:var(--serif);font-size:14px;font-weight:500;letter-spacing:.1em}
+      .product-status-notice span{display:block;margin-top:3px}
       @media(max-width:760px){.product-card[data-product] .product-visual{padding:8px!important}.product-card[data-product] .product-visual img.product-photo{max-width:98%!important;max-height:98%!important}}
       @media(max-width:760px){#product-mother-card{grid-column:auto}}
     `;
@@ -84,6 +87,17 @@
     return card;
   }
 
+  function markSpiritSoldOut(){
+    const card=getCard('spirit');
+    if(!card||card.querySelector('.product-status-notice'))return;
+    const description=card.querySelector('.product-desc');
+    if(!description)return;
+    const notice=document.createElement('p');
+    notice.className='product-status-notice';
+    notice.innerHTML='<strong>2026年度已請購完畢</strong><span>元神光彩御守每年僅開放請購一次。2027年度請購資訊，請靜待靈元院官網及 Facebook 公告。</span>';
+    description.insertAdjacentElement('afterend',notice);
+  }
+
   function bindFilters(){
     document.querySelectorAll('.filter-btn').forEach(button=>{
       if(button.dataset.dynamicFilterBound==='true')return;
@@ -112,6 +126,7 @@
 
   ensureStyle();
   installMotherCard();
+  markSpiritSoldOut();
   bindFilters();
   const incensePrice=document.querySelector('[data-product="incense"] .price');if(incensePrice)incensePrice.textContent='NT$ 680';
   window.LYYApplyProductPhoto('motherCard',motherCardPhoto);
