@@ -24,7 +24,7 @@ jobs:
           DIR='assets/articles/yuanshen-destiny-archetype'
           mkdir -p "$DIR"
 
-          curl -fL --retry 3 -A 'Mozilla/5.0' 'https://www.books.com.tw/img/001/106/00/0011060075.jpg?utm_source=chatgpt.com' -o "$DIR/book-cover.jpg"
+          curl -fL --retry 3 'https://media.canva.com/v2/image-resize/format:JPG/height:200/quality:75/uri:ifs%3A%2F%2FM%2Fad98e332-1e20-44c1-bd53-892c068338c9/watermark:F/width:160?csig=AAAAAAAAAAAAAAAAAAAAAG1czCCf4M_bPPxiLdCyYEZ2314UNDYiBhiuUNgCVFQE&exp=1786170615&osig=AAAAAAAAAAAAAAAAAAAAAKOsB8QgUXsTtZVs6eHxZkDkgNyzCaaBJH-1e3MD9qsS&signer=media-rpc&x-canva-quality=thumbnail' -o "$DIR/book-cover.jpg"
           curl -fL --retry 3 'https://media.canva.com/v2/image-resize/format:JPG/height:112/quality:75/uri:ifs%3A%2F%2FM%2Fb55070fc-ad24-4b2d-9331-7ce4048f3d45/watermark:F/width:200?csig=AAAAAAAAAAAAAAAAAAAAAF6lSloJtZC0HBrro4iTjd_ZRQfzkMj6b1QS99Gsx1Yg&exp=1786170420&osig=AAAAAAAAAAAAAAAAAAAAAHO6tEXGSmv2MVYmNpnYldKTkD5KQz6oYvmlujicETeB&signer=media-rpc&x-canva-quality=thumbnail' -o "$DIR/stone-origin.jpg"
           curl -fL --retry 3 'https://media.canva.com/v2/image-resize/format:JPG/height:112/quality:75/uri:ifs%3A%2F%2FM%2F607b8f8d-a414-44f4-bff4-1fee575dd659/watermark:F/width:200?csig=AAAAAAAAAAAAAAAAAAAAAAJYe4cKfA1XTqwCpdk7jtMvXj2x0DB1LYE6tjoPBTMG&exp=1786171835&osig=AAAAAAAAAAAAAAAAAAAAAFdtzKEBHGYKNvY89SFNnXBX5Dz46K8yCILT8Yf7GI8N&signer=media-rpc&x-canva-quality=thumbnail' -o "$DIR/roc-awakening.jpg"
 
