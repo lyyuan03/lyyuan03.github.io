@@ -14,7 +14,7 @@ const categoryLabels = {
 const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
 ]);
-const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings"]);
+const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 
 let articles = [];
