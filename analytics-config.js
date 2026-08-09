@@ -31,6 +31,11 @@ if (location.pathname.endsWith("/articles.html")) {
   eventDiagnosticsScript.type = "module";
   eventDiagnosticsScript.src = "/event-access-diagnostics-v2.js?v=20260803-2";
   document.head.appendChild(eventDiagnosticsScript);
+
+  const mobileNavFixScript = document.createElement("script");
+  mobileNavFixScript.src = "/article-mobile-nav-fix.js?v=20260809-1";
+  mobileNavFixScript.defer = true;
+  document.head.appendChild(mobileNavFixScript);
 }
 
 if (location.pathname.endsWith("/admin.html")) {
