@@ -7,6 +7,13 @@ const MAX_IMAGES = 3;
 const SCALE_MIN = 100;
 const SCALE_MAX = 250;
 const DEFAULTS = { positionX: 50, positionY: 50, scale: 100 };
+const KNOWN_ARTICLE_IMAGE_REPAIRS = {
+  "yuanshen-destiny-archetype": [
+    { alt: "天庭巨石所化的元神", src: "assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260808-hires-merge-1" },
+    { alt: "大鵬鳥元神", src: "assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260808-hires-merge-1" },
+    { alt: "九尾七彩神鳥元神", src: "assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260808-hires-merge-1" }
+  ]
+};
 
 let settingsByArticle = new Map();
 let currentImages = [];
@@ -38,6 +45,14 @@ function esc(value = "") {
   return String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
 
+function adminPreviewSrc(value = "") {
+  const src = String(value || "").trim();
+  if (!src) return "";
+  if (/^(?:https?:|data:|blob:)/i.test(src) || src.startsWith("//")) return src;
+  const cleaned = src.replace(/^(?:(?:\.\.\/)|(?:\.\/))+/, "").replace(/^\/+/, "");
+  return `https://lyyuan.tw/${cleaned}`;
+}
+
 function parseImages(content = "") {
   const result = [];
   const re = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
@@ -46,6 +61,21 @@ function parseImages(content = "") {
     result.push({ alt: match[1] || "", src: match[2] || "", full: match[0], start: match.index, end: match.index + match[0].length });
   }
   return result;
+}
+
+function repairKnownArticleImages(content = "", id = "") {
+  const repair = KNOWN_ARTICLE_IMAGE_REPAIRS[id];
+  if (!repair) return content;
+  const parsed = parseImages(content);
+  if (parsed.length !== repair.length) return content;
+  let next = content;
+  for (let index = parsed.length - 1; index >= 0; index -= 1) {
+    const source = parsed[index];
+    const target = repair[index];
+    const block = `![${target.alt || source.alt}](${target.src})`;
+    next = next.slice(0, source.start) + block + next.slice(source.end);
+  }
+  return next;
 }
 
 function syncImages(content, id = activeId || articleId()) {
@@ -119,6 +149,8 @@ function replaceContent(input, next, cursor) {
 
 function render(panel, input, form) {
   activeId = articleId();
+  const repairedContent = repairKnownArticleImages(input.value, activeId);
+  if (repairedContent !== input.value) input.value = repairedContent;
   syncImages(input.value, activeId);
   const list = panel.querySelector("#inline-image-list");
   const status = panel.querySelector("#inline-image-status");
@@ -133,7 +165,7 @@ function render(panel, input, form) {
     const pos = `${image.positionX}% ${image.positionY}%`;
     return `<section class="inline-image-card" data-index="${i}">
       <div class="inline-image-head"><strong>圖 ${i + 1}</strong><span>固定 16:9｜裁切填滿</span></div>
-      <div class="inline-image-preview"><img src="${esc(image.src)}" alt="${esc(image.alt)}" style="object-position:${pos};transform:scale(${image.scale / 100});transform-origin:${pos}"></div>
+      <div class="inline-image-preview"><img src="${esc(adminPreviewSrc(image.src))}" alt="${esc(image.alt)}" style="object-position:${pos};transform:scale(${image.scale / 100});transform-origin:${pos}"></div>
       <div class="inline-image-controls">
         <label>水平位置 <output data-out="x">${image.positionX}%</output><input data-key="x" type="range" min="0" max="100" value="${image.positionX}"></label><div class="inline-labels"><span>左</span><span>中</span><span>右</span></div>
         <label>垂直位置 <output data-out="y">${image.positionY}%</output><input data-key="y" type="range" min="0" max="100" value="${image.positionY}"></label><div class="inline-labels"><span>上</span><span>中</span><span>下</span></div>
