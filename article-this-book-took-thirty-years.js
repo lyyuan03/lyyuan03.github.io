@@ -9,6 +9,7 @@ export const thisBookTookThirtyYearsArticle = {
   publishedAt: "2026-08-10T10:36:00.000Z",
   updatedAt: "2026-08-10T14:18:00.000Z",
   coverImage: "assets/articles/this-book-took-thirty-years/cover.jpg?v=20260810-photoreal-2",
+  thumbnailImage: "assets/articles/this-book-took-thirty-years/cover.jpg?v=20260810-photoreal-2",
   excerpt: "《我在人間的元神覺醒》出版前，我想先說一些書裡沒有說完的事：看見元神不難，真正困難的是看見之後，如何把修行活進日常。",
   accessType: "open",
   topics: ["元神覺醒", "修行心性", "新書幕後"],
