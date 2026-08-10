@@ -14,7 +14,7 @@ export const thisBookTookThirtyYearsArticle = {
   accessType: "open",
   topics: ["元神覺醒", "修行心性", "新書幕後"],
   readingLevel: "深度",
-  sharePath: "article/this-book-took-thirty-years-v3.html",
+  sharePath: "article/this-book-took-thirty-years.html",
   bookTitle: "我在人間的元神覺醒",
   bookAuthor: "宇色 Osel",
   bookPublisher: "柿子文化",
