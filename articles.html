@@ -23,70 +23,18 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 .nav-inner{display:flex;justify-content:center;align-items:center;height:56px;padding:0 40px}
 .nav-links{display:flex;gap:30px;list-style:none;align-items:center;margin:0;padding:0}
 .nav-links>li{position:relative}
-.nav-links>li>a,.nav-links>li>span{color:rgba(245,240,232,.78);font-size:13.5px;letter-spacing:.14em;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;text-decoration:none}
-.nav-links>li>a:hover,.nav-links>li>span:hover,.nav-links>li>a.active{color:var(--gold)}
-.has-dropdown:after{content:'▾';font-size:9px;opacity:.5}
-.dropdown{display:none;position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%);background:rgba(14,20,12,.97);border:1px solid rgba(165,130,84,.18);box-shadow:0 10px 32px rgba(0,0,0,.5);min-width:185px;padding:6px 0;list-style:none;white-space:nowrap;margin:0}
-.dropdown:before{content:'';position:absolute;top:-14px;left:0;right:0;height:14px}
-.dropdown li a,.dropdown li span{display:block;padding:10px 20px;color:rgba(245,240,232,.7);font-size:13px;letter-spacing:.1em;text-decoration:none}
-.dropdown li a:hover{background:rgba(165,130,84,.1);color:var(--gold)}
-.nav-links>li:hover .dropdown{display:block}
-.nav-disabled{color:rgba(245,240,232,.28)!important;cursor:default;pointer-events:none}
+.nav-links>li>a,.nav-links>li>span{color:rgba(245,240,232,.78);font-size:13.5px;letter-spacing:.14em;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nav-links>li>a.active{color:#C5A26F}.nav-links>li>a.active:after{content:'';position:absolute;bottom:-18px;left:20%;right:20%;height:1px;background:#C5A26F}
+.has-dropdown:after{content:'⌄';font-size:10px;opacity:.45;margin-left:2px}.dropdown{display:none;position:absolute;top:30px;left:50%;transform:translateX(-50%);min-width:180px;background:rgba(15,20,13,.97);border:1px solid rgba(165,130,84,.18);list-style:none;padding:8px 0;margin:0;box-shadow:0 8px 30px rgba(0,0,0,.25)}.nav-links>li:hover .dropdown{display:block}.dropdown li a,.dropdown li span{display:block;padding:9px 18px;color:rgba(245,240,232,.65);font-size:12.5px;letter-spacing:.08em;white-space:nowrap}.dropdown li a:hover{color:#C5A26F;background:rgba(165,130,84,.08)}.dropdown .nav-disabled{color:rgba(245,240,232,.25);cursor:default}.dropdown .nav-disabled:hover{color:rgba(245,240,232,.25);background:none}
+@media(max-width:768px){.nav-inner{height:auto;min-height:56px;padding:0 20px;overflow-x:auto;justify-content:flex-start}.nav-links{gap:24px}.nav-links>li>a,.nav-links>li>span{font-size:13px}.nav-links>li:hover .dropdown{display:none}.nav-links>li.open .dropdown{display:block;position:fixed;top:56px;left:12px;right:12px;transform:none}.dropdown{min-width:0}}
 </style>
-<style id="footer-brand-logo-style">
-.footer-brand-mark{display:block;width:128px;max-width:34vw;height:auto;margin:0 auto 2px;opacity:.64;filter:saturate(.72) brightness(.78)}
-@media(max-width:560px){.footer-brand-mark{width:112px;max-width:38vw}}
-</style>
-<style id="article-reading-accessibility">
-/* 保留網站原有深綠背景，只提升文選列表與文章閱讀區的清晰度。 */
-.article-grid{gap:20px}
-.article-card{
-  padding:26px;
-  background:rgba(25,36,22,.96);
-  border-color:rgba(197,162,111,.34);
-  box-shadow:0 12px 30px rgba(0,0,0,.2);
-  transition:background .2s,border-color .2s,transform .2s,box-shadow .2s;
-}
-.article-card:hover,.article-card:focus-visible{
-  background:rgba(34,47,29,.98);
-  border-color:rgba(197,162,111,.58);
-  transform:translateY(-2px);
-  box-shadow:0 16px 36px rgba(0,0,0,.28);
-  outline:none;
-}
-.article-card img{border-color:rgba(197,162,111,.28)}
-.article-card .article-meta{font-size:13px;font-weight:500;color:#CDAE80}
-.article-card h2{font-size:24px;line-height:1.6;letter-spacing:.08em;color:#FFFDF8}
-.article-card p{color:rgba(255,253,248,.84);font-size:16px;line-height:1.9}
-.category-tabs a{
-  display:inline-flex;
-  align-items:center;
-  min-height:44px;
-  padding:10px 16px;
-  color:rgba(255,253,248,.82);
-}
-.limited-reading-countdown,.limited-reading-countdown.is-ended{padding:7px 11px;font-size:13px}
-.article-card .article-engagement{color:rgba(255,253,248,.66);font-size:11px}
-.article-card .article-engagement b{color:#D8BD91;font-weight:500}
-.article-guide{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 22px}
-.article-guide span{
-  display:inline-flex;
-  align-items:center;
-  min-height:30px;
-  padding:5px 10px;
-  border-radius:999px;
-  font-family:var(--sans);
-  font-size:12px;
-  line-height:1.4;
-  letter-spacing:.06em;
-}
-.article-topic{border:1px solid rgba(139,104,63,.3);background:rgba(165,130,84,.09);color:#664B2D}
-.article-level{border:1px solid rgba(90,67,42,.18);background:rgba(255,255,255,.28);color:#725C42}
-.article-guide.is-compact{margin:2px 0 13px;gap:6px}
-.article-guide.is-compact span{min-height:26px;padding:4px 9px;font-size:11px}
-.article-card .article-topic{border-color:rgba(216,189,145,.3);background:rgba(197,162,111,.11);color:#E3CEAA}
-.article-card .article-level{border-color:rgba(255,253,248,.17);background:rgba(255,253,248,.06);color:rgba(255,253,248,.76)}
 
+<style id="article-reading-v2">
+body{padding-top:56px;background:#071106}.hero{border-bottom:1px solid rgba(165,130,84,.12)}.hero h1{font-weight:500}.hero p{max-width:760px}.article-card{border-color:rgba(165,130,84,.26)}.article-card h2{line-height:1.65}.article-view{max-width:800px}.article-view>h2{letter-spacing:.08em}.article-body{line-height:2.05}.article-body p{margin-bottom:1.55em}.article-body h2{font-size:28px}.article-body h3{font-size:22px}.article-view .member-lock-zone{margin-top:18px}.article-view .article-support-card{background:rgba(244,239,230,.8)}
+</style>
+
+<style id="article-readable-paper-v1">
+body{background:#071106}
 .article-view{
   max-width:760px;
   margin:12px auto 0;
@@ -203,7 +151,6 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 </style>
 
 <style id="article-library-layout-v2">
-/* 文選快速瀏覽：同一套資訊架構，依螢幕寬度調整卡片排列。 */
 .wrap{max-width:1180px}
 .category-tabs{display:block;position:sticky;top:56px;z-index:40;margin:0 0 28px}
 .article-filter-panel{
@@ -258,45 +205,35 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 .article-access-badge.is-free{background:rgba(65,91,58,.95);color:#F4F7EF}
 .article-card-content{display:flex;flex:1;flex-direction:column;padding:18px 19px 16px}
 .article-card h2 .paid-article-badge{display:none}
-.article-card h2{
-  display:-webkit-box;min-height:76px;margin:7px 0 8px;overflow:hidden;
-  -webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:21px;line-height:1.65
+.article-card-heading{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:4px}
+.article-card-content .article-access-badge{position:static;flex:0 0 auto;min-height:24px;padding:4px 7px;box-shadow:none}
+.article-card .article-list-title{
+  display:-webkit-box;min-height:3.2em;margin:7px 0 7px;overflow:hidden;
+  -webkit-box-orient:vertical;-webkit-line-clamp:2;
+  font-size:20px;line-height:1.6;letter-spacing:.055em
 }
-.article-card .article-guide.is-compact{margin-bottom:9px}
-.article-card p{
-  display:-webkit-box;margin:0 0 8px;overflow:hidden;-webkit-box-orient:vertical;
-  -webkit-line-clamp:2;font-size:14px;line-height:1.75
+.article-card p.article-hook{
+  display:-webkit-box;margin:2px 0 0;overflow:hidden;
+  -webkit-box-orient:vertical;-webkit-line-clamp:3;
+  font-size:13px;line-height:1.75;color:rgba(245,240,232,.62)
 }
-.article-card .article-engagement.is-compact{margin-top:auto;padding-top:10px}
-.article-load-more-wrap{display:flex;justify-content:center;margin:28px 0 4px}
-.article-load-more{
-  min-width:230px;min-height:48px;padding:10px 22px;cursor:pointer;
-  border:1px solid rgba(197,162,111,.44);background:rgba(165,130,84,.12);
-  color:#E0C59B;font-family:var(--sans);font-size:14px;letter-spacing:.08em
-}
-.article-load-more:hover{background:rgba(165,130,84,.22);border-color:rgba(197,162,111,.68)}
-.article-load-more small{margin-left:8px;color:rgba(245,240,232,.54);font-size:11px}
-@media(max-width:900px){
-  .article-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
+.article-load-more-wrap{display:flex;justify-content:center;margin-top:28px}
+.article-load-more{min-width:220px;border:1px solid rgba(197,162,111,.38);background:rgba(165,130,84,.1);padding:11px 17px;color:#D9BD90;font-family:var(--sans);font-size:13px;letter-spacing:.08em;cursor:pointer}
+.article-load-more small{margin-left:6px;color:rgba(245,240,232,.48)}
+.article-load-more:hover{background:rgba(165,130,84,.18);border-color:rgba(197,162,111,.62)}
+@media(max-width:900px){.article-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){
-  .hero{padding:66px 18px 34px}
-  .hero p{font-size:14px;line-height:1.75}
-  .wrap{padding-top:18px}
-  .category-tabs{top:56px;margin-left:-6px;margin-right:-6px;margin-bottom:18px}
-  .article-filter-panel{padding:13px 12px}
-  .filter-heading{margin-bottom:9px}
-  .filter-heading strong{font-size:16px}
-  .filter-heading span{display:none}
-  .category-tabs .filter-row a{min-height:38px;padding:7px 12px}
-  .category-tabs .access-filter a{min-width:auto}
-  .article-grid{grid-template-columns:1fr;gap:12px}
-  .article-card{
-    display:grid;grid-template-columns:118px minmax(0,1fr);
-    min-height:164px
-  }
-  .article-card-media{height:100%;min-height:164px;aspect-ratio:auto}
-  .article-card-media img{height:100%}
+  .category-tabs{top:56px;margin-bottom:16px}
+  .article-filter-panel{padding:14px 13px}
+  .filter-heading{display:none}
+  .filter-row{gap:7px}
+  .filter-row+.filter-row{margin-top:8px;padding-top:8px}
+  .category-tabs .filter-row a{min-height:36px;padding:7px 10px;font-size:12px}
+  .category-tabs .access-filter a{min-width:102px;font-size:13px}
+  .article-grid{display:grid;grid-template-columns:1fr;gap:12px}
+  .article-card{display:grid;grid-template-columns:118px minmax(0,1fr);min-height:204px}
+  .article-card-media{width:118px;height:204px;min-height:204px;aspect-ratio:auto}
+  .article-card-media img{height:100%;object-fit:cover}
   .article-access-badge{top:8px;left:7px;min-height:25px;padding:4px 7px;font-size:10px}
   .article-card-content{min-width:0;padding:13px 14px 11px}
   .article-card .article-meta{font-size:11px}
@@ -316,7 +253,6 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 </style>
 
 <style id="article-cover-system-v1">
-/* 統一文選縮圖：固定比例、同一色調、同一字型與標題位置。 */
 .article-card-media{isolation:isolate;background:#10170E}
 .article-card-media img{
   position:absolute;inset:0;width:100%;height:100%;
@@ -355,7 +291,6 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 </style>
 
 <style id="article-light-ci-v1">
-/* 文選卡片採靈元院 CI 延伸淺色：奇數暖米棕、偶數柔和橄欖；網站深色背景維持不變。 */
 .article-card{
   color:#3B312A;
   border-color:rgba(165,130,84,.46);
@@ -378,145 +313,83 @@ nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.82);backdrop-fi
 .article-card .article-level{
   border-color:rgba(96,99,48,.3);
   background:rgba(96,99,48,.12);
-  color:#4E5229
+  color:#606330
 }
-.article-card .article-engagement,
-.article-card .article-engagement b{color:#675847}
-.article-card .article-engagement.is-compact{border-top-color:rgba(89,79,71,.18)}
-.article-card-media{background:#C8C4B4}
-.article-card-media img{
-  filter:brightness(.92) saturate(.9) contrast(1.03);
-  transform:scale(1.002)
+.article-card .article-engagement.is-compact{
+  border-top-color:rgba(89,79,71,.16);
+  color:#6D5C4A
 }
-.article-card:hover .article-card-media img{transform:scale(1.025)}
-.article-card-media-gradient{
-  background:linear-gradient(
-    180deg,
-    rgba(7,17,6,0) 0%,
-    rgba(7,17,6,.02) 42%,
-    rgba(7,17,6,.35) 68%,
-    rgba(7,17,6,.88) 100%
-  )
-}
-.article-card .article-cover-title{
+.article-card .article-engagement b{color:#805E39;font-weight:600}
+.article-card-content .article-access-badge.is-free{
+  background:rgba(96,99,48,.9);
   color:#FFFDF8;
-  text-shadow:0 2px 5px rgba(0,0,0,.95),0 1px 14px rgba(0,0,0,.62)
+  border-color:rgba(96,99,48,.28)
 }
-@media(max-width:760px){
-  .article-card-media-gradient{
-    background:linear-gradient(
-      180deg,
-      rgba(7,17,6,0) 0%,
-      rgba(7,17,6,.08) 38%,
-      rgba(7,17,6,.46) 66%,
-      rgba(7,17,6,.92) 100%
-    )
-  }
+.article-card-content .article-access-badge.is-paid{
+  background:rgba(165,130,84,.94);
+  color:#FFFDF8;
+  border-color:rgba(165,130,84,.36)
 }
-</style>
-
-<style id="article-hook-layout-v1">
-/* 縮圖只呈現原圖；統一標題移至文字區，避免與原圖既有字樣重疊。 */
+.article-card-content .article-access-badge.is-event{
+  background:rgba(89,79,71,.9);
+  color:#FFFDF8;
+  border-color:rgba(89,79,71,.3)
+}
 .article-card .article-cover-title{display:none!important}
-.article-card .article-list-title{
-  display:-webkit-box;
-  min-height:0;
-  margin:7px 0 9px;
-  overflow:hidden;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2;
-  color:#4B3827;
-  font-family:var(--serif);
-  font-size:20px;
-  font-weight:700;
-  line-height:1.55;
-  letter-spacing:.045em
-}
-.article-card p.article-hook{
-  display:-webkit-box;
-  margin:0 0 10px;
-  overflow:hidden;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:3;
-  color:#493F36;
-  font-size:14px;
-  font-weight:500;
-  line-height:1.8
-}
-.article-card-media-gradient{
-  background:linear-gradient(180deg,rgba(7,17,6,.03),rgba(7,17,6,.12))
-}
 @media(max-width:760px){
-  .article-card{min-height:210px}
-  .article-card-media{min-height:210px}
-  .article-card-media img{
-    filter:brightness(.96) saturate(.92) contrast(1.02);
-    object-position:center
+  .article-card{box-shadow:0 8px 20px rgba(0,0,0,.14)}
+  .article-card-media{
+    border-right:1px solid rgba(89,79,71,.16)
   }
-  .article-card-content{padding:14px 16px 12px}
-  .article-card .article-list-title{
-    margin:4px 0 7px;
-    font-size:17px;
-    line-height:1.5;
-    letter-spacing:.025em;
-    -webkit-line-clamp:2
-  }
-  .article-card p.article-hook{
-    margin:0 0 7px;
-    font-size:13px;
-    line-height:1.72;
-    -webkit-line-clamp:4
-  }
-  .article-card .article-engagement.is-compact{
-    margin-top:auto;
-    padding-top:7px
-  }
-}
-@media(max-width:420px){
-  .article-card{grid-template-columns:108px minmax(0,1fr);min-height:220px}
-  .article-card-media{min-height:220px}
-  .article-card .article-list-title{font-size:16px}
-  .article-card p.article-hook{font-size:12.5px;line-height:1.68}
 }
 </style>
 
-<style id="article-clean-thumbnail-v1">
-/* 列表專用縮圖：不疊字、不放標籤；文章內頁圖片完全不受影響。 */
-.article-card-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:3px}
-.article-card-content .article-access-badge{
-  position:static;
-  flex:0 0 auto;
-  min-height:26px;
-  padding:5px 8px;
-  box-shadow:none;
-  border-color:rgba(89,79,71,.22);
-  font-size:10px
+<style id="article-card-clean-media-v1">
+.article-card-media-gradient{display:none!important}
+.article-card-media img{
+  filter:none!important;
+  transform:none!important;
+  background:#F1ECE2
 }
-.article-card-media-gradient{display:none}
-.article-card p.article-hook{
-  font-family:var(--serif);
-  font-weight:700;
-  letter-spacing:.025em
+.article-card:hover .article-card-media img{transform:scale(1.018)!important}
+</style>
+
+<style id="article-thumb-portrait-v1">
+@media(max-width:760px){
+  .article-card-media img{object-position:center top}
 }
-.article-card[data-article-id="good-fortune-believe-in-yourself-choices"] .article-card-media img{object-position:82% center}
-.article-card[data-article-id="seven-twenty-five-election-shift"] .article-card-media img{object-position:88% center}
-.article-card[data-article-id="market-crash-money-self-control"] .article-card-media img{object-position:32% center}
-.article-card[data-article-id="japan-temple-faith-and-decline"] .article-card-media img{object-position:center 82%;transform:scale(1.18)}
-.article-card[data-article-id="japan-temple-faith-and-decline"]:hover .article-card-media img{transform:scale(1.21)}
+</style>
+
+<style id="article-content-hierarchy-v1">
+.article-guide{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 22px}
+.article-guide span{
+  display:inline-flex;align-items:center;min-height:30px;padding:5px 10px;
+  border-radius:999px;font-family:var(--sans);font-size:12px;line-height:1.4;
+  letter-spacing:.06em;
+}
+.article-topic{border:1px solid rgba(139,104,63,.3);background:rgba(165,130,84,.09);color:#664B2D}
+.article-level{border:1px solid rgba(90,67,42,.18);background:rgba(255,255,255,.28);color:#725C42}
+.article-guide.is-compact{margin:2px 0 13px;gap:6px}
+.article-guide.is-compact span{min-height:26px;padding:4px 9px;font-size:11px}
+.article-card .article-topic{border-color:rgba(216,189,145,.3);background:rgba(197,162,111,.11);color:#E3CEAA}
+.article-card .article-level{border-color:rgba(255,253,248,.17);background:rgba(255,253,248,.06);color:rgba(255,253,248,.76)}
+</style>
+
+<style id="article-card-mobile-portrait-v1">
 @media(max-width:760px){
   .article-card{
     grid-template-columns:118px minmax(0,1fr);
-    min-height:210px
+    min-height:204px
   }
   .article-card-media{
     width:118px;
-    height:210px;
-    min-height:210px;
-    aspect-ratio:9/16
+    height:204px;
+    min-height:204px;
+    aspect-ratio:auto
   }
   .article-card-media img{
-    width:100%;
-    height:100%;
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center top;
     filter:brightness(1) saturate(.94) contrast(1.02)
   }
   .article-card-heading{margin-bottom:1px}
@@ -675,7 +548,6 @@ html{scroll-behavior:smooth}
 </style>
 
 <style id="article-toc-collision-fix-v1">
-/* 章節目錄必須留在文章排版流內，不得繼承網站主導覽的 fixed 樣式。 */
 .article-toc{
   position:static!important;
   inset:auto!important;
@@ -696,7 +568,6 @@ html{scroll-behavior:smooth}
 .article-toc.is-open{height:auto!important}
 </style>
 <style id="article-card-consistency-v1">
-/* 統一桌面版文章卡片高度與資訊列位置；手機版維持自適應。 */
 .article-card-content{display:flex;flex:1;flex-direction:column}
 .article-card .article-engagement.is-compact{margin-top:auto}
 @media(min-width:761px){
@@ -726,7 +597,7 @@ html{scroll-behavior:smooth}
 </main>
 <footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5 17 7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>
 <script>(()=>{const nav=document.querySelector('nav');if(!nav)return;const triggers=[...nav.querySelectorAll('.has-dropdown')];const mq=window.matchMedia('(max-width:768px)');const close=()=>nav.querySelectorAll('.open').forEach(i=>i.classList.remove('open'));triggers.forEach(t=>{if(t.matches('a[href]'))return;const li=t.closest('li');t.addEventListener('click',e=>{if(!mq.matches)return;e.preventDefault();const is=li.classList.contains('open');close();if(!is)li.classList.add('open')})});document.addEventListener('click',e=>{if(!nav.contains(e.target))close()})})();</script>
-<script type="module" src="articles.js?v=20260808-final-images-2"></script>
+<script type="module" src="articles.js?v=20260810-new-book-article-2"></script>
 <script src="article-destination-links.js?v=20260806-ci-1" defer></script>
 <script type="module" src="/sponsor-checkout.js?v=20260805-public-sync-1"></script>
 <script type="module" src="/article-thumbnail-display.js?v=20260807-thumbnail-sync-1"></script>
