@@ -607,6 +607,40 @@ html,body{max-width:100%;overflow-x:hidden}
   .article-cover,.article-body figure,.article-body img{max-width:100%!important}
 }
 </style>
+
+<style id="article-mobile-card-repair-v1">
+@media(max-width:760px){
+  .article-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important}
+  .article-card{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  .article-card-media{
+    position:relative!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:16/9!important;
+    overflow:hidden!important;
+  }
+  .article-card-media img{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:100%!important;
+    margin:0!important;
+    object-fit:cover!important;
+    object-position:center!important;
+  }
+  .article-card-content{width:100%!important;max-width:100%!important;min-width:0!important}
+}
+</style>
 </head>
 <body>
 <nav><div class="nav-inner"><ul class="nav-links">
