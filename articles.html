@@ -583,6 +583,30 @@ html{scroll-behavior:smooth}
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
+
+<style id="article-mobile-overflow-fix-v1">
+html,body{max-width:100%;overflow-x:hidden}
+.wrap,#article-root,.article-view,.article-body,.article-body figure{min-width:0}
+.article-view{width:min(760px,100%)}
+.article-cover,.article-body img{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  object-fit:contain!important;
+  object-position:center!important;
+}
+.article-body figure{width:100%;max-width:100%;margin:34px 0!important;padding:0;overflow:hidden}
+@media(max-width:760px){
+  .wrap{width:100%;max-width:100%;padding-left:12px;padding-right:12px;overflow:hidden}
+  #article-root{width:100%;max-width:100%}
+  .article-view{width:100%;max-width:100%;margin-left:0;margin-right:0;padding:34px 20px 32px;overflow:hidden}
+  .article-cover,.article-body figure,.article-body img{max-width:100%!important}
+}
+</style>
 </head>
 <body>
 <nav><div class="nav-inner"><ul class="nav-links">
