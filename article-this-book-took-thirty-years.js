@@ -7,8 +7,8 @@ export const thisBookTookThirtyYearsArticle = {
   series: "靈修辨證",
   status: "published",
   publishedAt: "2026-08-10T10:36:00.000Z",
-  updatedAt: "2026-08-10T10:36:00.000Z",
-  coverImage: "assets/articles/this-book-took-thirty-years/cover.svg?v=20260810-1",
+  updatedAt: "2026-08-10T14:18:00.000Z",
+  coverImage: "assets/articles/this-book-took-thirty-years/cover.jpg?v=20260810-photoreal-2",
   excerpt: "《我在人間的元神覺醒》出版前，我想先說一些書裡沒有說完的事：看見元神不難，真正困難的是看見之後，如何把修行活進日常。",
   accessType: "open",
   topics: ["元神覺醒", "修行心性", "新書幕後"],
@@ -51,7 +51,7 @@ export const thisBookTookThirtyYearsArticle = {
 
 這三句話，我大概花了快三十年才真正明白。
 
-![一本談元神的書，真正困難的是把能力之外的心性與人生寫進去](assets/articles/this-book-took-thirty-years/inline-1.svg?v=20260810-1)
+![一本談元神的書，真正困難的是把能力之外的心性與人生寫進去](assets/articles/this-book-took-thirty-years/inline-1.jpg?v=20260810-photoreal-2)
 
 <!-- member-only -->
 
@@ -89,7 +89,7 @@ export const thisBookTookThirtyYearsArticle = {
 
 真正陪伴你修行的老師，應該讓你愈來愈能夠獨立，而不是愈來愈離不開他。如果一個人修了很多年，最後連自己要不要換工作、要不要結婚、要不要搬家、要不要看醫生，都必須先去問老師，那我要問的是：這個人到底是在修行，還是在把自己的人生交出去？
 
-![真正的引導，不是讓學生依附老師，而是逐漸找回自己的判斷與生活能力](assets/articles/this-book-took-thirty-years/inline-2.svg?v=20260810-1)
+![真正的引導，不是讓學生依附老師，而是逐漸找回自己的判斷與生活能力](assets/articles/this-book-took-thirty-years/inline-2.jpg?v=20260810-photoreal-2)
 
 ## 為什麼愈修，人生反而愈痛苦？
 
