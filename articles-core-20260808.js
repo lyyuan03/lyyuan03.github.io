@@ -237,136 +237,17 @@ function renderContent(value = "") {
 }
 
 function addGuanyinVowLampImages(content = "", articleId = "") {
-  if (articleId !== "2026-guanyin-vow-lamp-record-v2") return content;
-  const withoutManagedImages = content
-    .replace(
-      /^!\[[^\]]*\]\(\/?assets\/articles\/guanyin-vow-lamp\/guanyin-vow-lamp-[123]\.svg(?:\?[^)]*)?\)\s*$/gm,
-      ""
-    )
-    .replace(
-      /^!\[[^\]]*\]\(\/?assets\/articles\/2026-guanyin-vow-lamp-record\/(?:vow-sheets-before-guanyin|patience-in-practice|path-with-obstacles)\.webp(?:\?[^)]*)?\)\s*$/gm,
-      ""
-    );
-  const placements = [
-    {
-      heading: "## 我知道方法，但我做不到",
-      image: "![每一封疏文，都是一份交付給觀世音菩薩的修行託付](assets/articles/2026-guanyin-vow-lamp-record/vow-sheets-before-guanyin.webp?v=20260802-1)"
-    },
-    {
-      heading: "## 我聽見最重的兩段話，是關於生死與親情",
-      image: "![真正的感應不急著證明，會在時間裡慢慢證明自己](assets/articles/2026-guanyin-vow-lamp-record/patience-in-practice.webp?v=20260802-1)"
-    },
-    {
-      heading: "## 一連串巧合，其實就證明了你走在對的路上",
-      image: "![符合天命的路不是沒有阻礙，而是在阻礙中依然感覺篤定](assets/articles/2026-guanyin-vow-lamp-record/path-with-obstacles.webp?v=20260802-1)"
-    }
-  ];
-  return placements.reduce((result, placement) => {
-    if (result.includes(placement.image)) return result;
-    return result.replace(
-      `\n\n${placement.heading}`,
-      `\n\n${placement.image}\n\n${placement.heading}`
-    );
-  }, withoutManagedImages);
-}
-
-function getTimeValue(value) {
-  if (!value) return 0;
-  if (typeof value?.toMillis === "function") return value.toMillis();
-  if (typeof value === "number") return value;
-  const parsed = Date.parse(value);
-  return Number.isNaN(parsed) ? 0 : parsed;
-}
-
-function sortPublished(a, b) {
-  // 排序優先序須與後台 article-admin.js 的 articleTime() 一致（updatedAt 優先），
-  // 否則文章一經編輯（updatedAt 比 publishedAt 新），前後台顯示順序就會不同步。
-  const at = getTimeValue(a.updatedAt) || getTimeValue(a.publishedAt);
-  const bt = getTimeValue(b.updatedAt) || getTimeValue(b.publishedAt);
-  return bt - at;
-}
-
-function articleIsPaid(article = {}) {
-  return article.accessType === "paid" || (article.content || "").includes(paidMarker);
-}
-
-function articleIsEvent(article = {}) {
-  return article.accessType === "event" && Boolean(article.eventId);
-}
-
-function articleIsLimitedOpen(article = {}) {
-  const key = articleKey(article);
-  return articleIsPaid(article)
-    && limitedReadingDeadlines.has(key)
-    && Date.now() < limitedReadingDeadlines.get(key);
-}
-
-function articleAccess(article = {}) {
-  if (articleIsEvent(article)) return "event";
-  return articleIsPaid(article) && !articleIsLimitedOpen(article) ? "paid" : "free";
-}
-
-function filterHref(access, category) {
-  const next = new URLSearchParams();
-  if (access && access !== "all") next.set("access", access);
-  if (category) next.set("category", category);
-  if (magicToken) next.set("token", magicToken);
-  if (magicEventId) next.set("event", magicEventId);
-  const queryString = next.toString();
-  return queryString ? `articles.html?${queryString}` : "articles.html";
-}
-
-function renderTabs() {
-  const accessItems = [
-    ["all", "全部文章"],
-    ["free", "免費閱讀"],
-    ["paid", "贊助專屬"],
-    ["event", "活動限定"]
-  ];
-  const categoryItems = [["", "全部主題"], ...Object.entries(categoryLabels)];
-  const counts = loadedArticles.reduce((result, article) => {
-    result.all += 1;
-    result[articleAccess(article)] += 1;
-    return result;
-  }, { all: 0, free: 0, paid: 0, event: 0 });
-
-  tabs.innerHTML = `
-    <div class="article-filter-panel" id="article-filters">
-      <div class="filter-heading">
-        <strong>選擇想閱讀的文章</strong>
-        <span>依閱讀方式或主題快速尋找</span>
-      </div>
-      <div class="filter-row access-filter" aria-label="閱讀方式">
-        ${accessItems.map(([key, label]) => `
-          <a class="${key === activeAccess ? "is-active" : ""}" href="${filterHref(key, activeCategory)}">
-            ${label}<small>${counts[key]}</small>
-          </a>
-        `).join("")}
-      </div>
-      <div class="filter-row topic-filter" aria-label="文章主題">
-        ${categoryItems.map(([key, label]) => `
-          <a class="${key === activeCategory ? "is-active" : ""}" href="${filterHref(activeAccess, key)}">${label}</a>
-        `).join("")}
-      </div>
-    </div>
-  `;
-}
-
-function metricValue(articleId, key) {
-  return Number(articleMetrics.get(articleId)?.[key] || 0);
-}
-
-function renderMetricSummary(articleId, compact = false) {
-  const views = metricValue(articleId, "views");
-  const shares = metricValue(articleId, "shares");
-  const copies = metricValue(articleId, "copies");
-  return `
-    <div class="article-engagement${compact ? " is-compact" : ""}" data-metric-article="${escapeHtml(articleId)}">
-      <span>閱讀 <b data-metric-value="views">${views.toLocaleString("zh-TW")}</b></span>
-      <span>分享 <b data-metric-value="shares">${shares.toLocaleString("zh-TW")}</b></span>
-      <span>複製 <b data-metric-value="copies">${copies.toLocaleString("zh-TW")}</b></span>
-    </div>
-  `;
+  if (articleId !== "guanyin-chengdao-vow-reading") return content;
+  const imageOne = "![觀世音菩薩成道法會・觀音應化啟願燈](assets/articles/guanyin-vow-lamp-01.jpg?v=20260731-1)";
+  const imageTwo = "![法會後的供桌與供果](assets/articles/guanyin-vow-lamp-02.jpg?v=20260731-1)";
+  let next = content;
+  if (!next.includes("guanyin-vow-lamp-01.jpg")) {
+    next = next.replace("## 法會結束後，我一直在想一件事", `${imageOne}\n\n## 法會結束後，我一直在想一件事`);
+  }
+  if (!next.includes("guanyin-vow-lamp-02.jpg")) {
+    next = next.replace("## 願要被聽見，也需要準備承擔", `${imageTwo}\n\n## 願要被聽見，也需要準備承擔`);
+  }
+  return next;
 }
 
 function articleKey(article) {
