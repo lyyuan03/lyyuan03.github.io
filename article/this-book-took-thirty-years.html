@@ -42,7 +42,7 @@ nav{position:fixed;z-index:100;top:0;left:0;right:0;height:56px;background:rgba(
 <header class="hero"><small>靈修・新書幕後</small><h1>這本書，我寫了三十年</h1><p>宇色｜《我在人間的元神覺醒》出版前記</p></header>
 <main class="page"><article class="article">
 <a class="back" href="/articles.html">← 返回全部文選</a>
-<details class="toc" open><summary>文章章節・共 9 節</summary><ol><li><a href="#section-1"><span>01</span>一本原本不是這樣的書</a></li><li><a href="#section-2"><span>02</span>我原本也想把這本書寫得「很厲害」</a></li><li><a href="#section-3"><span>03</span>我看過太多人，把人生交給了「感應」</a></li><li><a href="#section-4"><span>04</span>有一章，我三年前不敢寫</a></li><li><a href="#section-5"><span>05</span>為什麼愈修，人生反而愈痛苦？</a></li><li><a href="#section-6"><span>06</span>看得見元神，然後呢？</a></li><li><a href="#section-7"><span>07</span>書送印以前，我拿掉了一句話</a></li><li><a href="#section-8"><span>08</span>我現在不想再扮演一個「什麼都懂」的老師</a></li><li><a href="#section-9"><span>09</span>如果你要讀這本書</a></li></ol></details>
+<aside class="article-toc" aria-label="文章章節"><button class="article-toc-toggle" type="button" aria-expanded="false"><span>文章章節</span><small>共 9 節</small></button><ol><li><a href="#section-1">一本原本不是這樣的書</a></li><li><a href="#section-2">我原本也想把這本書寫得「很厲害」</a></li><li><a href="#section-3">我看過太多人，把人生交給了「感應」</a></li><li><a href="#section-4">有一章，我三年前不敢寫</a></li><li><a href="#section-5">為什麼愈修，人生反而愈痛苦？</a></li><li><a href="#section-6">看得見元神，然後呢？</a></li><li><a href="#section-7">書送印以前，我拿掉了一句話</a></li><li><a href="#section-8">我現在不想再扮演一個「什麼都懂」的老師</a></li><li><a href="#section-9">如果你要讀這本書</a></li></ol></aside>
 <img class="cover" src="/assets/articles/this-book-took-thirty-years/cover.jpg?v=20260810-photoreal-2" alt="三十年的書寫、修行與沉澱" width="1672" height="941">
 <div class="content"><p>《我在人間的元神覺醒》出版前，我想先說一些書裡沒有說完的事。</p>
 <p>修煉二十年，看得見他人的元神，那不是什麼難事。</p>
@@ -128,5 +128,8 @@ nav{position:fixed;z-index:100;top:0;left:0;right:0;height:56px;background:rgba(
 <p>宇色</p></div>
 <div class="footer-note">前行之路，即是歸返之路。｜宇色</div>
 </article></main>
+<script>
+(()=>{const toc=document.querySelector(".article-toc");const button=toc?.querySelector(".article-toc-toggle");if(!toc||!button)return;button.addEventListener("click",()=>{const open=toc.classList.toggle("is-open");button.setAttribute("aria-expanded",String(open))});toc.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{toc.classList.remove("is-open");button.setAttribute("aria-expanded","false")}))})();
+</script>
 <script type="module" src="/site-auth-nav.js?v=20260810-static-article-1"></script>
 </body></html>
