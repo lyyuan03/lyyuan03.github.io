@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260808-final-images-2";
+import { staticArticles } from "./static-articles.js?v=20260810-new-book-article-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -22,12 +22,17 @@ const memberMarker = "<!-- member-only -->";
 const paidMarker = "<!-- paid-only -->";
 const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh";
 // 限時免費 deadline 已全部過期（2026-07 月底），清空後這些文章固定以贊助專屬運作。
-// 若未來需要再開放限時免費，直接在此 Map 新增 [文章ID, Date.parse("...Z")] 即可。
+// 若未來需要再開放限時免費，直接在此 Map 新增 [文章ID, Date.parse(\"...Z\")] 即可。
 const limitedReadingDeadlines = new Map();
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 // 這篇已由 Firestore 後台接管；索引首次建立前也不得退回顯示靜態 published 版本。
 const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype"]);
 const articleGuides = {
+  "this-book-took-thirty-years": {
+    topics: ["元神覺醒", "修行心性"],
+    level: "深度",
+    nextId: "yuanshen-destiny-archetype"
+  },
   "wealth-as-water": {
     topics: ["金錢意識", "安全感"],
     level: "深度",
@@ -116,6 +121,7 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
+  "this-book-took-thirty-years": "assets/articles/thumbnails/this-book-took-thirty-years.svg?v=20260810-1",
   "celebrity-death-dream-spirit-five-checks": "assets/articles/thumbnails/celebrity-dream-spirit.svg?v=20260731-clean-1",
   "japan-temple-faith-and-decline": "assets/articles/thumbnails/japan-temple.jpg",
   "spiritual-practice-cannot-be-outsourced-to-gods": "assets/articles/thumbnails/spiritual-practice.jpg",
@@ -135,6 +141,7 @@ const articleThumbnailImages = {
 };
 
 const articleHooks = {
+  "this-book-took-thirty-years": "看得見元神並不難。真正困難的是看見之後，你是否有能力把修行帶回金錢、感情、情緒與每天的生活。",
   "celebrity-death-dream-spirit-five-checks": "有人說亡者托夢、名人指定自己傳話。比起急著判斷真假，我更在意的是：這段接觸，究竟讓活著的人更清明，還是更依賴另一個故事？",
   "japan-temple-faith-and-decline": "如果有一天，信仰的人都不在了，這些神佛又會去哪裡？寺院還在，信仰卻可能早已離開。",
   "spiritual-practice-cannot-be-outsourced-to-gods": "神明可以引路，也可能給你感應；但神明離開之後，你是否仍能清醒做人，才是修為真正開始被檢驗的時刻。",
@@ -223,197 +230,94 @@ function renderContent(value = "") {
       if (trimmed.startsWith("### ")) return `<h3>${renderInline(trimmed.slice(4))}</h3>`;
       if (trimmed.startsWith("## ")) return `<h2>${renderInline(trimmed.slice(3))}</h2>`;
       if (trimmed.startsWith("# ")) return `<h1>${renderInline(trimmed.slice(2))}</h1>`;
+      if (/^!\[[^\]]*\]\([^)]+\)$/.test(trimmed)) return `<figure>${renderInline(trimmed)}</figure>`;
       return `<p>${renderInline(trimmed).replace(/\n/g, "<br>")}</p>`;
     })
     .join("");
 }
 
-function addGuanyinVowLampImages(content = "", articleId = "") {
-  if (articleId !== "2026-guanyin-vow-lamp-record-v2") return content;
-  const withoutManagedImages = content
-    .replace(
-      /^!\[[^\]]*\]\(\/?assets\/articles\/guanyin-vow-lamp\/guanyin-vow-lamp-[123]\.svg(?:\?[^)]*)?\)\s*$/gm,
-      ""
-    )
-    .replace(
-      /^!\[[^\]]*\]\(\/?assets\/articles\/2026-guanyin-vow-lamp-record\/(?:vow-sheets-before-guanyin|patience-in-practice|path-with-obstacles)\.webp(?:\?[^)]*)?\)\s*$/gm,
-      ""
-    );
-  const placements = [
-    {
-      heading: "## 我知道方法，但我做不到",
-      image: "![每一封疏文，都是一份交付給觀世音菩薩的修行託付](assets/articles/2026-guanyin-vow-lamp-record/vow-sheets-before-guanyin.webp?v=20260802-1)"
-    },
-    {
-      heading: "## 我聽見最重的兩段話，是關於生死與親情",
-      image: "![真正的感應不急著證明，會在時間裡慢慢證明自己](assets/articles/2026-guanyin-vow-lamp-record/patience-in-practice.webp?v=20260802-1)"
-    },
-    {
-      heading: "## 一連串巧合，其實就證明了你走在對的路上",
-      image: "![符合天命的路不是沒有阻礙，而是在阻礙中依然感覺篤定](assets/articles/2026-guanyin-vow-lamp-record/path-with-obstacles.webp?v=20260802-1)"
-    }
-  ];
-  return placements.reduce((result, placement) => {
-    if (result.includes(placement.image)) return result;
-    return result.replace(
-      `\n\n${placement.heading}`,
-      `\n\n${placement.image}\n\n${placement.heading}`
-    );
-  }, withoutManagedImages);
+function articleKey(article) {
+  return article?.id || article?.slug || "";
 }
 
-function getTimeValue(value) {
-  if (!value) return 0;
-  if (typeof value?.toMillis === "function") return value.toMillis();
-  if (typeof value === "number") return value;
-  const parsed = Date.parse(value);
-  return Number.isNaN(parsed) ? 0 : parsed;
+function articleIsPaid(article) {
+  return article?.accessType === "paid" || String(article?.content || "").includes(paidMarker);
 }
 
-function sortPublished(a, b) {
-  // 排序優先序須與後台 article-admin.js 的 articleTime() 一致（updatedAt 優先），
-  // 否則文章一經編輯（updatedAt 比 publishedAt 新），前後台顯示順序就會不同步。
-  const at = getTimeValue(a.updatedAt) || getTimeValue(a.publishedAt);
-  const bt = getTimeValue(b.updatedAt) || getTimeValue(b.publishedAt);
-  return bt - at;
+function articleIsEvent(article) {
+  return article?.accessType === "event" || Boolean(article?.eventId);
 }
 
-function articleIsPaid(article = {}) {
-  return article.accessType === "paid" || (article.content || "").includes(paidMarker);
+function articleIsLimitedOpen(article) {
+  const deadline = limitedReadingDeadlines.get(articleKey(article));
+  return Boolean(articleIsPaid(article) && deadline && Date.now() < deadline);
 }
 
-function articleIsEvent(article = {}) {
-  return article.accessType === "event" && Boolean(article.eventId);
-}
-
-function articleIsLimitedOpen(article = {}) {
-  const key = articleKey(article);
-  return articleIsPaid(article)
-    && limitedReadingDeadlines.has(key)
-    && Date.now() < limitedReadingDeadlines.get(key);
-}
-
-function articleAccess(article = {}) {
+function articleAccess(article) {
   if (articleIsEvent(article)) return "event";
-  return articleIsPaid(article) && !articleIsLimitedOpen(article) ? "paid" : "free";
+  if (articleIsPaid(article) && !articleIsLimitedOpen(article)) return "paid";
+  return "open";
 }
 
-function filterHref(access, category) {
-  const next = new URLSearchParams();
-  if (access && access !== "all") next.set("access", access);
-  if (category) next.set("category", category);
-  if (magicToken) next.set("token", magicToken);
-  if (magicEventId) next.set("event", magicEventId);
-  const queryString = next.toString();
-  return queryString ? `articles.html?${queryString}` : "articles.html";
+function getArticleThumbnail(article) {
+  return articleThumbnailImages[articleKey(article)] || article?.thumbnailImage || article?.coverImage || "";
 }
 
-function renderTabs() {
-  const accessItems = [
-    ["all", "全部文章"],
-    ["free", "免費閱讀"],
-    ["paid", "贊助專屬"],
-    ["event", "活動限定"]
-  ];
-  const categoryItems = [["", "全部主題"], ...Object.entries(categoryLabels)];
-  const counts = loadedArticles.reduce((result, article) => {
-    result.all += 1;
-    result[articleAccess(article)] += 1;
-    return result;
-  }, { all: 0, free: 0, paid: 0, event: 0 });
-
-  tabs.innerHTML = `
-    <div class="article-filter-panel" id="article-filters">
-      <div class="filter-heading">
-        <strong>選擇想閱讀的文章</strong>
-        <span>依閱讀方式或主題快速尋找</span>
-      </div>
-      <div class="filter-row access-filter" aria-label="閱讀方式">
-        ${accessItems.map(([key, label]) => `
-          <a class="${key === activeAccess ? "is-active" : ""}" href="${filterHref(key, activeCategory)}">
-            ${label}<small>${counts[key]}</small>
-          </a>
-        `).join("")}
-      </div>
-      <div class="filter-row topic-filter" aria-label="文章主題">
-        ${categoryItems.map(([key, label]) => `
-          <a class="${key === activeCategory ? "is-active" : ""}" href="${filterHref(activeAccess, key)}">${label}</a>
-        `).join("")}
-      </div>
-    </div>
-  `;
+function getArticleHook(article) {
+  return articleHooks[articleKey(article)] || article?.excerpt || "";
 }
 
-function metricValue(articleId, key) {
-  return Number(articleMetrics.get(articleId)?.[key] || 0);
-}
-
-function renderMetricSummary(articleId, compact = false) {
-  const views = metricValue(articleId, "views");
-  const shares = metricValue(articleId, "shares");
-  const copies = metricValue(articleId, "copies");
-  return `
-    <div class="article-engagement${compact ? " is-compact" : ""}" data-metric-article="${escapeHtml(articleId)}">
-      <span>閱讀 <b data-metric-value="views">${views.toLocaleString("zh-TW")}</b></span>
-      <span>分享 <b data-metric-value="shares">${shares.toLocaleString("zh-TW")}</b></span>
-      <span>複製 <b data-metric-value="copies">${copies.toLocaleString("zh-TW")}</b></span>
-    </div>
-  `;
-}
-
-function articleKey(article = {}) {
-  return article.id || article.slug || "";
-}
-
-function getArticleGuide(article = {}) {
-  return articleGuides[articleKey(article)] || {
-    topics: Array.isArray(article.topics) ? article.topics : [],
-    level: article.readingLevel || ""
+function getArticleGuide(article) {
+  const key = articleKey(article);
+  return articleGuides[key] || {
+    topics: Array.isArray(article?.topics) ? article.topics.slice(0, 2) : [],
+    level: article?.readingLevel || ""
   };
-}
-
-function getArticleThumbnail(article = {}) {
-  return articleThumbnailImages[articleKey(article)] || article.coverImage || "";
-}
-
-function getArticleHook(article = {}) {
-  return articleHooks[articleKey(article)] || article.excerpt || "";
 }
 
 function renderArticleGuide(article, compact = false) {
   const guide = getArticleGuide(article);
-  if (!guide.topics.length && !guide.level) return "";
-  return `
-    <div class="article-guide${compact ? " is-compact" : ""}" aria-label="文章主題與閱讀程度">
-      ${guide.topics.map((topic) => `<span class="article-topic">${escapeHtml(topic)}</span>`).join("")}
-      ${guide.level ? `<span class="article-level">${escapeHtml(guide.level)}閱讀</span>` : ""}
-    </div>
-  `;
+  const topics = (guide.topics || []).filter(Boolean).slice(0, compact ? 2 : 3);
+  const level = guide.level || "";
+  if (!topics.length && !level) return "";
+  return `<div class="article-guide${compact ? " is-compact" : ""}">
+    ${topics.map((topic) => `<span>${escapeHtml(topic)}</span>`).join("")}
+    ${level ? `<small>${escapeHtml(level)}</small>` : ""}
+  </div>`;
 }
 
-function renderNextReading(article) {
-  const guide = getArticleGuide(article);
-  if (!guide.nextId) return "";
-  const nextArticle = loadedArticles.find((item) => articleKey(item) === guide.nextId);
-  if (!nextArticle) return "";
-  const nextGuide = getArticleGuide(nextArticle);
-  return `
-    <aside class="next-reading" aria-label="下一篇延伸閱讀">
-      <div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div>
-      <a href="articles.html?id=${encodeURIComponent(articleKey(nextArticle))}">
-        <strong>${escapeHtml(nextArticle.title || "下一篇文章")}</strong>
-        ${nextGuide.topics.length ? `<span>${nextGuide.topics.map(escapeHtml).join("・")}</span>` : ""}
-      </a>
-    </aside>
-  `;
+function sortPublished(a, b) {
+  return Date.parse(b.publishedAt || b.updatedAt || 0) - Date.parse(a.publishedAt || a.updatedAt || 0);
+}
+
+function renderTabs() {
+  if (!tabs) return;
+  const categories = [
+    ["", "全部"],
+    ["spiritual", categoryLabels.spiritual],
+    ["worldly", categoryLabels.worldly],
+    ["spirit-world", categoryLabels["spirit-world"]],
+    ["reading", categoryLabels.reading]
+  ];
+  tabs.innerHTML = categories.map(([key, label]) => `<a class="${activeCategory === key ? "active" : ""}" href="articles.html${key ? `?category=${encodeURIComponent(key)}` : ""}">${label}</a>`).join("");
+}
+
+function metricFor(articleId) {
+  return articleMetrics.get(articleId) || {};
+}
+
+function renderMetricSummary(articleId, compact = false) {
+  const metric = metricFor(articleId);
+  const views = Number(metric.views || 0);
+  const shares = Number(metric.shares || 0);
+  const copies = Number(metric.copies || 0);
+  return `<div class="article-metrics${compact ? " is-compact" : ""}" data-article-metrics="${escapeHtml(articleId)}"><span>閱讀 ${views}</span><span>分享 ${shares}</span><span>複製 ${copies}</span></div>`;
 }
 
 function updateMetricSummary(articleId) {
-  document.querySelectorAll(`[data-metric-article="${CSS.escape(articleId)}"]`).forEach((node) => {
-    ["views", "shares", "copies"].forEach((key) => {
-      const target = node.querySelector(`[data-metric-value="${key}"]`);
-      if (target) target.textContent = metricValue(articleId, key).toLocaleString("zh-TW");
-    });
+  document.querySelectorAll(`[data-article-metrics="${CSS.escape(articleId)}"]`).forEach((node) => {
+    const metric = metricFor(articleId);
+    node.innerHTML = `<span>閱讀 ${Number(metric.views || 0)}</span><span>分享 ${Number(metric.shares || 0)}</span><span>複製 ${Number(metric.copies || 0)}</span>`;
   });
 }
 
@@ -741,162 +645,105 @@ async function eventArticleKey(article) {
 
 async function hydrateEventArticle(article) {
   if (!articleIsEvent(article)) return article;
-  if (!currentUser && !magicToken) return { ...article, content: "", eventAccessGranted: false };
+  if (!currentUser && !magicToken) return article;
+  const key = await eventArticleKey(article);
+  if (!key) return article;
   try {
-    const key = await eventArticleKey(article);
-    if (!key || !article.encryptedContent || !article.eventIv) {
-      return { ...article, content: "", eventAccessGranted: false };
-    }
-    const content = await decryptEventContent(article.encryptedContent, article.eventIv, key);
+    const content = await decryptEventContent(article.encryptedContent, article.contentIv, key);
     return { ...article, content, eventAccessGranted: true };
   } catch (error) {
-    console.warn("活動文章閱讀資格無法確認。", error);
-    return { ...article, content: "", eventAccessGranted: false };
+    console.warn("活動限定文章解密失敗。", error);
+    return article;
   }
 }
 
-function renderRecommendedBook(article) {
-  if (!article.bookTitle && !article.bookAuthor && !article.bookPublisher && !article.bookPurchaseUrl) return "";
+function renderSupportGate(lockedContent) {
+  if (!lockedContent) return "";
   return `
-    <aside class="recommended-book" aria-label="本篇推薦書籍">
-      <div class="recommended-book-eyebrow">本篇推薦書籍</div>
-      ${article.bookTitle ? `<strong>${escapeHtml(article.bookTitle)}</strong>` : ""}
-      <div class="recommended-book-meta">
-        ${article.bookAuthor ? `<span>作者｜${escapeHtml(article.bookAuthor)}</span>` : ""}
-        ${article.bookPublisher ? `<span>出版社｜${escapeHtml(article.bookPublisher)}</span>` : ""}
-      </div>
-      ${article.bookPurchaseUrl ? `<a href="${escapeHtml(article.bookPurchaseUrl)}" target="_blank" rel="noopener noreferrer">前往博客來看書籍介紹</a>` : ""}
-    </aside>
-  `;
-}
-
-function renderBookCta() {
-  return `
-    <div class="article-book-link-wrap">
-      <a class="article-book-link" href="${bookUrl}">延伸閱讀｜宇色靈修著作</a>
-    </div>
-  `;
-}
-
-function renderSupportGate(lockedContent = "") {
-  const preview = lockedContent.trim() || "更多宇色老師的靈修解析與生命觀察。";
-  return `
-    <section class="member-lock-zone" id="article-support-gate" aria-label="支持宇色老師">
-      <div class="article-body member-lock-preview" aria-hidden="true">${renderContent(preview)}</div>
-      <div class="member-lock-card article-support-card">
-        <div class="member-lock-icon" aria-hidden="true">◇</div>
-        <h3>文章未完，繼續閱讀</h3>
-        <p>若這篇文章對你有所啟發，歡迎訂閱<br><span>YouTube、追蹤 Facebook，持續收到新的靈修解析。</span></p>
+    <section class="article-support-gate" aria-label="繼續閱讀全文">
+      <div class="article-support-preview" aria-hidden="true">${renderContent(lockedContent)}</div>
+      <div class="article-support-card">
+        <strong>文章未完，繼續閱讀</strong>
+        <p>若這篇文章對你有所啟發，歡迎訂閱 YouTube、追蹤 Facebook，持續收到新的靈修解析。</p>
         <div class="article-support-actions">
-          <a class="article-support-link youtube" href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">訂閱 靈元院YouTube</a>
-          <a class="article-support-link facebook" href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">追蹤 靈元院 Facebook</a>
+          <a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">訂閱 靈元院YouTube</a>
+          <a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">追蹤 靈元院 Facebook</a>
         </div>
-        <button id="article-continue-button" type="button">繼續閱讀全文</button>
-        <div class="article-author-links" aria-label="宇色老師社群">
-          <span>更多宇色老師</span>
-          <a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">影音</a>
-          <i aria-hidden="true">·</i>
-          <a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">文章</a>
-        </div>
+        <button class="article-continue" type="button">繼續閱讀全文</button>
       </div>
     </section>
   `;
-}
-
-function renderPaidGate(article) {
-  return `
-    <section class="member-lock-zone paid-lock-zone" aria-label="贊助會員專屬">
-      <div class="paid-lock-preview" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <div class="member-lock-card paid-lock-card sponsor-join-card">
-        <div class="member-lock-icon" aria-hidden="true">◇</div>
-        <h3>閱讀全文｜加入贊助會員</h3>
-        <p>本篇目前開放前段試閱。完成贊助方案付款並由行政團隊開通後，即可使用登記的 Gmail 閱讀全文。</p>
-        <div data-sponsor-offer-slot>
-          <div class="sponsor-offer-loading">方案與優惠名額載入中，請稍候。</div>
-        </div>
-        <div class="paid-member-return">
-          <span>已是贊助會員？</span>
-          <button class="paid-inquiry-primary" id="article-member-login-button" type="button">${currentUser ? "重新確認會員資格" : "會員登入"}</button>
-        </div>
-        <a class="paid-help-link" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">付款後尚未開通｜聯繫行政團隊</a>
-        <small>完成開通後，使用登記的 Gmail 登入即可閱讀全文。</small>
-      </div>
-    </section>
-  `;
-}
-
-function renderEventGate(article) {
-  const eventName = article.eventName || "2026 觀音成道日法會";
-  return `
-    <section class="member-lock-zone paid-lock-zone" aria-label="活動限定文章">
-      <div class="paid-lock-preview" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-      <div class="member-lock-card paid-lock-card">
-        <div class="member-lock-icon" aria-hidden="true">◇</div>
-        <h3>本文為活動限定文章</h3>
-        <p>${magicToken ? "此個人專屬連結已失效、逾期，或不適用於本篇文章。" : `此文章限 ${escapeHtml(eventName)}參加者閱讀。`}</p>
-        <div class="paid-inquiry-actions">
-          <button class="paid-inquiry-primary" id="article-event-login-button" type="button">${currentUser ? "重新確認活動資格" : "使用活動報名 Email 登入"}</button>
-        </div>
-        <small>一般會員或贊助會員不會自動取得本活動文章權限</small>
-      </div>
-    </section>
-  `;
-}
-
-function bindPaidLogin() {
-  document.getElementById("article-member-login-button")?.addEventListener("click", () => {
-    document.getElementById("member-login-button")?.click();
-  });
-}
-
-function bindEventLogin() {
-  document.getElementById("article-event-login-button")?.addEventListener("click", () => {
-    document.getElementById("member-login-button")?.click();
-  });
 }
 
 function bindArticleContinue() {
-  const button = document.getElementById("article-continue-button");
-  const gate = document.getElementById("article-support-gate");
+  const button = document.querySelector(".article-continue");
   const remaining = document.getElementById("article-remaining-content");
-  if (!button || !gate || !remaining) return;
+  const gate = document.querySelector(".article-support-gate");
+  if (!button || !remaining) return;
   button.addEventListener("click", () => {
-    gate.remove();
     remaining.hidden = false;
+    gate?.remove();
     remaining.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
+function renderPaidGate(article) {
+  return `<section class="article-paid-gate"><strong>贊助專屬文章</strong><p>此篇為贊助專屬內容，請使用具有閱讀資格的 Gmail 登入。</p><button class="article-paid-login" type="button">會員登入</button></section>`;
+}
+
+function bindPaidLogin() {
+  document.querySelector(".article-paid-login")?.addEventListener("click", () => {
+    location.href = `member-login.html?redirect=${encodeURIComponent(location.href)}`;
+  });
+}
+
+function renderEventGate(article) {
+  return `<section class="article-paid-gate"><strong>活動限定文章</strong><p>此篇僅提供指定活動參與者閱讀。</p></section>`;
+}
+
+function bindEventLogin() {}
+
+function renderRecommendedBook(article) {
+  if (!article.bookTitle) return "";
+  const url = article.bookPurchaseUrl || bookUrl;
+  return `<aside class="recommended-book"><div><small>延伸閱讀</small><strong>${escapeHtml(article.bookTitle)}</strong><span>${escapeHtml(article.bookAuthor || "")}${article.bookPublisher ? `｜${escapeHtml(article.bookPublisher)}` : ""}</span></div><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">查看著作</a></aside>`;
+}
+
+function renderBookCta() {
+  return `<div class="article-book-link-wrap"><a class="article-book-link" href="${bookUrl}" target="_blank" rel="noopener noreferrer">延伸閱讀｜宇色靈修著作</a></div>`;
+}
+
+function renderNextReading(article) {
+  const guide = getArticleGuide(article);
+  const nextId = guide.nextId;
+  if (!nextId) return "";
+  const target = loadedArticles.find((item) => articleKey(item) === nextId);
+  if (!target) return "";
+  return `<aside class="next-reading"><div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div><a href="articles.html?id=${encodeURIComponent(nextId)}"><strong>${escapeHtml(target.title || "延伸閱讀")}</strong><span>${escapeHtml((getArticleGuide(target).topics || []).join("・"))}</span></a></aside>`;
+}
+
+function getShareUrl(article) {
+  if (article?.sharePath) return new URL(article.sharePath, location.origin).href;
+  return new URL(`articles.html?id=${encodeURIComponent(articleKey(article))}`, location.origin).href;
+}
+
 function renderArticleShare(article) {
-  const articleKey = article.id || article.slug || activeId;
-  const shareUrl = article.sharePath
-    ? new URL(article.sharePath, `${location.origin}/`).href
-    : `${location.origin}${location.pathname}?id=${encodeURIComponent(articleKey)}`;
-  const shareTitle = article.title || "靈元院文選";
+  const articleId = articleKey(article);
+  const shareUrl = getShareUrl(article);
   const encodedUrl = encodeURIComponent(shareUrl);
-  const encodedTitle = encodeURIComponent(shareTitle);
+  const encodedText = encodeURIComponent(`${article.title || "靈元院文選"} ${shareUrl}`);
+  const encodedTitle = encodeURIComponent(article.title || "靈元院文選");
   return `
-    <div class="article-share" aria-label="靈元院社群平台">
-      <a class="article-social-facebook" data-share-metric="true" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Facebook" title="分享到 Facebook">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4.4c-.5-.1-2.1-.2-4-.2-3.9 0-6.6 2.4-6.6 6.8v3.8H2v4h4.4V24h5.4v-5.2h4.5l.7-4h-5.2v-3.4C11.8 9.8 12.2 8 14 8Z" fill="currentColor"/></svg>
-      </a>
-      <a class="article-social-instagram" href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="靈元院 Instagram">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/></svg>
-      </a>
-      <a class="article-share-line" data-share-metric="true" href="https://social-plugins.line.me/lineit/share?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer" aria-label="分享到 LINE" title="分享到 LINE">
-        <span class="article-line-mark" aria-hidden="true">LINE</span>
-      </a>
-      <a class="article-share-telegram" data-share-metric="true" href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Telegram" title="分享到 Telegram">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.3 18.4 20c-.2 1.2-.9 1.5-1.9.9l-4.7-3.5-2.3 2.2c-.2.3-.5.5-1 .5l.4-4.8 8.7-7.9c.4-.3-.1-.5-.6-.2L6.2 14 1.6 12.5c-1-.3-1-1 .2-1.5L20 4c.8-.3 1.6.2 1.5 1.3Z" fill="currentColor"/></svg>
-      </a>
-      <a class="article-share-email" data-share-metric="true" href="mailto:?subject=${encodedTitle}&body=${encodeURIComponent(`${shareTitle}\n\n${shareUrl}`)}" aria-label="使用 Email 分享" title="使用 Email 分享">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="5.2" width="18.4" height="13.6" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <button class="article-share-copy" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="複製文章連結" title="複製文章連結">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-2M6 9h6a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3Z" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
-      </button>
+    <div class="article-share" aria-label="文章分享">
+      ${renderMetricSummary(articleId)}
+      <div class="article-share-actions">
+        <a class="article-share-icon facebook" href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Facebook" title="Facebook">f</a>
+        <a class="article-share-icon instagram" href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="Instagram">◎</a>
+        <a class="article-share-icon line" data-share-metric href="https://social-plugins.line.me/lineit/share?url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="分享到 LINE" title="LINE">L</a>
+        <a class="article-share-icon telegram" data-share-metric href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Telegram" title="Telegram">T</a>
+        <a class="article-share-icon email" data-share-metric href="mailto:?subject=${encodedTitle}&body=${encodedText}" aria-label="用 Email 分享" title="Email">@</a>
+        <button class="article-share-icon copy article-share-copy" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="複製文章連結" title="複製連結">⧉</button>
+      </div>
       <span class="article-share-status" role="status" aria-live="polite"></span>
     </div>
   `;
@@ -1058,7 +905,6 @@ async function writePublicationStatusIndex(statuses) {
   const indexRef = doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID);
   const current = await getDoc(indexRef);
   if (!current.exists()) {
-    // 先以符合既有公開建立規則的統計格式建立，再由管理員寫入狀態索引。
     await setDoc(indexRef, {
       articleId: ARTICLE_STATUS_INDEX_ID,
       views: 1,
@@ -1112,7 +958,6 @@ async function loadArticles() {
     console.warn("文章狀態索引暫時無法載入。", statusResult.reason);
   }
 
-  // Firestore 有同 ID 文件時，靜態資料不得回補；靜態檔只備援尚未進入 Firestore 的文章。
   const mergedById = new Map();
   staticArticles.forEach((article) => {
     const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
@@ -1130,7 +975,6 @@ async function loadArticles() {
     && article.systemRecord !== true
   );
   const normalizedArticles = merged.map((article) => {
-    // YUANSHEN_FINAL_IMAGE_SYNC_20260807
     if (article.id === "yuanshen-destiny-archetype") {
       let fixedContent = String(article.content || "")
         .replace(/stone-origin\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260808-final-images-2")
@@ -1152,14 +996,6 @@ async function loadArticles() {
         content: fixedContent,
       };
     }
-    
-    if (article.id === "yuanshen-destiny-archetype") {
-      const fixedContent = String(article.content || "")
-        .replace(/stone-origin\.svg(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260807-direct-2")
-        .replace(/roc-awakening\.svg(?:\?[^)\s"']*)?/g, "roc-awakening.jpg?v=20260807-direct-2")
-        .replace(/nine-tailed-bird\.svg(?:\?[^)\s"']*)?/g, "nine-tailed-bird.jpg?v=20260807-direct-2");
-      return { ...article, coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260807-cover-local-2", content: fixedContent };
-    }
     if (article.id === "celebrity-death-dream-spirit-five-checks") {
       return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
     }
@@ -1171,7 +1007,6 @@ async function loadArticles() {
   loadedArticles = hydratedArticles.sort(sortPublished);
   renderTabs();
 
-  // 文章內容優先顯示；閱讀統計改為背景載入，避免統計請求延遲時整頁卡在「文章載入中」。
   renderCurrentView();
   void loadArticleMetrics().then(() => {
     loadedArticles.forEach((article) => updateMetricSummary(articleKey(article)));
@@ -1209,9 +1044,4 @@ onAuthStateChanged(auth, async (user) => {
       console.warn("文章狀態索引同步失敗。", error);
     }
   }
-  if (loadedArticles.length && activeId) {
-    const index = loadedArticles.findIndex((article) => article.id === activeId || article.slug === activeId);
-    if (index >= 0) loadedArticles[index] = await hydrateEventArticle(loadedArticles[index]);
-  }
-  if (loadedArticles.length) renderCurrentView();
 });
