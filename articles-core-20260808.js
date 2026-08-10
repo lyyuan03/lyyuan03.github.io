@@ -28,6 +28,11 @@ const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 // 這篇已由 Firestore 後台接管；索引首次建立前也不得退回顯示靜態 published 版本。
 const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype"]);
 const articleGuides = {
+  "this-book-took-thirty-years": {
+    topics: ["元神覺醒", "修行心性"],
+    level: "深度",
+    nextId: "yuanshen-destiny-archetype"
+  },
   "wealth-as-water": {
     topics: ["金錢意識", "安全感"],
     level: "深度",
@@ -116,6 +121,7 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
+  "this-book-took-thirty-years": "assets/articles/this-book-took-thirty-years/thumbnail.svg?v=20260810-1",
   "celebrity-death-dream-spirit-five-checks": "assets/articles/thumbnails/celebrity-dream-spirit.svg?v=20260731-clean-1",
   "japan-temple-faith-and-decline": "assets/articles/thumbnails/japan-temple.jpg",
   "spiritual-practice-cannot-be-outsourced-to-gods": "assets/articles/thumbnails/spiritual-practice.jpg",
@@ -131,8 +137,7 @@ const articleThumbnailImages = {
   "market-crash-money-self-control": "assets/articles/thumbnails/market-crash.jpg",
   "wealth-as-water": "assets/articles/thumbnails/market-crash.jpg?v=20260801-wealth-as-water-restore-1",
   "fantasy-intuition-or-yuanshen": "assets/articles/fantasy-intuition-yuanshen/cover.webp?v=20260801-fantasy-visual-1",
-  "wealth-discipline-investing-and-self-mastery": "assets/articles/wealth-discipline/book-cover-photo.jpg?v=20260730-book-cover-2",
-  "this-book-took-thirty-years": "assets/articles/this-book-took-thirty-years/thumbnail.svg?v=20260810-1"
+  "wealth-discipline-investing-and-self-mastery": "assets/articles/wealth-discipline/book-cover-photo.jpg?v=20260730-book-cover-2"
 };
 
 const articleHooks = {
@@ -225,288 +230,520 @@ function renderContent(value = "") {
       if (trimmed.startsWith("### ")) return `<h3>${renderInline(trimmed.slice(4))}</h3>`;
       if (trimmed.startsWith("## ")) return `<h2>${renderInline(trimmed.slice(3))}</h2>`;
       if (trimmed.startsWith("# ")) return `<h1>${renderInline(trimmed.slice(2))}</h1>`;
-      if (/^!\[[^\]]*\]\([^)]+\)$/.test(trimmed)) return renderInline(trimmed);
+      if (/^!\[[^\]]*\]\([^)]+\)$/.test(trimmed)) return `<figure>${renderInline(trimmed)}</figure>`;
       return `<p>${renderInline(trimmed).replace(/\n/g, "<br>")}</p>`;
     })
     .join("");
 }
 
-function articleAccess(article) {
-  if (article.eventId || article.accessType === "event") return "event";
-  if (article.accessType === "paid" || article.content?.includes(paidMarker)) return "paid";
-  return "free";
-}
-
-function articleIsEvent(article) {
-  return articleAccess(article) === "event";
+function articleKey(article) {
+  return article?.id || article?.slug || "";
 }
 
 function articleIsPaid(article) {
-  return articleAccess(article) === "paid";
+  return article?.accessType === "paid" || String(article?.content || "").includes(paidMarker);
+}
+
+function articleIsEvent(article) {
+  return article?.accessType === "event" || Boolean(article?.eventId);
 }
 
 function articleIsLimitedOpen(article) {
-  const deadline = limitedReadingDeadlines.get(article.id || article.slug || "");
+  const deadline = limitedReadingDeadlines.get(articleKey(article));
   return Boolean(articleIsPaid(article) && deadline && Date.now() < deadline);
 }
 
-function articleKey(article = {}) {
-  return article.id || article.slug || "";
+function articleAccess(article) {
+  if (articleIsEvent(article)) return "event";
+  if (articleIsPaid(article) && !articleIsLimitedOpen(article)) return "paid";
+  return "open";
 }
 
-function getArticleThumbnail(article = {}) {
+function getArticleThumbnail(article) {
+  return articleThumbnailImages[articleKey(article)] || article?.thumbnailImage || article?.coverImage || "";
+}
+
+function getArticleHook(article) {
+  return articleHooks[articleKey(article)] || article?.excerpt || "";
+}
+
+function getArticleGuide(article) {
   const key = articleKey(article);
-  return articleThumbnailImages[key] || article.coverImage || "";
+  return articleGuides[key] || {
+    topics: Array.isArray(article?.topics) ? article.topics.slice(0, 2) : [],
+    level: article?.readingLevel || ""
+  };
 }
 
-function getArticleHook(article = {}) {
-  const key = articleKey(article);
-  return articleHooks[key] || article.excerpt || "";
+function renderArticleGuide(article, compact = false) {
+  const guide = getArticleGuide(article);
+  const topics = (guide.topics || []).filter(Boolean).slice(0, compact ? 2 : 3);
+  const level = guide.level || "";
+  if (!topics.length && !level) return "";
+  return `<div class="article-guide${compact ? " is-compact" : ""}">
+    ${topics.map((topic) => `<span>${escapeHtml(topic)}</span>`).join("")}
+    ${level ? `<small>${escapeHtml(level)}</small>` : ""}
+  </div>`;
 }
 
-function guideForArticle(article = {}) {
-  const key = articleKey(article);
-  const manual = articleGuides[key] || {};
-  const topics = Array.isArray(article.topics) && article.topics.length ? article.topics : manual.topics || [];
-  const level = article.readingLevel || manual.level || "";
-  const nextId = article.nextReadingId || manual.nextId || "";
-  return { topics, level, nextId };
+function sortPublished(a, b) {
+  return Date.parse(b.publishedAt || b.updatedAt || 0) - Date.parse(a.publishedAt || a.updatedAt || 0);
 }
 
-function renderArticleGuide(article = {}, compact = false) {
-  const guide = guideForArticle(article);
-  if (!guide.topics.length && !guide.level) return "";
-  const topics = guide.topics.slice(0, compact ? 2 : 3)
-    .map((topic) => `<span class="article-topic">${escapeHtml(topic)}</span>`)
-    .join("");
-  const level = guide.level ? `<span class="article-level">閱讀層級｜${escapeHtml(guide.level)}</span>` : "";
-  return `<div class="article-guide${compact ? " is-compact" : ""}">${topics}${level}</div>`;
+function renderTabs() {
+  if (!tabs) return;
+  const categories = [
+    ["", "全部"],
+    ["spiritual", categoryLabels.spiritual],
+    ["worldly", categoryLabels.worldly],
+    ["spirit-world", categoryLabels["spirit-world"]],
+    ["reading", categoryLabels.reading]
+  ];
+  tabs.innerHTML = categories.map(([key, label]) => `<a class="${activeCategory === key ? "active" : ""}" href="articles.html${key ? `?category=${encodeURIComponent(key)}` : ""}">${label}</a>`).join("");
 }
 
-function renderNextReading(article = {}) {
-  const { nextId } = guideForArticle(article);
-  if (!nextId) return "";
-  const next = loadedArticles.find((item) => articleKey(item) === nextId);
-  if (!next || articleIsEvent(next)) return "";
-  const nextGuide = guideForArticle(next);
-  const detail = [nextGuide.topics.slice(0, 2).join("・"), nextGuide.level ? `${nextGuide.level}閱讀` : ""].filter(Boolean).join("｜");
-  return `
-    <aside class="next-reading" aria-label="下一篇延伸閱讀">
-      <div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div>
-      <a href="articles.html?id=${encodeURIComponent(articleKey(next))}">
-        <strong>${escapeHtml(next.title || "未命名文章")}</strong>
-        ${detail ? `<span>${escapeHtml(detail)}</span>` : ""}
-      </a>
-    </aside>
-  `;
+function metricFor(articleId) {
+  return articleMetrics.get(articleId) || {};
 }
 
-function renderRecommendedBook(article = {}) {
-  if (!article.bookTitle || !article.bookPurchaseUrl) return "";
-  return `
-    <aside class="recommended-book" aria-label="延伸閱讀書籍">
-      <div class="recommended-book-eyebrow">延伸閱讀書籍</div>
-      <strong>${escapeHtml(article.bookTitle)}</strong>
-      <div class="recommended-book-meta">
-        ${article.bookAuthor ? `<span>作者｜${escapeHtml(article.bookAuthor)}</span>` : ""}
-        ${article.bookPublisher ? `<span>出版｜${escapeHtml(article.bookPublisher)}</span>` : ""}
+function renderMetricSummary(articleId, compact = false) {
+  const metric = metricFor(articleId);
+  const views = Number(metric.views || 0);
+  const shares = Number(metric.shares || 0);
+  const copies = Number(metric.copies || 0);
+  return `<div class="article-metrics${compact ? " is-compact" : ""}" data-article-metrics="${escapeHtml(articleId)}"><span>閱讀 ${views}</span><span>分享 ${shares}</span><span>複製 ${copies}</span></div>`;
+}
+
+function updateMetricSummary(articleId) {
+  document.querySelectorAll(`[data-article-metrics="${CSS.escape(articleId)}"]`).forEach((node) => {
+    const metric = metricFor(articleId);
+    node.innerHTML = `<span>閱讀 ${Number(metric.views || 0)}</span><span>分享 ${Number(metric.shares || 0)}</span><span>複製 ${Number(metric.copies || 0)}</span>`;
+  });
+}
+
+async function loadArticleMetrics() {
+  try {
+    const snapshot = await getDocs(collection(db, "articleMetrics"));
+    articleMetrics = new Map(snapshot.docs
+      .filter((item) => item.id !== ARTICLE_STATUS_INDEX_ID)
+      .map((item) => [item.id, item.data()]));
+  } catch (error) {
+    console.warn("文章統計暫時無法載入。", error);
+    articleMetrics = new Map();
+  }
+}
+
+async function incrementArticleMetric(articleId, metric) {
+  if (!articleId || !["views", "shares", "copies"].includes(metric)) return;
+  const metricRef = doc(db, "articleMetrics", articleId);
+  try {
+    await runTransaction(db, async (transaction) => {
+      const snapshot = await transaction.get(metricRef);
+      const current = snapshot.exists() ? snapshot.data() : {};
+      transaction.set(metricRef, {
+        articleId,
+        views: Number(current.views || 0) + (metric === "views" ? 1 : 0),
+        shares: Number(current.shares || 0) + (metric === "shares" ? 1 : 0),
+        copies: Number(current.copies || 0) + (metric === "copies" ? 1 : 0),
+        updatedAt: serverTimestamp()
+      });
+    });
+    const current = articleMetrics.get(articleId) || {};
+    articleMetrics.set(articleId, {
+      ...current,
+      articleId,
+      [metric]: Number(current[metric] || 0) + 1
+    });
+    updateMetricSummary(articleId);
+  } catch (error) {
+    console.warn(`文章${metric}統計寫入失敗。`, error);
+  }
+}
+
+function trackArticleView(articleId) {
+  const key = `lyyuan-article-viewed:${articleId}`;
+  try {
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, "1");
+  } catch {}
+  incrementArticleMetric(articleId, "views");
+}
+
+function renderLimitedReadingCountdown(articleId, isPaid = false) {
+  if (!limitedReadingDeadlines.has(articleId)) return "";
+  const isLimitedOpen = isPaid && Date.now() < limitedReadingDeadlines.get(articleId);
+  return `<small class="limited-reading-countdown" data-limited-reading-countdown data-article-id="${escapeHtml(articleId)}" data-limited-open="${isLimitedOpen ? "true" : "false"}" aria-live="polite">限時閱讀｜計算中…</small>`;
+}
+
+function bindLimitedReadingCountdowns() {
+  const nodes = [...document.querySelectorAll("[data-limited-reading-countdown]")];
+  if (!nodes.length) return;
+
+  const update = () => {
+    const now = Date.now();
+    let hasActiveCountdown = false;
+    nodes.forEach((node) => {
+      const deadline = limitedReadingDeadlines.get(node.dataset.articleId);
+      const remaining = deadline - now;
+      if (remaining <= 0) {
+        if (node.dataset.limitedOpen === "true" && activeId) {
+          renderCurrentView();
+          return;
+        }
+        node.remove();
+        return;
+      }
+
+      hasActiveCountdown = true;
+      const totalSeconds = Math.floor(remaining / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+      const seconds = String(totalSeconds % 60).padStart(2, "0");
+      node.textContent = `限時閱讀｜${hours}：${minutes}：${seconds}`;
+    });
+    return hasActiveCountdown;
+  };
+
+  if (!update()) return;
+  const timer = window.setInterval(() => {
+    if (!update()) window.clearInterval(timer);
+  }, 1000);
+}
+
+function renderList(articles) {
+  const filtered = articles.filter((article) => {
+    const matchesCategory = !activeCategory || article.category === activeCategory;
+    const matchesAccess = activeAccess === "all" || articleAccess(article) === activeAccess;
+    const matchesEvent = !magicEventId || article.eventId === magicEventId;
+    return matchesCategory && matchesAccess && matchesEvent;
+  });
+
+  if (!filtered.length) {
+    root.innerHTML = '<div class="empty">目前沒有符合條件的文章，請選擇其他分類。</div>';
+    return;
+  }
+
+  const visibleArticles = filtered.slice(0, visibleArticleCount);
+  const remainingCount = filtered.length - visibleArticles.length;
+  root.innerHTML = `
+    <div class="article-result-summary">
+      <span>共 ${filtered.length} 篇文章</span>
+      <a href="#article-filters">重新選擇分類</a>
+    </div>
+    <div class="article-grid">
+      ${visibleArticles.map((article) => {
+        const key = articleKey(article);
+        const access = articleAccess(article);
+        const accessLabel = access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
+        return `
+          <a class="article-card" data-article-id="${escapeHtml(key)}" href="articles.html?id=${encodeURIComponent(key)}${magicToken ? `&event=${encodeURIComponent(article.eventId || magicEventId)}&token=${encodeURIComponent(magicToken)}` : ""}">
+            <div class="article-card-media">
+              ${getArticleThumbnail(article) ? `<img src="${escapeHtml(getArticleThumbnail(article))}" alt="${escapeHtml(article.title || "靈元院文選")}" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
+              <div class="article-card-media-gradient" aria-hidden="true"></div>
+            </div>
+            <div class="article-card-content">
+              <div class="article-card-heading">
+                <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
+                <span class="article-access-badge is-${access}">${accessLabel}</span>
+              </div>
+              <h2 class="article-list-title">${escapeHtml(article.title || "未命名文章")}</h2>
+              ${renderArticleGuide(article, true)}
+              ${renderLimitedReadingCountdown(key, articleIsPaid(article))}
+              <p class="article-hook">${escapeHtml(getArticleHook(article))}</p>
+              ${renderMetricSummary(key, true)}
+            </div>
+          </a>
+        `;
+      }).join("")}
+    </div>
+    ${remainingCount > 0 ? `
+      <div class="article-load-more-wrap">
+        <button class="article-load-more" id="article-load-more" type="button">
+          顯示更多文章 <small>尚有 ${remainingCount} 篇</small>
+        </button>
       </div>
-      <a href="${escapeHtml(article.bookPurchaseUrl)}" target="_blank" rel="noopener noreferrer">前往博客來</a>
-    </aside>
+    ` : ""}
   `;
+
+  document.getElementById("article-load-more")?.addEventListener("click", () => {
+    visibleArticleCount += window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
+    renderList(articles);
+  });
+  bindLimitedReadingCountdowns();
+  bindListMotion();
+}
+
+function bindListMotion() {
+  const cards = [...document.querySelectorAll(".article-card")];
+  if (!cards.length) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+    cards.forEach((card) => card.classList.add("is-visible"));
+    return;
+  }
+  document.documentElement.classList.add("article-motion-ready");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: .08, rootMargin: "0px 0px -24px" });
+  cards.forEach((card, index) => {
+    card.style.setProperty("--card-order", String(index % 3));
+    observer.observe(card);
+  });
+}
+
+function splitMemberContent(content = "", articleId = "") {
+  const deadline = limitedReadingDeadlines.get(articleId);
+  if (content.includes(paidMarker) && deadline && Date.now() < deadline) {
+    return { publicContent: content.replace(paidMarker, ""), lockedContent: "", accessType: "open" };
+  }
+  const accessType = content.includes(paidMarker)
+    ? "paid"
+    : content.includes(memberMarker)
+      ? "member"
+      : "open";
+  if (accessType === "paid" && hasPaidAccess(articleId)) {
+    return { publicContent: content.replace(paidMarker, ""), lockedContent: "", accessType: "open" };
+  }
+  if (accessType === "open") {
+    return { publicContent: content, lockedContent: "", accessType: "open" };
+  }
+  const marker = accessType === "paid" ? paidMarker : memberMarker;
+  const [publicContent, ...rest] = content.split(marker);
+  return {
+    publicContent: publicContent.trim(),
+    lockedContent: rest.join(marker).trim(),
+    accessType
+  };
+}
+
+function memberAccessDate(value) {
+  if (!value) return null;
+  const date = value?.toDate?.() || new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function hasDirectSponsorAccess(record, userEmail) {
+  if (!record || record.memberType !== "sponsor-member") return false;
+  if (record.status !== "active" || record.paymentStatus !== "paid") return false;
+  if (record.articleAccess !== true || record.accessScope !== "sponsor-paid-articles") return false;
+  if (Number(record.accessVersion || 0) < 2 || !String(record.lastOrderNo || "").trim()) return false;
+  if (record.revokedAt || record.suspended === true || record.disabled === true) return false;
+  const recordEmail = String(record.email || "").trim().toLowerCase();
+  if (!recordEmail || recordEmail !== userEmail) return false;
+  const now = new Date();
+  const startsAt = memberAccessDate(record.startsAt);
+  const expiresAt = memberAccessDate(record.expiresAt);
+  return (!startsAt || startsAt <= now) && Boolean(expiresAt && expiresAt > now);
+}
+
+function hasWellnessArticleBenefit(record, member, userEmail) {
+  const benefit = record?.wellnessBenefit;
+  if (!benefit || benefit.active !== true || benefit.articleAccess !== true) return false;
+  if (benefit.status !== "active" || benefit.accessScope !== "sponsor-paid-articles") return false;
+  if (Number(benefit.accessVersion || 0) < 1) return false;
+  if (String(record.email || "").trim().toLowerCase() !== userEmail) return false;
+  if (!member || String(member.email || "").trim().toLowerCase() !== userEmail) return false;
+  if (member.memberType !== "wellness-channel" || member.wellnessAccess !== true) return false;
+  if (!["wellness", "lingji"].includes(member.memberLevel)) return false;
+  if (member.status !== "active" || member.paymentStatus !== "paid") return false;
+  if (member.revokedAt || member.suspended === true || member.disabled === true) return false;
+
+  const now = new Date();
+  const memberStart = memberAccessDate(member.startsAt || member.firstJoinedAt);
+  const memberExpiry = memberAccessDate(member.expiresAt);
+  const benefitStart = memberAccessDate(benefit.startsAt);
+  const benefitExpiry = memberAccessDate(benefit.expiresAt);
+  if (memberStart && memberStart > now) return false;
+  if (!memberExpiry || memberExpiry <= now || !benefitExpiry || benefitExpiry <= now) return false;
+  if (benefitStart && benefitStart > now) return false;
+  if (benefitExpiry.getTime() > memberExpiry.getTime() + 60000) return false;
+  if (benefit.linkedMemberLevel !== member.memberLevel) return false;
+
+  if (benefit.source === "lingji-member") return member.memberLevel === "lingji";
+  if (benefit.source === "single-purchase-15000") {
+    return Number(benefit.qualifyingPurchaseAmount || 0) >= 15000
+      && Boolean(String(benefit.confirmedBy || "").trim())
+      && Boolean(memberAccessDate(benefit.confirmedAt));
+  }
+  return false;
+}
+
+function hasPaidAccess(articleId = "") {
+  if (isAdminEmail(currentUser?.email)) return true;
+  if (!currentUser?.email || !currentSponsorAccess) return false;
+
+  const userEmail = currentUser.email.trim().toLowerCase();
+  const directAccess = hasDirectSponsorAccess(currentSponsorAccess, userEmail);
+  const wellnessAccess = hasWellnessArticleBenefit(currentSponsorAccess, currentMemberAccess, userEmail);
+  if (!directAccess && !wellnessAccess) return false;
+
+  const entitlement = directAccess ? currentSponsorAccess : currentSponsorAccess.wellnessBenefit;
+  const deniedArticleIds = Array.isArray(entitlement.deniedArticleIds)
+    ? entitlement.deniedArticleIds.map(String)
+    : [];
+  if (articleId && deniedArticleIds.includes(String(articleId))) return false;
+
+  const allowedArticleIds = Array.isArray(entitlement.allowedArticleIds)
+    ? entitlement.allowedArticleIds.map(String)
+    : [];
+  if (allowedArticleIds.length > 0 && (!articleId || !allowedArticleIds.includes(String(articleId)))) return false;
+
+  return true;
+}
+
+async function loadMemberAccess(user) {
+  currentMemberAccess = null;
+  currentSponsorAccess = null;
+  if (!user?.email || isAdminEmail(user.email)) return;
+  try {
+    const email = user.email.trim().toLowerCase();
+    const [memberSnapshot, sponsorSnapshot] = await Promise.all([
+      getDoc(doc(db, "memberAccess", email)),
+      getDoc(doc(db, "sponsorMemberAccess", email))
+    ]);
+
+    if (memberSnapshot.exists()) {
+      const record = memberSnapshot.data() || {};
+      const recordEmail = String(record.email || memberSnapshot.id || "").trim().toLowerCase();
+      if (recordEmail === email) currentMemberAccess = { ...record, email: recordEmail };
+      else console.warn("一般會員資料 Email 與登入帳號不一致，已拒絕載入。");
+    }
+
+    if (sponsorSnapshot.exists()) {
+      const record = sponsorSnapshot.data() || {};
+      const recordEmail = String(record.email || sponsorSnapshot.id || "").trim().toLowerCase();
+      if (recordEmail === email) currentSponsorAccess = { ...record, email: recordEmail };
+      else console.warn("贊助會員資料 Email 與登入帳號不一致，已拒絕授權。");
+    }
+  } catch (error) {
+    console.warn("會員閱讀資格暫時無法確認。", error);
+    currentMemberAccess = null;
+    currentSponsorAccess = null;
+  }
+}
+
+async function eventArticleKey(article) {
+  const key = article.id || article.slug;
+  if (magicToken && (!magicEventId || magicEventId === article.eventId)) {
+    const hash = await magicTokenHash(magicToken);
+    const record = article.magicLinkAccess?.[hash];
+    const expiresAt = Date.parse(record?.expiresAt || "");
+    if (record?.status === "active" && Number.isFinite(expiresAt) && expiresAt > Date.now()) {
+      return unwrapEventKey(record, magicToken);
+    }
+  }
+  if (isAdminEmail(currentUser?.email)) {
+    const snapshot = await getDoc(doc(db, "membershipSettings", "eventArticleKeys"));
+    return snapshot.exists() ? snapshot.data().keys?.[key] || "" : "";
+  }
+  if (currentMemberAccess?.eventAccess?.[article.eventId]?.status !== "active") return "";
+  return currentMemberAccess?.eventArticleKeys?.[key] || "";
+}
+
+async function hydrateEventArticle(article) {
+  if (!articleIsEvent(article)) return article;
+  if (!currentUser && !magicToken) return article;
+  const key = await eventArticleKey(article);
+  if (!key) return article;
+  try {
+    const content = await decryptEventContent(article.encryptedContent, article.contentIv, key);
+    return { ...article, content, eventAccessGranted: true };
+  } catch (error) {
+    console.warn("活動限定文章解密失敗。", error);
+    return article;
+  }
+}
+
+function renderSupportGate(lockedContent) {
+  if (!lockedContent) return "";
+  return `
+    <section class="article-support-gate" aria-label="繼續閱讀全文">
+      <div class="article-support-preview" aria-hidden="true">${renderContent(lockedContent)}</div>
+      <div class="article-support-card">
+        <strong>文章未完，繼續閱讀</strong>
+        <p>若這篇文章對你有所啟發，歡迎訂閱 YouTube、追蹤 Facebook，持續收到新的靈修解析。</p>
+        <div class="article-support-actions">
+          <a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">訂閱 靈元院YouTube</a>
+          <a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">追蹤 靈元院 Facebook</a>
+        </div>
+        <button class="article-continue" type="button">繼續閱讀全文</button>
+      </div>
+    </section>
+  `;
+}
+
+function bindArticleContinue() {
+  const button = document.querySelector(".article-continue");
+  const remaining = document.getElementById("article-remaining-content");
+  const gate = document.querySelector(".article-support-gate");
+  if (!button || !remaining) return;
+  button.addEventListener("click", () => {
+    remaining.hidden = false;
+    gate?.remove();
+    remaining.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function renderPaidGate(article) {
+  return `<section class="article-paid-gate"><strong>贊助專屬文章</strong><p>此篇為贊助專屬內容，請使用具有閱讀資格的 Gmail 登入。</p><button class="article-paid-login" type="button">會員登入</button></section>`;
+}
+
+function bindPaidLogin() {
+  document.querySelector(".article-paid-login")?.addEventListener("click", () => {
+    location.href = `member-login.html?redirect=${encodeURIComponent(location.href)}`;
+  });
+}
+
+function renderEventGate(article) {
+  return `<section class="article-paid-gate"><strong>活動限定文章</strong><p>此篇僅提供指定活動參與者閱讀。</p></section>`;
+}
+
+function bindEventLogin() {}
+
+function renderRecommendedBook(article) {
+  if (!article.bookTitle) return "";
+  const url = article.bookPurchaseUrl || bookUrl;
+  return `<aside class="recommended-book"><div><small>延伸閱讀</small><strong>${escapeHtml(article.bookTitle)}</strong><span>${escapeHtml(article.bookAuthor || "")}${article.bookPublisher ? `｜${escapeHtml(article.bookPublisher)}` : ""}</span></div><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">查看著作</a></aside>`;
 }
 
 function renderBookCta() {
   return `<div class="article-book-link-wrap"><a class="article-book-link" href="${bookUrl}" target="_blank" rel="noopener noreferrer">延伸閱讀｜宇色靈修著作</a></div>`;
 }
 
-function renderMetricSummary(articleId, compact = false) {
-  const metric = articleMetrics.get(articleId) || {};
-  const views = Number(metric.views || 0);
-  const shares = Number(metric.shares || 0);
-  const copies = Number(metric.copies || 0);
-  return `
-    <div class="article-engagement${compact ? " is-compact" : ""}" data-metric-summary="${escapeHtml(articleId)}">
-      <span>閱讀 <b data-metric-value="views">${views}</b></span>
-      <span>分享 <b data-metric-value="shares">${shares}</b></span>
-      <span>複製 <b data-metric-value="copies">${copies}</b></span>
-    </div>
-  `;
+function renderNextReading(article) {
+  const guide = getArticleGuide(article);
+  const nextId = guide.nextId;
+  if (!nextId) return "";
+  const target = loadedArticles.find((item) => articleKey(item) === nextId);
+  if (!target) return "";
+  return `<aside class="next-reading"><div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div><a href="articles.html?id=${encodeURIComponent(nextId)}"><strong>${escapeHtml(target.title || "延伸閱讀")}</strong><span>${escapeHtml((getArticleGuide(target).topics || []).join("・"))}</span></a></aside>`;
 }
 
-function updateMetricSummary(articleId) {
-  document.querySelectorAll(`[data-metric-summary="${CSS.escape(articleId)}"]`).forEach((node) => {
-    const metric = articleMetrics.get(articleId) || {};
-    ["views", "shares", "copies"].forEach((key) => {
-      const target = node.querySelector(`[data-metric-value="${key}"]`);
-      if (target) target.textContent = String(Number(metric[key] || 0));
-    });
-  });
-}
-
-function sortPublished(a, b) {
-  return new Date(b.publishedAt || b.updatedAt || 0) - new Date(a.publishedAt || a.updatedAt || 0);
-}
-
-function renderTabs() {
-  if (!tabs) return;
-  const counts = loadedArticles.reduce((acc, article) => {
-    acc.total += 1;
-    acc.categories[article.category] = (acc.categories[article.category] || 0) + 1;
-    const access = articleAccess(article);
-    acc.access[access] = (acc.access[access] || 0) + 1;
-    return acc;
-  }, { total: 0, categories: {}, access: { free: 0, paid: 0, event: 0 } });
-  tabs.innerHTML = `
-    <div class="article-filter-panel" id="article-filters">
-      <div class="filter-heading">
-        <strong>文章分類</strong>
-        <span>依主題或閱讀方式瀏覽</span>
-      </div>
-      <div class="filter-row category-filter" aria-label="文章主題分類">
-        <a class="${!activeCategory ? "is-active" : ""}" href="articles.html${activeAccess !== "all" ? `?access=${encodeURIComponent(activeAccess)}` : ""}">全部 <small>${counts.total}</small></a>
-        ${Object.entries(categoryLabels).map(([key, label]) => {
-          const queryParts = [`category=${encodeURIComponent(key)}`];
-          if (activeAccess !== "all") queryParts.push(`access=${encodeURIComponent(activeAccess)}`);
-          return `<a class="${activeCategory === key ? "is-active" : ""}" href="articles.html?${queryParts.join("&")}">${label} <small>${counts.categories[key] || 0}</small></a>`;
-        }).join("")}
-      </div>
-      <div class="filter-row access-filter" aria-label="文章閱讀方式">
-        ${[
-          ["all", "全部文章", counts.total],
-          ["free", "免費閱讀", counts.access.free || 0],
-          ["paid", "贊助專屬", counts.access.paid || 0],
-          ["event", "活動限定", counts.access.event || 0]
-        ].map(([key, label, count]) => {
-          const queryParts = [];
-          if (activeCategory) queryParts.push(`category=${encodeURIComponent(activeCategory)}`);
-          if (key !== "all") queryParts.push(`access=${encodeURIComponent(key)}`);
-          return `<a class="${activeAccess === key ? "is-active" : ""}" href="articles.html${queryParts.length ? `?${queryParts.join("&")}` : ""}">${label} <small>${count}</small></a>`;
-        }).join("")}
-      </div>
-    </div>
-  `;
-}
-
-function addGuanyinVowLampImages(content = "", articleId = "") {
-  if (articleId !== "guanyin-chengdao-vow-reading") return content;
-  const imageOne = "![觀世音菩薩成道法會・觀音應化啟願燈](assets/articles/guanyin-vow-lamp-01.jpg?v=20260731-1)";
-  const imageTwo = "![法會後的供桌與供果](assets/articles/guanyin-vow-lamp-02.jpg?v=20260731-1)";
-  let next = content;
-  if (!next.includes("guanyin-vow-lamp-01.jpg")) {
-    next = next.replace("## 法會結束後，我一直在想一件事", `${imageOne}\n\n## 法會結束後，我一直在想一件事`);
-  }
-  if (!next.includes("guanyin-vow-lamp-02.jpg")) {
-    next = next.replace("## 願要被聽見，也需要準備承擔", `${imageTwo}\n\n## 願要被聽見，也需要準備承擔`);
-  }
-  return next;
-}
-
-function renderEventGate(article) {
-  return `
-    <div class="member-lock-card event-lock-card">
-      <div class="member-lock-icon">◌</div>
-      <h3>活動限定文章</h3>
-      <p>這篇內容只開放給本場活動的報名者閱讀。</p>
-      <button id="event-login-button">使用 Gmail 登入</button>
-      <small>請使用報名時填寫的 Gmail。</small>
-    </div>
-  `;
-}
-
-function renderSupportGate(lockedContent = "") {
-  return `
-    <div class="member-lock-zone article-support-zone" id="article-support-zone">
-      <div class="member-lock-preview" aria-hidden="true">${renderContent(lockedContent)}</div>
-      <div class="member-lock-card article-support-card">
-        <div class="member-lock-icon">◇</div>
-        <h3>文章未完，繼續閱讀</h3>
-        <p>若這篇文章對你有所啟發，歡迎訂閱<br>YouTube、追蹤 Facebook，持續收到新的靈修解析。</p>
-        <div class="article-support-actions">
-          <a class="article-support-link youtube" href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">訂閱 靈元院YouTube</a>
-          <a class="article-support-link facebook" href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">追蹤 靈元院 Facebook</a>
-        </div>
-        <div class="article-author-links" aria-label="宇色老師">
-          <span>宇色老師</span>
-          <a href="https://www.youtube.com/@oselteacher" target="_blank" rel="noopener noreferrer">影音</a>
-          <i>・</i>
-          <a href="https://www.facebook.com/osel.teacher" target="_blank" rel="noopener noreferrer">文章</a>
-        </div>
-        <button id="article-continue-button" type="button">繼續閱讀全文</button>
-      </div>
-    </div>
-  `;
-}
-
-function bindArticleContinue() {
-  const button = document.getElementById("article-continue-button");
-  const zone = document.getElementById("article-support-zone");
-  const remaining = document.getElementById("article-remaining-content");
-  if (!button || !zone || !remaining) return;
-  button.addEventListener("click", () => {
-    zone.remove();
-    remaining.hidden = false;
-    remaining.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-}
-
-function renderPaidGate(article = {}) {
-  const checkoutOneMonth = "https://shop.lyyuan.tw/sponsor/1-month";
-  const checkoutThreeMonths = "https://shop.lyyuan.tw/sponsor/3-months";
-  return `
-    <div class="member-lock-zone paid-lock-zone">
-      <div class="member-lock-preview" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="member-lock-card paid-lock-card">
-        <div class="member-lock-icon">◇</div>
-        <h3>贊助專屬文章</h3>
-        <p>這篇文章屬於贊助專屬閱讀內容。已有資格者請使用 Gmail 登入；若要加入，可直接選擇閱讀方案。</p>
-        <div class="paid-inquiry-actions">
-          <button id="paid-login-button" class="paid-inquiry-primary" type="button">Gmail 登入閱讀</button>
-          <a class="paid-inquiry-primary sponsor-checkout" data-plan="1-month" href="${checkoutOneMonth}" target="_blank" rel="noopener noreferrer">一個月方案</a>
-          <a class="paid-inquiry-primary sponsor-checkout" data-plan="3-month" href="${checkoutThreeMonths}" target="_blank" rel="noopener noreferrer">三個月方案</a>
-          <a class="paid-inquiry-secondary" href="https://lin.ee/rDAAj5c" target="_blank" rel="noopener noreferrer">加入 LINE 詢問</a>
-        </div>
-        <small>方案資格依官網最新公告與後台有效會期為準。</small>
-      </div>
-    </div>
-  `;
-}
-
-function bindEventLogin() {
-  const button = document.getElementById("event-login-button");
-  if (!button) return;
-  button.addEventListener("click", () => {
-    window.dispatchEvent(new CustomEvent("lyyuan:request-google-login", { detail: { returnUrl: location.href } }));
-  });
-}
-
-function bindPaidLogin() {
-  const button = document.getElementById("paid-login-button");
-  if (!button) return;
-  button.addEventListener("click", () => {
-    window.dispatchEvent(new CustomEvent("lyyuan:request-google-login", { detail: { returnUrl: location.href } }));
-  });
-}
-
-function articleShareUrl(article = {}) {
-  const path = String(article.sharePath || "").trim();
-  if (path) return new URL(path, location.origin).href;
+function getShareUrl(article) {
+  if (article?.sharePath) return new URL(article.sharePath, location.origin).href;
   return new URL(`articles.html?id=${encodeURIComponent(articleKey(article))}`, location.origin).href;
 }
 
-function renderArticleShare(article = {}) {
-  const shareUrl = articleShareUrl(article);
-  const title = article.title || "靈元院文選";
+function renderArticleShare(article) {
+  const articleId = articleKey(article);
+  const shareUrl = getShareUrl(article);
   const encodedUrl = encodeURIComponent(shareUrl);
-  const encodedText = encodeURIComponent(`${title}\n${shareUrl}`);
+  const encodedText = encodeURIComponent(`${article.title || "靈元院文選"} ${shareUrl}`);
+  const encodedTitle = encodeURIComponent(article.title || "靈元院文選");
   return `
     <div class="article-share" aria-label="文章分享">
-      <a class="article-social-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Facebook" title="分享到 Facebook" data-share-metric="facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5H17V3.9c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4V10H8.2v3h2.6v8h2.9Z"/></svg></a>
-      <a class="article-social-instagram" href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="前往靈元院 Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
-      <a class="article-share-line" href="https://social-plugins.line.me/lineit/share?url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="分享到 LINE" title="分享到 LINE" data-share-metric="line"><span class="article-line-mark" aria-hidden="true">LINE</span></a>
-      <a class="article-share-telegram" href="https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(title)}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Telegram" title="分享到 Telegram" data-share-metric="telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m21.4 4.2-3 14.1c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.5.5-.9.5l.3-4.7 8.6-7.8c.4-.3-.1-.5-.6-.2L6.7 12.3 2.1 10.9c-1-.3-1-1 .2-1.5L20.1 2.6c.8-.3 1.6.2 1.3 1.6Z"/></svg></a>
-      <a class="article-share-email" href="mailto:?subject=${encodeURIComponent(title)}&body=${encodedText}" aria-label="使用 Email 分享文章" title="使用 Email 分享文章" data-share-metric="email"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M3 5h18v14H3z"/><path fill="none" stroke="currentColor" stroke-width="2" d="m4 7 8 6 8-6"/></svg></a>
-      <button class="article-share-copy" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="複製文章連結" title="複製文章連結"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 6V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h1" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+      ${renderMetricSummary(articleId)}
+      <div class="article-share-actions">
+        <a class="article-share-icon facebook" href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Facebook" title="Facebook">f</a>
+        <a class="article-share-icon instagram" href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="Instagram">◎</a>
+        <a class="article-share-icon line" data-share-metric href="https://social-plugins.line.me/lineit/share?url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="分享到 LINE" title="LINE">L</a>
+        <a class="article-share-icon telegram" data-share-metric href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Telegram" title="Telegram">T</a>
+        <a class="article-share-icon email" data-share-metric href="mailto:?subject=${encodedTitle}&body=${encodedText}" aria-label="用 Email 分享" title="Email">@</a>
+        <button class="article-share-icon copy article-share-copy" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="複製文章連結" title="複製連結">⧉</button>
+      </div>
       <span class="article-share-status" role="status" aria-live="polite"></span>
     </div>
   `;
@@ -596,10 +833,10 @@ function renderArticle(article) {
     return;
   }
   document.title = `${article.title}｜靈元院文選`;
-  const articleKeyValue = article.id || article.slug || activeId;
+  const articleKey = article.id || article.slug || activeId;
   if (articleIsEvent(article) && !article.eventAccessGranted) {
     root.innerHTML = `
-      <article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}">
+      <article class="article-view" data-article-id="${escapeHtml(articleKey)}">
         <a class="article-back" href="articles.html">← 返回全部文選</a>
         <div class="article-meta">${categoryLabels[article.category] || "文選"}｜活動限定</div>
         <h2>${escapeHtml(article.title || "未命名文章")}</h2>
@@ -611,16 +848,16 @@ function renderArticle(article) {
     bindEventLogin();
     return;
   }
-  const articleContent = addGuanyinVowLampImages(article.content || "", articleKeyValue);
-  const { publicContent, lockedContent, accessType } = splitMemberContent(articleContent, articleKeyValue);
+  const articleContent = addGuanyinVowLampImages(article.content || "", articleKey);
+  const { publicContent, lockedContent, accessType } = splitMemberContent(articleContent, articleKey);
   root.innerHTML = `
-    <article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}">
+    <article class="article-view" data-article-id="${escapeHtml(articleKey)}">
       <a class="article-back" href="articles.html">← 返回全部文選</a>
       <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
       <h2>${escapeHtml(article.title || "未命名文章")}</h2>
       ${renderArticleGuide(article)}
       ${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}
-      ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKeyValue) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}
+      ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKey) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}
       <div class="article-body">${renderContent(publicContent)}</div>
       ${accessType === "member" ? renderSupportGate(lockedContent) : ""}
       ${accessType === "paid" ? renderPaidGate(article) : ""}
@@ -634,9 +871,9 @@ function renderArticle(article) {
   bindLimitedReadingCountdowns();
   if (accessType === "member") bindArticleContinue();
   if (accessType === "paid") bindPaidLogin();
-  bindArticleShare(articleKeyValue);
+  bindArticleShare(articleKey);
   bindArticleExperience();
-  trackArticleView(articleKeyValue);
+  trackArticleView(articleKey);
 }
 
 function renderCurrentView() {
@@ -769,6 +1006,7 @@ async function loadArticles() {
   ));
   loadedArticles = hydratedArticles.sort(sortPublished);
   renderTabs();
+
   renderCurrentView();
   void loadArticleMetrics().then(() => {
     loadedArticles.forEach((article) => updateMetricSummary(articleKey(article)));
