@@ -31,8 +31,55 @@ nav{position:fixed;z-index:100;top:0;left:0;right:0;height:56px;background:rgba(
 .toc{margin:0 0 28px;border:1px solid rgba(89,79,71,.25);background:rgba(255,255,255,.28)}.toc summary{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;color:#493724;font-size:14px;font-weight:700;letter-spacing:.08em;cursor:pointer;list-style:none}.toc summary::-webkit-details-marker{display:none}.toc summary:after{content:"＋";color:#8b683f;font-size:20px}.toc[open] summary:after{content:"－"}.toc ol{margin:0;padding:8px 18px 16px 18px;border-top:1px solid rgba(89,79,71,.15);list-style:none}.toc li+li{border-top:1px solid rgba(89,79,71,.1)}.toc a{display:flex;gap:12px;padding:11px 2px;color:#493724;font:500 14px/1.6 var(--serif);text-decoration:none}.toc a span{flex:0 0 24px;color:#9a774d;font:500 11px/2.05 var(--sans)}
 .cover,figure img{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center;border:1px solid rgba(90,67,42,.22)}
 .cover{margin:0 0 38px}.content{font:400 19px/2.05 var(--serif);letter-spacing:.025em}.content p{margin:0 0 1.55em}.content h2,.content h3{scroll-margin-top:124px;margin:2em 0 .8em;padding-top:.35em;color:#644a2d;border-top:1px solid rgba(89,79,71,.15);font-weight:700;line-height:1.65}.content h2{font-size:27px}.content h3{font-size:21px}.content figure{width:100%;margin:36px 0;padding:0}.content figcaption{margin-top:8px;color:#725c42;font:400 12px/1.6 var(--sans);text-align:center}
-.footer-note{margin-top:40px;padding-top:20px;border-top:1px solid rgba(89,79,71,.2);color:#725c42;font-size:12px;text-align:center}
 @media(max-width:900px){.nav-inner{justify-content:flex-start}.page{width:100%;padding:12px 12px 54px}.article{width:100%;max-width:100%;padding:30px 20px 38px;overflow:hidden}.hero{padding:34px 16px 30px}.hero h1{font-size:30px}.content{font-size:18px;line-height:2}.content h2{font-size:24px}.toc a{font-size:13px}.cover,figure img{width:100%!important;max-width:100%!important;height:auto!important;aspect-ratio:16/9!important;object-fit:cover!important}}
+
+/* 完整文章結尾：下一篇主題 → 雙導流卡 → 作者 → CTA → 分享 → 文選導覽 */
+.article-ending{margin-top:50px;padding-top:4px}
+.next-reading{margin:0 0 24px;padding:24px;border-top:1px solid rgba(90,67,42,.25);border-bottom:1px solid rgba(90,67,42,.25);background:rgba(255,255,255,.18)}
+.next-reading-eyebrow{margin-bottom:9px;color:#8b683f;font:500 12px/1.6 var(--sans);letter-spacing:.12em}
+.next-reading a{display:block;color:#493724;text-decoration:none}
+.next-reading strong{display:block;font:700 22px/1.65 var(--serif)}
+.next-reading span{display:block;margin-top:7px;color:#725c42;font:500 12px/1.7 var(--sans);letter-spacing:.08em}
+.next-reading a:hover strong,.next-reading a:focus-visible strong{color:#8b683f}
+.article-book-link-wrap{display:flex;justify-content:center;margin:30px 0 12px}
+.article-book-link{display:inline-flex;min-height:44px;align-items:center;padding:10px 15px;border:1px solid rgba(90,67,42,.3);background:rgba(165,130,84,.1);color:#664b2d;font:500 13px/1.5 var(--sans);letter-spacing:.08em;text-decoration:none}
+.article-author-card,.article-subscribe-cta,.article-share-panel{margin:28px 0 0;padding:24px;border:1px solid rgba(90,67,42,.22);background:rgba(255,255,255,.2)}
+.article-author-line{margin:0 0 10px!important;color:#493724;font:700 15px/1.8 var(--sans)!important;letter-spacing:.06em}
+.article-author-line a{color:#6d4f2d;text-decoration:none;border-bottom:1px solid rgba(109,79,45,.32)}
+.article-author-line span{padding:0 5px;color:#9a846a}
+.article-author-note{margin:0!important;color:#725c42;font:400 13px/1.9 var(--sans)!important}
+.article-subscribe-cta{text-align:center;background:linear-gradient(145deg,rgba(255,255,255,.34),rgba(222,225,205,.46))}
+.article-subscribe-cta p{max-width:600px;margin:0 auto 18px!important;color:#493724;font:500 15px/1.9 var(--serif)!important}
+.article-cta-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.article-cta-button{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:10px 18px;border:1px solid rgba(89,79,71,.32);background:#8b683f;color:#fffdf8!important;font:500 13px/1.5 var(--sans);letter-spacing:.06em;text-decoration:none!important}
+.article-cta-button.is-aesthetics{background:#606330}
+.article-share-panel{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.article-share-heading{color:#493724;font:700 14px/1.6 var(--sans);letter-spacing:.08em}
+.article-share-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.article-share-action{display:inline-flex;min-width:42px;height:42px;align-items:center;justify-content:center;padding:0 12px;border:1px solid rgba(89,79,71,.24);border-radius:999px;background:#f5f0e8;color:#594f47!important;font:700 12px/1 var(--sans);text-decoration:none!important;cursor:pointer;box-shadow:0 3px 9px rgba(48,42,35,.1)}
+.article-share-action.is-facebook{background:#435f84;color:#fff!important}.article-share-action.is-line{background:#4f7b53;color:#fff!important}.article-share-action.is-x{background:#403d39;color:#fff!important}
+.article-share-status{min-height:1em;margin-top:8px;color:#725c42;font:400 11px/1.5 var(--sans);text-align:right}
+.article-pagination{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.48fr);gap:14px;margin:30px 0 4px;padding-top:26px;border-top:1px solid rgba(89,79,71,.2)}
+.article-pagination a{display:flex;min-height:92px;flex-direction:column;justify-content:center;padding:17px 19px;border:1px solid rgba(89,79,71,.22);background:rgba(255,255,255,.2);color:#493724;text-decoration:none}
+.article-pagination small{margin-bottom:5px;color:#8b683f;font:500 11px/1.5 var(--sans);letter-spacing:.12em}
+.article-pagination strong{font:700 15px/1.7 var(--serif)}
+.article-pagination a:hover,.article-pagination a:focus-visible{border-color:rgba(89,79,71,.45);background:rgba(255,255,255,.34)}
+@media(max-width:760px){
+  .article-ending{margin-top:42px}
+  .next-reading,.article-author-card,.article-subscribe-cta,.article-share-panel{padding:20px}
+  .next-reading strong{font-size:20px}
+  .article-share-panel{align-items:flex-start;flex-direction:column}
+  .article-share-actions{justify-content:flex-start}
+  .article-share-status{text-align:left}
+  .article-pagination{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+  .next-reading,.article-author-card,.article-subscribe-cta,.article-share-panel{padding:18px}
+  .article-cta-actions{display:grid;grid-template-columns:1fr}
+  .article-cta-button{width:100%}
+  .article-share-action{min-width:40px;height:40px;padding:0 10px}
+}
+
 </style>
 </head>
 <body class="article-static-page">
@@ -126,10 +173,65 @@ nav{position:fixed;z-index:100;top:0;left:0;right:0;height:56px;background:rgba(
 <p>至於接下來怎麼走，仍然是每一個人自己的功課。</p>
 <p>前行之路，即是歸返之路。</p>
 <p>宇色</p></div>
-<div class="footer-note">前行之路，即是歸返之路。｜宇色</div>
+
+<section class="article-ending" aria-label="文章延伸閱讀與完整文末資訊">
+  <aside class="next-reading">
+    <div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div>
+    <a href="/article/yuanshen-destiny-archetype.html">
+      <strong>你的元神不是神祕身分，而是你一生逃不掉的命運原型</strong>
+      <span>元神原型・心性與業力・生命轉化</span>
+    </a>
+  </aside>
+
+  <div class="article-book-link-wrap">
+    <a class="article-book-link" href="https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh" target="_blank" rel="noopener noreferrer">延伸閱讀｜宇色靈修著作</a>
+  </div>
+
+  <section class="article-author-card" aria-label="作者資訊">
+    <p class="article-author-line">作者：<a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">宇色</a><span>｜</span><a href="https://lyyuan.tw/">靈元院</a></p>
+    <p class="article-author-note">本文由靈元院依專題架構編撰，內容結合靈性觀點與生活實踐，著作與延伸閱讀請依站內連結參閱。</p>
+  </section>
+
+  <section class="article-subscribe-cta" aria-label="訂閱與延伸閱讀">
+    <p>如果你喜歡這篇文章，歡迎訂閱、分享，並持續回到靈元院閱讀更多內容。</p>
+    <div class="article-cta-actions">
+      <a class="article-cta-button" href="https://t.me/lyyuan_channel" target="_blank" rel="noopener noreferrer">訂閱靈元院</a>
+      <a class="article-cta-button is-aesthetics" href="/spiritual-aesthetics.html">前往靈性美學館</a>
+    </div>
+  </section>
+
+  <section class="article-share-panel" aria-label="分享文章">
+    <div class="article-share-heading">分享這篇文章</div>
+    <div>
+      <div class="article-share-actions">
+        <a class="article-share-action is-facebook" data-share-link="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Flyyuan.tw%2Farticle%2Fthis-book-took-thirty-years.html" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a class="article-share-action is-line" data-share-link="line" href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Flyyuan.tw%2Farticle%2Fthis-book-took-thirty-years.html" target="_blank" rel="noopener noreferrer">LINE</a>
+        <a class="article-share-action is-x" data-share-link="x" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Flyyuan.tw%2Farticle%2Fthis-book-took-thirty-years.html&text=%E9%80%99%E6%9C%AC%E6%9B%B8%EF%BC%8C%E6%88%91%E5%AF%AB%E4%BA%86%E4%B8%89%E5%8D%81%E5%B9%B4" target="_blank" rel="noopener noreferrer">X</a>
+        <button class="article-share-action article-copy-link" type="button" data-copy-url="https://lyyuan.tw/article/this-book-took-thirty-years.html">複製連結</button>
+      </div>
+      <div class="article-share-status" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <nav class="article-pagination" aria-label="上一篇文章與全部文選">
+    <a href="/article/yuanshen-destiny-archetype.html">
+      <small>上一篇文選</small>
+      <strong>你的元神不是神祕身分，而是你一生逃不掉的命運原型</strong>
+    </a>
+    <a href="/articles.html">
+      <small>文章導覽</small>
+      <strong>返回全部文選</strong>
+    </a>
+  </nav>
+</section>
 </article></main>
 <script>
 (()=>{const toc=document.querySelector(".article-toc");const button=toc?.querySelector(".article-toc-toggle");if(!toc||!button)return;button.addEventListener("click",()=>{const open=toc.classList.toggle("is-open");button.setAttribute("aria-expanded",String(open))});toc.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{toc.classList.remove("is-open");button.setAttribute("aria-expanded","false")}))})();
+</script>
+
+<script src="/article-destination-links.js?v=20260810-complete-ending-1" defer></script>
+<script>
+(()=>{const button=document.querySelector(".article-copy-link");const status=document.querySelector(".article-share-status");if(!button)return;button.addEventListener("click",async()=>{const url=button.dataset.copyUrl;try{await navigator.clipboard.writeText(url);if(status)status.textContent="已複製文章連結"}catch(error){window.prompt("請複製文章連結",url)}})})();
 </script>
 <script type="module" src="/site-auth-nav.js?v=20260810-static-article-1"></script>
 </body></html>
