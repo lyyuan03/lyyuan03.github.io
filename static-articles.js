@@ -7,7 +7,7 @@ import { youCanNotFearDeathArticle } from "./article-you-can-not-fear-death.js?v
 import { howToJudgeTrueLingxiuUnderstandingArticle } from "./article-how-to-judge-true-lingxiu-understanding-display.js?v=20260803-publish-1";
 import { loveBeyondFilialPietyArticle } from "./article-love-beyond-filial-piety-photo.js?v=20260810-original-photo-fix-1";
 import { yuanshenDestinyArchetypeArticle } from "./article-yuanshen-destiny-archetype.js?v=20260807-final-1";
-import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-years.js?v=20260810-1";
+import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-years.js?v=20260810-2";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
