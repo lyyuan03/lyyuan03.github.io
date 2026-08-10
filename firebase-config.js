@@ -1,11 +1,10 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const currentPath = location.pathname;
 const isAdminPage = /(^|\/)admin\.html$/i.test(currentPath);
-const isAdminSectionRoute = /^#(?:activity-management|sponsor-members|wellness-members|member-video-management)$/i.test(location.hash);
 
 if (/(^|\/)articles\.html$/i.test(currentPath)) {
   import("./article-protection.js?v=20260723-member-watermark-1");
@@ -49,26 +48,12 @@ export function isAdminEmail(email) {
   return ADMIN_EMAILS.includes(normalizeEmail(email));
 }
 
-// 後台曾成功載入管理員帳號後，按下「登出」即離開後台，
-// 並處理登出後仍停留在管理區段網址的舊分頁。
-if (isAdminPage) {
-  const adminSessionMarker = "lyyuan-admin-session-active";
-  onAuthStateChanged(auth, (user) => {
-    if (user && isAdminEmail(user.email)) {
-      sessionStorage.setItem(adminSessionMarker, "1");
-      return;
-    }
-
-    const hadAdminSession = sessionStorage.getItem(adminSessionMarker) === "1";
-    if (!user && (hadAdminSession || isAdminSectionRoute)) {
-      sessionStorage.removeItem(adminSessionMarker);
-      window.location.replace("/member-dashboard.html");
-    }
-  });
-}
+// 後台登入狀態由 article-admin.js 統一管理。
+// 不在 Firebase 初始化階段以「暫時尚未取得 user」判定為登出並跳頁，
+// 避免 iPhone／iPad 經 Google 登入返回 admin.html 時被過早導回會員頁。
 
 // 所有使用 Firebase 的頁面都載入同一套登入相容處理，
 // 讓 iPhone、iPad、Android 與桌機使用一致的 Email 判讀與登入狀態。
-import("./auth-mobile-compat.js?v=20260803-mobile-login-1").catch((error) => {
+import("./auth-mobile-compat.js?v=20260810-admin-login-race-fix-1").catch((error) => {
   console.error("跨裝置登入相容模組載入失敗：", error);
 });
