@@ -43,7 +43,12 @@ function start() {
   fixArticleImages(root);
 
   const observer = new MutationObserver(() => fixArticleImages(root));
-  observer.observe(root, { childList: true, subtree: true });
+  observer.observe(root, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["src", "srcset"]
+  });
 }
 
 if (document.readyState === "loading") {
