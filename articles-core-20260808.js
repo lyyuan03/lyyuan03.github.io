@@ -16,6 +16,8 @@ const params = new URLSearchParams(location.search);
 const activeCategory = params.get("category") || "";
 const activeAccess = params.get("access") || "all";
 const activeId = params.get("id") || "";
+const standaloneArticlePaths = new Map([["this-book-took-thirty-years", "/article/this-book-took-thirty-years.html"]]);
+if (standaloneArticlePaths.has(activeId)) location.replace(standaloneArticlePaths.get(activeId));
 const magicToken = params.get("token") || "";
 const magicEventId = params.get("event") || "";
 const memberMarker = "<!-- member-only -->";
@@ -450,7 +452,7 @@ function renderList(articles) {
         const access = articleAccess(article);
         const accessLabel = access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
         return `
-          <a class="article-card" data-article-id="${escapeHtml(key)}" href="articles.html?id=${encodeURIComponent(key)}${magicToken ? `&event=${encodeURIComponent(article.eventId || magicEventId)}&token=${encodeURIComponent(magicToken)}` : ""}">
+          <a class="article-card" data-article-id="${escapeHtml(key)}" href="${standaloneArticlePaths.get(key) || `articles.html?id=${encodeURIComponent(key)}`}${magicToken ? `&event=${encodeURIComponent(article.eventId || magicEventId)}&token=${encodeURIComponent(magicToken)}` : ""}">
             <div class="article-card-media">
               ${getArticleThumbnail(article) ? `<img src="${escapeHtml(getArticleThumbnail(article))}" alt="${escapeHtml(article.title || "靈元院文選")}" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
               <div class="article-card-media-gradient" aria-hidden="true"></div>
