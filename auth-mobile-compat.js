@@ -104,6 +104,14 @@ async function beginGoogleLogin(button, flow) {
       return;
     }
 
+    // 管理員從任何前台會員登入入口登入時，都應直接進入後台。
+    // 原本行動裝置相容層會攔截前台登入按鈕，卻沒有補上這個導向，
+    // 造成管理員登入後仍停留前台，甚至再次被要求登入。
+    if (result.user && isAdminEmail(result.user.email)) {
+      if (location.pathname !== "/admin.html") location.replace("/admin.html");
+      return;
+    }
+
     if (flow === "member") {
       document.getElementById("member-login-modal")?.classList.remove("is-open");
     }
