@@ -10,6 +10,22 @@ const categoryLabels = {
   reading: "思．讀物"
 };
 
+/**
+ * 文選 topics 固定詞表（唯一合法來源）。
+ * 新增文章時，topics 必須從這份清單挑選，不得自行新增詞彙。
+ * 如確有新增關鍵字的需求，必須先修改這份清單，並經使用者確認後才可使用。
+ * 「宇色著作」是獨立來源標籤，不屬於 topics。
+ */
+const ALLOWED_ARTICLE_TOPICS_BY_CATEGORY = Object.freeze({
+  spiritual: Object.freeze(["元神與人格", "靈修辨識", "感應與修為", "修行心性", "信仰與人"]),
+  worldly: Object.freeze(["金錢意識", "自我信任", "生命選擇", "社會觀察"]),
+  "spirit-world": Object.freeze(["神明與修行", "亡者接觸", "靈乩辨識", "靈界辨識", "權力與界線"]),
+  reading: Object.freeze(["財富", "神祕學", "榮格", "塔羅牌"])
+});
+const ALLOWED_ARTICLE_TOPICS = Object.freeze(
+  Object.values(ALLOWED_ARTICLE_TOPICS_BY_CATEGORY).flat()
+);
+
 const root = document.getElementById("article-root");
 const tabs = document.getElementById("category-tabs");
 const params = new URLSearchParams(location.search);
@@ -31,92 +47,93 @@ const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype"]);
 const articleGuides = {
   "this-book-took-thirty-years": {
-    topics: ["元神覺醒", "修行心性"],
+    topics: ["元神與人格"],
     level: "深度",
     nextId: "yuanshen-destiny-archetype"
   },
   "wealth-as-water": {
-    topics: ["金錢意識", "安全感"],
+    topics: ["金錢意識"],
     level: "深度",
     nextId: "market-crash-money-self-control"
   },
   "fantasy-intuition-or-yuanshen": {
-    topics: ["直覺辨識", "元神與識神"],
+    topics: ["靈修辨識"],
     level: "深度",
     nextId: "yuanshen-awakening-eleven-principles"
   },
   "spiritual-practice-cannot-be-outsourced-to-gods": {
-    topics: ["修行責任", "神明與自我"],
+    topics: ["神明與修行"],
     level: "初識",
     nextId: "jitong-leader-discernment"
   },
   "celebrity-death-dream-spirit-five-checks": {
-    topics: ["亡者接觸", "意識邊界"],
+    topics: ["亡者接觸"],
     level: "深度",
     nextId: "tonglingren-wufa-huifu-putongren"
   },
   "japan-temple-faith-and-decline": {
-    topics: ["信仰與人", "寺院興衰"],
+    topics: ["信仰與人"],
     level: "深度",
     nextId: "spiritual-practice-cannot-be-outsourced-to-gods"
   },
   "shenming-yinlu-ganying-budengyu-xiuwei": {
-    topics: ["感應與修為", "心性與界線"],
+    topics: ["感應與修為"],
     level: "進階",
     nextId: "jitong-leader-discernment"
   },
   "jitong-leader-discernment": {
-    topics: ["靈乩辨識", "權力與界線"],
+    topics: ["權力與界線"],
     level: "深度",
     nextId: "tonglingren-wufa-huifu-putongren"
   },
   "jitong-discernment-before-exorcism": {
-    topics: ["靈乩辨識", "靈擾與中邪"],
+    topics: ["靈乩辨識"],
     level: "深度",
     nextId: "jitong-shenming-fushen"
   },
   "good-fortune-believe-in-yourself-choices": {
-    topics: ["自我信任", "生命選擇"],
+    topics: ["自我信任"],
     level: "初識",
     nextId: "market-crash-money-self-control"
   },
   "yuanshen-awakening-eleven-principles": {
-    topics: ["元神與人格", "靈能力"],
+    topics: ["元神與人格"],
     level: "初識",
     nextId: "lingxiu-yuanshen-reality"
   },
   "seven-twenty-five-election-shift": {
-    topics: ["社會觀察", "責任與選擇"],
+    topics: ["社會觀察"],
     level: "初識",
     nextId: "market-crash-money-self-control"
   },
   "tonglingren-wufa-huifu-putongren": {
-    topics: ["通靈辨識", "人格膨脹"],
+    topics: ["靈修辨識"],
     level: "進階",
     nextId: "jitong-shenming-fushen"
   },
   "lingxiu-zouhuo-rumo": {
-    topics: ["修行偏差", "身心辨識"],
+    topics: ["靈修辨識"],
     level: "初識",
     nextId: "lingxiu-yuanshen-reality"
   },
   "lingxiu-yuanshen-reality": {
-    topics: ["元神與人格", "修行責任"],
+    topics: ["元神與人格"],
     level: "進階",
     nextId: "yuanshen-awakening-eleven-principles"
   },
   "jitong-shenming-fushen": {
-    topics: ["通靈辨識", "乩身與神意"],
+    topics: ["靈修辨識"],
     level: "深度",
     nextId: "tonglingren-wufa-huifu-putongren"
   },
   "wealth-discipline-investing-and-self-mastery": {
-    topics: ["投資心理", "財富與定力"],
+    topics: ["財富"],
+    sourceTag: "宇色著作",
     level: "初識",
     nextId: "market-crash-money-self-control"
   },
   "market-crash-money-self-control": {
-    topics: ["財富與生命", "自我主導"],
+    topics: ["金錢意識"],
     level: "初識",
     nextId: "good-fortune-believe-in-yourself-choices"
   }
@@ -294,10 +311,12 @@ function getArticleGuide(article) {
 function renderArticleGuide(article, compact = false) {
   const guide = getArticleGuide(article);
   const topics = (guide.topics || []).filter(Boolean).slice(0, compact ? 2 : 3);
+  const sourceTag = compact ? guide.sourceTag || "" : "";
   const level = guide.level || "";
-  if (!topics.length && !level) return "";
+  if (!topics.length && !sourceTag && !level) return "";
   return `<div class="article-guide${compact ? " is-compact" : ""}">
     ${topics.map((topic) => `<span>${escapeHtml(topic)}</span>`).join("")}
+    ${sourceTag ? `<span class="article-source-tag">${escapeHtml(sourceTag)}</span>` : ""}
     ${level ? `<small>${escapeHtml(level)}</small>` : ""}
   </div>`;
 }
