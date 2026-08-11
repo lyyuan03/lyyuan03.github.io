@@ -47,17 +47,17 @@ const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype"]);
 const articleGuides = {
   "this-book-took-thirty-years": {
-    topics: ["元神與人格"],
+    topics: ["元神與人格", "修行心性"],
     level: "深度",
     nextId: "yuanshen-destiny-archetype"
   },
   "wealth-as-water": {
-    topics: ["金錢意識"],
+    topics: ["金錢意識", "自我信任"],
     level: "深度",
     nextId: "market-crash-money-self-control"
   },
   "fantasy-intuition-or-yuanshen": {
-    topics: ["靈修辨識"],
+    topics: ["靈修辨識", "元神與人格"],
     level: "深度",
     nextId: "yuanshen-awakening-eleven-principles"
   },
@@ -67,7 +67,7 @@ const articleGuides = {
     nextId: "jitong-leader-discernment"
   },
   "celebrity-death-dream-spirit-five-checks": {
-    topics: ["亡者接觸"],
+    topics: ["亡者接觸", "靈界辨識"],
     level: "深度",
     nextId: "tonglingren-wufa-huifu-putongren"
   },
@@ -77,27 +77,27 @@ const articleGuides = {
     nextId: "spiritual-practice-cannot-be-outsourced-to-gods"
   },
   "shenming-yinlu-ganying-budengyu-xiuwei": {
-    topics: ["感應與修為"],
+    topics: ["感應與修為", "修行心性"],
     level: "進階",
     nextId: "jitong-leader-discernment"
   },
   "jitong-leader-discernment": {
-    topics: ["權力與界線"],
+    topics: ["靈乩辨識", "權力與界線"],
     level: "深度",
     nextId: "tonglingren-wufa-huifu-putongren"
   },
   "jitong-discernment-before-exorcism": {
-    topics: ["靈乩辨識"],
+    topics: ["靈乩辨識", "靈界辨識"],
     level: "深度",
     nextId: "jitong-shenming-fushen"
   },
   "good-fortune-believe-in-yourself-choices": {
-    topics: ["自我信任"],
+    topics: ["自我信任", "生命選擇"],
     level: "初識",
     nextId: "market-crash-money-self-control"
   },
   "yuanshen-awakening-eleven-principles": {
-    topics: ["元神與人格"],
+    topics: ["元神與人格", "感應與修為"],
     level: "初識",
     nextId: "lingxiu-yuanshen-reality"
   },
@@ -107,7 +107,7 @@ const articleGuides = {
     nextId: "market-crash-money-self-control"
   },
   "tonglingren-wufa-huifu-putongren": {
-    topics: ["靈修辨識"],
+    topics: ["靈修辨識", "修行心性"],
     level: "進階",
     nextId: "jitong-shenming-fushen"
   },
@@ -117,12 +117,12 @@ const articleGuides = {
     nextId: "lingxiu-yuanshen-reality"
   },
   "lingxiu-yuanshen-reality": {
-    topics: ["元神與人格"],
+    topics: ["元神與人格", "修行心性"],
     level: "進階",
     nextId: "yuanshen-awakening-eleven-principles"
   },
   "jitong-shenming-fushen": {
-    topics: ["靈修辨識"],
+    topics: ["靈修辨識", "感應與修為"],
     level: "深度",
     nextId: "tonglingren-wufa-huifu-putongren"
   },
@@ -133,7 +133,7 @@ const articleGuides = {
     nextId: "market-crash-money-self-control"
   },
   "market-crash-money-self-control": {
-    topics: ["金錢意識"],
+    topics: ["金錢意識", "生命選擇"],
     level: "初識",
     nextId: "good-fortune-believe-in-yourself-choices"
   }
@@ -311,7 +311,7 @@ function getArticleGuide(article) {
 function renderArticleGuide(article, compact = false) {
   const guide = getArticleGuide(article);
   const topics = (guide.topics || []).filter(Boolean).slice(0, compact ? 2 : 3);
-  const sourceTag = compact ? guide.sourceTag || "" : "";
+  const sourceTag = guide.sourceTag || "";
   const level = guide.level || "";
   if (!topics.length && !sourceTag && !level) return "";
   return `<div class="article-guide${compact ? " is-compact" : ""}">
