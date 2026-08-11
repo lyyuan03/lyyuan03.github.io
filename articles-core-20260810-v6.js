@@ -322,18 +322,21 @@ function metricFor(articleId) {
   return articleMetrics.get(articleId) || {};
 }
 
-function renderMetricSummary(articleId, compact = false) {
-  const metric = metricFor(articleId);
+function renderMetricItems(metric, compact = false) {
   const views = Number(metric.views || 0);
   const shares = Number(metric.shares || 0);
   const copies = Number(metric.copies || 0);
-  return `<div class="article-metrics${compact ? " is-compact" : ""}" data-article-metrics="${escapeHtml(articleId)}"><span>閱讀 ${views}</span><span>分享 ${shares}</span><span>複製 ${copies}</span></div>`;
+  if (!compact) return `<span>閱讀 ${views}</span><span>分享 ${shares}</span><span>複製 ${copies}</span>`;
+  return `<span class="article-metric"><span class="article-metric-label">閱讀</span><span class="article-metric-value">${views}</span></span><span class="article-metric"><span class="article-metric-label">分享</span><span class="article-metric-value">${shares}</span></span><span class="article-metric"><span class="article-metric-label">複製</span><span class="article-metric-value">${copies}</span></span>`;
+}
+
+function renderMetricSummary(articleId, compact = false) {
+  return `<div class="article-metrics${compact ? " is-compact" : ""}" data-article-metrics="${escapeHtml(articleId)}">${renderMetricItems(metricFor(articleId), compact)}</div>`;
 }
 
 function updateMetricSummary(articleId) {
   document.querySelectorAll(`[data-article-metrics="${CSS.escape(articleId)}"]`).forEach((node) => {
-    const metric = metricFor(articleId);
-    node.innerHTML = `<span>閱讀 ${Number(metric.views || 0)}</span><span>分享 ${Number(metric.shares || 0)}</span><span>複製 ${Number(metric.copies || 0)}</span>`;
+    node.innerHTML = renderMetricItems(metricFor(articleId), node.classList.contains("is-compact"));
   });
 }
 

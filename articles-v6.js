@@ -1,4 +1,4 @@
-import "./articles-core-20260810-v6.js?v=20260810-remove-unrequested-1";
+import "./articles-core-20260810-v6.js?v=20260811-card-metrics-1";
 import "./article-love-beyond-filial-piety-display-fix.js?v=20260810-original-photo-fix-1";
 import "./sponsor-checkout-v3.js?v=20260808-email-renewal-1";
 
@@ -15,8 +15,6 @@ if (!document.getElementById(articleVisualFixStyleId)) {
     .article-card-content .article-meta,
     .article-card-content .article-guide,
     .article-card-content .article-guide span,
-    .article-card-content .article-metrics,
-    .article-card-content .article-metrics span,
     .article-card-content .article-engagement,
     .article-card-content .article-engagement span,
     .article-card-content .article-engagement b {
