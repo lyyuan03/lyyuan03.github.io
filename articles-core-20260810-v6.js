@@ -308,16 +308,23 @@ function getArticleGuide(article) {
   };
 }
 
+const articleLevelClassNames = {
+  "初識": "is-beginner",
+  "深度": "is-deep",
+  "進階": "is-advanced"
+};
+
 function renderArticleGuide(article, compact = false) {
   const guide = getArticleGuide(article);
   const topics = (guide.topics || []).filter(Boolean).slice(0, compact ? 2 : 3);
   const sourceTag = guide.sourceTag || "";
   const level = guide.level || "";
+  const levelClass = articleLevelClassNames[level] || "";
   if (!topics.length && !sourceTag && !level) return "";
   return `<div class="article-guide${compact ? " is-compact" : ""}">
-    ${topics.map((topic) => `<span>${escapeHtml(topic)}</span>`).join("")}
+    ${level ? `<span class="article-level${levelClass ? ` ${levelClass}` : ""}">${escapeHtml(level)}</span>` : ""}
+    ${topics.map((topic) => `<span class="article-topic">${escapeHtml(topic)}</span>`).join("")}
     ${sourceTag ? `<span class="article-source-tag">${escapeHtml(sourceTag)}</span>` : ""}
-    ${level ? `<small>${escapeHtml(level)}</small>` : ""}
   </div>`;
 }
 
