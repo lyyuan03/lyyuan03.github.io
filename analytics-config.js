@@ -17,6 +17,23 @@ if (location.pathname.endsWith("/books.html")) {
 }
 
 if (location.pathname.endsWith("/articles.html")) {
+  // 必須在 body/footer 解析前就固定頁尾 Logo 尺寸，避免重新載入時先以 SVG 原始尺寸放大閃現。
+  if (!document.getElementById("articles-footer-logo-first-paint")) {
+    const footerLogoFirstPaintStyle = document.createElement("style");
+    footerLogoFirstPaintStyle.id = "articles-footer-logo-first-paint";
+    footerLogoFirstPaintStyle.textContent = `
+      .footer-brand-mark {
+        display: block;
+        width: 128px;
+        max-width: 34vw;
+        height: auto;
+        opacity: .64;
+        filter: saturate(.72) brightness(.78);
+      }
+    `;
+    document.head.appendChild(footerLogoFirstPaintStyle);
+  }
+
   const filterScript = document.createElement("script");
   filterScript.src = "/article-filter-fix.js?v=20260730-1";
   filterScript.defer = true;
