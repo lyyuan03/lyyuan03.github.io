@@ -242,9 +242,10 @@ function buildReminder(member, sponsorMember) {
       : "會籍即將到期";
   const title = days === 0 ? "會籍今日到期" : "會籍即將到期";
   const expiryText = formatTaipeiDate(next.expiry);
+  const gratitudeMessage = "非常感謝您一路以來的護持！如果這段期間，靈元院的文章與內容曾帶給您一些啟發與陪伴，若您還想繼續與我們同行，歡迎續會，讓這份靈性的成長與陪伴延續下去。";
   const message = days === 0
-    ? `您的${next.label}將於今日（${expiryText}）到期。為避免會員專屬內容與相關權益中斷，請於今日完成續會。`
-    : `您的${next.label}將於 ${expiryText} 到期，目前剩餘 ${days} 天。為避免會員專屬內容與相關權益中斷，請於到期日前完成續會。`;
+    ? `您的${next.label}將於今日（${expiryText}）到期。${gratitudeMessage}`
+    : `您的${next.label}將於 ${expiryText} 到期，目前還有 ${days} 天。${gratitudeMessage}`;
 
   return { ...next, days, urgent, badge, title, message };
 }
@@ -278,7 +279,7 @@ function renderReminder(reminder) {
     <span class="membership-expiry-alert-icon" aria-hidden="true">!</span>
     <div class="membership-expiry-alert-copy">
       <strong>${reminder.title}</strong>
-      <p>${reminder.message.replace(/(\d{4}年\d{1,2}月\d{1,2}日|剩餘 \d+ 天)/g, "<b>$1</b>")}</p>
+      <p>${reminder.message.replace(/(\d{4}年\d{1,2}月\d{1,2}日|還有 \d+ 天)/g, "<b>$1</b>")}</p>
     </div>
   `;
   identity.insertAdjacentElement("afterend", alert);
