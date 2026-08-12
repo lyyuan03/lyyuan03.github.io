@@ -17,7 +17,9 @@ jobs:
         with:
           ref: fix-2058-inline-images
       - name: Apply patch
-        run: python tools/patch-2058-inline-images.py
+        run: |
+          sed -i 's/20260812-article-notify-1/20260812-2058-image-sync-1/' tools/patch-2058-inline-images.py
+          python tools/patch-2058-inline-images.py
       - name: Verify patch
         run: |
           grep -F 'verification.webp?v=20260812-2' article-admin-core.js
