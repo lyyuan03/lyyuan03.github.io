@@ -16,7 +16,6 @@ async function loadArticleCore() {
 async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
-    ["贊助方案", "./sponsor-checkout-v3.js?v=20260812-static-first-fix-6"],
     ["贊助文章購買框", "./article-paid-gate-restore.js?v=20260812-paid-gate-selfcontained-7"]
   ];
   const results = await Promise.allSettled(addons.map(([, path]) => import(path)));
