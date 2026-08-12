@@ -7,8 +7,8 @@ export const OFFER_MEMBER_TYPES = Object.freeze({
 });
 
 export const OFFER_MEMBER_LABELS = Object.freeze({
-  wellness_general: "養生療癒頻道｜一般會員",
-  wellness_lingji: "養生療癒頻道｜靈極會員",
+  wellness_general: "養生療遇頻道｜一般會員",
+  wellness_lingji: "養生療遇頻道｜靈極會員",
   article_paid: "贊助專屬文章付費會員"
 });
 
