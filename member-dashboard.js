@@ -2,7 +2,7 @@ import "./member-dashboard-core-20260808.js?v=20260808-email-renewal-1";
 import "./sponsor-dashboard-payment-new-tab.js?v=20260808-dashboard-new-tab-1";
 import "./sponsor-checkout-v3.js?v=20260808-email-renewal-1";
 import "./sponsor-dashboard-renewal.js?v=20260808-email-renewal-1";
-import "./member-dashboard-expiry-reminder.js?v=20260812-expiry-reminder-3";
+import "./member-dashboard-expiry-reminder.js?v=20260812-expiry-reminder-4";
 
 const WELLNESS_OLD_LABEL = "養生療癒";
 const WELLNESS_NEW_LABEL = "養生療遇";
