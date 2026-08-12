@@ -13,6 +13,7 @@ function installStyles() {
   style.id = "member-offers-menu-styles";
   style.textContent = `
     #${MENU_LINK_ID}{display:flex!important;align-items:center;justify-content:space-between;gap:12px}
+    #${MENU_LINK_ID}[hidden]{display:none!important}
     #${MENU_LINK_ID} .member-offers-menu-label{min-width:0}
     .member-offers-new-badge{flex:0 0 auto;color:#ff5757;font-size:10px;font-weight:700;line-height:1;letter-spacing:.12em;text-shadow:0 0 8px rgba(255,87,87,.28);animation:memberOffersNewPulse 1.15s ease-in-out infinite}
     .member-offers-new-badge[hidden]{display:none!important}
