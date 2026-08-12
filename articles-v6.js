@@ -1,7 +1,12 @@
 import "./articles-core-20260810-v6.js?v=20260812-paid-login-modal-fix-1";
 import "./article-love-beyond-filial-piety-display-fix.js?v=20260810-original-photo-fix-1";
 import "./sponsor-checkout-v3.js?v=20260808-email-renewal-1";
-import "./article-paid-gate-restore.js?v=20260812-paid-gate-restore-2";
+
+// 購買框修復屬於附加功能，不可再阻斷文章核心載入。
+// 使用動態載入：即使 CDN 尚未同步或附加模組暫時失敗，文章本體仍會正常顯示。
+import("./article-paid-gate-restore.js?v=20260812-paid-gate-loading-fix-3").catch((error) => {
+  console.warn("贊助文章購買框附加模組載入失敗，文章本體維持正常顯示。", error);
+});
 
 const articleVisualFixStyleId = "article-visual-fixes-20260811";
 if (!document.getElementById(articleVisualFixStyleId)) {
