@@ -1,0 +1,87 @@
+name: One-time fix paid article login
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/one-time-fix-paid-login.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix-paid-login:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Replace obsolete member-login redirect
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          files = [
+              "articles-core-20260808.js",
+              "articles-core-20260810.js",
+              "articles-core-20260810-v3.js",
+              "articles-core-20260810-v4.js",
+              "articles-core-20260810-v5.js",
+              "articles-core-20260810-v6.js",
+          ]
+          old = '''function bindPaidLogin() {
+            document.querySelector(".article-paid-login")?.addEventListener("click", () => {
+              location.href = `member-login.html?redirect=${encodeURIComponent(location.href)}`;
+            });
+          }'''
+          new = '''function bindPaidLogin() {
+            document.querySelector(".article-paid-login")?.addEventListener("click", () => {
+              document.getElementById("member-login-button")?.click();
+            });
+          }'''
+
+          for filename in files:
+              path = Path(filename)
+              content = path.read_text(encoding="utf-8")
+              count = content.count(old)
+              if count != 1:
+                  raise SystemExit(f"{filename}: expected exactly 1 obsolete bindPaidLogin, found {count}")
+              path.write_text(content.replace(old, new), encoding="utf-8")
+              print(f"fixed {filename}")
+          PY
+
+      - name: Verify JavaScript syntax and obsolete redirect removal
+        run: |
+          for f in \
+            articles-core-20260808.js \
+            articles-core-20260810.js \
+            articles-core-20260810-v3.js \
+            articles-core-20260810-v4.js \
+            articles-core-20260810-v5.js \
+            articles-core-20260810-v6.js; do
+            node --check "$f"
+            if grep -Fq 'member-login.html?redirect=' "$f"; then
+              echo "obsolete redirect still exists in $f" >&2
+              exit 1
+            fi
+          done
+          grep -n -A4 -B1 'function bindPaidLogin' articles-core-20260810-v6.js
+
+      - name: Commit fixes and remove one-time workflow
+        run: |
+          git config user.name "lyyuan03"
+          git config user.email "lyyuan03@gmail.com"
+          git rm .github/workflows/one-time-fix-paid-login.yml
+          git add \
+            articles-core-20260808.js \
+            articles-core-20260810.js \
+            articles-core-20260810-v3.js \
+            articles-core-20260810-v4.js \
+            articles-core-20260810-v5.js \
+            articles-core-20260810-v6.js
+          git commit -m "fix: open member login modal from paid articles"
+          git push origin main
