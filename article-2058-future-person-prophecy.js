@@ -8,12 +8,16 @@ export const futurePerson2058ProphecyArticle = {
   status: "published",
   publishedAt: "2026-08-12T04:29:00.000Z",
   updatedAt: "2026-08-12T04:29:00.000Z",
-  coverImage: "assets/articles/2058-future-person-prophecy/cover.svg?v=20260812-1",
-  thumbnailImage: "assets/articles/2058-future-person-prophecy/thumbnail.svg?v=20260812-1",
+  coverImage: "assets/articles/2058-future-person-prophecy/cover.webp?v=20260812-2",
+  thumbnailImage: "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260812-2",
   excerpt: "六個看似神準的預言，拆開貼文時間與公開時間後，故事完全不同。真正值得追問的，不只是預言準不準，而是未來究竟是不是早已固定。",
   accessType: "paid",
   topics: ["靈修辨識", "修行心性"],
   readingLevel: "深度",
+  bookTitle: "喚醒天生好命",
+  bookAuthor: "宇色Osel",
+  bookPublisher: "高寶",
+  bookPurchaseUrl: "https://www.books.com.tw/products/0011003625?loc=P_br_r0vq68ygz_D_2aabd0_B_1",
   sharePath: "article/2058-future-person-prophecy.html",
   content: `最近我看到一個很有意思的故事。
 
@@ -113,7 +117,7 @@ export const futurePerson2058ProphecyArticle = {
 
 一個真、一個假，兩個都攤在陽光下，這比六個「全部命中」的貼文，反而更接近事情原本的樣子。
 
-![當預言只剩下命中的版本，真正要辨識的是我們看見了什麼、又漏掉了什麼](assets/articles/2058-future-person-prophecy/verification.svg?v=20260812-1)
+![當預言只剩下命中的版本，真正要辨識的是我們看見了什麼、又漏掉了什麼](assets/articles/2058-future-person-prophecy/verification.webp?v=20260812-2)
 
 而這也是我真正對這件事情產生興趣的地方——不是他準不準，而是「準」這件事，遠比我們願意相信的還要複雜得多。
 
@@ -171,7 +175,7 @@ export const futurePerson2058ProphecyArticle = {
 
 這也是為什麼我一直認為：未來不是不存在，而是未來不停地形成。
 
-![未來不是單一路線，而是由無數選擇與集體意識交織而成的網絡](assets/articles/2058-future-person-prophecy/consciousness-network.svg?v=20260812-1)
+![未來不是單一路線，而是由無數選擇與集體意識交織而成的網絡](assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260812-2)
 
 ## 為什麼古代的預言可以看四十年、五十年，甚至百年之後？
 
