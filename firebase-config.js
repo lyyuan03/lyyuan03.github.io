@@ -57,3 +57,13 @@ export function isAdminEmail(email) {
 import("./auth-mobile-compat.js?v=20260810-admin-login-race-fix-1").catch((error) => {
   console.error("跨裝置登入相容模組載入失敗：", error);
 });
+
+// 會員專屬優惠共用整合：公開會員頁只提示權益；會員中心顯示最新活動；
+// 管理後台載入可設定多階段與三種會員資格的優惠管理模組。
+if (/(^|\/)(membership|member-dashboard|admin)\.html$/i.test(currentPath)) {
+  queueMicrotask(() => {
+    import("./member-offers-integration.js?v=20260812-1").catch((error) => {
+      console.error("會員專屬優惠整合模組載入失敗：", error);
+    });
+  });
+}
