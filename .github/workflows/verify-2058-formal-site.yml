@@ -21,8 +21,7 @@ jobs:
         run: |
           npm init -y >/dev/null 2>&1
           npm install --silent playwright-core
-          which google-chrome
-      - name: Inspect formal site and capture diagnostics
+      - name: Verify formal site and capture screenshots
         run: |
           cat > verify-2058.js <<'JS'
           const { chromium } = require('playwright-core');
@@ -30,47 +29,56 @@ jobs:
           (async () => {
             const browser = await chromium.launch({headless:true, executablePath:'/usr/bin/google-chrome'});
             const page = await browser.newPage({viewport:{width:1440,height:1000}, deviceScaleFactor:1});
-            const consoleMessages = [];
-            const pageErrors = [];
-            const requestFailures = [];
-            page.on('console', msg => consoleMessages.push(`${msg.type()}: ${msg.text()}`));
-            page.on('pageerror', err => pageErrors.push(String(err)));
-            page.on('requestfailed', req => requestFailures.push(`${req.url()} :: ${req.failure()?.errorText || ''}`));
-            const url = `https://lyyuan.tw/articles.html?id=2058-future-person-prophecy&verify=20260812-2-${Date.now()}`;
-            let responseStatus = null;
-            try {
-              const response = await page.goto(url, {waitUntil:'domcontentloaded', timeout:60000});
-              responseStatus = response?.status() ?? null;
-            } catch (e) {
-              pageErrors.push(`goto: ${e}`);
+            const url = `https://lyyuan.tw/articles.html?id=2058-future-person-prophecy&verify=final-${Date.now()}`;
+            const response = await page.goto(url, {waitUntil:'domcontentloaded', timeout:60000});
+            if (!response || response.status() !== 200) throw new Error(`HTTP ${response?.status()}`);
+            const article = page.locator('.article-view[data-article-id="2058-future-person-prophecy"]');
+            await article.waitFor({state:'visible', timeout:45000});
+            const cover = article.locator('.article-cover');
+            await cover.waitFor({state:'visible', timeout:30000});
+            await page.waitForTimeout(2500);
+            const coverSrc = await cover.getAttribute('src');
+            if (!coverSrc?.includes('assets/articles/2058-future-person-prophecy/cover.webp?v=20260812-2')) {
+              throw new Error(`cover mismatch: ${coverSrc}`);
             }
-            await page.waitForTimeout(15000);
-            const data = await page.evaluate(() => ({
-              title: document.title,
-              href: location.href,
-              rootText: document.getElementById('article-root')?.innerText || '',
-              bodyText: document.body?.innerText?.slice(0,12000) || '',
-              scripts: [...document.scripts].map(s => s.src).filter(Boolean),
-              articleCount: document.querySelectorAll('.article-view').length,
-              targetCount: document.querySelectorAll('.article-view[data-article-id="2058-future-person-prophecy"]').length,
-              coverSrc: document.querySelector('.article-cover')?.getAttribute('src') || null,
-              recommendedText: document.querySelector('.recommended-book')?.innerText || null,
-              nextText: document.querySelector('.next-reading')?.innerText || null,
-              nextHref: document.querySelector('.next-reading a')?.getAttribute('href') || null,
-              htmlSnippet: document.getElementById('article-root')?.innerHTML?.slice(0,12000) || ''
-            }));
-            const report = {url,responseStatus,...data,consoleMessages,pageErrors,requestFailures};
-            fs.writeFileSync('formal-2058-diagnostic.json', JSON.stringify(report,null,2));
-            await page.screenshot({path:'formal-2058-diagnostic.png', fullPage:true});
-            console.log(JSON.stringify(report,null,2));
+            const recommended = article.locator('.recommended-book');
+            const next = article.locator('.next-reading');
+            await recommended.waitFor({state:'visible', timeout:30000});
+            await next.waitFor({state:'visible', timeout:30000});
+            const recommendedText = (await recommended.innerText()).trim();
+            const nextText = (await next.innerText()).trim();
+            const nextHref = await next.locator('a').getAttribute('href');
+            if (!recommendedText.includes('喚醒天生好命') || !recommendedText.includes('宇色Osel') || !recommendedText.includes('高寶')) {
+              throw new Error(`recommended mismatch: ${recommendedText}`);
+            }
+            if (!nextText.includes('沿著這個主題繼續閱讀') || !nextHref?.includes('lingxiu-yuanshen-reality')) {
+              throw new Error(`next mismatch: ${nextText} / ${nextHref}`);
+            }
+            const title = article.locator(':scope > h2');
+            const articleBox = await article.boundingBox();
+            const titleBox = await title.boundingBox();
+            const coverBox = await cover.boundingBox();
+            if (!articleBox || !titleBox || !coverBox) throw new Error('cover bounds unavailable');
+            const coverTop = Math.max(0, titleBox.y - 24);
+            const coverBottom = coverBox.y + coverBox.height + 24;
+            await page.screenshot({path:'formal-2058-cover.png', clip:{x:articleBox.x,y:coverTop,width:articleBox.width,height:coverBottom-coverTop}});
+            const nextBox = await next.boundingBox();
+            const recBox = await recommended.boundingBox();
+            if (!nextBox || !recBox) throw new Error('bottom bounds unavailable');
+            const bottomTop = Math.max(0, Math.min(nextBox.y,recBox.y)-28);
+            const bottomEnd = Math.max(nextBox.y+nextBox.height,recBox.y+recBox.height)+28;
+            await page.screenshot({path:'formal-2058-bottom.png', clip:{x:articleBox.x,y:bottomTop,width:articleBox.width,height:bottomEnd-bottomTop}});
+            fs.writeFileSync('formal-2058-verification.json', JSON.stringify({url,coverSrc,recommendedText,nextText,nextHref},null,2));
+            console.log(JSON.stringify({coverSrc,recommendedText,nextText,nextHref},null,2));
             await browser.close();
           })().catch(err => { console.error(err); process.exit(1); });
           JS
           node verify-2058.js
       - uses: actions/upload-artifact@v4
         with:
-          name: formal-site-2058-diagnostic
+          name: formal-site-2058-final
           path: |
-            formal-2058-diagnostic.png
-            formal-2058-diagnostic.json
+            formal-2058-cover.png
+            formal-2058-bottom.png
+            formal-2058-verification.json
           if-no-files-found: error
