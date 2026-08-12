@@ -1,5 +1,5 @@
-import "./article-admin-core.js?v=20260812-2058-image-sync-1";
-import { app } from "./firebase-config.js";
+import "./article-admin-core.js?v=20260812-2058-inline-image-sync-1";
+import { app } from "./firebase-config.js?v=20260812-2058-inline-image-sync-1";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
 const functions = getFunctions(app, "asia-east1");
