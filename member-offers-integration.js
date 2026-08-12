@@ -25,10 +25,12 @@ function injectStyles() {
   .member-offer-entry:before{content:'';position:absolute;inset:0 auto 0 0;width:5px;background:#A58254}
   .member-offer-entry-inner{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
   .member-offer-entry-kicker{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#85643F;font-size:10px;letter-spacing:.14em}
-  .member-offer-entry-new{padding:3px 7px;background:#606330;color:#FFFDF8;font-size:9px}
+  .member-offer-entry-new{color:#D92B2B;font-size:10px;font-weight:700;line-height:1;letter-spacing:.12em;text-shadow:0 0 7px rgba(217,43,43,.28);animation:memberOfferEntryNewPulse 1.15s ease-in-out infinite}
+  @keyframes memberOfferEntryNewPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.94)}}
   .member-offer-entry h2{margin:6px 0 5px;color:#493724;font-family:var(--serif,'Noto Serif TC',serif);font-size:24px;font-weight:500;letter-spacing:.09em}
   .member-offer-entry p{margin:0;color:#756452;font-size:13px}
   .member-offer-entry a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 18px;border:1px solid rgba(139,104,63,.5);background:#8B683F;color:#FFFDF8;white-space:nowrap;font-size:12px;letter-spacing:.08em}
+  @media(prefers-reduced-motion:reduce){.member-offer-entry-new{animation:none}}
   @media(max-width:680px){.member-offer-entry-inner{grid-template-columns:1fr}.member-offer-entry a{width:100%}}
   `;
   document.head.appendChild(style);
@@ -93,7 +95,7 @@ function enhanceDashboardPage() {
         title.textContent = best.offer.title || "會員專屬優惠";
         message.textContent = "您目前具有參加資格，點擊即可查看活動與專屬入口。";
       } else if (best.state.nextEligiblePhase) {
-        kicker.innerHTML = '<span>會員限定｜即將開放</span>';
+        kicker.innerHTML = '<span class="member-offer-entry-new">NEW</span><span>會員限定｜即將開放</span>';
         title.textContent = best.offer.title || "會員專屬優惠";
         message.textContent = `您的會員資格將於 ${formatTaipeiShort(best.state.nextEligiblePhase.startsAtDate)} 開放。`;
       }
