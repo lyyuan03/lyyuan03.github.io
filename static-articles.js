@@ -1,5 +1,5 @@
 import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1";
-import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260812-prophecy-3";
+import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260812-prophecy-4";
 import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=20260730-wealth-discipline-6";
 import { celebrityDreamSpiritArticle } from "./article-celebrity-dream-spirit.js?v=20260731-celebrity-dream-4";
 import { fantasyIntuitionYuanshenArticle } from "./article-fantasy-intuition-yuanshen-display.js?v=20260801-fantasy-full-1";
@@ -9,11 +9,6 @@ import { howToJudgeTrueLingxiuUnderstandingArticle } from "./article-how-to-judg
 import { loveBeyondFilialPietyArticle } from "./article-love-beyond-filial-piety-photo.js?v=20260810-original-photo-fix-1";
 import { yuanshenDestinyArchetypeArticle } from "./article-yuanshen-destiny-archetype.js?v=20260807-final-1";
 import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-years.js?v=20260810-complete-ending-1";
-
-const publishedFuturePerson2058ProphecyArticle = {
-  ...futurePerson2058ProphecyArticle,
-  status: "published"
-};
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -55,7 +50,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
-  publishedFuturePerson2058ProphecyArticle,
+  futurePerson2058ProphecyArticle,
   thisBookTookThirtyYearsArticle,
   yuanshenDestinyArchetypeArticle,
   loveBeyondFilialPietyArticle,
