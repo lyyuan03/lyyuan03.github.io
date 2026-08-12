@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260812-article-notify-1";
+import "./article-admin-core.js?v=20260812-2058-image-sync-1";
 import { app } from "./firebase-config.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
