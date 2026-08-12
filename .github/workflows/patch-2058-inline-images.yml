@@ -32,7 +32,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git rm .github/workflows/patch-2058-inline-images.yml tools/patch-2058-inline-images.py
+          git rm -f .github/workflows/patch-2058-inline-images.yml tools/patch-2058-inline-images.py
           git add admin.html article-admin.js article-admin-core.js article-inline-image-admin.js firebase-config.js static-articles.js
           git commit -m 'Fix 2058 inline images in admin'
           git push origin HEAD:fix-2058-inline-images
