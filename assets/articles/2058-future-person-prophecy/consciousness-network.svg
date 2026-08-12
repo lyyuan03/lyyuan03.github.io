@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="由無數節點與路徑交織而成的宇宙意識網抽象視覺">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07110b"/><stop offset=".52" stop-color="#1d2b20"/><stop offset="1" stop-color="#594f47"/></linearGradient>
+ <radialGradient id="r"><stop stop-color="#d5c09a" stop-opacity=".34"/><stop offset="1" stop-color="#d5c09a" stop-opacity="0"/></radialGradient>
+ <filter id="b"><feGaussianBlur stdDeviation="15"/></filter>
+ <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" seed="88" result="n"/><feColorMatrix in="n" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .055 0"/><feBlend in="SourceGraphic" mode="soft-light"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<ellipse cx="810" cy="450" rx="390" ry="360" fill="url(#r)" filter="url(#b)"/>
+<g fill="none" stroke="#8ca18d" stroke-opacity=".36" stroke-width="2">
+<path d="M85 210L260 150 390 268 540 130 690 245 822 116 972 230 1112 146 1285 245 1510 155"/>
+<path d="M120 390L285 305 420 420 575 310 735 388 860 285 1010 410 1160 300 1320 400 1490 325"/>
+<path d="M72 590L225 500 385 612 530 495 690 602 835 492 995 600 1142 505 1325 610 1518 510"/>
+<path d="M110 748L290 650 448 758 600 655 760 760 900 652 1060 755 1210 660 1370 745 1510 675"/>
+<path d="M260 150L285 305 225 500 290 650M390 268L420 420 385 612 448 758M540 130L575 310 530 495 600 655M690 245L735 388 690 602 760 760M822 116L860 285 835 492 900 652M972 230L1010 410 995 600 1060 755M1112 146L1160 300 1142 505 1210 660M1285 245L1320 400 1325 610 1370 745"/>
+</g>
+<g fill="#eee7da" opacity=".64">
+<circle cx="85" cy="210" r="4"/><circle cx="260" cy="150" r="5"/><circle cx="390" cy="268" r="4"/><circle cx="540" cy="130" r="5"/><circle cx="690" cy="245" r="4"/><circle cx="822" cy="116" r="5"/><circle cx="972" cy="230" r="4"/><circle cx="1112" cy="146" r="4"/><circle cx="1285" cy="245" r="5"/><circle cx="1510" cy="155" r="4"/>
+<circle cx="120" cy="390" r="4"/><circle cx="285" cy="305" r="5"/><circle cx="420" cy="420" r="4"/><circle cx="575" cy="310" r="5"/><circle cx="735" cy="388" r="4"/><circle cx="860" cy="285" r="7" fill="#d5c09a"/><circle cx="1010" cy="410" r="5"/><circle cx="1160" cy="300" r="4"/><circle cx="1320" cy="400" r="5"/><circle cx="1490" cy="325" r="4"/>
+<circle cx="72" cy="590" r="4"/><circle cx="225" cy="500" r="5"/><circle cx="385" cy="612" r="4"/><circle cx="530" cy="495" r="5"/><circle cx="690" cy="602" r="4"/><circle cx="835" cy="492" r="10" fill="#d5c09a"/><circle cx="995" cy="600" r="5"/><circle cx="1142" cy="505" r="4"/><circle cx="1325" cy="610" r="5"/><circle cx="1518" cy="510" r="4"/>
+<circle cx="110" cy="748" r="4"/><circle cx="290" cy="650" r="5"/><circle cx="448" cy="758" r="4"/><circle cx="600" cy="655" r="5"/><circle cx="760" cy="760" r="4"/><circle cx="900" cy="652" r="7" fill="#d5c09a"/><circle cx="1060" cy="755" r="5"/><circle cx="1210" cy="660" r="4"/><circle cx="1370" cy="745" r="5"/><circle cx="1510" cy="675" r="4"/>
+</g>
+<g fill="none" stroke="#a58254" stroke-width="3" opacity=".45"><circle cx="835" cy="492" r="75"/><circle cx="835" cy="492" r="145" stroke-opacity=".55"/><circle cx="835" cy="492" r="235" stroke-opacity=".3"/></g>
+<circle cx="835" cy="492" r="65" fill="#d5c09a" opacity=".14" filter="url(#b)"/>
+<rect width="1600" height="900" fill="transparent" filter="url(#grain)"/>
+</svg>
