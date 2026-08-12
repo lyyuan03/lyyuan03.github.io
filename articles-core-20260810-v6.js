@@ -145,6 +145,7 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
+  "2058-future-person-prophecy": "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260812-2",
   "this-book-took-thirty-years": "assets/articles/this-book-took-thirty-years/cover.jpg?v=20260810-photoreal-2",
   "celebrity-death-dream-spirit-five-checks": "assets/articles/thumbnails/celebrity-dream-spirit.svg?v=20260731-clean-1",
   "japan-temple-faith-and-decline": "assets/articles/thumbnails/japan-temple.jpg",
@@ -1044,6 +1045,21 @@ async function loadArticles() {
         ...article,
         coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260808-final-images-2",
         content: fixedContent,
+      };
+    }
+    if (article.id === "2058-future-person-prophecy") {
+      const fixedContent = String(article.content || "")
+        .replace(/verification\.svg(?:\?[^)\s"']*)?/g, "verification.webp?v=20260812-2")
+        .replace(/consciousness-network\.svg(?:\?[^)\s"']*)?/g, "consciousness-network.webp?v=20260812-2");
+      return {
+        ...article,
+        content: fixedContent,
+        coverImage: "assets/articles/2058-future-person-prophecy/cover.webp?v=20260812-2",
+        thumbnailImage: "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260812-2",
+        bookTitle: "喚醒天生好命",
+        bookAuthor: "宇色Osel",
+        bookPublisher: "高寶",
+        bookPurchaseUrl: "https://www.books.com.tw/products/0011003625?loc=P_br_r0vq68ygz_D_2aabd0_B_1"
       };
     }
     if (article.id === "celebrity-death-dream-spirit-five-checks") {
