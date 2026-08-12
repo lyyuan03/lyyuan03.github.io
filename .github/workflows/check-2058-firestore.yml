@@ -13,38 +13,46 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install Firebase Admin SDK
-        run: npm install --silent firebase-admin
-      - name: Read Firestore article document
+      - name: Read published Firestore article document
         run: |
           node <<'NODE'
-          const { initializeApp, applicationDefault } = require('firebase-admin/app');
-          const { getFirestore } = require('firebase-admin/firestore');
-          initializeApp({ credential: applicationDefault(), projectId: 'lyyuan03-membership' });
-          (async () => {
-            const ref = getFirestore().collection('articles').doc('2058-future-person-prophecy');
-            const snap = await ref.get();
-            console.log(`DOCUMENT_EXISTS=${snap.exists}`);
-            if (snap.exists) {
-              const data = snap.data() || {};
-              const out = {
-                id: snap.id,
-                coverImage: data.coverImage ?? null,
-                thumbnailImage: data.thumbnailImage ?? null,
-                status: data.status ?? null,
-                staticSyncRevision: data.staticSyncRevision ?? null,
-                staticSourceUpdatedAt: data.staticSourceUpdatedAt ?? null
-              };
-              console.log('ARTICLE_FIELDS=' + JSON.stringify(out));
+          const apiKey = 'AIzaSyAgHy-nPOErzs7NDJossVGPITbenXOfjQY';
+          const path = 'projects/lyyuan03-membership/databases/(default)/documents/articles/2058-future-person-prophecy';
+          const url = `https://firestore.googleapis.com/v1/${path}?key=${apiKey}`;
+          const unwrap = (field) => {
+            if (!field || typeof field !== 'object') return null;
+            for (const key of ['stringValue','integerValue','doubleValue','booleanValue','timestampValue','nullValue']) {
+              if (key in field) return field[key];
             }
+            return field;
+          };
+          (async () => {
+            const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+            const body = await response.json().catch(() => ({}));
+            console.log(`HTTP_STATUS=${response.status}`);
+            if (response.status === 404) {
+              console.log('DOCUMENT_EXISTS=false');
+              return;
+            }
+            if (!response.ok) {
+              console.log('DOCUMENT_READABLE=false');
+              console.log('FIRESTORE_ERROR=' + JSON.stringify(body.error || body));
+              process.exit(2);
+            }
+            const fields = body.fields || {};
+            const out = {
+              id: '2058-future-person-prophecy',
+              coverImage: unwrap(fields.coverImage),
+              thumbnailImage: unwrap(fields.thumbnailImage),
+              status: unwrap(fields.status),
+              staticSyncRevision: unwrap(fields.staticSyncRevision),
+              staticSourceUpdatedAt: unwrap(fields.staticSourceUpdatedAt)
+            };
+            console.log('DOCUMENT_EXISTS=true');
+            console.log('ARTICLE_FIELDS=' + JSON.stringify(out));
           })().catch((error) => {
             console.error('FIRESTORE_CHECK_FAILED=' + (error?.stack || error));
             process.exit(1);
