@@ -28,7 +28,7 @@ jobs:
           const fs = require('fs');
           (async () => {
             const browser = await chromium.launch({headless:true, executablePath:'/usr/bin/google-chrome'});
-            const page = await browser.newPage({viewport:{width:1440,height:1000}, deviceScaleFactor:1});
+            const page = await browser.newPage({viewport:{width:1440,height:1400}, deviceScaleFactor:1});
             const url = `https://lyyuan.tw/articles.html?id=2058-future-person-prophecy&verify=final-${Date.now()}`;
             const response = await page.goto(url, {waitUntil:'domcontentloaded', timeout:60000});
             if (!response || response.status() !== 200) throw new Error(`HTTP ${response?.status()}`);
@@ -36,7 +36,7 @@ jobs:
             await article.waitFor({state:'visible', timeout:45000});
             const cover = article.locator('.article-cover');
             await cover.waitFor({state:'visible', timeout:30000});
-            await page.waitForTimeout(2500);
+            await page.waitForTimeout(3000);
             const coverSrc = await cover.getAttribute('src');
             if (!coverSrc?.includes('assets/articles/2058-future-person-prophecy/cover.webp?v=20260812-2')) {
               throw new Error(`cover mismatch: ${coverSrc}`);
@@ -55,19 +55,12 @@ jobs:
               throw new Error(`next mismatch: ${nextText} / ${nextHref}`);
             }
             const title = article.locator(':scope > h2');
-            const articleBox = await article.boundingBox();
-            const titleBox = await title.boundingBox();
-            const coverBox = await cover.boundingBox();
-            if (!articleBox || !titleBox || !coverBox) throw new Error('cover bounds unavailable');
-            const coverTop = Math.max(0, titleBox.y - 24);
-            const coverBottom = coverBox.y + coverBox.height + 24;
-            await page.screenshot({path:'formal-2058-cover.png', clip:{x:articleBox.x,y:coverTop,width:articleBox.width,height:coverBottom-coverTop}});
-            const nextBox = await next.boundingBox();
-            const recBox = await recommended.boundingBox();
-            if (!nextBox || !recBox) throw new Error('bottom bounds unavailable');
-            const bottomTop = Math.max(0, Math.min(nextBox.y,recBox.y)-28);
-            const bottomEnd = Math.max(nextBox.y+nextBox.height,recBox.y+recBox.height)+28;
-            await page.screenshot({path:'formal-2058-bottom.png', clip:{x:articleBox.x,y:bottomTop,width:articleBox.width,height:bottomEnd-bottomTop}});
+            await title.scrollIntoViewIfNeeded();
+            await page.waitForTimeout(400);
+            await page.screenshot({path:'formal-2058-cover.png', fullPage:false});
+            await next.scrollIntoViewIfNeeded();
+            await page.waitForTimeout(400);
+            await page.screenshot({path:'formal-2058-bottom.png', fullPage:false});
             fs.writeFileSync('formal-2058-verification.json', JSON.stringify({url,coverSrc,recommendedText,nextText,nextHref},null,2));
             console.log(JSON.stringify({coverSrc,recommendedText,nextText,nextHref},null,2));
             await browser.close();
