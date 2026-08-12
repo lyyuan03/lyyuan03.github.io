@@ -1036,17 +1036,15 @@ async function loadArticles() {
   const firestorePublishedIds = new Set(firestoreArticles.map((article) => article.id));
   staticArticles.forEach((article) => {
     const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
-    const indexedStatus = statusById.get(article.id);
     const allow2058PublishedFallback = article.id === "2058-future-person-prophecy"
-      && !firestorePublishedIds.has(article.id)
-      && indexedStatus?.status !== "draft"
-      && indexedStatus?.hidden !== true
-      && indexedStatus?.systemRecord !== true;
+      && !firestorePublishedIds.has(article.id);
     if (!managedByFirestore || allow2058PublishedFallback) mergedById.set(article.id, article);
   });
   firestoreArticles.forEach((article) => mergedById.set(article.id, article));
   statusById.forEach((status, articleId) => {
-    if (status.status !== "published" || status.hidden === true || status.systemRecord === true) {
+    const keep2058StaticFallback = articleId === "2058-future-person-prophecy"
+      && !firestorePublishedIds.has(articleId);
+    if (!keep2058StaticFallback && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) {
       mergedById.delete(articleId);
     }
   });
