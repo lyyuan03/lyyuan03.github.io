@@ -1,0 +1,216 @@
+name: One-time browser test paid login
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/one-time-browser-test-paid-login.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  browser-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Install browser driver
+        run: npm install --no-save --no-package-lock puppeteer-core@24.17.0
+
+      - name: Run live and scenario browser tests
+        run: |
+          cat > /tmp/paid-login-browser-test.mjs <<'JS'
+          import fs from 'node:fs';
+          import { execSync } from 'node:child_process';
+          import puppeteer from 'puppeteer-core';
+
+          const executablePath = (() => {
+            for (const cmd of ['which google-chrome', 'which google-chrome-stable', 'which chromium']) {
+              try { return execSync(cmd, { encoding: 'utf8' }).trim(); } catch {}
+            }
+            throw new Error('Chrome/Chromium not found');
+          })();
+
+          const browser = await puppeteer.launch({
+            executablePath,
+            headless: true,
+            args: ['--no-sandbox', '--disable-dev-shm-usage']
+          });
+
+          const assert = (condition, message) => {
+            if (!condition) throw new Error(message);
+          };
+
+          async function wait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+
+          async function liveTest() {
+            const page = await browser.newPage();
+            await page.setCacheEnabled(false);
+            const consoleErrors = [];
+            page.on('console', (msg) => {
+              if (msg.type() === 'error') consoleErrors.push(msg.text());
+            });
+
+            let offerResponse = null;
+            page.on('response', async (response) => {
+              if (!response.url().includes('sponsorOfferStatus')) return;
+              try { offerResponse = await response.json(); } catch {}
+            });
+
+            const listUrl = `https://lyyuan.tw/articles.html?access=paid&browserTest=${Date.now()}`;
+            await page.goto(listUrl, { waitUntil: 'networkidle2', timeout: 90000 });
+            await page.waitForSelector('.article-card', { timeout: 45000 });
+            const href = await page.$eval('.article-card', (el) => el.href);
+            await page.goto(href, { waitUntil: 'networkidle2', timeout: 90000 });
+            await page.waitForSelector('.article-paid-login', { timeout: 45000 });
+            await page.waitForSelector('#member-login-button', { timeout: 45000 });
+
+            const before = page.url();
+            await page.click('.article-paid-login');
+            await page.waitForSelector('#member-login-modal.is-open', { visible: true, timeout: 15000 });
+            const after = page.url();
+            assert(after === before, `Paid login changed URL unexpectedly: ${before} -> ${after}`);
+            assert(!after.includes('member-login.html'), `Obsolete member-login.html navigation occurred: ${after}`);
+
+            await page.waitForFunction(() => {
+              const el = document.getElementById('member-login-offer');
+              return el && !el.hidden && el.textContent.trim().length > 0;
+            }, { timeout: 20000 });
+            const modalText = await page.$eval('#member-login-modal', (el) => el.innerText.replace(/\s+/g, ' ').trim());
+            const offerText = await page.$eval('#member-login-offer', (el) => el.innerText.replace(/\s+/g, ' ').trim());
+            assert(offerResponse && offerResponse.ready === true, 'Live sponsorOfferStatus response was not ready');
+
+            const fmt = (n) => Number(n || 0).toLocaleString('zh-TW');
+            if (offerResponse.promotionAvailable === true) {
+              const limit = Number(offerResponse.promoLimit || 200);
+              assert(offerText.includes(`前${limit}名`), `Modal missing live promo limit: ${offerText}`);
+              assert(offerText.includes(fmt(offerResponse.promoPrice1)), `Modal missing live promo 1-month price: ${offerText}`);
+              assert(offerText.includes(fmt(offerResponse.promoPrice3)), `Modal missing live promo 3-month price: ${offerText}`);
+              assert(offerText.includes(String(Number(offerResponse.remaining || 0))), `Modal missing live remaining count: ${offerText}`);
+            } else {
+              assert(offerText.includes('贊助閱讀方案'), `Modal did not switch to regular plan: ${offerText}`);
+              assert(offerText.includes(fmt(offerResponse.regularPrice1)), `Modal missing regular 1-month price: ${offerText}`);
+              assert(offerText.includes(fmt(offerResponse.regularPrice3)), `Modal missing regular 3-month price: ${offerText}`);
+            }
+
+            console.log('LIVE_TEST_PASS');
+            console.log('LIVE_ARTICLE_URL=' + before);
+            console.log('LIVE_MODAL_OPEN=true');
+            console.log('LIVE_URL_UNCHANGED=true');
+            console.log('LIVE_OFFER=' + JSON.stringify({
+              promotionAvailable: offerResponse.promotionAvailable,
+              promoLimit: offerResponse.promoLimit,
+              occupiedCount: offerResponse.occupiedCount,
+              remaining: offerResponse.remaining,
+              promoPrice1: offerResponse.promoPrice1,
+              promoPrice3: offerResponse.promoPrice3,
+              regularPrice1: offerResponse.regularPrice1,
+              regularPrice3: offerResponse.regularPrice3
+            }));
+            console.log('LIVE_OFFER_TEXT=' + offerText);
+            if (consoleErrors.length) console.log('LIVE_CONSOLE_ERRORS=' + JSON.stringify(consoleErrors));
+            await page.close();
+          }
+
+          const checkoutSource = fs.readFileSync('sponsor-checkout-v3.js', 'utf8')
+            .split('\n')
+            .filter((line) => !line.startsWith('import '))
+            .join('\n');
+
+          async function scenarioTest(name, { offer, sponsor = null, history = null, expectedMode, expectedTier, expectedButton, expectedPrice1, expectedPrice3 }) {
+            const page = await browser.newPage();
+            await page.setContent(`<!doctype html><html><body><button id="member-login-button">會員登入</button><div data-sponsor-smart-slot data-sponsor-context="article"></div></body></html>`, { waitUntil: 'domcontentloaded' });
+            await page.evaluate(({ offer, sponsor, history }) => {
+              window.__auth = { currentUser: { email: 'browser-test@example.com' } };
+              window.__docs = {
+                articles: { 'sponsor-offer-status': { status: 'published', systemRecord: true, ...offer } },
+                sponsorMemberAccess: { 'browser-test@example.com': sponsor },
+                membershipHistory: { 'browser-test@example.com': history }
+              };
+            }, { offer, sponsor, history });
+
+            const prelude = `
+              const auth = window.__auth;
+              const db = {};
+              const onAuthStateChanged = (auth, callback) => { queueMicrotask(() => callback(auth.currentUser)); return () => {}; };
+              const doc = (_db, collectionName, id) => ({ collectionName, id });
+              const getDoc = async (ref) => {
+                const value = window.__docs?.[ref.collectionName]?.[ref.id];
+                return { exists: () => value !== undefined && value !== null, data: () => value };
+              };
+            `;
+            await page.addScriptTag({ content: prelude + '\n' + checkoutSource });
+            await page.waitForFunction(() => window.LingYuanSponsorCheckout?.getState().member.loaded === true, { timeout: 10000 });
+            await page.waitForSelector(`.sponsor-smart-panel.is-${expectedMode}`, { timeout: 10000 });
+            const state = await page.evaluate(() => window.LingYuanSponsorCheckout.getState());
+            const button = await page.$eval('[data-sponsor-smart-pay]', (el) => el.textContent.trim());
+            const text = await page.$eval('[data-sponsor-smart-slot]', (el) => el.innerText.replace(/\s+/g, ' ').trim());
+            assert(state.tier === expectedTier, `${name}: expected tier ${expectedTier}, got ${state.tier}`);
+            assert(button === expectedButton, `${name}: expected button "${expectedButton}", got "${button}"`);
+            assert(text.includes(`NT$${Number(expectedPrice1).toLocaleString('zh-TW')}`), `${name}: missing expected 1-month price in ${text}`);
+            assert(text.includes(`NT$${Number(expectedPrice3).toLocaleString('zh-TW')}`), `${name}: missing expected 3-month price in ${text}`);
+            console.log(`SCENARIO_PASS ${name} mode=${expectedMode} tier=${state.tier} button=${button}`);
+            await page.close();
+          }
+
+          const baseOffer = {
+            ready: true,
+            promoLimit: 200,
+            occupiedCount: 120,
+            remaining: 80,
+            promotionAvailable: true,
+            promoPrice1: 150,
+            promoPrice3: 400,
+            regularPrice1: 180,
+            regularPrice3: 500,
+            promoPaymentUrl: 'https://example.com/promo',
+            regularPaymentUrl: 'https://example.com/regular'
+          };
+          const future = new Date(Date.now() + 30 * 86400000).toISOString();
+          const past = new Date(Date.now() - 30 * 86400000).toISOString();
+          const activeSponsor = {
+            memberType: 'sponsor-member', paymentStatus: 'paid', status: 'active', articleAccess: true,
+            accessScope: 'sponsor-paid-articles', accessVersion: 2, expiresAt: future, purchaseCount: 1
+          };
+          const expiredSponsor = {
+            memberType: 'sponsor-member', paymentStatus: 'paid', status: 'expired', articleAccess: true,
+            accessScope: 'sponsor-paid-articles', accessVersion: 2, expiresAt: past, purchaseCount: 1
+          };
+
+          try {
+            await liveTest();
+            await scenarioTest('first-purchase-promo', {
+              offer: baseOffer, expectedMode: 'join', expectedTier: 'promo', expectedButton: '立即加入', expectedPrice1: 150, expectedPrice3: 400
+            });
+            await scenarioTest('active-renewal-regular', {
+              offer: baseOffer, sponsor: activeSponsor, history: { sponsor: { ...activeSponsor, verified: true, purchaseCount: 1 } },
+              expectedMode: 'renew', expectedTier: 'regular', expectedButton: '續期閱讀權限', expectedPrice1: 180, expectedPrice3: 500
+            });
+            await scenarioTest('expired-reopen-regular', {
+              offer: baseOffer, sponsor: expiredSponsor, history: { sponsor: { ...expiredSponsor, verified: true, purchaseCount: 1 } },
+              expectedMode: 'reopen', expectedTier: 'regular', expectedButton: '重新開通閱讀權限', expectedPrice1: 180, expectedPrice3: 500
+            });
+            await scenarioTest('promo-full-first-purchase-regular', {
+              offer: { ...baseOffer, promotionAvailable: false, occupiedCount: 200, remaining: 0 },
+              expectedMode: 'join', expectedTier: 'regular', expectedButton: '立即加入', expectedPrice1: 180, expectedPrice3: 500
+            });
+          } finally {
+            await browser.close();
+          }
+          JS
+          node /tmp/paid-login-browser-test.mjs
+
+      - name: Remove one-time browser workflow
+        if: success()
+        run: |
+          git config user.name "lyyuan03"
+          git config user.email "lyyuan03@gmail.com"
+          git rm .github/workflows/one-time-browser-test-paid-login.yml
+          git commit -m "chore: remove one-time paid login browser test"
+          git push origin main
