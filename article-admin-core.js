@@ -1,5 +1,5 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260807-article-sync-1";
+import { staticArticles } from "./static-articles.js?v=20260812-2058-image-sync-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -13,6 +13,9 @@ const categoryLabels = {
 
 const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
+]);
+const staticImageSyncRevisions = new Map([
+  ["2058-future-person-prophecy", "20260812-2058-image-sync-1"]
 ]);
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
@@ -351,6 +354,32 @@ async function syncRevisedStaticArticles(snapshot) {
   return didSync;
 }
 
+async function syncRevisedStaticArticleImages(snapshot) {
+  const firestoreById = new Map(snapshot.docs.map((item) => [item.id, item.data()]));
+  let didSync = false;
+  for (const [articleId, revision] of staticImageSyncRevisions) {
+    const current = firestoreById.get(articleId);
+    const article = staticArticles.find((item) => item.id === articleId);
+    if (!current || !article) continue;
+    const desiredCoverImage = article.coverImage || "";
+    const desiredThumbnailImage = article.thumbnailImage || "";
+    if (
+      current.staticImageSyncRevision === revision
+      && (current.coverImage || "") === desiredCoverImage
+      && (current.thumbnailImage || "") === desiredThumbnailImage
+    ) continue;
+    await setDoc(doc(db, "articles", articleId), {
+      coverImage: desiredCoverImage,
+      thumbnailImage: desiredThumbnailImage,
+      staticImageSyncRevision: revision,
+      staticImageSourceUpdatedAt: article.updatedAt || "",
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    didSync = true;
+  }
+  return didSync;
+}
+
 function setFormData(article = {}) {
   const isStaticArticle = article.source === "github-static";
   form.title.value = article.title || "";
@@ -484,9 +513,12 @@ async function loadArticles() {
   listEl.innerHTML = '<div class="empty">載入中…</div>';
   try {
     let snapshot = await getDocs(collection(db, "articles"));
-    if (await syncRevisedStaticArticles(snapshot)) {
+    const didImageSync = await syncRevisedStaticArticleImages(snapshot);
+    const didContentSync = await syncRevisedStaticArticles(snapshot);
+    if (didImageSync || didContentSync) {
       snapshot = await getDocs(collection(db, "articles"));
-      showAdminToast("《你可以不怕死》前後台內容已完成同步。", "success");
+      if (didContentSync) showAdminToast("《你可以不怕死》前後台內容已完成同步。", "success");
+      if (didImageSync) showAdminToast("2058 未來人文章前後台圖片已完成同步。", "success");
     }
     await syncPublicationStatusIndex(snapshot);
     try {
@@ -516,7 +548,18 @@ async function loadArticles() {
     const mergedArticles = new Map(
       staticArticles.map((article) => [article.id, { ...article, source: "github-static" }])
     );
-    firestoreArticles.forEach((article) => mergedArticles.set(article.id, article));
+    firestoreArticles.forEach((article) => {
+      const staticArticle = staticArticles.find((item) => item.id === article.id);
+      if (staticImageSyncRevisions.has(article.id) && staticArticle) {
+        mergedArticles.set(article.id, {
+          ...article,
+          coverImage: staticArticle.coverImage || article.coverImage || "",
+          thumbnailImage: staticArticle.thumbnailImage || article.thumbnailImage || ""
+        });
+      } else {
+        mergedArticles.set(article.id, article);
+      }
+    });
     articles = [...mergedArticles.values()].sort((a, b) =>
       articleTime(b.updatedAt || b.publishedAt) - articleTime(a.updatedAt || a.publishedAt)
     );
