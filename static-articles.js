@@ -10,6 +10,11 @@ import { loveBeyondFilialPietyArticle } from "./article-love-beyond-filial-piety
 import { yuanshenDestinyArchetypeArticle } from "./article-yuanshen-destiny-archetype.js?v=20260807-final-1";
 import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-years.js?v=20260810-complete-ending-1";
 
+const draftFuturePerson2058ProphecyArticle = {
+  ...futurePerson2058ProphecyArticle,
+  status: "draft"
+};
+
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
   publishedAt: "2026-07-30T23:59:00.000Z",
@@ -50,7 +55,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
-  futurePerson2058ProphecyArticle,
+  draftFuturePerson2058ProphecyArticle,
   thisBookTookThirtyYearsArticle,
   yuanshenDestinyArchetypeArticle,
   loveBeyondFilialPietyArticle,
