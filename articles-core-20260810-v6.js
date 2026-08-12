@@ -980,6 +980,15 @@ async function syncPublicationStatusIndexForAdmin() {
   return true;
 }
 
+function withTimeout(promise, timeoutMs, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      window.setTimeout(() => reject(new Error(`${label}逾時`)), timeoutMs);
+    })
+  ]);
+}
+
 async function loadArticles() {
   renderTabs();
   const publishedRequest = getDocs(
@@ -987,8 +996,8 @@ async function loadArticles() {
   );
   const statusRequest = getDoc(doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID));
   const [publishedResult, statusResult] = await Promise.allSettled([
-    publishedRequest,
-    statusRequest
+    withTimeout(publishedRequest, 8000, "已發布文章載入"),
+    withTimeout(statusRequest, 8000, "文章狀態索引載入")
   ]);
 
   const firestoreArticles = publishedResult.status === "fulfilled"
