@@ -47,7 +47,7 @@ jobs:
           path = Path('articles.html')
           text = path.read_text(encoding='utf-8')
           replacements = {
-              'articles-v6.js?v=20260812-paid-gate-selfcontained-7': 'articles-v6.js?v=20260812-confirm-fix-8',
+              'articles-v6.js?v=20260812-2058-visual-1': 'articles-v6.js?v=20260812-confirm-fix-8',
               '/sponsor-checkout.js?v=20260805-public-sync-1': '/sponsor-checkout.js?v=20260812-confirm-fix-8',
           }
           for old, new in replacements.items():
