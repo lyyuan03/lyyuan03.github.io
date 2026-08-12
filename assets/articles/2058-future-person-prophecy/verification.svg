@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="大量預測紀錄中只留下少數命中內容的抽象視覺">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b1710"/><stop offset="1" stop-color="#40362f"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="18"/></filter>
+ <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="3" seed="2019" result="n"/><feColorMatrix in="n" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .06 0"/><feBlend in="SourceGraphic" mode="soft-light"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<g opacity=".55" fill="#1f3027" stroke="#a58254" stroke-opacity=".32">
+ <rect x="110" y="140" width="285" height="130" rx="18"/><rect x="470" y="125" width="285" height="130" rx="18"/><rect x="830" y="148" width="285" height="130" rx="18"/><rect x="1190" y="128" width="285" height="130" rx="18"/>
+ <rect x="135" y="355" width="285" height="130" rx="18"/><rect x="495" y="340" width="285" height="130" rx="18"/><rect x="855" y="363" width="285" height="130" rx="18" fill="#304439" stroke-opacity=".82"/><rect x="1215" y="343" width="285" height="130" rx="18"/>
+ <rect x="105" y="570" width="285" height="130" rx="18"/><rect x="465" y="555" width="285" height="130" rx="18"/><rect x="825" y="578" width="285" height="130" rx="18"/><rect x="1185" y="558" width="285" height="130" rx="18"/>
+</g>
+<g fill="#eee7da" opacity=".18">
+ <path d="M160 178h160v8H160zM160 205h112v8H160zM160 232h190v8H160z"/><path d="M520 163h155v8H520zM520 190h195v8H520zM520 217h122v8H520z"/>
+ <path d="M880 186h160v8H880zM880 213h205v8H880zM880 240h108v8H880z"/><path d="M1240 166h154v8h-154zM1240 193h196v8h-196zM1240 220h126v8h-126z"/>
+ <path d="M185 393h181v8H185zM185 420h114v8H185zM185 447h173v8H185z"/><path d="M545 378h174v8H545zM545 405h125v8H545zM545 432h193v8H545z"/>
+ <path d="M905 401h171v8H905zM905 428h196v8H905zM905 455h132v8H905z"/><path d="M1265 381h175v8h-175zM1265 408h118v8h-118zM1265 435h191v8h-191z"/>
+ <path d="M155 608h165v8H155zM155 635h196v8H155zM155 662h119v8H155z"/><path d="M515 593h167v8H515zM515 620h120v8H515zM515 647h194v8H515z"/>
+ <path d="M875 616h170v8H875zM875 643h192v8H875zM875 670h128v8H875z"/><path d="M1235 596h169v8h-169zM1235 623h116v8h-116zM1235 650h196v8h-196z"/>
+</g>
+<g stroke="#8b6252" stroke-opacity=".46" stroke-width="4"><path d="M128 155l250 100M492 142l242 98M1212 145l236 97M153 372l245 97M512 357l247 96M1232 360l245 95M124 587l244 98M484 572l244 98M844 595l244 97M1204 575l244 98"/></g>
+<rect x="835" y="343" width="325" height="170" rx="28" fill="#d5c09a" opacity=".11" filter="url(#glow)"/>
+<circle cx="889" cy="393" r="9" fill="#d5c09a"/><circle cx="889" cy="393" r="27" fill="#d5c09a" opacity=".18" filter="url(#glow)"/>
+<g fill="none" stroke="#a58254" opacity=".7"><path d="M1010 780v-130M1010 780L680 850M1010 780l-160 70M1010 780l160 70M1010 780l330 70"/></g>
+<rect width="1600" height="900" fill="transparent" filter="url(#grain)"/>
+</svg>
