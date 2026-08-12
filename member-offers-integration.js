@@ -1,11 +1,13 @@
-import { app, auth } from "./firebase-config.js";
+import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
-import { evaluateOfferForRoles, formatTaipeiShort } from "./member-offers-core.js?v=20260812-1";
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  evaluateOfferForRoles,
+  formatTaipeiShort,
+  loadOfferMemberProfile
+} from "./member-offers-core.js?v=20260812-2";
 
 const path = location.pathname.toLowerCase();
-const functions = getFunctions(app, "asia-east1");
-const getMemberOffers = httpsCallable(functions, "getMemberOffers");
 
 function onReady(callback) {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", callback, { once: true });
@@ -43,9 +45,17 @@ function enhanceMembershipPage() {
   target.appendChild(note);
 }
 
-function bestOffer(roles, offers, serverTime) {
-  const now = serverTime ? new Date(serverTime) : new Date();
-  const candidates = (Array.isArray(offers) ? offers : []).map((offer) => ({ offer, state: evaluateOfferForRoles(offer, roles, now) })).filter((item) => !item.state.hidden && !item.state.ended);
+async function loadPublishedOffers() {
+  const snapshot = await getDocs(query(collection(db, "articles"), where("status", "==", "published")));
+  return snapshot.docs
+    .map((item) => ({ id: item.id, ...item.data() }))
+    .filter((offer) => offer.systemRecord === true && offer.systemType === "memberOffer");
+}
+
+function bestOffer(roles, offers, now = new Date()) {
+  const candidates = (Array.isArray(offers) ? offers : [])
+    .map((offer) => ({ offer, state: evaluateOfferForRoles(offer, roles, now) }))
+    .filter((item) => !item.state.hidden && !item.state.ended);
   candidates.sort((a, b) => {
     if (a.state.currentEligible !== b.state.currentEligible) return a.state.currentEligible ? -1 : 1;
     const aNext = a.state.nextEligiblePhase?.startsAtDate || a.state.startsAt || new Date(8640000000000000);
@@ -70,9 +80,10 @@ function enhanceDashboardPage() {
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
     try {
-      const result = await getMemberOffers();
-      const roles = Array.isArray(result.data?.roles) ? result.data.roles : [];
-      const best = bestOffer(roles, result.data?.offers, result.data?.serverTime);
+      const profile = await loadOfferMemberProfile(db, user);
+      if (!profile.active) return;
+      const offers = await loadPublishedOffers();
+      const best = bestOffer(profile.roles, offers, new Date());
       if (!best) return;
       const message = document.getElementById("member-offer-entry-message");
       const kicker = entry.querySelector(".member-offer-entry-kicker");
@@ -87,7 +98,7 @@ function enhanceDashboardPage() {
         message.textContent = `您的會員資格將於 ${formatTaipeiShort(best.state.nextEligiblePhase.startsAtDate)} 開放。`;
       }
     } catch (error) {
-      if (!["functions/permission-denied", "functions/unauthenticated"].includes(error?.code)) console.warn("會員中心優惠摘要載入失敗：", error);
+      console.warn("會員中心優惠摘要載入失敗：", error);
     }
   });
 }
@@ -95,5 +106,5 @@ function enhanceDashboardPage() {
 onReady(() => {
   if (/(^|\/)membership\.html$/.test(path)) enhanceMembershipPage();
   if (/(^|\/)member-dashboard\.html$/.test(path)) enhanceDashboardPage();
-  if (/(^|\/)admin\.html$/.test(path)) import("./member-offer-admin.js?v=20260812-1").catch((error) => console.error("會員優惠後台載入失敗：", error));
+  if (/(^|\/)admin\.html$/.test(path)) import("./member-offer-admin.js?v=20260812-2").catch((error) => console.error("會員優惠後台載入失敗：", error));
 });
