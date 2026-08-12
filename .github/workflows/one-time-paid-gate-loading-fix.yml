@@ -1,0 +1,53 @@
+name: One-time paid article loading cache refresh
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/one-time-paid-gate-loading-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cache-refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Bump active articles entry cache version
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('articles.html')
+          text = path.read_text(encoding='utf-8')
+          old = 'articles-v6.js?v=20260812-paid-gate-restore-2'
+          new = 'articles-v6.js?v=20260812-paid-gate-loading-fix-3'
+          count = text.count(old)
+          if count != 1:
+              raise SystemExit(f'articles.html: expected exactly one active entry, found {count}')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
+      - name: Verify article core cannot be blocked by paid gate addon
+        run: |
+          grep -F 'articles-v6.js?v=20260812-paid-gate-loading-fix-3' articles.html
+          grep -F 'import("./article-paid-gate-restore.js?v=20260812-paid-gate-loading-fix-3")' articles-v6.js
+          if grep -Fq 'import "./article-paid-gate-restore.js' articles-v6.js; then exit 1; fi
+          node --check articles-v6.js
+          node --check article-paid-gate-restore.js
+
+      - name: Commit cache refresh and remove one-time workflow
+        run: |
+          git config user.name "lyyuan03"
+          git config user.email "lyyuan03@gmail.com"
+          git rm .github/workflows/one-time-paid-gate-loading-fix.yml
+          git add articles.html articles-v6.js
+          git commit -m "fix: restore article loading after paid gate change"
+          git pull --rebase origin main
+          git push origin main
