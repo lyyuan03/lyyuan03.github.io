@@ -738,7 +738,7 @@ function renderPaidGate(article) {
 
 function bindPaidLogin() {
   document.querySelector(".article-paid-login")?.addEventListener("click", () => {
-    location.href = `member-login.html?redirect=${encodeURIComponent(location.href)}`;
+    document.getElementById("member-login-button")?.click();
   });
 }
 
