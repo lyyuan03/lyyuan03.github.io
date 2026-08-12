@@ -8,6 +8,10 @@ const SCALE_MIN = 100;
 const SCALE_MAX = 250;
 const DEFAULTS = { positionX: 50, positionY: 50, scale: 100 };
 const KNOWN_ARTICLE_IMAGE_REPAIRS = {
+  "2058-future-person-prophecy": [
+    { alt: "當預言只剩下命中的版本，真正要辨識的是我們看見了什麼、又漏掉了什麼", src: "assets/articles/2058-future-person-prophecy/verification.webp?v=20260812-2" },
+    { alt: "未來不是單一路線，而是選擇與集體意識交織出的可能性", src: "assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260812-2" }
+  ],
   "yuanshen-destiny-archetype": [
     { alt: "天庭巨石所化的元神", src: "assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260808-hires-merge-1" },
     { alt: "大鵬鳥元神", src: "assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260808-hires-merge-1" },

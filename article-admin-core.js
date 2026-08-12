@@ -1,5 +1,5 @@
-import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260812-2058-image-sync-1";
+import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260812-2058-inline-image-sync-1";
+import { staticArticles } from "./static-articles.js?v=20260812-2058-inline-image-sync-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -15,7 +15,7 @@ const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
 ]);
 const staticImageSyncRevisions = new Map([
-  ["2058-future-person-prophecy", "20260812-2058-image-sync-1"]
+  ["2058-future-person-prophecy", "20260812-2058-image-sync-2"]
 ]);
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
@@ -354,6 +354,13 @@ async function syncRevisedStaticArticles(snapshot) {
   return didSync;
 }
 
+function syncKnownInlineImagePaths(articleId, content = "") {
+  if (articleId !== "2058-future-person-prophecy") return String(content || "");
+  return String(content || "")
+    .replace(/assets\/articles\/2058-future-person-prophecy\/verification\.svg(?:\?v=[^)\s]+)?/g, "assets/articles/2058-future-person-prophecy/verification.webp?v=20260812-2")
+    .replace(/assets\/articles\/2058-future-person-prophecy\/consciousness-network\.svg(?:\?v=[^)\s]+)?/g, "assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260812-2");
+}
+
 async function syncRevisedStaticArticleImages(snapshot) {
   const firestoreById = new Map(snapshot.docs.map((item) => [item.id, item.data()]));
   let didSync = false;
@@ -363,18 +370,24 @@ async function syncRevisedStaticArticleImages(snapshot) {
     if (!current || !article) continue;
     const desiredCoverImage = article.coverImage || "";
     const desiredThumbnailImage = article.thumbnailImage || "";
+    const currentContent = current.content || "";
+    const desiredContent = syncKnownInlineImagePaths(articleId, currentContent);
+    const contentChanged = desiredContent !== currentContent;
     if (
       current.staticImageSyncRevision === revision
       && (current.coverImage || "") === desiredCoverImage
       && (current.thumbnailImage || "") === desiredThumbnailImage
+      && !contentChanged
     ) continue;
-    await setDoc(doc(db, "articles", articleId), {
+    const payload = {
       coverImage: desiredCoverImage,
       thumbnailImage: desiredThumbnailImage,
       staticImageSyncRevision: revision,
       staticImageSourceUpdatedAt: article.updatedAt || "",
       updatedAt: serverTimestamp()
-    }, { merge: true });
+    };
+    if (contentChanged) payload.content = desiredContent;
+    await setDoc(doc(db, "articles", articleId), payload, { merge: true });
     didSync = true;
   }
   return didSync;
@@ -554,7 +567,8 @@ async function loadArticles() {
         mergedArticles.set(article.id, {
           ...article,
           coverImage: staticArticle.coverImage || article.coverImage || "",
-          thumbnailImage: staticArticle.thumbnailImage || article.thumbnailImage || ""
+          thumbnailImage: staticArticle.thumbnailImage || article.thumbnailImage || "",
+          content: syncKnownInlineImagePaths(article.id, article.content || "")
         });
       } else {
         mergedArticles.set(article.id, article);
