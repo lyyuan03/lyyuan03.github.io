@@ -1,0 +1,52 @@
+name: Patch 2058 Article Guide
+
+on:
+  push:
+    branches: [ fix-2058-article-guide ]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix-2058-article-guide
+      - name: Add article guide entry
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('articles-core-20260810-v6.js')
+          text = path.read_text(encoding='utf-8')
+          key = '"2058-future-person-prophecy"'
+          if key in text:
+              raise SystemExit('2058 article guide already exists; refusing duplicate insertion.')
+
+          anchor = 'const articleGuides = {\n'
+          if text.count(anchor) != 1:
+              raise SystemExit(f'Expected exactly one articleGuides anchor, found {text.count(anchor)}.')
+
+          entry = '''  "2058-future-person-prophecy": {\n    topics: ["靈修辨識", "修行心性"],\n    level: "深度",\n    nextId: "lingxiu-yuanshen-reality"\n  },\n'''
+          text = text.replace(anchor, anchor + entry, 1)
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Verify exact change
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('articles-core-20260810-v6.js').read_text(encoding='utf-8')
+          expected = '''  "2058-future-person-prophecy": {\n    topics: ["靈修辨識", "修行心性"],\n    level: "深度",\n    nextId: "lingxiu-yuanshen-reality"\n  },'''
+          assert text.count(expected) == 1, 'Expected guide block was not written exactly once.'
+          PY
+          git diff -- articles-core-20260810-v6.js
+      - name: Remove one-time workflow and commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/patch-2058-article-guide.yml
+          git add articles-core-20260810-v6.js
+          git commit -m "Add guide metadata for 2058 prophecy article"
+          git push origin fix-2058-article-guide
