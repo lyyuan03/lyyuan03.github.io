@@ -117,6 +117,7 @@ reminderStyle.textContent = `
   font-size:13px;
   line-height:1.8;
   letter-spacing:.035em;
+  white-space:pre-line;
 }
 .membership-expiry-alert-copy b {
   color:#60442E;
@@ -244,8 +245,8 @@ function buildReminder(member, sponsorMember) {
   const expiryText = formatTaipeiDate(next.expiry);
   const gratitudeMessage = "非常感謝您一路以來的護持！如果這段期間，靈元院的文章與內容曾帶給您一些啟發與陪伴，若您還想繼續與我們同行，歡迎續會，讓這份靈性的成長與陪伴延續下去。";
   const message = days === 0
-    ? `您的${next.label}將於今日（${expiryText}）到期。${gratitudeMessage}`
-    : `您的${next.label}將於 ${expiryText} 到期，目前還有 ${days} 天。${gratitudeMessage}`;
+    ? `您的${next.label}將於今日（${expiryText}）到期。\n${gratitudeMessage}`
+    : `您的${next.label}將於 ${expiryText} 到期，目前還有 ${days} 天。\n${gratitudeMessage}`;
 
   return { ...next, days, urgent, badge, title, message };
 }
