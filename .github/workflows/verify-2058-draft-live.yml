@@ -1,0 +1,72 @@
+name: Verify 2058 Draft Live
+
+on:
+  push:
+    branches:
+      - verify-2058-draft-live
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: verify-2058-draft-live
+      - name: Install browser
+        run: |
+          mkdir -p /tmp/lyyuan-livecheck
+          cd /tmp/lyyuan-livecheck
+          npm init -y >/dev/null 2>&1
+          npm install playwright --no-save >/dev/null 2>&1
+          npx playwright install chromium
+      - name: Verify draft is absent from live frontend
+        run: |
+          cat >/tmp/lyyuan-livecheck/check.js <<'NODE'
+          const { chromium } = require('/tmp/lyyuan-livecheck/node_modules/playwright');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
+            const stamp = Date.now();
+
+            await page.goto(`https://lyyuan.tw/articles.html?id=2058-future-person-prophecy&verify=${stamp}`, { waitUntil: 'domcontentloaded', timeout: 90000 });
+            await page.waitForTimeout(7000);
+            const directViews = await page.locator('.article-view[data-article-id="2058-future-person-prophecy"]').count();
+            const directTitle = await page.getByText('來自2058年的未來人', { exact: false }).count();
+            const directBody = await page.locator('body').innerText();
+            console.log(`DIRECT_ARTICLE_VIEW=${directViews}`);
+            console.log(`DIRECT_TITLE_MATCHES=${directTitle}`);
+            console.log(`DIRECT_BODY_HAS_UNAVAILABLE=${/找不到|尚未發布|載入/.test(directBody)}`);
+            if (directViews !== 0 || directTitle !== 0) {
+              throw new Error('2058 draft article is still rendered on the direct frontend URL');
+            }
+
+            await page.goto(`https://lyyuan.tw/articles.html?verify=${stamp}`, { waitUntil: 'domcontentloaded', timeout: 90000 });
+            await page.waitForTimeout(7000);
+            const listLinks = await page.locator('a[href*="2058-future-person-prophecy"]').count();
+            const listTitle = await page.getByText('來自2058年的未來人', { exact: false }).count();
+            console.log(`LIST_LINK_MATCHES=${listLinks}`);
+            console.log(`LIST_TITLE_MATCHES=${listTitle}`);
+            if (listLinks !== 0 || listTitle !== 0) {
+              throw new Error('2058 draft article is still present in the public article list');
+            }
+
+            await browser.close();
+            console.log('LIVE_DRAFT_VISIBILITY_OK=true');
+          })().catch((error) => {
+            console.error(error?.stack || error);
+            process.exit(1);
+          });
+          NODE
+          node /tmp/lyyuan-livecheck/check.js
+      - name: Remove one-time verifier
+        if: always()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm -f .github/workflows/verify-2058-draft-live.yml
+          git commit -m 'Remove one-time 2058 live verifier'
+          git push origin HEAD:verify-2058-draft-live
