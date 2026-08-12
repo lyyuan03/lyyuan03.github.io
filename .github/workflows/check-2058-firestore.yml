@@ -48,8 +48,8 @@ jobs:
               coverImage: unwrap(fields.coverImage),
               thumbnailImage: unwrap(fields.thumbnailImage),
               status: unwrap(fields.status),
-              staticSyncRevision: unwrap(fields.staticSyncRevision),
-              staticSourceUpdatedAt: unwrap(fields.staticSourceUpdatedAt)
+              staticImageSyncRevision: unwrap(fields.staticImageSyncRevision),
+              staticImageSourceUpdatedAt: unwrap(fields.staticImageSourceUpdatedAt)
             };
             console.log('DOCUMENT_EXISTS=true');
             console.log('ARTICLE_FIELDS=' + JSON.stringify(out));
