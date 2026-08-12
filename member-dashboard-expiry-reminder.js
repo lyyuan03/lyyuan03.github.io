@@ -57,6 +57,7 @@ reminderStyle.textContent = `
 }
 .membership-expiry-alert.is-urgent:before { background:#8B5637; }
 .membership-expiry-alert-icon {
+  --expiry-pulse:165,130,84;
   display:grid;
   place-items:center;
   width:28px;
@@ -69,10 +70,37 @@ reminderStyle.textContent = `
   font-size:16px;
   font-weight:600;
   line-height:1;
+  transform-origin:center;
+  will-change:transform,box-shadow;
+  animation:membershipExpiryNudge 2.4s ease-in-out infinite;
 }
 .membership-expiry-alert.is-urgent .membership-expiry-alert-icon {
+  --expiry-pulse:139,86,55;
   border-color:rgba(139,86,55,.55);
   color:#7B432E;
+  animation-duration:1.8s;
+}
+@keyframes membershipExpiryNudge {
+  0%,58%,100% {
+    transform:translateY(0) scale(1);
+    box-shadow:0 0 0 0 rgba(var(--expiry-pulse),0);
+  }
+  66% {
+    transform:translateY(-3px) scale(1.06);
+    box-shadow:0 0 0 0 rgba(var(--expiry-pulse),.24);
+  }
+  74% {
+    transform:translateY(0) scale(1);
+    box-shadow:0 0 0 7px rgba(var(--expiry-pulse),0);
+  }
+  82% {
+    transform:translateY(-1px) scale(1.025);
+    box-shadow:0 0 0 0 rgba(var(--expiry-pulse),.16);
+  }
+  90% {
+    transform:translateY(0) scale(1);
+    box-shadow:0 0 0 5px rgba(var(--expiry-pulse),0);
+  }
 }
 .membership-expiry-alert-copy strong {
   display:block;
@@ -102,6 +130,11 @@ reminderStyle.textContent = `
     grid-template-columns:auto 1fr;
     gap:11px;
     padding:16px 17px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .membership-expiry-alert-icon {
+    animation:none!important;
   }
 }
 `;
