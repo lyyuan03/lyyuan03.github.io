@@ -46,6 +46,11 @@ const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 // 這篇已由 Firestore 後台接管；索引首次建立前也不得退回顯示靜態 published 版本。
 const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype"]);
 const articleGuides = {
+  "2058-future-person-prophecy": {
+    topics: ["靈修辨識", "修行心性"],
+    level: "深度",
+    nextId: "lingxiu-yuanshen-reality"
+  },
   "this-book-took-thirty-years": {
     topics: ["元神與人格", "修行心性"],
     level: "深度",
