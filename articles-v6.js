@@ -1,11 +1,34 @@
-import "./articles-core-20260810-v6.js?v=20260812-paid-login-modal-fix-1";
-import "./article-love-beyond-filial-piety-display-fix.js?v=20260810-original-photo-fix-1";
-import "./sponsor-checkout-v3.js?v=20260808-email-renewal-1";
+const articleRoot = document.getElementById("article-root");
 
-// 購買框修復屬於附加功能，不可再阻斷文章核心載入。
-// 使用動態載入：即使 CDN 尚未同步或附加模組暫時失敗，文章本體仍會正常顯示。
-import("./article-paid-gate-restore.js?v=20260812-paid-gate-loading-fix-3").catch((error) => {
-  console.warn("贊助文章購買框附加模組載入失敗，文章本體維持正常顯示。", error);
+async function loadArticleCore() {
+  try {
+    await import("./articles-core-20260810-v6.js?v=20260812-core-isolation-fix-4");
+  } catch (error) {
+    console.error("文選核心載入失敗。", error);
+    if (articleRoot) {
+      articleRoot.innerHTML = '<div class="empty">文章載入失敗，請重新整理頁面後再試。若問題持續，請聯繫網站管理員。</div>';
+    }
+    return false;
+  }
+  return true;
+}
+
+async function loadArticleAddons() {
+  const addons = [
+    ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-core-isolation-fix-4"],
+    ["贊助方案", "./sponsor-checkout-v3.js?v=20260812-core-isolation-fix-4"],
+    ["贊助文章購買框", "./article-paid-gate-restore.js?v=20260812-core-isolation-fix-4"]
+  ];
+  const results = await Promise.allSettled(addons.map(([, path]) => import(path)));
+  results.forEach((result, index) => {
+    if (result.status === "rejected") {
+      console.warn(`${addons[index][0]}附加模組載入失敗，文章本體維持正常顯示。`, result.reason);
+    }
+  });
+}
+
+void loadArticleCore().then((loaded) => {
+  if (loaded) void loadArticleAddons();
 });
 
 const articleVisualFixStyleId = "article-visual-fixes-20260811";
