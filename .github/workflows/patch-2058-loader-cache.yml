@@ -1,0 +1,42 @@
+name: Patch 2058 Loader Cache
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Refresh article loader query string
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('articles.html')
+          text = path.read_text(encoding='utf-8')
+          old = 'articles-v6.js?v=20260812-paid-gate-selfcontained-7'
+          new = 'articles-v6.js?v=20260812-2058-visual-1'
+          if old not in text and new not in text:
+              raise SystemExit('expected articles-v6 cache string not found')
+          text = text.replace(old, new, 1)
+          path.write_text(text, encoding='utf-8')
+          Path('.github/workflows/patch-2058-loader-cache.yml').unlink()
+          PY
+      - name: Validate and commit
+        run: |
+          set -euo pipefail
+          grep -q 'articles-v6.js?v=20260812-2058-visual-1' articles.html
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Refresh 2058 article loader cache'
+          git push
