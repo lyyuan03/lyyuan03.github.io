@@ -25,7 +25,7 @@ jobs:
 
       - name: Run live and scenario browser tests
         run: |
-          cat > /tmp/paid-login-browser-test.mjs <<'JS'
+          cat > paid-login-browser-test.mjs <<'JS'
           import fs from 'node:fs';
           import { execSync } from 'node:child_process';
           import puppeteer from 'puppeteer-core';
@@ -46,8 +46,6 @@ jobs:
           const assert = (condition, message) => {
             if (!condition) throw new Error(message);
           };
-
-          async function wait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 
           async function liveTest() {
             const page = await browser.newPage();
@@ -82,7 +80,6 @@ jobs:
               const el = document.getElementById('member-login-offer');
               return el && !el.hidden && el.textContent.trim().length > 0;
             }, { timeout: 20000 });
-            const modalText = await page.$eval('#member-login-modal', (el) => el.innerText.replace(/\s+/g, ' ').trim());
             const offerText = await page.$eval('#member-login-offer', (el) => el.innerText.replace(/\s+/g, ' ').trim());
             assert(offerResponse && offerResponse.ready === true, 'Live sponsorOfferStatus response was not ready');
 
@@ -204,7 +201,7 @@ jobs:
             await browser.close();
           }
           JS
-          node /tmp/paid-login-browser-test.mjs
+          node paid-login-browser-test.mjs
 
       - name: Remove one-time browser workflow
         if: success()
