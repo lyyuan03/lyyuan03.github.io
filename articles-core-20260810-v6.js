@@ -651,8 +651,8 @@ async function loadMemberAccess(user) {
   try {
     const email = user.email.trim().toLowerCase();
     const [memberSnapshot, sponsorSnapshot] = await Promise.all([
-      getDoc(doc(db, "memberAccess", email)),
-      getDoc(doc(db, "sponsorMemberAccess", email))
+      withTimeout(getDoc(doc(db, "memberAccess", email)), 8000, "一般會員資格載入"),
+      withTimeout(getDoc(doc(db, "sponsorMemberAccess", email)), 8000, "贊助會員資格載入")
     ]);
 
     if (memberSnapshot.exists()) {
@@ -991,6 +991,20 @@ function withTimeout(promise, timeoutMs, label) {
 
 async function loadArticles() {
   renderTabs();
+
+  // 詳細文章若已有正式發布的靜態版本，先立即顯示，不等待任何遠端查詢。
+  // Firestore 完成後仍會重新核對發布狀態與會員權限並更新畫面。
+  if (activeId) {
+    const immediateArticle = staticArticles.find((article) =>
+      (article.id === activeId || article.slug === activeId)
+      && article.status === "published"
+      && article.hidden !== true
+      && article.systemRecord !== true
+      && !LEGACY_FIRESTORE_MANAGED_IDS.has(article.id)
+    );
+    if (immediateArticle) renderArticle(immediateArticle);
+  }
+
   const publishedRequest = getDocs(
     query(collection(db, "articles"), where("status", "==", "published"))
   );
@@ -1061,7 +1075,12 @@ async function loadArticles() {
     return article;
   });
   const hydratedArticles = await Promise.all(normalizedArticles.map((article) =>
-    activeId && (article.id === activeId || article.slug === activeId) ? hydrateEventArticle(article) : article
+    activeId && (article.id === activeId || article.slug === activeId)
+      ? withTimeout(hydrateEventArticle(article), 8000, "活動文章權限確認").catch((error) => {
+          console.warn("活動文章權限確認逾時，先顯示原始文章狀態。", error);
+          return article;
+        })
+      : article
   ));
   loadedArticles = hydratedArticles.sort(sortPublished);
   renderTabs();
