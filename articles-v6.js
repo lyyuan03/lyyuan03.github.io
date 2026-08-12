@@ -2,7 +2,7 @@ const articleRoot = document.getElementById("article-root");
 
 async function loadArticleCore() {
   try {
-    await import("./articles-core-20260810-v6.js?v=20260812-loading-timeout-fix-5");
+    await import("./articles-core-20260810-v6.js?v=20260812-static-first-fix-6");
   } catch (error) {
     console.error("文選核心載入失敗。", error);
     if (articleRoot) {
@@ -15,9 +15,9 @@ async function loadArticleCore() {
 
 async function loadArticleAddons() {
   const addons = [
-    ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-loading-timeout-fix-5"],
-    ["贊助方案", "./sponsor-checkout-v3.js?v=20260812-loading-timeout-fix-5"],
-    ["贊助文章購買框", "./article-paid-gate-restore.js?v=20260812-loading-timeout-fix-5"]
+    ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
+    ["贊助方案", "./sponsor-checkout-v3.js?v=20260812-static-first-fix-6"],
+    ["贊助文章購買框", "./article-paid-gate-restore.js?v=20260812-static-first-fix-6"]
   ];
   const results = await Promise.allSettled(addons.map(([, path]) => import(path)));
   results.forEach((result, index) => {
