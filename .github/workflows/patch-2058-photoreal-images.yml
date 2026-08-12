@@ -2,7 +2,8 @@ name: Patch 2058 Photoreal Images
 
 on:
   push:
-    branches: [ fix-2058-photoreal-images ]
+    branches:
+      - fix-2058-photoreal-images
   workflow_dispatch:
 
 permissions:
@@ -16,7 +17,7 @@ jobs:
         with:
           ref: fix-2058-photoreal-images
 
-      - name: Prepare source images
+      - name: Download free-use source photos
         run: |
           set -euo pipefail
           mkdir -p /tmp/2058-src assets/articles/2058-future-person-prophecy
@@ -25,7 +26,7 @@ jobs:
           curl -L --fail --retry 3 'https://images.unsplash.com/photo-1779444480590-9bf6f021d5d4?auto=format&fit=crop&fm=jpg&q=88&w=2200' -o /tmp/2058-src/consciousness.jpg
           python -m pip install --quiet Pillow
 
-      - name: Produce web images and patch article
+      - name: Generate WebP assets and patch references
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -35,8 +36,9 @@ jobs:
           root = Path('.')
           out = root / 'assets/articles/2058-future-person-prophecy'
           out.mkdir(parents=True, exist_ok=True)
+          version = '20260812-2'
 
-          def editorial(src, dest, size=(1200, 800), brightness=0.88, contrast=1.10, saturation=0.82):
+          def make_editorial(src, dest, size=(1200, 800), brightness=0.86, contrast=1.12, saturation=0.80):
               im = Image.open(src).convert('RGB')
               im = ImageOps.fit(im, size, method=Image.Resampling.LANCZOS, centering=(0.5, 0.5))
               im = ImageEnhance.Brightness(im).enhance(brightness)
@@ -45,42 +47,43 @@ jobs:
               im.save(dest, 'WEBP', quality=88, method=6)
               return im
 
-          cover = editorial('/tmp/2058-src/cover.jpg', out / 'cover.webp', brightness=0.84, contrast=1.13, saturation=0.78)
-          editorial('/tmp/2058-src/verification.jpg', out / 'verification.webp', brightness=0.82, contrast=1.12, saturation=0.72)
-          editorial('/tmp/2058-src/consciousness.jpg', out / 'consciousness-network.webp', brightness=0.78, contrast=1.15, saturation=0.80)
+          cover = make_editorial('/tmp/2058-src/cover.jpg', out / 'cover.webp', brightness=0.84, contrast=1.13, saturation=0.78)
+          make_editorial('/tmp/2058-src/verification.jpg', out / 'verification.webp', brightness=0.82, contrast=1.12, saturation=0.72)
+          make_editorial('/tmp/2058-src/consciousness.jpg', out / 'consciousness-network.webp', brightness=0.78, contrast=1.15, saturation=0.80)
           thumb = ImageOps.fit(cover, (720, 480), method=Image.Resampling.LANCZOS, centering=(0.5, 0.48))
           thumb.save(out / 'thumbnail.webp', 'WEBP', quality=86, method=6)
 
-          version = '20260812-2'
           article_path = root / 'article-2058-future-person-prophecy.js'
           text = article_path.read_text(encoding='utf-8')
-          replacements = {
-              'assets/articles/2058-future-person-prophecy/cover.svg?v=20260812-1': f'assets/articles/2058-future-person-prophecy/cover.webp?v={version}',
-              'assets/articles/2058-future-person-prophecy/thumbnail.svg?v=20260812-1': f'assets/articles/2058-future-person-prophecy/thumbnail.webp?v={version}',
-              'assets/articles/2058-future-person-prophecy/verification.svg?v=20260812-1': f'assets/articles/2058-future-person-prophecy/verification.webp?v={version}',
-              'assets/articles/2058-future-person-prophecy/consciousness-network.svg?v=20260812-1': f'assets/articles/2058-future-person-prophecy/consciousness-network.webp?v={version}',
-          }
-          for old, new in replacements.items():
+          swaps = [
+              ('assets/articles/2058-future-person-prophecy/cover.svg?v=20260812-1', f'assets/articles/2058-future-person-prophecy/cover.webp?v={version}'),
+              ('assets/articles/2058-future-person-prophecy/thumbnail.svg?v=20260812-1', f'assets/articles/2058-future-person-prophecy/thumbnail.webp?v={version}'),
+              ('assets/articles/2058-future-person-prophecy/verification.svg?v=20260812-1', f'assets/articles/2058-future-person-prophecy/verification.webp?v={version}'),
+              ('assets/articles/2058-future-person-prophecy/consciousness-network.svg?v=20260812-1', f'assets/articles/2058-future-person-prophecy/consciousness-network.webp?v={version}'),
+          ]
+          for old, new in swaps:
               if old not in text:
-                  raise SystemExit(f'missing expected article image path: {old}')
+                  raise SystemExit(f'missing expected article path: {old}')
               text = text.replace(old, new)
           if 'bookTitle: "喚醒天生好命"' not in text:
               anchor = '  readingLevel: "深度",\n'
               if anchor not in text:
                   raise SystemExit('missing readingLevel anchor')
-              text = text.replace(anchor, anchor +
+              fields = (
                   '  bookTitle: "喚醒天生好命",\n'
                   '  bookAuthor: "宇色Osel",\n'
                   '  bookPublisher: "高寶",\n'
-                  '  bookPurchaseUrl: "https://www.books.com.tw/products/0011003625?loc=P_br_r0vq68ygz_D_2aabd0_B_1",\n', 1)
+                  '  bookPurchaseUrl: "https://www.books.com.tw/products/0011003625?loc=P_br_r0vq68ygz_D_2aabd0_B_1",\n'
+              )
+              text = text.replace(anchor, anchor + fields, 1)
           article_path.write_text(text, encoding='utf-8')
 
           static_path = root / 'static-articles.js'
           text = static_path.read_text(encoding='utf-8')
-          text = text.replace(
-              './article-2058-future-person-prophecy.js?v=20260812-prophecy-1',
-              './article-2058-future-person-prophecy.js?v=20260812-prophecy-2'
-          )
+          old_import = './article-2058-future-person-prophecy.js?v=20260812-prophecy-1'
+          new_import = './article-2058-future-person-prophecy.js?v=20260812-prophecy-2'
+          if old_import in text:
+              text = text.replace(old_import, new_import, 1)
           static_path.write_text(text, encoding='utf-8')
 
           core_path = root / 'articles-core-20260810-v6.js'
@@ -108,17 +111,21 @@ jobs:
       }};
     }}
 '''
-          if 'if (article.id === "2058-future-person-prophecy") {' not in text[text.find('const normalizedArticles'):]:
+          normalized_pos = text.find('const normalizedArticles')
+          if normalized_pos < 0:
+              raise SystemExit('missing normalizedArticles section')
+          if 'if (article.id === "2058-future-person-prophecy") {' not in text[normalized_pos:]:
               anchor = '    if (article.id === "celebrity-death-dream-spirit-five-checks") {'
               if anchor not in text:
-                  raise SystemExit('missing normalizedArticles insertion anchor')
+                  raise SystemExit('missing normalized insertion anchor')
               text = text.replace(anchor, override + anchor, 1)
           core_path.write_text(text, encoding='utf-8')
 
           html_path = root / 'article/2058-future-person-prophecy.html'
           if html_path.exists():
               text = html_path.read_text(encoding='utf-8')
-              text = re.sub(r'assets/articles/2058-future-person-prophecy/cover\\.svg(?:\\?[^"\']*)?', f'assets/articles/2058-future-person-prophecy/cover.webp?v={version}', text)
+              pattern = r"assets/articles/2058-future-person-prophecy/cover\.svg(?:\?[^\"']*)?"
+              text = re.sub(pattern, f'assets/articles/2058-future-person-prophecy/cover.webp?v={version}', text)
               html_path.write_text(text, encoding='utf-8')
 
           workflow = root / '.github/workflows/patch-2058-photoreal-images.yml'
@@ -126,7 +133,7 @@ jobs:
               workflow.unlink()
           PY
 
-      - name: Validate generated assets
+      - name: Validate outputs
         run: |
           set -euo pipefail
           test -s assets/articles/2058-future-person-prophecy/cover.webp
@@ -141,11 +148,11 @@ jobs:
           grep -q '2058-future-person-prophecy.*thumbnail.webp?v=20260812-2' articles-core-20260810-v6.js
           ls -lh assets/articles/2058-future-person-prophecy/*.webp
 
-      - name: Commit patch
+      - name: Commit generated changes
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add article-2058-future-person-prophecy.js static-articles.js articles-core-20260810-v6.js article/2058-future-person-prophecy.html assets/articles/2058-future-person-prophecy .github/workflows/patch-2058-photoreal-images.yml
+          git add -A
           git commit -m 'Refresh 2058 article visuals and recommendation'
           git push
