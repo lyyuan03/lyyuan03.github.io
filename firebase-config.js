@@ -76,3 +76,12 @@ if (/(^|\/)(membership|member-dashboard|admin)\.html$/i.test(currentPath)) {
     });
   });
 }
+
+// 會員優惠影片附加功能：後台可儲存影片網址，會員中心活動卡可直接觀看。
+if (/(^|\/)(member-dashboard|admin)\.html$/i.test(currentPath)) {
+  queueMicrotask(() => {
+    import("./member-offer-video-addon.js?v=20260812-1").catch((error) => {
+      console.error("會員優惠影片功能載入失敗：", error);
+    });
+  });
+}
