@@ -24,7 +24,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Verify formal site and capture screenshots
         run: |
-          cat > /tmp/verify-2058.js <<'JS'
+          cat > verify-2058.js <<'JS'
           const { chromium } = require('playwright');
           const fs = require('fs');
           (async () => {
@@ -86,7 +86,7 @@ jobs:
             await browser.close();
           })().catch(err => { console.error(err); process.exit(1); });
           JS
-          node /tmp/verify-2058.js
+          node verify-2058.js
       - uses: actions/upload-artifact@v4
         with:
           name: formal-site-2058-screenshots
