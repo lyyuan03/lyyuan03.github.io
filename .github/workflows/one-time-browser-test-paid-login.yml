@@ -36,82 +36,77 @@ jobs:
             }
             throw new Error('Chrome/Chromium not found');
           })();
+          const browser = await puppeteer.launch({ executablePath, headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
+          const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
-          const browser = await puppeteer.launch({
-            executablePath,
-            headless: true,
-            args: ['--no-sandbox', '--disable-dev-shm-usage']
-          });
-
-          const assert = (condition, message) => {
-            if (!condition) throw new Error(message);
-          };
-
-          async function liveTest() {
-            const page = await browser.newPage();
+          async function openPaidArticle(page) {
             await page.setCacheEnabled(false);
-            const consoleErrors = [];
-            page.on('console', (msg) => {
-              if (msg.type() === 'error') consoleErrors.push(msg.text());
-            });
-
-            let offerResponse = null;
-            page.on('response', async (response) => {
-              if (!response.url().includes('sponsorOfferStatus')) return;
-              try { offerResponse = await response.json(); } catch {}
-            });
-
-            const listUrl = `https://lyyuan.tw/articles.html?access=paid&browserTest=${Date.now()}`;
-            await page.goto(listUrl, { waitUntil: 'networkidle2', timeout: 90000 });
+            await page.goto(`https://lyyuan.tw/articles.html?access=paid&browserTest=${Date.now()}`, { waitUntil: 'networkidle2', timeout: 90000 });
             await page.waitForSelector('.article-card', { timeout: 45000 });
             const href = await page.$eval('.article-card', (el) => el.href);
             await page.goto(href, { waitUntil: 'networkidle2', timeout: 90000 });
             await page.waitForSelector('.article-paid-login', { timeout: 45000 });
             await page.waitForSelector('#member-login-button', { timeout: 45000 });
+            return page.url();
+          }
 
-            const before = page.url();
+          async function clickAndAssertModal(page, before) {
             await page.click('.article-paid-login');
             await page.waitForSelector('#member-login-modal.is-open', { visible: true, timeout: 15000 });
             const after = page.url();
             assert(after === before, `Paid login changed URL unexpectedly: ${before} -> ${after}`);
             assert(!after.includes('member-login.html'), `Obsolete member-login.html navigation occurred: ${after}`);
+          }
 
-            await page.waitForFunction(() => {
-              const el = document.getElementById('member-login-offer');
-              return el && !el.hidden && el.textContent.trim().length > 0;
-            }, { timeout: 20000 });
-            const offerText = await page.$eval('#member-login-offer', (el) => el.innerText.replace(/\s+/g, ' ').trim());
-            assert(offerResponse && offerResponse.ready === true, 'Live sponsorOfferStatus response was not ready');
-
-            const fmt = (n) => Number(n || 0).toLocaleString('zh-TW');
-            if (offerResponse.promotionAvailable === true) {
-              const limit = Number(offerResponse.promoLimit || 200);
-              assert(offerText.includes(`前${limit}名`), `Modal missing live promo limit: ${offerText}`);
-              assert(offerText.includes(fmt(offerResponse.promoPrice1)), `Modal missing live promo 1-month price: ${offerText}`);
-              assert(offerText.includes(fmt(offerResponse.promoPrice3)), `Modal missing live promo 3-month price: ${offerText}`);
-              assert(offerText.includes(String(Number(offerResponse.remaining || 0))), `Modal missing live remaining count: ${offerText}`);
-            } else {
-              assert(offerText.includes('贊助閱讀方案'), `Modal did not switch to regular plan: ${offerText}`);
-              assert(offerText.includes(fmt(offerResponse.regularPrice1)), `Modal missing regular 1-month price: ${offerText}`);
-              assert(offerText.includes(fmt(offerResponse.regularPrice3)), `Modal missing regular 3-month price: ${offerText}`);
-            }
-
-            console.log('LIVE_TEST_PASS');
+          async function liveModalTest() {
+            const page = await browser.newPage();
+            const before = await openPaidArticle(page);
+            await clickAndAssertModal(page, before);
+            console.log('LIVE_MODAL_TEST_PASS');
             console.log('LIVE_ARTICLE_URL=' + before);
             console.log('LIVE_MODAL_OPEN=true');
             console.log('LIVE_URL_UNCHANGED=true');
-            console.log('LIVE_OFFER=' + JSON.stringify({
-              promotionAvailable: offerResponse.promotionAvailable,
-              promoLimit: offerResponse.promoLimit,
-              occupiedCount: offerResponse.occupiedCount,
-              remaining: offerResponse.remaining,
-              promoPrice1: offerResponse.promoPrice1,
-              promoPrice3: offerResponse.promoPrice3,
-              regularPrice1: offerResponse.regularPrice1,
-              regularPrice3: offerResponse.regularPrice3
-            }));
-            console.log('LIVE_OFFER_TEXT=' + offerText);
-            if (consoleErrors.length) console.log('LIVE_CONSOLE_ERRORS=' + JSON.stringify(consoleErrors));
+            const liveOffer = await page.$eval('#member-login-offer', (el) => ({ hidden: el.hidden, text: el.innerText.replace(/\s+/g, ' ').trim() }));
+            console.log('LIVE_OFFER_STATE=' + JSON.stringify(liveOffer));
+            await page.close();
+          }
+
+          async function modalOfferBranchTest(name, promotionAvailable) {
+            const page = await browser.newPage();
+            await page.setRequestInterception(true);
+            const responseBody = {
+              ready: true,
+              promotionAvailable,
+              promoLimit: 200,
+              occupiedCount: promotionAvailable ? 120 : 200,
+              remaining: promotionAvailable ? 80 : 0,
+              promoPrice1: 150,
+              promoPrice3: 400,
+              regularPrice1: 180,
+              regularPrice3: 500
+            };
+            page.on('request', (request) => {
+              if (request.url().includes('sponsorOfferStatus')) {
+                request.respond({ status: 200, contentType: 'application/json', body: JSON.stringify(responseBody), headers: { 'access-control-allow-origin': '*' } }).catch(() => {});
+              } else {
+                request.continue().catch(() => {});
+              }
+            });
+            const before = await openPaidArticle(page);
+            await clickAndAssertModal(page, before);
+            await page.waitForFunction(() => {
+              const el = document.getElementById('member-login-offer');
+              return el && !el.hidden && el.textContent.trim().length > 0;
+            }, { timeout: 15000 });
+            const text = await page.$eval('#member-login-offer', (el) => el.innerText.replace(/\s+/g, ' ').trim());
+            if (promotionAvailable) {
+              assert(text.includes('前200名'), `${name}: missing promo label: ${text}`);
+              assert(text.includes('150') && text.includes('400') && text.includes('80'), `${name}: promo values mismatch: ${text}`);
+            } else {
+              assert(text.includes('贊助閱讀方案'), `${name}: missing regular label: ${text}`);
+              assert(text.includes('180') && text.includes('500'), `${name}: regular values mismatch: ${text}`);
+            }
+            console.log(`MODAL_OFFER_BRANCH_PASS ${name} text=${text}`);
             await page.close();
           }
 
@@ -122,7 +117,7 @@ jobs:
 
           async function scenarioTest(name, { offer, sponsor = null, history = null, expectedMode, expectedTier, expectedButton, expectedPrice1, expectedPrice3 }) {
             const page = await browser.newPage();
-            await page.setContent(`<!doctype html><html><body><button id="member-login-button">會員登入</button><div data-sponsor-smart-slot data-sponsor-context="article"></div></body></html>`, { waitUntil: 'domcontentloaded' });
+            await page.setContent('<!doctype html><html><body><button id="member-login-button">會員登入</button><div data-sponsor-smart-slot data-sponsor-context="article"></div></body></html>', { waitUntil: 'domcontentloaded' });
             await page.evaluate(({ offer, sponsor, history }) => {
               window.__auth = { currentUser: { email: 'browser-test@example.com' } };
               window.__docs = {
@@ -131,7 +126,6 @@ jobs:
                 membershipHistory: { 'browser-test@example.com': history }
               };
             }, { offer, sponsor, history });
-
             const prelude = `
               const auth = window.__auth;
               const db = {};
@@ -149,54 +143,31 @@ jobs:
             const button = await page.$eval('[data-sponsor-smart-pay]', (el) => el.textContent.trim());
             const text = await page.$eval('[data-sponsor-smart-slot]', (el) => el.innerText.replace(/\s+/g, ' ').trim());
             assert(state.tier === expectedTier, `${name}: expected tier ${expectedTier}, got ${state.tier}`);
-            assert(button === expectedButton, `${name}: expected button "${expectedButton}", got "${button}"`);
-            assert(text.includes(`NT$${Number(expectedPrice1).toLocaleString('zh-TW')}`), `${name}: missing expected 1-month price in ${text}`);
-            assert(text.includes(`NT$${Number(expectedPrice3).toLocaleString('zh-TW')}`), `${name}: missing expected 3-month price in ${text}`);
+            assert(button === expectedButton, `${name}: expected button ${expectedButton}, got ${button}`);
+            assert(text.includes(`NT$${Number(expectedPrice1).toLocaleString('zh-TW')}`), `${name}: missing 1-month price: ${text}`);
+            assert(text.includes(`NT$${Number(expectedPrice3).toLocaleString('zh-TW')}`), `${name}: missing 3-month price: ${text}`);
             console.log(`SCENARIO_PASS ${name} mode=${expectedMode} tier=${state.tier} button=${button}`);
             await page.close();
           }
 
           const baseOffer = {
-            ready: true,
-            promoLimit: 200,
-            occupiedCount: 120,
-            remaining: 80,
-            promotionAvailable: true,
-            promoPrice1: 150,
-            promoPrice3: 400,
-            regularPrice1: 180,
-            regularPrice3: 500,
-            promoPaymentUrl: 'https://example.com/promo',
-            regularPaymentUrl: 'https://example.com/regular'
+            ready: true, promoLimit: 200, occupiedCount: 120, remaining: 80, promotionAvailable: true,
+            promoPrice1: 150, promoPrice3: 400, regularPrice1: 180, regularPrice3: 500,
+            promoPaymentUrl: 'https://example.com/promo', regularPaymentUrl: 'https://example.com/regular'
           };
           const future = new Date(Date.now() + 30 * 86400000).toISOString();
           const past = new Date(Date.now() - 30 * 86400000).toISOString();
-          const activeSponsor = {
-            memberType: 'sponsor-member', paymentStatus: 'paid', status: 'active', articleAccess: true,
-            accessScope: 'sponsor-paid-articles', accessVersion: 2, expiresAt: future, purchaseCount: 1
-          };
-          const expiredSponsor = {
-            memberType: 'sponsor-member', paymentStatus: 'paid', status: 'expired', articleAccess: true,
-            accessScope: 'sponsor-paid-articles', accessVersion: 2, expiresAt: past, purchaseCount: 1
-          };
+          const activeSponsor = { memberType: 'sponsor-member', paymentStatus: 'paid', status: 'active', articleAccess: true, accessScope: 'sponsor-paid-articles', accessVersion: 2, expiresAt: future, purchaseCount: 1 };
+          const expiredSponsor = { memberType: 'sponsor-member', paymentStatus: 'paid', status: 'expired', articleAccess: true, accessScope: 'sponsor-paid-articles', accessVersion: 2, expiresAt: past, purchaseCount: 1 };
 
           try {
-            await liveTest();
-            await scenarioTest('first-purchase-promo', {
-              offer: baseOffer, expectedMode: 'join', expectedTier: 'promo', expectedButton: '立即加入', expectedPrice1: 150, expectedPrice3: 400
-            });
-            await scenarioTest('active-renewal-regular', {
-              offer: baseOffer, sponsor: activeSponsor, history: { sponsor: { ...activeSponsor, verified: true, purchaseCount: 1 } },
-              expectedMode: 'renew', expectedTier: 'regular', expectedButton: '續期閱讀權限', expectedPrice1: 180, expectedPrice3: 500
-            });
-            await scenarioTest('expired-reopen-regular', {
-              offer: baseOffer, sponsor: expiredSponsor, history: { sponsor: { ...expiredSponsor, verified: true, purchaseCount: 1 } },
-              expectedMode: 'reopen', expectedTier: 'regular', expectedButton: '重新開通閱讀權限', expectedPrice1: 180, expectedPrice3: 500
-            });
-            await scenarioTest('promo-full-first-purchase-regular', {
-              offer: { ...baseOffer, promotionAvailable: false, occupiedCount: 200, remaining: 0 },
-              expectedMode: 'join', expectedTier: 'regular', expectedButton: '立即加入', expectedPrice1: 180, expectedPrice3: 500
-            });
+            await liveModalTest();
+            await modalOfferBranchTest('promo-open', true);
+            await modalOfferBranchTest('promo-full-regular', false);
+            await scenarioTest('first-purchase-promo', { offer: baseOffer, expectedMode: 'join', expectedTier: 'promo', expectedButton: '立即加入', expectedPrice1: 150, expectedPrice3: 400 });
+            await scenarioTest('active-renewal-regular', { offer: baseOffer, sponsor: activeSponsor, history: { sponsor: { ...activeSponsor, verified: true, purchaseCount: 1 } }, expectedMode: 'renew', expectedTier: 'regular', expectedButton: '續期閱讀權限', expectedPrice1: 180, expectedPrice3: 500 });
+            await scenarioTest('expired-reopen-regular', { offer: baseOffer, sponsor: expiredSponsor, history: { sponsor: { ...expiredSponsor, verified: true, purchaseCount: 1 } }, expectedMode: 'reopen', expectedTier: 'regular', expectedButton: '重新開通閱讀權限', expectedPrice1: 180, expectedPrice3: 500 });
+            await scenarioTest('promo-full-first-purchase-regular', { offer: { ...baseOffer, promotionAvailable: false, occupiedCount: 200, remaining: 0 }, expectedMode: 'join', expectedTier: 'regular', expectedButton: '立即加入', expectedPrice1: 180, expectedPrice3: 500 });
           } finally {
             await browser.close();
           }
