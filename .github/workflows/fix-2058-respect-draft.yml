@@ -1,0 +1,38 @@
+name: Fix 2058 Draft Visibility
+
+on:
+  push:
+    branches:
+      - fix-2058-respect-draft
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix-2058-respect-draft
+      - name: Apply draft visibility repair
+        run: python tools/fix-2058-respect-draft.py
+      - name: Verify draft rules
+        run: |
+          grep -F 'status: "draft"' article-2058-future-person-prophecy.js
+          grep -F 'futurePerson2058ProphecyArticle,' static-articles.js
+          ! grep -F 'publishedFuturePerson2058ProphecyArticle' static-articles.js
+          grep -F '"2058-future-person-prophecy"' articles-core-20260810-v6.js
+          ! grep -F 'allow2058PublishedFallback' articles-core-20260810-v6.js
+          ! grep -F 'keep2058StaticFallback' articles-core-20260810-v6.js
+          grep -F '20260812-2058-respect-draft-1' articles-v6.js
+          grep -F '20260812-2058-respect-draft-1' articles.html
+      - name: Commit clean repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm -f .github/workflows/fix-2058-respect-draft.yml tools/fix-2058-respect-draft.py
+          git add article-2058-future-person-prophecy.js static-articles.js articles-core-20260810-v6.js articles-v6.js articles.html
+          git commit -m 'Respect 2058 draft status on frontend'
+          git push origin HEAD:fix-2058-respect-draft
