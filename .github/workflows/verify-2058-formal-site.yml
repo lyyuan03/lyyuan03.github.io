@@ -1,0 +1,97 @@
+name: Verify 2058 Formal Site
+
+on:
+  push:
+    branches:
+      - verify-2058-formal-site
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install browser
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright
+          npx playwright install --with-deps chromium
+      - name: Verify formal site and capture screenshots
+        run: |
+          cat > /tmp/verify-2058.js <<'JS'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+          (async () => {
+            const browser = await chromium.launch({headless:true});
+            const page = await browser.newPage({viewport:{width:1440,height:1000}, deviceScaleFactor:1});
+            const url = `https://lyyuan.tw/articles.html?id=2058-future-person-prophecy&verify=20260812-2-${Date.now()}`;
+            await page.goto(url, {waitUntil:'domcontentloaded', timeout:90000});
+            await page.waitForSelector('.article-view[data-article-id="2058-future-person-prophecy"]', {timeout:90000});
+            await page.waitForSelector('.article-cover', {state:'visible', timeout:90000});
+            await page.waitForTimeout(3500);
+
+            const cover = page.locator('.article-cover');
+            const coverSrc = await cover.getAttribute('src');
+            if (!coverSrc || !coverSrc.includes('assets/articles/2058-future-person-prophecy/cover.webp?v=20260812-2')) {
+              throw new Error(`formal cover path mismatch: ${coverSrc}`);
+            }
+            const recommended = page.locator('.recommended-book');
+            const next = page.locator('.next-reading');
+            await recommended.waitFor({state:'visible', timeout:30000});
+            await next.waitFor({state:'visible', timeout:30000});
+            const recommendedText = (await recommended.innerText()).trim();
+            const nextText = (await next.innerText()).trim();
+            const nextHref = await next.locator('a').getAttribute('href');
+            if (!recommendedText.includes('喚醒天生好命') || !recommendedText.includes('宇色Osel') || !recommendedText.includes('高寶')) {
+              throw new Error(`recommended book mismatch: ${recommendedText}`);
+            }
+            if (!nextText.includes('沿著這個主題繼續閱讀') || !nextHref?.includes('lingxiu-yuanshen-reality')) {
+              throw new Error(`next reading mismatch: ${nextText} / ${nextHref}`);
+            }
+
+            const article = page.locator('.article-view[data-article-id="2058-future-person-prophecy"]');
+            const articleBox = await article.boundingBox();
+            const titleBox = await article.locator(':scope > h2').boundingBox();
+            const coverBox = await cover.boundingBox();
+            if (!articleBox || !titleBox || !coverBox) throw new Error('cover screenshot bounds unavailable');
+            const topY = Math.max(0, titleBox.y - 22);
+            const bottomY = coverBox.y + coverBox.height + 24;
+            await page.screenshot({
+              path:'formal-2058-cover.png',
+              clip:{x:articleBox.x,y:topY,width:articleBox.width,height:bottomY-topY}
+            });
+
+            await next.scrollIntoViewIfNeeded();
+            await recommended.scrollIntoViewIfNeeded();
+            await page.waitForTimeout(500);
+            const nextBox = await next.boundingBox();
+            const recBox = await recommended.boundingBox();
+            if (!nextBox || !recBox) throw new Error('bottom screenshot bounds unavailable');
+            const bottomTop = Math.max(0, Math.min(nextBox.y, recBox.y) - 28);
+            const bottomEnd = Math.max(nextBox.y + nextBox.height, recBox.y + recBox.height) + 28;
+            await page.screenshot({
+              path:'formal-2058-bottom.png',
+              clip:{x:articleBox.x,y:bottomTop,width:articleBox.width,height:bottomEnd-bottomTop}
+            });
+
+            fs.writeFileSync('formal-2058-verification.json', JSON.stringify({
+              url, coverSrc, recommendedText, nextText, nextHref
+            }, null, 2));
+            await browser.close();
+          })().catch(err => { console.error(err); process.exit(1); });
+          JS
+          node /tmp/verify-2058.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: formal-site-2058-screenshots
+          path: |
+            formal-2058-cover.png
+            formal-2058-bottom.png
+            formal-2058-verification.json
+          if-no-files-found: error
