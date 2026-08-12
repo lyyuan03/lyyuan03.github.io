@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260810-complete-ending-1";
+import { staticArticles } from "./static-articles.js?v=20260812-2058-fallback-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -1033,9 +1033,16 @@ async function loadArticles() {
   }
 
   const mergedById = new Map();
+  const firestorePublishedIds = new Set(firestoreArticles.map((article) => article.id));
   staticArticles.forEach((article) => {
     const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
-    if (!managedByFirestore) mergedById.set(article.id, article);
+    const indexedStatus = statusById.get(article.id);
+    const allow2058PublishedFallback = article.id === "2058-future-person-prophecy"
+      && !firestorePublishedIds.has(article.id)
+      && indexedStatus?.status !== "draft"
+      && indexedStatus?.hidden !== true
+      && indexedStatus?.systemRecord !== true;
+    if (!managedByFirestore || allow2058PublishedFallback) mergedById.set(article.id, article);
   });
   firestoreArticles.forEach((article) => mergedById.set(article.id, article));
   statusById.forEach((status, articleId) => {

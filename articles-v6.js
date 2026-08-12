@@ -2,7 +2,7 @@ const articleRoot = document.getElementById("article-root");
 
 async function loadArticleCore() {
   try {
-    await import("./articles-core-20260810-v6.js?v=20260812-2058-visual-2");
+    await import("./articles-core-20260810-v6.js?v=20260812-2058-fallback-1");
   } catch (error) {
     console.error("文選核心載入失敗。", error);
     if (articleRoot) {
