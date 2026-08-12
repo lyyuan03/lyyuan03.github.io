@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260812-2058-fallback-1";
+import { staticArticles } from "./static-articles.js?v=20260812-2058-respect-draft-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -44,7 +44,7 @@ const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh
 const limitedReadingDeadlines = new Map();
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 // 這篇已由 Firestore 後台接管；索引首次建立前也不得退回顯示靜態 published 版本。
-const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype"]);
+const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype", "2058-future-person-prophecy"]);
 const articleGuides = {
   "2058-future-person-prophecy": {
     topics: ["靈修辨識", "修行心性"],
@@ -1033,18 +1033,13 @@ async function loadArticles() {
   }
 
   const mergedById = new Map();
-  const firestorePublishedIds = new Set(firestoreArticles.map((article) => article.id));
   staticArticles.forEach((article) => {
     const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
-    const allow2058PublishedFallback = article.id === "2058-future-person-prophecy"
-      && !firestorePublishedIds.has(article.id);
-    if (!managedByFirestore || allow2058PublishedFallback) mergedById.set(article.id, article);
+    if (!managedByFirestore) mergedById.set(article.id, article);
   });
   firestoreArticles.forEach((article) => mergedById.set(article.id, article));
   statusById.forEach((status, articleId) => {
-    const keep2058StaticFallback = articleId === "2058-future-person-prophecy"
-      && !firestorePublishedIds.has(articleId);
-    if (!keep2058StaticFallback && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) {
+    if (status.status !== "published" || status.hidden === true || status.systemRecord === true) {
       mergedById.delete(articleId);
     }
   });
