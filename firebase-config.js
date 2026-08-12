@@ -62,7 +62,7 @@ import("./auth-mobile-compat.js?v=20260810-admin-login-race-fix-1").catch((error
 // 管理後台載入可設定多階段與三種會員資格的優惠管理模組。
 if (/(^|\/)(membership|member-dashboard|admin)\.html$/i.test(currentPath)) {
   queueMicrotask(() => {
-    import("./member-offers-integration.js?v=20260812-1").catch((error) => {
+    import("./member-offers-integration.js?v=20260812-2").catch((error) => {
       console.error("會員專屬優惠整合模組載入失敗：", error);
     });
   });

@@ -1,16 +1,15 @@
-import { app, auth, isAdminEmail } from "./firebase-config.js";
+import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   escapeHtml,
   evaluateOfferForRoles,
   formatTaipeiDateTime,
+  loadOfferMemberProfile,
   roleLabels,
   safeWebUrl
-} from "./member-offers-core.js?v=20260812-1";
+} from "./member-offers-core.js?v=20260812-2";
 
-const functions = getFunctions(app, "asia-east1");
-const getMemberOffers = httpsCallable(functions, "getMemberOffers");
 const gate = document.getElementById("offer-access");
 const appRoot = document.getElementById("offer-app");
 const identity = document.getElementById("offer-member-identity");
@@ -27,6 +26,13 @@ function showGate(title, message, actions = "") {
   gate.innerHTML = `<span class="eyebrow">MEMBER EXCLUSIVE</span><h2>${escapeHtml(title)}</h2><p>${escapeHtml(message)}</p>${actions ? `<div class="access-actions">${actions}</div>` : ""}`;
 }
 
+async function loadPublishedOffers() {
+  const snapshot = await getDocs(query(collection(db, "articles"), where("status", "==", "published")));
+  return snapshot.docs
+    .map((item) => ({ id: item.id, ...item.data() }))
+    .filter((offer) => offer.systemRecord === true && offer.systemType === "memberOffer");
+}
+
 function phaseSchedule(phases) {
   if (!phases.length) return "";
   return `<div class="offer-phases">${phases.map((phase, index) => {
@@ -35,11 +41,10 @@ function phaseSchedule(phases) {
   }).join("")}</div>`;
 }
 
-function currentAction(offer, state) {
-  if (!state.currentEligible || !state.currentPhase || !offer.currentAction) return null;
-  if (offer.currentAction.phaseId !== state.currentPhase.id) return null;
-  const url = safeWebUrl(offer.currentAction.url);
-  return url ? { url, label: String(offer.currentAction.label || state.currentPhase.actionLabel || "立即參加") } : null;
+function currentAction(state) {
+  if (!state.currentEligible || !state.currentPhase) return null;
+  const url = safeWebUrl(state.currentPhase.actionUrl);
+  return url ? { url, label: String(state.currentPhase.actionLabel || "立即參加") } : null;
 }
 
 function renderOfferCard(item) {
@@ -52,7 +57,7 @@ function renderOfferCard(item) {
     ? '<span class="offer-button is-disabled">活動已結束</span>'
     : action
       ? `<a class="offer-button" href="${escapeHtml(action.url)}" target="_blank" rel="noopener">${escapeHtml(action.label)}</a>`
-      : `<span class="offer-button is-disabled">${escapeHtml(state.message)}</span>`;
+      : `<span class="offer-button is-disabled">${escapeHtml(state.currentEligible ? "訂購／報名連結尚未設定" : state.message)}</span>`;
 
   return `<article class="offer-card ${state.currentEligible ? "is-open" : ""}">
     ${image ? `<div class="offer-image"><img src="${escapeHtml(image)}" alt="${escapeHtml(offer.title || "會員專屬優惠")}" loading="lazy"></div>` : ""}
@@ -78,11 +83,11 @@ function renderBucket(section, list, items) {
   list.innerHTML = items.map(renderOfferCard).join("");
 }
 
-function renderOffers(roles, offers, serverTime) {
-  const now = serverTime ? new Date(serverTime) : new Date();
+function renderOffers(roles, offers) {
+  const now = new Date();
   const visible = (Array.isArray(offers) ? offers : []).map((offer) => {
     const state = evaluateOfferForRoles(offer, roles, now);
-    return { offer, state, action: currentAction(offer, state) };
+    return { offer, state, action: currentAction(state) };
   }).filter((item) => !item.state.hidden);
 
   visible.sort((a, b) => {
@@ -117,16 +122,18 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   try {
-    const result = await getMemberOffers();
-    const roles = Array.isArray(result.data?.roles) ? result.data.roles : [];
-    const offers = Array.isArray(result.data?.offers) ? result.data.offers : [];
-    identity.textContent = `目前資格｜${roleLabels(roles).join("＋")}`;
+    const profile = await loadOfferMemberProfile(db, user);
+    if (!profile.active) {
+      showGate("目前沒有有效優惠資格", "此帳號目前不是有效的養生療癒頻道會員或贊助專屬文章付費會員。", '<a class="access-link" href="/member-dashboard.html">返回會員中心</a>');
+      return;
+    }
+    const offers = await loadPublishedOffers();
+    identity.textContent = `目前資格｜${roleLabels(profile.roles).join("＋")}`;
     gate.hidden = true;
     appRoot.hidden = false;
-    renderOffers(roles, offers, result.data?.serverTime);
+    renderOffers(profile.roles, offers);
   } catch (error) {
     console.error("會員優惠載入失敗：", error);
-    const denied = ["functions/permission-denied", "functions/unauthenticated"].includes(error?.code);
-    showGate(denied ? "目前沒有有效優惠資格" : "暫時無法載入會員優惠", denied ? "此帳號目前不是有效的養生療癒頻道會員或贊助專屬文章付費會員。" : "系統目前無法完成資格或活動資料核對，請稍後重新整理頁面。", '<a class="access-link" href="/member-dashboard.html">返回會員中心</a>');
+    showGate("暫時無法載入會員優惠", "系統目前無法完成會員資料或活動資料核對，請稍後重新整理頁面。", '<a class="access-link" href="/member-dashboard.html">返回會員中心</a>');
   }
 });
