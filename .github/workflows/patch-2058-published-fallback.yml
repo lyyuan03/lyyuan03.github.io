@@ -21,16 +21,18 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
+          import re
 
           static_path = Path('static-articles.js')
           text = static_path.read_text(encoding='utf-8')
-          old = '''const draftFuturePerson2058ProphecyArticle = {
-            ...futurePerson2058ProphecyArticle,
-            status: "draft"
-          };'''.replace('          ', '')
-          if old not in text:
-              raise SystemExit('2058 draft wrapper not found')
-          text = text.replace(old, 'const publishedFuturePerson2058ProphecyArticle = {\n  ...futurePerson2058ProphecyArticle,\n  status: "published"\n};', 1)
+          text, count = re.subn(
+              r'const draftFuturePerson2058ProphecyArticle = \{\s*\.\.\.futurePerson2058ProphecyArticle,\s*status: "draft"\s*\};',
+              'const publishedFuturePerson2058ProphecyArticle = {\n  ...futurePerson2058ProphecyArticle,\n  status: "published"\n};',
+              text,
+              count=1
+          )
+          if count != 1:
+              raise SystemExit(f'2058 draft wrapper replacements: {count}')
           text = text.replace('  draftFuturePerson2058ProphecyArticle,', '  publishedFuturePerson2058ProphecyArticle,', 1)
           static_path.write_text(text, encoding='utf-8')
 
@@ -41,48 +43,48 @@ jobs:
               'import { staticArticles } from "./static-articles.js?v=20260812-2058-fallback-1";',
               1
           )
-          old_merge = '''  const mergedById = new Map();
-          staticArticles.forEach((article) => {
-            const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
-            if (!managedByFirestore) mergedById.set(article.id, article);
-          });
-          firestoreArticles.forEach((article) => mergedById.set(article.id, article));'''.replace('          ', '')
-          new_merge = '''  const mergedById = new Map();
-          const firestorePublishedIds = new Set(firestoreArticles.map((article) => article.id));
-          staticArticles.forEach((article) => {
-            const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
-            const indexedStatus = statusById.get(article.id);
-            const allow2058PublishedFallback = article.id === "2058-future-person-prophecy"
-              && !firestorePublishedIds.has(article.id)
-              && indexedStatus?.status !== "draft"
-              && indexedStatus?.hidden !== true
-              && indexedStatus?.systemRecord !== true;
-            if (!managedByFirestore || allow2058PublishedFallback) mergedById.set(article.id, article);
-          });
-          firestoreArticles.forEach((article) => mergedById.set(article.id, article));'''.replace('          ', '')
-          if old_merge not in text:
-              raise SystemExit('article merge block not found')
-          text = text.replace(old_merge, new_merge, 1)
+          merge_pattern = re.compile(
+              r'  const mergedById = new Map\(\);\n'
+              r'  staticArticles\.forEach\(\(article\) => \{\n'
+              r'    const managedByFirestore = statusById\.has\(article\.id\) \|\| LEGACY_FIRESTORE_MANAGED_IDS\.has\(article\.id\);\n'
+              r'    if \(!managedByFirestore\) mergedById\.set\(article\.id, article\);\n'
+              r'  \}\);\n'
+              r'  firestoreArticles\.forEach\(\(article\) => mergedById\.set\(article\.id, article\)\);'
+          )
+          replacement = '''  const mergedById = new Map();
+  const firestorePublishedIds = new Set(firestoreArticles.map((article) => article.id));
+  staticArticles.forEach((article) => {
+    const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
+    const indexedStatus = statusById.get(article.id);
+    const allow2058PublishedFallback = article.id === "2058-future-person-prophecy"
+      && !firestorePublishedIds.has(article.id)
+      && indexedStatus?.status !== "draft"
+      && indexedStatus?.hidden !== true
+      && indexedStatus?.systemRecord !== true;
+    if (!managedByFirestore || allow2058PublishedFallback) mergedById.set(article.id, article);
+  });
+  firestoreArticles.forEach((article) => mergedById.set(article.id, article));'''
+          text, count = merge_pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'article merge replacements: {count}')
           core_path.write_text(text, encoding='utf-8')
 
           loader_path = Path('articles-v6.js')
           text = loader_path.read_text(encoding='utf-8')
-          text = text.replace(
-              './articles-core-20260810-v6.js?v=20260812-2058-visual-2',
+          text = re.sub(
+              r'\./articles-core-20260810-v6\.js\?v=[^"\']+',
               './articles-core-20260810-v6.js?v=20260812-2058-fallback-1',
-              1
+              text,
+              count=1
           )
           loader_path.write_text(text, encoding='utf-8')
 
-          workflow = Path('.github/workflows/patch-2058-published-fallback.yml')
-          if workflow.exists():
-              workflow.unlink()
+          Path('.github/workflows/patch-2058-published-fallback.yml').unlink()
           PY
       - name: Validate patch
         run: |
           set -euo pipefail
           grep -q 'publishedFuturePerson2058ProphecyArticle' static-articles.js
-          grep -q 'status: "published"' static-articles.js
           grep -q 'allow2058PublishedFallback' articles-core-20260810-v6.js
           grep -q 'static-articles.js?v=20260812-2058-fallback-1' articles-core-20260810-v6.js
           grep -q 'articles-core-20260810-v6.js?v=20260812-2058-fallback-1' articles-v6.js
