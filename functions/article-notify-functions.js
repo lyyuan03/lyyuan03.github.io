@@ -57,7 +57,8 @@ function mailTransport() {
         pass: config.pass
       }
     }),
-    from: config.from || `LYY靈元院行政團隊 <${config.user}>`
+    from: config.from || `LYY靈元院行政團隊 <${config.user}>`,
+    auditEmail: normalizeEmail(config.user)
   };
 }
 
@@ -250,10 +251,12 @@ exports.notifyArticleSubscribers = onCall(
     let smtpAccepted = false;
     try {
       if (context.recipients.length > 0) {
-        const { transporter, from } = mailTransport();
+        const { transporter, from, auditEmail } = mailTransport();
+        await transporter.verify();
         await transporter.sendMail({
           from,
-          bcc: context.recipients,
+          to: auditEmail,
+          bcc: context.recipients.filter((email) => email !== auditEmail),
           subject: context.mail.subject,
           text: context.mail.text,
           html: context.mail.html
