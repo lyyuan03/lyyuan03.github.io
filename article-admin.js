@@ -152,9 +152,9 @@ async function handleNotify() {
     const message = errorMessage(error);
     setNotificationStatus(message, "error");
     showToast(message, "error");
-    await refreshNotificationDeliveryStatus();
   } finally {
     updateButtonState();
+    await refreshNotificationDeliveryStatus();
   }
 }
 
