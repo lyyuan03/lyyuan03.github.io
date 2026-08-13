@@ -1,0 +1,114 @@
+name: Final2 fix article image Markdown editing
+
+on:
+  push:
+    paths:
+      - ".github/workflows/fix-article-image-markdown-final2.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove all automatic image Markdown rewriting
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          version = "20260813-manual-image-markdown-2"
+
+          inline_path = Path("article-inline-image-admin.js")
+          inline = inline_path.read_text()
+          inline, count_map = re.subn(r'const KNOWN_ARTICLE_IMAGE_REPAIRS = \{.*?\n\};\n\n', '', inline, count=1, flags=re.S)
+          inline, count_fn = re.subn(r'function repairKnownArticleImages\(content = "", id = ""\) \{.*?\n\}\n\n(?=function syncImages)', '', inline, count=1, flags=re.S)
+          if count_map != 1 or count_fn != 1:
+              raise SystemExit(f"inline repair removal failed: map={count_map}, fn={count_fn}")
+          inline_path.write_text(inline)
+
+          core_path = Path("article-admin-core.js")
+          core = core_path.read_text()
+          core, count_sync = re.subn(r'function syncKnownInlineImagePaths\(articleId, content = ""\) \{.*?\n\}\n\n(?=async function syncRevisedStaticArticleImages)', '', core, count=1, flags=re.S)
+          if count_sync != 1:
+              raise SystemExit(f"sync path function removal failed: {count_sync}")
+
+          core = core.replace('''    const desiredThumbnailImage = article.thumbnailImage || "";
+    const currentContent = current.content || "";
+    const desiredContent = syncKnownInlineImagePaths(articleId, currentContent);
+    const contentChanged = desiredContent !== currentContent;
+    if (
+      current.staticImageSyncRevision === revision
+      && (current.coverImage || "") === desiredCoverImage
+      && (current.thumbnailImage || "") === desiredThumbnailImage
+      && !contentChanged
+    ) continue;''', '''    const desiredThumbnailImage = article.thumbnailImage || "";
+    if (
+      current.staticImageSyncRevision === revision
+      && (current.coverImage || "") === desiredCoverImage
+      && (current.thumbnailImage || "") === desiredThumbnailImage
+    ) continue;''', 1)
+          core = core.replace('    if (contentChanged) payload.content = desiredContent;\n', '', 1)
+          core = core.replace('''          coverImage: staticArticle.coverImage || article.coverImage || "",
+          thumbnailImage: staticArticle.thumbnailImage || article.thumbnailImage || "",
+          content: syncKnownInlineImagePaths(article.id, article.content || "")''', '''          coverImage: staticArticle.coverImage || article.coverImage || "",
+          thumbnailImage: staticArticle.thumbnailImage || article.thumbnailImage || ""''', 1)
+
+          if any(x in core for x in ["syncKnownInlineImagePaths", "desiredContent", "contentChanged"]):
+              raise SystemExit("article-admin-core still rewrites article content")
+
+          core = re.sub(r'(from "\./firebase-config\.js\?v=)[^"]+(";)', rf'\g<1>{version}\2', core, count=1)
+          core = re.sub(r'(from "\./static-articles\.js\?v=)[^"]+(";)', rf'\g<1>{version}\2', core, count=1)
+          core_path.write_text(core)
+
+          p = Path("article-admin.js")
+          s = p.read_text()
+          s = re.sub(r'(import "\./article-admin-core\.js\?v=)[^"]+(";)', rf'\g<1>{version}\2', s, count=1)
+          s = re.sub(r'(from "\./firebase-config\.js\?v=)[^"]+(";)', rf'\g<1>{version}\2', s, count=1)
+          p.write_text(s)
+
+          p = Path("firebase-config.js")
+          s = p.read_text()
+          s = re.sub(r'(import\("\./article-inline-image-admin\.js\?v=)[^"]+("\);)', rf'\g<1>{version}\2', s, count=1)
+          p.write_text(s)
+
+          p = Path("admin.html")
+          s = p.read_text()
+          s = re.sub(r'(src="article-admin\.js\?v=)[^"]+("\>)', rf'\g<1>{version}\2', s, count=1)
+          p.write_text(s)
+          PY
+
+      - name: Verify final behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -Fq 'KNOWN_ARTICLE_IMAGE_REPAIRS' article-inline-image-admin.js
+          ! grep -Fq 'repairKnownArticleImages' article-inline-image-admin.js
+          ! grep -Fq 'syncKnownInlineImagePaths' article-admin-core.js
+          ! grep -Fq 'desiredContent' article-admin-core.js
+          ! grep -Fq 'contentChanged' article-admin-core.js
+          grep -Fq 'article-inline-image-admin.js?v=20260813-manual-image-markdown-2' firebase-config.js
+          grep -Fq 'article-admin-core.js?v=20260813-manual-image-markdown-2' article-admin.js
+          grep -Fq 'firebase-config.js?v=20260813-manual-image-markdown-2' article-admin.js
+          grep -Fq 'article-admin.js?v=20260813-manual-image-markdown-2' admin.html
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/fix-article-image-markdown-final.yml
+          rm -f .github/workflows/fix-article-image-markdown-final2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add article-inline-image-admin.js article-admin-core.js article-admin.js firebase-config.js admin.html .github/workflows/fix-article-image-markdown-final.yml .github/workflows/fix-article-image-markdown-final2.yml
+          git commit -m "徹底停止後台改寫文章圖片語法"
+          git pull --rebase origin main
+          git push origin HEAD:main
