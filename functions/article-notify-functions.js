@@ -250,7 +250,7 @@ exports.notifyArticleSubscribers = onCall(
 
     let smtpAccepted = false;
     try {
-      if (context.recipients.length > 0) {
+      {
         const { transporter, from, auditEmail } = mailTransport();
         await transporter.verify();
         await transporter.sendMail({
