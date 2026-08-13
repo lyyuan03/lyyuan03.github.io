@@ -50,7 +50,12 @@ function errorMessage(error) {
   if (code.includes("permission-denied")) return "目前帳號沒有文章通知權限。";
   if (code.includes("not-found")) return "找不到這篇文章的 Firestore 紀錄，請先確認文章已儲存到後台。";
   if (code.includes("aborted")) return "郵件伺服器可能已接收通知，但系統未完成確認。請勿重複寄送，請先查看寄件備份。";
-  if (code.includes("internal")) return "通知信未完成寄送。請先確認寄件備份與寄件信箱設定，不要立即重複按下寄送。";
+  if (code.includes("internal")) {
+    const detail = String(error?.message || "").replace(/^internal\s*/i, "").trim();
+    return detail && detail !== "internal"
+      ? detail
+      : "通知信未寄出｜Firebase 沒有回傳 SMTP 詳細錯誤。";
+  }
   return error?.message || "操作失敗，請稍後再試。";
 }
 
