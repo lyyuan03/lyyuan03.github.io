@@ -1,0 +1,75 @@
+name: Finalize 2058 article images
+
+on:
+  push:
+    paths:
+      - ".github/workflows/rebuild-2058-images-final2.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync latest main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git pull --rebase origin main
+
+      - name: Rebuild and verify exact WebP images
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, struct
+
+          src = Path('.github/image-rebuild-temp')
+          dst = Path('assets/articles/2058-future-person-prophecy')
+          dst.mkdir(parents=True, exist_ok=True)
+          specs = {
+              'bath': ('bath-test.webp', '08502de8b499a362c74d261936912ecb7640cd5e14112e7eba1446895fd33b1f'),
+              'record': ('prediction-record.webp', '5fb706e98c36fa766e1598572fb1fb58842ba7d13ee0e9847692e04dad7771ad'),
+              'netfix': ('consciousness-network.webp', '5f7dbd0f2a18f71bb71a6432165375281697b182225dae0ed9d234a31260122c'),
+          }
+          for prefix, (filename, expected_sha) in specs.items():
+              files = sorted(src.glob(f'{prefix}.*.b64'))
+              if not files:
+                  raise SystemExit(f'No staged chunks for {prefix}')
+              raw_b64 = ''.join(p.read_text(encoding='utf-8').strip() for p in files)
+              data = base64.b64decode(raw_b64, validate=True)
+              if len(data) < 12 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+                  raise SystemExit(f'Invalid WebP RIFF header for {prefix}')
+              declared = struct.unpack('<I', data[4:8])[0] + 8
+              if declared != len(data):
+                  raise SystemExit(f'WebP size mismatch for {prefix}: declared={declared}, actual={len(data)}')
+              actual_sha = hashlib.sha256(data).hexdigest()
+              if actual_sha != expected_sha:
+                  raise SystemExit(f'SHA mismatch for {prefix}: {actual_sha}')
+              (dst / filename).write_bytes(data)
+              print(f'OK {prefix}: {len(data)} bytes {actual_sha}')
+          PY
+
+      - name: Commit and push generated article images
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/articles/2058-future-person-prophecy/bath-test.webp \
+                  assets/articles/2058-future-person-prophecy/prediction-record.webp \
+                  assets/articles/2058-future-person-prophecy/consciousness-network.webp
+          if git diff --cached --quiet; then
+            echo "Images already present and identical."
+            exit 0
+          fi
+          git commit -m "Add verified 2058 prophecy article images"
+          git pull --rebase origin main
+          git push origin HEAD:main
