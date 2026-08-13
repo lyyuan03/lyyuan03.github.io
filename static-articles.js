@@ -19,6 +19,40 @@ const featuredWealthDisciplineArticle = {
   coverImage: "assets/articles/wealth-discipline/book-cover-photo.jpg?v=20260730-book-cover-2"
 };
 
+const ghostGateAlwaysOpenEnhancedArticle = (() => {
+  let content = String(ghostGateAlwaysOpenArticle.content || "");
+  const waterImage = "![不要把每一場意外都交給鬼來解釋](assets/articles/ghost-gate-always-open/water-rationality.webp?v=20260813-1)";
+  const practiceImage = "![修行不是拿來試鬼的](assets/articles/ghost-gate-always-open/practice-not-test.webp?v=20260813-1)";
+  const puduImage = "![普渡不是交換，是敬意](assets/articles/ghost-gate-always-open/pudu-respect.webp?v=20260813-1)";
+
+  if (!content.includes("water-rationality.webp")) {
+    content = content.replace(
+      "## 第二章｜不要把每一場意外,都交給鬼來解釋",
+      `${waterImage}\n\n## 第二章｜不要把每一場意外,都交給鬼來解釋`
+    );
+  }
+
+  if (!content.includes("practice-not-test.webp")) {
+    const anchor = "我真正不建議的,是另一件事——**拿修行的工具去測靈、鬥靈、試膽,或是證明自己有什麼能耐。**";
+    content = content.replace(anchor, `${anchor}\n\n${practiceImage}`);
+  }
+
+  if (!content.includes("pudu-respect.webp")) {
+    const anchor = "這份心意,不只是給看不見的存在,也給我們自己。面對所有看得見與看不見的生命,保持一份敬意與慈悲,這才是普渡真正想教會我們的事,而不是一場單純的驅趕儀式。";
+    content = content.replace(anchor, `${anchor}\n\n${puduImage}`);
+  }
+
+  return {
+    ...ghostGateAlwaysOpenArticle,
+    updatedAt: "2026-08-13T10:09:00.000Z",
+    bookTitle: "請問鬼怪：穿越台日幽冥幻境，無極瑤池金母讓你看見內在恐懼與執念",
+    bookAuthor: "宇色Osel",
+    bookPublisher: "橡樹林",
+    bookPurchaseUrl: "https://www.books.com.tw/products/0011029318",
+    content
+  };
+})();
+
 const categoryNames = {
   spiritual: "靈修",
   worldly: "人生",
@@ -53,7 +87,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
-  ghostGateAlwaysOpenArticle,
+  ghostGateAlwaysOpenEnhancedArticle,
   futurePerson2058ProphecyArticle,
   quantumFrequencyWorkWishArticle,
   thisBookTookThirtyYearsArticle,
