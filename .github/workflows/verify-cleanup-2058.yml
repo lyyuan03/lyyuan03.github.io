@@ -1,0 +1,64 @@
+name: Verify and clean 2058 article temp files
+
+on:
+  push:
+    paths:
+      - ".github/workflows/verify-cleanup-2058.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  verify-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync latest main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git pull --rebase origin main
+
+      - name: Verify final images and article references
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(sha256sum assets/articles/2058-future-person-prophecy/bath-test.webp | awk '{print $1}')" = "08502de8b499a362c74d261936912ecb7640cd5e14112e7eba1446895fd33b1f"
+          test "$(sha256sum assets/articles/2058-future-person-prophecy/prediction-record.webp | awk '{print $1}')" = "5fb706e98c36fa766e1598572fb1fb58842ba7d13ee0e9847692e04dad7771ad"
+          test "$(sha256sum assets/articles/2058-future-person-prophecy/consciousness-network.webp | awk '{print $1}')" = "5f7dbd0f2a18f71bb71a6432165375281697b182225dae0ed9d234a31260122c"
+          grep -Fq 'prediction-record.webp?v=20260813-1' article-2058-future-person-prophecy.js
+          grep -Fq 'bath-test.webp?v=20260813-1' article-2058-future-person-prophecy.js
+          grep -Fq 'consciousness-network.webp?v=20260813-1' article-2058-future-person-prophecy.js
+          grep -Fq '<!-- paid-only -->' article-2058-future-person-prophecy.js
+          ! grep -Fq 'verification.webp' article-2058-future-person-prophecy.js
+          echo 'Final 2058 article state verified.'
+
+      - name: Remove temporary files and one-time workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .github/image-rebuild-temp
+          rm -f .github/workflows/rebuild-2058-images.yml
+          rm -f .github/workflows/rebuild-2058-images-final.yml
+          rm -f .github/workflows/rebuild-2058-images-final2.yml
+          rm -f .github/workflows/cleanup-2058-temp.yml
+          rm -f .github/workflows/verify-cleanup-2058.yml
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'Nothing to clean.'
+            exit 0
+          fi
+          git commit -m "Clean verified 2058 article temporary files"
+          git pull --rebase origin main
+          git push origin HEAD:main
