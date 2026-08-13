@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260813-2058-inline-slots-2";
+import "./article-admin-core.js?v=20260813-no-asterisks-1";
 import { app } from "./firebase-config.js?v=20260813-2058-inline-slots-2";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
