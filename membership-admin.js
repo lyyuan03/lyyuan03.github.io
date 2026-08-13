@@ -667,7 +667,7 @@ function editMember(email) {
   amountEl.value = String(member.amount || "");
   document.getElementById("member-note").value = member.note || "";
   updatePlanOptions();
-  updatePlanPreview(false);
+  updatePlanPreview(true);
   memberForm.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
