@@ -643,18 +643,24 @@ async function loadMemberAccess(user) {
   try {
     const email = user.email.trim().toLowerCase();
     const [memberSnapshot, sponsorSnapshot] = await Promise.all([
-      withTimeout(getDoc(doc(db, "memberAccess", email)), 8000, "一般會員資格載入"),
-      withTimeout(getDoc(doc(db, "sponsorMemberAccess", email)), 8000, "贊助會員資格載入")
+      withTimeout(getDoc(doc(db, "memberAccess", email)), 8000, "一般會員資格載入").catch((error) => {
+        if (error?.code !== "permission-denied") console.warn("一般會員資格載入失敗。", error);
+        return null;
+      }),
+      withTimeout(getDoc(doc(db, "sponsorMemberAccess", email)), 8000, "贊助會員資格載入").catch((error) => {
+        console.warn("贊助會員資格載入失敗。", error);
+        return null;
+      })
     ]);
 
-    if (memberSnapshot.exists()) {
+    if (memberSnapshot?.exists()) {
       const record = memberSnapshot.data() || {};
       const recordEmail = String(record.email || memberSnapshot.id || "").trim().toLowerCase();
       if (recordEmail === email) currentMemberAccess = { ...record, email: recordEmail };
       else console.warn("一般會員資料 Email 與登入帳號不一致，已拒絕載入。");
     }
 
-    if (sponsorSnapshot.exists()) {
+    if (sponsorSnapshot?.exists()) {
       const record = sponsorSnapshot.data() || {};
       const recordEmail = String(record.email || sponsorSnapshot.id || "").trim().toLowerCase();
       if (recordEmail === email) currentSponsorAccess = { ...record, email: recordEmail };
