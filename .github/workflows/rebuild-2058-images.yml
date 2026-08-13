@@ -1,6 +1,6 @@
 name: Rebuild 2058 article images
 
-# Retry after all staged image chunks are present on main.
+# Verify decoded WebP files by RIFF structure before committing.
 on:
   push:
     paths:
@@ -30,13 +30,24 @@ jobs:
           cat "$source_dir"/record.*.b64 | base64 -d > "$target_dir/prediction-record.webp"
           cat "$source_dir"/network.*.b64 | base64 -d > "$target_dir/consciousness-network.webp"
 
-          test "$(wc -c < "$target_dir/bath-test.webp")" -eq 17514
-          test "$(wc -c < "$target_dir/prediction-record.webp")" -eq 33904
-          test "$(wc -c < "$target_dir/consciousness-network.webp")" -eq 43532
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
 
-          file "$target_dir/bath-test.webp" | grep -q "Web/P image"
-          file "$target_dir/prediction-record.webp" | grep -q "Web/P image"
-          file "$target_dir/consciousness-network.webp" | grep -q "Web/P image"
+          paths = [
+              Path('assets/articles/2058-future-person-prophecy/bath-test.webp'),
+              Path('assets/articles/2058-future-person-prophecy/prediction-record.webp'),
+              Path('assets/articles/2058-future-person-prophecy/consciousness-network.webp'),
+          ]
+          for path in paths:
+              data = path.read_bytes()
+              if len(data) < 12 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+                  raise SystemExit(f'Invalid WebP RIFF header: {path}')
+              declared = struct.unpack('<I', data[4:8])[0] + 8
+              if declared != len(data):
+                  raise SystemExit(f'WebP size mismatch: {path}: declared={declared}, actual={len(data)}')
+              print(f'OK {path} {len(data)} bytes')
+          PY
 
       - name: Commit generated article images
         shell: bash
