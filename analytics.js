@@ -87,19 +87,37 @@
     const style = document.createElement("style");
     style.id = "latest-book-2026-style";
     style.textContent = `
-      #latest-book-2026{position:relative;padding:34px 0 42px;background:#090b08;border-top:1px solid rgba(197,162,111,.24);border-bottom:1px solid rgba(197,162,111,.24)}
-      #latest-book-2026 .latest-book-wrap{max-width:1440px;margin:auto;padding:0 24px}
-      #latest-book-2026 .latest-book-banner{display:block;overflow:hidden;border:1px solid rgba(197,162,111,.36);box-shadow:0 26px 70px rgba(0,0,0,.42);background:#050605}
-      #latest-book-2026 .latest-book-banner img{display:block;width:100%;height:auto;aspect-ratio:1920/755;object-fit:cover}
-      #latest-book-2026 .latest-book-actions{display:flex;justify-content:center;margin-top:24px}
+      #latest-book-2026{position:relative;padding:58px 0 54px;background:linear-gradient(180deg,#0b100c,#070a07);border-top:1px solid rgba(197,162,111,.22);border-bottom:1px solid rgba(197,162,111,.24);color:#f5f0e8;overflow:hidden}
+      #latest-book-2026:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0,rgba(197,162,111,.09),transparent 46%);pointer-events:none}
+      #latest-book-2026 .latest-book-wrap{position:relative;z-index:1;max-width:1120px;margin:auto;padding:0 24px}
+      #latest-book-2026 .latest-book-head{text-align:center;max-width:820px;margin:0 auto 28px}
+      #latest-book-2026 .latest-book-kicker{font-family:var(--en);font-size:12px;letter-spacing:.42em;color:#c5a26f;margin-bottom:8px}
+      #latest-book-2026 h2{font-family:var(--serif);font-size:34px;font-weight:400;letter-spacing:.12em;color:#efd29d;line-height:1.5;margin:0 0 8px}
+      #latest-book-2026 .latest-book-sub{font-family:var(--serif);font-size:16px;letter-spacing:.08em;color:rgba(245,240,232,.66);line-height:1.9}
+      #latest-book-2026 .latest-book-media{max-width:1040px;margin:0 auto;border:1px solid rgba(197,162,111,.34);background:#030503;box-shadow:0 26px 64px rgba(0,0,0,.44);overflow:hidden}
+      #latest-book-2026 .latest-book-video{display:none;width:100%;height:auto;background:#000;aspect-ratio:16/9;object-fit:contain}
+      #latest-book-2026 .latest-book-fallback{display:block;position:relative;background:#050605;overflow:hidden}
+      #latest-book-2026 .latest-book-fallback img{display:block;width:100%;height:auto;aspect-ratio:1920/755;object-fit:cover}
+      #latest-book-2026 .latest-book-fallback-badge{position:absolute;left:18px;bottom:16px;padding:7px 11px;border:1px solid rgba(217,183,119,.44);background:rgba(5,7,5,.78);backdrop-filter:blur(10px);font-size:11px;letter-spacing:.14em;color:rgba(245,240,232,.78)}
+      #latest-book-2026 .latest-book-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:24px}
       #latest-book-2026 .latest-book-button{display:inline-flex;align-items:center;justify-content:center;min-width:250px;padding:14px 34px;border:1px solid rgba(217,183,119,.72);background:linear-gradient(135deg,#a58254,#c5a26f,#a58254);color:#171109;font-family:var(--serif);font-size:15px;letter-spacing:.16em;box-shadow:0 12px 28px rgba(0,0,0,.28);transition:transform .25s ease,box-shadow .25s ease,filter .25s ease}
       #latest-book-2026 .latest-book-button:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,0,0,.38);filter:brightness(1.05)}
+      .works .era.latest-era .era-year{color:#9b7242}
+      .works .era.latest-era .era-book img{width:62px;height:93px;border-color:rgba(165,130,84,.52);box-shadow:0 10px 24px rgba(73,48,24,.22),0 0 0 1px rgba(197,162,111,.08)}
+      .works .era.latest-era .era-book span{color:#4d3823;font-weight:500}
+      @media(max-width:960px){
+        .works .era.latest-era .era-book img{width:84px;height:120px;box-shadow:0 10px 22px rgba(73,48,24,.18),0 0 0 1px rgba(197,162,111,.10)}
+      }
       @media(max-width:820px){
-        #latest-book-2026{padding:18px 0 28px}
-        #latest-book-2026 .latest-book-wrap{padding:0 12px}
-        #latest-book-2026 .latest-book-banner{overflow-x:auto;scrollbar-width:none}
-        #latest-book-2026 .latest-book-banner::-webkit-scrollbar{display:none}
-        #latest-book-2026 .latest-book-banner img{width:auto;max-width:none;height:58vw;min-height:270px;aspect-ratio:auto;object-fit:contain}
+        #latest-book-2026{padding:44px 0 46px}
+        #latest-book-2026 .latest-book-wrap{padding:0 16px}
+        #latest-book-2026 .latest-book-head{margin-bottom:22px}
+        #latest-book-2026 h2{font-size:29px;letter-spacing:.08em}
+        #latest-book-2026 .latest-book-sub{font-size:15px}
+        #latest-book-2026 .latest-book-media{max-width:430px;border-radius:8px}
+        #latest-book-2026 .latest-book-video{aspect-ratio:608/1080;max-height:78vh}
+        #latest-book-2026 .latest-book-fallback img{width:auto;max-width:none;height:64vw;min-height:250px;aspect-ratio:auto;object-fit:contain;margin:auto}
+        #latest-book-2026 .latest-book-fallback-badge{left:12px;bottom:10px;font-size:10px}
         #latest-book-2026 .latest-book-button{width:100%;max-width:360px;min-width:0;padding:14px 20px}
       }
     `;
@@ -107,18 +125,27 @@
 
     const section = document.createElement("section");
     section.id = "latest-book-2026";
-    section.setAttribute("aria-label", "2026 年度重磅新作《我在人間的元神覺醒》");
+    section.setAttribute("aria-label", "2026 新書《我在人間的元神覺醒》");
     section.innerHTML = `
       <div class="latest-book-wrap">
-        <a class="latest-book-banner" href="https://www.books.com.tw/products/0011060075?sloc=main" target="_blank" rel="noopener noreferrer" aria-label="前往博客來預購《我在人間的元神覺醒》">
-          <img id="latest-book-2026-banner-image" alt="《我在人間的元神覺醒》2026 新書 Banner" loading="eager">
-        </a>
+        <div class="latest-book-head">
+          <div class="latest-book-kicker">2026 NEW RELEASE</div>
+          <h2>《我在人間的元神覺醒》</h2>
+          <p class="latest-book-sub">宇色最新靈修著作｜新書形象影片</p>
+        </div>
+        <div class="latest-book-media">
+          <video class="latest-book-video" controls playsinline preload="metadata" aria-label="《我在人間的元神覺醒》新書宣傳影片"></video>
+          <a class="latest-book-fallback" href="https://www.books.com.tw/products/0011060075?sloc=main" target="_blank" rel="noopener noreferrer" aria-label="前往博客來預購《我在人間的元神覺醒》">
+            <img id="latest-book-2026-banner-image" alt="《我在人間的元神覺醒》2026 新書 Banner" loading="eager">
+            <span class="latest-book-fallback-badge">NEW BOOK · 2026</span>
+          </a>
+        </div>
         <div class="latest-book-actions">
           <a class="latest-book-button" href="https://www.books.com.tw/products/0011060075?sloc=main" target="_blank" rel="noopener noreferrer">前往博客來立即預購</a>
         </div>
       </div>`;
 
-    target.parentNode.insertBefore(section, target);
+    target.insertAdjacentElement("afterend", section);
 
     const bannerImage = section.querySelector("#latest-book-2026-banner-image");
     const bannerParts = [
@@ -141,6 +168,48 @@
       .catch(() => {
         bannerImage.alt = "《我在人間的元神覺醒》2026 新書 Banner 載入失敗";
       });
+
+    const video = section.querySelector(".latest-book-video");
+    const fallback = section.querySelector(".latest-book-fallback");
+    const videoSrc = matchMedia("(max-width:820px)").matches
+      ? "/assets/videos/osel-awakening-2026-mobile.mp4?v=20260813-1"
+      : "/assets/videos/osel-awakening-2026-desktop.mp4?v=20260813-1";
+
+    fetch(videoSrc, { method: "HEAD", cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Video unavailable: ${response.status}`);
+        video.src = videoSrc;
+        video.addEventListener("loadedmetadata", () => {
+          video.style.display = "block";
+          fallback.style.display = "none";
+        }, { once: true });
+        video.addEventListener("error", () => {
+          video.style.display = "none";
+          fallback.style.display = "block";
+        }, { once: true });
+        video.load();
+      })
+      .catch(() => {
+        video.style.display = "none";
+        fallback.style.display = "block";
+      });
+  };
+
+  const upgradeLatestBookTimeline = () => {
+    if (!location.pathname.endsWith("/books.html")) return;
+    const timeline = document.getElementById("worksGrid");
+    if (!timeline) return;
+    const era2026 = Array.from(timeline.querySelectorAll(".era")).find((era) => era.querySelector(".era-year")?.textContent.trim() === "2026");
+    if (!era2026) return;
+
+    era2026.classList.add("latest-era");
+    const books = era2026.querySelector(".era-books");
+    if (!books) return;
+    books.innerHTML = `
+      <a class="era-book" href="https://www.books.com.tw/products/0011060075?sloc=main" target="_blank" rel="noopener noreferrer" aria-label="查看《我在人間的元神覺醒》">
+        <img src="https://www.books.com.tw/img/001/106/00/0011060075.jpg" alt="《我在人間的元神覺醒》書封">
+        <span>我在人間的元神覺醒</span>
+      </a>`;
   };
 
   const fixBookCovers = () => {
@@ -213,6 +282,7 @@
 
   const init = () => {
     installLatestBookFeature();
+    upgradeLatestBookTimeline();
     fixBookCovers();
     trackPageType();
     trackReading();
