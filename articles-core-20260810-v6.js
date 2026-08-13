@@ -1,5 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260813-publish-consistency-1";
+import { staticArticles } from "./static-articles.js?v=20260813-fixed-reading-footer-2";
+import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-2";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -46,6 +47,41 @@ const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 // 這篇已由 Firestore 後台接管；索引首次建立前也不得退回顯示靜態 published 版本。
 const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype", "2058-future-person-prophecy"]);
 const articleGuides = {
+  "quantum-frequency-work-wish": {
+    topics: ["神祕學"],
+    level: "初識",
+    nextId: "wealth-discipline-investing-and-self-mastery"
+  },
+  "yuanshen-destiny-archetype": {
+    topics: ["元神與人格", "修行心性"],
+    level: "深度",
+    nextId: "this-book-took-thirty-years"
+  },
+  "love-beyond-filial-piety-and-ancestor-worship": {
+    topics: ["修行心性", "生命選擇"],
+    level: "深度",
+    nextId: "good-fortune-believe-in-yourself-choices"
+  },
+  "how-to-judge-true-lingxiu-understanding": {
+    topics: ["靈修辨識", "元神與人格"],
+    level: "深度",
+    nextId: "fantasy-intuition-or-yuanshen"
+  },
+  "reading-you-can-not-fear-death": {
+    topics: ["修行心性", "生命選擇"],
+    level: "深度",
+    nextId: "tonglingren-wufa-huifu-putongren"
+  },
+  "2026-guanyin-vow-lamp-record": {
+    topics: ["信仰與人", "修行心性"],
+    level: "深度",
+    nextId: "japan-temple-faith-and-decline"
+  },
+  "2026-guanyin-vow-lamp-record-v2": {
+    topics: ["信仰與人", "修行心性"],
+    level: "深度",
+    nextId: "japan-temple-faith-and-decline"
+  },
   "2058-future-person-prophecy": {
     topics: ["靈修辨識", "修行心性"],
     level: "深度",
@@ -752,22 +788,60 @@ function renderEventGate(article) {
 function bindEventLogin() {}
 
 function renderRecommendedBook(article) {
-  if (!article.bookTitle) return "";
-  const url = article.bookPurchaseUrl || bookUrl;
-  return `<aside class="recommended-book"><div><small>延伸閱讀</small><strong>${escapeHtml(article.bookTitle)}</strong><span>${escapeHtml(article.bookAuthor || "")}${article.bookPublisher ? `｜${escapeHtml(article.bookPublisher)}` : ""}</span></div><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">查看著作</a></aside>`;
+  const book = recommendedBookForArticle(article);
+  const meta = [book.author, book.publisher].filter(Boolean).join("｜");
+  const coverClass = book.coverStyle === "landscape" ? " is-landscape" : "";
+  return `<aside class="recommended-book" aria-label="延伸書籍：${escapeHtml(book.title)}">
+    <a class="recommended-book-link" href="${escapeHtml(book.purchaseUrl || bookUrl)}" target="_blank" rel="noopener noreferrer">
+      <div class="recommended-book-copy">
+        <small class="recommended-book-eyebrow">延伸書籍</small>
+        <strong>${escapeHtml(book.title)}</strong>
+        ${meta ? `<span class="recommended-book-meta">${escapeHtml(meta)}</span>` : ""}
+        <span class="recommended-book-action">查看書籍 <span aria-hidden="true">→</span></span>
+      </div>
+      <span class="recommended-book-cover${coverClass}">
+        <img src="${escapeHtml(book.coverImage)}" alt="《${escapeHtml(book.title)}》書封" loading="lazy" decoding="async">
+      </span>
+    </a>
+  </aside>`;
 }
 
-function renderBookCta() {
-  return `<div class="article-book-link-wrap"><a class="article-book-link" href="${bookUrl}" target="_blank" rel="noopener noreferrer">延伸閱讀｜宇色靈修著作</a></div>`;
+function firstArticleImage(article) {
+  if (article?.coverImage) return article.coverImage;
+  const markdownImage = String(article?.content || "").match(/!\[[^\]]*\]\(([^)\s]+)\)/)?.[1];
+  return markdownImage || getArticleThumbnail(article) || "";
+}
+
+function relatedArticleFor(article) {
+  const currentId = articleKey(article);
+  const pool = loadedArticles.length ? loadedArticles : staticArticles;
+  const preferredId = getArticleGuide(article).nextId;
+  const preferred = preferredId
+    ? pool.find((item) => articleKey(item) === preferredId && articleKey(item) !== currentId)
+    : null;
+  if (preferred) return preferred;
+  return pool.find((item) => articleKey(item) !== currentId && item.category === article.category)
+    || pool.find((item) => articleKey(item) !== currentId)
+    || null;
 }
 
 function renderNextReading(article) {
-  const guide = getArticleGuide(article);
-  const nextId = guide.nextId;
-  if (!nextId) return "";
-  const target = loadedArticles.find((item) => articleKey(item) === nextId);
+  const target = relatedArticleFor(article);
   if (!target) return "";
-  return `<aside class="next-reading"><div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div><a href="articles.html?id=${encodeURIComponent(nextId)}"><strong>${escapeHtml(target.title || "延伸閱讀")}</strong><span>${escapeHtml((getArticleGuide(target).topics || []).join("・"))}</span></a></aside>`;
+  const nextId = articleKey(target);
+  const thumbnail = firstArticleImage(target);
+  return `<aside class="next-reading" aria-label="延伸閱讀：${escapeHtml(target.title || "靈元院文選")}">
+    <div class="next-reading-eyebrow">延伸閱讀</div>
+    <a class="next-reading-link" href="${standaloneArticlePaths.get(nextId) || `articles.html?id=${encodeURIComponent(nextId)}`}">
+      <span class="next-reading-thumbnail">
+        ${thumbnail ? `<img src="${escapeHtml(thumbnail)}" alt="${escapeHtml(target.title || "延伸閱讀")}首圖縮圖" loading="lazy" decoding="async">` : '<span class="next-reading-placeholder">靈元院文選</span>'}
+      </span>
+      <span class="next-reading-copy">
+        <strong>${escapeHtml(target.title || "延伸閱讀")}</strong>
+        <span>${escapeHtml((getArticleGuide(target).topics || []).join("・") || categoryLabels[target.category] || "文選")}</span>
+      </span>
+    </a>
+  </aside>`;
 }
 
 function getShareUrl(article) {
@@ -891,9 +965,14 @@ function renderArticle(article) {
         ${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}
         ${article.excerpt ? `<div class="article-body"><p>${escapeHtml(article.excerpt)}</p></div>` : ""}
         ${renderEventGate(article)}
+        ${renderNextReading(article)}
+        ${renderRecommendedBook(article)}
+        ${renderArticleShare(article)}
       </article>
     `;
     bindEventLogin();
+    bindArticleShare(articleKey);
+    trackArticleView(articleKey);
     return;
   }
   const articleContent = addGuanyinVowLampImages(article.content || "", articleKey);
@@ -912,7 +991,6 @@ function renderArticle(article) {
       ${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}
       ${renderNextReading(article)}
       ${renderRecommendedBook(article)}
-      ${renderBookCta()}
       ${renderArticleShare(article)}
     </article>
   `;

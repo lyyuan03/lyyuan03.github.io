@@ -1,7 +1,5 @@
 import { howToJudgeTrueLingxiuUnderstandingArticle as baseArticle } from "./article-how-to-judge-true-lingxiu-understanding.js?v=20260803-full-1";
 
-const ARTICLE_ID = "how-to-judge-true-lingxiu-understanding";
-const RELATED_ID = "fantasy-intuition-or-yuanshen";
 const FIRST_OLD_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/mind-expansion.jpg?v=20260803-1";
 const SECOND_OLD_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/humility-compassion.jpg?v=20260803-1";
 const FIRST_INLINE_IMAGE = "assets/articles/how-to-judge-true-lingxiu-understanding/inline-1-user-upload.svg?v=20260803-4";
@@ -32,41 +30,3 @@ export const howToJudgeTrueLingxiuUnderstandingArticle = {
   bookPurchaseUrl: "https://www.books.com.tw/products/0010784866?loc=P_0005_087",
   content: prepareContent(baseArticle.content || "")
 };
-
-function installRelatedReading() {
-  if (typeof document === "undefined" || !document.getElementById("article-root")) return;
-
-  const inject = () => {
-    const view = document.querySelector(`.article-view[data-article-id="${ARTICLE_ID}"]`);
-    if (!view || view.querySelector(`[data-related-reading="${ARTICLE_ID}"]`)) return;
-
-    const aside = document.createElement("aside");
-    aside.className = "next-reading";
-    aside.dataset.relatedReading = ARTICLE_ID;
-    aside.setAttribute("aria-label", "下一篇延伸閱讀");
-    aside.innerHTML = `
-      <div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div>
-      <a href="articles.html?id=${RELATED_ID}">
-        <strong>那是幻想、直覺，還是元神在說話？</strong>
-        <span>直覺辨識・元神與識神</span>
-      </a>
-    `;
-
-    const anchor = view.querySelector(".recommended-book, .article-book-link-wrap, .article-share");
-    view.insertBefore(aside, anchor || null);
-  };
-
-  const start = () => {
-    inject();
-    const observer = new MutationObserver(inject);
-    observer.observe(document.body, { childList: true, subtree: true });
-  };
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start, { once: true });
-  } else {
-    start();
-  }
-}
-
-installRelatedReading();

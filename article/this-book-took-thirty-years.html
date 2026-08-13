@@ -37,14 +37,22 @@ nav{position:fixed;z-index:100;top:0;left:0;right:0;height:56px;background:rgba(
 .article-ending{margin-top:50px;padding-top:4px}
 .next-reading{margin:0 0 24px;padding:24px;border-top:1px solid rgba(90,67,42,.25);border-bottom:1px solid rgba(90,67,42,.25);background:rgba(255,255,255,.18)}
 .next-reading-eyebrow{margin-bottom:9px;color:#8b683f;font:500 12px/1.6 var(--sans);letter-spacing:.12em}
-.next-reading a{display:block;color:#493724;text-decoration:none}
-.next-reading strong{display:block;font:700 22px/1.65 var(--serif)}
-.next-reading span{display:block;margin-top:7px;color:#725c42;font:500 12px/1.7 var(--sans);letter-spacing:.08em}
+.next-reading a{display:grid;grid-template-columns:140px minmax(0,1fr);gap:20px;align-items:center;color:#493724;text-decoration:none}
+.next-reading-thumbnail{display:block;width:100%;aspect-ratio:16/10;overflow:hidden;border:1px solid rgba(90,67,42,.22)}
+.next-reading-thumbnail img{display:block;width:100%;height:100%;border:0;object-fit:cover}
+.next-reading-copy strong{display:block;font:700 22px/1.65 var(--serif)}
+.next-reading-copy span{display:block;margin-top:7px;color:#725c42;font:500 12px/1.7 var(--sans);letter-spacing:.08em}
 .next-reading a:hover strong,.next-reading a:focus-visible strong{color:#8b683f}
-.article-book-link-wrap{display:flex;justify-content:center;margin:30px 0 12px}
-.article-book-link{display:inline-flex;min-height:44px;align-items:center;padding:10px 15px;border:1px solid rgba(90,67,42,.3);background:rgba(165,130,84,.1);color:#664b2d;font:500 13px/1.5 var(--sans);letter-spacing:.08em;text-decoration:none}
-@media(max-width:760px){.article-ending{margin-top:42px}.next-reading{padding:20px}.next-reading strong{font-size:20px}}
-@media(max-width:420px){.next-reading{padding:18px}}
+.recommended-book{margin:24px 0;border:1px solid rgba(90,67,42,.25);background:rgba(255,255,255,.18)}
+.recommended-book a{display:grid;grid-template-columns:minmax(0,1fr) 126px;gap:24px;align-items:center;padding:22px 24px;color:#493724;text-decoration:none}
+.recommended-book small{display:block;margin-bottom:8px;color:#8b683f;font:500 12px/1.6 var(--sans);letter-spacing:.16em}
+.recommended-book strong{display:block;font:700 22px/1.6 var(--serif)}
+.recommended-book-meta{display:block;margin-top:9px;color:#725c42;font:500 13px/1.7 var(--sans)}
+.recommended-book-action{display:inline-block;margin-top:15px;padding:7px 12px;background:#8b683f;color:#fff;font:500 12px/1.5 var(--sans);letter-spacing:.08em}
+.recommended-book-cover{display:block;width:126px;aspect-ratio:2/3;overflow:hidden;border:1px solid rgba(90,67,42,.24);background:#f4efe8;box-shadow:0 12px 26px rgba(48,42,35,.2)}
+.recommended-book-cover img{display:block;width:100%;height:100%;object-fit:contain}
+@media(max-width:760px){.article-ending{margin-top:42px}.next-reading{padding:20px}.next-reading-copy strong,.recommended-book strong{font-size:20px}}
+@media(max-width:520px){.next-reading{padding:18px}.next-reading a{grid-template-columns:96px minmax(0,1fr);gap:14px}.recommended-book a{grid-template-columns:minmax(0,1fr) 96px;gap:16px;padding:19px 18px}.recommended-book-cover{width:96px}}
 </style>
 <link rel="stylesheet" href="/article-footer.css?v=20260811-1">
 </head>
@@ -142,16 +150,19 @@ nav{position:fixed;z-index:100;top:0;left:0;right:0;height:56px;background:rgba(
 
 <section class="article-ending" aria-label="文章延伸閱讀">
   <aside class="next-reading">
-    <div class="next-reading-eyebrow">沿著這個主題繼續閱讀</div>
-    <a href="/article/yuanshen-destiny-archetype.html">
-      <strong>你的元神不是神祕身分，而是你一生逃不掉的命運原型</strong>
-      <span>元神原型・心性與業力・生命轉化</span>
+    <div class="next-reading-eyebrow">延伸閱讀</div>
+    <a href="/articles.html?id=yuanshen-destiny-archetype">
+      <span class="next-reading-thumbnail"><img src="/assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260808-final-images-2" alt="〈你的元神不是神祕身分，而是你一生逃不掉的命運原型〉首圖縮圖" loading="lazy" decoding="async"></span>
+      <span class="next-reading-copy"><strong>你的元神不是神祕身分，而是你一生逃不掉的命運原型</strong><span>元神原型・心性與業力・生命轉化</span></span>
     </a>
   </aside>
 
-  <div class="article-book-link-wrap">
-    <a class="article-book-link" href="https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh" target="_blank" rel="noopener noreferrer">延伸閱讀｜宇色靈修著作</a>
-  </div>
+  <aside class="recommended-book" aria-label="延伸書籍：我在人間的元神覺醒">
+    <a href="https://www.books.com.tw/products/0011060075?sloc=main" target="_blank" rel="noopener noreferrer">
+      <span><small>延伸書籍</small><strong>我在人間的元神覺醒</strong><span class="recommended-book-meta">宇色 Osel｜柿子文化</span><span class="recommended-book-action">查看書籍 →</span></span>
+      <span class="recommended-book-cover"><img src="https://wsrv.nl/?url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg&amp;w=480&amp;output=webp&amp;q=88" alt="《我在人間的元神覺醒》書封" loading="lazy" decoding="async"></span>
+    </a>
+  </aside>
 </section>
 </article></main>
 <footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5 17 7.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer>

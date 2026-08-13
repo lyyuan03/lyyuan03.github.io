@@ -122,8 +122,8 @@
 
         <div class="grid">
           <div class="field">
-            <label for="bookTitle">推薦書名</label>
-            <input id="bookTitle" name="bookTitle" placeholder="非推薦書文章可留空">
+            <label for="bookTitle">延伸書名（每篇必填）</label>
+            <input id="bookTitle" name="bookTitle" placeholder="每篇文章都必須指定一本延伸書籍" required>
           </div>
           <div class="field">
             <label for="bookAuthor">作者</label>
@@ -134,8 +134,12 @@
             <input id="bookPublisher" name="bookPublisher">
           </div>
           <div class="field">
-            <label for="bookPurchaseUrl">博客來連結</label>
-            <input id="bookPurchaseUrl" name="bookPurchaseUrl" type="url" placeholder="https://www.books.com.tw/...">
+            <label for="bookPurchaseUrl">書籍連結（每篇必填）</label>
+            <input id="bookPurchaseUrl" name="bookPurchaseUrl" type="url" placeholder="https://www.books.com.tw/..." required>
+          </div>
+          <div class="field">
+            <label for="bookCoverImage">書封圖片網址（每篇必填）</label>
+            <input id="bookCoverImage" name="bookCoverImage" type="url" placeholder="https://.../book-cover.jpg" required>
           </div>
         </div>
 
