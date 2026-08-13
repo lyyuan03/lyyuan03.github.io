@@ -1,5 +1,6 @@
 import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1";
 import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260812-prophecy-4";
+import { quantumFrequencyWorkWishArticle } from "./article-quantum-frequency-work-wish.js?v=20260813-draft-1";
 import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=20260730-wealth-discipline-6";
 import { celebrityDreamSpiritArticle } from "./article-celebrity-dream-spirit.js?v=20260731-celebrity-dream-4";
 import { fantasyIntuitionYuanshenArticle } from "./article-fantasy-intuition-yuanshen-display.js?v=20260801-fantasy-full-1";
@@ -35,6 +36,7 @@ const seriesById = {
   "lingxiu-yuanshen-reality": "靈修辨證",
   "lingxiu-zouhuo-rumo": "靈修辨證",
   "celebrity-death-dream-spirit-five-checks": "靈界辨證",
+  "quantum-frequency-work-wish": "宇色書房",
   "wealth-discipline-investing-and-self-mastery": "宇色書房",
   "wealth-as-water": "財富與生命",
   "market-crash-money-self-control": "財富與生命",
@@ -51,6 +53,7 @@ function normalizeArticle(article) {
 
 export const staticArticles = [
   futurePerson2058ProphecyArticle,
+  quantumFrequencyWorkWishArticle,
   thisBookTookThirtyYearsArticle,
   yuanshenDestinyArchetypeArticle,
   loveBeyondFilialPietyArticle,
