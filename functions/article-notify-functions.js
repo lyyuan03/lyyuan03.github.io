@@ -306,7 +306,8 @@ exports.notifyArticleSubscribers = onCall(
       if (smtpAccepted) {
         throw new HttpsError("aborted", "郵件伺服器可能已接收通知，但系統未完成確認。請勿重複寄送，請先查看寄件備份。");
       }
-      throw new HttpsError("internal", "通知信未完成寄送。請先確認寄件信箱設定後再試。");
+      const smtpMessage = cleanText(error?.message || "SMTP 未回傳詳細錯誤", 500);
+      throw new HttpsError("internal", `通知信未寄出｜${smtpMessage}`);
     }
   }
 );
