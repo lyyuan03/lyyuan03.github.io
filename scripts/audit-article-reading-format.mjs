@@ -54,6 +54,7 @@ publishedArticleIds.forEach((id) => {
   "function renderRecommendedBook(article)",
   "recommendedBookForArticle(article)",
   "next-reading-thumbnail",
+  "data-related-reading",
   "recommended-book-cover",
   "延伸閱讀",
   "延伸書籍"
@@ -61,7 +62,7 @@ publishedArticleIds.forEach((id) => {
 
 [
   ".next-reading-thumbnail img",
-  '.next-reading[data-related-reading]{display:none!important}',
+  '.next-reading[data-related-reading][aria-label="下一篇延伸閱讀"]{display:none!important}',
   ".recommended-book-link",
   ".recommended-book-cover img",
   ".recommended-book-cover.is-landscape img"

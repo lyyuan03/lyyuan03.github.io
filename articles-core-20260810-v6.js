@@ -828,9 +828,10 @@ function relatedArticleFor(article) {
 function renderNextReading(article) {
   const target = relatedArticleFor(article);
   if (!target) return "";
+  const sourceId = articleKey(article);
   const nextId = articleKey(target);
   const thumbnail = firstArticleImage(target);
-  return `<aside class="next-reading" aria-label="延伸閱讀：${escapeHtml(target.title || "靈元院文選")}">
+  return `<aside class="next-reading" data-related-reading="${escapeHtml(sourceId)}" aria-label="延伸閱讀：${escapeHtml(target.title || "靈元院文選")}">
     <div class="next-reading-eyebrow">延伸閱讀</div>
     <a class="next-reading-link" href="${standaloneArticlePaths.get(nextId) || `articles.html?id=${encodeURIComponent(nextId)}`}">
       <span class="next-reading-thumbnail">
