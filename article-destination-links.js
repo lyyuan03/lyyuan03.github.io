@@ -265,6 +265,49 @@
         .article-destination-link:focus-visible,
         .article-destination-link:active{transform:none!important}
       }
+      /* 2026-07-21 原始文章分享列：Facebook、Instagram、LINE、Telegram、Email、複製連結 */
+      .article-share{
+        display:flex;
+        justify-content:flex-end;
+        align-items:center;
+        gap:9px;
+        margin:22px 0 3px;
+        color:rgba(245,240,232,.68);
+        font-family:var(--sans,'Noto Sans TC',sans-serif);
+        font-size:12px;
+        letter-spacing:.1em;
+      }
+      .article-share>a,.article-share>button{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        width:36px;
+        height:36px;
+        padding:0;
+        border:0;
+        border-radius:50%;
+        color:#fff;
+        cursor:pointer;
+        transition:transform .2s,filter .2s;
+        box-shadow:0 3px 10px rgba(0,0,0,.22);
+        text-decoration:none;
+      }
+      .article-share .article-social-facebook{background:#1877F2}
+      .article-share .article-social-instagram{background:linear-gradient(135deg,#833AB4 5%,#C13584 38%,#E1306C 60%,#F77737 82%,#FCAF45 100%)}
+      .article-share .article-share-line{background:#06C755}
+      .article-share .article-share-telegram{background:#229ED9}
+      .article-share .article-share-email{background:#D86A4A}
+      .article-share .article-share-copy{background:#A58254}
+      .article-line-mark{font-family:Arial,sans-serif;font-size:8px;font-weight:700;letter-spacing:-.04em;color:#fff}
+      .article-share>a:hover,.article-share>button:hover{filter:brightness(1.12);transform:translateY(-2px)}
+      .article-share svg{width:18px;height:18px}
+      .article-share-status{min-width:0;color:rgba(245,240,232,.66);font-size:11px;letter-spacing:.04em}
+      .article-static-page .article-share{color:#493724}
+      .article-static-page .article-share-status{color:#725c42}
+      @media(max-width:520px){
+        .article-share{justify-content:flex-start;flex-wrap:wrap}
+      }
+
     `;
     document.head.appendChild(style);
   }
@@ -300,6 +343,86 @@
         </span>
         <span class="article-destination-arrow" aria-hidden="true">→</span>`;
       wrap.appendChild(aestheticsLink);
+    });
+  }
+
+
+  function getRestoredShareDetails(article, currentShare) {
+    const existingCopy = currentShare?.querySelector(".article-share-copy");
+    const shareUrl = existingCopy?.dataset.shareUrl
+      || document.querySelector('meta[property="og:url"]')?.content
+      || document.querySelector('link[rel="canonical"]')?.href
+      || location.href;
+    const shareTitle = article.querySelector(":scope > h2")?.textContent?.trim()
+      || document.querySelector(".hero h1")?.textContent?.trim()
+      || document.querySelector('meta[property="og:title"]')?.content
+      || document.title.split("｜")[0].trim()
+      || "靈元院文選";
+    return { shareUrl, shareTitle };
+  }
+
+  function restoredShareMarkup(shareUrl, shareTitle) {
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const encodedTitle = encodeURIComponent(shareTitle);
+    const encodedEmail = encodeURIComponent(`${shareTitle}\n\n${shareUrl}`);
+    return `
+      <a class="article-social-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Facebook" title="分享到 Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4.4c-.5-.1-2.1-.2-4-.2-3.9 0-6.6 2.4-6.6 6.8v3.8H2v4h4.4V24h5.4v-5.2h4.5l.7-4h-5.2v-3.4C11.8 9.8 12.2 8 14 8Z" fill="currentColor"/></svg>
+      </a>
+      <a class="article-social-instagram" href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="靈元院 Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/></svg>
+      </a>
+      <a class="article-share-line" href="https://social-plugins.line.me/lineit/share?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer" aria-label="分享到 LINE" title="分享到 LINE">
+        <span class="article-line-mark" aria-hidden="true">LINE</span>
+      </a>
+      <a class="article-share-telegram" href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Telegram" title="分享到 Telegram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.3 18.4 20c-.2 1.2-.9 1.5-1.9.9l-4.7-3.5-2.3 2.2c-.2.3-.5.5-1 .5l.4-4.8 8.7-7.9c.4-.3-.1-.5-.6-.2L6.2 14 1.6 12.5c-1-.3-1-1 .2-1.5L20 4c.8-.3 1.6.2 1.5 1.3Z" fill="currentColor"/></svg>
+      </a>
+      <a class="article-share-email" href="mailto:?subject=${encodedTitle}&body=${encodedEmail}" aria-label="使用 Email 分享" title="使用 Email 分享">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="5.2" width="18.4" height="13.6" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <button class="article-share-copy" type="button" data-share-url="${shareUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")}" aria-label="複製文章連結" title="複製文章連結">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-2M6 9h6a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3Z" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+      </button>
+      <span class="article-share-status" role="status" aria-live="polite"></span>`;
+  }
+
+  function bindRestoredShare(share) {
+    const copyButton = share.querySelector(".article-share-copy");
+    if (!copyButton || copyButton.dataset.copyBound === "true") return;
+    copyButton.dataset.copyBound = "true";
+    copyButton.addEventListener("click", async () => {
+      const status = share.querySelector(".article-share-status");
+      try {
+        await navigator.clipboard.writeText(copyButton.dataset.shareUrl);
+        if (status) status.textContent = "已複製連結";
+      } catch {
+        window.prompt("請複製文章連結", copyButton.dataset.shareUrl);
+      }
+    });
+  }
+
+  function restoreArticleShare() {
+    document.querySelectorAll(".article-view, article.article").forEach((article) => {
+      if (!article.querySelector(".article-body,.content")) return;
+      if (article.querySelector(".article-share-restored")) return;
+      let share = article.querySelector(".article-share");
+      if (share?.dataset.originalSyntaxRestored === "true") return;
+
+      const metrics = share?.querySelector(".article-metrics");
+      const { shareUrl, shareTitle } = getRestoredShareDetails(article, share);
+      if (!share) {
+        share = document.createElement("div");
+        share.className = "article-share";
+        share.setAttribute("aria-label", "分享文章");
+        const ending = article.querySelector(".article-ending");
+        (ending || article).appendChild(share);
+      }
+
+      share.innerHTML = restoredShareMarkup(shareUrl, shareTitle);
+      if (metrics) share.prepend(metrics);
+      share.dataset.originalSyntaxRestored = "true";
+      bindRestoredShare(share);
     });
   }
 
@@ -347,6 +470,7 @@
 
   function enhanceArticlePage() {
     enhanceDestinationLinks();
+    restoreArticleShare();
     fixYuanshenArticleImages();
   }
 
