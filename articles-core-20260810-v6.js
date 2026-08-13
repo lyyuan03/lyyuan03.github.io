@@ -580,7 +580,7 @@ function hasDirectSponsorAccess(record, userEmail) {
   if (!record || record.memberType !== "sponsor-member") return false;
   if (record.status !== "active" || record.paymentStatus !== "paid") return false;
   if (record.articleAccess !== true || record.accessScope !== "sponsor-paid-articles") return false;
-  if (Number(record.accessVersion || 0) < 2 || !String(record.lastOrderNo || "").trim()) return false;
+  if (Number(record.accessVersion || 0) < 2) return false;
   if (record.revokedAt || record.suspended === true || record.disabled === true) return false;
   const recordEmail = String(record.email || "").trim().toLowerCase();
   if (!recordEmail || recordEmail !== userEmail) return false;
@@ -631,17 +631,8 @@ function hasPaidAccess(articleId = "") {
   const wellnessAccess = hasWellnessArticleBenefit(currentSponsorAccess, currentMemberAccess, userEmail);
   if (!directAccess && !wellnessAccess) return false;
 
-  const entitlement = directAccess ? currentSponsorAccess : currentSponsorAccess.wellnessBenefit;
-  const deniedArticleIds = Array.isArray(entitlement.deniedArticleIds)
-    ? entitlement.deniedArticleIds.map(String)
-    : [];
-  if (articleId && deniedArticleIds.includes(String(articleId))) return false;
-
-  const allowedArticleIds = Array.isArray(entitlement.allowedArticleIds)
-    ? entitlement.allowedArticleIds.map(String)
-    : [];
-  if (allowedArticleIds.length > 0 && (!articleId || !allowedArticleIds.includes(String(articleId)))) return false;
-
+  // 有效的贊助閱讀權限適用全部贊助專屬文章。
+  // 續期、即將到期與付款提示只在會員中心顯示，不介入文章閱讀。
   return true;
 }
 
