@@ -61,6 +61,7 @@ publishedArticleIds.forEach((id) => {
 
 [
   ".next-reading-thumbnail img",
+  '.next-reading[data-related-reading]{display:none!important}',
   ".recommended-book-link",
   ".recommended-book-cover img",
   ".recommended-book-cover.is-landscape img"
