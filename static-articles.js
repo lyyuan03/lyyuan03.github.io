@@ -1,5 +1,5 @@
 import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1";
-import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260813-full-sync-1";
+import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260813-inline-slots-2";
 import { quantumFrequencyWorkWishArticle } from "./article-quantum-frequency-work-wish.js?v=20260813-publish-1";
 import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=20260730-wealth-discipline-6";
 import { celebrityDreamSpiritArticle } from "./article-celebrity-dream-spirit.js?v=20260731-celebrity-dream-4";

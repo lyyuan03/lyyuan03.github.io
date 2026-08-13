@@ -9,8 +9,9 @@ const SCALE_MAX = 250;
 const DEFAULTS = { positionX: 50, positionY: 50, scale: 100 };
 const KNOWN_ARTICLE_IMAGE_REPAIRS = {
   "2058-future-person-prophecy": [
-    { alt: "當預言只剩下命中的版本，真正要辨識的是我們看見了什麼、又漏掉了什麼", src: "assets/articles/2058-future-person-prophecy/verification.webp?v=20260812-2" },
-    { alt: "未來不是單一路線，而是選擇與集體意識交織出的可能性", src: "assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260812-2" }
+    { alt: "日期是真的。「當時有人看得到」，不一定是真的。", src: "assets/articles/2058-future-person-prophecy/verification.webp?v=20260813-3" },
+    { alt: "未來不是不存在，而是未來不停地在形成。", src: "assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260812-2" },
+    { alt: "帶他去洗澡的人，早就看過了。", src: "assets/articles/2058-future-person-prophecy/bath-test.webp?v=20260813-3" }
   ],
   "yuanshen-destiny-archetype": [
     { alt: "天庭巨石所化的元神", src: "assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260808-hires-merge-1" },
@@ -71,6 +72,13 @@ function repairKnownArticleImages(content = "", id = "") {
   const repair = KNOWN_ARTICLE_IMAGE_REPAIRS[id];
   if (!repair) return content;
   const parsed = parseImages(content);
+  if (id === "2058-future-person-prophecy" && parsed.length === 2 && repair.length === 3) {
+    const repairedTwo = parsed.reduceRight((next, source, index) => {
+      const target = repair[index];
+      return next.slice(0, source.start) + `![${target.alt}](${target.src})` + next.slice(source.end);
+    }, content);
+    return `${repairedTwo.trimEnd()}\n\n![${repair[2].alt}](${repair[2].src})\n`;
+  }
   if (parsed.length !== repair.length) return content;
   let next = content;
   for (let index = parsed.length - 1; index >= 0; index -= 1) {

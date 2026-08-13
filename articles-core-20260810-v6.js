@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260813-2058-full-sync-1";
+import { staticArticles } from "./static-articles.js?v=20260813-2058-inline-slots-2";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -45,7 +45,6 @@ const limitedReadingDeadlines = new Map();
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 // 這篇已由 Firestore 後台接管；索引首次建立前也不得退回顯示靜態 published 版本。
 const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype", "2058-future-person-prophecy"]);
-const STATIC_SOURCE_OF_TRUTH_IDS = new Set(["quantum-frequency-work-wish"]);
 const articleGuides = {
   "2058-future-person-prophecy": {
     topics: ["靈修辨識", "修行心性"],
@@ -1036,13 +1035,9 @@ async function loadArticles() {
   const mergedById = new Map();
   staticArticles.forEach((article) => {
     const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
-    if (!managedByFirestore || STATIC_SOURCE_OF_TRUTH_IDS.has(article.id)) {
-      mergedById.set(article.id, article);
-    }
+    if (!managedByFirestore) mergedById.set(article.id, article);
   });
-  firestoreArticles.forEach((article) => {
-    if (!STATIC_SOURCE_OF_TRUTH_IDS.has(article.id)) mergedById.set(article.id, article);
-  });
+  firestoreArticles.forEach((article) => mergedById.set(article.id, article));
   statusById.forEach((status, articleId) => {
     if (status.status !== "published" || status.hidden === true || status.systemRecord === true) {
       mergedById.delete(articleId);
