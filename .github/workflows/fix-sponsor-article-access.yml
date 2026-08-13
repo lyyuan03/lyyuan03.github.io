@@ -1,4 +1,4 @@
-name: One-time sponsor article access repair
+name: One-time sponsor article access cache refresh
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  repair:
+  refresh:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,42 +18,37 @@ jobs:
         with:
           ref: main
 
-      - name: Patch sponsor-only access lookup
+      - name: Bump article access cache keys
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          path = Path("articles-core-20260810-v6.js")
-          text = path.read_text(encoding="utf-8")
-
-          old = '''    const [memberSnapshot, sponsorSnapshot] = await Promise.all([\n      withTimeout(getDoc(doc(db, "memberAccess", email)), 8000, "一般會員資格載入"),\n      withTimeout(getDoc(doc(db, "sponsorMemberAccess", email)), 8000, "贊助會員資格載入")\n    ]);'''
-          new = '''    const [memberSnapshot, sponsorSnapshot] = await Promise.all([\n      withTimeout(getDoc(doc(db, "memberAccess", email)), 8000, "一般會員資格載入").catch((error) => {\n        if (error?.code !== "permission-denied") console.warn("一般會員資格載入失敗。", error);\n        return null;\n      }),\n      withTimeout(getDoc(doc(db, "sponsorMemberAccess", email)), 8000, "贊助會員資格載入").catch((error) => {\n        console.warn("贊助會員資格載入失敗。", error);\n        return null;\n      })\n    ]);'''
-
+          wrapper = Path("articles-v6.js")
+          text = wrapper.read_text(encoding="utf-8")
+          old = "./articles-core-20260810-v6.js?v=20260813-auth-rerender-fix-1"
+          new = "./articles-core-20260810-v6.js?v=20260813-sponsor-only-access-fix-2"
           if old not in text:
-              raise SystemExit("Expected Promise.all access block not found; refusing to patch")
-          text = text.replace(old, new, 1)
+              raise SystemExit("Expected core cache key not found")
+          wrapper.write_text(text.replace(old, new, 1), encoding="utf-8")
 
-          if '    if (memberSnapshot.exists()) {' not in text:
-              raise SystemExit("Expected memberSnapshot check not found")
-          text = text.replace('    if (memberSnapshot.exists()) {', '    if (memberSnapshot?.exists()) {', 1)
-
-          if '    if (sponsorSnapshot.exists()) {' not in text:
-              raise SystemExit("Expected sponsorSnapshot check not found")
-          text = text.replace('    if (sponsorSnapshot.exists()) {', '    if (sponsorSnapshot?.exists()) {', 1)
-
-          path.write_text(text, encoding="utf-8")
+          page = Path("articles.html")
+          html = page.read_text(encoding="utf-8")
+          old_html = 'articles-v6.js?v=20260813-auth-rerender-fix-1'
+          new_html = 'articles-v6.js?v=20260813-sponsor-only-access-fix-2'
+          if old_html not in html:
+              raise SystemExit("Expected articles-v6 cache key not found")
+          page.write_text(html.replace(old_html, new_html, 1), encoding="utf-8")
           PY
 
-      - name: Verify patch
+      - name: Verify cache refresh
         run: |
-          grep -F 'memberSnapshot?.exists()' articles-core-20260810-v6.js
-          grep -F 'sponsorSnapshot?.exists()' articles-core-20260810-v6.js
-          grep -F '一般會員資格載入失敗。' articles-core-20260810-v6.js
+          grep -F 'articles-core-20260810-v6.js?v=20260813-sponsor-only-access-fix-2' articles-v6.js
+          grep -F 'articles-v6.js?v=20260813-sponsor-only-access-fix-2' articles.html
 
-      - name: Commit repair
+      - name: Commit cache refresh
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add articles-core-20260810-v6.js
-          git commit -m "fix(articles): keep sponsor access when general member record is absent"
+          git add articles-v6.js articles.html
+          git commit -m "fix(articles): refresh sponsor access client cache"
           git push origin HEAD:main
