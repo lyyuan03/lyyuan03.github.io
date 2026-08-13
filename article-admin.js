@@ -93,7 +93,13 @@ async function refreshNotificationDeliveryStatus() {
       notifyButton.disabled = true;
       setNotificationStatus("寄送狀態尚未確認，請勿重複寄送；請先查看寄件備份。", "error");
     } else if (data.status === "error") {
-      setNotificationStatus("上次寄送未完成。請先查看寄件備份並確認寄件信箱設定，再決定是否重試。", "error");
+      const detail = String(data.errorMessage || "").trim();
+      setNotificationStatus(
+        detail
+          ? `寄送失敗｜${detail}`
+          : "寄送失敗｜系統沒有取得詳細原因，請檢查 Firebase Functions 記錄。",
+        "error"
+      );
     }
   } catch (error) {
     console.warn("無法讀取文章通知寄送狀態。", error);
