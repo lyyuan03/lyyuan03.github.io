@@ -1,4 +1,5 @@
 import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1";
+import { ghostGateAlwaysOpenArticle } from "./article-ghost-gate-always-open.js?v=20260813-draft-1";
 import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260813-publish-consistency-1";
 import { quantumFrequencyWorkWishArticle } from "./article-quantum-frequency-work-wish.js?v=20260813-content-restore-2";
 import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=20260730-wealth-discipline-6";
@@ -52,6 +53,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
+  ghostGateAlwaysOpenArticle,
   futurePerson2058ProphecyArticle,
   quantumFrequencyWorkWishArticle,
   thisBookTookThirtyYearsArticle,
