@@ -12,7 +12,7 @@ export const wealthAsWaterArticle = {
   bookTitle: "請問財富",
   bookAuthor: "無極瑤池金母、宇色Osel",
   bookPublisher: "橡樹林",
-  bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053",
+  bookPurchaseUrl: "https://www.kingstone.com.tw/basic/2012990002443/?lid=search&actid=WISE",
   content: `### 股市下跌時，真正被看見的，往往不是投資技巧，而是人如何面對得失
 
 最近股市大跌，我收到不少讀者來信。

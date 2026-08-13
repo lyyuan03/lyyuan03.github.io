@@ -250,6 +250,7 @@ function getFormData() {
     bookAuthor: data.bookAuthor.trim(),
     bookPublisher: data.bookPublisher.trim(),
     bookPurchaseUrl: data.bookPurchaseUrl.trim(),
+    bookCoverImage: data.bookCoverImage.trim(),
     accessType: data.accessType || "open",
     eventId: (data.eventId || "").trim(),
     content: data.content.trim()
@@ -283,6 +284,7 @@ function staticArticlePayload(article, revision) {
     bookAuthor: article.bookAuthor || "",
     bookPublisher: article.bookPublisher || "",
     bookPurchaseUrl: article.bookPurchaseUrl || "",
+    bookCoverImage: article.bookCoverImage || "",
     accessType: normalizeAdminAccessType(article),
     eventId: "",
     eventName: "",
@@ -393,6 +395,7 @@ function setFormData(article = {}) {
   form.bookAuthor.value = article.bookAuthor || "";
   form.bookPublisher.value = article.bookPublisher || "";
   form.bookPurchaseUrl.value = article.bookPurchaseUrl || "";
+  form.bookCoverImage.value = article.bookCoverImage || "";
   form.accessType.value = normalizeAdminAccessType(article);
   renderEventOptions(article.eventId || "");
   toggleEventAccess();
@@ -426,6 +429,7 @@ async function importStaticArticle(articleId) {
     bookAuthor: article.bookAuthor || "",
     bookPublisher: article.bookPublisher || "",
     bookPurchaseUrl: article.bookPurchaseUrl || "",
+    bookCoverImage: article.bookCoverImage || "",
     accessType: normalizeAdminAccessType(article),
     eventId: article.eventId || "",
     eventName: article.eventName || "",
@@ -755,6 +759,7 @@ function articleForExport(article, source) {
     bookAuthor: article.bookAuthor || "",
     bookPublisher: article.bookPublisher || "",
     bookPurchaseUrl: article.bookPurchaseUrl || "",
+    bookCoverImage: article.bookCoverImage || "",
     content: article.content || "",
     createdAt: exportDate(article.createdAt),
     updatedAt: exportDate(article.updatedAt),
@@ -774,6 +779,11 @@ function articleMarkdown(article) {
     `status: ${JSON.stringify(article.status)}`,
     `excerpt: ${JSON.stringify(article.excerpt)}`,
     `coverImage: ${JSON.stringify(article.coverImage)}`,
+    `bookTitle: ${JSON.stringify(article.bookTitle)}`,
+    `bookAuthor: ${JSON.stringify(article.bookAuthor)}`,
+    `bookPublisher: ${JSON.stringify(article.bookPublisher)}`,
+    `bookPurchaseUrl: ${JSON.stringify(article.bookPurchaseUrl)}`,
+    `bookCoverImage: ${JSON.stringify(article.bookCoverImage)}`,
     `publishedAt: ${JSON.stringify(article.publishedAt)}`,
     `source: ${JSON.stringify(article.source)}`,
     "---",
@@ -786,6 +796,7 @@ function collectImageRows(items) {
   const rows = [["文章ID", "文章標題", "類型", "圖片網址", "來源"]];
   items.forEach((article) => {
     if (article.coverImage) rows.push([article.id, article.title, "封面", article.coverImage, article.source]);
+    if (article.bookCoverImage) rows.push([article.id, article.title, "延伸書籍封面", article.bookCoverImage, article.source]);
     const pattern = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
     let match;
     while ((match = pattern.exec(article.content))) {
