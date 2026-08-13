@@ -161,8 +161,8 @@ function replaceContent(input, next, cursor) {
 
 function render(panel, input, form) {
   activeId = articleId();
-  const repairedContent = repairKnownArticleImages(input.value, activeId);
-  if (repairedContent !== input.value) input.value = repairedContent;
+  // 文章正文圖片 Markdown 以管理員手動編輯內容為準。
+  // 圖片管理器只讀取圖片與顯示設定，不得自動補回、換掉或依順序改寫圖片語法。
   syncImages(input.value, activeId);
   const list = panel.querySelector("#inline-image-list");
   const status = panel.querySelector("#inline-image-status");
