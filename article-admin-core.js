@@ -1,5 +1,5 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260813-2058-inline-slots-2";
-import { staticArticles } from "./static-articles.js?v=20260813-no-asterisks-1";
+import { staticArticles } from "./static-articles.js?v=20260813-publish-consistency-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -13,7 +13,7 @@ const categoryLabels = {
 
 const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],
-  ["2058-future-person-prophecy", "20260813-no-asterisks-1"]
+  ["2058-future-person-prophecy", "20260813-publish-consistency-1"]
 ]);
 const staticImageSyncRevisions = new Map([
   ["2058-future-person-prophecy", "20260813-2058-inline-slots-4"]
@@ -633,6 +633,19 @@ async function saveArticle(event) {
     if (data.status === "published") payload.publishedAt = serverTimestamp();
     if (!articles.some((article) => article.id === currentId)) payload.createdAt = serverTimestamp();
     await setDoc(articleRef, payload, { merge: true });
+
+    // 發布／取消發布必須同時完成文章本體與狀態索引，避免後台顯示成功但前台仍讀到舊狀態。
+    const publicationSnapshot = await getDocs(collection(db, "articles"));
+    const persistedArticle = publicationSnapshot.docs.find((item) => item.id === currentId)?.data();
+    if (!persistedArticle || persistedArticle.status !== data.status) {
+      throw new Error("文章狀態寫入後驗證失敗");
+    }
+    await syncPublicationStatusIndex(publicationSnapshot);
+    const persistedIndex = await getDoc(doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID));
+    const indexedStatus = persistedIndex.exists() ? persistedIndex.data()?.statuses?.[currentId]?.status : "";
+    if (indexedStatus !== data.status) {
+      throw new Error("發布狀態索引寫入後驗證失敗");
+    }
 
     let thumbnailSaved = false;
     let thumbnailSaveError = null;

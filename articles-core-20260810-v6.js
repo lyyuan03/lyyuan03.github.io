@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260813-no-asterisks-1";
+import { staticArticles } from "./static-articles.js?v=20260813-publish-consistency-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -1033,17 +1033,18 @@ async function loadArticles() {
   }
 
   const mergedById = new Map();
-  staticArticles.forEach((article) => {
-    const managedByFirestore = statusById.has(article.id) || LEGACY_FIRESTORE_MANAGED_IDS.has(article.id);
-    if (!managedByFirestore) mergedById.set(article.id, article);
-  });
+  // 靜態文章是前台備援來源；Firestore 有資料時再覆蓋。不得因索引存在就先移除靜態文章。
+  staticArticles.forEach((article) => mergedById.set(article.id, article));
   firestoreArticles.forEach((article) => mergedById.set(article.id, article));
+  const livePublishedIds = new Set(firestoreArticles.map((article) => article.id));
   const quantumFrequencyStaticArticle = staticArticles.find((article) => article.id === "quantum-frequency-work-wish");
   if (quantumFrequencyStaticArticle) {
     mergedById.set("quantum-frequency-work-wish", quantumFrequencyStaticArticle);
   }
   statusById.forEach((status, articleId) => {
-    if (status.status !== "published" || status.hidden === true || status.systemRecord === true) {
+    // 即時 published 查詢優先於可能稍晚更新的狀態索引，避免剛發布的文章被舊 draft 索引誤刪。
+    if (!livePublishedIds.has(articleId)
+      && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) {
       mergedById.delete(articleId);
     }
   });

@@ -5,7 +5,7 @@ export const futurePerson2058ProphecyArticle = {
   category: "spiritual",
   displayCategory: "靈修",
   series: "靈修辨證",
-  status: "draft",
+  status: "published",
   publishedAt: "2026-08-12T04:29:00.000Z",
   updatedAt: "2026-08-13T14:10:00.000Z",
   coverImage: "assets/articles/2058-future-person-prophecy/cover.webp?v=20260813-3",
