@@ -27,7 +27,9 @@ function isPublished() {
 
 function setNotificationStatus(message, state = "") {
   if (!notifyStatus) return;
-  notifyStatus.textContent = message || "";
+  const isPublishNotice = message === "只有已發布文章可以預覽或通知訂閱者";
+  notifyStatus.textContent = isPublishNotice ? `⚠️ ${message}` : (message || "");
+  notifyStatus.classList.toggle("notice-warning", isPublishNotice);
   if (state) notifyStatus.dataset.state = state;
   else delete notifyStatus.dataset.state;
 }
