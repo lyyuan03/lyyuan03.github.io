@@ -17,57 +17,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Remove automatic Markdown image rewriting
+      - name: Stop editor from rewriting image Markdown
         shell: python
         run: |
           from pathlib import Path
-          import re
 
           path = Path("article-inline-image-admin.js")
           text = path.read_text()
-          original = text
-
-          text, count_map = re.subn(
-              r'const KNOWN_ARTICLE_IMAGE_REPAIRS = \{.*?\n\};\n\n',
-              '',
-              text,
-              count=1,
-              flags=re.S,
-          )
-          text, count_fn = re.subn(
-              r'function repairKnownArticleImages\(content = "", id = ""\) \{.*?\n\}\n\n(?=function syncImages)',
-              '',
-              text,
-              count=1,
-              flags=re.S,
-          )
-          old_render = '''  activeId = articleId();
-          const repairedContent = repairKnownArticleImages(input.value, activeId);
-          if (repairedContent !== input.value) input.value = repairedContent;
-          syncImages(input.value, activeId);'''
-          new_render = '''  activeId = articleId();
-          // 文章正文的圖片 Markdown 以管理員手動編輯內容為準。
-          // 圖片管理器只讀取與管理顯示設定，不得自動補圖、換圖或改寫順序。
-          syncImages(input.value, activeId);'''
-          if old_render not in text:
-              raise SystemExit("render auto-repair block not found")
-          text = text.replace(old_render, new_render, 1)
-
-          if count_map != 1 or count_fn != 1:
-              raise SystemExit(f"unexpected repair block counts: map={count_map}, function={count_fn}")
-          if "repairKnownArticleImages" in text or "KNOWN_ARTICLE_IMAGE_REPAIRS" in text:
-              raise SystemExit("automatic repair code still remains")
-          if text == original:
-              raise SystemExit("no changes produced")
-
+          old = "  const repairedContent = repairKnownArticleImages(input.value, activeId);\n  if (repairedContent !== input.value) input.value = repairedContent;\n  syncImages(input.value, activeId);"
+          new = "  // 文章正文圖片 Markdown 以管理員手動編輯內容為準。\n  // 圖片管理器只讀取圖片與顯示設定，不得自動補回、換掉或依順序改寫圖片語法。\n  syncImages(input.value, activeId);"
+          if old not in text:
+              raise SystemExit("auto-repair render block not found")
+          text = text.replace(old, new, 1)
           path.write_text(text)
 
       - name: Verify behavior
         shell: bash
         run: |
           set -euo pipefail
-          ! grep -Fq 'repairKnownArticleImages' article-inline-image-admin.js
-          ! grep -Fq 'KNOWN_ARTICLE_IMAGE_REPAIRS' article-inline-image-admin.js
+          ! grep -Fq 'const repairedContent = repairKnownArticleImages(input.value, activeId);' article-inline-image-admin.js
+          ! grep -Fq 'if (repairedContent !== input.value) input.value = repairedContent;' article-inline-image-admin.js
           grep -Fq '圖片 Markdown 以管理員手動編輯內容為準' article-inline-image-admin.js
           grep -Fq 'syncImages(input.value, activeId);' article-inline-image-admin.js
           grep -Fq 'data-action="move"' article-inline-image-admin.js
