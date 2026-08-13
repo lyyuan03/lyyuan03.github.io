@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260813-quantum-publish-2";
+import { staticArticles } from "./static-articles.js?v=20260813-2058-full-sync-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -145,7 +145,7 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
-  "2058-future-person-prophecy": "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260812-2",
+  "2058-future-person-prophecy": "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260813-3",
   "this-book-took-thirty-years": "assets/articles/this-book-took-thirty-years/cover.jpg?v=20260810-photoreal-2",
   "celebrity-death-dream-spirit-five-checks": "assets/articles/thumbnails/celebrity-dream-spirit.svg?v=20260731-clean-1",
   "japan-temple-faith-and-decline": "assets/articles/thumbnails/japan-temple.jpg",
@@ -1071,14 +1071,14 @@ async function loadArticles() {
       };
     }
     if (article.id === "2058-future-person-prophecy") {
-      const fixedContent = String(article.content || "")
-        .replace(/verification\.svg(?:\?[^)\s"']*)?/g, "verification.webp?v=20260812-2")
-        .replace(/consciousness-network\.svg(?:\?[^)\s"']*)?/g, "consciousness-network.webp?v=20260812-2");
+      const staticArticle = staticArticles.find((item) => item.id === article.id);
+      const fixedContent = String(staticArticle?.content || article.content || "");
       return {
         ...article,
         content: fixedContent,
-        coverImage: "assets/articles/2058-future-person-prophecy/cover.webp?v=20260812-2",
-        thumbnailImage: "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260812-2",
+        excerpt: staticArticle?.excerpt || article.excerpt || "",
+        coverImage: "assets/articles/2058-future-person-prophecy/cover.webp?v=20260813-3",
+        thumbnailImage: "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260813-3",
         bookTitle: "喚醒天生好命",
         bookAuthor: "宇色Osel",
         bookPublisher: "高寶",

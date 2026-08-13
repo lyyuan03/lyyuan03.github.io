@@ -1,5 +1,5 @@
-import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260812-2058-inline-image-sync-1";
-import { staticArticles } from "./static-articles.js?v=20260812-2058-inline-image-sync-1";
+import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260813-2058-full-sync-1";
+import { staticArticles } from "./static-articles.js?v=20260813-2058-full-sync-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -12,10 +12,11 @@ const categoryLabels = {
 };
 
 const staticArticleSyncRevisions = new Map([
-  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
+  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],
+  ["2058-future-person-prophecy", "20260813-full-content-images-sync-1"]
 ]);
 const staticImageSyncRevisions = new Map([
-  ["2058-future-person-prophecy", "20260812-2058-image-sync-2"]
+  ["2058-future-person-prophecy", "20260813-2058-image-sync-3"]
 ]);
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
@@ -357,8 +358,9 @@ async function syncRevisedStaticArticles(snapshot) {
 function syncKnownInlineImagePaths(articleId, content = "") {
   if (articleId !== "2058-future-person-prophecy") return String(content || "");
   return String(content || "")
-    .replace(/assets\/articles\/2058-future-person-prophecy\/verification\.svg(?:\?v=[^)\s]+)?/g, "assets/articles/2058-future-person-prophecy/verification.webp?v=20260812-2")
-    .replace(/assets\/articles\/2058-future-person-prophecy\/consciousness-network\.svg(?:\?v=[^)\s]+)?/g, "assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260812-2");
+    .replace(/assets\/articles\/2058-future-person-prophecy\/(?:verification\.svg|prediction-record\.webp)(?:\?v=[^)\s]+)?/g, "assets/articles/2058-future-person-prophecy/prediction-record.webp?v=20260813-2")
+    .replace(/assets\/articles\/2058-future-person-prophecy\/bath-test\.webp(?:\?v=[^)\s]+)?/g, "assets/articles/2058-future-person-prophecy/bath-test.webp?v=20260813-2")
+    .replace(/assets\/articles\/2058-future-person-prophecy\/(?:consciousness-network\.svg|consciousness-network\.webp)(?:\?v=[^)\s]+)?/g, "assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260813-2");
 }
 
 async function syncRevisedStaticArticleImages(snapshot) {
