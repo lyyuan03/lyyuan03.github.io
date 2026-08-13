@@ -1,4 +1,4 @@
-name: Diagnose 2058 image staging
+name: Rebuild 2058 article images
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  diagnose:
+  rebuild:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build diagnostics
+      - name: Rebuild and verify exact WebP images
         shell: bash
         run: |
           set -euo pipefail
@@ -26,59 +26,47 @@ jobs:
           import base64, hashlib, struct
 
           src = Path('.github/image-rebuild-temp')
-          out = []
+          dst = Path('assets/articles/2058-future-person-prophecy')
+          dst.mkdir(parents=True, exist_ok=True)
 
-          def ordered_merge(parts):
-              merged = ''
-              overlaps = []
-              for part in parts:
-                  p = part.strip()
-                  if not merged:
-                      merged = p
-                      overlaps.append(0)
-                      continue
-                  if p in merged:
-                      overlaps.append(len(p))
-                      continue
-                  max_overlap = min(len(merged), len(p))
-                  overlap = 0
-                  for n in range(max_overlap, 0, -1):
-                      if merged[-n:] == p[:n]:
-                          overlap = n
-                          break
-                  overlaps.append(overlap)
-                  merged += p[overlap:]
-              return merged, overlaps
+          specs = {
+              'bath': ('bath-test.webp', '08502de8b499a362c74d261936912ecb7640cd5e14112e7eba1446895fd33b1f'),
+              'record': ('prediction-record.webp', '5fb706e98c36fa766e1598572fb1fb58842ba7d13ee0e9847692e04dad7771ad'),
+              'network': ('consciousness-network.webp', '5ea4e9d636bda3f10676da0e6252a8fbd0edd36a73283b26eb81dde4c89c2b68'),
+          }
 
-          for prefix in ('bath','record','network'):
+          for prefix, (filename, expected_sha) in specs.items():
               files = sorted(src.glob(f'{prefix}.*.b64'))
-              parts = [p.read_text(encoding='utf-8').strip() for p in files]
-              merged, overlaps = ordered_merge(parts)
-              out.append(f'[{prefix}]')
-              out.append('files=' + ','.join(p.name for p in files))
-              out.append('part_lengths=' + ','.join(str(len(p)) for p in parts))
-              out.append('overlaps=' + ','.join(str(x) for x in overlaps))
-              out.append(f'merged_b64_len={len(merged)} mod4={len(merged)%4}')
-              try:
-                  data = base64.b64decode(merged, validate=True)
-                  out.append(f'decoded_len={len(data)}')
-                  out.append(f'sha256={hashlib.sha256(data).hexdigest()}')
-                  out.append(f'header={data[:12].hex()}')
-                  if len(data) >= 12 and data[:4] == b"RIFF" and data[8:12] == b"WEBP":
-                      out.append(f'riif_declared={struct.unpack("<I", data[4:8])[0] + 8}')
-              except Exception as exc:
-                  out.append(f'decode_error={type(exc).__name__}:{exc}')
-              out.append('')
+              if not files:
+                  raise SystemExit(f'No staged chunks for {prefix}')
+              raw_b64 = ''.join(p.read_text(encoding='utf-8').strip() for p in files)
+              data = base64.b64decode(raw_b64, validate=True)
 
-          Path('.github/image-rebuild-temp/diagnostics.txt').write_text('\n'.join(out), encoding='utf-8')
+              if len(data) < 12 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+                  raise SystemExit(f'Invalid WebP RIFF header for {prefix}')
+              declared = struct.unpack('<I', data[4:8])[0] + 8
+              if len(data) < declared:
+                  raise SystemExit(f'Truncated WebP for {prefix}: declared={declared}, actual={len(data)}')
+
+              # RIFF length is authoritative; ignore any staged bytes after the complete WebP.
+              webp = data[:declared]
+              actual_sha = hashlib.sha256(webp).hexdigest()
+              if actual_sha != expected_sha:
+                  raise SystemExit(f'SHA mismatch for {prefix}: {actual_sha}')
+
+              out = dst / filename
+              out.write_bytes(webp)
+              print(f'OK {prefix}: {len(webp)} bytes {actual_sha}')
           PY
 
-      - name: Commit diagnostics
+      - name: Commit generated article images
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/image-rebuild-temp/diagnostics.txt
-          git commit -m "temp: diagnose 2058 image staging"
+          git add assets/articles/2058-future-person-prophecy/bath-test.webp \
+                  assets/articles/2058-future-person-prophecy/prediction-record.webp \
+                  assets/articles/2058-future-person-prophecy/consciousness-network.webp
+          git commit -m "Add 2058 prophecy article images"
           git push
