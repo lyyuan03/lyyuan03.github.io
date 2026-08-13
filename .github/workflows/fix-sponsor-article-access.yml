@@ -1,0 +1,59 @@
+name: One-time sponsor article access repair
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - .github/workflows/fix-sponsor-article-access.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Patch sponsor-only access lookup
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("articles-core-20260810-v6.js")
+          text = path.read_text(encoding="utf-8")
+
+          old = '''    const [memberSnapshot, sponsorSnapshot] = await Promise.all([\n      withTimeout(getDoc(doc(db, "memberAccess", email)), 8000, "一般會員資格載入"),\n      withTimeout(getDoc(doc(db, "sponsorMemberAccess", email)), 8000, "贊助會員資格載入")\n    ]);'''
+          new = '''    const [memberSnapshot, sponsorSnapshot] = await Promise.all([\n      withTimeout(getDoc(doc(db, "memberAccess", email)), 8000, "一般會員資格載入").catch((error) => {\n        if (error?.code !== "permission-denied") console.warn("一般會員資格載入失敗。", error);\n        return null;\n      }),\n      withTimeout(getDoc(doc(db, "sponsorMemberAccess", email)), 8000, "贊助會員資格載入").catch((error) => {\n        console.warn("贊助會員資格載入失敗。", error);\n        return null;\n      })\n    ]);'''
+
+          if old not in text:
+              raise SystemExit("Expected Promise.all access block not found; refusing to patch")
+          text = text.replace(old, new, 1)
+
+          if '    if (memberSnapshot.exists()) {' not in text:
+              raise SystemExit("Expected memberSnapshot check not found")
+          text = text.replace('    if (memberSnapshot.exists()) {', '    if (memberSnapshot?.exists()) {', 1)
+
+          if '    if (sponsorSnapshot.exists()) {' not in text:
+              raise SystemExit("Expected sponsorSnapshot check not found")
+          text = text.replace('    if (sponsorSnapshot.exists()) {', '    if (sponsorSnapshot?.exists()) {', 1)
+
+          path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Verify patch
+        run: |
+          grep -F 'memberSnapshot?.exists()' articles-core-20260810-v6.js
+          grep -F 'sponsorSnapshot?.exists()' articles-core-20260810-v6.js
+          grep -F '一般會員資格載入失敗。' articles-core-20260810-v6.js
+
+      - name: Commit repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add articles-core-20260810-v6.js
+          git commit -m "fix(articles): keep sponsor access when general member record is absent"
+          git push origin HEAD:main
