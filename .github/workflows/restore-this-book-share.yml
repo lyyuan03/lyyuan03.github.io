@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   restore:
-    if: github.event.head_commit.message == 'Add one-time share restoration workflow'
+    if: github.event.head_commit.message == 'Trigger share restoration workflow'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
