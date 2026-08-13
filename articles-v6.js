@@ -1,3 +1,4 @@
+// 2058 Firestore content priority deployment marker: 20260813-1
 const articleRoot = document.getElementById("article-root");
 
 async function loadArticleCore() {
