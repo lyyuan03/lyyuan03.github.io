@@ -1077,7 +1077,7 @@ async function loadArticles() {
     }
     if (article.id === "2058-future-person-prophecy") {
       const staticArticle = staticArticles.find((item) => item.id === article.id);
-      const fixedContent = String(staticArticle?.content || article.content || "");
+      const fixedContent = String(article.content || staticArticle?.content || "");
       return {
         ...article,
         content: fixedContent,

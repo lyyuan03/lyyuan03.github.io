@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260813-publish-consistency-1";
+import "./article-admin-core.js?v=20260813-firestore-content-priority-1";
 import { app } from "./firebase-config.js?v=20260813-2058-inline-slots-2";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 

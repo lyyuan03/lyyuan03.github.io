@@ -12,8 +12,7 @@ const categoryLabels = {
 };
 
 const staticArticleSyncRevisions = new Map([
-  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],
-  ["2058-future-person-prophecy", "20260813-publish-consistency-1"]
+  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
 ]);
 const staticImageSyncRevisions = new Map([
   ["2058-future-person-prophecy", "20260813-2058-inline-slots-4"]
