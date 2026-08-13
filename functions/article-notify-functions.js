@@ -196,6 +196,27 @@ exports.previewArticleNotification = onCall(
   }
 );
 
+exports.getArticleNotificationStatus = onCall(
+  {
+    region: REGION,
+    enforceAppCheck: false
+  },
+  async (request) => {
+    assertAdmin(request);
+    const articleId = cleanText(request.data?.articleId, 300);
+    if (!articleId) throw new HttpsError("invalid-argument", "缺少 articleId。");
+    const snapshot = await db.doc(`articleNotifications/${articleId}`).get();
+    if (!snapshot.exists) return { articleId, status: "not-sent" };
+    const record = snapshot.data() || {};
+    return {
+      articleId,
+      status: cleanText(record.status || "unknown", 50),
+      recipientCount: Number(record.recipientCount || 0),
+      errorMessage: cleanText(record.errorMessage || "", 500)
+    };
+  }
+);
+
 exports.notifyArticleSubscribers = onCall(
   {
     region: REGION,
@@ -226,6 +247,7 @@ exports.notifyArticleSubscribers = onCall(
       }, { merge: true });
     });
 
+    let smtpAccepted = false;
     try {
       if (context.recipients.length > 0) {
         const { transporter, from } = mailTransport();
@@ -236,6 +258,12 @@ exports.notifyArticleSubscribers = onCall(
           text: context.mail.text,
           html: context.mail.html
         });
+        smtpAccepted = true;
+        await recordRef.set({
+          status: "smtp-accepted",
+          smtpAcceptedAt: FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp()
+        }, { merge: true });
       }
 
       await recordRef.set({
@@ -257,14 +285,25 @@ exports.notifyArticleSubscribers = onCall(
         recipientCount: context.recipients.length,
         error
       });
-      await recordRef.set({
-        status: "error",
-        errorMessage: cleanText(error?.message || "unknown error", 500),
-        failedAt: FieldValue.serverTimestamp(),
-        updatedAt: FieldValue.serverTimestamp()
-      }, { merge: true });
+      const failureStatus = smtpAccepted ? "delivery-unknown" : "error";
+      try {
+        await recordRef.set({
+          status: failureStatus,
+          errorMessage: cleanText(error?.message || "unknown error", 500),
+          failedAt: FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp()
+        }, { merge: true });
+      } catch (recordError) {
+        console.error("Article notification failure status write failed", {
+          articleId: context.articleId,
+          recordError
+        });
+      }
       if (error instanceof HttpsError) throw error;
-      throw new HttpsError("internal", "文章通知寄送失敗，請檢查 SMTP 或 Functions 記錄後再試。");
+      if (smtpAccepted) {
+        throw new HttpsError("aborted", "郵件伺服器可能已接收通知，但系統未完成確認。請勿重複寄送，請先查看寄件備份。");
+      }
+      throw new HttpsError("internal", "通知信未完成寄送。請先確認寄件信箱設定後再試。");
     }
   }
 );
