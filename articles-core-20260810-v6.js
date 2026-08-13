@@ -1134,4 +1134,7 @@ onAuthStateChanged(auth, async (user) => {
       console.warn("文章狀態索引同步失敗。", error);
     }
   }
+  // 登入與會員資格確認完成後，必須重新呈現目前文章。
+  // 否則頁面會停留在最初的訪客付款框，即使會員資格已經有效。
+  renderCurrentView();
 });
