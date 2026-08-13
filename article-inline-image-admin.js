@@ -7,19 +7,6 @@ const MAX_IMAGES = 3;
 const SCALE_MIN = 100;
 const SCALE_MAX = 250;
 const DEFAULTS = { positionX: 50, positionY: 50, scale: 100 };
-const KNOWN_ARTICLE_IMAGE_REPAIRS = {
-  "2058-future-person-prophecy": [
-    { alt: "日期是真的。「當時有人看得到」，不一定是真的。", src: "assets/articles/2058-future-person-prophecy/verification.webp?v=20260813-3" },
-    { alt: "未來不是不存在，而是未來不停地在形成。", src: "assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260812-2" },
-    { alt: "帶他去洗澡的人，早就看過了。", src: "assets/articles/2058-future-person-prophecy/bath-test.webp?v=20260813-3" }
-  ],
-  "yuanshen-destiny-archetype": [
-    { alt: "天庭巨石所化的元神", src: "assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260808-hires-merge-1" },
-    { alt: "大鵬鳥元神", src: "assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260808-hires-merge-1" },
-    { alt: "九尾七彩神鳥元神", src: "assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260808-hires-merge-1" }
-  ]
-};
-
 let settingsByArticle = new Map();
 let currentImages = [];
 let activeId = "";
@@ -66,28 +53,6 @@ function parseImages(content = "") {
     result.push({ alt: match[1] || "", src: match[2] || "", full: match[0], start: match.index, end: match.index + match[0].length });
   }
   return result;
-}
-
-function repairKnownArticleImages(content = "", id = "") {
-  const repair = KNOWN_ARTICLE_IMAGE_REPAIRS[id];
-  if (!repair) return content;
-  const parsed = parseImages(content);
-  if (id === "2058-future-person-prophecy" && parsed.length === 2 && repair.length === 3) {
-    const repairedTwo = parsed.reduceRight((next, source, index) => {
-      const target = repair[index];
-      return next.slice(0, source.start) + `![${target.alt}](${target.src})` + next.slice(source.end);
-    }, content);
-    return `${repairedTwo.trimEnd()}\n\n![${repair[2].alt}](${repair[2].src})\n`;
-  }
-  if (parsed.length !== repair.length) return content;
-  let next = content;
-  for (let index = parsed.length - 1; index >= 0; index -= 1) {
-    const source = parsed[index];
-    const target = repair[index];
-    const block = `![${target.alt || source.alt}](${target.src})`;
-    next = next.slice(0, source.start) + block + next.slice(source.end);
-  }
-  return next;
 }
 
 function syncImages(content, id = activeId || articleId()) {

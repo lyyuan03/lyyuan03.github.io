@@ -1,5 +1,5 @@
-import "./article-admin-core.js?v=20260813-firestore-content-priority-1";
-import { app } from "./firebase-config.js?v=20260813-2058-inline-slots-2";
+import "./article-admin-core.js?v=20260813-manual-image-markdown-3";
+import { app } from "./firebase-config.js?v=20260813-manual-image-markdown-3";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
 const functions = getFunctions(app, "asia-east1");
