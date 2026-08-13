@@ -172,8 +172,8 @@
     const video = section.querySelector(".latest-book-video");
     const fallback = section.querySelector(".latest-book-fallback");
     const videoSrc = matchMedia("(max-width:820px)").matches
-      ? "/assets/videos/osel-awakening-2026-mobile.mp4?v=20260813-2"
-      : "/assets/videos/osel-awakening-2026-desktop.mp4?v=20260813-2";
+      ? "/assets/videos/osel-awakening-2026-mobile.mp4?v=20260813-3"
+      : "/assets/videos/osel-awakening-2026-desktop.mp4?v=20260813-3";
 
     fetch(videoSrc, { method: "HEAD", cache: "no-store" })
       .then((response) => {
