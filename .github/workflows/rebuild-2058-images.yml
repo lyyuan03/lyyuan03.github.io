@@ -1,5 +1,6 @@
 name: Rebuild 2058 article images
 
+# Retry after all staged image chunks are present on main.
 on:
   push:
     paths:
