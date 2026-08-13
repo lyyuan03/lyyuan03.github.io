@@ -1,0 +1,44 @@
+name: Apply article image Markdown fix
+
+on:
+  push:
+    paths:
+      - ".github/workflows/run-image-markdown-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply fix
+        run: python3 scripts/fix-image-markdown.py
+
+      - name: Verify
+        run: |
+          grep -Fq 'article-inline-image-admin.js?v=20260813-manual-image-markdown-3' firebase-config.js
+          grep -Fq 'article-admin-core.js?v=20260813-manual-image-markdown-3' article-admin.js
+          grep -Fq 'firebase-config.js?v=20260813-manual-image-markdown-3' article-admin.js
+          grep -Fq 'article-admin.js?v=20260813-manual-image-markdown-3' admin.html
+          ! grep -Fq 'KNOWN_ARTICLE_IMAGE_REPAIRS' article-inline-image-admin.js
+          ! grep -Fq 'repairKnownArticleImages' article-inline-image-admin.js
+          ! grep -Fq 'syncKnownInlineImagePaths' article-admin-core.js
+
+      - name: Commit
+        run: |
+          rm -f .github/workflows/fix-article-image-markdown-final.yml
+          rm -f .github/workflows/fix-article-image-markdown-final2.yml
+          rm -f .github/workflows/run-image-markdown-fix.yml
+          rm -f scripts/fix-image-markdown.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "徹底停止後台改寫文章圖片語法"
+          git pull --rebase origin main
+          git push origin HEAD:main
