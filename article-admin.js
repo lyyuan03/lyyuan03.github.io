@@ -4,6 +4,7 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
 
 const functions = getFunctions(app, "asia-east1");
 const previewNotification = httpsCallable(functions, "previewArticleNotification");
+const getNotificationStatus = httpsCallable(functions, "getArticleNotificationStatus");
 const sendNotification = httpsCallable(functions, "notifyArticleSubscribers");
 
 const form = document.getElementById("article-form");
@@ -48,6 +49,8 @@ function errorMessage(error) {
   if (code.includes("failed-precondition")) return error?.message || "只有已發布文章可以使用通知功能。";
   if (code.includes("permission-denied")) return "目前帳號沒有文章通知權限。";
   if (code.includes("not-found")) return "找不到這篇文章的 Firestore 紀錄，請先確認文章已儲存到後台。";
+  if (code.includes("aborted")) return "郵件伺服器可能已接收通知，但系統未完成確認。請勿重複寄送，請先查看寄件備份。";
+  if (code.includes("internal")) return "通知信未完成寄送。請先確認寄件備份與寄件信箱設定，不要立即重複按下寄送。";
   return error?.message || "操作失敗，請稍後再試。";
 }
 
@@ -74,6 +77,27 @@ function openPreviewWindow() {
 async function getPreview(articleId) {
   const result = await previewNotification({ articleId });
   return result.data || {};
+}
+
+async function refreshNotificationDeliveryStatus() {
+  const articleId = currentArticleId();
+  if (!articleId || !isPublished()) return;
+  try {
+    const result = await getNotificationStatus({ articleId });
+    const data = result.data || {};
+    const count = Number(data.recipientCount || 0).toLocaleString("zh-TW");
+    if (data.status === "sent") {
+      notifyButton.disabled = true;
+      setNotificationStatus(`已確認寄出｜共 ${count} 位收件者`, "success");
+    } else if (["sending", "smtp-accepted", "delivery-unknown"].includes(data.status)) {
+      notifyButton.disabled = true;
+      setNotificationStatus("寄送狀態尚未確認，請勿重複寄送；請先查看寄件備份。", "error");
+    } else if (data.status === "error") {
+      setNotificationStatus("上次寄送未完成。請先查看寄件備份並確認寄件信箱設定，再決定是否重試。", "error");
+    }
+  } catch (error) {
+    console.warn("無法讀取文章通知寄送狀態。", error);
+  }
 }
 
 async function handlePreview() {
@@ -128,6 +152,7 @@ async function handleNotify() {
     const message = errorMessage(error);
     setNotificationStatus(message, "error");
     showToast(message, "error");
+    await refreshNotificationDeliveryStatus();
   } finally {
     updateButtonState();
   }
@@ -161,13 +186,23 @@ function installNotificationControls() {
   saveActions.insertBefore(notifyButton, deleteButton || null);
   saveActions.insertBefore(notifyStatus, deleteButton || null);
   updateButtonState();
+  void refreshNotificationDeliveryStatus();
 }
 
 installNotificationControls();
-form?.elements?.status?.addEventListener("change", updateButtonState);
-listEl?.addEventListener("click", () => queueMicrotask(updateButtonState));
+form?.elements?.status?.addEventListener("change", () => {
+  updateButtonState();
+  void refreshNotificationDeliveryStatus();
+});
+listEl?.addEventListener("click", () => queueMicrotask(() => {
+  updateButtonState();
+  void refreshNotificationDeliveryStatus();
+}));
 newButton?.addEventListener("click", () => queueMicrotask(updateButtonState));
-form?.addEventListener("submit", () => window.setTimeout(updateButtonState, 500));
+form?.addEventListener("submit", () => window.setTimeout(() => {
+  updateButtonState();
+  void refreshNotificationDeliveryStatus();
+}, 500));
 
 const observer = new MutationObserver(updateButtonState);
 if (listEl) observer.observe(listEl, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
