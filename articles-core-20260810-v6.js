@@ -1038,6 +1038,10 @@ async function loadArticles() {
     if (!managedByFirestore) mergedById.set(article.id, article);
   });
   firestoreArticles.forEach((article) => mergedById.set(article.id, article));
+  const quantumFrequencyStaticArticle = staticArticles.find((article) => article.id === "quantum-frequency-work-wish");
+  if (quantumFrequencyStaticArticle) {
+    mergedById.set("quantum-frequency-work-wish", quantumFrequencyStaticArticle);
+  }
   statusById.forEach((status, articleId) => {
     if (status.status !== "published" || status.hidden === true || status.systemRecord === true) {
       mergedById.delete(articleId);
