@@ -7,9 +7,9 @@ export const quantumFrequencyWorkWishArticle = {
   series: "宇色書房",
   status: "published",
   publishedAt: "2026-08-13T03:08:00.000Z",
-  updatedAt: "2026-08-13T12:55:00.000Z",
-  coverImage: "assets/articles/quantum-frequency-work-wish/cover.png?v=20260813-publish-1",
-  thumbnailImage: "assets/articles/quantum-frequency-work-wish/cover.png?v=20260813-publish-1",
+  updatedAt: "2026-08-13T13:52:00.000Z",
+  coverImage: "assets/articles/quantum-frequency-work-wish/cover.webp?v=20260813-publish-2",
+  thumbnailImage: "assets/articles/quantum-frequency-work-wish/cover.webp?v=20260813-publish-2",
   excerpt: "一本談人生阻礙，一本談願望實現。村松大輔把「觀測點、頻率、日記與呼吸」變成日常可以練習的方法；我更在意的是，讀完之後，你是否開始用不同的方式看待自己與世界。",
   accessType: "free",
   topics: ["神祕學"],
@@ -37,7 +37,7 @@ export const quantumFrequencyWorkWishArticle = {
 
 作者用量子力學的語言說：觀測點改變，所見的世界也會不同。先不談它能不能直接套用到物理世界，放回生活裡，我很認同這個方向。很多人的困境不是完全沒有出口，而是站在同一個位置太久，久到已經看不見別的路。
 
-![當你改變觀測點，牆就不再只是阻礙。](assets/articles/quantum-frequency-work-wish/obstacle.png?v=20260813-publish-1)
+![當你改變觀測點，牆就不再只是阻礙。](assets/articles/quantum-frequency-work-wish/obstacle.webp?v=20260813-publish-2)
 
 ## 願望不是一直想，而是先把自己調回來
 
@@ -47,7 +47,7 @@ export const quantumFrequencyWorkWishArticle = {
 
 它也談到 4-4-4 呼吸、放鬆與進入 Zone。這比「只要一直想，願望就會實現」有價值得多，因為它把願望拉回身體、情緒，以及每天真正做得到的練習裡。
 
-![你的內在頻率，決定你所觀測到的世界。](assets/articles/quantum-frequency-work-wish/frequency.png?v=20260813-publish-1)
+![你的內在頻率，決定你所觀測到的世界。](assets/articles/quantum-frequency-work-wish/frequency.webp?v=20260813-publish-2)
 
 ## 我最有興趣的，是它怎麼談金錢
 
