@@ -1,0 +1,104 @@
+name: Fix 2058 Firestore content priority
+
+on:
+  push:
+    paths:
+      - ".github/workflows/fix-2058-firestore-priority.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch article source priority and cache versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              "articles-core-20260810-v6.js": [
+                  (
+                      'const fixedContent = String(staticArticle?.content || article.content || "");',
+                      'const fixedContent = String(article.content || staticArticle?.content || "");'
+                  ),
+              ],
+              "article-admin-core.js": [
+                  (
+                      'const staticArticleSyncRevisions = new Map([\n  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],\n  ["2058-future-person-prophecy", "20260813-publish-consistency-1"]\n]);',
+                      'const staticArticleSyncRevisions = new Map([\n  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]\n]);'
+                  ),
+              ],
+              "articles-v6.js": [
+                  (
+                      './articles-core-20260810-v6.js?v=20260813-publish-consistency-1',
+                      './articles-core-20260810-v6.js?v=20260813-firestore-content-priority-1'
+                  ),
+              ],
+              "articles.html": [
+                  (
+                      'articles-v6.js?v=20260813-publish-consistency-1',
+                      'articles-v6.js?v=20260813-firestore-content-priority-1'
+                  ),
+              ],
+              "article-admin.js": [
+                  (
+                      './article-admin-core.js?v=20260813-publish-consistency-1',
+                      './article-admin-core.js?v=20260813-firestore-content-priority-1'
+                  ),
+              ],
+              "admin.html": [
+                  (
+                      'article-admin.js?v=20260813-publish-consistency-1',
+                      'article-admin.js?v=20260813-firestore-content-priority-1'
+                  ),
+              ],
+          }
+
+          for filename, pairs in replacements.items():
+              path = Path(filename)
+              text = path.read_text(encoding="utf-8")
+              original = text
+              for old, new in pairs:
+                  count = text.count(old)
+                  if count != 1:
+                      raise SystemExit(f"{filename}: expected exactly 1 occurrence, found {count}: {old}")
+                  text = text.replace(old, new, 1)
+              if text == original:
+                  raise SystemExit(f"{filename}: no changes made")
+              path.write_text(text, encoding="utf-8")
+
+          workflow = Path('.github/workflows/fix-2058-firestore-priority.yml')
+          if workflow.exists():
+              workflow.unlink()
+          PY
+
+      - name: Verify fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'const fixedContent = String(article.content || staticArticle?.content || "");' articles-core-20260810-v6.js
+          ! grep -Fq '["2058-future-person-prophecy", "20260813-publish-consistency-1"]' article-admin-core.js
+          grep -Fq '20260813-firestore-content-priority-1' articles-v6.js
+          grep -Fq '20260813-firestore-content-priority-1' articles.html
+          grep -Fq '20260813-firestore-content-priority-1' article-admin.js
+          grep -Fq '20260813-firestore-content-priority-1' admin.html
+
+      - name: Commit and push fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add articles-core-20260810-v6.js article-admin-core.js articles-v6.js articles.html article-admin.js admin.html .github/workflows/fix-2058-firestore-priority.yml
+          git commit -m "修正2058文章後台內容優先與公開分界"
+          git pull --rebase origin main
+          git push origin HEAD:main
