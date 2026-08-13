@@ -93,11 +93,13 @@ service cloud.firestore {
     }
 
     match /memberAccess/{memberEmail} {
+      // 會員只能讀取自己的路徑。不要依賴 resource.data 判斷，
+      // 讓「沒有一般會員紀錄、只有贊助會員紀錄」的帳號也能正常取得 not-found，
+      // 避免文章端 Promise.all 因 permission-denied 連帶清空有效的贊助閱讀資格。
       allow read: if isAdmin()
         || (signedIn()
           && request.auth.token.email_verified == true
-          && request.auth.token.email == memberEmail
-          && resource.data.email == memberEmail);
+          && request.auth.token.email == memberEmail);
       allow create, update, delete: if isAdmin();
     }
 
