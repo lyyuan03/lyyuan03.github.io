@@ -231,7 +231,7 @@ exports.notifyArticleSubscribers = onCall(
     await db.runTransaction(async (transaction) => {
       const existingSnapshot = await transaction.get(recordRef);
       const existing = existingSnapshot.exists ? (existingSnapshot.data() || {}) : null;
-      if (existing && ["sending", "sent"].includes(existing.status)) {
+      if (existing && ["sending", "smtp-accepted", "delivery-unknown", "sent"].includes(existing.status)) {
         throw new HttpsError("already-exists", "這篇文章已寄送過通知，或目前正在寄送中。");
       }
       transaction.set(recordRef, {
