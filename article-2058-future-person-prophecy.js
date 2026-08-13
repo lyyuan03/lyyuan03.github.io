@@ -7,7 +7,7 @@ export const futurePerson2058ProphecyArticle = {
   series: "靈修辨證",
   status: "draft",
   publishedAt: "2026-08-12T04:29:00.000Z",
-  updatedAt: "2026-08-13T02:47:00.000Z",
+  updatedAt: "2026-08-13T14:10:00.000Z",
   coverImage: "assets/articles/2058-future-person-prophecy/cover.webp?v=20260812-2",
   thumbnailImage: "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260812-2",
   excerpt: "六個看似神準的預言，拆開貼文時間與公開時間後，故事完全不同。真正值得追問的，不只是預言準不準，而是未來究竟是不是早已固定。",
@@ -101,7 +101,7 @@ export const futurePerson2058ProphecyArticle = {
 
 日期是真的。「2019年當時有人看得到」,不一定是真的。
 
-![日期是真的，當時有人看得到不一定是真的](assets/articles/2058-future-person-prophecy/prediction-record.webp?v=20260813-1)
+![日期是真的，當時有人看得到不一定是真的](assets/articles/2058-future-person-prophecy/prediction-record.webp?v=20260813-2)
 
 這是六則預言裡最大的破口——它們全部集中在還沒有人盯著他的那個階段。
 
@@ -137,7 +137,7 @@ export const futurePerson2058ProphecyArticle = {
 
 流傳最廣的說法叫「洗澡測試」——有記者專程前往試探,抵達後先被一名當地人拖住,兩人一起去了公共澡堂。等記者真正見到她時,她說出了他身上的隱密印記。記者一開始震驚,後來才意識到,帶他去洗澡的那個人,早就看過了。
 
-![帶他去洗澡的人，早就看過了](assets/articles/2058-future-person-prophecy/bath-test.webp?v=20260813-1)
+![帶他去洗澡的人，早就看過了](assets/articles/2058-future-person-prophecy/bath-test.webp?v=20260813-2)
 
 而保加利亞政府確實在1967年之後將她正式納入國家管理體系,安排預約、收取費用,並與國家支持的研究機構有正式往來——學術資料證實,當年建立過一套龐大的訪客資料庫,光是那幾年就留下數千份個別諮詢檔案。她本人是否知情,至今沒有解密檔案可以一槌定音。
 
@@ -167,7 +167,7 @@ export const futurePerson2058ProphecyArticle = {
 
 未來不是不存在,而是未來不停地在形成。
 
-![未來不是不存在，而是未來不停地在形成](assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260813-1)
+![未來不是不存在，而是未來不停地在形成](assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260813-2)
 
 ## 為什麼古人能看四十年後,我們卻連三年都看不準
 
