@@ -32,6 +32,14 @@ const FORCED_THUMBNAIL_SETTINGS = {
     thumbnailScale: 100,
     thumbnailTitleAlign: "left",
     thumbnailImage: "assets/articles/this-book-took-thirty-years/cover.jpg?v=20260810-photoreal-2"
+  },
+  "quantum-frequency-work-wish": {
+    thumbnailFit: "cover",
+    thumbnailPositionX: 50,
+    thumbnailPositionY: 50,
+    thumbnailScale: 100,
+    thumbnailTitleAlign: "left",
+    thumbnailImage: "assets/articles/quantum-frequency-work-wish/cover.webp?v=20260813-publish-2"
   }
 };
 
