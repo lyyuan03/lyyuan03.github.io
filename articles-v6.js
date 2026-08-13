@@ -16,7 +16,8 @@ async function loadArticleCore() {
 
 async function loadArticleAddons() {
   const addons = [
-    ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"]
+    ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260813-guest-offer-restore-1"]
   ];
   const results = await Promise.allSettled(addons.map(([, path]) => import(path)));
   results.forEach((result, index) => {
