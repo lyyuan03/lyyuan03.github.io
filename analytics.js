@@ -94,9 +94,9 @@
       #latest-book-2026 .latest-book-kicker{font-family:var(--en);font-size:12px;letter-spacing:.42em;color:#c5a26f;margin-bottom:8px}
       #latest-book-2026 h2{font-family:var(--serif);font-size:34px;font-weight:400;letter-spacing:.12em;color:#efd29d;line-height:1.5;margin:0 0 8px}
       #latest-book-2026 .latest-book-sub{font-family:var(--serif);font-size:16px;letter-spacing:.08em;color:rgba(245,240,232,.66);line-height:1.9}
-      #latest-book-2026 .latest-book-media{max-width:1040px;margin:0 auto;border:1px solid rgba(197,162,111,.34);background:#030503;box-shadow:0 26px 64px rgba(0,0,0,.44);overflow:hidden}
-      #latest-book-2026 .latest-book-video{display:none;width:100%;height:auto;background:#000;aspect-ratio:16/9;object-fit:contain}
-      #latest-book-2026 .latest-book-fallback{display:block;position:relative;background:#050605;overflow:hidden}
+      #latest-book-2026 .latest-book-media{max-width:1040px;margin:0 auto;border:1px solid rgba(197,162,111,.34);background:#030503;box-shadow:0 26px 64px rgba(0,0,0,.44);overflow:hidden;display:flex;flex-direction:column;align-items:stretch}
+      #latest-book-2026 .latest-book-video{order:2;display:none;width:100%;height:auto;background:#000;aspect-ratio:16/9;object-fit:contain;border-top:1px solid rgba(197,162,111,.26)}
+      #latest-book-2026 .latest-book-fallback{order:1;display:block!important;position:relative;width:100%;background:#050605;overflow:hidden}
       #latest-book-2026 .latest-book-fallback img{display:block;width:100%;height:auto;aspect-ratio:1920/755;object-fit:cover}
       #latest-book-2026 .latest-book-fallback-badge{position:absolute;left:18px;bottom:16px;padding:7px 11px;border:1px solid rgba(217,183,119,.44);background:rgba(5,7,5,.78);backdrop-filter:blur(10px);font-size:11px;letter-spacing:.14em;color:rgba(245,240,232,.78)}
       #latest-book-2026 .latest-book-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:24px}
@@ -116,7 +116,7 @@
         #latest-book-2026 .latest-book-sub{font-size:15px}
         #latest-book-2026 .latest-book-media{max-width:430px;border-radius:8px}
         #latest-book-2026 .latest-book-video{aspect-ratio:608/1080;max-height:78vh}
-        #latest-book-2026 .latest-book-fallback img{width:auto;max-width:none;height:64vw;min-height:250px;aspect-ratio:auto;object-fit:contain;margin:auto}
+        #latest-book-2026 .latest-book-fallback img{display:block;width:100%;max-width:100%;height:auto;min-height:0;aspect-ratio:auto;object-fit:contain;margin:0}
         #latest-book-2026 .latest-book-fallback-badge{left:12px;bottom:10px;font-size:10px}
         #latest-book-2026 .latest-book-button{width:100%;max-width:360px;min-width:0;padding:14px 20px}
       }
