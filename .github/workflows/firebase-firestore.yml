@@ -37,8 +37,47 @@ jobs:
             gcloud firestore databases create --database="(default)" --location="asia-east1" --type="firestore-native" --project="$PROJECT_ID"
           fi
 
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
       - name: Deploy Firestore rules
-        run: firebase deploy --only firestore:rules --project lyyuan03-membership --non-interactive
+        run: |
+          set -euo pipefail
+          PROJECT_ID="lyyuan03-membership"
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+
+          jq -n --rawfile rules firestore.rules \
+            '{source:{files:[{name:"firestore.rules",content:$rules}]}}' \
+            > /tmp/firestore-ruleset.json
+
+          HTTP_STATUS="$(curl --silent --show-error \
+            --output /tmp/ruleset-response.json \
+            --write-out "%{http_code}" \
+            --request POST \
+            --header "Authorization: Bearer $ACCESS_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-binary @/tmp/firestore-ruleset.json \
+            "https://firebaserules.googleapis.com/v1/projects/$PROJECT_ID/rulesets")"
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            jq . /tmp/ruleset-response.json
+            exit 1
+          fi
+
+          RULESET_NAME="$(jq -r '.name' /tmp/ruleset-response.json)"
+          jq -n --arg rulesetName "$RULESET_NAME" \
+            '{rulesetName:$rulesetName}' \
+            > /tmp/firestore-release.json
+
+          HTTP_STATUS="$(curl --silent --show-error \
+            --output /tmp/release-response.json \
+            --write-out "%{http_code}" \
+            --request PATCH \
+            --header "Authorization: Bearer $ACCESS_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-binary @/tmp/firestore-release.json \
+            "https://firebaserules.googleapis.com/v1/projects/$PROJECT_ID/releases/cloud.firestore?updateMask=rulesetName")"
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            jq . /tmp/release-response.json
+            exit 1
+          fi
+
+          echo "Firestore rules deployed successfully."
