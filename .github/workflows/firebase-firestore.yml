@@ -62,8 +62,10 @@ jobs:
           fi
 
           RULESET_NAME="$(jq -r '.name' /tmp/ruleset-response.json)"
-          jq -n --arg rulesetName "$RULESET_NAME" \
-            '{rulesetName:$rulesetName}' \
+          jq -n \
+            --arg name "projects/$PROJECT_ID/releases/cloud.firestore" \
+            --arg rulesetName "$RULESET_NAME" \
+            '{release:{name:$name,rulesetName:$rulesetName},updateMask:"rulesetName"}' \
             > /tmp/firestore-release.json
 
           HTTP_STATUS="$(curl --silent --show-error \
@@ -73,7 +75,7 @@ jobs:
             --header "Authorization: Bearer $ACCESS_TOKEN" \
             --header "Content-Type: application/json" \
             --data-binary @/tmp/firestore-release.json \
-            "https://firebaserules.googleapis.com/v1/projects/$PROJECT_ID/releases/cloud.firestore?updateMask=rulesetName")"
+            "https://firebaserules.googleapis.com/v1/projects/$PROJECT_ID/releases/cloud.firestore")"
 
           if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
             jq . /tmp/release-response.json
