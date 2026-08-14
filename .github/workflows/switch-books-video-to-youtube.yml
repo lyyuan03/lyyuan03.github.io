@@ -1,0 +1,71 @@
+name: Switch Books Video to YouTube
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/switch-books-video-to-youtube.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Replace MP4 player with YouTube embed
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('analytics.js')
+          text = path.read_text(encoding='utf-8')
+
+          replacements = [
+            (
+              '#latest-book-2026 .latest-book-video{order:2;display:none;width:100%;height:auto;background:#000;aspect-ratio:16/9;object-fit:contain;border-top:1px solid rgba(197,162,111,.26)}',
+              '#latest-book-2026 .latest-book-youtube{order:2;display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000;border:0;border-top:1px solid rgba(197,162,111,.26)}'
+            ),
+            (
+              '#latest-book-2026 .latest-book-video{aspect-ratio:608/1080;max-height:78vh}',
+              '#latest-book-2026 .latest-book-youtube{aspect-ratio:16/9;max-height:none}'
+            ),
+            (
+              '<video class="latest-book-video" controls playsinline preload="metadata" aria-label="《我在人間的元神覺醒》新書宣傳影片"></video>',
+              '<iframe class="latest-book-youtube" src="https://www.youtube-nocookie.com/embed/TFdGqhJZKOw?rel=0&modestbranding=1" title="《我在人間的元神覺醒》新書宣傳影片" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
+            )
+          ]
+
+          for old, new in replacements:
+              if old not in text:
+                  raise SystemExit(f'Expected snippet not found: {old[:100]}')
+              text = text.replace(old, new, 1)
+
+          start = text.find('    const video = section.querySelector(".latest-book-video");')
+          end_marker = '  };\n\n  const upgradeLatestBookTimeline = () => {'
+          end = text.find(end_marker, start)
+          if start == -1 or end == -1:
+              raise SystemExit('Could not locate old MP4 loading block')
+          text = text[:start] + end_marker + text[end + len(end_marker):]
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+          rm -f .github/workflows/switch-books-video-to-youtube.yml
+
+      - name: Commit change
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A analytics.js .github/workflows/switch-books-video-to-youtube.yml
+          git commit -m 'fix(books): 新書影片改用 YouTube 內嵌'
+          git push origin HEAD:main
