@@ -1,0 +1,187 @@
+name: Patch 2058 article six images
+
+on:
+  push:
+    paths:
+      - ".github/workflows/patch-2058-six-images-20260816.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync latest main
+        run: git pull --rebase origin main
+
+      - name: Patch article and sync strategy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          REV = "20260816-six-images-1"
+          ARTICLE_ID = "2058-future-person-prophecy"
+
+          article = Path("article-2058-future-person-prophecy.js")
+          text = article.read_text(encoding="utf-8")
+
+          sports = "![日本球場冠軍時刻示意圖](assets/articles/2058-future-person-prophecy/japanese-stadium-championship.webp?v=20260816-1)"
+          female = "![日本女性政治人物情境示意圖（非本人照片）](assets/articles/2058-future-person-prophecy/fictional-female-politician.webp?v=20260816-1)"
+          collective = "![個人命運與集體意識交織成網](assets/articles/2058-future-person-prophecy/collective-consciousness-network.webp?v=20260816-1)"
+
+          if "japanese-stadium-championship.webp" not in text:
+              anchor = "真的全部都只是運氣嗎?\n\n## 唯一一則,提早三年被記錄下來"
+              replacement = f"真的全部都只是運氣嗎?\n\n{sports}\n\n## 唯一一則,提早三年被記錄下來"
+              if anchor not in text:
+                  raise SystemExit("sports insertion anchor not found")
+              text = text.replace(anchor, replacement, 1)
+
+          if "fictional-female-politician.webp" not in text:
+              anchor = "一年之後,2025年10月21日,高市早苗真的就任日本首相,完成了日本政治史上第一次。\n\n人物對了。事件對了。"
+              replacement = f"一年之後,2025年10月21日,高市早苗真的就任日本首相,完成了日本政治史上第一次。\n\n{female}\n\n人物對了。事件對了。"
+              if anchor not in text:
+                  raise SystemExit("female insertion anchor not found")
+              text = text.replace(anchor, replacement, 1)
+
+          if "collective-consciousness-network.webp" not in text:
+              anchor = "未來自然不再是一條直線。\n\n靈魂意識愈覺醒的人"
+              replacement = f"未來自然不再是一條直線。\n\n{collective}\n\n靈魂意識愈覺醒的人"
+              if anchor not in text:
+                  raise SystemExit("collective insertion anchor not found")
+              text = text.replace(anchor, replacement, 1)
+
+          text = re.sub(
+              r'updatedAt: "[^"]+",',
+              'updatedAt: "2026-08-16T02:10:00.000Z",',
+              text,
+              count=1,
+          )
+          article.write_text(text, encoding="utf-8")
+
+          static = Path("static-articles.js")
+          text = static.read_text(encoding="utf-8")
+          text = re.sub(
+              r'\./article-2058-future-person-prophecy\.js\?v=[^"\']+',
+              f'./article-2058-future-person-prophecy.js?v={REV}',
+              text,
+              count=1,
+          )
+          static.write_text(text, encoding="utf-8")
+
+          admin_core = Path("article-admin-core.js")
+          text = admin_core.read_text(encoding="utf-8")
+          text = re.sub(
+              r'\./static-articles\.js\?v=[^"\']+',
+              f'./static-articles.js?v={REV}',
+              text,
+              count=1,
+          )
+          if f'["{ARTICLE_ID}", "{REV}"]' not in text:
+              old = 'const staticArticleSyncRevisions = new Map([\n  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]\n]);'
+              new = f'const staticArticleSyncRevisions = new Map([\n  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],\n  ["{ARTICLE_ID}", "{REV}"]\n]);'
+              if old not in text:
+                  raise SystemExit("admin staticArticleSyncRevisions anchor not found")
+              text = text.replace(old, new, 1)
+          admin_core.write_text(text, encoding="utf-8")
+
+          admin_loader = Path("article-admin.js")
+          text = admin_loader.read_text(encoding="utf-8")
+          text = re.sub(
+              r'\./article-admin-core\.js\?v=[^"\']+',
+              f'./article-admin-core.js?v={REV}',
+              text,
+              count=1,
+          )
+          admin_loader.write_text(text, encoding="utf-8")
+
+          admin_html = Path("admin.html")
+          text = admin_html.read_text(encoding="utf-8")
+          text = re.sub(
+              r'article-admin\.js\?v=[^"\']+',
+              f'article-admin.js?v={REV}',
+              text,
+              count=1,
+          )
+          admin_html.write_text(text, encoding="utf-8")
+
+          public_core = Path("articles-core-20260810-v6.js")
+          text = public_core.read_text(encoding="utf-8")
+          text = re.sub(
+              r'\./static-articles\.js\?v=[^"\']+',
+              f'./static-articles.js?v={REV}',
+              text,
+              count=1,
+          )
+          marker = '  firestoreArticles.forEach((article) => mergedById.set(article.id, article));\n'
+          block = f'''  firestoreArticles.forEach((article) => mergedById.set(article.id, article));
+  // 2058 文章這次由 GitHub 更新正文圖片；若 Firestore 尚未同步到同一版本，
+  // 前台先使用靜態新版正文，但保留 Firestore 的發布狀態、權限與其他後台欄位。
+  const future2058Static = staticArticles.find((article) => article.id === "{ARTICLE_ID}");
+  const future2058Firestore = firestoreArticles.find((article) => article.id === "{ARTICLE_ID}");
+  if (future2058Static && future2058Firestore && future2058Firestore.staticSyncRevision !== "{REV}") {{
+    mergedById.set("{ARTICLE_ID}", {{
+      ...future2058Firestore,
+      content: future2058Static.content,
+      coverImage: future2058Static.coverImage || future2058Firestore.coverImage || "",
+      thumbnailImage: future2058Static.thumbnailImage || future2058Firestore.thumbnailImage || "",
+      updatedAt: future2058Static.updatedAt || future2058Firestore.updatedAt
+    }});
+  }}
+'''
+          if f'future2058Firestore.staticSyncRevision !== "{REV}"' not in text:
+              if marker not in text:
+                  raise SystemExit("public merge anchor not found")
+              text = text.replace(marker, block, 1)
+          public_core.write_text(text, encoding="utf-8")
+
+          public_loader = Path("articles-v6.js")
+          text = public_loader.read_text(encoding="utf-8")
+          text = re.sub(
+              r'\./articles-core-20260810-v6\.js\?v=[^"\']+',
+              f'./articles-core-20260810-v6.js?v={REV}',
+              text,
+              count=1,
+          )
+          public_loader.write_text(text, encoding="utf-8")
+
+          articles_html = Path("articles.html")
+          text = articles_html.read_text(encoding="utf-8")
+          text = re.sub(
+              r'articles-v6\.js\?v=[^"\']+',
+              f'articles-v6.js?v={REV}',
+              text,
+              count=1,
+          )
+          articles_html.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Validate article and assets
+        run: |
+          set -euo pipefail
+          test -s assets/articles/2058-future-person-prophecy/fictional-female-politician.webp
+          test -s assets/articles/2058-future-person-prophecy/japanese-stadium-championship.webp
+          test -s assets/articles/2058-future-person-prophecy/collective-consciousness-network.webp
+          test "$(grep -o 'assets/articles/2058-future-person-prophecy/[^)]*\.webp[^)]*' article-2058-future-person-prophecy.js | wc -l)" -ge 6
+          grep -q 'japanese-stadium-championship.webp?v=20260816-1' article-2058-future-person-prophecy.js
+          grep -q 'fictional-female-politician.webp?v=20260816-1' article-2058-future-person-prophecy.js
+          grep -q 'collective-consciousness-network.webp?v=20260816-1' article-2058-future-person-prophecy.js
+          grep -q '<!-- paid-only -->' article-2058-future-person-prophecy.js
+          grep -q '2058-future-person-prophecy", "20260816-six-images-1' article-admin-core.js
+          grep -q 'future2058Firestore.staticSyncRevision !== "20260816-six-images-1"' articles-core-20260810-v6.js
+          grep -q 'articles-v6.js?v=20260816-six-images-1' articles.html
+
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f .github/workflows/patch-2058-six-images-20260816.yml
+          git add article-2058-future-person-prophecy.js static-articles.js article-admin-core.js article-admin.js admin.html articles-core-20260810-v6.js articles-v6.js articles.html
+          git commit -m "Add three generated images to 2058 article"
+          git pull --rebase origin main
+          git push origin HEAD:main
