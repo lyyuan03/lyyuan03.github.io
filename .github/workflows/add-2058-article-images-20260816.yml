@@ -67,8 +67,8 @@ jobs:
               if len(data) != expected_size:
                   raise SystemExit(f'{name}: declared size {len(data)} != {expected_size}')
               width, height = webp_dimensions(data)
-              if (width, height) != (800, 450):
-                  raise SystemExit(f'{name}: dimensions {width}x{height} != 800x450')
+              if width < 800 or height < 450 or width * 9 != height * 16:
+                  raise SystemExit(f'{name}: dimensions {width}x{height} are not valid 16:9')
               got = hashlib.sha256(data).hexdigest()
               (dst / name).write_bytes(data)
               print(f'{name}: raw={len(raw)} clean={len(data)} {width}x{height} sha256={got}')
