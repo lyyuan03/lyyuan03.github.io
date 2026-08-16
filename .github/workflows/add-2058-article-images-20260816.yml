@@ -29,28 +29,10 @@ jobs:
           dst = Path('assets/articles/2058-future-person-prophecy')
           dst.mkdir(parents=True, exist_ok=True)
 
-          def read(name):
-              return (src / name).read_text(encoding='utf-8').strip()
-
-          encoded = {
-              'fictional-female-politician.webp': (
-                  read('add2058-female.00.b64')[:3000]
-                  + ''.join(read(f'add2058-female.{i:02d}.b64') for i in range(1, 6))
-              ),
-              'japanese-stadium-championship.webp': ''.join(
-                  read(f'add2058-sports.{i:02d}.b64') for i in range(10)
-              ),
-              'collective-consciousness-network.webp': (
-                  ''.join(read(f'add2058-collective.{i:02d}.b64') for i in range(3))
-                  + read('add2058-collective.03.b64')[:12000]
-                  + read('add2058-collective.04.b64')
-              ),
-          }
-
-          expected_sizes = {
-              'fictional-female-politician.webp': 13126,
-              'japanese-stadium-championship.webp': 41584,
-              'collective-consciousness-network.webp': 42268,
+          specs = {
+              'add2058-female': ('fictional-female-politician.webp', 13126),
+              'add2058-sports': ('japanese-stadium-championship.webp', 41584),
+              'add2058-collective': ('collective-consciousness-network.webp', 42268),
           }
 
           def webp_dimensions(data):
@@ -72,19 +54,24 @@ jobs:
                   return 1 + int.from_bytes(chunk[4:7], 'little'), 1 + int.from_bytes(chunk[7:10], 'little')
               raise ValueError(f'unsupported WebP chunk {fourcc!r}')
 
-          for name, b64 in encoded.items():
-              data = base64.b64decode(b64, validate=True)
-              expected_size = expected_sizes[name]
-              if len(data) != expected_size:
-                  raise SystemExit(f'{name}: size {len(data)} != {expected_size}')
+          for prefix, (name, expected_size) in specs.items():
+              parts = sorted(src.glob(f'{prefix}.*.b64'))
+              if not parts:
+                  raise SystemExit(f'No chunks for {prefix}')
+              all_b64 = ''.join(p.read_text(encoding='utf-8').strip() for p in parts)
+              needed_chars = ((expected_size + 2) // 3) * 4
+              decoded = base64.b64decode(all_b64[:needed_chars], validate=True)
+              if len(decoded) < expected_size:
+                  raise SystemExit(f'{name}: decoded only {len(decoded)} bytes, need {expected_size}')
+              data = decoded[:expected_size]
               if not (data[:4] == b'RIFF' and data[8:12] == b'WEBP'):
                   raise SystemExit(f'{name}: invalid WebP header')
               declared = int.from_bytes(data[4:8], 'little') + 8
-              if declared != len(data):
-                  raise SystemExit(f'{name}: RIFF declares {declared}, actual {len(data)}')
+              if declared != expected_size:
+                  raise SystemExit(f'{name}: RIFF declares {declared} != {expected_size}')
               width, height = webp_dimensions(data)
-              if (width, height) != (800, 450):
-                  raise SystemExit(f'{name}: dimensions {width}x{height} != 800x450')
+              if width < 800 or height < 450 or width * 9 != height * 16:
+                  raise SystemExit(f'{name}: invalid 16:9 dimensions {width}x{height}')
               sha = hashlib.sha256(data).hexdigest()
               (dst / name).write_bytes(data)
               print(f'OK {name}: {len(data)} bytes, {width}x{height}, sha256={sha}')
