@@ -1,0 +1,1 @@
+Trigger deployment after fixing duplicate and missing images in the 2058 prophecy article.
