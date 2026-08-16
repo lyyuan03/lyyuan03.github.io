@@ -3,7 +3,7 @@ import { doc, onSnapshot, serverTimestamp, setDoc } from "https://www.gstatic.co
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
-const MAX_IMAGES = 3;
+const MAX_IMAGES = 6;
 const SCALE_MIN = 100;
 const SCALE_MAX = 250;
 const DEFAULTS = { positionX: 50, positionY: 50, scale: 100 };
@@ -285,7 +285,7 @@ function init() {
   const panel = document.createElement("section");
   panel.id = "inline-image-control-panel";
   panel.className = "inline-image-control-panel";
-  panel.innerHTML = `<div class="inline-image-control-head"><div><strong>文章內文圖片</strong><small>每篇最多 3 張。版型固定為 16:9、裁切填滿；只需調整左右、上下與放大比例，三張圖尺寸會保持一致。</small></div><span id="inline-image-status" role="status" aria-live="polite"></span></div><div id="inline-image-list" class="inline-image-list"></div><div class="inline-image-panel-actions"><span class="inline-image-lock-note">固定：16:9｜100% 文章寬度｜cover 裁切｜最多 3 張</span><button id="inline-image-save" class="btn primary" type="button">儲存圖片設定</button></div>`;
+  panel.innerHTML = `<div class="inline-image-control-head"><div><strong>文章內文圖片</strong><small>每篇最多 ${MAX_IMAGES} 張。版型固定為 16:9、裁切填滿；只需調整左右、上下與放大比例，所有圖片尺寸會保持一致。</small></div><span id="inline-image-status" role="status" aria-live="polite"></span></div><div id="inline-image-list" class="inline-image-list"></div><div class="inline-image-panel-actions"><span class="inline-image-lock-note">固定：16:9｜100% 文章寬度｜cover 裁切｜最多 ${MAX_IMAGES} 張</span><button id="inline-image-save" class="btn primary" type="button">儲存圖片設定</button></div>`;
   field.insertAdjacentElement("afterend", panel);
 
   ["click","keyup","select","focus","blur"].forEach(name => input.addEventListener(name, () => rememberSelection(input)));
