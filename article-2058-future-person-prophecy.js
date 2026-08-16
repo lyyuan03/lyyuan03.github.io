@@ -7,7 +7,7 @@ export const futurePerson2058ProphecyArticle = {
   series: "靈修辨證",
   status: "published",
   publishedAt: "2026-08-12T04:29:00.000Z",
-  updatedAt: "2026-08-16T02:30:00.000Z",
+  updatedAt: "2026-08-16T03:02:00.000Z",
   coverImage: "assets/articles/2058-future-person-prophecy/cover.webp?v=20260813-3",
   thumbnailImage: "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260813-3",
   excerpt: "六個看似神準的預言，拆開貼文時間與公開時間後，故事完全不同。真正值得追問的，不只是預言準不準，而是未來究竟是不是早已固定。",
@@ -34,6 +34,8 @@ export const futurePerson2058ProphecyArticle = {
 ![](assets/articles/2058-future-person-prophecy/japanese-stadium-championship.webp?v=20260816-2)
 
 前六則有一個共同的弱點：全部發生在他還沒有爆紅之前。而第七則不一樣——在事情發生的三年前，就已經有第三方網站白紙黑字寫下：2024年10月，高市早苗將成為日本第一位女性首相。人物、事件、月份，全部指名道姓。2024年，高市早苗確實在自民黨總裁選舉中殺入決選，卻敗給石破茂。照正常標準，這則預言已經落空。一年之後，2025年10月21日，高市早苗真的就任日本首相，完成了日本政治史上第一次。人物對了，事件對了，「第一位女性首相」這個歷史定位對了，月份也對了。只有年份，晚了整整一年。
+
+![](assets/articles/2058-future-person-prophecy/takaichi-press-conference.webp?v=20260816-3)
 
 如果只用準或不準來判斷，答案很簡單——錯了。但如果換一個角度問，為什麼人物、事件、月份都能碰到，唯獨時間本身偏移了？這位「未來人」看見的，究竟是一個已經寫死的劇本，還是當時所有條件匯聚之後，最有可能成形的那一條路？這兩者聽起來很像，但對我理解命運與修行而言，是完全不同的兩件事。
 
@@ -73,7 +75,7 @@ export const futurePerson2058ProphecyArticle = {
 
 很多人把命運想成鐵軌——台北出發，經過新竹、台中、嘉義，最後抵達高雄，只要站得夠高，就能看見終點。我不完全這樣理解。命運比較像一張有結構、有慣性，卻同時佈滿可變交點的網。其中一個重要交點一旦鬆動，後面整條路徑都可能跟著改寫。未來不是不存在，而是未來不停地在形成。
 
-![未來不是不存在，而是未來不停地在形成。](assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260812-2)
+![未來不是不存在，而是未來不停地在形成。](assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260816-3)
 
 我從無極瑤池金母的教導中，一直有一個很深的體悟：不是古人比較有智慧，是那個時代的集體意識，流動得比現在慢太多。一百年前，一個人出生在農村，一輩子的生活半徑不過幾個鄉鎮，父親種田他大概也種田。整個社會的集體意識像一條流速緩慢的河，你自然容易預測它十公里後會流向哪裡。
 
@@ -85,7 +87,6 @@ export const futurePerson2058ProphecyArticle = {
 
 一個人的影響力愈大，愈難被算死。一個生活規律的人，能量慣性通常清楚可辨；但一個企業家、一個政治人物，一個決定就牽動成千上萬人，他在意識網上的交點異常活躍，交點一動，牽出去的線就會重新排列，未來自然不再是一條直線。
 
-![](assets/articles/2058-future-person-prophecy/collective-consciousness-network.webp?v=20260816-2)
 
 靈魂意識愈覺醒的人，預言對他的束縛愈小。過去有人看我的命盤，對我早年的分析相當精準，但談到我接觸靈修之後的人生，卻開始出現偏差，連命理師自己都覺得奇怪。這件事讓我重新思考：命盤究竟是命運，還是出生那一刻的初始設定？如果一個人的個性、習慣、恐懼從不改變，選擇自然一次次重複，最後你就會說「你看，命中注定」。但如果有一天，連那個做選擇的自己都變了呢？這正是修行真正介入命運的地方。修行從來不是幫你預測未來，而是改變那個會走向未來的你。
 

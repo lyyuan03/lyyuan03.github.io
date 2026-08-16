@@ -1,6 +1,7 @@
 const ARTICLE_ID = "2058-future-person-prophecy";
 const STADIUM_SRC = "/assets/articles/2058-future-person-prophecy/japanese-stadium-championship.webp?v=20260816-2";
-const NETWORK_SRC = "/assets/articles/2058-future-person-prophecy/collective-consciousness-network.webp?v=20260816-2";
+const NETWORK_SRC = "/assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260816-3";
+const POLITICIAN_SRC = "/assets/articles/2058-future-person-prophecy/takaichi-press-conference.webp?v=20260816-3";
 
 const sections = [
   { id: "section-1", title: "七則預言，為什麼讓人開始相信？", startsWith: "一個人，同時說中了奧運金牌數" },
@@ -104,8 +105,20 @@ function ensureImageAfter(view, startsWith, key, src, alt, acceptedFragments) {
   if (target.nextElementSibling !== holder) target.insertAdjacentElement("afterend", holder);
 }
 
+function removeExtraImageMatches(view, key, fragments) {
+  const keep = view.querySelector(`p[data-article2058-image="${key}"]`);
+  getParagraphs(view).forEach((paragraph) => {
+    if (paragraph === keep) return;
+    const images = paragraph.querySelectorAll(":scope > img");
+    if (images.length !== 1 || cleanText(paragraph)) return;
+    const imageSrc = images[0].getAttribute("src") || images[0].src || "";
+    if (fragments.some((fragment) => imageSrc.includes(fragment))) paragraph.remove();
+  });
+}
+
 function ensureImages(view) {
   removeBadFemaleImage(view);
+
   ensureImageAfter(
     view,
     "如果他的預言全部集中在政治與金融",
@@ -114,6 +127,18 @@ function ensureImages(view) {
     "日本職棒與足球冠軍賽現場",
     ["japanese-stadium-championship"]
   );
+  removeExtraImageMatches(view, "stadium", ["japanese-stadium-championship"]);
+
+  ensureImageAfter(
+    view,
+    "前六則有一個共同的弱點",
+    "politician",
+    POLITICIAN_SRC,
+    "日本女性政治人物於記者會發表談話",
+    ["takaichi-press-conference"]
+  );
+  removeExtraImageMatches(view, "politician", ["takaichi-press-conference"]);
+
   ensureImageAfter(
     view,
     "我在《喚醒天生好命》中談過一個概念",
@@ -122,6 +147,7 @@ function ensureImages(view) {
     "宇宙意識網與集體意識的連結",
     ["collective-consciousness-network", "consciousness-network"]
   );
+  removeExtraImageMatches(view, "network", ["collective-consciousness-network", "consciousness-network"]);
 }
 
 function ensureToc(view) {
