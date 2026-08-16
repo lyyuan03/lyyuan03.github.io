@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260813-manual-image-markdown-3";
+import "./article-admin-core.js?v=20260816-six-images-1";
 const ADMIN_WELLNESS_OLD_LABEL = "養生療癒";
 const ADMIN_WELLNESS_NEW_LABEL = "養生療遇";
 

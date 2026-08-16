@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260813-fixed-reading-footer-3";
+import { staticArticles } from "./static-articles.js?v=20260816-six-images-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -1112,6 +1112,19 @@ async function loadArticles() {
   // 靜態文章是前台備援來源；Firestore 有資料時再覆蓋。不得因索引存在就先移除靜態文章。
   staticArticles.forEach((article) => mergedById.set(article.id, article));
   firestoreArticles.forEach((article) => mergedById.set(article.id, article));
+  // 2058 文章這次由 GitHub 更新正文圖片；若 Firestore 尚未同步到同一版本，
+  // 前台先使用靜態新版正文，但保留 Firestore 的發布狀態、權限與其他後台欄位。
+  const future2058Static = staticArticles.find((article) => article.id === "2058-future-person-prophecy");
+  const future2058Firestore = firestoreArticles.find((article) => article.id === "2058-future-person-prophecy");
+  if (future2058Static && future2058Firestore && future2058Firestore.staticSyncRevision !== "20260816-six-images-1") {
+    mergedById.set("2058-future-person-prophecy", {
+      ...future2058Firestore,
+      content: future2058Static.content,
+      coverImage: future2058Static.coverImage || future2058Firestore.coverImage || "",
+      thumbnailImage: future2058Static.thumbnailImage || future2058Firestore.thumbnailImage || "",
+      updatedAt: future2058Static.updatedAt || future2058Firestore.updatedAt
+    });
+  }
   const livePublishedIds = new Set(firestoreArticles.map((article) => article.id));
   const quantumFrequencyStaticArticle = staticArticles.find((article) => article.id === "quantum-frequency-work-wish");
   if (quantumFrequencyStaticArticle) {

@@ -1,5 +1,5 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260813-manual-image-markdown-3";
-import { staticArticles } from "./static-articles.js?v=20260813-manual-image-markdown-3";
+import { staticArticles } from "./static-articles.js?v=20260816-six-images-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -12,7 +12,8 @@ const categoryLabels = {
 };
 
 const staticArticleSyncRevisions = new Map([
-  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"]
+  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],
+  ["2058-future-person-prophecy", "20260816-six-images-1"]
 ]);
 const staticImageSyncRevisions = new Map([
   ["2058-future-person-prophecy", "20260813-2058-inline-slots-4"]
