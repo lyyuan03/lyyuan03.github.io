@@ -119,21 +119,22 @@ jobs:
               count=1,
           )
           marker = '  firestoreArticles.forEach((article) => mergedById.set(article.id, article));\n'
-          block = f'''  firestoreArticles.forEach((article) => mergedById.set(article.id, article));
-  // 2058 文章這次由 GitHub 更新正文圖片；若 Firestore 尚未同步到同一版本，
-  // 前台先使用靜態新版正文，但保留 Firestore 的發布狀態、權限與其他後台欄位。
-  const future2058Static = staticArticles.find((article) => article.id === "{ARTICLE_ID}");
-  const future2058Firestore = firestoreArticles.find((article) => article.id === "{ARTICLE_ID}");
-  if (future2058Static && future2058Firestore && future2058Firestore.staticSyncRevision !== "{REV}") {{
-    mergedById.set("{ARTICLE_ID}", {{
-      ...future2058Firestore,
-      content: future2058Static.content,
-      coverImage: future2058Static.coverImage || future2058Firestore.coverImage || "",
-      thumbnailImage: future2058Static.thumbnailImage || future2058Firestore.thumbnailImage || "",
-      updatedAt: future2058Static.updatedAt || future2058Firestore.updatedAt
-    }});
-  }}
-'''
+          block = (
+              '  firestoreArticles.forEach((article) => mergedById.set(article.id, article));\n'
+              '  // 2058 文章這次由 GitHub 更新正文圖片；若 Firestore 尚未同步到同一版本，\n'
+              '  // 前台先使用靜態新版正文，但保留 Firestore 的發布狀態、權限與其他後台欄位。\n'
+              f'  const future2058Static = staticArticles.find((article) => article.id === "{ARTICLE_ID}");\n'
+              f'  const future2058Firestore = firestoreArticles.find((article) => article.id === "{ARTICLE_ID}");\n'
+              f'  if (future2058Static && future2058Firestore && future2058Firestore.staticSyncRevision !== "{REV}") {{\n'
+              f'    mergedById.set("{ARTICLE_ID}", {{\n'
+              '      ...future2058Firestore,\n'
+              '      content: future2058Static.content,\n'
+              '      coverImage: future2058Static.coverImage || future2058Firestore.coverImage || "",\n'
+              '      thumbnailImage: future2058Static.thumbnailImage || future2058Firestore.thumbnailImage || "",\n'
+              '      updatedAt: future2058Static.updatedAt || future2058Firestore.updatedAt\n'
+              '    });\n'
+              '  }\n'
+          )
           if f'future2058Firestore.staticSyncRevision !== "{REV}"' not in text:
               if marker not in text:
                   raise SystemExit("public merge anchor not found")
