@@ -1,0 +1,83 @@
+name: Finalize Yaochi Banner V2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/finalize-yaochi-banner-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild verified banner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s .github/yaochi-avif-temp/part-00.b64
+          test -s .github/yaochi-avif-temp/part-01.b64
+          test -s .github/yaochi-avif-temp/part-02.b64
+          test -s .github/yaochi-avif-temp/part-03.b64
+          cat .github/yaochi-avif-temp/part-00.b64 .github/yaochi-avif-temp/part-01.b64 .github/yaochi-avif-temp/part-02.b64 .github/yaochi-avif-temp/part-03.b64 | tr -d '\r\n' | base64 --decode > yaochi-event-banner.avif
+          echo '9fc49f9094b48708812a157fed351acedbad26c20694f1100c3fd4e7c71fd6ac  yaochi-event-banner.avif' | sha256sum -c -
+
+      - name: Put banner at the top of the event page
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('yaochi-event-v2.html')
+          s = p.read_text(encoding='utf-8')
+
+          css = ".top-banner{width:min(1120px,calc(100% - 32px));margin:20px auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(165,130,84,.18);background:rgba(10,15,8,.54);box-shadow:0 18px 48px #0004}.top-banner img{display:block;width:100%;height:auto}"
+          if '.top-banner{' not in s:
+              marker = '.hero{position:relative'
+              if marker not in s:
+                  raise SystemExit('Hero CSS marker not found')
+              s = s.replace(marker, css + marker, 1)
+
+          mobile_css = '.top-banner{width:min(100% - 18px,1120px);margin-top:10px;border-radius:14px}'
+          mobile_marker = '@media(max-width:640px){body{background-attachment:scroll}'
+          if mobile_css not in s:
+              if mobile_marker not in s:
+                  raise SystemExit('Mobile CSS marker not found')
+              s = s.replace(mobile_marker, mobile_marker + mobile_css, 1)
+
+          marker = '<div class="page-content"><main class="main">'
+          banner = '<section class="top-banner" aria-label="無極瑤池金母聖誕祝壽暨解冤赦業法儀活動主視覺"><img src="yaochi-event-banner.avif?v=20260816-2" alt="無極瑤池金母聖誕祝壽暨解冤赦業法儀，日期2026年8月29日" width="800" height="333" fetchpriority="high" decoding="async"></section>'
+          if 'class="top-banner"' not in s:
+              if marker not in s:
+                  raise SystemExit('Page content marker not found')
+              s = s.replace(marker, marker + banner, 1)
+          else:
+              import re
+              s = re.sub(r'<section class="top-banner".*?</section>', banner, s, count=1, flags=re.S)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Clean staging and commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .github/yaochi-banner-temp
+          rm -rf .github/yaochi-avif-temp
+          rm -f .github/workflows/build-yaochi-banner.yml
+          rm -f .github/workflows/finalize-yaochi-banner-v2.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Add Yaochi event banner to page top'
+          git pull --rebase origin main
+          git push origin HEAD:main
