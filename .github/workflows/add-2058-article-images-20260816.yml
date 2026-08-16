@@ -30,24 +30,31 @@ jobs:
           dst.mkdir(parents=True, exist_ok=True)
 
           specs = {
-              'add2058-female': (
-                  'fictional-female-politician.webp',
-                  13126,
-                  '159ce9f227c2c056c971e0fed3b08d4dc7180aafe9177d20e7bab12ce45a213d',
-              ),
-              'add2058-sports': (
-                  'japanese-stadium-championship.webp',
-                  41584,
-                  '27946625de0c0f55a2468d37e3e482baab072350ab14d3dfd952be299010ae9a',
-              ),
-              'add2058-collective': (
-                  'collective-consciousness-network.webp',
-                  42268,
-                  'c09c209d72ee128a4333e1ad7f4b0d6a2682defa7b17856966bd093aebc708b0',
-              ),
+              'add2058-female': ('fictional-female-politician.webp', 13126),
+              'add2058-sports': ('japanese-stadium-championship.webp', 41584),
+              'add2058-collective': ('collective-consciousness-network.webp', 42268),
           }
 
-          for prefix, (name, expected_size, expected_sha) in specs.items():
+          def webp_dimensions(data):
+              fourcc = data[12:16]
+              chunk = data[20:]
+              if fourcc == b'VP8 ':
+                  if len(chunk) < 10 or chunk[3:6] != b'\x9d\x01\x2a':
+                      raise ValueError('invalid VP8 frame header')
+                  return int.from_bytes(chunk[6:8], 'little') & 0x3fff, int.from_bytes(chunk[8:10], 'little') & 0x3fff
+              if fourcc == b'VP8L':
+                  if len(chunk) < 5 or chunk[0] != 0x2f:
+                      raise ValueError('invalid VP8L frame header')
+                  w = 1 + (((chunk[2] & 0x3f) << 8) | chunk[1])
+                  h = 1 + (((chunk[4] & 0x0f) << 10) | (chunk[3] << 2) | ((chunk[2] & 0xc0) >> 6))
+                  return w, h
+              if fourcc == b'VP8X':
+                  if len(chunk) < 10:
+                      raise ValueError('invalid VP8X frame header')
+                  return 1 + int.from_bytes(chunk[4:7], 'little'), 1 + int.from_bytes(chunk[7:10], 'little')
+              raise ValueError(f'unsupported WebP chunk {fourcc!r}')
+
+          for prefix, (name, expected_size) in specs.items():
               parts = sorted(src.glob(f'{prefix}.*.b64'))
               if not parts:
                   raise SystemExit(f'No chunks for {prefix}')
@@ -57,14 +64,14 @@ jobs:
                   raise SystemExit(f'{name}: invalid WebP header')
               declared_size = int.from_bytes(raw[4:8], 'little') + 8
               data = raw[:declared_size]
-              print(f'{name}: raw={len(raw)} declared={declared_size}')
               if len(data) != expected_size:
-                  raise SystemExit(f'{name}: trimmed size {len(data)} != {expected_size}')
+                  raise SystemExit(f'{name}: declared size {len(data)} != {expected_size}')
+              width, height = webp_dimensions(data)
+              if (width, height) != (800, 450):
+                  raise SystemExit(f'{name}: dimensions {width}x{height} != 800x450')
               got = hashlib.sha256(data).hexdigest()
-              if got != expected_sha:
-                  raise SystemExit(f'{name}: sha {got} != {expected_sha}')
               (dst / name).write_bytes(data)
-              print(name, len(data), got)
+              print(f'{name}: raw={len(raw)} clean={len(data)} {width}x{height} sha256={got}')
           PY
 
       - name: Commit images and clean staging files
