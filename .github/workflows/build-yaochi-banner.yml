@@ -1,0 +1,86 @@
+name: Build Yaochi Event Banner
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/yaochi-banner-temp/**'
+      - '.github/workflows/build-yaochi-banner.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify and rebuild banner
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'b5a44da0df1575b524ed8246e526fecd6571d5a6053797719b2aa7a854c2fa7d  .github/yaochi-banner-temp/part-00.b64' | sha256sum -c -
+          echo '383a0e866c4344d5feaf0d971542c1eafaeb60ba232f9ab37e9ab734c4c43f5b  .github/yaochi-banner-temp/part-01.b64' | sha256sum -c -
+          echo '1f31a16fe133343fd5ebdf04715ed05afe3d8f873d37ca195e208a636ecf5fdf  .github/yaochi-banner-temp/part-02.b64' | sha256sum -c -
+          echo '68d6e92d101828f5b1df2b52be418d7bb252b98b271de3fbd772ee8258871c77  .github/yaochi-banner-temp/part-03.b64' | sha256sum -c -
+          echo 'd150946bf99378f6e165248d1f8b5c0318c8fa26b8aed0363e8aa03602d85d19  .github/yaochi-banner-temp/part-04.b64' | sha256sum -c -
+          echo '2204534d5b91a3402ec26e962ecc75fc838cbf19e335bc89375cfe73e24cbb08  .github/yaochi-banner-temp/part-05.b64' | sha256sum -c -
+          echo '77ce7f193246aeb91e5d0be68d3db674a50552e72fee035535c6d0e7fb69dc0e  .github/yaochi-banner-temp/part-06.b64' | sha256sum -c -
+          echo 'f09a6b9fc8a42eb21d3a23571c89221f8fd081d2452dfdbedb1c538e439ad516  .github/yaochi-banner-temp/part-07.b64' | sha256sum -c -
+          echo 'b97fe4479b08c3ceda2e1579c5f1cb80288db335cabe62eee2f9086747add06e  .github/yaochi-banner-temp/part-08.b64' | sha256sum -c -
+          cat .github/yaochi-banner-temp/part-*.b64 | tr -d '\r\n' | base64 --decode > /tmp/yaochi-event-banner.jpg
+          echo 'cde021193498ae3b4df67fe59cbc3bddb4af873c1b8d28ee7d8036f114e69e9c  /tmp/yaochi-event-banner.jpg' | sha256sum -c -
+          mv /tmp/yaochi-event-banner.jpg yaochi-event-banner.jpg
+
+      - name: Add banner to event page
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('yaochi-event-v2.html')
+          s = p.read_text(encoding='utf-8')
+
+          if '.top-banner{' not in s:
+              css = ".top-banner{width:min(1120px,calc(100% - 32px));margin:20px auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(165,130,84,.18);background:rgba(10,15,8,.54);box-shadow:0 18px 48px #0004}.top-banner img{display:block;width:100%;height:auto}"
+              marker = '.hero{position:relative'
+              if marker not in s:
+                  raise SystemExit('Hero CSS marker not found')
+              s = s.replace(marker, css + marker, 1)
+              mobile = '@media(max-width:640px){body{background-attachment:scroll}'
+              if mobile not in s:
+                  raise SystemExit('Mobile CSS marker not found')
+              s = s.replace(mobile, mobile + '.top-banner{width:min(100% - 18px,1120px);margin-top:10px;border-radius:14px}', 1)
+
+          if 'class="top-banner"' not in s:
+              marker = '<div class="page-content"><main class="main">'
+              if marker not in s:
+                  raise SystemExit('Page content marker not found')
+              banner = '<section class="top-banner" aria-label="無極瑤池金母聖誕祝壽暨解冤赦業法儀活動主視覺"><img src="yaochi-event-banner.jpg?v=20260816-1" alt="無極瑤池金母聖誕祝壽暨解冤赦業法儀，日期2026年8月29日" width="1024" height="427" fetchpriority="high" decoding="async"></section>'
+              s = s.replace(marker, marker + banner, 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit and push banner
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .github/yaochi-banner-temp
+          rm -f .github/workflows/build-yaochi-banner.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Add Yaochi event banner'
+          git pull --rebase origin main
+          git push origin HEAD:main
