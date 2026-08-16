@@ -19,7 +19,7 @@ jobs:
       - name: Sync latest main
         run: git pull --rebase origin main
 
-      - name: Decode and validate generated images
+      - name: Decode, trim and validate generated images
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -52,14 +52,17 @@ jobs:
               if not parts:
                   raise SystemExit(f'No chunks for {prefix}')
               b64 = ''.join(p.read_text().strip() for p in parts)
-              data = base64.b64decode(b64, validate=True)
+              raw = base64.b64decode(b64, validate=True)
+              if not (raw[:4] == b'RIFF' and raw[8:12] == b'WEBP'):
+                  raise SystemExit(f'{name}: invalid WebP header')
+              declared_size = int.from_bytes(raw[4:8], 'little') + 8
+              data = raw[:declared_size]
+              print(f'{name}: raw={len(raw)} declared={declared_size}')
               if len(data) != expected_size:
-                  raise SystemExit(f'{name}: size {len(data)} != {expected_size}')
+                  raise SystemExit(f'{name}: trimmed size {len(data)} != {expected_size}')
               got = hashlib.sha256(data).hexdigest()
               if got != expected_sha:
                   raise SystemExit(f'{name}: sha {got} != {expected_sha}')
-              if not (data[:4] == b'RIFF' and data[8:12] == b'WEBP'):
-                  raise SystemExit(f'{name}: invalid WebP header')
               (dst / name).write_bytes(data)
               print(name, len(data), got)
           PY
