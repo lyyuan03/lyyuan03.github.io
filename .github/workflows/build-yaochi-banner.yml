@@ -23,16 +23,22 @@ jobs:
       - name: Verify and rebuild banner
         shell: bash
         run: |
-          set -euo pipefail
-          echo 'b5a44da0df1575b524ed8246e526fecd6571d5a6053797719b2aa7a854c2fa7d  .github/yaochi-banner-temp/part-00.b64' | sha256sum -c -
-          echo '383a0e866c4344d5feaf0d971542c1eafaeb60ba232f9ab37e9ab734c4c43f5b  .github/yaochi-banner-temp/part-01.b64' | sha256sum -c -
-          echo '1f31a16fe133343fd5ebdf04715ed05afe3d8f873d37ca195e208a636ecf5fdf  .github/yaochi-banner-temp/part-02.b64' | sha256sum -c -
-          echo '68d6e92d101828f5b1df2b52be418d7bb252b98b271de3fbd772ee8258871c77  .github/yaochi-banner-temp/part-03.b64' | sha256sum -c -
-          echo 'd150946bf99378f6e165248d1f8b5c0318c8fa26b8aed0363e8aa03602d85d19  .github/yaochi-banner-temp/part-04.b64' | sha256sum -c -
-          echo '2204534d5b91a3402ec26e962ecc75fc838cbf19e335bc89375cfe73e24cbb08  .github/yaochi-banner-temp/part-05.b64' | sha256sum -c -
-          echo '77ce7f193246aeb91e5d0be68d3db674a50552e72fee035535c6d0e7fb69dc0e  .github/yaochi-banner-temp/part-06.b64' | sha256sum -c -
-          echo 'f09a6b9fc8a42eb21d3a23571c89221f8fd081d2452dfdbedb1c538e439ad516  .github/yaochi-banner-temp/part-07.b64' | sha256sum -c -
-          echo 'b97fe4479b08c3ceda2e1579c5f1cb80288db335cabe62eee2f9086747add06e  .github/yaochi-banner-temp/part-08.b64' | sha256sum -c -
+          set -uo pipefail
+          bad=0
+          echo 'b5a44da0df1575b524ed8246e526fecd6571d5a6053797719b2aa7a854c2fa7d  .github/yaochi-banner-temp/part-00.b64' | sha256sum -c - || bad=1
+          echo '383a0e866c4344d5feaf0d971542c1eafaeb60ba232f9ab37e9ab734c4c43f5b  .github/yaochi-banner-temp/part-01.b64' | sha256sum -c - || bad=1
+          echo '1f31a16fe133343fd5ebdf04715ed05afe3d8f873d37ca195e208a636ecf5fdf  .github/yaochi-banner-temp/part-02.b64' | sha256sum -c - || bad=1
+          echo '68d6e92d101828f5b1df2b52be418d7bb252b98b271de3fbd772ee8258871c77  .github/yaochi-banner-temp/part-03.b64' | sha256sum -c - || bad=1
+          echo 'd150946bf99378f6e165248d1f8b5c0318c8fa26b8aed0363e8aa03602d85d19  .github/yaochi-banner-temp/part-04.b64' | sha256sum -c - || bad=1
+          echo '2204534d5b91a3402ec26e962ecc75fc838cbf19e335bc89375cfe73e24cbb08  .github/yaochi-banner-temp/part-05.b64' | sha256sum -c - || bad=1
+          echo '77ce7f193246aeb91e5d0be68d3db674a50552e72fee035535c6d0e7fb69dc0e  .github/yaochi-banner-temp/part-06.b64' | sha256sum -c - || bad=1
+          echo 'f09a6b9fc8a42eb21d3a23571c89221f8fd081d2452dfdbedb1c538e439ad516  .github/yaochi-banner-temp/part-07.b64' | sha256sum -c - || bad=1
+          echo 'b97fe4479b08c3ceda2e1579c5f1cb80288db335cabe62eee2f9086747add06e  .github/yaochi-banner-temp/part-08.b64' | sha256sum -c - || bad=1
+          if [ "$bad" -ne 0 ]; then
+            echo 'One or more banner chunks are corrupted.'
+            exit 1
+          fi
+          set -e
           cat .github/yaochi-banner-temp/part-*.b64 | tr -d '\r\n' | base64 --decode > /tmp/yaochi-event-banner.jpg
           echo 'cde021193498ae3b4df67fe59cbc3bddb4af873c1b8d28ee7d8036f114e69e9c  /tmp/yaochi-event-banner.jpg' | sha256sum -c -
           mv /tmp/yaochi-event-banner.jpg yaochi-event-banner.jpg
