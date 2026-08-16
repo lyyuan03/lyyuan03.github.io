@@ -1,0 +1,78 @@
+name: Add 2058 article generated images
+
+on:
+  push:
+    paths:
+      - ".github/workflows/add-2058-article-images-20260816.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync latest main
+        run: git pull --rebase origin main
+
+      - name: Decode and validate generated images
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, hashlib
+
+          src = Path('.github/image-rebuild-temp')
+          dst = Path('assets/articles/2058-future-person-prophecy')
+          dst.mkdir(parents=True, exist_ok=True)
+
+          specs = {
+              'add2058-female': (
+                  'fictional-female-politician.webp',
+                  13126,
+                  '159ce9f227c2c056c971e0fed3b08d4dc7180aafe9177d20e7bab12ce45a213d',
+              ),
+              'add2058-sports': (
+                  'japanese-stadium-championship.webp',
+                  41584,
+                  '27946625de0c0f55a2468d37e3e482baab072350ab14d3dfd952be299010ae9a',
+              ),
+              'add2058-collective': (
+                  'collective-consciousness-network.webp',
+                  42268,
+                  'c09c209d72ee128a4333e1ad7f4b0d6a2682defa7b17856966bd093aebc708b0',
+              ),
+          }
+
+          for prefix, (name, expected_size, expected_sha) in specs.items():
+              parts = sorted(src.glob(f'{prefix}.*.b64'))
+              if not parts:
+                  raise SystemExit(f'No chunks for {prefix}')
+              b64 = ''.join(p.read_text().strip() for p in parts)
+              data = base64.b64decode(b64, validate=True)
+              if len(data) != expected_size:
+                  raise SystemExit(f'{name}: size {len(data)} != {expected_size}')
+              got = hashlib.sha256(data).hexdigest()
+              if got != expected_sha:
+                  raise SystemExit(f'{name}: sha {got} != {expected_sha}')
+              if not (data[:4] == b'RIFF' and data[8:12] == b'WEBP'):
+                  raise SystemExit(f'{name}: invalid WebP header')
+              (dst / name).write_bytes(data)
+              print(name, len(data), got)
+          PY
+
+      - name: Commit images and clean staging files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/articles/2058-future-person-prophecy/fictional-female-politician.webp \
+                  assets/articles/2058-future-person-prophecy/japanese-stadium-championship.webp \
+                  assets/articles/2058-future-person-prophecy/collective-consciousness-network.webp
+          git rm -f .github/image-rebuild-temp/add2058-*.b64
+          git rm -f .github/workflows/add-2058-article-images-20260816.yml
+          git commit -m "Add generated 2058 article images"
+          git pull --rebase origin main
+          git push origin HEAD:main
