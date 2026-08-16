@@ -1,0 +1,69 @@
+name: Patch 2058 TOC and attachment images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-2058-toc-images-20260816.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch article and cache versions
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          article = Path('article-2058-future-person-prophecy.js')
+          text = article.read_text()
+          text = text.replace('japanese-stadium-championship.webp?v=20260816-1', 'japanese-stadium-championship.webp?v=20260816-2')
+          text = text.replace('\n\n![](assets/articles/2058-future-person-prophecy/fictional-female-politician.webp?v=20260816-1)', '')
+          text = text.replace('collective-consciousness-network.webp?v=20260816-1', 'collective-consciousness-network.webp?v=20260816-2')
+          text = re.sub(r'updatedAt: "[^"]+"', 'updatedAt: "2026-08-16T02:30:00.000Z"', text, count=1)
+          article.write_text(text)
+
+          static = Path('static-articles.js')
+          text = static.read_text()
+          text = re.sub(r'(article-2058-future-person-prophecy\.js\?v=)[^"]+', r'\g<1>20260816-toc-images-1', text, count=1)
+          static.write_text(text)
+
+          core = Path('articles-core-20260810-v6.js')
+          text = core.read_text()
+          text = re.sub(r'(static-articles\.js\?v=)[^"]+', r'\g<1>20260816-toc-images-1', text, count=1)
+          core.write_text(text)
+
+          loader = Path('articles-v6.js')
+          text = loader.read_text()
+          text = re.sub(r'(articles-core-20260810-v6\.js\?v=)[^"]+', r'\g<1>20260816-toc-images-1', text, count=1)
+          loader.write_text(text)
+
+          page = Path('articles.html')
+          text = page.read_text()
+          text = re.sub(r'(articles-v6\.js\?v=)[^"\']+', r'\g<1>20260816-toc-images-1', text, count=1)
+          toc_script = '<script type="module" src="/article-2058-toc.js?v=20260816-1"></script>'
+          if toc_script not in text:
+              marker = '<script type="module" src="/article-inline-image-display.js?v=20260816-six-inline-images-1"></script>'
+              if marker in text:
+                  text = text.replace(marker, marker + '\n' + toc_script)
+              else:
+                  text = text.replace('</body>', toc_script + '\n</body>')
+          page.write_text(text)
+
+          Path('assets/articles/2058-future-person-prophecy/fictional-female-politician.webp').unlink(missing_ok=True)
+          Path('.tmp/2058-network-20260816.b64').unlink(missing_ok=True)
+          Path('.github/workflows/patch-2058-toc-images-20260816.yml').unlink(missing_ok=True)
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add 2058 chapter selector and refresh article images"
+          git push
