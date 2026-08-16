@@ -7,7 +7,7 @@ export const dragonCanonConsciousnessFieldArticle = {
   series: "靈修辨證",
   status: "draft",
   publishedAt: null,
-  updatedAt: "2026-08-16T00:00:00.000Z",
+  updatedAt: "2026-08-16T00:08:00.000Z",
   coverImage: "assets/articles/dragon-canon-consciousness-field/cover.webp?v=20260816-1",
   excerpt: "一部流傳357年的皇家佛經，為什麼偏偏在今天引發大量感應？宇色老師從媒介、意識場與修行轉化，重新理解《龍藏經》爆紅背後真正值得思考的事。",
   accessType: "paid",
@@ -21,6 +21,8 @@ export const dragonCanonConsciousnessFieldArticle = {
 這部經，就是最近正在台北故宮展出的國寶——《龍藏經》。
 
 它不是最近才被發現的經書，也不是為了這次展覽才出現的宗教文物。它的歷史，要從357年前說起。
+
+![孝莊太皇太后下詔修造《龍藏經》，以皇室意志推動這場龐大的佛教工程](assets/articles/dragon-canon-consciousness-field/xiaozhuang-decree.webp?v=20260816-1)
 
 西元1667年，也就是清康熙六年，在孝莊太皇太后的主導，以及甫親政的康熙皇帝推動之下，清宮開始了一項規模極其龐大的佛教工程：修造泥金寫本藏文《甘珠爾》，也就是今天我們所稱的《龍藏經》。整個工程歷時兩年，到1669年完成，全套108函，收錄1,057部經典，超過五萬葉經葉，而且這五萬多葉經文，不是用普通的墨寫成，而是將泥金一筆一字恭敬地書寫在深藍色的磁青紙上。
 
@@ -78,6 +80,8 @@ export const dragonCanonConsciousnessFieldArticle = {
 
 這件事情很重要，因為從這一刻開始，你已經不是毫無預設地走進那個空間。你帶著一個訊息進去了，而且不是只有你，旁邊幾百個人，也可能帶著同樣的訊息。
 
+![當大量訪客帶著期待與信念聚集，展場中的感應彷彿形成向外擴散的能量波](assets/articles/dragon-canon-consciousness-field/museum-energy-field.webp?v=20260816-1)
+
 ![同一座展櫃前，有人急著尋找感應，也有人只是安靜觀看](assets/articles/dragon-canon-consciousness-field/museum-visitors.webp?v=20260816-1)
 
 所以我要先把一件事情分清楚。七世福報是流傳的信仰說法，同樣地，有人頭皮發麻、聞到香味、身體發熱，這些人的感受可以是真的，但感受是真的，不等於我們對感受來源所做的解釋就一定是真的。這是兩回事。而我真正有興趣的，恰恰是後面這件事情。
@@ -107,6 +111,8 @@ export const dragonCanonConsciousnessFieldArticle = {
 ## 做一個極端的假設，你就明白了
 
 假設今天《龍藏經》前面站了一千個人，但這一千個人不是一般觀光客，全部都是修行幾十年的出家人。一千個人安安靜靜地坐在那裡，沒有人拍照，沒有人聊天，每一個人的心都非常專注，每一個人都在持咒、誦經或者入定。然後你走進去，只有你一個人完全沒有修行——請問你走進那個空間之後，感受到的東西，真的能全部歸因於前面的《龍藏經》嗎？還是你其實進入了一個由《龍藏經》、一千個修行人的意識、整個空間，以及你自己的意識共同形成的場？
+
+![高度和諧的集體意識，與尚未整合的混亂能量，會形成截然不同的場](assets/articles/dragon-canon-consciousness-field/harmony-chaos-field.webp?v=20260816-1)
 
 如果我們願意這樣想，很多事情就開始可以有另外一種理解，也可以解釋為什麼同一件宗教文物，在不同時間、不同空間、不同人群之中，一個人的感受可能完全不一樣。這也是為什麼，我很多年前在南院看《龍藏經》的經驗，跟現在很多人在北院分享的經驗不同——物件可能沒有改變，但是場已經不同了。
 
