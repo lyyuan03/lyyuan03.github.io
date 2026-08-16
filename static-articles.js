@@ -1,3 +1,4 @@
+import { dragonCanonConsciousnessFieldArticle } from "./article-dragon-canon-consciousness-field.js?v=20260816-draft-1";
 import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1";
 import { ghostGateAlwaysOpenArticle } from "./article-ghost-gate-always-open.js?v=20260813-draft-1";
 import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260813-publish-consistency-1";
@@ -87,6 +88,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
+  dragonCanonConsciousnessFieldArticle,
   ghostGateAlwaysOpenEnhancedArticle,
   futurePerson2058ProphecyArticle,
   quantumFrequencyWorkWishArticle,
