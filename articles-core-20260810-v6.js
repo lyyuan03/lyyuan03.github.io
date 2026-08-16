@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260816-six-images-1";
+import { staticArticles } from "./static-articles.js?v=20260816-2058-content-force-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -1116,7 +1116,7 @@ async function loadArticles() {
   // 前台先使用靜態新版正文，但保留 Firestore 的發布狀態、權限與其他後台欄位。
   const future2058Static = staticArticles.find((article) => article.id === "2058-future-person-prophecy");
   const future2058Firestore = firestoreArticles.find((article) => article.id === "2058-future-person-prophecy");
-  if (future2058Static && future2058Firestore && future2058Firestore.staticSyncRevision !== "20260816-six-images-1") {
+  if (future2058Static && future2058Firestore) {
     mergedById.set("2058-future-person-prophecy", {
       ...future2058Firestore,
       content: future2058Static.content,
@@ -1166,7 +1166,7 @@ async function loadArticles() {
     }
     if (article.id === "2058-future-person-prophecy") {
       const staticArticle = staticArticles.find((item) => item.id === article.id);
-      const fixedContent = String(article.content || staticArticle?.content || "");
+      const fixedContent = String(staticArticle?.content || article.content || "");
       return {
         ...article,
         content: fixedContent,
