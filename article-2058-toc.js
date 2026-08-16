@@ -1,7 +1,4 @@
 const ARTICLE_ID = "2058-future-person-prophecy";
-const STADIUM_SRC = "/assets/articles/2058-future-person-prophecy/japanese-stadium-championship.webp?v=20260816-2";
-const NETWORK_SRC = "/assets/articles/2058-future-person-prophecy/consciousness-network.webp?v=20260816-3";
-const POLITICIAN_SRC = "/assets/articles/2058-future-person-prophecy/takaichi-press-conference.webp?v=20260816-3";
 
 const sections = [
   { id: "section-1", title: "七則預言，為什麼讓人開始相信？", startsWith: "一個人，同時說中了奧運金牌數" },
@@ -34,9 +31,9 @@ function findParagraph(view, startsWith) {
 }
 
 function installStyle() {
-  if (document.getElementById("article-2058-toc-style-v2")) return;
+  if (document.getElementById("article-2058-toc-style-v3")) return;
   const style = document.createElement("style");
-  style.id = "article-2058-toc-style-v2";
+  style.id = "article-2058-toc-style-v3";
   style.textContent = `
 .article-view[data-article-id="${ARTICLE_ID}"] .article-toc{margin:18px 0 28px;border:1px solid rgba(89,79,71,.22);background:rgba(255,255,255,.24);color:#493724}
 .article-view[data-article-id="${ARTICLE_ID}"] .article-toc-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:50px;padding:11px 15px;border:0;background:transparent;color:#493724;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:500;letter-spacing:.08em;text-align:left}
@@ -49,8 +46,6 @@ function installStyle() {
 .article-view[data-article-id="${ARTICLE_ID}"] .article-toc a{color:#5a4631;text-decoration:none;border:0}
 .article-view[data-article-id="${ARTICLE_ID}"] .article-toc a:hover{color:#8b683f}
 .article-view[data-article-id="${ARTICLE_ID}"] .article-body [id^="section-"]{scroll-margin-top:125px}
-.article-view[data-article-id="${ARTICLE_ID}"] p[data-article2058-image]{position:relative;width:100%;max-width:100%;margin:30px auto!important;padding:0!important;overflow:hidden;line-height:0}
-.article-view[data-article-id="${ARTICLE_ID}"] p[data-article2058-image] img{display:block;width:100%!important;max-width:100%!important;height:auto!important;margin:0!important;border:1px solid var(--line)}
 @media(max-width:520px){.article-view[data-article-id="${ARTICLE_ID}"] .article-toc{margin:14px 0 24px}.article-view[data-article-id="${ARTICLE_ID}"] .article-toc-toggle{font-size:13px}.article-view[data-article-id="${ARTICLE_ID}"] .article-toc ol{padding-left:34px;padding-right:14px}.article-view[data-article-id="${ARTICLE_ID}"] .article-toc li{font-size:13px}}
 `;
   document.head.appendChild(style);
@@ -63,119 +58,35 @@ function assignAnchors(view) {
   });
 }
 
-function removeBadFemaleImage(view) {
-  view.querySelectorAll('img[src*="fictional-female-politician"], img[src*="female-politician"]').forEach((image) => {
-    const parent = image.parentElement;
-    if (parent?.tagName === "P" && parent.querySelectorAll("img").length === 1 && !cleanText(parent)) parent.remove();
-    else image.remove();
-  });
-}
-
-function ensureImageAfter(view, startsWith, key, src, alt, acceptedFragments) {
-  const target = findParagraph(view, startsWith);
-  if (!target) return;
-
-  let holder = view.querySelector(`p[data-article2058-image="${key}"]`);
-  if (!holder) {
-    holder = getParagraphs(view).find((paragraph) => {
-      const images = paragraph.querySelectorAll(":scope > img");
-      if (images.length !== 1 || cleanText(paragraph)) return false;
-      const imageSrc = images[0].getAttribute("src") || images[0].src || "";
-      return acceptedFragments.some((fragment) => imageSrc.includes(fragment));
-    });
-  }
-
-  if (!holder) {
-    holder = document.createElement("p");
-    holder.appendChild(document.createElement("img"));
-  }
-
-  holder.dataset.article2058Image = key;
-  let image = holder.querySelector(":scope > img");
-  if (!image) {
-    image = document.createElement("img");
-    holder.replaceChildren(image);
-  }
-  if (image.getAttribute("src") !== src) image.setAttribute("src", src);
-  image.setAttribute("alt", alt);
-  image.removeAttribute("style");
-  image.classList.remove("article-inline-image-managed");
-  holder.classList.remove("article-inline-image-frame");
-
-  if (target.nextElementSibling !== holder) target.insertAdjacentElement("afterend", holder);
-}
-
-function removeExtraImageMatches(view, key, fragments) {
-  const keep = view.querySelector(`p[data-article2058-image="${key}"]`);
-  getParagraphs(view).forEach((paragraph) => {
-    if (paragraph === keep) return;
-    const images = paragraph.querySelectorAll(":scope > img");
-    if (images.length !== 1 || cleanText(paragraph)) return;
-    const imageSrc = images[0].getAttribute("src") || images[0].src || "";
-    if (fragments.some((fragment) => imageSrc.includes(fragment))) paragraph.remove();
-  });
-}
-
-function ensureImages(view) {
-  removeBadFemaleImage(view);
-
-  ensureImageAfter(
-    view,
-    "如果他的預言全部集中在政治與金融",
-    "stadium",
-    STADIUM_SRC,
-    "日本職棒與足球冠軍賽現場",
-    ["japanese-stadium-championship"]
-  );
-  removeExtraImageMatches(view, "stadium", ["japanese-stadium-championship"]);
-
-  ensureImageAfter(
-    view,
-    "前六則有一個共同的弱點",
-    "politician",
-    POLITICIAN_SRC,
-    "日本女性政治人物於記者會發表談話",
-    ["takaichi-press-conference"]
-  );
-  removeExtraImageMatches(view, "politician", ["takaichi-press-conference"]);
-
-  ensureImageAfter(
-    view,
-    "我在《喚醒天生好命》中談過一個概念",
-    "network",
-    NETWORK_SRC,
-    "宇宙意識網與集體意識的連結",
-    ["collective-consciousness-network", "consciousness-network"]
-  );
-  removeExtraImageMatches(view, "network", ["collective-consciousness-network", "consciousness-network"]);
-}
-
 function ensureToc(view) {
   assignAnchors(view);
   const availableSections = sections.filter((section) => view.querySelector(`#${section.id}`));
   if (!availableSections.length) return;
 
-  let toc = view.querySelector("#article-2058-toc");
-  if (!toc) {
-    view.querySelectorAll(".article-toc").forEach((old) => old.remove());
-    toc = document.createElement("aside");
-    toc.id = "article-2058-toc";
-    toc.className = "article-toc";
-    toc.setAttribute("aria-label", "文章章節");
-    toc.setAttribute("role", "navigation");
-    const cover = view.querySelector(":scope > .article-cover");
-    const firstBody = view.querySelector(":scope > .article-body");
-    const anchor = cover || firstBody;
-    if (anchor) anchor.insertAdjacentElement("beforebegin", toc);
-    else view.prepend(toc);
-  }
+  // 這支檔案只負責章節導覽。文章圖片一律由 article.content 的 Markdown
+  // 經核心 renderContent() 產生，這裡不得建立、移動或刪除任何 <img>。
+  if (view.querySelector("#article-2058-toc")) return;
 
+  // 若核心 renderer 曾因正文有標題而建立一般章節選單，只替換導覽本身，絕不碰文章內容。
+  view.querySelectorAll(":scope > .article-toc").forEach((old) => old.remove());
+
+  const toc = document.createElement("aside");
+  toc.id = "article-2058-toc";
+  toc.className = "article-toc";
+  toc.setAttribute("aria-label", "文章章節");
+  toc.setAttribute("role", "navigation");
   toc.innerHTML = `
     <button class="article-toc-toggle" type="button" aria-expanded="false">
       <span>文章章節</span><small>共 ${availableSections.length} 節</small>
     </button>
     <ol>${availableSections.map((section) => `<li><a href="#${section.id}">${section.title}</a></li>`).join("")}</ol>
   `;
+
+  const cover = view.querySelector(":scope > .article-cover");
+  const firstBody = view.querySelector(":scope > .article-body");
+  const anchor = cover || firstBody;
+  if (anchor) anchor.insertAdjacentElement("beforebegin", toc);
+  else view.prepend(toc);
 
   const toggle = toc.querySelector(".article-toc-toggle");
   toggle.addEventListener("click", () => {
@@ -196,7 +107,7 @@ function ensureToc(view) {
 }
 
 let scheduled = false;
-function applyPatch() {
+function applyToc() {
   if (scheduled) return;
   scheduled = true;
   requestAnimationFrame(() => {
@@ -204,23 +115,22 @@ function applyPatch() {
     installStyle();
     const view = getView();
     if (!view) return;
-    ensureImages(view);
     ensureToc(view);
   });
 }
 
 const root = document.getElementById("article-root") || document.body;
-new MutationObserver(applyPatch).observe(root, { childList: true, subtree: true });
-document.addEventListener("DOMContentLoaded", applyPatch, { once: true });
-document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") applyPatch(); });
-window.addEventListener("pageshow", applyPatch);
+new MutationObserver(applyToc).observe(root, { childList: true, subtree: true });
+document.addEventListener("DOMContentLoaded", applyToc, { once: true });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") applyToc(); });
+window.addEventListener("pageshow", applyToc);
 
 let attempts = 0;
 const retry = window.setInterval(() => {
-  applyPatch();
+  applyToc();
   attempts += 1;
   if (attempts >= 30 && getView()?.querySelector("#article-2058-toc")) window.clearInterval(retry);
   else if (attempts >= 60) window.clearInterval(retry);
 }, 500);
 
-applyPatch();
+applyToc();
