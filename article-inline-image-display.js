@@ -2,6 +2,7 @@ import { db } from "./firebase-config.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
+const MAX_IMAGES = 6;
 const SCALE_MIN = 100;
 const SCALE_MAX = 250;
 let settingsByArticle = new Map();
@@ -77,7 +78,7 @@ function apply() {
   if (!article) return;
   const id = article.dataset.articleId || "";
   const saved = settingsByArticle.get(id);
-  const images = Array.isArray(saved?.images) ? saved.images.slice(0, 3).map(normalize) : [];
+  const images = Array.isArray(saved?.images) ? saved.images.slice(0, MAX_IMAGES).map(normalize) : [];
   if (!images.length) return;
 
   const bySrc = new Map(images.map(item => [absoluteUrl(item.src), item]));
