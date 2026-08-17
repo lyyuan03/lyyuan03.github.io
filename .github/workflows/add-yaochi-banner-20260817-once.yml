@@ -1,5 +1,6 @@
 name: Add Yaochi Banner 20260817 Once
 
+# Trigger after workflow is present on the default branch.
 on:
   push:
     branches:
@@ -38,7 +39,6 @@ jobs:
           mobile_css = '''
 @media(max-width:640px){.event-top-banner{width:calc(100% - 18px);margin-top:10px;border-radius:12px}}
 '''
-          # Keep the small-screen banner rule after the main CSS; duplicate-safe.
           if '@media(max-width:640px){.event-top-banner{' not in text:
               text = text.replace('</style>', mobile_css + '</style>', 1)
 
