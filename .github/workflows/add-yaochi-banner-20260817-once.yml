@@ -1,6 +1,5 @@
 name: Add Yaochi Banner 20260817 Once
 
-# Trigger after workflow is present on the default branch.
 on:
   push:
     branches:
@@ -19,38 +18,31 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Add banner above title
-        shell: python
+        shell: bash
         run: |
+          python3 - <<'PY'
           from pathlib import Path
           import re
 
-          path = Path('yaochi-event-v2.html')
-          text = path.read_text(encoding='utf-8')
-
-          # Remove any prior top-banner block created for this event to avoid duplicates.
+          path = Path("yaochi-event-v2.html")
+          text = path.read_text(encoding="utf-8")
           text = re.sub(r'<div class="event-top-banner"[^>]*>.*?</div>\s*', '', text, flags=re.S)
 
-          css = '''
-.event-top-banner{width:min(1200px,calc(100% - 32px));margin:20px auto 0;overflow:hidden;border-radius:16px;border:1px solid rgba(165,130,84,.20);box-shadow:0 18px 44px rgba(0,0,0,.28);background:#efe3cf}.event-top-banner img{display:block;width:100%;height:auto;object-fit:contain}
-'''
-          if '.event-top-banner{' not in text:
-              text = text.replace('</style>', css + '</style>', 1)
-
-          mobile_css = '''
-@media(max-width:640px){.event-top-banner{width:calc(100% - 18px);margin-top:10px;border-radius:12px}}
-'''
-          if '@media(max-width:640px){.event-top-banner{' not in text:
-              text = text.replace('</style>', mobile_css + '</style>', 1)
+          css = ".event-top-banner{width:min(1200px,calc(100% - 32px));margin:20px auto 0;overflow:hidden;border-radius:16px;border:1px solid rgba(165,130,84,.20);box-shadow:0 18px 44px rgba(0,0,0,.28);background:#efe3cf}.event-top-banner img{display:block;width:100%;height:auto;object-fit:contain}"
+          mobile = "@media(max-width:640px){.event-top-banner{width:calc(100% - 18px);margin-top:10px;border-radius:12px}}"
+          if ".event-top-banner{" not in text:
+              text = text.replace("</style>", css + "\n" + mobile + "\n</style>", 1)
 
           marker = '<div class="page-content"><main class="main">'
-          banner = '''<div class="event-top-banner"><img src="yaochi-event-banner-20260817.webp?v=20260817-1636" alt="無極瑤池金母聖誕祝壽暨解冤赦業・護法續脈遠距祝壽懺儀｜2026年8月29日" width="1200" height="457" decoding="async" fetchpriority="high"></div>'''
+          banner = '<div class="event-top-banner"><img src="yaochi-event-banner-20260817.webp?v=20260817-1636" alt="無極瑤池金母聖誕祝壽暨解冤赦業・護法續脈遠距祝壽懺儀｜2026年8月29日" width="1200" height="457" decoding="async" fetchpriority="high"></div>'
           if marker not in text:
-              raise SystemExit('page-content marker not found')
-          text = text.replace(marker, marker + '\n' + banner, 1)
-
-          path.write_text(text, encoding='utf-8')
+              raise SystemExit("page-content marker not found")
+          text = text.replace(marker, marker + "\n" + banner, 1)
+          path.write_text(text, encoding="utf-8")
+          PY
 
       - name: Commit updated page
+        shell: bash
         run: |
           git config user.name "lyyuan03"
           git config user.email "lyyuan03@gmail.com"
