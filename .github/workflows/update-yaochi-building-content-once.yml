@@ -1,0 +1,93 @@
+name: Update Yaochi Building Content Once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/update-yaochi-building-content-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update Yaochi event copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('yaochi-event-v2.html')
+          s = p.read_text(encoding='utf-8')
+
+          # Metadata
+          s = re.sub(r'<meta name="description" content="[^"]*">',
+                     '<meta name="description" content="2026年8月29日｜無極瑤池金母聖誕祝壽暨解冤赦業・護法續脈遠距祝壽懺儀。以母娘祝壽、解冤赦業與靈元院建院護法續脈三願相合，一念連靈山、十方聚願力、共成建院聖業。">', s, count=1)
+          s = re.sub(r'<meta property="og:description" content="[^"]*">',
+                     '<meta property="og:description" content="母娘聖誕祝壽・解冤赦業・建院護法續脈｜一念連靈山・十方聚願力・共成建院聖業｜2026/8/29">', s, count=1)
+
+          # Hero intro and button label
+          s = re.sub(r'<p class="hero-lead" data-hero="3">.*?</p>',
+                     '<p class="hero-lead" data-hero="3">恭逢無極瑤池金母聖誕，靈元院啟建祝壽懺儀，以祝壽、供燈、懺悔與解冤赦業恭敬禮謝母娘慈恩；而今年更承載一份重要願力——靈元院建院護法續脈。願將每一份祝壽、每一盞護持之燈與每一念建院願心，匯聚成未來道場得以成就、法脈得以相續的力量。</p>',
+                     s, count=1, flags=re.S)
+          s = s.replace('查看法儀項目', '查看護持項目')
+
+          origin = '''<section class="section narrow" id="origin"><div class="section-title" data-reveal><div><span>THE CEREMONY</span><h2>聖誕祝壽．解冤赦業．護法續脈</h2></div></div><div class="intro-copy" data-reveal><p>農曆七月，恭逢無極瑤池金母聖誕，也是靈元院一年之中重要的祝壽修福因緣。今年除了依循祝壽懺儀，為參與者祈福、迴向、解冤赦業之外，更將這份願力延伸至<strong>靈元院建院聖業</strong>。</p><p>一座道場的成就，從來不只是土地與建築。它承載的是法脈，是修行，也是一代又一代護持者共同留下的願。因此，今年母娘聖誕，我們將「祝壽」與「建院」合為一願：以祝壽感念母恩，以懺悔化解宿業；以護法守住道場，以續脈延續法緣。</p><div class="quote">一念連靈山・十方聚願力・共成建院聖業。<br>今日十方匯聚的一念，願成為未來靈元院的一磚一瓦，也成為法脈得以長久相續的力量。</div></div><div class="info-strip" data-reveal><div class="info-item"><span class="info-label">DATE</span><span class="info-value">2026 / 08 / 29</span></div><div class="info-item"><span class="info-label">THREE VOWS</span><span class="info-value">祝壽・解冤・建院續脈</span></div><div class="info-item"><span class="info-label">HOST</span><span class="info-value">靈元院 · 靈山派</span></div></div></section>'''
+          s = re.sub(r'<section class="section narrow" id="origin">.*?</section>', origin, s, count=1, flags=re.S)
+
+          core = '''<section class="section wide" id="items"><div class="section-title" data-reveal><div><span>FOUNDING PATRONAGE</span><h2>丙午建院核心護持</h2></div></div><div class="intro-copy" data-reveal><p>今年母娘聖誕祝壽懺儀，特別啟建兩項建院核心護持。護持的不只是眼前的一場法儀，更是一座未來承載朝禮、修持、弘法與法脈傳續的道場。</p></div><div class="cards"><article class="card" data-reveal><span class="card-number">01 · FOUNDING MERIT PATRON</span><h3>丙午建院總功德主</h3><p>為本次建院護持之核心功德項目。將個人的願力與靈元院未來道場的興建相連，願今日所種的一份建院因緣，在道場圓滿之時，成為自己生命中曾經親手成就的一段善緣。</p><span class="tag">建院核心護持 · 共成聖業</span></article><article class="card" data-reveal><span class="card-number">02 · DHARMA GUARDIAN LAMP LEADER</span><h3>丙午護法續脈燈首</h3><p>「護法」是守護道場；「續脈」是讓法脈不因時間而斷。此燈首不只承載個人的祈願，更代表願意共同護持靈元院、護持靈山法脈長久相續的一份心。</p><span class="tag">護法守院 · 法脈相續</span></article></div></section>'''
+          s = re.sub(r'<section class="section wide" id="items">.*?</section>', core, s, count=1, flags=re.S)
+
+          lights = '''<section class="section wide" id="lights"><div class="section-title" data-reveal><div><span>FOUNDING LIGHTS</span><h2>建院護持燈</h2></div></div><div class="cards"><article class="card" data-reveal><span class="card-number">03 · DHARMA GUARDIAN LIGHT</span><h3>建院護法燈</h3><p>護持靈元院建院因緣，祈願道場興建順利、護法善緣具足，使籌建過程中的種種因緣安定圓融。</p><span class="tag">護持建院 · 善緣具足</span></article><article class="card" data-reveal><span class="card-number">04 · COMPLETION LIGHT</span><h3>建院圓滿燈</h3><p>為靈元院籌建工程祈願，從土地、空間、工程到未來正式落成，願一切建院因緣漸次具足，聖業圓成。</p><span class="tag">工程順遂 · 聖業圓成</span></article><article class="card" data-reveal><span class="card-number">05 · LINEAGE SUPPORT LIGHT</span><h3>靈山法脈護持燈</h3><p>護持靈山法脈相續，使修行的傳承不只存在於一代，而能藉由道場、教法與修持，一代一代延續。</p><span class="tag">法脈護持 · 傳承相續</span></article><article class="card" data-reveal><span class="card-number">06 · BIRTHDAY BLESSING LIGHT</span><h3>母娘祝壽燈</h3><p>恭祝無極瑤池金母聖誕，以一盞燈表達感恩、祝壽與敬意，祈願福慧增長、善緣具足、身心安泰。</p><span class="tag">感念母恩 · 福慧增長</span></article></div></section>'''
+          # Insert before release section
+          if 'id="lights"' not in s:
+              s = s.replace('<section class="section wide" id="release">', lights + '<section class="section wide" id="release">', 1)
+
+          release = '''<section class="section wide" id="release"><div class="section-title" data-reveal><div><span>RECONCILIATION & RELEASE</span><h2>解冤赦業・先整理自己，再成就道場</h2></div></div><div class="intro-copy" data-reveal><p>今年的建院願力，仍不離修行最根本的一件事：先整理自己，再成就道場。建院，是建立外在的道場；懺悔，是整理自己內在的道場。兩者並行，才是此次法儀完整的意義。</p></div><div class="cards single-row"><article class="card dark" data-reveal><span class="card-number">07 · KARMIC RECONCILIATION</span><h3>化解累世冤親債主</h3><p>以懺悔、和解與功德迴向，祈願累世未解之因緣漸次化開，使彼此放下執著，各得其所，讓生命不再被過往的冤結反覆牽引。</p><span class="tag">和解 · 迴向 · 冤結漸解</span></article><article class="card dark" data-reveal><span class="card-number">08 · OBSTACLE RELEASE</span><h3>化解無明業障病主</h3><p>為自身無明、習氣、業障與身心障緣祈願，藉由懺悔與迴向，使障緣漸化、心念漸明，讓修持重新回到安定與清明。</p><span class="tag">懺悔 · 轉念 · 身心安住</span></article></div></section>'''
+          s = re.sub(r'<section class="section wide" id="release">.*?</section>', release, s, count=1, flags=re.S)
+
+          sponsorship = '''<section class="section wide" id="sponsorship"><div class="section-title" data-reveal><div><span>BUILDING SUPPORT</span><h2>共成建院聖業</h2></div></div><div class="intro-copy" data-reveal><p>除了法儀護持之外，本次亦開放建院專項隨喜。每一項看似不同，最後都匯聚成同一件事：讓靈元院真正成為一座可以長久承載修行、弘法與法脈的道場。</p></div><div class="cards"><article class="card" data-reveal><span class="card-number">09 · LANDSCAPE</span><h3>景觀園藝贊助</h3><p>護持未來靈元院戶外環境、植栽與整體聖境營造，使道場內外皆能呈現安定、清雅而具修行意義的空間。</p><span class="tag">聖境營造 · 景觀植栽</span></article><article class="card" data-reveal><span class="card-number">10 · SACRED IMAGES & OFFERINGS</span><h3>神像供具隨喜贊助</h3><p>護持未來殿堂神像、供桌、法器及相關莊嚴供具，使諸聖安座、殿堂莊嚴，成就信眾朝禮與修持之所。</p><span class="tag">莊嚴殿堂 · 朝禮修持</span></article><article class="card" data-reveal><span class="card-number">11 · FACILITIES</span><h3>硬體設備隨喜贊助</h3><p>護持未來道場教學、弘法、空調、影音及相關硬體設備建置，使靈元院具備長久服務信眾與弘法所需的基礎。</p><span class="tag">弘法設備 · 道場建置</span></article></div></section>'''
+
+          pilgrimage = '''<section class="section narrow" id="pilgrimage"><div class="section-title" data-reveal><div><span>FIRST PILGRIMAGE</span><h2>首批入院朝禮・建院因緣</h2></div></div><div class="remote-panel" data-reveal><h3>曾經護持這座道場的人，終有一天，親自走回自己曾經成就的地方。</h3><p>凡參與<strong>丙午建院總功德主、丙午護法續脈燈首</strong>護持者，將有機會於靈元院籌建圓滿、正式落成之後，成為<strong>首批入院朝禮者</strong>。</p><p>屆時將由<strong>蘇監院親自引領</strong>，帶領護持者走入新建完成的靈元院，朝禮聖境、參拜諸聖，並親自開示建院因緣、道場精神與其中所承載的修行意義。</p><p>這不只是一場參訪，而是讓曾經為靈元院建院付出一份願力的人，在道場初成之時，親自回到自己曾經護持成就的聖地。</p><div class="quote">今日的一念護持，成為未來道場的一磚一瓦；待聖域落成之日，再親自走入其中，看見自己曾經種下的這份因緣。</div></div></section>'''
+
+          # Insert both before remote participation section
+          if 'id="sponsorship"' not in s:
+              s = s.replace('<section class="section narrow" id="remote">', sponsorship + pilgrimage + '<section class="section narrow" id="remote">', 1)
+
+          remote = '''<section class="section narrow" id="remote"><div class="section-title" data-reveal><div><span>REMOTE PRAYER</span><h2>遠距祝壽・建院護持參與方式</h2></div></div><div class="remote-panel" data-reveal><h3>不需親臨道場，也能將祝壽、祈願與建院願心正式登記於本次法儀。</h3><p>本次採遠距方式參與。完成線上登記後，依所選護持項目辦理祝壽祈願、解冤赦業、建院護持與功德迴向；實際功德項目、名額、功德金及最新注意事項，請以正式報名公告為準。</p><ul class="remote-list"><li><strong>線上登記</strong>依活動公告完成個人資料與護持項目登記。</li><li><strong>遠距參與</strong>無需前往靈元院現場，即可參與本次祝壽懺儀與建院護持。</li><li><strong>祝壽・解冤・建院</strong>依所登記項目，於法儀中進行祝壽祈願、功德迴向與建院願力匯聚。</li><li><strong>一念成願</strong>每一份護持都不是只為眼前，而是與未來靈元院道場的成就結下一份因緣。</li></ul></div></section>'''
+          s = re.sub(r'<section class="section narrow" id="remote">.*?</section>', remote, s, count=1, flags=re.S)
+
+          register = '''<section class="section narrow" id="register"><div class="cta-panel" data-reveal><span class="eyebrow">REGISTRATION</span><h2>2026 / 8 / 29　遠距祝壽・建院護持登記</h2><p>本次以無極瑤池金母聖誕祝壽為因緣，結合解冤赦業、護法續脈與靈元院建院願力。請由正式活動公告查看最新護持項目、名額、功德金與報名方式。</p><div class="cta-actions" style="justify-content:center"><a class="btn primary" href="https://kinkiosel.pixnet.net/blog/posts/1034238177" target="_blank" rel="noopener">前往活動公告／報名</a><a class="btn" href="https://t.me/lyyuan" target="_blank" rel="noopener">聯繫靈元院</a></div><p class="cta-note">一念連靈山・十方聚願力・共成建院聖業</p></div></section>'''
+          s = re.sub(r'<section class="section narrow" id="register">.*?</section>', register, s, count=1, flags=re.S)
+
+          # Revision marker
+          s = re.sub(r'<!-- YAOCHI-CONTENT-REVISION: .*? -->\n?', '', s)
+          s = s.replace('<body>', '<body>\n<!-- YAOCHI-CONTENT-REVISION: 2026-08-17-1611 -->', 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit content update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add yaochi-event-v2.html
+          if git diff --cached --quiet; then
+            echo 'No page changes detected.'
+            exit 0
+          fi
+          git commit -m 'Expand Yaochi event copy for building and lineage support'
+          git pull --rebase origin main
+          git push origin HEAD:main
