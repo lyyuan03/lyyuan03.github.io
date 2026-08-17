@@ -1,5 +1,6 @@
 name: Fix Yaochi Banner Binary Once
 
+# Trigger repair after workflow registration.
 on:
   push:
     branches:
