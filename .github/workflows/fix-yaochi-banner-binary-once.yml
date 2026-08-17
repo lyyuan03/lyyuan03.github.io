@@ -1,6 +1,6 @@
 name: Fix Yaochi Banner Binary Once
 
-# Trigger repair after workflow registration.
+# Diagnose staged base64.
 on:
   push:
     branches:
@@ -17,27 +17,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Rebuild and verify banner
+      - name: Diagnose staged part
         run: |
-          cat .tmp/banner-part-00.b64 .tmp/banner-part-01.b64 .tmp/banner-part-02.b64 .tmp/banner-part-03.b64 .tmp/banner-part-04.b64 | base64 --decode > yaochi-event-banner-20260817.jpg
-          echo "776345026db22133c9bf260febc1d872091fb0b236377ae8d35836848e9a23c5  yaochi-event-banner-20260817.jpg" | sha256sum -c -
-          file yaochi-event-banner-20260817.jpg
-
-      - name: Update page reference
-        shell: python
-        run: |
+          wc -c .tmp2/banner-q15-part-00.b64
+          sha1sum .tmp2/banner-q15-part-00.b64
+          head -c 40 .tmp2/banner-q15-part-00.b64; echo
+          tail -c 40 .tmp2/banner-q15-part-00.b64; echo
+          python - <<'PY'
           from pathlib import Path
-          p = Path('yaochi-event-v2.html')
-          text = p.read_text(encoding='utf-8')
-          text = text.replace('yaochi-event-banner-20260817.webp?v=20260817-1636', 'yaochi-event-banner-20260817.jpg?v=20260817-1649')
-          p.write_text(text, encoding='utf-8')
-
-      - name: Commit fixed image and page
-        run: |
-          rm -f yaochi-event-banner-20260817.webp
-          git config user.name "lyyuan03"
-          git config user.email "lyyuan03@gmail.com"
-          git add yaochi-event-v2.html yaochi-event-banner-20260817.jpg yaochi-event-banner-20260817.webp
-          git commit -m "Fix Yaochi banner image asset" || exit 0
-          git push
+          s=Path('.tmp2/banner-q15-part-00.b64').read_text()
+          bad=[(i,repr(c)) for i,c in enumerate(s) if c not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\r\n']
+          print('bad_count',len(bad),'first_bad',bad[:10])
+          PY
