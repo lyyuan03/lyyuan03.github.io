@@ -29,10 +29,13 @@
         color: #F5F0E8 !important;
         border: 1px solid rgba(245, 240, 232, .3) !important;
         box-shadow: 0 4px 14px rgba(0, 0, 0, .18) !important;
-        cursor: default !important;
-        pointer-events: none !important;
-        transform: none !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
         opacity: 1 !important;
+      }
+      .announcement-item.featured.cis-featured .announcement-btn.upcoming-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 22px rgba(165, 130, 84, .46) !important;
       }
 
       /* 8/1：報名截止維持灰階 */
@@ -85,11 +88,9 @@
 
     if (action && !action.querySelector(".upcoming-btn")) {
       const button = document.createElement("a");
-      button.className = "announcement-btn upcoming-btn disabled";
-      button.textContent = "即將開放報名";
+      button.className = "announcement-btn upcoming-btn";
+      button.textContent = "開放報名";
       button.href = "https://lyyuan.tw/yaochi-event-v2.html#how";
-      button.setAttribute("aria-disabled", "true");
-      button.setAttribute("tabindex", "-1");
       action.appendChild(button);
     }
   };
