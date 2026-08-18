@@ -84,10 +84,12 @@
     }
 
     if (action && !action.querySelector(".upcoming-btn")) {
-      const button = document.createElement("span");
+      const button = document.createElement("a");
       button.className = "announcement-btn upcoming-btn disabled";
       button.textContent = "即將開放報名";
+      button.href = "https://lyyuan.tw/yaochi-event-v2.html#how";
       button.setAttribute("aria-disabled", "true");
+      button.setAttribute("tabindex", "-1");
       action.appendChild(button);
     }
   };
