@@ -67,14 +67,11 @@
     .dark .section-heading p{color:rgba(247,242,233,.62)}
 
     .purpose-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .purpose{padding:0;overflow:hidden;border-top:3px solid var(--gold);background:#fffdf9;box-shadow:0 12px 30px rgba(53,43,31,.07)}
-    .purpose-image{display:block;width:100%;height:180px;object-fit:cover;border-bottom:1px solid rgba(165,130,84,.20)}
-    .purpose:nth-child(1) .purpose-image{object-position:50% 25%}
-    .purpose:nth-child(2) .purpose-image{object-position:50% 50%}
-    .purpose:nth-child(3) .purpose-image{object-position:50% 50%}
-    .purpose-body{padding:25px 26px 29px}
+    .purpose{display:grid;grid-template-columns:42% 1fr;min-height:270px;padding:0;overflow:hidden;border-top:3px solid var(--gold);background:#fffdf9;box-shadow:0 12px 30px rgba(53,43,31,.07)}
+    .purpose-image{display:block;width:100%;height:100%;min-height:270px;object-fit:cover;object-position:center;border-right:1px solid rgba(165,130,84,.20)}
+    .purpose-body{display:flex;flex-direction:column;justify-content:center;padding:24px 22px 26px}
     .purpose h3{margin:0 0 10px;font-family:var(--serif);font-size:23px;font-weight:500;letter-spacing:.08em;color:#493b2e}
-    .purpose p{margin:0;color:#73675b;font-size:14.5px;line-height:1.85}
+    .purpose p{margin:0;color:#73675b;font-size:13.5px;line-height:1.85}
 
     .item-groups{display:grid;gap:20px}
     .item-group{--tone:#c8aa7b;--tone-bg:#241a10;--tone-panel:rgba(165,130,84,.09);display:grid;grid-template-columns:238px 1fr;border:1px solid color-mix(in srgb,var(--tone) 42%,transparent);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.035);box-shadow:0 14px 34px rgba(0,0,0,.16)}
@@ -162,7 +159,7 @@
       .container{width:min(100% - 24px,1080px)}.nav-inner{min-height:58px}.brand{font-size:16px}.hero{padding-top:12px}.hero-image{border-radius:11px}
       .teacher-message{margin-top:16px;padding:31px 24px 25px}.teacher-message h2{font-size:27px}.teacher-copy{font-size:15.5px;line-height:1.9}.teacher-copy .key-line{font-size:19px}.teacher-signoff{gap:10px}.teacher-signoff img{width:120px}.hero-meta{display:block;padding:22px 4px 28px}.event-date{font-size:22px}.hero-summary{margin-top:0;font-size:15.5px}.hero-meta>.btn{display:none}
       .paper,.dark{padding:54px 0}.section-heading{margin-bottom:28px}.section-heading h2{font-size:28px}.section-heading p{font-size:14.5px}
-      .purpose{padding:25px 22px}.item-list{grid-template-columns:1fr}.item-list>li,.item-list>li:nth-last-child(-n+2){border-bottom:1px solid rgba(200,170,123,.14)}.item-list>li:last-child{border-bottom:0}.group-title{padding:22px}.group-emblem{width:68px;height:68px;margin-bottom:17px}.deity-window{height:260px;margin:-22px -22px 21px}.group-notes{padding:19px 21px}.shared-details{grid-column:1;padding:22px}.name-grid{grid-template-columns:1fr}.pilgrimage{padding:23px 21px}
+      .purpose{grid-template-columns:1fr;min-height:0}.purpose-image{height:210px;min-height:0;border-right:0;border-bottom:1px solid rgba(165,130,84,.20)}.purpose-body{padding:23px 22px 26px}.item-list{grid-template-columns:1fr}.item-list>li,.item-list>li:nth-last-child(-n+2){border-bottom:1px solid rgba(200,170,123,.14)}.item-list>li:last-child{border-bottom:0}.group-title{padding:22px}.group-emblem{width:68px;height:68px;margin-bottom:17px}.deity-window{height:260px;margin:-22px -22px 21px}.group-notes{padding:19px 21px}.shared-details{grid-column:1;padding:22px}.name-grid{grid-template-columns:1fr}.pilgrimage{padding:23px 21px}
       .final-cta{padding:58px 0 82px}.final-cta h2{font-size:27px}.cta-actions .btn{width:100%}
       .mobile-register{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:999px;background:#f3ecdf;color:#2e281f;text-decoration:none;font-family:var(--serif);font-size:16px;letter-spacing:.08em;box-shadow:0 10px 28px rgba(0,0,0,.35)}
       footer{padding-bottom:94px}
@@ -222,9 +219,9 @@
           <p>恭逢無極瑤池金母聖誕，靈元院依循祝壽懺儀，並將功德願力迴向個人、因緣與建院聖業。</p>
         </div>
         <div class="purpose-grid">
-          <article class="purpose"><img class="purpose-image" src="assets/yaochi-purpose-birthday.webp?v=20260818-1" alt="瑤池金母龍頭柺" width="900" height="1511" loading="lazy"><div class="purpose-body"><h3>聖誕祝壽</h3><p>以祝壽、供燈與頂禮感念母娘慈恩，祈願福慧增長、善緣具足、身心安泰。</p></div></article>
-          <article class="purpose"><img class="purpose-image" src="assets/yaochi-purpose-release.webp?v=20260818-1" alt="靈元院解冤赦業法儀" width="1200" height="818" loading="lazy"><div class="purpose-body"><h3>解冤赦業</h3><p>藉由懺悔、和解與功德迴向，祈願冤結漸解、障緣漸化，使身心回到安定清明。</p></div></article>
-          <article class="purpose"><img class="purpose-image" src="assets/yaochi-purpose-building.webp?v=20260818-1" alt="靈元院建院願景" width="1400" height="788" loading="lazy"><div class="purpose-body"><h3>建院護持</h3><p>將願力匯聚於靈元院籌建，護持未來道場成就，使修行、弘法與法脈得以長久相續。</p></div></article>
+          <article class="purpose"><img class="purpose-image" src="assets/yaochi-purpose-birthday.webp?v=20260818-2" alt="瑤池金母龍頭柺" width="700" height="1200" loading="lazy"><div class="purpose-body"><h3>聖誕祝壽</h3><p>以祝壽、供燈與頂禮感念母娘慈恩，祈願福慧增長、善緣具足、身心安泰。</p></div></article>
+          <article class="purpose"><img class="purpose-image" src="assets/yaochi-purpose-release.webp?v=20260818-2" alt="靈元院解冤赦業法儀" width="760" height="1007" loading="lazy"><div class="purpose-body"><h3>解冤赦業</h3><p>藉由懺悔、和解與功德迴向，祈願冤結漸解、障緣漸化，使身心回到安定清明。</p></div></article>
+          <article class="purpose"><img class="purpose-image" src="assets/yaochi-purpose-building.webp?v=20260818-2" alt="靈元院建院願景" width="900" height="987" loading="lazy"><div class="purpose-body"><h3>建院護持</h3><p>將願力匯聚於靈元院籌建，護持未來道場成就，使修行、弘法與法脈得以長久相續。</p></div></article>
         </div>
       </div>
     </section>
