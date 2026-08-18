@@ -80,3 +80,62 @@ if (location.pathname.endsWith("/membership.html")) {
   eightBenefitsScript.defer = true;
   document.head.appendChild(eightBenefitsScript);
 }
+
+if (location.pathname.endsWith("/yaochi-event-v2.html")) {
+  const pilgrimageMotionStyle = document.createElement("style");
+  pilgrimageMotionStyle.id = "yaochi-pilgrimage-calm-motion";
+  pilgrimageMotionStyle.textContent = `
+    .pilgrimage-invite.motion-visible {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid rgba(224,173,85,.30) !important;
+      background: linear-gradient(135deg,rgba(224,173,85,.13),rgba(96,99,48,.10)) !important;
+      animation: none !important;
+      box-shadow: none;
+    }
+    .pilgrimage-invite.motion-visible::after {
+      content: '';
+      position: absolute;
+      z-index: 0;
+      top: -45%;
+      bottom: -45%;
+      left: -32%;
+      width: 28%;
+      pointer-events: none;
+      background: linear-gradient(90deg,transparent,rgba(255,236,196,.24),transparent);
+      filter: blur(2px);
+      transform: translateX(-220%) skewX(-16deg);
+      opacity: 0;
+      animation: pilgrimageSweepCalm 14s ease-in-out infinite;
+    }
+    .pilgrimage-invite.motion-visible > * {
+      position: relative;
+      z-index: 1;
+    }
+    @keyframes pilgrimageSweepCalm {
+      0%, 82% {
+        transform: translateX(-220%) skewX(-16deg);
+        opacity: 0;
+      }
+      84% {
+        opacity: .38;
+      }
+      96% {
+        transform: translateX(520%) skewX(-16deg);
+        opacity: .22;
+      }
+      100% {
+        transform: translateX(520%) skewX(-16deg);
+        opacity: 0;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pilgrimage-invite.motion-visible::after {
+        animation: none !important;
+        opacity: 0 !important;
+      }
+    }
+  `;
+  document.head.appendChild(pilgrimageMotionStyle);
+}
