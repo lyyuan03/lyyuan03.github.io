@@ -37,6 +37,17 @@
     .hero{background:radial-gradient(circle at 50% 0,rgba(96,99,48,.20),transparent 46%),linear-gradient(180deg,#101a0f,#111a10);padding:24px 0 0}
     .hero-image{position:relative;overflow:hidden;border:1px solid rgba(200,170,123,.24);border-radius:18px;background:#e9ddca;box-shadow:0 24px 64px rgba(0,0,0,.34)}
     .hero-image img{display:block;width:100%;height:auto}
+    .teacher-message{position:relative;margin:28px 0 0;padding:44px 48px 34px;overflow:hidden;border:1px solid rgba(200,170,123,.28);border-radius:16px;background:linear-gradient(135deg,rgba(49,35,20,.96),rgba(20,31,18,.94));box-shadow:0 18px 44px rgba(0,0,0,.22)}
+    .teacher-message:before{content:'「';position:absolute;right:34px;top:-28px;font-family:var(--serif);font-size:150px;line-height:1;color:rgba(200,170,123,.08)}
+    .teacher-message .eyebrow{margin-bottom:7px;color:#d7b77f}
+    .teacher-message h2{margin:0 0 24px;font-family:var(--serif);font-size:32px;font-weight:500;letter-spacing:.09em;color:#f3dfbd}
+    .teacher-copy{max-width:790px;font-family:var(--serif);font-size:17px;line-height:2;color:rgba(250,247,242,.82)}
+    .teacher-copy p{margin:0 0 13px}
+    .teacher-copy .direction{margin:20px 0 8px;color:#dec293}
+    .teacher-copy .key-line{font-size:21px;font-weight:600;letter-spacing:.08em;color:#fff0cf}
+    .teacher-signoff{display:flex;align-items:flex-end;justify-content:flex-end;gap:17px;margin-top:12px}
+    .teacher-signoff img{display:block;width:150px;height:auto}
+    .teacher-signoff time{padding-bottom:7px;font-family:var(--serif);font-size:12px;letter-spacing:.12em;color:rgba(250,247,242,.46)}
     .hero-meta{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;padding:30px 0 34px}
     .event-date{font-family:var(--serif);font-size:25px;letter-spacing:.12em;color:#ead8ba;white-space:nowrap}
     .event-date small{display:block;margin-bottom:2px;font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:.18em;color:rgba(247,242,233,.48)}
@@ -95,6 +106,11 @@
     .group-notes p+p{margin-top:7px}
     .group-notes .important{color:#edd7b2}
     .group-notes a{color:#ead1a7}
+    .pilgrimage-invite{grid-column:1/-1;display:grid;grid-template-columns:210px 1fr;gap:30px;padding:30px 32px;border-top:1px solid rgba(224,173,85,.28);background:linear-gradient(135deg,rgba(224,173,85,.13),rgba(96,99,48,.10))}
+    .pilgrimage-label span{display:block;margin-bottom:7px;font-size:10px;letter-spacing:.18em;color:#e0ad55}
+    .pilgrimage-label h4{margin:0;font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.55;color:#ffe3ae}
+    .pilgrimage-copy p{margin:0;color:rgba(247,242,233,.72);font-size:14px;line-height:1.9}
+    .pilgrimage-copy p+p{margin-top:10px}
     .name-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
     .name-grid span{padding:13px 16px;border:1px solid color-mix(in srgb,var(--tone) 26%,transparent);background:color-mix(in srgb,var(--tone) 7%,transparent);font-family:var(--serif);font-size:16px;color:color-mix(in srgb,var(--tone) 58%,white)}
     .shared-details{grid-column:2;padding:24px 26px;background:linear-gradient(135deg,var(--tone-panel),rgba(255,255,255,.015))}
@@ -128,11 +144,11 @@
 
     @media(max-width:820px){
       .hero-meta{grid-template-columns:1fr auto}.hero-summary{grid-column:1/-1;grid-row:2;padding:20px 0 0;border-left:0;border-top:1px solid rgba(200,170,123,.26)}
-      .purpose-grid,.steps{grid-template-columns:1fr}.item-group{grid-template-columns:1fr}.group-title{border-right:0;border-bottom:1px solid color-mix(in srgb,var(--tone) 22%,transparent)}.deity-window{height:300px}.item-list li{border-left:0}.nav-links li:not(:last-child){display:none}
+      .purpose-grid,.steps{grid-template-columns:1fr}.item-group{grid-template-columns:1fr}.group-title{border-right:0;border-bottom:1px solid color-mix(in srgb,var(--tone) 22%,transparent)}.deity-window{height:300px}.item-list li{border-left:0}.pilgrimage-invite{grid-template-columns:1fr;gap:15px}.nav-links li:not(:last-child){display:none}
     }
     @media(max-width:560px){
       .container{width:min(100% - 24px,1080px)}.nav-inner{min-height:58px}.brand{font-size:16px}.hero{padding-top:12px}.hero-image{border-radius:11px}
-      .hero-meta{display:block;padding:22px 4px 28px}.event-date{font-size:22px}.hero-summary{margin-top:18px;font-size:15.5px}.hero-meta>.btn{display:none}
+      .teacher-message{margin-top:16px;padding:31px 24px 25px}.teacher-message h2{font-size:27px}.teacher-copy{font-size:15.5px;line-height:1.9}.teacher-copy .key-line{font-size:19px}.teacher-signoff{gap:10px}.teacher-signoff img{width:120px}.hero-meta{display:block;padding:22px 4px 28px}.event-date{font-size:22px}.hero-summary{margin-top:18px;font-size:15.5px}.hero-meta>.btn{display:none}
       .paper,.dark{padding:54px 0}.section-heading{margin-bottom:28px}.section-heading h2{font-size:28px}.section-heading p{font-size:14.5px}
       .purpose{padding:25px 22px}.item-list{grid-template-columns:1fr}.item-list>li,.item-list>li:nth-last-child(-n+2){border-bottom:1px solid rgba(200,170,123,.14)}.item-list>li:last-child{border-bottom:0}.group-title{padding:22px}.group-emblem{width:68px;height:68px;margin-bottom:17px}.deity-window{height:260px;margin:-22px -22px 21px}.group-notes{padding:19px 21px}.shared-details{grid-column:1;padding:22px}.name-grid{grid-template-columns:1fr}.pilgrimage{padding:23px 21px}
       .final-cta{padding:58px 0 82px}.final-cta h2{font-size:27px}.cta-actions .btn{width:100%}
@@ -144,7 +160,7 @@
   <script src="/analytics.js" defer></script>
 </head>
 <body>
-  <!-- YAOCHI-VISUAL-REVISION: 2026-08-18 -->
+  <!-- YAOCHI-CONTENT-LAYOUT-REVISION: 2026-08-18 -->
   <nav class="site-nav" aria-label="活動頁導覽">
     <div class="container nav-inner">
       <a class="brand" href="https://lyyuan.tw/">靈元院</a>
@@ -164,6 +180,22 @@
         <div class="hero-image">
           <img src="yaochi-event-banner-20260817.jpg?v=20260817-1718" alt="無極瑤池金母聖誕祝壽暨解冤赦業・護法續脈遠距祝壽懺儀" width="1200" height="457" fetchpriority="high">
         </div>
+        <section class="teacher-message" aria-labelledby="teacher-message-title">
+          <span class="eyebrow">宇色老師・建院心語</span>
+          <h2 id="teacher-message-title">不急，一步一步來</h2>
+          <div class="teacher-copy">
+            <p>今年的無極瑤池金母聖誕，對靈元院來說，意義不一樣。</p>
+            <p>這段時間，我一直在母娘座前，稟報靈元院重建之事。</p>
+            <p class="direction">母娘的方向很清楚——</p>
+            <p class="key-line">不急，一步一步來。</p>
+            <p>先把大殿立起來，先讓母娘與眾神尊重新安座。</p>
+            <p>香火、願力、道場，要先凝聚起來，其他的，再慢慢完成。</p>
+          </div>
+          <div class="teacher-signoff">
+            <img src="assets/osel-signature-20260815.png?v=20260818-1" alt="宇色老師簽名" width="260" height="229">
+            <time datetime="2026-08-15">2026.8.15</time>
+          </div>
+        </section>
         <div class="hero-meta">
           <div class="event-date"><small>法儀日期</small>2026・08・29</div>
           <div class="hero-summary">以<strong>母娘祝壽、解冤赦業、建院護持</strong>三願相合，將每一念祈願匯聚成靈元院建院與法脈相續的力量。</div>
@@ -198,7 +230,7 @@
           <section class="item-group tone-core">
             <div class="group-title">
               <div class="deity-window"><img src="assets/yaochi-zhenyuan-statue.webp?v=20260818-1" alt="真元虛空手神像局部" width="520" height="1026" loading="lazy"></div>
-              <span>丙午建院核心護持</span><h3>總功德主・燈首</h3>
+              <span>丙午建院</span><h3>核心護持</h3>
             </div>
             <ul class="item-list">
               <li class="featured-merit">
@@ -221,12 +253,23 @@
               <p>以上所有點燈芳名，均入疏文宣讀迴向。</p>
               <p>以上護持功德金，請洽本院行政團隊 <a href="https://t.me/lyyuan" target="_blank" rel="noopener">Telegram</a>。</p>
             </div>
+            <aside class="pilgrimage-invite" aria-labelledby="pilgrimage-title">
+              <div class="pilgrimage-label">
+                <span>建院圓滿之約</span>
+                <h4 id="pilgrimage-title">首批入院朝禮</h4>
+              </div>
+              <div class="pilgrimage-copy">
+                <p>凡參與本次建院護持者，將有機會於靈元院籌建圓滿、正式落成之後，成為首批入院朝禮者。</p>
+                <p>屆時將由蘇監院親自引領，帶領護持者走入新建完成的靈元院，朝禮聖境、參拜諸聖，並親自開示建院因緣、道場精神與其中所承載的修行意義。</p>
+                <p>這不只是一場參訪，而是讓曾經為靈元院建院付出一份願力的人，在道場初成之時，親自回到自己曾經護持成就的聖地。</p>
+              </div>
+            </aside>
           </section>
 
           <section class="item-group tone-lineage">
             <div class="group-title">
               <div class="group-emblem" aria-hidden="true"><svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="36" cy="36" r="23"/><circle cx="36" cy="36" r="7"/><path d="M36 6v18M36 48v18M6 36h18M48 36h18M15 15l13 13M44 44l13 13M57 15L44 28M28 44L15 57"/><path d="M36 24l12 12-12 12-12-12 12-12z"/></svg></div>
-              <span>護持功德項目及細則</span><h3>金母．靈修法脈續緣法燈</h3>
+              <span>靈修法脈</span><h3>續緣護持</h3>
             </div>
             <ul class="item-list single">
               <li>
