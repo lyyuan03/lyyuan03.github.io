@@ -143,38 +143,57 @@ if (location.pathname.endsWith("/yaochi-event-v2.html")) {
   witnessStyle.id = "yaochi-building-witness-style";
   witnessStyle.textContent = `
     .building-witness {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
       margin-top: 8px;
-      padding: 34px 34px 32px;
-      border: 1px solid rgba(200,170,123,.30);
+      padding: 38px 36px 34px;
+      border: 1px solid rgba(210,178,124,.44);
       border-radius: 12px;
-      background: linear-gradient(145deg,rgba(34,46,29,.96),rgba(18,27,18,.98));
-      box-shadow: 0 14px 32px rgba(0,0,0,.16);
+      background:
+        linear-gradient(135deg,rgba(9,18,11,.88) 0%,rgba(17,29,18,.84) 48%,rgba(8,16,10,.92) 100%),
+        url("/assets/yaochi-building-witness-20260818.webp?v=20260818-1") 58% center / cover no-repeat;
+      box-shadow: 0 18px 42px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,236,199,.06);
+    }
+    .building-witness::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 20% 12%,rgba(203,169,112,.13),transparent 38%), linear-gradient(180deg,rgba(4,10,6,.05),rgba(4,10,6,.22));
+    }
+    .building-witness > * {
+      position: relative;
+      z-index: 1;
     }
     .building-witness-head {
       max-width: 760px;
-      margin: 0 auto 24px;
+      margin: 0 auto 26px;
       text-align: center;
     }
     .building-witness-head span {
       display: block;
       margin-bottom: 7px;
-      color: #c8aa7b;
+      color: #d4b77f;
       font-size: 11px;
       letter-spacing: .20em;
     }
     .building-witness-head h3 {
       margin: 0 0 11px;
-      color: #f1dec0;
+      color: #fff0d5;
       font-family: var(--serif);
-      font-size: 29px;
+      font-size: 30px;
       font-weight: 500;
       letter-spacing: .08em;
+      text-shadow: 0 2px 16px rgba(0,0,0,.36);
     }
     .building-witness-head p {
       margin: 0;
-      color: rgba(247,242,233,.76);
+      color: rgba(252,248,240,.90);
       font-size: 15.5px;
       line-height: 1.9;
+      text-shadow: 0 1px 10px rgba(0,0,0,.48);
     }
     .building-witness-grid {
       display: grid;
@@ -182,44 +201,55 @@ if (location.pathname.endsWith("/yaochi-event-v2.html")) {
       gap: 16px;
     }
     .witness-card {
-      padding: 24px 24px 22px;
-      border: 1px solid rgba(200,170,123,.20);
+      padding: 25px 24px 23px;
+      border: 1px solid rgba(214,184,132,.34);
       border-radius: 9px;
-      background: rgba(255,255,255,.035);
+      background: linear-gradient(145deg,rgba(14,25,16,.84),rgba(10,18,12,.79));
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(3px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 8px 20px rgba(0,0,0,.10);
     }
     .witness-card.premium {
-      border-color: rgba(224,173,85,.42);
-      background: linear-gradient(145deg,rgba(224,173,85,.10),rgba(96,99,48,.08));
+      border-color: rgba(224,173,85,.56);
+      background: linear-gradient(145deg,rgba(71,57,30,.78),rgba(21,31,18,.84));
     }
     .witness-card small {
       display: block;
       margin-bottom: 6px;
-      color: #b9b386;
+      color: #d0c28e;
       font-size: 11px;
       letter-spacing: .14em;
     }
-    .witness-card.premium small { color: #ddb86f; }
+    .witness-card.premium small { color: #edc77b; }
     .witness-card h4 {
       margin: 0 0 10px;
-      color: #f5e7cf;
+      color: #fff0d8;
       font-family: var(--serif);
-      font-size: 21px;
+      font-size: 22px;
       font-weight: 500;
       letter-spacing: .06em;
+      text-shadow: 0 1px 10px rgba(0,0,0,.30);
     }
     .witness-card p {
       margin: 0 0 9px;
-      color: rgba(247,242,233,.72);
+      color: rgba(252,248,240,.86);
       font-size: 14.5px;
       line-height: 1.85;
+      text-shadow: 0 1px 8px rgba(0,0,0,.34);
     }
     .witness-card p:last-child { margin-bottom: 0; }
-    .witness-card strong { color: #f3d6a3; font-weight: 500; }
+    .witness-card strong { color: #ffdca2; font-weight: 500; }
     @media (max-width: 700px) {
-      .building-witness { padding: 27px 20px 24px; }
-      .building-witness-head h3 { font-size: 25px; }
+      .building-witness {
+        padding: 28px 20px 25px;
+        background-position: 64% center;
+      }
+      .building-witness-head { margin-bottom: 22px; }
+      .building-witness-head h3 { font-size: 26px; }
+      .building-witness-head p { color: rgba(252,248,240,.92); }
       .building-witness-grid { grid-template-columns: 1fr; }
-      .witness-card { padding: 21px 19px 20px; }
+      .witness-card { padding: 22px 19px 21px; background: linear-gradient(145deg,rgba(12,23,15,.88),rgba(8,16,10,.84)); }
+      .witness-card.premium { background: linear-gradient(145deg,rgba(66,52,27,.84),rgba(17,28,16,.88)); }
     }
   `;
   document.head.appendChild(witnessStyle);
