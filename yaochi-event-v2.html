@@ -66,13 +66,27 @@
     .group-title span{display:block;margin-bottom:7px;font-size:10px;letter-spacing:.18em;color:var(--gold-light)}
     .group-title h3{margin:0;font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:.06em;color:#f0dfc2}
     .item-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:0;padding:0;list-style:none}
-    .item-list li{padding:25px 26px;border-left:1px solid rgba(200,170,123,.14);border-bottom:1px solid rgba(200,170,123,.14)}
-    .item-list li:nth-last-child(-n+2){border-bottom:0}
-    .item-list strong{display:block;margin-bottom:6px;font-family:var(--serif);font-size:18px;font-weight:500;color:#f4e8d3}
-    .item-list p{margin:0;color:rgba(247,242,233,.60);font-size:13.5px;line-height:1.75}
+    .item-list>li{padding:25px 26px;border-left:1px solid rgba(200,170,123,.14);border-bottom:1px solid rgba(200,170,123,.14)}
+    .item-list>li:nth-last-child(-n+2){border-bottom:0}
+    .item-list>li>strong{display:block;margin-bottom:6px;font-family:var(--serif);font-size:18px;font-weight:500;color:#f4e8d3}
+    .item-list>li>p{margin:0;color:rgba(247,242,233,.60);font-size:13.5px;line-height:1.75}
     .item-list .notice{margin-top:9px;color:#d9bd8d;font-size:12px}
     .item-list.single{grid-template-columns:1fr}
-    .item-list.single li{border-bottom:0}
+    .item-list.single>li{border-bottom:0}
+    .detail-list{margin:10px 0 0;padding-left:1.2em;color:rgba(247,242,233,.66);font-size:13.5px;line-height:1.8}
+    .detail-list li+li{margin-top:7px}
+    .detail-list strong{color:#ead1a7;font-weight:500}
+    .group-notes{grid-column:1/-1;padding:20px 26px;border-top:1px solid rgba(200,170,123,.16);background:rgba(165,130,84,.08)}
+    .group-notes p{margin:0;color:rgba(247,242,233,.68);font-size:13.5px}
+    .group-notes p+p{margin-top:7px}
+    .group-notes .important{color:#edd7b2}
+    .group-notes a{color:#ead1a7}
+    .name-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
+    .name-grid span{padding:13px 16px;border:1px solid rgba(200,170,123,.16);background:rgba(255,255,255,.035);font-family:var(--serif);font-size:16px;color:#f4e8d3}
+    .shared-details{grid-column:2;padding:24px 26px}
+    .shared-details>p{margin:0;color:rgba(247,242,233,.65);font-size:13.5px}
+    .shared-details>p+p{margin-top:8px}
+    .shared-details .quote-line{margin-top:16px;padding-left:16px;border-left:2px solid var(--gold-light);color:#e5cfaa}
 
     .pilgrimage{margin-top:28px;padding:26px 30px;border-left:3px solid var(--gold-light);background:rgba(165,130,84,.10)}
     .pilgrimage h3{margin:0 0 7px;font-family:var(--serif);font-size:20px;font-weight:500;color:#f1dfc0}
@@ -106,7 +120,7 @@
       .container{width:min(100% - 24px,1080px)}.nav-inner{min-height:58px}.brand{font-size:16px}.hero{padding-top:12px}.hero-image{border-radius:11px}
       .hero-meta{display:block;padding:22px 4px 28px}.event-date{font-size:22px}.hero-summary{margin-top:18px;font-size:15.5px}.hero-meta>.btn{display:none}
       .paper,.dark{padding:54px 0}.section-heading{margin-bottom:28px}.section-heading h2{font-size:28px}.section-heading p{font-size:14.5px}
-      .purpose{padding:25px 22px}.item-list{grid-template-columns:1fr}.item-list li,.item-list li:nth-last-child(-n+2){border-bottom:1px solid rgba(200,170,123,.14)}.item-list li:last-child{border-bottom:0}.group-title{padding:22px}.pilgrimage{padding:23px 21px}
+      .purpose{padding:25px 22px}.item-list{grid-template-columns:1fr}.item-list>li,.item-list>li:nth-last-child(-n+2){border-bottom:1px solid rgba(200,170,123,.14)}.item-list>li:last-child{border-bottom:0}.group-title{padding:22px}.group-notes{padding:19px 21px}.shared-details{grid-column:1;padding:22px}.name-grid{grid-template-columns:1fr}.pilgrimage{padding:23px 21px}
       .final-cta{padding:58px 0 82px}.final-cta h2{font-size:27px}.cta-actions .btn{width:100%}
       .mobile-register{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:999px;background:#f3ecdf;color:#2e281f;text-decoration:none;font-family:var(--serif);font-size:16px;letter-spacing:.08em;box-shadow:0 10px 28px rgba(0,0,0,.35)}
       footer{padding-bottom:94px}
@@ -164,38 +178,92 @@
         <div class="section-heading">
           <span class="eyebrow">護持與登記項目</span>
           <h2>依所願，選擇護持項目</h2>
-          <p>將原本分散的內容歸納為三類，讓您能直接找到適合自己的登記項目。</p>
+          <p>依照不同護持因緣整理項目與細則，請於登記前完整閱讀相關注意事項。</p>
         </div>
         <div class="item-groups">
           <section class="item-group">
-            <div class="group-title"><span>核心護持</span><h3>祝壽・法脈・建院</h3></div>
+            <div class="group-title"><span>丙午建院核心護持</span><h3>總功德主・燈首</h3></div>
             <ul class="item-list">
-              <li><strong>總功德主</strong><p>以一份核心願力護持本次祝壽法儀與靈元院建院聖業。</p></li>
-              <li><strong>金母富貴圓滿燈燈首</strong><p>恭祝母娘聖誕，祈願福慧、善緣與所行之事漸次圓滿。</p></li>
-              <li><strong>金母靈修法脈續緣法燈</strong><p>護持既有修持因緣與法脈相續。</p><p class="notice">僅限乙巳（2025）年續燈者登記，不開放新請燈。</p></li>
-              <li><strong>吉祥祝壽燈</strong><p>以一盞燈表達感恩祝壽之心，祈願身心安泰、福慧增長。</p></li>
+              <li>
+                <strong>丙午建院<br>總功德主</strong>
+                <ul class="detail-list">
+                  <li>恭設闔家長生牌位一座、供油燈。</li>
+                  <li><strong>宇色老師親自回覆－個人靈修疑問（僅限一個問題）</strong>。非通靈問事，請勿填寫有關主神、靈脈、元神，或請示神尊等問題，請審慎填寫。（以PDF文字檔回覆）</li>
+                </ul>
+              </li>
+              <li>
+                <strong>丙午護法續脈燈<br>燈首</strong>
+                <ul class="detail-list">
+                  <li>恭設個人長生牌位、供油燈。</li>
+                  <li>詢問個人靈修疑問（僅限一個問題）。非通靈問事，請勿填寫有關主神、靈脈、元神，或請示神尊等問題，請審慎填寫。（以PDF文字檔回覆）</li>
+                </ul>
+              </li>
             </ul>
+            <div class="group-notes">
+              <p class="important">【特別留意】8/29–8/31三天茹素，晚上6點過後禁食，可喝水，助淨化身心轉氣。</p>
+              <p>以上所有點燈芳名，均入疏文宣讀迴向。</p>
+              <p>以上護持功德金，請洽本院行政團隊 <a href="https://t.me/lyyuan" target="_blank" rel="noopener">Telegram</a>。</p>
+            </div>
           </section>
 
           <section class="item-group">
-            <div class="group-title"><span>解冤赦業</span><h3>懺悔・和解・迴向</h3></div>
-            <ul class="item-list">
-              <li><strong>化解累世冤親債主</strong><p>祈願累世未解因緣漸次化開，彼此放下執著，各得其所。</p></li>
-              <li><strong>化解無明業障病主</strong><p>為自身無明、習氣、業障與身心障緣祈願，願障緣漸化、心念漸明。</p></li>
-            </ul>
-          </section>
-
-          <section class="item-group">
-            <div class="group-title"><span>隨喜護持</span><h3>共成建院聖業</h3></div>
+            <div class="group-title"><span>護持功德項目及細則</span><h3>金母．靈修法脈續緣法燈</h3></div>
             <ul class="item-list single">
-              <li><strong>隨喜贊助靈元院籌建</strong><p>護持未來道場空間、設備、神像供具與整體環境建置，使靈元院得以長久承載朝禮、修持與弘法。</p></li>
+              <li>
+                <strong>金母．靈修法脈續緣法燈</strong>
+                <ul class="detail-list">
+                  <li>僅限<strong>乙巳（2025）年續燈者登記</strong>，隨喜功德。無開放新請燈。</li>
+                  <li>特別慈降個人符令。</li>
+                  <li>因需提前作業郵寄，請於<strong>8/23（日）晚上23:59前完成登記及匯款</strong>。</li>
+                  <li>如不確定資格，請先洽詢本院行政團隊。</li>
+                  <li>【特別留意】8/29–8/31三天茹素，晚上6點過後禁食，可喝水，助淨化身心轉氣。</li>
+                </ul>
+              </li>
             </ul>
+          </section>
+
+          <section class="item-group">
+            <div class="group-title"><span>點燈護持</span><h3>祝壽・護法・建院</h3></div>
+            <div class="shared-details">
+              <div class="name-grid">
+                <span>建院護法燈</span>
+                <span>建院圓滿燈</span>
+                <span>靈山派護持燈</span>
+                <span>母娘祝壽燈</span>
+              </div>
+              <p>名額不限。</p>
+              <p>供油燈。</p>
+            </div>
+          </section>
+
+          <section class="item-group">
+            <div class="group-title"><span>解冤赦業</span><h3>化解因緣・宣讀迴向</h3></div>
+            <div class="shared-details">
+              <div class="name-grid">
+                <span>化解累世冤親債主</span>
+                <span>化解無明業障病主</span>
+              </div>
+              <p>登記解冤者1人姓名、安奉牌位。</p>
+              <p>解冤芳名宣讀迴向。</p>
+              <p class="quote-line"><strong>三天內（8/29–8/31），不可到人多之公眾場所（上班工作不在此限）。</strong></p>
+            </div>
+          </section>
+
+          <section class="item-group">
+            <div class="group-title"><span>建院隨喜功德</span><h3>共成建院聖業</h3></div>
+            <div class="shared-details">
+              <div class="name-grid">
+                <span>景觀園藝贊助</span>
+                <span>神像供具贊助隨喜功德</span>
+                <span>硬體設備贊助隨喜功德</span>
+              </div>
+              <p>隨喜護持靈元院籌建。</p>
+              <p class="quote-line">今日的一念護持，成為未來道場的一磚一瓦；待聖域落成之日，再親自走入其中，看見自己曾經種下的這份因緣。</p>
+              <p>以上所有登記功德金，請參閱報名表。</p>
+              <p>以上所有點燈及隨喜功德芳名，均入疏文宣讀迴向。</p>
+            </div>
           </section>
         </div>
-        <aside class="pilgrimage">
-          <h3>建院完成後，首批入院朝禮</h3>
-          <p>符合正式公告資格之護持者，將有機會於靈元院籌建圓滿後，成為首批入院朝禮者，由蘇監院親自引領，開示建院因緣與道場精神。</p>
-        </aside>
       </div>
     </section>
 
