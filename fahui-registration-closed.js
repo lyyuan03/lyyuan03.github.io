@@ -90,7 +90,7 @@
       const button = document.createElement("a");
       button.className = "announcement-btn upcoming-btn";
       button.textContent = "開放報名";
-      button.href = "https://lyyuan.tw/yaochi-event-v2.html#how";
+      button.href = "https://lyyuan.tw/yaochi-event-v2.html";
       action.appendChild(button);
     }
   };
