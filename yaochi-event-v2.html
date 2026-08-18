@@ -61,18 +61,32 @@
     .purpose p{margin:0;color:#73675b;font-size:14.5px;line-height:1.85}
 
     .item-groups{display:grid;gap:20px}
-    .item-group{display:grid;grid-template-columns:220px 1fr;border:1px solid rgba(200,170,123,.22);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.035)}
-    .group-title{padding:28px 26px;background:rgba(165,130,84,.11)}
-    .group-title span{display:block;margin-bottom:7px;font-size:10px;letter-spacing:.18em;color:var(--gold-light)}
-    .group-title h3{margin:0;font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:.06em;color:#f0dfc2}
-    .item-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:0;padding:0;list-style:none}
+    .item-group{--tone:#c8aa7b;--tone-bg:#241a10;--tone-panel:rgba(165,130,84,.09);display:grid;grid-template-columns:238px 1fr;border:1px solid color-mix(in srgb,var(--tone) 42%,transparent);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.035);box-shadow:0 14px 34px rgba(0,0,0,.16)}
+    .tone-core{--tone:#e0ad55;--tone-bg:#2c1d0d;--tone-panel:rgba(180,111,32,.13)}
+    .tone-lineage{--tone:#b9b467;--tone-bg:#1c2515;--tone-panel:rgba(96,99,48,.17)}
+    .tone-lights{--tone:#d59472;--tone-bg:#2a1712;--tone-panel:rgba(142,66,40,.15)}
+    .tone-release{--tone:#bea4ca;--tone-bg:#211627;--tone-panel:rgba(94,63,108,.17)}
+    .tone-building{--tone:#82b8a6;--tone-bg:#10231e;--tone-panel:rgba(50,104,87,.17)}
+    .group-title{position:relative;padding:28px 26px;background:linear-gradient(155deg,color-mix(in srgb,var(--tone) 13%,var(--tone-bg)),var(--tone-bg));border-right:1px solid color-mix(in srgb,var(--tone) 22%,transparent)}
+    .group-title span{display:block;margin-bottom:7px;font-size:10px;letter-spacing:.18em;color:color-mix(in srgb,var(--tone) 86%,white)}
+    .group-title h3{margin:0;font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:.06em;color:#f7eddd}
+    .group-emblem{display:grid;place-items:center;width:76px;height:76px;margin:0 0 22px;border:1px solid color-mix(in srgb,var(--tone) 48%,transparent);border-radius:50%;color:var(--tone);background:radial-gradient(circle,rgba(255,255,255,.07),transparent 66%);box-shadow:0 0 30px color-mix(in srgb,var(--tone) 16%,transparent)}
+    .group-emblem svg{width:52px;height:52px;overflow:visible;filter:drop-shadow(0 0 7px color-mix(in srgb,var(--tone) 30%,transparent))}
+    .deity-window{position:relative;height:220px;margin:-28px -26px 24px;overflow:hidden;border-bottom:1px solid color-mix(in srgb,var(--tone) 40%,transparent);background:#160d08}
+    .deity-window:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,var(--tone-bg) 100%),linear-gradient(90deg,transparent 65%,rgba(22,13,8,.40));pointer-events:none}
+    .deity-window img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 24%;filter:saturate(.88) contrast(1.06) brightness(.94)}
+    .item-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:0;padding:0;list-style:none;background:linear-gradient(135deg,var(--tone-panel),rgba(255,255,255,.015))}
     .item-list>li{padding:25px 26px;border-left:1px solid rgba(200,170,123,.14);border-bottom:1px solid rgba(200,170,123,.14)}
     .item-list>li:nth-last-child(-n+2){border-bottom:0}
-    .item-list>li>strong{display:block;margin-bottom:6px;font-family:var(--serif);font-size:18px;font-weight:500;color:#f4e8d3}
+    .item-list>li>strong{display:block;margin-bottom:6px;font-family:var(--serif);font-size:18px;font-weight:500;color:color-mix(in srgb,var(--tone) 60%,white)}
     .item-list>li>p{margin:0;color:rgba(247,242,233,.60);font-size:13.5px;line-height:1.75}
     .item-list .notice{margin-top:9px;color:#d9bd8d;font-size:12px}
     .item-list.single{grid-template-columns:1fr}
     .item-list.single>li{border-bottom:0}
+    .featured-merit{background:radial-gradient(circle at 20% 0,color-mix(in srgb,var(--tone) 18%,transparent),transparent 58%)}
+    .item-list>.featured-merit>strong{font-size:23px;font-weight:600;line-height:1.48;color:#ffe8b8;text-shadow:0 0 18px rgba(224,173,85,.28)}
+    .featured-merit .detail-list{color:rgba(255,247,230,.86)}
+    .featured-merit .detail-list strong{color:#ffdea2}
     .detail-list{margin:10px 0 0;padding-left:1.2em;color:rgba(247,242,233,.66);font-size:13.5px;line-height:1.8}
     .detail-list li+li{margin-top:7px}
     .detail-list strong{color:#ead1a7;font-weight:500}
@@ -82,8 +96,8 @@
     .group-notes .important{color:#edd7b2}
     .group-notes a{color:#ead1a7}
     .name-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
-    .name-grid span{padding:13px 16px;border:1px solid rgba(200,170,123,.16);background:rgba(255,255,255,.035);font-family:var(--serif);font-size:16px;color:#f4e8d3}
-    .shared-details{grid-column:2;padding:24px 26px}
+    .name-grid span{padding:13px 16px;border:1px solid color-mix(in srgb,var(--tone) 26%,transparent);background:color-mix(in srgb,var(--tone) 7%,transparent);font-family:var(--serif);font-size:16px;color:color-mix(in srgb,var(--tone) 58%,white)}
+    .shared-details{grid-column:2;padding:24px 26px;background:linear-gradient(135deg,var(--tone-panel),rgba(255,255,255,.015))}
     .shared-details>p{margin:0;color:rgba(247,242,233,.65);font-size:13.5px}
     .shared-details>p+p{margin-top:8px}
     .shared-details .quote-line{margin-top:16px;padding-left:16px;border-left:2px solid var(--gold-light);color:#e5cfaa}
@@ -114,13 +128,13 @@
 
     @media(max-width:820px){
       .hero-meta{grid-template-columns:1fr auto}.hero-summary{grid-column:1/-1;grid-row:2;padding:20px 0 0;border-left:0;border-top:1px solid rgba(200,170,123,.26)}
-      .purpose-grid,.steps{grid-template-columns:1fr}.item-group{grid-template-columns:1fr}.item-list li{border-left:0}.nav-links li:not(:last-child){display:none}
+      .purpose-grid,.steps{grid-template-columns:1fr}.item-group{grid-template-columns:1fr}.group-title{border-right:0;border-bottom:1px solid color-mix(in srgb,var(--tone) 22%,transparent)}.deity-window{height:300px}.item-list li{border-left:0}.nav-links li:not(:last-child){display:none}
     }
     @media(max-width:560px){
       .container{width:min(100% - 24px,1080px)}.nav-inner{min-height:58px}.brand{font-size:16px}.hero{padding-top:12px}.hero-image{border-radius:11px}
       .hero-meta{display:block;padding:22px 4px 28px}.event-date{font-size:22px}.hero-summary{margin-top:18px;font-size:15.5px}.hero-meta>.btn{display:none}
       .paper,.dark{padding:54px 0}.section-heading{margin-bottom:28px}.section-heading h2{font-size:28px}.section-heading p{font-size:14.5px}
-      .purpose{padding:25px 22px}.item-list{grid-template-columns:1fr}.item-list>li,.item-list>li:nth-last-child(-n+2){border-bottom:1px solid rgba(200,170,123,.14)}.item-list>li:last-child{border-bottom:0}.group-title{padding:22px}.group-notes{padding:19px 21px}.shared-details{grid-column:1;padding:22px}.name-grid{grid-template-columns:1fr}.pilgrimage{padding:23px 21px}
+      .purpose{padding:25px 22px}.item-list{grid-template-columns:1fr}.item-list>li,.item-list>li:nth-last-child(-n+2){border-bottom:1px solid rgba(200,170,123,.14)}.item-list>li:last-child{border-bottom:0}.group-title{padding:22px}.group-emblem{width:68px;height:68px;margin-bottom:17px}.deity-window{height:260px;margin:-22px -22px 21px}.group-notes{padding:19px 21px}.shared-details{grid-column:1;padding:22px}.name-grid{grid-template-columns:1fr}.pilgrimage{padding:23px 21px}
       .final-cta{padding:58px 0 82px}.final-cta h2{font-size:27px}.cta-actions .btn{width:100%}
       .mobile-register{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:999px;background:#f3ecdf;color:#2e281f;text-decoration:none;font-family:var(--serif);font-size:16px;letter-spacing:.08em;box-shadow:0 10px 28px rgba(0,0,0,.35)}
       footer{padding-bottom:94px}
@@ -130,7 +144,7 @@
   <script src="/analytics.js" defer></script>
 </head>
 <body>
-  <!-- YAOCHI-FOCUS-REVISION: 2026-08-18 -->
+  <!-- YAOCHI-VISUAL-REVISION: 2026-08-18 -->
   <nav class="site-nav" aria-label="活動頁導覽">
     <div class="container nav-inner">
       <a class="brand" href="https://lyyuan.tw/">靈元院</a>
@@ -181,10 +195,13 @@
           <p>依照不同護持因緣整理項目與細則，請於登記前完整閱讀相關注意事項。</p>
         </div>
         <div class="item-groups">
-          <section class="item-group">
-            <div class="group-title"><span>丙午建院核心護持</span><h3>總功德主・燈首</h3></div>
+          <section class="item-group tone-core">
+            <div class="group-title">
+              <div class="deity-window"><img src="assets/yaochi-zhenyuan-statue.webp?v=20260818-1" alt="真元虛空手神像局部" width="520" height="1026" loading="lazy"></div>
+              <span>丙午建院核心護持</span><h3>總功德主・燈首</h3>
+            </div>
             <ul class="item-list">
-              <li>
+              <li class="featured-merit">
                 <strong>丙午建院<br>總功德主</strong>
                 <ul class="detail-list">
                   <li>恭設闔家長生牌位一座、供油燈。</li>
@@ -206,8 +223,11 @@
             </div>
           </section>
 
-          <section class="item-group">
-            <div class="group-title"><span>護持功德項目及細則</span><h3>金母．靈修法脈續緣法燈</h3></div>
+          <section class="item-group tone-lineage">
+            <div class="group-title">
+              <div class="group-emblem" aria-hidden="true"><svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="36" cy="36" r="23"/><circle cx="36" cy="36" r="7"/><path d="M36 6v18M36 48v18M6 36h18M48 36h18M15 15l13 13M44 44l13 13M57 15L44 28M28 44L15 57"/><path d="M36 24l12 12-12 12-12-12 12-12z"/></svg></div>
+              <span>護持功德項目及細則</span><h3>金母．靈修法脈續緣法燈</h3>
+            </div>
             <ul class="item-list single">
               <li>
                 <strong>金母．靈修法脈續緣法燈</strong>
@@ -222,8 +242,11 @@
             </ul>
           </section>
 
-          <section class="item-group">
-            <div class="group-title"><span>點燈護持</span><h3>祝壽・護法・建院</h3></div>
+          <section class="item-group tone-lights">
+            <div class="group-title">
+              <div class="group-emblem" aria-hidden="true"><svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M36 8c7 9 10 15 10 22 0 7-4 12-10 12s-10-5-10-12c0-6 3-12 10-22z"/><path d="M36 20c3 5 4 8 4 11 0 3-2 6-4 6s-4-3-4-6c0-3 1-6 4-11z"/><path d="M22 45h28M25 45c0 9 4 14 11 14s11-5 11-14M18 63h36"/></svg></div>
+              <span>點燈護持</span><h3>祝壽・護法・建院</h3>
+            </div>
             <div class="shared-details">
               <div class="name-grid">
                 <span>建院護法燈</span>
@@ -236,8 +259,11 @@
             </div>
           </section>
 
-          <section class="item-group">
-            <div class="group-title"><span>解冤赦業</span><h3>化解因緣・宣讀迴向</h3></div>
+          <section class="item-group tone-release">
+            <div class="group-title">
+              <div class="group-emblem" aria-hidden="true"><svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M16 33c0 16 9 27 20 31 11-4 20-15 20-31"/><path d="M36 57c-4-12-11-18-21-20 2 10 9 17 21 20zM36 57c4-12 11-18 21-20-2 10-9 17-21 20z"/><path d="M36 57c8-13 8-25 0-36-8 11-8 23 0 36z"/><path d="M26 18c3-5 6-8 10-11 4 3 7 6 10 11"/></svg></div>
+              <span>解冤赦業</span><h3>化解因緣・宣讀迴向</h3>
+            </div>
             <div class="shared-details">
               <div class="name-grid">
                 <span>化解累世冤親債主</span>
@@ -249,8 +275,11 @@
             </div>
           </section>
 
-          <section class="item-group">
-            <div class="group-title"><span>建院隨喜功德</span><h3>共成建院聖業</h3></div>
+          <section class="item-group tone-building">
+            <div class="group-title">
+              <div class="group-emblem" aria-hidden="true"><svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 32h54L49 20H23L9 32zM18 38h36M23 38v20M49 38v20M18 58h36M13 64h46"/><path d="M29 38v20M43 38v20M36 8v12M30 12h12"/><path d="M6 32c8 0 13-3 17-7M66 32c-8 0-13-3-17-7"/></svg></div>
+              <span>建院隨喜功德</span><h3>共成建院聖業</h3>
+            </div>
             <div class="shared-details">
               <div class="name-grid">
                 <span>景觀園藝贊助</span>
