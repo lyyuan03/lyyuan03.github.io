@@ -138,4 +138,128 @@ if (location.pathname.endsWith("/yaochi-event-v2.html")) {
     }
   `;
   document.head.appendChild(pilgrimageMotionStyle);
+
+  const witnessStyle = document.createElement("style");
+  witnessStyle.id = "yaochi-building-witness-style";
+  witnessStyle.textContent = `
+    .building-witness {
+      margin-top: 8px;
+      padding: 34px 34px 32px;
+      border: 1px solid rgba(200,170,123,.30);
+      border-radius: 12px;
+      background: linear-gradient(145deg,rgba(34,46,29,.96),rgba(18,27,18,.98));
+      box-shadow: 0 14px 32px rgba(0,0,0,.16);
+    }
+    .building-witness-head {
+      max-width: 760px;
+      margin: 0 auto 24px;
+      text-align: center;
+    }
+    .building-witness-head span {
+      display: block;
+      margin-bottom: 7px;
+      color: #c8aa7b;
+      font-size: 11px;
+      letter-spacing: .20em;
+    }
+    .building-witness-head h3 {
+      margin: 0 0 11px;
+      color: #f1dec0;
+      font-family: var(--serif);
+      font-size: 29px;
+      font-weight: 500;
+      letter-spacing: .08em;
+    }
+    .building-witness-head p {
+      margin: 0;
+      color: rgba(247,242,233,.76);
+      font-size: 15.5px;
+      line-height: 1.9;
+    }
+    .building-witness-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .witness-card {
+      padding: 24px 24px 22px;
+      border: 1px solid rgba(200,170,123,.20);
+      border-radius: 9px;
+      background: rgba(255,255,255,.035);
+    }
+    .witness-card.premium {
+      border-color: rgba(224,173,85,.42);
+      background: linear-gradient(145deg,rgba(224,173,85,.10),rgba(96,99,48,.08));
+    }
+    .witness-card small {
+      display: block;
+      margin-bottom: 6px;
+      color: #b9b386;
+      font-size: 11px;
+      letter-spacing: .14em;
+    }
+    .witness-card.premium small { color: #ddb86f; }
+    .witness-card h4 {
+      margin: 0 0 10px;
+      color: #f5e7cf;
+      font-family: var(--serif);
+      font-size: 21px;
+      font-weight: 500;
+      letter-spacing: .06em;
+    }
+    .witness-card p {
+      margin: 0 0 9px;
+      color: rgba(247,242,233,.72);
+      font-size: 14.5px;
+      line-height: 1.85;
+    }
+    .witness-card p:last-child { margin-bottom: 0; }
+    .witness-card strong { color: #f3d6a3; font-weight: 500; }
+    @media (max-width: 700px) {
+      .building-witness { padding: 27px 20px 24px; }
+      .building-witness-head h3 { font-size: 25px; }
+      .building-witness-grid { grid-template-columns: 1fr; }
+      .witness-card { padding: 21px 19px 20px; }
+    }
+  `;
+  document.head.appendChild(witnessStyle);
+
+  const installBuildingWitness = () => {
+    if (document.getElementById("building-witness")) return;
+    const notice = document.querySelector("#items .common-notice-block");
+    if (!notice) return;
+
+    const witness = document.createElement("section");
+    witness.id = "building-witness";
+    witness.className = "building-witness";
+    witness.setAttribute("aria-labelledby", "building-witness-title");
+    witness.innerHTML = `
+      <div class="building-witness-head">
+        <span>建院願心見證</span>
+        <h3 id="building-witness-title">一念護持・共同見證</h3>
+        <p>凡本次法會登記護持者，皆可獲邀以 Gmail 帳號登入「靈元院建院願心見證專頁」，持續了解目前建院進度、重要規劃與各階段推動情形，共同見證靈元院一步一步從願心走向成就。</p>
+      </div>
+      <div class="building-witness-grid">
+        <article class="witness-card">
+          <small>所有本次法會護持者</small>
+          <h4>建院願心見證專頁</h4>
+          <p>持續掌握建院進度、重要規劃與各階段推動情形，看見每一份護持如何逐步成為道場的一部分。</p>
+        </article>
+        <article class="witness-card premium">
+          <small>丙午建院總功德主・專屬閱覽</small>
+          <h4>更完整的建院紀錄</h4>
+          <p>登記本次<strong>「丙午建院總功德主」</strong>者，將可進一步閱覽更完整的建院紀錄。</p>
+          <p>並可觀看由<strong>宇色老師親自說明</strong>目前建院所面對的重要課題、推進方向與下一階段規劃。</p>
+          <p>這不只是一份進度公開，更希望讓每一位發心護持者，都能清楚看見自己的願心，正在如何實際成就靈元院的建院聖業。</p>
+        </article>
+      </div>`;
+
+    notice.insertAdjacentElement("afterend", witness);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", installBuildingWitness, { once: true });
+  } else {
+    installBuildingWitness();
+  }
 }
