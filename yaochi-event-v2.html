@@ -48,10 +48,10 @@
     .teacher-signoff{display:flex;align-items:flex-end;justify-content:flex-end;gap:17px;margin-top:12px}
     .teacher-signoff img{display:block;width:150px;height:auto}
     .teacher-signoff time{padding-bottom:7px;font-family:var(--serif);font-size:12px;letter-spacing:.12em;color:rgba(250,247,242,.46)}
-    .hero-meta{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;padding:30px 0 34px}
+    .hero-meta{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:30px 0 34px}
     .event-date{font-family:var(--serif);font-size:25px;letter-spacing:.12em;color:#ead8ba;white-space:nowrap}
     .event-date small{display:block;margin-bottom:2px;font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:.18em;color:rgba(247,242,233,.48)}
-    .hero-summary{padding-left:28px;border-left:1px solid rgba(200,170,123,.26);font-family:var(--serif);font-size:17px;line-height:1.9;color:rgba(247,242,233,.78)}
+    .hero-summary{padding-left:0;border-left:0;font-family:var(--serif);font-size:17px;line-height:1.9;color:rgba(247,242,233,.78)}
     .hero-summary strong{color:#f4e8d3;font-weight:500}
     .btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 24px;border:1px solid rgba(200,170,123,.48);border-radius:999px;text-decoration:none;font-family:var(--serif);font-size:15px;letter-spacing:.08em;transition:.2s}
     .btn:hover{transform:translateY(-2px);border-color:#e2c99e}
@@ -143,12 +143,12 @@
     .mobile-register{display:none}
 
     @media(max-width:820px){
-      .hero-meta{grid-template-columns:1fr auto}.hero-summary{grid-column:1/-1;grid-row:2;padding:20px 0 0;border-left:0;border-top:1px solid rgba(200,170,123,.26)}
+      .hero-meta{grid-template-columns:1fr auto}.hero-summary{padding:0;border-left:0}
       .purpose-grid,.steps{grid-template-columns:1fr}.item-group{grid-template-columns:1fr}.group-title{border-right:0;border-bottom:1px solid color-mix(in srgb,var(--tone) 22%,transparent)}.deity-window{height:300px}.item-list li{border-left:0}.pilgrimage-invite{grid-template-columns:1fr;gap:15px}.nav-links li:not(:last-child){display:none}
     }
     @media(max-width:560px){
       .container{width:min(100% - 24px,1080px)}.nav-inner{min-height:58px}.brand{font-size:16px}.hero{padding-top:12px}.hero-image{border-radius:11px}
-      .teacher-message{margin-top:16px;padding:31px 24px 25px}.teacher-message h2{font-size:27px}.teacher-copy{font-size:15.5px;line-height:1.9}.teacher-copy .key-line{font-size:19px}.teacher-signoff{gap:10px}.teacher-signoff img{width:120px}.hero-meta{display:block;padding:22px 4px 28px}.event-date{font-size:22px}.hero-summary{margin-top:18px;font-size:15.5px}.hero-meta>.btn{display:none}
+      .teacher-message{margin-top:16px;padding:31px 24px 25px}.teacher-message h2{font-size:27px}.teacher-copy{font-size:15.5px;line-height:1.9}.teacher-copy .key-line{font-size:19px}.teacher-signoff{gap:10px}.teacher-signoff img{width:120px}.hero-meta{display:block;padding:22px 4px 28px}.event-date{font-size:22px}.hero-summary{margin-top:0;font-size:15.5px}.hero-meta>.btn{display:none}
       .paper,.dark{padding:54px 0}.section-heading{margin-bottom:28px}.section-heading h2{font-size:28px}.section-heading p{font-size:14.5px}
       .purpose{padding:25px 22px}.item-list{grid-template-columns:1fr}.item-list>li,.item-list>li:nth-last-child(-n+2){border-bottom:1px solid rgba(200,170,123,.14)}.item-list>li:last-child{border-bottom:0}.group-title{padding:22px}.group-emblem{width:68px;height:68px;margin-bottom:17px}.deity-window{height:260px;margin:-22px -22px 21px}.group-notes{padding:19px 21px}.shared-details{grid-column:1;padding:22px}.name-grid{grid-template-columns:1fr}.pilgrimage{padding:23px 21px}
       .final-cta{padding:58px 0 82px}.final-cta h2{font-size:27px}.cta-actions .btn{width:100%}
@@ -197,7 +197,6 @@
           </div>
         </section>
         <div class="hero-meta">
-          <div class="event-date"><small>法儀日期</small>2026・08・29</div>
           <div class="hero-summary">以<strong>母娘祝壽、解冤赦業、建院護持</strong>三願相合，將每一念祈願匯聚成靈元院建院與法脈相續的力量。</div>
           <a class="btn btn-primary" href="#register">前往活動公告／報名</a>
         </div>
