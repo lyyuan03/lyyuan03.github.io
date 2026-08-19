@@ -24,7 +24,7 @@ jobs:
           marker = '<div class="building-witness-grid">'
           if marker not in s:
               raise SystemExit('Building witness grid marker not found; no change made')
-          gallery = '''<div class="building-witness-gallery" aria-label="靈元院建院願景圖"><figure><img src="/images/dizhi-render-garden.jpg?v=20260819-1825" alt="靈元院新址庭院景觀3D示意圖"></figure><figure><img src="/images/dizhi-render-exterior.jpg?v=20260819-1825" alt="靈元院新址建築外觀3D示意圖"></figure><figure><img src="/images/dizhi-blueprint.jpg?v=20260819-1825" alt="靈元院新址3D藍圖"></figure></div>'''
+          gallery = '''<div class="building-witness-gallery" aria-label="靈元院建院願景圖"><figure><img src="/images/dizhi-render-garden.jpg?v=20260819-1830" alt="靈元院新址庭院景觀3D示意圖"></figure><figure><img src="/images/dizhi-render-exterior.jpg?v=20260819-1830" alt="靈元院新址建築外觀3D示意圖"></figure><figure><img src="/images/dizhi-blueprint.jpg?v=20260819-1830" alt="靈元院新址3D藍圖"></figure></div>'''
           s = s.replace(marker, gallery + marker, 1)
           css_marker = '.building-witness-grid {'
           if css_marker not in s:
