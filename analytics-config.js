@@ -82,6 +82,56 @@ if (location.pathname.endsWith("/membership.html")) {
 }
 
 if (location.pathname.endsWith("/yaochi-event-v2.html")) {
+  const installYaochiArticleNavLinks = () => {
+    const nav = document.querySelector(".site-nav .nav-links");
+    if (!nav) return;
+
+    const wenxuanItem = Array.from(nav.children).find((item) => {
+      const trigger = item.querySelector(":scope > span.has-dropdown, :scope > a.has-dropdown");
+      return trigger?.textContent.replace("▾", "").trim() === "文選";
+    });
+    if (!wenxuanItem) return;
+
+    const trigger = wenxuanItem.querySelector(":scope > span.has-dropdown");
+    if (trigger) {
+      const anchor = document.createElement("a");
+      anchor.href = "/articles.html";
+      anchor.className = trigger.className;
+      anchor.textContent = "文選";
+      trigger.replaceWith(anchor);
+    }
+
+    const categoryLinks = new Map([
+      ["靈．修行", "/articles.html?category=spiritual"],
+      ["人．俗世", "/articles.html?category=worldly"],
+      ["異．靈界", "/articles.html?category=spirit-world"],
+      ["思．讀物", "/articles.html?category=reading"]
+    ]);
+
+    wenxuanItem.querySelectorAll(".dropdown .nav-disabled").forEach((item) => {
+      const label = item.textContent.trim();
+      const href = categoryLinks.get(label);
+      if (!href) return;
+      const anchor = document.createElement("a");
+      anchor.href = href;
+      anchor.textContent = label;
+      item.replaceWith(anchor);
+    });
+
+    if (!document.getElementById("yaochi-wenxuan-nav-link-style")) {
+      const style = document.createElement("style");
+      style.id = "yaochi-wenxuan-nav-link-style";
+      style.textContent = ".nav-links>li>a.has-dropdown::after{content:'▾';font-size:10px;opacity:.6}";
+      document.head.appendChild(style);
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", installYaochiArticleNavLinks, { once: true });
+  } else {
+    installYaochiArticleNavLinks();
+  }
+
   const pilgrimageMotionStyle = document.createElement("style");
   pilgrimageMotionStyle.id = "yaochi-pilgrimage-calm-motion";
   pilgrimageMotionStyle.textContent = `
