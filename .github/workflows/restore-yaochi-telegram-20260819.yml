@@ -1,0 +1,37 @@
+name: Restore Yaochi Telegram note
+
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-yaochi-telegram-20260819.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore Telegram note only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('yaochi-event-v2.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '''              <p class="important">【特別留意】8/29–8/31三天茹素，晚上6點過後禁食，可喝水，助淨化身心轉氣。</p>\n'''
+          telegram = '''              <p>以上護持功德金，請洽本院行政團隊 <a href="https://t.me/lyyuan" target="_blank" rel="noopener">Telegram</a>。</p>\n'''
+          if telegram in s:
+              raise SystemExit('Telegram note already present; no change needed')
+          if marker not in s:
+              raise SystemExit('Target marker not found; no change made')
+          s = s.replace(marker, marker + telegram, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit change
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add yaochi-event-v2.html
+          git commit -m 'fix: restore yaochi Telegram note'
+          git push
