@@ -116,6 +116,18 @@ function prepareGmailWindow() {
   return emailWindow;
 }
 
+function openOfficialGmailDraft(recipients, subject, body, emailWindow = null) {
+  const url = officialGmailComposeUrl(recipients, subject, body);
+  const draftWindow = emailWindow && !emailWindow.closed ? emailWindow : prepareGmailWindow();
+  if (!draftWindow) {
+    alert("瀏覽器阻擋了 Gmail 新視窗。請允許 lyyuan.tw 開啟彈出式視窗後再試一次；目前後台頁面會保留不變。");
+    return false;
+  }
+  draftWindow.location.href = url;
+  try { draftWindow.opener = null; } catch {}
+  return true;
+}
+
 function updateButtonState() {
   const enabled = Boolean(currentArticleId()) && isPublished();
   [previewButton, notifyButton].forEach((button) => {
@@ -159,6 +171,7 @@ async function handlePreview() {
 async function handleNotify() {
   const articleId = currentArticleId();
   if (!articleId || !isPublished()) return;
+
   const emailWindow = prepareGmailWindow();
   if (!emailWindow) {
     showToast("瀏覽器阻擋了 Gmail 新視窗。請允許 lyyuan.tw 開啟彈出式視窗後再試。", "error");
@@ -167,33 +180,28 @@ async function handleNotify() {
 
   notifyButton.disabled = true;
   previewButton.disabled = true;
-  setNotificationStatus("正在確認目前有贊助文章閱讀資格的會員…", "saving");
+  setNotificationStatus("正在建立靈元院 Gmail 通知草稿…", "saving");
+
   try {
     const recipients = await collectArticleNotificationRecipients();
     if (!recipients.length) {
-      emailWindow.close();
+      emailWindow.document.body.innerHTML = `<div style="font-family:-apple-system,BlinkMacSystemFont,'Noto Sans TC','Microsoft JhengHei',sans-serif;padding:32px;color:#594F47;line-height:1.8"><strong>目前沒有符合贊助文章閱讀資格的會員。</strong><br><br>此視窗不會寄出任何信件，可以直接關閉。</div>`;
       setNotificationStatus("目前沒有符合贊助文章閱讀資格的會員。", "error");
       showToast("目前沒有符合閱讀資格的會員，因此未建立通知信。", "error");
       return;
     }
 
     const mail = notificationEmailContent();
-    const confirmed = window.confirm(
-      `確定要建立這篇文章的上架通知信嗎？\n\n文章：${mail.title}\n寄件帳號：${OFFICIAL_SENDER_EMAIL}\n收件方式：密件副本 BCC\n預計收件人數：${recipients.length.toLocaleString("zh-TW")} 位\n\n按「確定」後會開啟靈元院官方 Gmail，信件內容與收件名單會自動填好；請由行政人員確認後再按 Gmail 的「寄送」。`
-    );
-    if (!confirmed) {
-      emailWindow.close();
-      setNotificationStatus("已取消建立通知信。", "");
-      return;
-    }
+    const opened = openOfficialGmailDraft(recipients, mail.subject, mail.body, emailWindow);
+    if (!opened) return;
 
-    emailWindow.location.href = officialGmailComposeUrl(recipients, mail.subject, mail.body);
-    try { emailWindow.opener = null; } catch {}
-    setNotificationStatus(`已開啟 ${OFFICIAL_SENDER_EMAIL}｜BCC ${recipients.length.toLocaleString("zh-TW")} 位｜請確認後寄送`, "success");
-    showToast("已用靈元院官方 Gmail 建立通知信，請確認內容後按下寄送。", "success");
+    setNotificationStatus(`已開啟 ${OFFICIAL_SENDER_EMAIL}｜BCC ${recipients.length.toLocaleString("zh-TW")} 位｜請在 Gmail 確認內容後按「寄送」`, "success");
+    showToast("已開啟靈元院官方 Gmail 草稿，請確認內容與收件名單後再按寄送。", "success");
   } catch (error) {
-    if (!emailWindow.closed) emailWindow.close();
     console.error(error);
+    if (!emailWindow.closed) {
+      emailWindow.document.body.innerHTML = `<div style="font-family:-apple-system,BlinkMacSystemFont,'Noto Sans TC','Microsoft JhengHei',sans-serif;padding:32px;color:#8b3f35;line-height:1.8"><strong>通知草稿建立失敗。</strong><br><br>無法取得會員名單，請回到文章後台再試一次。</div>`;
+    }
     setNotificationStatus("通知信尚未建立｜無法取得會員名單。", "error");
     showToast("無法取得會員通知名單，請確認管理員權限後再試。", "error");
   } finally {
