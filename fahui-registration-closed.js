@@ -116,10 +116,37 @@
     }
   };
 
+  const repairArticleNavigation = () => {
+    const articleTrigger = Array.from(document.querySelectorAll(".nav-links > li > span.has-dropdown"))
+      .find((item) => item.textContent.trim() === "文選");
+    const menu = articleTrigger?.closest("li")?.querySelector(".dropdown");
+
+    if (!menu) return;
+
+    const articleLinks = [
+      ["靈．修行", "articles.html?category=spiritual"],
+      ["人．俗世", "articles.html?category=worldly"],
+      ["異．靈界", "articles.html?category=spirit-world"],
+      ["思．讀物", "articles.html?category=reading"]
+    ];
+
+    menu.replaceChildren(
+      ...articleLinks.map(([label, href]) => {
+        const listItem = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = href;
+        link.textContent = label;
+        listItem.appendChild(link);
+        return listItem;
+      })
+    );
+  };
+
   const applyPageState = () => {
     ensureStyles();
     applyUpcomingState();
     applyRegistrationClosedState();
+    repairArticleNavigation();
   };
 
   if (document.readyState === "loading") {
