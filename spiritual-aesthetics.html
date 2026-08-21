@@ -14,7 +14,7 @@ html,body{width:100%;height:100%;margin:0;background:#0b1209;overflow:hidden}
 </head>
 <body>
 <div id="loading">靈性美學館載入中</div>
-<iframe id="preview" src="spiritual-aesthetics-preview.html?v=20260808-products-7" title="靈性美學館"></iframe>
+<iframe id="preview" src="spiritual-aesthetics-preview.html?v=20260821-nav-full-1" title="靈性美學館"></iframe>
 <script>
 const frame=document.getElementById('preview');
 const loading=document.getElementById('loading');
@@ -33,10 +33,60 @@ function loadInto(doc,src,marker){
   });
 }
 
+function repairFullNavigation(doc){
+  const navItems=[...doc.querySelectorAll('.nav-links>li')];
+  const menuFor=(label)=>{
+    const item=navItems.find(li=>{
+      const trigger=li.querySelector(':scope > .has-dropdown');
+      return trigger?.textContent.replace('▾','').trim()===label;
+    });
+    return item?.querySelector(':scope > .dropdown');
+  };
+
+  const videoMenu=menuFor('影像');
+  if(videoMenu){
+    videoMenu.classList.add('full-site-dropdown');
+    videoMenu.innerHTML=`
+      <li class="nav-group-label"><span>靈元院官方</span></li>
+      <li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">YT ｜ 靈元院</a></li>
+      <li class="nav-group-label"><span>宇色老師</span></li>
+      <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">YT ｜ 宇色心養生</a></li>
+      <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank" rel="noopener noreferrer">Podcast ｜ 宇色人間書影</a></li>
+      <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank" rel="noopener noreferrer">Podcast ｜ 宇色心養生</a></li>`;
+  }
+
+  const socialMenu=menuFor('社群');
+  if(socialMenu){
+    socialMenu.classList.add('full-site-dropdown');
+    socialMenu.innerHTML=`
+      <li class="nav-group-label"><span>靈元院官方</span></li>
+      <li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">FB ｜ 靈元院</a></li>
+      <li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer">IG ｜ 靈元院</a></li>
+      <li class="nav-group-label"><span>宇色老師</span></li>
+      <li><a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">FB ｜ 我在人間－宇色</a></li>
+      <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank" rel="noopener noreferrer">IG ｜ 我在人間－宇色</a></li>`;
+  }
+
+  if(!doc.getElementById('full-site-dropdown-style')){
+    const style=doc.createElement('style');
+    style.id='full-site-dropdown-style';
+    style.textContent=`
+      .dropdown.full-site-dropdown{min-width:268px;padding:8px 0}
+      .dropdown.full-site-dropdown .nav-group-label{padding:10px 20px 5px;border-top:1px solid rgba(165,130,84,.16);pointer-events:none}
+      .dropdown.full-site-dropdown .nav-group-label:first-child{padding-top:8px;border-top:0}
+      .dropdown.full-site-dropdown .nav-group-label span{display:block;color:rgba(165,130,84,.82);font-family:var(--sans);font-size:10px;letter-spacing:.16em;white-space:nowrap}
+      .dropdown.full-site-dropdown .nav-group-label+li a{padding-top:7px}
+      .dropdown.full-site-dropdown a{white-space:nowrap}`;
+    doc.head.appendChild(style);
+  }
+}
+
 frame.addEventListener('load',async()=>{
   try{
     const doc=frame.contentDocument;
     if(!doc||!doc.body)return;
+
+    repairFullNavigation(doc);
 
     if(!doc.querySelector('base[data-preview-base]')){
       const base=doc.createElement('base');
@@ -169,10 +219,12 @@ frame.addEventListener('load',async()=>{
       ['assets/product-love-photo.js?v=20260807-love-photo-1','love-photo-refresh'],
       ['assets/product-incense-photo.js?v=20260808-incense-direct-2','incense-photo-refresh'],
       ['assets/spiritual-aesthetics-incense-fit.js?v=20260808-incense-direct-2','incense-fit'],
-      ['assets/spiritual-aesthetics-copy-polish.js?v=1','copy-polish'],
+      ['assets/spiritual-aesthetics-copy-polish.js?v=20260821-nav-full-2','copy-polish'],
       ['assets/spiritual-aesthetics-quiz.js?v=5','energy-quiz']
     ];
     for(const [src,marker] of sources)await loadInto(doc,src,marker);
+
+    repairFullNavigation(doc);
 
     if(window.LYYProductImages?.career && window.LYYApplyProductPhoto){
       window.LYYApplyProductPhoto('career',window.LYYProductImages.career);
