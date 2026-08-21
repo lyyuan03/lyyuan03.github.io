@@ -39,6 +39,38 @@
     }
   }
 
+  function installFullSocialNavigation() {
+    const socialItem = [...document.querySelectorAll('.nav-links > li')].find(item => {
+      const trigger = item.querySelector(':scope > .has-dropdown');
+      return trigger?.textContent.replace('▾', '').trim() === '社群';
+    });
+    const menu = socialItem?.querySelector(':scope > .dropdown');
+    if (!menu) return;
+
+    menu.classList.add('social-dropdown-full');
+    menu.innerHTML = `
+      <li class="nav-group-label"><span>靈元院官方</span></li>
+      <li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">FB ｜ 靈元院</a></li>
+      <li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer">IG ｜ 靈元院</a></li>
+      <li class="nav-group-label"><span>宇色老師</span></li>
+      <li><a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">FB ｜ 我在人間－宇色</a></li>
+      <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank" rel="noopener noreferrer">IG ｜ 我在人間－宇色</a></li>`;
+
+    if (!document.getElementById('aesthetics-social-nav-style')) {
+      const style = document.createElement('style');
+      style.id = 'aesthetics-social-nav-style';
+      style.textContent = `
+        .dropdown.social-dropdown-full{min-width:268px;padding:8px 0}
+        .dropdown.social-dropdown-full .nav-group-label{padding:10px 20px 5px;border-top:1px solid rgba(165,130,84,.16);pointer-events:none}
+        .dropdown.social-dropdown-full .nav-group-label:first-child{padding-top:8px;border-top:0}
+        .dropdown.social-dropdown-full .nav-group-label span{display:block;color:rgba(165,130,84,.82);font-family:var(--sans);font-size:10px;letter-spacing:.16em;white-space:nowrap}
+        .dropdown.social-dropdown-full .nav-group-label+li a{padding-top:7px}
+        .dropdown.social-dropdown-full a{white-space:nowrap}
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
   function setProductCopy(key, badge, description, cta) {
     const card = document.querySelector(`[data-product="${key}"]`);
     if (!card) return;
@@ -170,6 +202,7 @@
 
   function refreshCopy() {
     installFullVideoNavigation();
+    installFullSocialNavigation();
     applyStaticCopy();
     installInvocation();
     patchGeneratedQuizCopy();
