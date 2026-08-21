@@ -7,6 +7,38 @@
   };
   const setText = (selector, text) => assignText(document.querySelector(selector), text);
 
+  function installFullVideoNavigation() {
+    const videoItem = [...document.querySelectorAll('.nav-links > li')].find(item => {
+      const trigger = item.querySelector(':scope > .has-dropdown');
+      return trigger?.textContent.replace('▾', '').trim() === '影像';
+    });
+    const menu = videoItem?.querySelector(':scope > .dropdown');
+    if (!menu) return;
+
+    menu.classList.add('video-dropdown-full');
+    menu.innerHTML = `
+      <li class="nav-group-label"><span>靈元院官方</span></li>
+      <li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">YT ｜ 靈元院</a></li>
+      <li class="nav-group-label"><span>宇色老師</span></li>
+      <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">YT ｜ 宇色心養生</a></li>
+      <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank" rel="noopener noreferrer">Podcast ｜ 宇色人間書影</a></li>
+      <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank" rel="noopener noreferrer">Podcast ｜ 宇色心養生</a></li>`;
+
+    if (!document.getElementById('aesthetics-video-nav-style')) {
+      const style = document.createElement('style');
+      style.id = 'aesthetics-video-nav-style';
+      style.textContent = `
+        .dropdown.video-dropdown-full{min-width:268px;padding:8px 0}
+        .dropdown.video-dropdown-full .nav-group-label{padding:10px 20px 5px;border-top:1px solid rgba(165,130,84,.16);pointer-events:none}
+        .dropdown.video-dropdown-full .nav-group-label:first-child{padding-top:8px;border-top:0}
+        .dropdown.video-dropdown-full .nav-group-label span{display:block;color:rgba(165,130,84,.82);font-family:var(--sans);font-size:10px;letter-spacing:.16em;white-space:nowrap}
+        .dropdown.video-dropdown-full .nav-group-label+li a{padding-top:7px}
+        .dropdown.video-dropdown-full a{white-space:nowrap}
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
   function setProductCopy(key, badge, description, cta) {
     const card = document.querySelector(`[data-product="${key}"]`);
     if (!card) return;
@@ -137,6 +169,7 @@
   }
 
   function refreshCopy() {
+    installFullVideoNavigation();
     applyStaticCopy();
     installInvocation();
     patchGeneratedQuizCopy();
