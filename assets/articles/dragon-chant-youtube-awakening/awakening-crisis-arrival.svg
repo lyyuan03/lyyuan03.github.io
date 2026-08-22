@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="家屬扶著狀態混亂的學員進入明亮課堂，老師上前觀察">
+<defs>
+ <linearGradient id="room" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5dc"/><stop offset=".55" stop-color="#e5efe2"/><stop offset="1" stop-color="#b9d6ca"/></linearGradient>
+ <radialGradient id="light"><stop stop-color="#fffbdc"/><stop offset="1" stop-color="#fffbdc" stop-opacity="0"/></radialGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#room)"/>
+<rect x="90" y="95" width="430" height="500" rx="18" fill="#ffffff" opacity=".55"/><rect x="115" y="120" width="380" height="450" rx="10" fill="#d8eff4"/>
+<circle cx="340" cy="265" r="205" fill="url(#light)"/>
+<g opacity=".25" fill="#526d5f"><rect x="970" y="135" width="420" height="25" rx="10"/><rect x="1030" y="185" width="300" height="18" rx="9"/></g>
+<g transform="translate(655 230)">
+ <ellipse cx="240" cy="520" rx="250" ry="54" fill="#4d6358" opacity=".17"/>
+ <circle cx="245" cy="128" r="72" fill="#dcae86"/>
+ <path d="M183 121 Q245 45 315 112 L307 70 Q250 35 198 80Z" fill="#3f332e"/>
+ <path d="M150 290 Q240 220 336 290 L386 545 H105Z" fill="#748d82"/>
+ <path d="M207 144 Q245 173 285 141" stroke="#c48a78" stroke-width="5" fill="none" opacity=".55"/>
+ <path d="M208 130 L228 126 M266 126 L286 132" stroke="#6a5750" stroke-width="8" stroke-linecap="round"/>
+ <path d="M110 300 Q55 345 50 430" stroke="#d7a883" stroke-width="31" stroke-linecap="round"/>
+ <path d="M350 300 Q410 350 425 435" stroke="#d7a883" stroke-width="31" stroke-linecap="round"/>
+ <path d="M155 450 C180 418 210 484 242 440 S308 414 338 456" fill="none" stroke="#f1cc71" stroke-width="10" opacity=".72"/>
+</g>
+<g transform="translate(425 320)">
+ <circle cx="85" cy="75" r="52" fill="#e1b78f"/><path d="M39 70 Q80 18 134 63 L128 32 Q84 10 48 40Z" fill="#514039"/><path d="M30 190 Q86 125 150 190 L178 390 H0Z" fill="#a47d58"/><path d="M138 190 Q205 220 250 260" fill="none" stroke="#e1b78f" stroke-width="25" stroke-linecap="round"/>
+</g>
+<g transform="translate(1110 300)">
+ <circle cx="95" cy="73" r="55" fill="#e4bc96"/><path d="M46 71 Q95 10 152 62 L148 28 Q98 5 56 38Z" fill="#44362f"/><path d="M20 200 Q96 125 170 200 L202 410 H0Z" fill="#4b665a"/><path d="M35 208 Q-18 255 -55 315" fill="none" stroke="#e4bc96" stroke-width="27" stroke-linecap="round"/>
+</g>
+<circle cx="910" cy="400" r="170" fill="#fff3b4" opacity=".22" filter="url(#soft)"/>
+</svg>
