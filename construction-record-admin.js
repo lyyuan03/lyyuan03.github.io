@@ -2,7 +2,7 @@ import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, onSnapshot, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const CONSTRUCTION_CONTENT_VERSION = 2;
+const CONSTRUCTION_CONTENT_VERSION = 3;
 
 const RECORD_EVENTS = [
   {
@@ -12,7 +12,7 @@ const RECORD_EVENTS = [
   },
   {
     id: "2026-yaochi-lineage-lamp",
-    name: "丙午護法續脈燈首",
+    name: "丙午瑤池金母聖誕法會點燈參與者",
     status: "active"
   }
 ];
@@ -21,7 +21,7 @@ const RECORD_ARTICLES = [
   {
     id: "2026-building-patron-record",
     slug: "2026-building-patron-record",
-    title: "靈元院建院・總功德主專屬紀錄",
+    title: "靈元院建院願心見證專頁－丙午建院功德主專屬",
     eventId: "2026-yaochi-building-patron",
     eventName: "丙午建院總功德主",
     excerpt: "一念護持，共同成院。此頁為建院總功德主專屬紀錄，完整更新靈元院建院進度、空間設計、施工實景，以及宇色老師親自說明的建院近況。",
@@ -133,48 +133,46 @@ const RECORD_ARTICLES = [
   {
     id: "2026-lineage-lamp-building-record",
     slug: "2026-lineage-lamp-building-record",
-    title: "護法續脈・建院近況專屬紀錄",
+    title: "靈元院建院願心見證專頁",
     eventId: "2026-yaochi-lineage-lamp",
-    eventName: "丙午護法續脈燈首",
-    excerpt: "此頁為護法續脈燈首專屬建院近況，提供靈元院目前建院方向、階段性進度，以及精選空間設計圖。",
+    eventName: "丙午瑤池金母聖誕法會點燈參與者",
+    excerpt: "此頁提供本次法會所有點燈參與者閱讀，讓每一份護持都能共同見證靈元院目前的建院方向、階段性進度與空間設計。",
     tier: "lamp",
     coverImage: "images/dizhi-render-garden.jpg",
     thumbnailImage: "images/dizhi-render-exterior.jpg",
-    content: `## 護法續脈，不只是一次法儀
+    content: `## 一盞燈，也是一份共同成就道場的願心
 
-感謝您於本次法儀中發心護持「丙午護法續脈燈首」。
+感謝您參與本次瑤池金母聖誕法會的點燈護持。
 
-「續脈」的意義，不只是在一場法儀中點起一盞燈，而是讓一條修行的路、一道法脈，以及一處未來可以承接眾人修持的道院，能夠繼續往下走。
+不論您此次登記的是哪一項燈種、祈願或護持項目，只要參與這次法會點燈，這份願心就已經成為靈元院建院歷程中的一份力量。
 
 靈元院奉無極瑤池金母之旨而立，最初的目的，就是希望為靈修人保留一處能共修、修法、沉思、冥想與會靈的地方。現在，這個願正在由過去的道場經驗，一步一步走向新的建院階段。
 
-此頁將提供護法續脈燈首觀看靈元院目前的建院方向、階段性進度，以及部分已完成的空間規劃。內容會隨建院進度不定期更新。
+因此，我們特別保留這一個「建院願心見證專頁」，讓本次法會所有點燈參與者，都能看見靈元院目前走到哪裡，也能知道未來這座道院想成為什麼樣的地方。
 
-## 建院目前進度
+這一頁會以階段性的方式更新建院方向、目前進度，以及部分空間設計圖。它不是一份工程報告，而是一份共同見證：讓每一盞燈背後的願心，都能看見它所護持的道場，正在如何慢慢成形。
+
+## 建院目前走到哪裡
 
 最新更新｜2026 年 8 月
 
-目前建院已從規劃逐步進入實際工程階段。
+靈元院建院已經從規劃，逐步走進實際工程階段。
 
-現階段以主殿與必要使用空間為優先，並同步處理後續住宿、庭園、水井與周邊動線等規劃。整體不追求一次完成所有項目，而是依工程順序與實際使用需求，一階段一階段把核心做好。
+現階段以主殿與必要使用空間為優先，並同步安排後續住宿、庭園、水井與周邊動線等規劃。整體不追求一次完成所有項目，而是依照工程順序與實際使用需求，一階段一階段把真正重要的核心做好。
 
-對靈元院而言，建院不是把一塊土地填滿，而是把一個願，慢慢變成一個真正可以讓人走進去、安住下來、修行的地方。
+對靈元院而言，建院並不是把一塊土地填滿，而是讓一個原本只存在於心中的願，慢慢成為一個真正可以讓人走進去、安住下來、修行的地方。
 
-## 空間設計｜從法脈，走進可以安住的地方
+## 空間設計｜從一個願，走進可以安住的地方
 
 未來的靈元院，希望保有道院應有的莊嚴，但不以繁複裝飾來製造距離。
 
 整體空間以木質、庭園、自然光、水與植物作為重要元素，讓建築與人的行走、停留、靜坐彼此連結。人在進入主殿之前，先經過庭園與廊道；在法儀之外，也能有地方讓自己慢慢沉澱。
 
-以下為目前建院的設計與空間規劃示意。實際完成樣貌仍會依工程、結構與現場條件調整。
-
-![靈元院建院整體配置示意](images/dizhi-blueprint.jpg)
+以下為目前建院的部分 3D 空間設計與規劃示意。實際完成樣貌仍會依工程、結構、安全與現場條件調整，但整體方向與精神不變。
 
 ![靈元院新道場外觀設計示意](images/dizhi-render-exterior.jpg)
 
 ![靈元院新道場庭園設計示意](images/dizhi-render-garden.jpg)
-
-![靈元院道場空間規劃示意](images/dizhi-space.jpg)
 
 ## 為什麼我們保留庭園、廊道與留白
 
@@ -182,17 +180,33 @@ const RECORD_ARTICLES = [
 
 有人可以散步，有人可以靜坐，有人只是在一棵樹下待一會兒；法儀之前有地方整理自己，法儀之後也不需要立刻回到外面的喧囂。
 
-所以庭園與留白不是附屬景觀，而是整個修行空間的一部分。道場真正要承接的，不只是儀式，也包括一個人願意安靜下來的那一刻。
+所以庭園、廊道與留白不是附屬景觀，而是整個修行空間的一部分。道場真正要承接的，不只是儀式，也包括一個人願意安靜下來的那一刻。
+
+當一個地方能讓人的呼吸慢下來、心安定下來，它才真正開始具有道場的意義。
+
+## 每一份點燈，都是建院願力的一部分
+
+很多時候，我們會把「建院」想成一件只和建築工程有關的事。
+
+但一座道院真正能被建立起來，除了土地、材料與工程之外，還需要很多人的願心長時間累積。
+
+有人護持一盞燈，有人參與一次法會，有人在自己的能力之內留下一份心意。每一份護持看起來大小不同，但當這些願心匯聚在一起，最後才有可能變成一處真正存在、能夠延續法脈，也能讓後來的人繼續修行的地方。
+
+因此，這一頁不是只屬於某一種燈首或某一個特定護持項目。
+
+它屬於這一次願意參與法會點燈、共同留下願心的每一位信眾。
 
 ## 下一階段
 
-接下來仍會依工程次序，先推進主殿與必要設施，再逐步完成其他使用空間與整體環境。
+接下來，建院仍會依工程次序，先推進主殿與必要設施，再逐步完成其他使用空間與整體環境。
 
-建院是一條很長的路。護法續脈燈首所護持的，也正是讓這條路能夠持續延伸的願力之一。
+一座道院從發願到真正完成，需要很長的時間。也正因如此，我們更希望把重要的階段留存下來，讓曾經參與的人，日後回頭看時，可以知道自己曾經在它還沒有完全成形之前，就已經成為這段建院歷程的一部分。
 
-一念護持，皆是建院願力的一部分。
+一盞燈，是一個人的願。
 
-願我們共同見證，靈元院如何從一個願，慢慢成為一處真正可以承接修行與法脈的地方。`
+許多人的願聚在一起，就會成為一座道院慢慢往前走的力量。
+
+感謝您參與本次法會點燈，也感謝您與我們一起見證靈元院從願心走向實現。`
   }
 ];
 
@@ -204,12 +218,23 @@ let ivCompatibilityUnsubscribe = null;
 async function ensureRecordEvents() {
   const snapshot = await getDoc(settingsRef);
   const saved = snapshot.exists() && Array.isArray(snapshot.data().events) ? snapshot.data().events : [];
-  const existingIds = new Set(saved.map((item) => item.id));
-  const missing = RECORD_EVENTS.filter((item) => !existingIds.has(item.id));
-  if (!missing.length) return false;
-  const events = [...saved, ...missing];
-  await setDoc(settingsRef, { events, updatedAt: serverTimestamp() }, { merge: true });
-  window.dispatchEvent(new CustomEvent("activity-events-updated", { detail: { events } }));
+  const configured = new Map(RECORD_EVENTS.map((item) => [item.id, item]));
+  let changed = false;
+  const merged = saved.map((item) => {
+    const desired = configured.get(item.id);
+    if (!desired) return item;
+    const next = { ...item, name: desired.name, status: desired.status };
+    if (item.name !== next.name || item.status !== next.status) changed = true;
+    configured.delete(item.id);
+    return next;
+  });
+  configured.forEach((item) => {
+    merged.push(item);
+    changed = true;
+  });
+  if (!changed) return false;
+  await setDoc(settingsRef, { events: merged, updatedAt: serverTimestamp() }, { merge: true });
+  window.dispatchEvent(new CustomEvent("activity-events-updated", { detail: { events: merged } }));
   return true;
 }
 
