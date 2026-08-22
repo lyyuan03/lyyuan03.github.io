@@ -1,9 +1,9 @@
-// Sponsor article access deployment marker: 20260822-dragon-highlights-1
+// Sponsor article access deployment marker: 20260822-runtime-restore-2
 const articleRoot = document.getElementById("article-root");
 
 async function loadArticleCore() {
   try {
-    await import("./articles-core-20260810-v6.js?v=20260822-dragon-highlights-1");
+    await import("./articles-core-20260810-v6.js?v=20260822-runtime-restore-2");
   } catch (error) {
     console.error("文選核心載入失敗。", error);
     if (articleRoot) {
