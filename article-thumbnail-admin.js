@@ -75,13 +75,11 @@ function removeSystemArticleEntry() {
 
 function initialize() {
   const form = document.getElementById("article-form");
-  const coverInput = document.getElementById("coverImage");
+  const coverField = document.getElementById("coverImage")?.closest(".field");
   const contentInput = document.getElementById("content");
   const titleInput = document.getElementById("title");
   const articleList = document.getElementById("article-list");
-  if (!form || !coverInput || !contentInput || !articleList || document.getElementById("thumbnail-control-panel")) return;
-
-  const coverField = coverInput.closest(".field");
+  if (!form || !coverField || !contentInput || !articleList || document.getElementById("thumbnail-control-panel")) return;
   const panel = document.createElement("section");
   panel.id = "thumbnail-control-panel";
   panel.className = "thumbnail-control-panel";
@@ -95,6 +93,11 @@ function initialize() {
     </div>
     <div class="thumbnail-control-layout">
       <div class="thumbnail-control-fields">
+        <div class="field thumbnail-image-field">
+          <label for="thumbnail-image">縮圖圖片網址</label>
+          <input id="thumbnail-image" type="text" placeholder="貼上縮圖網址或站內圖片路徑">
+          <small class="thumbnail-image-help">只影響文章列表縮圖，不會改動文章封面。</small>
+        </div>
         <div class="grid">
           <div class="field">
             <label for="thumbnail-fit">圖片顯示方式</label>
@@ -154,6 +157,7 @@ function initialize() {
     .thumbnail-control-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:start}
     .thumbnail-control-fields{display:grid;gap:13px}.thumbnail-range-field label{display:flex;justify-content:space-between}.thumbnail-range-field input{padding:0;border:0;background:transparent}
     .thumbnail-range-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(245,240,232,.38)}
+    .thumbnail-image-help{display:block;color:rgba(245,240,232,.46);font-size:10px;line-height:1.65}
     .thumbnail-scale-help{display:block;color:rgba(245,240,232,.46);font-size:10px;line-height:1.65}
     .thumbnail-control-actions{display:flex;gap:8px;flex-wrap:wrap}.thumbnail-control-actions .btn{padding:8px 11px;font-size:12px}
     .thumbnail-preview-wrap{padding:12px;border:1px solid rgba(165,130,84,.2);background:rgba(4,8,3,.34)}
@@ -171,6 +175,7 @@ function initialize() {
   const yInput = panel.querySelector("#thumbnail-position-y");
   const scaleInput = panel.querySelector("#thumbnail-scale");
   const alignInput = panel.querySelector("#thumbnail-title-align");
+  const thumbnailImageInput = panel.querySelector("#thumbnail-image");
   const xValue = panel.querySelector("#thumbnail-position-x-value");
   const yValue = panel.querySelector("#thumbnail-position-y-value");
   const scaleValue = panel.querySelector("#thumbnail-scale-value");
@@ -190,7 +195,7 @@ function initialize() {
       thumbnailPositionY: yInput.value,
       thumbnailScale: scaleInput.value,
       thumbnailTitleAlign: alignInput.value,
-      thumbnailImage: coverInput.value.trim()
+      thumbnailImage: thumbnailImageInput.value.trim()
     }, articleId);
   }
 
@@ -201,7 +206,7 @@ function initialize() {
     yInput.value = String(normalized.thumbnailPositionY);
     scaleInput.value = String(normalized.thumbnailScale);
     alignInput.value = normalized.thumbnailTitleAlign;
-    if (normalized.thumbnailImage) coverInput.value = normalized.thumbnailImage;
+    thumbnailImageInput.value = normalized.thumbnailImage;
     thumbnailDirty = false;
     updatePreview();
   }
@@ -212,7 +217,7 @@ function initialize() {
     xValue.value = `${settings.thumbnailPositionX}%`;
     yValue.value = `${settings.thumbnailPositionY}%`;
     scaleValue.value = `${settings.thumbnailScale}%`;
-    previewImage.src = coverInput.value.trim() || "";
+    previewImage.src = thumbnailImageInput.value.trim() || "";
     previewImage.hidden = !previewImage.src;
     previewImage.style.objectFit = settings.thumbnailFit;
     previewImage.style.objectPosition = position;
@@ -294,13 +299,13 @@ function initialize() {
       const recovery = !saved && RECOVERY_SETTINGS[articleId]
         ? normalizeSettings({
             ...RECOVERY_SETTINGS[articleId],
-            thumbnailImage: fallback.thumbnailImage || fallback.coverImage || ""
+            thumbnailImage: fallback.thumbnailImage || ""
           }, articleId)
         : null;
       const legacy = !saved && !recovery && hasLegacySettings(fallback)
         ? normalizeSettings({
             ...fallback,
-            thumbnailImage: fallback.thumbnailImage || fallback.coverImage || ""
+            thumbnailImage: fallback.thumbnailImage || ""
           }, articleId)
         : null;
       const source = saved || recovery || legacy || {};
@@ -357,12 +362,12 @@ function initialize() {
       markThumbnailDirty();
     });
   });
-  [coverInput, titleInput].filter(Boolean).forEach((input) => {
+  [thumbnailImageInput, titleInput].filter(Boolean).forEach((input) => {
     input.addEventListener("input", updatePreview);
     input.addEventListener("change", updatePreview);
   });
-  coverInput.addEventListener("input", markThumbnailDirty);
-  coverInput.addEventListener("change", markThumbnailDirty);
+  thumbnailImageInput.addEventListener("input", markThumbnailDirty);
+  thumbnailImageInput.addEventListener("change", markThumbnailDirty);
 
   fitInput.addEventListener("change", () => {
     scaleInput.value = "100";
@@ -380,13 +385,13 @@ function initialize() {
       status.dataset.state = "error";
       return;
     }
-    coverInput.value = image;
+    thumbnailImageInput.value = image;
     updatePreview();
     markThumbnailDirty();
   });
 
   panel.querySelector("#thumbnail-reset").addEventListener("click", () => {
-    applySettings(normalizeSettings({ thumbnailImage: coverInput.value }, activeArticleId()), activeArticleId());
+    applySettings(normalizeSettings({ thumbnailImage: thumbnailImageInput.value }, activeArticleId()), activeArticleId());
     markThumbnailDirty();
   });
   saveButton.addEventListener("click", saveSettings);
