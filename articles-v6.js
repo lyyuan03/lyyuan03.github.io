@@ -1,4 +1,4 @@
-// Sponsor article access deployment marker: 20260822-construction-title-1
+// Sponsor article access deployment marker: 20260822-construction-cover-lock-1
 const articleRoot = document.getElementById("article-root");
 
 const CONSTRUCTION_TITLE_OVERRIDES = new Map([
@@ -50,7 +50,8 @@ async function loadArticleAddons() {
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
     ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260813-guest-offer-restore-1"],
-    ["建院見證專頁", "./construction-record-page.js?v=20260822-construction-title-1"]
+    ["建院見證專頁", "./construction-record-page.js?v=20260822-construction-title-1"],
+    ["建院見證封面鎖定", "./construction-cover-lock.js?v=20260822-cover-lock-1"]
   ];
   const results = await Promise.allSettled(addons.map(([, path]) => import(path)));
   results.forEach((result, index) => {
