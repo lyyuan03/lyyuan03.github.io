@@ -6,7 +6,7 @@ export const dragonChantYoutubeAwakeningArticle = {
   displayCategory: "靈修",
   series: "靈修辨證",
   status: "draft",
-  updatedAt: "2026-08-22T08:50:00.000Z",
+  updatedAt: "2026-08-22T09:30:00.000Z",
   coverImage: "assets/articles/dragon-chant-youtube-awakening/urgent-call-cover.svg?v=20260822-3",
   thumbnailImage: "assets/articles/thumbnails/dragon-chant-youtube-awakening.svg?v=20260822-1",
   excerpt: "一段上傳到 YouTube 的龍吟，隔天引發一通求救電話。那次之後，我再也沒有公開過自己的靈音。",
