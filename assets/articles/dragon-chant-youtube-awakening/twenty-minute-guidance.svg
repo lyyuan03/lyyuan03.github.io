@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="老師以平靜引導陪伴學員，金色光線逐漸由紊亂轉為穩定">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8edcf"/><stop offset=".48" stop-color="#e6f0df"/><stop offset="1" stop-color="#b8d5c4"/></linearGradient>
+ <linearGradient id="energy" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#d4a64f"/><stop offset=".5" stop-color="#fff2ad"/><stop offset="1" stop-color="#8eb39e"/></linearGradient>
+ <filter id="g"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<circle cx="800" cy="400" r="330" fill="#fff8cf" opacity=".36"/>
+<path d="M135 700 Q420 590 690 685 T1180 660 T1570 680 V900 H0 V760Z" fill="#759584" opacity=".38"/>
+<g transform="translate(290 240)">
+ <ellipse cx="230" cy="520" rx="220" ry="50" fill="#42564d" opacity=".18"/>
+ <circle cx="230" cy="120" r="70" fill="#e1b58d"/>
+ <path d="M171 115 Q230 42 298 108 L290 66 Q235 30 182 77Z" fill="#43352f"/>
+ <path d="M110 305 Q230 214 345 305 L395 545 H70Z" fill="#4f695b"/>
+ <path d="M342 315 Q470 325 535 420" fill="none" stroke="#e1b58d" stroke-width="30" stroke-linecap="round"/>
+</g>
+<g transform="translate(910 260)">
+ <ellipse cx="215" cy="505" rx="220" ry="48" fill="#42564d" opacity=".16"/>
+ <circle cx="215" cy="118" r="70" fill="#d8aa83"/>
+ <path d="M157 113 Q218 38 286 106 L278 65 Q220 30 169 75Z" fill="#3d302b"/>
+ <path d="M95 300 Q215 215 333 300 L378 535 H58Z" fill="#7a9185"/>
+ <path d="M135 134 L162 132 M265 132 L292 134" stroke="#594b45" stroke-width="7" stroke-linecap="round"/>
+</g>
+<path d="M720 305 C620 365 660 455 745 480 C830 505 890 435 860 365 C835 305 760 305 740 355 C715 415 790 445 825 410" fill="none" stroke="#d6a449" stroke-width="14" stroke-linecap="round" opacity=".65"/>
+<path d="M725 560 C820 515 930 515 1032 560" fill="none" stroke="url(#energy)" stroke-width="18" stroke-linecap="round" filter="url(#g)"/>
+<path d="M585 490 C680 430 780 555 870 500 S1040 420 1110 495" fill="none" stroke="#fff2aa" stroke-width="9" stroke-linecap="round" filter="url(#g)"/>
+<circle cx="840" cy="500" r="230" fill="#ffeaa0" opacity=".16"/>
+<g opacity=".34" fill="#fff"><circle cx="180" cy="170" r="45"/><circle cx="1400" cy="180" r="70"/><circle cx="1480" cy="670" r="35"/></g>
+</svg>
