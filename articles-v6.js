@@ -1,5 +1,36 @@
-// Sponsor article access deployment marker: 20260822-runtime-restore-2
+// Sponsor article access deployment marker: 20260822-construction-title-1
 const articleRoot = document.getElementById("article-root");
+
+const CONSTRUCTION_TITLE_OVERRIDES = new Map([
+  ["2026-building-patron-record", "靈元院建院願心見證專頁－丙午建院功德主專屬"],
+  ["2026-lineage-lamp-building-record", "靈元院建院願心見證專頁"]
+]);
+
+function applyConstructionTitleOverrides() {
+  const activeId = new URLSearchParams(location.search).get("id") || "";
+  const activeTitle = CONSTRUCTION_TITLE_OVERRIDES.get(activeId);
+
+  if (activeTitle) {
+    const detail = document.querySelector(`.article-view[data-article-id="${CSS.escape(activeId)}"]`);
+    const heading = detail?.querySelector(":scope > h2");
+    if (heading && heading.textContent !== activeTitle) heading.textContent = activeTitle;
+    document.title = `${activeTitle} | 靈元院`;
+  }
+
+  document.querySelectorAll("a.article-card, .article-card a, a[href*='articles.html?id=']").forEach((link) => {
+    let id = "";
+    try {
+      id = new URL(link.href, location.href).searchParams.get("id") || "";
+    } catch (_) {
+      return;
+    }
+    const title = CONSTRUCTION_TITLE_OVERRIDES.get(id);
+    if (!title) return;
+    const card = link.classList.contains("article-card") ? link : link.closest(".article-card");
+    const heading = card?.querySelector(".article-list-title, h2");
+    if (heading && heading.textContent !== title) heading.textContent = title;
+  });
+}
 
 async function loadArticleCore() {
   try {
@@ -18,7 +49,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260813-guest-offer-restore-1"]
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260813-guest-offer-restore-1"],
+    ["建院見證專頁", "./construction-record-page.js?v=20260822-construction-title-1"]
   ];
   const results = await Promise.allSettled(addons.map(([, path]) => import(path)));
   results.forEach((result, index) => {
@@ -29,8 +61,15 @@ async function loadArticleAddons() {
 }
 
 void loadArticleCore().then((loaded) => {
-  if (loaded) void loadArticleAddons();
+  if (!loaded) return;
+  applyConstructionTitleOverrides();
+  void loadArticleAddons().then(applyConstructionTitleOverrides);
 });
+
+if (articleRoot) {
+  const constructionTitleObserver = new MutationObserver(applyConstructionTitleOverrides);
+  constructionTitleObserver.observe(articleRoot, { childList: true, subtree: true });
+}
 
 const articleVisualFixStyleId = "article-visual-fixes-20260811";
 if (!document.getElementById(articleVisualFixStyleId)) {
