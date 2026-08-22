@@ -14,13 +14,22 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/memberAccess/$(request.auth.token.email));
     }
 
+    function hasValidWellnessExpiry() {
+      return wellnessMember().data.keys().hasAny(["expiresAt"])
+        && (
+          wellnessMember().data.expiresAt is string
+          || (wellnessMember().data.expiresAt is timestamp
+            && wellnessMember().data.expiresAt > request.time)
+        );
+    }
+
     function isActiveWellnessMember() {
       return signedIn()
         && request.auth.token.email_verified == true
         && wellnessMember().data.email == request.auth.token.email
         && wellnessMember().data.status == "active"
         && wellnessMember().data.paymentStatus == "paid"
-        && wellnessMember().data.expiresAt > request.time
+        && hasValidWellnessExpiry()
         && wellnessMember().data.memberType == "wellness-channel"
         && wellnessMember().data.wellnessAccess == true
         && wellnessMember().data.memberLevel in ["wellness", "lingji"]
