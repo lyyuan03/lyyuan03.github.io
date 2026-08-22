@@ -1,10 +1,13 @@
-// Sponsor article access deployment marker: 20260822-construction-cover-lock-1
+// Sponsor article access deployment marker: 20260822-dragon-title-fix-1
 const articleRoot = document.getElementById("article-root");
 
 const CONSTRUCTION_TITLE_OVERRIDES = new Map([
   ["2026-building-patron-record", "靈元院建院願心見證專頁－丙午建院功德主專屬"],
   ["2026-lineage-lamp-building-record", "靈元院建院願心見證專頁"]
 ]);
+
+const DRAGON_CHANT_ARTICLE_ID = "dragon-chant-youtube-awakening";
+const DRAGON_CHANT_TITLE = "元神所吟唱的靈音——它喚醒了一個人沉睡千年的元神";
 
 function applyConstructionTitleOverrides() {
   const activeId = new URLSearchParams(location.search).get("id") || "";
@@ -30,6 +33,44 @@ function applyConstructionTitleOverrides() {
     const heading = card?.querySelector(".article-list-title, h2");
     if (heading && heading.textContent !== title) heading.textContent = title;
   });
+}
+
+function applyDragonChantOverrides() {
+  const activeId = new URLSearchParams(location.search).get("id") || "";
+
+  document.querySelectorAll("a.article-card, .article-card a, a[href*='articles.html?id=']").forEach((link) => {
+    let id = "";
+    try {
+      id = new URL(link.href, location.href).searchParams.get("id") || "";
+    } catch (_) {
+      return;
+    }
+    if (id !== DRAGON_CHANT_ARTICLE_ID) return;
+    const card = link.classList.contains("article-card") ? link : link.closest(".article-card");
+    const heading = card?.querySelector(".article-list-title, h2");
+    if (heading && heading.textContent !== DRAGON_CHANT_TITLE) heading.textContent = DRAGON_CHANT_TITLE;
+  });
+
+  if (activeId !== DRAGON_CHANT_ARTICLE_ID) return;
+
+  const detail = document.querySelector(`.article-view[data-article-id="${CSS.escape(DRAGON_CHANT_ARTICLE_ID)}"]`) || document.querySelector(".article-view");
+  const heading = detail?.querySelector(":scope > h2");
+  if (heading && heading.textContent !== DRAGON_CHANT_TITLE) heading.textContent = DRAGON_CHANT_TITLE;
+  document.title = `${DRAGON_CHANT_TITLE} | 靈元院`;
+
+  const body = detail?.querySelector(".article-body");
+  if (!body) return;
+  const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach((node) => {
+    if (node.nodeValue?.includes("*")) node.nodeValue = node.nodeValue.replace(/\*/g, "");
+  });
+}
+
+function applyArticleDisplayOverrides() {
+  applyConstructionTitleOverrides();
+  applyDragonChantOverrides();
 }
 
 async function loadArticleCore() {
@@ -63,13 +104,13 @@ async function loadArticleAddons() {
 
 void loadArticleCore().then((loaded) => {
   if (!loaded) return;
-  applyConstructionTitleOverrides();
-  void loadArticleAddons().then(applyConstructionTitleOverrides);
+  applyArticleDisplayOverrides();
+  void loadArticleAddons().then(applyArticleDisplayOverrides);
 });
 
 if (articleRoot) {
-  const constructionTitleObserver = new MutationObserver(applyConstructionTitleOverrides);
-  constructionTitleObserver.observe(articleRoot, { childList: true, subtree: true });
+  const articleDisplayObserver = new MutationObserver(applyArticleDisplayOverrides);
+  articleDisplayObserver.observe(articleRoot, { childList: true, subtree: true });
 }
 
 const articleVisualFixStyleId = "article-visual-fixes-20260811";
