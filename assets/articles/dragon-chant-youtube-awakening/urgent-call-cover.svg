@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="台北課堂中接到緊急求救電話，背景浮現金色龍形聲波">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8edd1"/><stop offset=".45" stop-color="#d9e8dc"/><stop offset="1" stop-color="#92b7a8"/></linearGradient>
+  <radialGradient id="sun"><stop stop-color="#fff9d8"/><stop offset=".55" stop-color="#ffd98b" stop-opacity=".85"/><stop offset="1" stop-color="#ffd98b" stop-opacity="0"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fff7c6"/><stop offset=".45" stop-color="#efc46c"/><stop offset="1" stop-color="#ad7833"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<circle cx="1260" cy="170" r="330" fill="url(#sun)"/>
+<g opacity=".26" fill="#fff"><circle cx="110" cy="140" r="70"/><circle cx="250" cy="100" r="38"/><circle cx="1410" cy="690" r="120"/></g>
+<path d="M880 180 C1110 35 1440 135 1395 335 C1365 475 1140 420 1155 305 C1170 195 1320 205 1300 300 C1285 368 1190 380 1140 330 C1060 250 1010 175 880 180Z" fill="none" stroke="url(#gold)" stroke-width="18" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M960 430 C1110 355 1250 390 1350 520" fill="none" stroke="#fff5c4" stroke-opacity=".7" stroke-width="7" filter="url(#glow)"/>
+<g transform="translate(185 170)">
+  <ellipse cx="335" cy="625" rx="290" ry="58" fill="#425d53" opacity=".18"/>
+  <rect x="180" y="250" width="340" height="330" rx="48" fill="#f7f3e8" opacity=".92"/>
+  <circle cx="350" cy="205" r="95" fill="#e7b98e"/>
+  <path d="M270 198 Q350 95 440 182 L432 125 Q350 75 280 132Z" fill="#47372f"/>
+  <path d="M235 380 Q350 295 470 380 L515 600 H185Z" fill="#4c6258"/>
+  <path d="M430 350 Q535 285 585 350" fill="none" stroke="#e7b98e" stroke-width="38" stroke-linecap="round"/>
+  <g transform="rotate(-9 590 315)"><rect x="548" y="226" width="86" height="170" rx="18" fill="#1e2926"/><rect x="558" y="242" width="66" height="126" rx="10" fill="#e8f3e9"/><circle cx="591" cy="382" r="7" fill="#b79a5a"/></g>
+</g>
+<g transform="translate(755 590)" opacity=".88">
+  <rect x="0" y="0" width="610" height="140" rx="28" fill="#ffffff" fill-opacity=".72"/>
+  <circle cx="78" cy="70" r="34" fill="#d7a66e"/>
+  <path d="M145 75 C210 20 260 120 320 67 S430 10 502 75" fill="none" stroke="#b58542" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="545" cy="69" r="18" fill="#8eaa99"/>
+</g>
+</svg>
