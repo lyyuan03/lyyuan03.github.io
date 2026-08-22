@@ -7,6 +7,9 @@ const currentPath = location.pathname;
 const isAdminPage = /(^|\/)admin\.html$/i.test(currentPath);
 
 if (/(^|\/)articles\.html$/i.test(currentPath)) {
+  import("./articles-chrome-fix.js?v=20260822-1").catch((error) => {
+    console.error("文選頁首頁尾版型載入失敗：", error);
+  });
   import("./article-protection.js?v=20260723-member-watermark-1");
   import("./article-paid-badge.js?v=20260722-3");
   import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
