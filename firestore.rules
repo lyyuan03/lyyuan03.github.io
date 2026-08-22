@@ -26,7 +26,6 @@ service cloud.firestore {
     function isActiveWellnessMember() {
       return signedIn()
         && request.auth.token.email_verified == true
-        && wellnessMember().data.email == request.auth.token.email
         && wellnessMember().data.status == "active"
         && wellnessMember().data.paymentStatus == "paid"
         && hasValidWellnessExpiry()
