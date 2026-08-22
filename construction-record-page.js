@@ -93,6 +93,19 @@ function installConstructionRecordPage(pageConfig) {
     firstBlock.before(targetBlock);
   }
 
+  function swapPublicRecordCover(article) {
+    if (activeId !== "2026-lineage-lamp-building-record") return;
+    const cover = article.querySelector(":scope > .article-cover");
+    if (!cover) return;
+    if (!cover.dataset.originalConstructionCover) {
+      cover.dataset.originalConstructionCover = cover.getAttribute("src") || "";
+    }
+    if (!/dizhi-hero\.jpg/i.test(cover.getAttribute("src") || "")) {
+      cover.setAttribute("src", "images/dizhi-hero.jpg");
+      cover.setAttribute("alt", "元神的呼喚｜一間靈修人專屬的靈修道院");
+    }
+  }
+
   async function ensureLatestProgressPhoto(article) {
     if (activeId !== "2026-building-patron-record") return;
     if (article.querySelector(".construction-latest-progress")) return;
@@ -175,6 +188,7 @@ function installConstructionRecordPage(pageConfig) {
     }
 
     if (activeId === "2026-lineage-lamp-building-record") {
+      swapPublicRecordCover(article);
       article.querySelectorAll(".article-body img").forEach((image) => {
         const src = image.getAttribute("src") || "";
         if (/dizhi-render-(?:exterior|garden)\.jpg/i.test(src)) return;
