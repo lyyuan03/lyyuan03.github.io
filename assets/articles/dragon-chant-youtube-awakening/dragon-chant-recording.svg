@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="明亮靜謐空間中錄製龍吟，金色聲波化為龍形穿越天空">
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eaf7ff"/><stop offset=".48" stop-color="#dcebd9"/><stop offset="1" stop-color="#f4e5bd"/></linearGradient>
+  <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffde3"/><stop offset=".5" stop-color="#f7cf72"/><stop offset="1" stop-color="#bc8034"/></linearGradient>
+  <filter id="g"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#sky)"/>
+<circle cx="1270" cy="160" r="105" fill="#fff9d6"/><circle cx="1270" cy="160" r="170" fill="#ffe9a3" opacity=".28"/>
+<path d="M0 690 Q280 600 530 685 T1040 660 T1600 650 V900 H0Z" fill="#7c9f83" opacity=".72"/>
+<g transform="translate(250 250)">
+ <ellipse cx="310" cy="500" rx="210" ry="42" fill="#4b6255" opacity=".2"/>
+ <circle cx="310" cy="155" r="78" fill="#dfb38a"/>
+ <path d="M245 150 Q305 65 385 135 L378 85 Q310 45 255 100Z" fill="#3b302a"/>
+ <path d="M180 385 Q305 255 440 385 L485 540 H140Z" fill="#4d685a"/>
+ <path d="M310 285 C300 345 300 392 310 455" stroke="#f7d78c" stroke-width="8" opacity=".7"/>
+ <rect x="468" y="315" width="88" height="170" rx="22" fill="#26342f"/>
+ <rect x="479" y="330" width="66" height="125" rx="11" fill="#e7f4ea"/>
+ <circle cx="512" cy="470" r="7" fill="#ddb85d"/>
+</g>
+<path d="M660 470 C780 385 865 535 970 430 S1160 250 1375 318" fill="none" stroke="url(#beam)" stroke-width="15" stroke-linecap="round" filter="url(#g)"/>
+<path d="M900 355 C1010 205 1230 210 1370 320 C1450 385 1410 485 1310 470 C1200 454 1195 350 1275 325 C1340 305 1390 350 1370 410" fill="none" stroke="#f5ce6b" stroke-width="13" stroke-linecap="round" filter="url(#g)"/>
+<path d="M1295 276 L1325 222 L1340 287 M1360 292 L1415 248 L1398 315" stroke="#c48b3e" stroke-width="11" stroke-linecap="round"/>
+<g fill="#ffffff" opacity=".62"><circle cx="790" cy="245" r="22"/><circle cx="865" cy="200" r="14"/><circle cx="1460" cy="545" r="32"/></g>
+</svg>
