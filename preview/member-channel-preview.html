@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>養生會員頻道｜靈元院展示版</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --deep:#071106;
+      --deep-2:#0d170c;
+      --panel:#111b10;
+      --panel-soft:#172116;
+      --gold:#A58254;
+      --gold-light:#d1b27f;
+      --cream:#F5F0E8;
+      --muted:rgba(245,240,232,.64);
+      --line:rgba(165,130,84,.25);
+      --success:#9aae82;
+      --danger:#bc8277;
+      --serif:'Noto Serif TC','Georgia',serif;
+      --sans:'Noto Sans TC','Arial',sans-serif;
+      --en:'Cormorant Garamond',serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 12% 5%,rgba(165,130,84,.12),transparent 24%),
+        radial-gradient(circle at 88% 18%,rgba(96,99,48,.13),transparent 26%),
+        var(--deep);
+      color:var(--cream);
+      font-family:var(--sans);
+      line-height:1.75;
+      letter-spacing:.04em;
+    }
+    button,a{font:inherit}
+    button{cursor:pointer}
+    .preview-banner{
+      position:sticky;
+      top:0;
+      z-index:80;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:38px;
+      padding:8px 18px;
+      background:#b89868;
+      color:#17110a;
+      font-size:12px;
+      font-weight:500;
+      letter-spacing:.08em;
+      text-align:center;
+    }
+    .preview-dot{width:7px;height:7px;border-radius:50%;background:#17110a;box-shadow:0 0 0 4px rgba(23,17,10,.12)}
+    .site-header{
+      position:sticky;
+      top:38px;
+      z-index:70;
+      backdrop-filter:blur(18px);
+      background:rgba(7,17,6,.88);
+      border-bottom:1px solid var(--line);
+    }
+    .header-inner{
+      max-width:1180px;
+      margin:0 auto;
+      min-height:74px;
+      padding:12px 24px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .brand{display:flex;align-items:center;gap:14px;min-width:0}
+    .brand img{width:84px;height:auto;display:block;filter:brightness(1.08)}
+    .brand-copy{display:flex;flex-direction:column;min-width:0}
+    .brand-copy strong{font-family:var(--serif);font-size:17px;font-weight:500;letter-spacing:.17em;color:var(--gold-light)}
+    .brand-copy span{font-family:var(--en);font-size:11px;letter-spacing:.23em;color:rgba(245,240,232,.46);white-space:nowrap}
+    .header-actions{display:flex;align-items:center;gap:10px}
+    .member-pill{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:rgba(165,130,84,.08);font-size:12px;color:rgba(245,240,232,.84)}
+    .avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#876b46,#b89b6d);color:#100c07;font-family:var(--serif);font-weight:600}
+    .ghost-btn{border:1px solid var(--line);background:transparent;color:var(--gold-light);padding:9px 13px;font-size:12px;letter-spacing:.08em}
+    .ghost-btn:hover{background:rgba(165,130,84,.1)}
+    main{max-width:1180px;margin:0 auto;padding:38px 24px 80px}
+    .hero{
+      position:relative;
+      overflow:hidden;
+      min-height:330px;
+      display:grid;
+      grid-template-columns:1.35fr .65fr;
+      gap:28px;
+      align-items:end;
+      padding:48px;
+      border:1px solid var(--line);
+      background:
+        linear-gradient(110deg,rgba(7,17,6,.96) 0%,rgba(7,17,6,.82) 48%,rgba(7,17,6,.48) 100%),
+        radial-gradient(circle at 80% 24%,rgba(165,130,84,.42),transparent 28%),
+        linear-gradient(135deg,#152013,#2b3521);
+      box-shadow:0 28px 80px rgba(0,0,0,.26);
+    }
+    .hero:after{
+      content:'';
+      position:absolute;
+      right:-70px;
+      top:-110px;
+      width:360px;
+      height:360px;
+      border:1px solid rgba(165,130,84,.2);
+      border-radius:50%;
+      box-shadow:0 0 0 42px rgba(165,130,84,.04),0 0 0 84px rgba(165,130,84,.025);
+    }
+    .hero-copy{position:relative;z-index:2}
+    .eyebrow{margin:0 0 16px;font-family:var(--en);font-size:12px;color:var(--gold-light);letter-spacing:.42em}
+    .hero h1{margin:0;font-family:var(--serif);font-size:clamp(30px,5vw,52px);font-weight:500;letter-spacing:.13em;line-height:1.35}
+    .hero-sub{max-width:640px;margin:18px 0 0;color:var(--muted);font-size:15px;line-height:2}
+    .hero-status{position:relative;z-index:2;align-self:stretch;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;padding:22px;border-left:1px solid rgba(165,130,84,.28)}
+    .status-label{font-size:11px;color:rgba(245,240,232,.48);letter-spacing:.16em}
+    .status-main{font-family:var(--serif);font-size:21px;color:var(--gold-light)}
+    .status-sub{font-size:12px;color:var(--muted)}
+    .demo-switcher{
+      margin-top:20px;
+      padding:14px 16px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      border:1px dashed rgba(165,130,84,.35);
+      background:rgba(165,130,84,.05);
+    }
+    .demo-switcher strong{font-size:12px;color:var(--gold-light);letter-spacing:.1em;margin-right:4px}
+    .demo-btn{border:1px solid var(--line);background:rgba(5,10,4,.4);color:var(--muted);padding:7px 11px;font-size:11px}
+    .demo-btn.active{background:var(--gold);border-color:var(--gold);color:#130d07}
+    .section{margin-top:42px}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .section-title span{display:block;font-family:var(--en);font-size:11px;color:rgba(165,130,84,.8);letter-spacing:.32em;margin-bottom:5px}
+    .section-title h2{margin:0;font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.13em}
+    .section-note{font-size:12px;color:rgba(245,240,232,.46);text-align:right}
+    .dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .info-card{min-height:164px;padding:22px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(20,31,18,.98),rgba(12,21,11,.94));position:relative;overflow:hidden}
+    .info-card:after{content:'';position:absolute;right:-34px;bottom:-42px;width:110px;height:110px;border-radius:50%;border:1px solid rgba(165,130,84,.13)}
+    .info-label{font-size:11px;color:rgba(245,240,232,.48);letter-spacing:.13em}
+    .info-value{margin-top:12px;font-family:var(--serif);font-size:25px;color:var(--cream);letter-spacing:.08em}
+    .info-sub{margin-top:8px;font-size:12px;color:var(--muted)}
+    .progress{height:5px;margin-top:15px;background:rgba(245,240,232,.08);overflow:hidden}
+    .progress span{display:block;height:100%;background:linear-gradient(90deg,#7d663f,#c3a675);width:62%}
+    .coupon-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .coupon{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:20px;
+      align-items:center;
+      padding:22px;
+      border:1px solid rgba(165,130,84,.34);
+      background:linear-gradient(120deg,rgba(165,130,84,.15),rgba(14,24,13,.95));
+      position:relative;
+      overflow:hidden;
+    }
+    .coupon:before,.coupon:after{content:'';position:absolute;right:92px;width:18px;height:18px;background:var(--deep);border-radius:50%}
+    .coupon:before{top:-9px}.coupon:after{bottom:-9px}
+    .coupon-name{font-family:var(--serif);font-size:18px;color:var(--gold-light);letter-spacing:.08em}
+    .coupon-rule{margin-top:7px;font-size:12px;color:var(--muted)}
+    .coupon-expiry{margin-top:10px;font-size:11px;color:rgba(245,240,232,.4)}
+    .coupon-amount{padding-left:20px;border-left:1px dashed rgba(165,130,84,.38);font-family:var(--serif);font-size:26px;color:var(--cream);white-space:nowrap}
+    .empty-coupon{padding:30px;border:1px dashed var(--line);color:var(--muted);text-align:center;grid-column:1/-1}
+    .video-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+    .filter-btn{border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 14px;font-size:12px}
+    .filter-btn.active{background:rgba(165,130,84,.2);color:var(--gold-light);border-color:rgba(165,130,84,.55)}
+    .video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .video-card{border:1px solid var(--line);background:var(--panel);overflow:hidden;transition:transform .25s ease,border-color .25s ease}
+    .video-card:hover{transform:translateY(-4px);border-color:rgba(165,130,84,.55)}
+    .thumb{aspect-ratio:16/9;position:relative;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,#283523,#0b130a)}
+    .thumb:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 72% 28%,rgba(209,178,127,.38),transparent 18%),linear-gradient(130deg,transparent 20%,rgba(255,255,255,.04) 50%,transparent 70%)}
+    .thumb-symbol{position:relative;z-index:2;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(245,240,232,.55);background:rgba(7,17,6,.48);font-size:21px;padding-left:3px;transition:.2s}
+    .video-card:not(.locked) .thumb:hover .thumb-symbol{background:rgba(165,130,84,.85);color:#110c06;border-color:var(--gold)}
+    .thumb-kicker{position:absolute;left:14px;top:12px;z-index:2;padding:5px 8px;background:rgba(7,17,6,.76);border:1px solid rgba(165,130,84,.28);font-size:10px;color:var(--gold-light);letter-spacing:.1em}
+    .lock-overlay{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:rgba(4,8,3,.72);backdrop-filter:blur(3px)}
+    .lock-icon{font-size:22px}.lock-text{font-size:11px;color:rgba(245,240,232,.78);letter-spacing:.1em}
+    .video-body{padding:17px 18px 19px}
+    .video-meta{font-size:10px;color:rgba(245,240,232,.42);letter-spacing:.1em}
+    .video-title{margin:8px 0 0;font-family:var(--serif);font-size:17px;line-height:1.7;letter-spacing:.06em}
+    .video-desc{margin:9px 0 0;font-size:12px;color:var(--muted);line-height:1.8}
+    .video-action{width:100%;margin-top:15px;border:1px solid var(--line);background:rgba(165,130,84,.08);color:var(--gold-light);padding:9px 12px;font-size:12px}
+    .video-action:hover{background:rgba(165,130,84,.18)}
+    .locked .video-action{color:rgba(245,240,232,.4);background:rgba(255,255,255,.02)}
+    .orders{border:1px solid var(--line);overflow:hidden}
+    .order-row{display:grid;grid-template-columns:1.1fr .8fr .7fr .7fr;gap:16px;padding:16px 18px;border-bottom:1px solid rgba(165,130,84,.14);align-items:center;font-size:12px}
+    .order-row:last-child{border-bottom:0}
+    .order-head{background:rgba(165,130,84,.08);color:rgba(245,240,232,.5);font-size:11px;letter-spacing:.1em}
+    .order-status{color:var(--success)}
+    .footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:18px;color:rgba(245,240,232,.38);font-size:11px}
+    .modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,7,3,.82);backdrop-filter:blur(7px)}
+    .modal.open{display:flex}
+    .modal-card{width:min(560px,100%);border:1px solid rgba(165,130,84,.45);background:#10190f;padding:30px;box-shadow:0 28px 90px rgba(0,0,0,.55)}
+    .modal-card h3{margin:0;font-family:var(--serif);font-size:22px;color:var(--gold-light);letter-spacing:.1em}
+    .modal-card p{margin:14px 0 0;color:var(--muted);font-size:14px;line-height:2}
+    .modal-actions{margin-top:24px;display:flex;justify-content:flex-end}
+    .modal-close{border:1px solid var(--line);background:rgba(165,130,84,.14);color:var(--cream);padding:9px 18px}
+    .hidden{display:none!important}
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;padding:34px}.hero-status{border-left:0;border-top:1px solid rgba(165,130,84,.28);padding:18px 0 0}
+      .dashboard-grid,.video-grid{grid-template-columns:repeat(2,1fr)}
+      .coupon-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:640px){
+      .preview-banner{position:relative;min-height:34px}.site-header{top:0}.header-inner{min-height:64px;padding:10px 16px}.brand img{width:66px}.brand-copy span{display:none}.member-pill span:last-child{display:none}.ghost-btn{display:none}
+      main{padding:24px 16px 56px}.hero{min-height:330px;padding:28px 22px}.hero h1{font-size:34px}.hero-sub{font-size:14px}.dashboard-grid,.video-grid{grid-template-columns:1fr}.section{margin-top:34px}.section-head{align-items:flex-start;flex-direction:column}.section-note{text-align:left}.coupon{grid-template-columns:1fr}.coupon:before,.coupon:after{display:none}.coupon-amount{padding:14px 0 0;border-left:0;border-top:1px dashed rgba(165,130,84,.38)}
+      .order-row{grid-template-columns:1fr 1fr}.order-head{display:none}.order-row span:nth-child(3),.order-row span:nth-child(4){text-align:right}.footer{align-items:flex-start;flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-banner"><span class="preview-dot"></span>獨立展示版｜尚未連接正式官網、會員資料、付款系統或 YouTube 權限</div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="../logo.png" alt="靈元院">
+        <div class="brand-copy">
+          <strong>養生會員頻道</strong>
+          <span>WELLNESS MEMBER CHANNEL</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="member-pill"><span class="avatar">林</span><span id="header-member-name">林師兄</span></div>
+        <button class="ghost-btn" type="button" data-modal="account">會員帳戶</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">MEMBER · WELLNESS · CHANNEL</p>
+        <h1>養生會員頻道</h1>
+        <p class="hero-sub">依照您的會員資格，觀看每月最新養生影片、專屬文章與進階內容；同時查詢會員期限、折價券、消費累積及訂購紀錄。</p>
+      </div>
+      <div class="hero-status">
+        <span class="status-label">目前觀看資格</span>
+        <strong class="status-main" id="hero-status-main">養生會員｜有效</strong>
+        <span class="status-sub" id="hero-status-sub">會員期限至 2026 年 12 月 31 日</span>
+      </div>
+    </section>
+
+    <div class="demo-switcher">
+      <strong>切換展示狀態</strong>
+      <button class="demo-btn active" type="button" data-profile="standard">第一階會員</button>
+      <button class="demo-btn" type="button" data-profile="advanced">第二階會員</button>
+      <button class="demo-btn" type="button" data-profile="expired">資格已到期</button>
+    </div>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="section-title"><span>MEMBERSHIP</span><h2>我的會員權益</h2></div>
+        <div class="section-note">此區未來可由 Firestore 自動更新</div>
+      </div>
+      <div class="dashboard-grid">
+        <article class="info-card">
+          <div class="info-label">會員等級</div>
+          <div class="info-value" id="member-tier">第一階會員</div>
+          <div class="info-sub" id="member-tier-sub">可觀看養生會員頻道與第一階限定內容</div>
+        </article>
+        <article class="info-card">
+          <div class="info-label">會員資格期限</div>
+          <div class="info-value" id="member-expiry">2026.12.31</div>
+          <div class="info-sub" id="member-expiry-sub">距離到期尚有 161 天</div>
+        </article>
+        <article class="info-card">
+          <div class="info-label">第二階會員累積進度</div>
+          <div class="info-value" id="member-progress-value">62%</div>
+          <div class="info-sub" id="member-progress-sub">年度累積 NT$62,000</div>
+          <div class="progress"><span id="member-progress-bar"></span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="section-title"><span>COUPONS</span><h2>我的專屬優惠</h2></div>
+        <div class="section-note">結帳時只顯示此會員可使用的折價券</div>
+      </div>
+      <div class="coupon-grid" id="coupon-grid"></div>
+    </section>
+
+    <section class="section" id="videos">
+      <div class="section-head">
+        <div class="section-title"><span>VIDEO LIBRARY</span><h2>會員影音內容</h2></div>
+        <div class="section-note">有權限者可播放；其餘內容顯示鎖定狀態</div>
+      </div>
+      <div class="video-filter">
+        <button class="filter-btn active" type="button" data-filter="all">全部影片</button>
+        <button class="filter-btn" type="button" data-filter="monthly">本月最新</button>
+        <button class="filter-btn" type="button" data-filter="wellness">養生保健</button>
+        <button class="filter-btn" type="button" data-filter="advanced">第二階專屬</button>
+      </div>
+      <div class="video-grid" id="video-grid"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="section-title"><span>ORDER HISTORY</span><h2>近期訂購紀錄</h2></div>
+        <div class="section-note">未來可串接購物車、付款與出貨狀態</div>
+      </div>
+      <div class="orders">
+        <div class="order-row order-head"><span>訂單編號</span><span>訂購日期</span><span>金額</span><span>狀態</span></div>
+        <div class="order-row"><span>#LY20260718031</span><span>2026.07.18</span><span>NT$15,000</span><span class="order-status">已完成</span></div>
+        <div class="order-row"><span>#LY20260330012</span><span>2026.03.30</span><span>NT$6,800</span><span class="order-status">已完成</span></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>© 2026 靈元院 Ling Yuan Yuan</span>
+      <span>展示頁不會寫入或讀取任何正式會員資料</span>
+    </footer>
+  </main>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <h3 id="modal-title">展示說明</h3>
+      <p id="modal-message"></p>
+      <div class="modal-actions"><button class="modal-close" id="modal-close" type="button">關閉</button></div>
+    </div>
+  </div>
+
+  <script>
+    const profiles={
+      standard:{
+        tier:'第一階會員',active:true,expiry:'2026.12.31',days:'距離到期尚有 161 天',progress:62,amount:'年度累積 NT$62,000',tierSub:'可觀看養生會員頻道與第一階限定內容',
+        coupons:[
+          {name:'會員續購優惠券',rule:'單筆滿 NT$5,000 可折抵',expiry:'使用期限：2027.07.31',amount:'NT$500'},
+          {name:'會員免運券',rule:'一般會員訂購單適用',expiry:'使用期限：2026.12.31',amount:'免運 1 次'}
+        ]
+      },
+      advanced:{
+        tier:'第二階會員',active:true,expiry:'2027.02.28',days:'距離到期尚有 220 天',progress:100,amount:'本年度已達第二階會員資格',tierSub:'可觀看全部養生頻道與第二階深度內容',
+        coupons:[
+          {name:'第二階會員專屬券',rule:'單筆滿 NT$5,000 可折抵',expiry:'使用期限：2027.07.31',amount:'NT$800'},
+          {name:'第二階會員免運券',rule:'一般會員訂購單適用',expiry:'使用期限：2027.02.28',amount:'免運 2 次'}
+        ]
+      },
+      expired:{
+        tier:'會員資格已到期',active:false,expiry:'2026.06.30',days:'目前僅能觀看公開內容',progress:62,amount:'年度累積 NT$62,000',tierSub:'續會後可恢復會員影音與專屬文章權限',coupons:[]
+      }
+    };
+
+    const videos=[
+      {id:1,category:['monthly','wellness'],level:'standard',kicker:'2026 JULY',date:'2026.07.20',title:'七月養生會員影片｜油脂、身體與大腦的真相',desc:'從日常飲食重新理解油脂選擇，建立更適合自己的養生觀念。'},
+      {id:2,category:['wellness'],level:'standard',kicker:'MEMBER',date:'2026.06.18',title:'修得越久越疲憊？重新理解深層靈性疲勞',desc:'從身心負荷與修行節奏，找回穩定、清明與可持續的日常。'},
+      {id:3,category:['wellness'],level:'standard',kicker:'MEMBER',date:'2026.05.21',title:'靜坐真正有效的五種練習方式',desc:'從長期實修與現代研究中，整理適合日常執行的靜心方法。'},
+      {id:4,category:['advanced'],level:'advanced',kicker:'LEVEL II',date:'2026.07.12',title:'第二階專屬｜從元神觀點理解身心能量',desc:'僅開放第二階會員觀看的進階會員內容。'},
+      {id:5,category:['advanced'],level:'advanced',kicker:'LEVEL II',date:'2026.06.08',title:'第二階專屬｜修行中真正需要辨認的內在變化',desc:'透過更深入的生命觀察，理解修行歷程中的轉折。'},
+      {id:6,category:['wellness'],level:'standard',kicker:'ARCHIVE',date:'2026.04.19',title:'睡眠、壓力與身體修復的日常節奏',desc:'整理會員可以實際運用的睡眠與身心修復原則。'}
+    ];
+
+    let currentProfile='standard';
+    let currentFilter='all';
+    const modal=document.getElementById('modal');
+    const modalTitle=document.getElementById('modal-title');
+    const modalMessage=document.getElementById('modal-message');
+
+    function openModal(title,message){modalTitle.textContent=title;modalMessage.textContent=message;modal.classList.add('open')}
+    function closeModal(){modal.classList.remove('open')}
+    document.getElementById('modal-close').addEventListener('click',closeModal);
+    modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+    function canWatch(video){
+      const profile=profiles[currentProfile];
+      if(!profile.active)return false;
+      if(video.level==='advanced')return currentProfile==='advanced';
+      return true;
+    }
+
+    function renderProfile(){
+      const p=profiles[currentProfile];
+      document.getElementById('member-tier').textContent=p.tier;
+      document.getElementById('member-tier-sub').textContent=p.tierSub;
+      document.getElementById('member-expiry').textContent=p.expiry;
+      document.getElementById('member-expiry-sub').textContent=p.days;
+      document.getElementById('member-progress-value').textContent=p.progress+'%';
+      document.getElementById('member-progress-sub').textContent=p.amount;
+      document.getElementById('member-progress-bar').style.width=p.progress+'%';
+      document.getElementById('hero-status-main').textContent=p.active?(p.tier+'｜有效'):'會員資格｜已到期';
+      document.getElementById('hero-status-sub').textContent=p.active?('會員期限至 '+p.expiry.replaceAll('.',' 年 ').replace(' 年 12 年 ',' 年 12 月 ').replace(' 年 02 年 ',' 年 02 月 ')+' 日'):'目前僅開放公開內容';
+
+      const couponGrid=document.getElementById('coupon-grid');
+      if(!p.coupons.length){couponGrid.innerHTML='<div class="empty-coupon">目前沒有可使用的折價券；重新取得會員資格後，專屬優惠將顯示於此。</div>'}
+      else couponGrid.innerHTML=p.coupons.map(c=>`<article class="coupon"><div><div class="coupon-name">${c.name}</div><div class="coupon-rule">${c.rule}</div><div class="coupon-expiry">${c.expiry}</div></div><div class="coupon-amount">${c.amount}</div></article>`).join('');
+      renderVideos();
+    }
+
+    function renderVideos(){
+      const list=currentFilter==='all'?videos:videos.filter(v=>v.category.includes(currentFilter));
+      const grid=document.getElementById('video-grid');
+      grid.innerHTML=list.map(v=>{
+        const allowed=canWatch(v);
+        return `<article class="video-card ${allowed?'':'locked'}">
+          <div class="thumb">
+            <span class="thumb-kicker">${v.kicker}</span>
+            <span class="thumb-symbol">▶</span>
+            ${allowed?'':`<div class="lock-overlay"><span class="lock-icon">🔒</span><span class="lock-text">${profiles[currentProfile].active?'第二階會員專屬':'會員資格已到期'}</span></div>`}
+          </div>
+          <div class="video-body">
+            <div class="video-meta">${v.date}</div>
+            <h3 class="video-title">${v.title}</h3>
+            <p class="video-desc">${v.desc}</p>
+            <button class="video-action" type="button" data-video="${v.id}" data-allowed="${allowed}">${allowed?'播放展示影片':'查看觀看條件'}</button>
+          </div>
+        </article>`
+      }).join('');
+      grid.querySelectorAll('[data-video]').forEach(btn=>btn.addEventListener('click',()=>{
+        const v=videos.find(item=>item.id===Number(btn.dataset.video));
+        if(btn.dataset.allowed==='true')openModal('影片播放區展示','正式版本會在此開啟嵌入式 YouTube 影片，並由會員帳號、等級與到期日判斷是否顯示播放權限。目前展示版尚未放入正式影片連結。');
+        else openModal('此內容尚未開放',v.level==='advanced'&&profiles[currentProfile].active?'這支影片設定為第二階會員專屬。會員升級後，系統會自動解除鎖定。':'目前會員資格已到期，因此影片維持鎖定；重新取得會員資格後即可恢復觀看。');
+      }));
+    }
+
+    document.querySelectorAll('[data-profile]').forEach(btn=>btn.addEventListener('click',()=>{
+      currentProfile=btn.dataset.profile;
+      document.querySelectorAll('[data-profile]').forEach(b=>b.classList.toggle('active',b===btn));
+      renderProfile();
+    }));
+    document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{
+      currentFilter=btn.dataset.filter;
+      document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b===btn));
+      renderVideos();
+    }));
+    document.querySelector('[data-modal="account"]').addEventListener('click',()=>openModal('會員帳戶展示','正式版本可顯示 Google 登入帳號、會員姓名、聯絡資料與登出功能；此展示頁目前僅使用模擬會員資料。'));
+
+    renderProfile();
+  </script>
+</body>
+</html>
