@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="多位網友在不同空間聆聽龍吟後，看見夢境、光影與前世般的片段">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eaf6f1"/><stop offset=".5" stop-color="#f7e9c4"/><stop offset="1" stop-color="#c4d8ec"/></linearGradient>
+ <radialGradient id="r"><stop stop-color="#fffbdc"/><stop offset=".5" stop-color="#f6cf75" stop-opacity=".75"/><stop offset="1" stop-color="#f6cf75" stop-opacity="0"/></radialGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<circle cx="800" cy="420" r="350" fill="url(#r)" opacity=".55"/>
+<g fill="none" stroke="#d2a34e" opacity=".52"><circle cx="800" cy="420" r="120" stroke-width="9"/><circle cx="800" cy="420" r="220" stroke-width="7"/><circle cx="800" cy="420" r="330" stroke-width="5"/></g>
+<path d="M635 430 C720 340 785 495 870 405 S1040 330 1115 420" fill="none" stroke="#fff0a5" stroke-width="13" stroke-linecap="round" filter="url(#glow)"/>
+<g transform="translate(120 175)"><rect width="330" height="235" rx="32" fill="#fff" opacity=".72"/><circle cx="90" cy="83" r="42" fill="#ddb18b"/><path d="M46 82 Q88 28 138 74 L132 45 Q90 20 55 50Z" fill="#463832"/><rect x="145" y="62" width="102" height="145" rx="18" fill="#27342f"/><rect x="157" y="76" width="78" height="108" rx="10" fill="#dff0e5"/><path d="M278 55 Q318 95 280 130 Q245 160 274 200" fill="none" stroke="#e0ae54" stroke-width="8" stroke-linecap="round"/></g>
+<g transform="translate(1150 130)"><rect width="330" height="235" rx="32" fill="#fff" opacity=".72"/><circle cx="83" cy="85" r="42" fill="#e5bb94"/><path d="M42 84 Q82 30 133 77 L128 47 Q84 20 51 51Z" fill="#554139"/><rect x="148" y="62" width="100" height="145" rx="18" fill="#26342f"/><rect x="160" y="76" width="76" height="108" rx="10" fill="#e3edf7"/><g fill="#e8b95e" opacity=".65"><circle cx="286" cy="75" r="20"/><circle cx="300" cy="120" r="12"/><circle cx="274" cy="170" r="15"/></g></g>
+<g transform="translate(180 570)"><rect width="350" height="220" rx="32" fill="#fff" opacity=".72"/><circle cx="92" cy="80" r="42" fill="#ddb08a"/><path d="M50 77 Q92 25 141 73 L136 43 Q94 20 58 48Z" fill="#41332e"/><path d="M155 100 Q220 35 300 95 Q255 120 225 165 Q195 135 155 100Z" fill="#a7c8c2"/><circle cx="245" cy="95" r="26" fill="#f2cc70" opacity=".7"/></g>
+<g transform="translate(1070 565)"><rect width="350" height="220" rx="32" fill="#fff" opacity=".72"/><circle cx="92" cy="80" r="42" fill="#e2b791"/><path d="M50 78 Q91 27 141 72 L136 43 Q93 20 58 48Z" fill="#4a3a34"/><path d="M160 160 Q215 65 300 90 Q275 145 230 175 Q200 150 160 160Z" fill="#9bb5d0"/><path d="M190 136 Q235 95 283 112" fill="none" stroke="#f0c96f" stroke-width="9" stroke-linecap="round"/></g>
+<path d="M800 180 C920 65 1160 95 1255 235 C1325 340 1230 415 1145 372 C1065 332 1085 250 1150 238" fill="none" stroke="#d2a24f" stroke-width="12" stroke-linecap="round" opacity=".7" filter="url(#glow)"/>
+</svg>
