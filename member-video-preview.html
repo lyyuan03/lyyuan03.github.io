@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>會員影片中心預覽｜靈元院</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root{--bg:#071106;--panel:#10180d;--gold:#cbaa77;--cream:#f5f0e8;--muted:rgba(245,240,232,.62);--line:rgba(203,170,119,.24)}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#162312 0,#071106 42%);color:var(--cream);font-family:"Noto Sans TC",Arial,sans-serif;line-height:1.7}.wrap{max-width:1180px;margin:auto;padding:36px 20px 72px}.hero{padding:40px 28px;border:1px solid var(--line);background:rgba(16,24,13,.86)}.eyebrow{color:var(--gold);letter-spacing:.18em;font-size:12px}.hero h1{font-family:"Noto Serif TC",serif;font-weight:500;letter-spacing:.12em;margin:8px 0 10px}.hero p{max-width:760px;color:var(--muted)}.demo{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:24px}.demo select{background:#081006;color:var(--cream);border:1px solid var(--line);padding:10px 12px}.section{margin-top:30px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:14px}.section h2{font-family:"Noto Serif TC",serif;color:var(--gold);font-weight:500;letter-spacing:.1em;margin:0}.section-note{font-size:13px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{position:relative;border:1px solid var(--line);background:rgba(16,24,13,.9);overflow:hidden}.thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#1d2d18,#070c06);display:grid;place-items:center;color:rgba(245,240,232,.5);letter-spacing:.12em;text-align:center;padding:20px}.card-body{padding:16px}.tag{display:inline-block;font-size:11px;letter-spacing:.12em;color:var(--gold);border:1px solid var(--line);padding:3px 8px;margin-bottom:8px}.card h3{font-size:17px;margin:0 0 6px}.card p{font-size:13px;color:var(--muted);margin:0}.locked .thumb,.locked .card-body{filter:blur(1.5px);opacity:.42}.lock-layer{position:absolute;inset:0;display:grid;place-items:center;background:rgba(7,17,6,.58);text-align:center;padding:24px}.lock-layer strong{display:block;font-size:18px;color:var(--cream)}.lock-layer span{display:block;margin-top:6px;font-size:13px;color:var(--muted)}.hidden{display:none!important}.notice{margin-top:28px;padding:16px 18px;border:1px solid var(--line);background:rgba(203,170,119,.06);font-size:13px;color:var(--muted)}@media(max-width:860px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.grid{grid-template-columns:1fr}.hero{padding:28px 20px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero">
+<div class="eyebrow">MEMBER VIDEO CENTER · PREVIEW</div>
+<h1>靈元院會員影片中心</h1>
+<p>同一個頁面依會員等級顯示不同內容。一般會員可觀看一般會員影片；靈極會員同時可觀看一般會員與靈極會員專屬影片。</p>
+<div class="demo"><label for="role">預覽登入身分：</label><select id="role"><option value="guest">未登入</option><option value="general">一般會員</option><option value="lingji">靈極會員</option></select></div>
+</section>
+<section class="section">
+<div class="section-head"><div><h2>一般會員影片</h2><div class="section-note">一般會員與靈極會員皆可觀看</div></div></div>
+<div id="general-grid" class="grid"></div>
+</section>
+<section class="section">
+<div class="section-head"><div><h2>靈極會員專屬影片</h2><div class="section-note">一般會員可看見內容預告，但無法播放</div></div></div>
+<div id="lingji-grid" class="grid"></div>
+</section>
+<div class="notice">此頁目前只是獨立版型預覽，尚未嵌入正式官網，也沒有連接真實 Gmail 與到期日。影片標題先使用示意內容；確認版型後，再匯入頻道中實際可辨識的會員影片資料。</div>
+</main>
+<script>
+const data={general:[
+{title:'一般會員影片｜本月身心整理',desc:'示意：一般會員當月可觀看內容。'},
+{title:'一般會員影片｜日常能量練習',desc:'示意：可累積為會員影音資料庫。'},
+{title:'一般會員影片｜生活中的覺察',desc:'示意：靈極會員也包含此級別權益。'}],lingji:[
+{title:'靈極會員專屬｜本月深度解析',desc:'示意：僅靈極會員有效期間內可觀看。'},
+{title:'靈極會員專屬｜進階靈性課題',desc:'示意：一般會員只看見封面與升級提示。'},
+{title:'靈極會員專屬｜歷年會員影片',desc:'示意：會員有效期間內可回看累積內容。'}]};
+function card(item,type,locked){return `<article class="card ${locked?'locked':''}"><div class="thumb">YOUTUBE VIDEO<br>EMBED PREVIEW</div><div class="card-body"><span class="tag">${type==='general'?'一般會員':'靈極會員'}</span><h3>${item.title}</h3><p>${item.desc}</p></div>${locked?'<div class="lock-layer"><div><strong>🔒 尚未解鎖</strong><span>升級靈極會員後即可觀看</span></div></div>':''}</article>`}
+function render(){const role=document.getElementById('role').value;document.getElementById('general-grid').innerHTML=data.general.map(v=>card(v,'general',role==='guest')).join('');document.getElementById('lingji-grid').innerHTML=data.lingji.map(v=>card(v,'lingji',role!=='lingji')).join('')}
+document.getElementById('role').addEventListener('change',render);render();
+</script>
+</body>
+</html>
