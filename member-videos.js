@@ -66,12 +66,16 @@ function membershipLevel(member = {}) {
 }
 
 function isActiveWellnessMember(member = {}) {
-  if (member.memberType === "sponsor-member") return false;
-  const isWellness = member.wellnessAccess === true
-    || member.memberType === "wellness-channel"
-    || ["wellness", "lingji"].includes(member.memberLevel);
   const expiry = toDate(member.expiresAt);
-  return isWellness && member.status === "active" && Boolean(expiry && expiry > new Date());
+  return member.memberType === "wellness-channel"
+    && member.wellnessAccess === true
+    && ["wellness", "lingji"].includes(member.memberLevel)
+    && member.status === "active"
+    && member.paymentStatus === "paid"
+    && member.disabled !== true
+    && member.suspended !== true
+    && member.revokedAt == null
+    && Boolean(expiry && expiry > new Date());
 }
 
 function showAccessState(title, message, actions = "") {
@@ -194,6 +198,13 @@ onAuthStateChanged(auth, async (user) => {
     renderVideos(videos, email);
   } catch (error) {
     console.error("養生會員影片權限確認失敗：", error);
-    showAccessState("暫時無法確認會員資格", "系統目前無法完成權限核對，請稍後重新整理頁面再試。");
+    const denied = String(error?.code || "").includes("permission-denied");
+    showAccessState(
+      denied ? "會員影片權限核對失敗" : "暫時無法確認會員資格",
+      denied
+        ? "系統已登入您的會員帳號，但影片權限核對未通過。請重新整理頁面；若仍持續發生，請聯繫靈元院行政團隊。"
+        : "系統目前無法完成權限核對，請稍後重新整理頁面再試。",
+      '<button class="access-button" type="button" onclick="location.reload()">重新整理</button>'
+    );
   }
 });
