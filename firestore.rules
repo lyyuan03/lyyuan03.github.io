@@ -24,9 +24,12 @@ service cloud.firestore {
         && wellnessMember().data.memberType == "wellness-channel"
         && wellnessMember().data.wellnessAccess == true
         && wellnessMember().data.memberLevel in ["wellness", "lingji"]
-        && wellnessMember().data.disabled != true
-        && wellnessMember().data.suspended != true
-        && wellnessMember().data.revokedAt == null;
+        && (!wellnessMember().data.keys().hasAny(["disabled"])
+          || wellnessMember().data.disabled != true)
+        && (!wellnessMember().data.keys().hasAny(["suspended"])
+          || wellnessMember().data.suspended != true)
+        && (!wellnessMember().data.keys().hasAny(["revokedAt"])
+          || wellnessMember().data.revokedAt == null);
     }
 
     function isLingjiMember() {
