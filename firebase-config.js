@@ -11,6 +11,9 @@ if (/(^|\/)articles\.html$/i.test(currentPath)) {
   import("./article-paid-badge.js?v=20260722-3");
   import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
   import("./article-inline-image-display.js?v=20260807-inline-image-manager-1");
+  import("./construction-record-page.js?v=20260822-1").catch((error) => {
+    console.error("建院專屬紀錄版型載入失敗：", error);
+  });
 }
 
 if (isAdminPage) {
@@ -20,6 +23,9 @@ if (isAdminPage) {
   import("./activity-admin-bulk.js?v=20260802-bulk-selection-1");
   import("./member-admin-bulk.js?v=20260802-all-member-bulk-1");
   import("./article-inline-image-admin.js?v=20260813-manual-image-markdown-3");
+  import("./construction-record-admin.js?v=20260822-1").catch((error) => {
+    console.error("建院專屬紀錄後台初始化失敗：", error);
+  });
 }
 
 export const firebaseConfig = {
