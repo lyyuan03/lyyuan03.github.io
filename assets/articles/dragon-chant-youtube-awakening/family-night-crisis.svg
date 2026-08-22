@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="家人整夜守著狀態失控的學員，室內保留黎明般明亮光線">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c9dcec"/><stop offset=".45" stop-color="#e9e5cf"/><stop offset="1" stop-color="#f3d49b"/></linearGradient>
+ <linearGradient id="dawn" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fff9da"/><stop offset="1" stop-color="#f3c36d"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="16"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<rect x="1080" y="90" width="390" height="360" rx="18" fill="#ffffff" opacity=".66"/><rect x="1110" y="120" width="330" height="300" rx="10" fill="url(#dawn)"/>
+<circle cx="1300" cy="245" r="105" fill="#fffde9"/><path d="M1100 360 Q1260 270 1450 355 V420 H1100Z" fill="#86a58b" opacity=".72"/>
+<g transform="translate(590 250)">
+ <ellipse cx="250" cy="520" rx="280" ry="55" fill="#45594f" opacity=".2"/>
+ <circle cx="245" cy="120" r="74" fill="#d8aa83"/>
+ <path d="M182 116 Q245 38 316 108 L307 66 Q250 28 194 77Z" fill="#3d302a"/>
+ <path d="M110 320 Q235 210 365 320 L430 560 H55Z" fill="#657e72"/>
+ <path d="M80 320 Q25 250 -35 292" fill="none" stroke="#d8aa83" stroke-width="34" stroke-linecap="round"/>
+ <path d="M392 324 Q455 245 515 285" fill="none" stroke="#d8aa83" stroke-width="34" stroke-linecap="round"/>
+ <path d="M155 405 C205 345 260 485 320 385" fill="none" stroke="#f2c96f" stroke-width="13" stroke-linecap="round" opacity=".78"/>
+ <circle cx="245" cy="120" r="145" fill="#ffda7b" opacity=".13" filter="url(#glow)"/>
+</g>
+<g transform="translate(250 420)"><circle cx="90" cy="60" r="52" fill="#e0b38c"/><path d="M43 57 Q90 2 145 52 L138 22 Q92 2 52 27Z" fill="#493a33"/><path d="M20 170 Q90 108 162 170 L195 370 H0Z" fill="#9a795d"/><path d="M150 178 Q220 160 270 205" fill="none" stroke="#e0b38c" stroke-width="24" stroke-linecap="round"/></g>
+<g transform="translate(1120 500)"><circle cx="80" cy="58" r="50" fill="#e4b991"/><path d="M36 55 Q78 4 132 50 L128 20 Q83 0 45 26Z" fill="#544139"/><path d="M12 168 Q80 108 150 168 L182 360 H0Z" fill="#5f746a"/><path d="M20 175 Q-35 195 -80 240" fill="none" stroke="#e4b991" stroke-width="24" stroke-linecap="round"/></g>
+<g opacity=".35" fill="#fff"><circle cx="180" cy="170" r="45"/><circle cx="355" cy="120" r="25"/><circle cx="1490" cy="680" r="55"/></g>
+</svg>
