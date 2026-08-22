@@ -75,6 +75,24 @@ function installConstructionRecordPage(pageConfig) {
   `;
   document.head.appendChild(style);
 
+  function movePatronVisionImageToFirst(article) {
+    if (activeId !== "2026-building-patron-record") return;
+    const body = article.querySelector(".article-body");
+    if (!body) return;
+
+    const targetImage = [...body.querySelectorAll("img")].find((image) => {
+      const src = image.getAttribute("src") || "";
+      return /(?:^|\/)images\/dizhi-hero\.jpg(?:\?|$)/i.test(src) || /dizhi-hero\.jpg/i.test(src);
+    });
+    if (!targetImage) return;
+
+    const targetBlock = targetImage.closest("figure") || targetImage.closest("p") || targetImage;
+    const firstImage = body.querySelector("img");
+    if (!firstImage || firstImage === targetImage) return;
+    const firstBlock = firstImage.closest("figure") || firstImage.closest("p") || firstImage;
+    firstBlock.before(targetBlock);
+  }
+
   async function ensureLatestProgressPhoto(article) {
     if (activeId !== "2026-building-patron-record") return;
     if (article.querySelector(".construction-latest-progress")) return;
@@ -112,6 +130,7 @@ function installConstructionRecordPage(pageConfig) {
     if (article.querySelector(".construction-latest-progress")) return;
     const observer = new MutationObserver(() => {
       ensureLatestProgressPhoto(article);
+      movePatronVisionImageToFirst(article);
       if (article.querySelector(".construction-latest-progress")) observer.disconnect();
     });
     observer.observe(article, { childList: true, subtree: true });
@@ -151,6 +170,7 @@ function installConstructionRecordPage(pageConfig) {
         paragraph.classList.add("construction-video-pending");
         paragraph.textContent = "宇色老師建院影音｜即將於本頁更新";
       });
+      movePatronVisionImageToFirst(article);
       watchLatestProgressPhoto(article);
     }
 
