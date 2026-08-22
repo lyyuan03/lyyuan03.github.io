@@ -1,4 +1,4 @@
-import { dragonCanonConsciousnessFieldArticle } from "./article-dragon-canon-consciousness-field.js?v=20260816-draft-1";
+import { dragonCanonConsciousnessFieldArticle } from "./article-dragon-canon-consciousness-field.js?v=20260822-paid-highlight-1";
 import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1";
 import { ghostGateAlwaysOpenArticle } from "./article-ghost-gate-always-open.js?v=20260813-draft-1";
 import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260816-toc-images-1";
