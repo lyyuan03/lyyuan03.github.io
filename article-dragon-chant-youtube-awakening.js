@@ -6,8 +6,8 @@ export const dragonChantYoutubeAwakeningArticle = {
   displayCategory: "靈修",
   series: "靈修辨證",
   status: "draft",
-  updatedAt: "2026-08-22T08:05:00.000Z",
-  coverImage: "assets/articles/dragon-chant-youtube-awakening/urgent-call-cover.svg?v=20260822-1",
+  updatedAt: "2026-08-22T08:50:00.000Z",
+  coverImage: "assets/articles/dragon-chant-youtube-awakening/urgent-call-cover.svg?v=20260822-3",
   thumbnailImage: "assets/articles/thumbnails/dragon-chant-youtube-awakening.svg?v=20260822-1",
   excerpt: "一段上傳到 YouTube 的龍吟，隔天引發一通求救電話。那次之後，我再也沒有公開過自己的靈音。",
   accessType: "open",
@@ -33,7 +33,7 @@ export const dragonChantYoutubeAwakeningArticle = {
 
 ## 那段音頻，究竟是什麼
 
-![龍吟靈音的錄製與上傳](assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.svg?v=20260822-1)
+![龍吟靈音的錄製與上傳](assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.svg?v=20260822-3)
 
 許多年前，我常沉浸於靈動狀態的訓練，追求與元神的合一。某次靈動中，我的元神吟唱出一種悠遠而深邃的音頻，宛如龍吟自極遠之處傳來。聲音裡帶著一種很難形容的蒼茫感，純淨，卻又有極強的穿透力，彷彿把人拉往一個更古老、更遼闊的時空。
 
@@ -43,7 +43,7 @@ export const dragonChantYoutubeAwakeningArticle = {
 
 ## 失控的覺醒現象
 
-![家屬將失控學員帶到課堂現場](assets/articles/dragon-chant-youtube-awakening/awakening-crisis-arrival.svg?v=20260822-1)
+![家屬將失控學員帶到課堂現場](assets/articles/dragon-chant-youtube-awakening/awakening-crisis-arrival.svg?v=20260822-3)
 
 當那位家屬帶著學員出現在我面前時，我立刻明白事態的嚴重性。這位平時溫文儒雅的人，此刻的狀態令人震驚——眼神渙散迷茫，像喝得爛醉一般，整個意識處於極度混亂之中。我與他對話時，他會突然翻白眼，說出一些連貫性極差的話，彷彿有另一個人格正在主導他的言行。我一看便知，是「覺醒之力」發作了。
 
@@ -51,13 +51,13 @@ export const dragonChantYoutubeAwakeningArticle = {
 
 ## 錯誤的應對，讓事情更失控
 
-![家屬整夜守著失控的學員](assets/articles/dragon-chant-youtube-awakening/family-night-crisis.svg?v=20260822-1)
+![家屬整夜守著失控的學員](assets/articles/dragon-chant-youtube-awakening/family-night-crisis.svg?v=20260822-3)
 
 面對這種前所未見的狀況，慌張的家人按照傳統的理解，以為是「外靈附身」，於是讓他戴上佛珠、播放佛教音樂，希望能安撫他。這些措施不但沒有用，反而讓情況進一步惡化。他變得更加激動,開始大吼大叫，完全無法控制自己。家人整夜未眠，在恐懼與無助中，熬過了漫長的黑夜。直到想起我隔天恰巧在台北開課，才想起向我求助。
 
 ## 二十分鐘
 
-![二十分鐘的危機引導](assets/articles/dragon-chant-youtube-awakening/twenty-minute-guidance.svg?v=20260822-1)
+![二十分鐘的危機引導](assets/articles/dragon-chant-youtube-awakening/twenty-minute-guidance.svg?v=20260822-3)
 
 看著眼前這位深陷靈性危機的學員，我內心五味雜陳。一方面是對他遭遇的深深同情，另一方面，是對自己行為後果的深刻反思。但此刻最重要的，是如何安全地把人帶回來。
 
@@ -73,7 +73,7 @@ export const dragonChantYoutubeAwakeningArticle = {
 
 ## 網路上，陸續出現的異常回報
 
-![龍吟靈音在網路擴散後的異常回報](assets/articles/dragon-chant-youtube-awakening/network-ripple-reports.svg?v=20260822-1)
+![龍吟靈音在網路擴散後的異常回報](assets/articles/dragon-chant-youtube-awakening/network-ripple-reports.svg?v=20260822-3)
 
 我以為事情到此告一段落，卻沒想到，這才是真正的開始。
 
