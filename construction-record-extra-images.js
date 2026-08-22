@@ -25,7 +25,9 @@ function installExtraConstructionImages() {
         height:auto;
         border:0!important;
         box-shadow:none!important;
+        background:#d8d0c2;
       }
+      .construction-record-mode .construction-record-view .construction-extra-render.is-loading img{min-height:220px}
       .construction-record-mode .construction-record-view .construction-extra-render figcaption{
         padding:13px 16px 15px;
         color:#725b43;
@@ -37,6 +39,7 @@ function installExtraConstructionImages() {
       }
       @media(max-width:760px){
         .construction-record-mode .construction-record-view .construction-extra-render{margin:28px 0 32px}
+        .construction-record-mode .construction-record-view .construction-extra-render.is-loading img{min-height:150px}
         .construction-record-mode .construction-record-view .construction-extra-render figcaption{padding:11px 13px 13px;font-size:11px}
       }
     `;
@@ -46,43 +49,60 @@ function installExtraConstructionImages() {
   const specs = [
     {
       id: "entrance-path",
-      src: "assets/construction/2026-lineage-lamp/entrance-path.webp?v=20260822-1",
+      payload: "assets/construction/2026-lineage-lamp/entrance-path-720.jpg.b64?v=20260822-2",
       alt: "靈元院入口與石徑動線 3D 設計示意",
       caption: "入口與石徑動線｜由入口穿越植栽與木構廊架，逐步進入院區的空間設計示意。",
       anchorImage: /dizhi-render-exterior\.jpg/i
     },
     {
       id: "garden-corridor",
-      src: "assets/construction/2026-lineage-lamp/garden-corridor.webp?v=20260822-1",
+      payload: "assets/construction/2026-lineage-lamp/garden-corridor-500.jpg.b64?v=20260822-2",
       alt: "靈元院庭園與廊道 3D 設計示意",
       caption: "庭園與廊道｜木構建築、植栽與步道彼此銜接，呈現院區安定而內斂的行走尺度。",
       anchorImage: /dizhi-render-garden\.jpg/i
     },
     {
       id: "shrine-hall",
-      src: "assets/construction/2026-lineage-lamp/shrine-hall.webp?v=20260822-1",
+      payload: "assets/construction/2026-lineage-lamp/shrine-hall-500.jpg.b64?v=20260822-2",
       alt: "靈元院內部修持空間 3D 設計示意",
       caption: "內部修持空間｜以木格柵、柔和光線與水景構成沉靜的核心空間，作為未來修持與禮敬場域的設計想像。",
       headingPattern: /(主殿|殿內|內殿|修持|神尊)/
     }
   ];
 
+  const loadImagePayload = async (spec, image, figure) => {
+    try {
+      const response = await fetch(spec.payload, { cache: "reload" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const base64 = (await response.text()).replace(/\s+/g, "");
+      if (!base64.startsWith("/9j/")) throw new Error("invalid JPEG payload");
+      image.src = `data:image/jpeg;base64,${base64}`;
+      figure.classList.remove("is-loading");
+    } catch (error) {
+      console.warn(`建院設計圖載入失敗：${spec.id}`, error);
+      figure.classList.remove("is-loading");
+      figure.classList.add("is-error");
+    }
+  };
+
   const makeFigure = (spec) => {
     const figure = document.createElement("figure");
-    figure.className = "construction-extra-render";
+    figure.className = "construction-extra-render is-loading";
     figure.dataset.constructionExtra = spec.id;
+
     const image = document.createElement("img");
-    image.src = spec.src;
     image.alt = spec.alt;
     image.loading = "lazy";
     image.decoding = "async";
+
     const caption = document.createElement("figcaption");
     caption.textContent = spec.caption;
     figure.append(image, caption);
+    void loadImagePayload(spec, image, figure);
     return figure;
   };
 
-  const sectionEnd = (heading, body) => {
+  const sectionEnd = (heading) => {
     let node = heading.nextElementSibling;
     let last = heading;
     while (node && !/^H2$/i.test(node.tagName)) {
@@ -113,7 +133,7 @@ function installExtraConstructionImages() {
       if (spec.headingPattern) {
         const heading = [...body.querySelectorAll("h2,h3")].find((h) => spec.headingPattern.test(h.textContent || ""));
         if (heading) {
-          sectionEnd(heading, body).after(figure);
+          sectionEnd(heading).after(figure);
           return;
         }
       }
