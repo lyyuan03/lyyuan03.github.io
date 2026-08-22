@@ -1,7 +1,7 @@
 export const dragonChantYoutubeAwakeningArticle = {
   id: "dragon-chant-youtube-awakening",
   slug: "dragon-chant-youtube-awakening",
-  title: "我曾經把一段「龍吟」放上 YouTube，隔天，我接到一通求救電話",
+  title: "元神所吟唱的靈音——它喚醒了一個人沉睡千年的元神",
   category: "spiritual",
   displayCategory: "靈修",
   series: "靈修辨證",
@@ -17,7 +17,7 @@ export const dragonChantYoutubeAwakeningArticle = {
   bookAuthor: "宇色 Osel",
   bookPublisher: "柿子文化",
   bookPurchaseUrl: "https://www.books.com.tw/products/0011060075?sloc=main",
-  content: `**那次之後，我再也沒有公開過自己的靈音。**
+  content: `那次之後，我再也沒有公開過自己的靈音。
 
 「宇色老師，請您一定要幫幫我們！」
 
