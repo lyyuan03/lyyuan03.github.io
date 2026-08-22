@@ -1,9 +1,9 @@
-// Sponsor article access deployment marker: 20260813-1
+// Sponsor article access deployment marker: 20260822-dragon-highlights-1
 const articleRoot = document.getElementById("article-root");
 
 async function loadArticleCore() {
   try {
-    await import("./articles-core-20260810-v6.js?v=20260816-toc-images-1");
+    await import("./articles-core-20260810-v6.js?v=20260822-dragon-highlights-1");
   } catch (error) {
     console.error("文選核心載入失敗。", error);
     if (articleRoot) {
@@ -17,6 +17,7 @@ async function loadArticleCore() {
 async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
+    ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
     ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260813-guest-offer-restore-1"]
   ];
   const results = await Promise.allSettled(addons.map(([, path]) => import(path)));
