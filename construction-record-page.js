@@ -47,6 +47,11 @@ function installConstructionRecordPage(pageConfig) {
     .construction-record-mode .construction-record-view .article-body figure::after{content:"";position:absolute;right:16px;bottom:14px;width:112px;height:42px;background:url("assets/footer-logo-gold.svg") right bottom/contain no-repeat;opacity:.9;filter:drop-shadow(0 1px 3px rgba(0,0,0,.28));pointer-events:none}
     .construction-record-mode .construction-record-view .article-body p:has(>img){position:relative;display:block;margin:34px 0}
     .construction-record-mode .construction-record-view .article-body p:has(>img)::after{content:"";position:absolute;right:16px;bottom:14px;width:112px;height:42px;background:url("assets/footer-logo-gold.svg") right bottom/contain no-repeat;opacity:.9;filter:drop-shadow(0 1px 3px rgba(0,0,0,.28));pointer-events:none}
+    .construction-record-mode .construction-record-view .construction-latest-progress{margin:30px 0 40px;border:1px solid rgba(139,104,63,.24);background:rgba(165,130,84,.045);overflow:hidden}
+    .construction-record-mode .construction-record-view .construction-latest-progress::after{display:none!important}
+    .construction-record-mode .construction-record-view .construction-latest-progress img{display:block;width:100%;height:auto;border:0;box-shadow:none;background:#d8d0c2}
+    .construction-record-mode .construction-record-view .construction-latest-progress figcaption{padding:15px 18px 17px;color:#725b43;font-size:13px;line-height:1.8;letter-spacing:.04em;border-top:1px solid rgba(139,104,63,.18)}
+    .construction-record-mode .construction-record-view .construction-latest-progress figcaption strong{display:block;color:#65492f;font-size:14px;letter-spacing:.08em;margin-bottom:3px;font-weight:600}
     .construction-record-mode .construction-record-view .article-guide,
     .construction-record-mode .construction-record-view .recommended-book,
     .construction-record-mode .construction-record-view .next-reading,
@@ -65,9 +70,53 @@ function installConstructionRecordPage(pageConfig) {
       .construction-record-mode .construction-record-head{margin-bottom:14px}
       .construction-record-mode .construction-record-view .article-body figure::after,
       .construction-record-mode .construction-record-view .article-body p:has(>img)::after{right:10px;bottom:9px;width:82px;height:32px}
+      .construction-record-mode .construction-record-view .construction-latest-progress figcaption{font-size:12px;padding:13px 14px 15px}
     }
   `;
   document.head.appendChild(style);
+
+  async function ensureLatestProgressPhoto(article) {
+    if (activeId !== "2026-building-patron-record") return;
+    if (article.querySelector(".construction-latest-progress")) return;
+
+    const body = article.querySelector(".article-body");
+    if (!body) return;
+    const headings = [...body.querySelectorAll("h2")];
+    const progressHeading = headings.find((heading) => heading.textContent.includes("建院目前走到哪裡"));
+    if (!progressHeading) return;
+
+    const nextHeading = headings[headings.indexOf(progressHeading) + 1] || null;
+    const figure = document.createElement("figure");
+    figure.className = "construction-latest-progress";
+    figure.innerHTML = `
+      <img alt="靈元院 2026 年 8 月最新建院進度" loading="lazy">
+      <figcaption><strong>2026 年 8 月｜最新建院進度</strong>主體建築外觀已逐步成形，現場持續依工程節點推進。這張照片記錄的是靈元院 2026 年 8 月目前最新的建院現況。</figcaption>
+    `;
+    if (nextHeading) nextHeading.before(figure);
+    else body.appendChild(figure);
+
+    try {
+      const response = await fetch("assets/lingyuan-progress-202608.webp.b64", { cache: "force-cache" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const base64 = (await response.text()).trim();
+      figure.querySelector("img").src = `data:image/webp;base64,${base64}`;
+    } catch (error) {
+      console.warn("2026 年 8 月建院最新進度照片載入失敗：", error);
+      figure.remove();
+    }
+  }
+
+  function watchLatestProgressPhoto(article) {
+    if (activeId !== "2026-building-patron-record") return;
+    ensureLatestProgressPhoto(article);
+    if (article.querySelector(".construction-latest-progress")) return;
+    const observer = new MutationObserver(() => {
+      ensureLatestProgressPhoto(article);
+      if (article.querySelector(".construction-latest-progress")) observer.disconnect();
+    });
+    observer.observe(article, { childList: true, subtree: true });
+    window.setTimeout(() => observer.disconnect(), 15000);
+  }
 
   const apply = () => {
     const article = document.querySelector(`.article-view[data-article-id="${CSS.escape(activeId)}"]`);
@@ -102,6 +151,7 @@ function installConstructionRecordPage(pageConfig) {
         paragraph.classList.add("construction-video-pending");
         paragraph.textContent = "宇色老師建院影音｜即將於本頁更新";
       });
+      watchLatestProgressPhoto(article);
     }
 
     if (activeId === "2026-lineage-lamp-building-record") {
