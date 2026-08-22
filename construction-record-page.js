@@ -104,6 +104,15 @@ function installConstructionRecordPage(pageConfig) {
       });
     }
 
+    if (activeId === "2026-lineage-lamp-building-record") {
+      article.querySelectorAll(".article-body img").forEach((image) => {
+        const src = image.getAttribute("src") || "";
+        if (/dizhi-render-(?:exterior|garden)\.jpg/i.test(src)) return;
+        const container = image.closest("figure") || image.closest("p");
+        container?.remove();
+      });
+    }
+
     if (!article.querySelector(".construction-record-confidential")) {
       const note = document.createElement("div");
       note.className = "construction-record-confidential";
