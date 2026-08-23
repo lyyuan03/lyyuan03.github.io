@@ -3,7 +3,7 @@ import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/fire
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";
-const BRAND_VERSION = "20260823-2";
+const BRAND_VERSION = "20260823-3";
 
 const SPECIAL_ARTICLE_IMAGES = {
   "this-book-took-thirty-years": `assets/articles/thumbnails/brand-20260823/this-book-took-thirty-years.svg?v=${BRAND_VERSION}`,
@@ -35,6 +35,7 @@ const BRAND_THEMES = {
 };
 
 let hasSettingsDocument = false;
+let applyScheduled = false;
 
 function ensureBrandStyle() {
   if (document.getElementById("article-brand-thumbnail-style-20260823")) return;
@@ -84,7 +85,7 @@ function adjustSystemCounts() {
   const category = params.get("category") || "";
   const access = params.get("access") || "all";
   const summary = document.querySelector(".article-result-summary span");
-  if (!summary || summary.dataset.thumbnailSystemAdjusted === "true" || category || !["all", "free"].includes(access)) return;
+  if (!summary || summary.dataset.thumbnailSystemAdjusted === "true" || category || !["all", "free", "open"].includes(access)) return;
   const match = summary.textContent.match(/共\s*(\d+)\s*篇文章/);
   if (!match) return;
   summary.textContent = `共 ${Math.max(0, Number(match[1]) - 1)} 篇文章`;
@@ -119,6 +120,10 @@ function titleLengthClass(text) {
   return "len-long";
 }
 
+function setTextIfChanged(node, value) {
+  if (node && node.textContent !== value) node.textContent = value;
+}
+
 function ensureOverlay(media, titleText, categoryLabel, tone) {
   let overlay = media.querySelector(".article-brand-thumb-overlay");
   if (!overlay) {
@@ -127,13 +132,17 @@ function ensureOverlay(media, titleText, categoryLabel, tone) {
     overlay.innerHTML = `<div class="article-brand-thumb-head"><div><div class="article-brand-thumb-brand">靈元院</div><div class="article-brand-thumb-rule"></div><div class="article-brand-thumb-en">LYYUAN JOURNAL</div></div><div class="article-brand-thumb-category"></div></div><div class="article-brand-thumb-title"></div><div class="article-brand-thumb-foot">SELECTED READING</div>`;
     media.appendChild(overlay);
   }
-  overlay.classList.toggle("is-dark", tone === "dark");
-  overlay.classList.toggle("is-light", tone === "light");
+  const dark = tone === "dark";
+  if (overlay.classList.contains("is-dark") !== dark) overlay.classList.toggle("is-dark", dark);
+  if (overlay.classList.contains("is-light") === dark) overlay.classList.toggle("is-light", !dark);
   const titleNode = overlay.querySelector(".article-brand-thumb-title");
-  titleNode.textContent = titleText;
-  titleNode.classList.remove("len-short", "len-medium", "len-long");
-  titleNode.classList.add(titleLengthClass(titleText));
-  overlay.querySelector(".article-brand-thumb-category").textContent = categoryLabel;
+  setTextIfChanged(titleNode, titleText);
+  const lengthClass = titleLengthClass(titleText);
+  if (!titleNode.classList.contains(lengthClass)) {
+    titleNode.classList.remove("len-short", "len-medium", "len-long");
+    titleNode.classList.add(lengthClass);
+  }
+  setTextIfChanged(overlay.querySelector(".article-brand-thumb-category"), categoryLabel);
 }
 
 function applyCard(card) {
@@ -143,49 +152,56 @@ function applyCard(card) {
   if (!media) return;
   const titleText = (card.querySelector(".article-list-title")?.textContent || "靈元院文選").trim();
   const image = ensureImage(media, titleText);
-  media.dataset.brandThumbnail = "true";
+  if (media.dataset.brandThumbnail !== "true") media.dataset.brandThumbnail = "true";
 
   const specialImage = SPECIAL_ARTICLE_IMAGES[articleId];
   if (specialImage) {
     if (image.getAttribute("src") !== specialImage) image.setAttribute("src", specialImage);
-    media.dataset.brandSpecial = "true";
+    if (media.dataset.brandSpecial !== "true") media.dataset.brandSpecial = "true";
     media.querySelector(".article-brand-thumb-overlay")?.remove();
-    card.dataset.thumbnailConfigured = "brand-special";
+    if (card.dataset.thumbnailConfigured !== "brand-special") card.dataset.thumbnailConfigured = "brand-special";
     return;
   }
 
-  delete media.dataset.brandSpecial;
+  if (media.dataset.brandSpecial) delete media.dataset.brandSpecial;
   const theme = BRAND_THEMES[categoryKeyForCard(card)] || BRAND_THEMES.spiritual;
   if (image.getAttribute("src") !== theme.image) image.setAttribute("src", theme.image);
   ensureOverlay(media, titleText, theme.label, theme.tone);
-  card.dataset.thumbnailConfigured = "brand-system";
+  if (card.dataset.thumbnailConfigured !== "brand-system") card.dataset.thumbnailConfigured = "brand-system";
 }
 
 function applyAllCards() {
+  applyScheduled = false;
   ensureBrandStyle();
   removeSystemCard();
   adjustSystemCounts();
   document.querySelectorAll(".article-card[data-article-id]").forEach(applyCard);
 }
 
+function scheduleApply() {
+  if (applyScheduled) return;
+  applyScheduled = true;
+  requestAnimationFrame(applyAllCards);
+}
+
 function initialize() {
   ensureBrandStyle();
-  applyAllCards();
+  scheduleApply();
   const settingsRef = doc(db, "articles", SETTINGS_DOC_ID);
   onSnapshot(settingsRef, (snapshot) => {
     hasSettingsDocument = snapshot.exists();
-    applyAllCards();
+    scheduleApply();
   }, (error) => {
     console.warn("文章縮圖設定文件同步失敗。", error);
     hasSettingsDocument = false;
-    applyAllCards();
+    scheduleApply();
   });
   const root = document.getElementById("article-root") || document.body;
-  new MutationObserver(() => applyAllCards()).observe(root, { childList: true, subtree: true });
+  new MutationObserver(scheduleApply).observe(root, { childList: true, subtree: true });
   const tabs = document.getElementById("category-tabs");
-  if (tabs) new MutationObserver(() => adjustSystemCounts()).observe(tabs, { childList: true, subtree: true });
+  if (tabs) new MutationObserver(() => requestAnimationFrame(adjustSystemCounts)).observe(tabs, { childList: true, subtree: true });
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") applyAllCards();
+    if (document.visibilityState === "visible") scheduleApply();
   });
 }
 
