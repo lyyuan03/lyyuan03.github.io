@@ -1,120 +1,65 @@
 import { db } from "./firebase-config.js";
-import { collection, doc, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
-const SCALE_MIN = 100;
-const SCALE_MAX = 300;
 const MEDIA_BACKGROUND = "#E8E1D3";
+const BRAND_VERSION = "20260823-2";
 
-const DEFAULT_SETTINGS = {
-  thumbnailFit: "cover",
-  thumbnailPositionX: 50,
-  thumbnailPositionY: 50,
-  thumbnailScale: 100,
-  thumbnailTitleAlign: "left",
-  thumbnailImage: ""
+const SPECIAL_ARTICLE_IMAGES = {
+  "this-book-took-thirty-years": `assets/articles/thumbnails/brand-20260823/this-book-took-thirty-years.svg?v=${BRAND_VERSION}`,
+  "quantum-frequency-work-wish": `assets/articles/thumbnails/brand-20260823/quantum-frequency-work-wish.svg?v=${BRAND_VERSION}`,
+  "2058-future-person-prophecy": `assets/articles/thumbnails/brand-20260823/2058-future-person-prophecy.svg?v=${BRAND_VERSION}`
 };
 
-const THUMBNAIL_SETTING_KEYS = [
-  "thumbnailFit",
-  "thumbnailPositionX",
-  "thumbnailPositionY",
-  "thumbnailScale",
-  "thumbnailTitleAlign",
-  "thumbnailImage"
-];
-
-const FORCED_THUMBNAIL_SETTINGS = {
-  "this-book-took-thirty-years": {
-    thumbnailFit: "cover",
-    thumbnailPositionX: 50,
-    thumbnailPositionY: 50,
-    thumbnailScale: 100,
-    thumbnailTitleAlign: "left",
-    thumbnailImage: "assets/articles/thumbnails/brand-20260823/this-book-took-thirty-years.svg?v=20260823-1"
+const BRAND_THEMES = {
+  spiritual: {
+    image: `assets/articles/thumbnails/brand-system-20260823/spiritual.svg?v=${BRAND_VERSION}`,
+    tone: "dark",
+    label: "靈・修行"
   },
-  "quantum-frequency-work-wish": {
-    thumbnailFit: "cover",
-    thumbnailPositionX: 50,
-    thumbnailPositionY: 50,
-    thumbnailScale: 100,
-    thumbnailTitleAlign: "left",
-    thumbnailImage: "assets/articles/thumbnails/brand-20260823/quantum-frequency-work-wish.svg?v=20260823-1"
+  "spirit-world": {
+    image: `assets/articles/thumbnails/brand-system-20260823/spirit-world.svg?v=${BRAND_VERSION}`,
+    tone: "dark",
+    label: "異・靈界"
   },
-  "2058-future-person-prophecy": {
-    thumbnailFit: "cover",
-    thumbnailPositionX: 50,
-    thumbnailPositionY: 50,
-    thumbnailScale: 100,
-    thumbnailTitleAlign: "left",
-    thumbnailImage: "assets/articles/thumbnails/brand-20260823/2058-future-person-prophecy.svg?v=20260823-1"
+  worldly: {
+    image: `assets/articles/thumbnails/brand-system-20260823/worldly.svg?v=${BRAND_VERSION}`,
+    tone: "light",
+    label: "人・俗世"
+  },
+  reading: {
+    image: `assets/articles/thumbnails/brand-system-20260823/reading.svg?v=${BRAND_VERSION}`,
+    tone: "light",
+    label: "思・讀物"
   }
 };
 
-const RECOVERY_SETTINGS = {
-  "2026-guanyin-vow-lamp-record-v2": {
-    thumbnailFit: "cover",
-    thumbnailPositionX: 0,
-    thumbnailPositionY: 5,
-    thumbnailScale: 116,
-    thumbnailTitleAlign: "left"
-  },
-  "reading-you-can-not-fear-death": {
-    thumbnailFit: "cover",
-    thumbnailPositionX: 50,
-    thumbnailPositionY: 28,
-    thumbnailScale: 218,
-    thumbnailTitleAlign: "center"
-  }
-};
-
-function numberValue(value, fallback, min, max) {
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed)) return fallback;
-  return Math.min(max, Math.max(min, parsed));
-}
-
-function normalizeSettings(source = {}, articleId = "") {
-  const defaults = DEFAULT_SETTINGS;
-  const thumbnailFit = source.thumbnailFit === "contain" ? "contain" : defaults.thumbnailFit;
-  return {
-    thumbnailFit,
-    thumbnailPositionX: numberValue(source.thumbnailPositionX, defaults.thumbnailPositionX, 0, 100),
-    thumbnailPositionY: numberValue(source.thumbnailPositionY, defaults.thumbnailPositionY, 0, 100),
-    thumbnailScale: numberValue(source.thumbnailScale, defaults.thumbnailScale, SCALE_MIN, SCALE_MAX),
-    thumbnailTitleAlign: source.thumbnailTitleAlign === "center" ? "center" : defaults.thumbnailTitleAlign,
-    thumbnailImage: String(source.thumbnailImage || defaults.thumbnailImage || "").trim()
-  };
-}
-
-let settingsByArticle = new Map();
-let legacySettingsByArticle = new Map();
 let hasSettingsDocument = false;
 
-async function loadLegacySettings() {
-  try {
-    const publishedArticles = query(collection(db, "articles"), where("status", "==", "published"));
-    const snapshot = await getDocs(publishedArticles);
-    legacySettingsByArticle = new Map(snapshot.docs
-      .filter((item) => item.id !== SETTINGS_DOC_ID
-        && THUMBNAIL_SETTING_KEYS.some((key) => Object.prototype.hasOwnProperty.call(item.data(), key)))
-      .map((item) => {
-        const data = item.data();
-        return [item.id, {
-          ...data,
-          thumbnailImage: data.thumbnailImage || data.coverImage || ""
-        }];
-      }));
-  } catch (error) {
-    console.warn("舊版文章縮圖設定暫時無法載入。", error);
-    legacySettingsByArticle = new Map();
-  }
-}
-
-function updateSettingsFromSnapshot(snapshot) {
-  hasSettingsDocument = snapshot.exists();
-  const settings = hasSettingsDocument && snapshot.data().settings ? snapshot.data().settings : {};
-  settingsByArticle = new Map(Object.entries(settings));
+function ensureBrandStyle() {
+  if (document.getElementById("article-brand-thumbnail-style-20260823")) return;
+  const style = document.createElement("style");
+  style.id = "article-brand-thumbnail-style-20260823";
+  style.textContent = `
+    .article-card-media[data-brand-thumbnail="true"]{position:relative!important;overflow:hidden!important;background:${MEDIA_BACKGROUND}!important}
+    .article-card-media[data-brand-thumbnail="true"]>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;transform:none!important;filter:none!important;margin:0!important;padding:0!important}
+    .article-brand-thumb-overlay{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;padding:8.5% 8.5% 7.5%;pointer-events:none;text-align:left}
+    .article-brand-thumb-overlay.is-dark{color:#F2EBDD}.article-brand-thumb-overlay.is-light{color:#3F3024}
+    .article-brand-thumb-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .article-brand-thumb-brand{font-family:"Source Han Serif TC","Noto Serif TC","Songti TC",serif;font-size:clamp(12px,1.25vw,17px);letter-spacing:.18em;white-space:nowrap}
+    .article-brand-thumb-category{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:clamp(9px,.88vw,12px);letter-spacing:.12em;opacity:.74;white-space:nowrap}
+    .article-brand-thumb-rule{width:31%;height:1px;margin-top:7px;background:#A58254;opacity:.8}
+    .article-brand-thumb-en{margin-top:5px;color:#A58254;font-family:Arial,sans-serif;font-size:clamp(7px,.7vw,10px);letter-spacing:.16em}
+    .article-brand-thumb-title{margin-top:auto;margin-bottom:auto;max-width:68%;font-family:"Source Han Serif TC","Noto Serif TC","Songti TC",serif;font-weight:600;line-height:1.32;letter-spacing:.03em;text-wrap:balance;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;text-shadow:none}
+    .article-brand-thumb-title.len-short{font-size:clamp(20px,2.25vw,31px)}
+    .article-brand-thumb-title.len-medium{font-size:clamp(18px,2.05vw,28px)}
+    .article-brand-thumb-title.len-long{font-size:clamp(16px,1.8vw,25px);max-width:70%}
+    .article-brand-thumb-foot{display:flex;align-items:center;gap:9px;color:#A58254;font-family:Arial,sans-serif;font-size:clamp(7px,.7vw,10px);letter-spacing:.13em}
+    .article-brand-thumb-foot:before{content:"";width:22%;height:1px;background:#A58254;opacity:.62}
+    .article-card-media[data-brand-special="true"] .article-brand-thumb-overlay{display:none!important}
+    @media(max-width:760px){.article-brand-thumb-overlay{padding:7% 7.5% 6.5%}.article-brand-thumb-title{max-width:70%}.article-brand-thumb-title.len-long{max-width:72%}}
+  `;
+  document.head.appendChild(style);
 }
 
 function removeSystemCard() {
@@ -135,7 +80,6 @@ function adjustSystemCounts() {
     const label = (link.textContent || "").trim();
     if (label.startsWith("全部文章") || label.startsWith("免費閱讀")) subtractOne(link.querySelector("small"));
   });
-
   const params = new URLSearchParams(location.search);
   const category = params.get("category") || "";
   const access = params.get("access") || "all";
@@ -147,81 +91,103 @@ function adjustSystemCounts() {
   summary.dataset.thumbnailSystemAdjusted = "true";
 }
 
+function categoryKeyForCard(card) {
+  const meta = (card.querySelector(".article-meta")?.textContent || "").trim();
+  if (meta.includes("異") || meta.includes("靈界")) return "spirit-world";
+  if (meta.includes("人") || meta.includes("俗世")) return "worldly";
+  if (meta.includes("思") || meta.includes("讀物")) return "reading";
+  return "spiritual";
+}
+
+function ensureImage(media, titleText) {
+  let image = media.querySelector("img");
+  if (!image) {
+    media.querySelector(".article-card-placeholder")?.remove();
+    image = document.createElement("img");
+    image.alt = titleText || "靈元院文選";
+    image.loading = "lazy";
+    image.decoding = "async";
+    media.prepend(image);
+  }
+  return image;
+}
+
+function titleLengthClass(text) {
+  const length = [...String(text || "")].length;
+  if (length <= 14) return "len-short";
+  if (length <= 24) return "len-medium";
+  return "len-long";
+}
+
+function ensureOverlay(media, titleText, categoryLabel, tone) {
+  let overlay = media.querySelector(".article-brand-thumb-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.className = "article-brand-thumb-overlay";
+    overlay.innerHTML = `<div class="article-brand-thumb-head"><div><div class="article-brand-thumb-brand">靈元院</div><div class="article-brand-thumb-rule"></div><div class="article-brand-thumb-en">LYYUAN JOURNAL</div></div><div class="article-brand-thumb-category"></div></div><div class="article-brand-thumb-title"></div><div class="article-brand-thumb-foot">SELECTED READING</div>`;
+    media.appendChild(overlay);
+  }
+  overlay.classList.toggle("is-dark", tone === "dark");
+  overlay.classList.toggle("is-light", tone === "light");
+  const titleNode = overlay.querySelector(".article-brand-thumb-title");
+  titleNode.textContent = titleText;
+  titleNode.classList.remove("len-short", "len-medium", "len-long");
+  titleNode.classList.add(titleLengthClass(titleText));
+  overlay.querySelector(".article-brand-thumb-category").textContent = categoryLabel;
+}
+
 function applyCard(card) {
   const articleId = card.dataset.articleId || "";
   if (!articleId || articleId === SETTINGS_DOC_ID) return;
-  const saved = FORCED_THUMBNAIL_SETTINGS[articleId]
-    || settingsByArticle.get(articleId)
-    || RECOVERY_SETTINGS[articleId]
-    || legacySettingsByArticle.get(articleId);
-  if (!saved) return;
-
-  const image = card.querySelector(".article-card-media img");
   const media = card.querySelector(".article-card-media");
-  const title = card.querySelector(".article-list-title");
-  if (!image || !media) return;
+  if (!media) return;
+  const titleText = (card.querySelector(".article-list-title")?.textContent || "靈元院文選").trim();
+  const image = ensureImage(media, titleText);
+  media.dataset.brandThumbnail = "true";
 
-  const settings = normalizeSettings(saved, articleId);
-  const position = `${settings.thumbnailPositionX}% ${settings.thumbnailPositionY}%`;
-  if (settings.thumbnailImage && image.getAttribute("src") !== settings.thumbnailImage) {
-    image.setAttribute("src", settings.thumbnailImage);
+  const specialImage = SPECIAL_ARTICLE_IMAGES[articleId];
+  if (specialImage) {
+    if (image.getAttribute("src") !== specialImage) image.setAttribute("src", specialImage);
+    media.dataset.brandSpecial = "true";
+    media.querySelector(".article-brand-thumb-overlay")?.remove();
+    card.dataset.thumbnailConfigured = "brand-special";
+    return;
   }
 
-  image.style.setProperty("position", "absolute", "important");
-  image.style.setProperty("inset", "0", "important");
-  image.style.setProperty("width", "100%", "important");
-  image.style.setProperty("max-width", "none", "important");
-  image.style.setProperty("height", "100%", "important");
-  image.style.setProperty("max-height", "none", "important");
-  image.style.setProperty("padding", "0", "important");
-  image.style.setProperty("margin", "0", "important");
-  image.style.setProperty("object-fit", settings.thumbnailFit, "important");
-  image.style.setProperty("object-position", position, "important");
-  image.style.setProperty("transform", `scale(${settings.thumbnailScale / 100})`, "important");
-  image.style.setProperty("transform-origin", position, "important");
-  image.style.setProperty("filter", "none", "important");
-  image.style.setProperty("will-change", "transform", "important");
-
-  media.style.setProperty("position", "relative", "important");
-  media.style.setProperty("overflow", "hidden", "important");
-  media.style.setProperty("background", MEDIA_BACKGROUND, "important");
-  if (title) title.style.setProperty("text-align", settings.thumbnailTitleAlign, "important");
-  card.dataset.thumbnailConfigured = "true";
+  delete media.dataset.brandSpecial;
+  const theme = BRAND_THEMES[categoryKeyForCard(card)] || BRAND_THEMES.spiritual;
+  if (image.getAttribute("src") !== theme.image) image.setAttribute("src", theme.image);
+  ensureOverlay(media, titleText, theme.label, theme.tone);
+  card.dataset.thumbnailConfigured = "brand-system";
 }
 
 function applyAllCards() {
+  ensureBrandStyle();
   removeSystemCard();
   adjustSystemCounts();
   document.querySelectorAll(".article-card[data-article-id]").forEach(applyCard);
 }
 
-async function initialize() {
-  await loadLegacySettings();
+function initialize() {
+  ensureBrandStyle();
   applyAllCards();
-
   const settingsRef = doc(db, "articles", SETTINGS_DOC_ID);
   onSnapshot(settingsRef, (snapshot) => {
-    updateSettingsFromSnapshot(snapshot);
+    hasSettingsDocument = snapshot.exists();
     applyAllCards();
   }, (error) => {
-    console.warn("文章縮圖設定即時同步失敗。", error);
-    settingsByArticle = new Map();
+    console.warn("文章縮圖設定文件同步失敗。", error);
     hasSettingsDocument = false;
     applyAllCards();
   });
-
   const root = document.getElementById("article-root") || document.body;
   new MutationObserver(() => applyAllCards()).observe(root, { childList: true, subtree: true });
   const tabs = document.getElementById("category-tabs");
   if (tabs) new MutationObserver(() => adjustSystemCounts()).observe(tabs, { childList: true, subtree: true });
-
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") applyAllCards();
   });
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initialize, { once: true });
-} else {
-  initialize();
-}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true });
+else initialize();
