@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" fill="#071207"/>
+  <rect x="34" y="34" width="1132" height="607" rx="2" fill="none" stroke="#A58254" stroke-opacity=".38"/>
+  <path d="M74 118H286" stroke="#A58254" stroke-width="2"/>
+  <text x="74" y="96" fill="#EEE7DA" font-family="Noto Serif CJK TC, serif" font-size="28" letter-spacing="6">靈元院</text>
+  <text x="74" y="142" fill="#A58254" font-family="Arial, sans-serif" font-size="14" letter-spacing="5">LYYUAN JOURNAL</text>
+  <text x="1052" y="98" fill="#B9A788" font-family="Noto Sans CJK TC, sans-serif" font-size="16" text-anchor="end" letter-spacing="3">思・讀物</text>
+  <g fill="none" stroke="#A58254" stroke-opacity=".24">
+    <circle cx="930" cy="340" r="190" stroke-width="1"/>
+    <circle cx="930" cy="340" r="132" stroke-width="1"/>
+    <circle cx="930" cy="340" r="76" stroke-width="1"/>
+    <path d="M750 348 C820 275 870 420 940 342 S1050 276 1100 342" stroke-width="2"/>
+  </g>
+  <circle cx="930" cy="340" r="7" fill="#A58254"/>
+  <text x="74" y="314" fill="#EEE7DA" font-family="Noto Serif CJK TC, serif" font-size="58" font-weight="700" letter-spacing="2">人生卡住時</text>
+  <text x="74" y="392" fill="#EEE7DA" font-family="Noto Serif CJK TC, serif" font-size="58" font-weight="700" letter-spacing="2">先別急著更用力</text>
+  <text x="76" y="465" fill="#BEB7A9" font-family="Noto Sans CJK TC, sans-serif" font-size="20" letter-spacing="2">換一個觀看的位置，生命可能就開始移動。</text>
+  <path d="M74 548H510" stroke="#A58254" stroke-opacity=".5"/>
+  <text x="74" y="586" fill="#A58254" font-family="Arial, sans-serif" font-size="13" letter-spacing="4">SPIRITUAL READING · 2026</text>
+</svg>
