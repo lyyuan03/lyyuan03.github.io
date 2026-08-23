@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="從人生阻礙中看見新的出口">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f8d89b"/><stop offset=".55" stop-color="#d99b52"/><stop offset="1" stop-color="#8b5b36"/></linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff2c2"/><stop offset="1" stop-color="#9d693a"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#fffbe9"/><stop offset=".38" stop-color="#ffd88d" stop-opacity=".9"/><stop offset="1" stop-color="#d88c3a" stop-opacity="0"/></radialGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="1200" height="675" fill="#17191c"/>
+  <path d="M0 0h410l24 84-48 63 55 57-35 63 47 74-70 54 56 75-53 66 32 139H0z" fill="#202226"/>
+  <path d="M1200 0H790l-34 82 54 61-44 64 47 64-56 72 69 51-48 76 52 68-39 137h409z" fill="#1b1d20"/>
+  <path d="M414 0h374l-28 92 43 53-43 63 39 62-49 68 57 50-52 70 42 64-28 153H429l-35-146 46-72-51-62 62-58-49-72 51-61-44-61z" fill="url(#sky)"/>
+  <ellipse cx="604" cy="215" rx="245" ry="205" fill="url(#glow)" filter="url(#soft)"/>
+  <circle cx="603" cy="197" r="34" fill="#fff5cf" opacity=".92"/>
+  <path d="M575 675c7-108 16-178 29-228 12-45 31-77 55-104-14 48-13 91 4 129 21 49 44 116 70 203z" fill="url(#road)" opacity=".92"/>
+  <path d="M410 562c57-42 111-71 162-87" fill="none" stroke="#ffd884" stroke-width="4" opacity=".52"/>
+  <path d="M789 551c-51-38-100-64-148-79" fill="none" stroke="#ffd884" stroke-width="4" opacity=".45"/>
+  <g fill="#323438" opacity=".95">
+    <path d="M395 85l62-28 33 45-40 48-56-17z"/><path d="M431 192l49-19 31 38-23 44-57 4z"/><path d="M387 317l70-18 35 47-42 50-64-15z"/><path d="M414 445l54-17 34 39-28 55-63-3z"/>
+    <path d="M805 95l-64-27-31 47 43 47 53-20z"/><path d="M775 210l-52-21-29 40 27 44 55 1z"/><path d="M812 329l-66-21-36 48 42 50 65-16z"/><path d="M785 455l-57-20-32 41 31 54 61-5z"/>
+  </g>
+  <g transform="translate(536 484)" fill="#17191c">
+    <circle cx="44" cy="26" r="22"/><path d="M24 55c7-16 33-20 45-5 10 14 10 48 12 87H10c2-37 3-65 14-82z"/><path d="M20 132h22l-8 85H16zM50 132h22l12 85H64z"/>
+  </g>
+  <rect x="0" y="0" width="1200" height="675" fill="none" stroke="#a58254" stroke-opacity=".18"/>
+</svg>

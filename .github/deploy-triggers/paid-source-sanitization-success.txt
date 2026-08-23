@@ -1,0 +1,6 @@
+paid static source sanitation: success
+run id: 32611143441
+source workflow commit: 2d9fddc23d4d706aeea0817b0043009b0f049784
+Sanitized 0 paid article id(s) across 0 file(s).
+Static paid-source audit passed: no private suffix remains after paid-only markers.
+completed at: 2026-08-23T01:45:50Z

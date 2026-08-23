@@ -1,0 +1,5 @@
+public git history rewrite: prepared
+source commit: 29d567a6c4ff6eaa69fa0ee8c27a569c792365a1
+branch refs before rewrite: 84
+tag refs before rewrite: 0
+prepared at: 2026-08-23T02:22:40Z

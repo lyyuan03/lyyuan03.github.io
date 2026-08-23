@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "aitoearn": {
+      "type": "http",
+      "url": "https://aitoearn.ai/api/unified/mcp",
+      "headers": {
+        "x-api-key": "${AITO_EARN_API_KEY}"
+      }
+    }
+  }
+}

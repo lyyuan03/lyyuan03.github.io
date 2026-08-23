@@ -1,0 +1,4 @@
+secure paid article function: failed
+run id: 32610172772
+source commit: a0a1c5afa85f74464c6b171daadae20ba37f459c
+failed at: 2026-08-23T01:22:32Z

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">
+  <defs>
+    <radialGradient id="halo">
+      <stop stop-color="#d6bf8e" stop-opacity=".36"/>
+      <stop offset=".62" stop-color="#55705b" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#061008" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#101e15"/>
+      <stop offset="1" stop-color="#040906"/>
+    </linearGradient>
+  </defs>
+  <rect width="1536" height="1024" fill="url(#bg)"/>
+  <circle cx="768" cy="465" r="440" fill="url(#halo)"/>
+  <g fill="none" stroke="#c9b17f">
+    <circle cx="768" cy="465" r="300" stroke-width="3" opacity=".58"/>
+    <circle cx="768" cy="465" r="350" stroke-width="2" stroke-dasharray="7 18" opacity=".26"/>
+    <path d="M768 165v600M468 465h600" stroke-width="1" opacity=".14"/>
+  </g>
+  <g fill="#0b1710" stroke="#d0bb8e">
+    <circle cx="768" cy="348" r="67" stroke-width="3"/>
+    <path d="M650 696c15-151 51-251 118-251s103 100 118 251z" stroke-width="4"/>
+  </g>
+  <path d="M768 205l22 44 49 7-36 34 9 49-44-23-44 23 9-49-36-34 49-7z" fill="#cbb380" opacity=".52"/>
+  <text x="768" y="855" text-anchor="middle" fill="#ddceb0" font-family="serif" font-size="42" letter-spacing="8">能夠出手是能力，知道不該出手是修為</text>
+</svg>

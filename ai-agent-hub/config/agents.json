@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "defaultMode": "human-review",
+  "agents": {
+    "research": {
+      "name": "Agent-Reach",
+      "repository": "Panniantong/agent-reach",
+      "pinnedCommit": "93ae1d18c37b707dec053c7c4f9d91cd8ef8943d",
+      "enabled": true,
+      "runtime": "external-cli",
+      "allowedInGithubActions": true,
+      "loginPlatformsInGithubActions": false
+    },
+    "execution": {
+      "name": "Goose",
+      "enabled": false,
+      "runtime": "local-agent",
+      "allowedInGithubPages": false,
+      "requireReviewBeforeWrite": true,
+      "requireTestsBeforeCommit": true
+    },
+    "publishing": {
+      "name": "AiToEarn",
+      "repository": "NPC-Kui/aitoearn",
+      "enabled": false,
+      "runtime": "mcp",
+      "endpoint": "https://aitoearn.ai/api/unified/mcp",
+      "apiKeyEnvironmentVariable": "AITO_EARN_API_KEY",
+      "publishMode": "draft-first",
+      "requireHumanApproval": true
+    }
+  }
+}

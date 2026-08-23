@@ -1,0 +1,156 @@
+name: Sanitize Paid Static Sources
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/sanitize-paid-static-sources.mjs'
+      - '.github/workflows/sanitize-paid-static-sources.yml'
+
+jobs:
+  sanitize-paid-static-sources:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebase onto current main
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+
+      - name: Require verified private migration and deployed Firestore rules
+        run: |
+          set -euo pipefail
+          test -f .github/deploy-triggers/paid-article-migration-success.txt
+          test -f .github/deploy-triggers/firestore-rules-success.txt
+          echo "Verified private-body migration and Firestore server-side access rules are both present."
+
+      - name: Verify article admin repair invariant
+        run: |
+          set -euo pipefail
+          git show 4c96f3e80e413489a880516f74a2d7326977ab65:article-admin.js > /tmp/article-admin-original.js
+          grep -v 'article-admin-paid-security.js?v=20260823-firestore-paid-2' article-admin.js > /tmp/article-admin-without-security-import.js
+          cmp /tmp/article-admin-original.js /tmp/article-admin-without-security-import.js
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install parser for guarded sanitation
+        run: npm install --no-save --package-lock=false acorn@8
+
+      - name: Remove only verified paid bodies from public static sources
+        run: |
+          set -euo pipefail
+          node scripts/sanitize-paid-static-sources.mjs | tee /tmp/paid-sanitize.log
+
+      - name: Force browsers to fetch sanitized article modules
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_one(path, old, new):
+              p = Path(path)
+              text = p.read_text()
+              if new in text:
+                  return
+              if text.count(old) != 1:
+                  raise SystemExit(f'{path}: expected exactly one cache token to replace: {old}')
+              p.write_text(text.replace(old, new, 1))
+
+          replace_one('articles.html',
+              'articles-v6.js?v=20260823-paid-flow-1',
+              'articles-v6.js?v=20260823-paid-security-final-1')
+          replace_one('articles-v6.js',
+              './articles-core-20260810-v6.js?v=20260822-runtime-restore-2',
+              './articles-core-20260810-v6.js?v=20260823-paid-security-final-1')
+          replace_one('articles-v6.js',
+              './paid-article-secure-loader.js?v=20260823-private-body-1',
+              './paid-article-secure-loader.js?v=20260823-firestore-paid-final-1')
+          replace_one('articles-core-20260810-v6.js',
+              './static-articles.js?v=20260816-toc-images-1',
+              './static-articles.js?v=20260823-paid-private-final-1')
+          replace_one('article-admin-core.js',
+              './static-articles.js?v=20260816-six-images-1',
+              './static-articles.js?v=20260823-paid-private-final-1')
+          replace_one('admin.html',
+              'article-admin.js?v=20260816-six-images-1',
+              'article-admin.js?v=20260823-paid-security-final-1')
+
+          token = 'paid-private=20260823-final-1'
+          pattern = re.compile(r'(from\s+["\'])(\./(?:article-[^"\']+|static-articles-base)\.js(?:\?[^"\']*)?)(["\'])')
+          for path in ('static-articles.js', 'static-articles-base.js'):
+              p = Path(path)
+              text = p.read_text()
+              def repl(match):
+                  prefix, spec, suffix = match.groups()
+                  if token in spec:
+                      return match.group(0)
+                  separator = '&' if '?' in spec else '?'
+                  return f'{prefix}{spec}{separator}{token}{suffix}'
+              p.write_text(pattern.sub(repl, text))
+          PY
+
+      - name: Verify changed JavaScript syntax and security wiring
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do
+            [[ "$file" == *.js ]] || continue
+            node --check "$file"
+          done < <(git diff --name-only)
+          grep -F 'getDoc(doc(db, "paidArticleBodies", articleId))' paid-article-secure-loader.js
+          grep -F 'view.querySelectorAll(".article-paid-gate, [data-paid-gate-restored]")' paid-article-secure-loader.js
+          grep -F 'article-admin-paid-security.js?v=20260823-firestore-paid-2' article-admin.js
+          grep -F 'paid-article-secure-loader.js?v=20260823-firestore-paid-final-1' articles-v6.js
+
+      - name: Commit verified sanitation
+        run: |
+          set -euo pipefail
+          mkdir -p .github/deploy-triggers
+          {
+            echo "paid static source sanitation: success"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source workflow commit: $GITHUB_SHA"
+            grep -E '^Sanitized |^Static paid-source audit passed' /tmp/paid-sanitize.log || true
+            echo "completed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/paid-source-sanitization-success.txt
+          rm -f .github/deploy-triggers/paid-source-sanitization-failed.txt
+          rm -rf node_modules
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add article-*.js static-articles*.js articles-core-20260810-v6.js article-admin-core.js articles-v6.js articles.html admin.html .github/deploy-triggers/paid-source-sanitization-success.txt
+          git add -u .github/deploy-triggers
+          git diff --cached --quiet && { echo "No sanitation changes were staged."; exit 1; }
+          git commit -m "Remove verified paid bodies from public static sources"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Record sanitation failure
+        if: failure()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "paid static source sanitation: failed"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source workflow commit: $GITHUB_SHA"
+            echo "failed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/paid-source-sanitization-failed.txt
+          git add .github/deploy-triggers/paid-source-sanitization-failed.txt
+          git commit -m "Record failed paid source sanitation" || true
+          git push origin HEAD:main

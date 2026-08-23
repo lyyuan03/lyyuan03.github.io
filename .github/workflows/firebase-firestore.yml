@@ -1,0 +1,129 @@
+name: Deploy Firebase Firestore
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - firestore.rules
+      - firebase.json
+      - .firebaserc
+      - .github/workflows/firebase-firestore.yml
+
+jobs:
+  deploy-firestore:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Record Firestore rules deployment start
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "firestore rules: started"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "started at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/firestore-rules-started.txt
+          git add .github/deploy-triggers/firestore-rules-started.txt
+          git commit -m "Record Firestore rules deployment start" || true
+          git push origin HEAD:main
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Firestore rules directly through Firebase Rules API
+        run: |
+          set -euo pipefail
+          PROJECT_ID="lyyuan03-membership"
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+
+          jq -n --rawfile rules firestore.rules \
+            '{source:{files:[{name:"firestore.rules",content:$rules}]}}' \
+            > /tmp/firestore-ruleset.json
+
+          HTTP_STATUS="$(curl --silent --show-error \
+            --output /tmp/ruleset-response.json \
+            --write-out "%{http_code}" \
+            --request POST \
+            --header "Authorization: Bearer $ACCESS_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-binary @/tmp/firestore-ruleset.json \
+            "https://firebaserules.googleapis.com/v1/projects/$PROJECT_ID/rulesets")"
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            jq . /tmp/ruleset-response.json
+            exit 1
+          fi
+
+          RULESET_NAME="$(jq -r '.name' /tmp/ruleset-response.json)"
+          jq -n \
+            --arg name "projects/$PROJECT_ID/releases/cloud.firestore" \
+            --arg rulesetName "$RULESET_NAME" \
+            '{release:{name:$name,rulesetName:$rulesetName},updateMask:"rulesetName"}' \
+            > /tmp/firestore-release.json
+
+          HTTP_STATUS="$(curl --silent --show-error \
+            --output /tmp/release-response.json \
+            --write-out "%{http_code}" \
+            --request PATCH \
+            --header "Authorization: Bearer $ACCESS_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-binary @/tmp/firestore-release.json \
+            "https://firebaserules.googleapis.com/v1/projects/$PROJECT_ID/releases/cloud.firestore")"
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            jq . /tmp/release-response.json
+            exit 1
+          fi
+
+          echo "Firestore rules deployed successfully."
+
+      - name: Record successful Firestore rules deployment
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "firestore rules: success"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "completed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/firestore-rules-success.txt
+          rm -f .github/deploy-triggers/firestore-rules-failed.txt
+          git add -A .github/deploy-triggers
+          git commit -m "Record successful Firestore rules deployment" || true
+          git push origin HEAD:main
+
+      - name: Record Firestore rules deployment failure
+        if: failure()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "firestore rules: failed"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "failed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/firestore-rules-failed.txt
+          git add .github/deploy-triggers/firestore-rules-failed.txt
+          git commit -m "Record failed Firestore rules deployment" || true
+          git push origin HEAD:main

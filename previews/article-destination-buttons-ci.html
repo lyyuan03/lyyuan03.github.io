@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文章底部 CI 按鍵預覽｜靈元院</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;600&display=swap">
+<style>
+:root{
+  --ci-deep-brown:#594F47;
+  --ci-light-brown:#A58254;
+  --ci-olive:#606330;
+  --ci-gold:#A58254;
+  --ci-paper:#EEE7DA;
+  --ci-sage:#DEE1CD;
+  --ink:#302A23;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 18% 15%,rgba(165,130,84,.12),transparent 34%),
+    linear-gradient(180deg,#071106 0%,#0C160A 100%);
+  color:#F5F0E8;
+  font-family:'Noto Sans TC',sans-serif;
+  line-height:1.9;
+}
+.preview-shell{max-width:1180px;margin:0 auto;padding:72px 24px 88px}
+.preview-header{text-align:center;margin-bottom:34px}
+.preview-header small{display:block;color:#C5A26F;letter-spacing:.28em;font-size:12px}
+.preview-header h1{margin:10px 0 8px;font-family:'Noto Serif TC',serif;font-size:38px;font-weight:600;letter-spacing:.12em;color:#D7B982}
+.preview-header p{margin:0;color:rgba(245,240,232,.64);font-size:14px}
+.article-card{
+  max-width:760px;
+  margin:0 auto;
+  padding:52px 56px 46px;
+  background:rgba(244,239,230,.94);
+  color:var(--ink);
+  border:1px solid rgba(165,130,84,.42);
+  box-shadow:0 26px 64px rgba(0,0,0,.34)
+}
+.article-meta{color:#8B683F;font-size:13px;font-weight:500;letter-spacing:.12em}
+.article-card h2{margin:10px 0 24px;font-family:'Noto Serif TC',serif;font-size:34px;line-height:1.55;color:#5A432A}
+.article-body{font-family:'Noto Serif TC',serif;font-size:19px;line-height:2;color:#302A23}
+.article-body p{margin:0 0 1.5em}
+.divider{height:1px;margin:34px 0 24px;background:rgba(89,79,71,.16)}
+.article-destination-section{margin:26px 0 8px}
+.article-destination-eyebrow{
+  margin-bottom:12px;
+  color:#8B683F;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.16em
+}
+.article-destination-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.article-destination-card{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-height:104px;
+  padding:17px 18px;
+  border:1px solid rgba(89,79,71,.2);
+  overflow:hidden;
+  transition:transform .25s,box-shadow .25s,border-color .25s
+}
+.article-destination-card:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.14),transparent 42%);
+  pointer-events:none
+}
+.article-destination-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(48,42,35,.14)
+}
+.article-destination-card.books{
+  background:linear-gradient(135deg,#594F47 0%,#745F4D 100%);
+  border-color:rgba(165,130,84,.55);
+  color:#FFF9EF
+}
+.article-destination-card.aesthetics{
+  background:linear-gradient(135deg,#606330 0%,#777A3E 100%);
+  border-color:rgba(165,130,84,.45);
+  color:#FFFBEF
+}
+.article-destination-icon{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 46px;
+  width:46px;
+  height:46px;
+  border:1px solid rgba(255,255,255,.34)
+}
+.article-destination-icon svg{width:25px;height:25px}
+.article-destination-copy{position:relative;z-index:1;min-width:0}
+.article-destination-copy small{display:block;margin-bottom:2px;font-size:10px;letter-spacing:.14em;opacity:.72}
+.article-destination-copy strong{
+  display:block;
+  font-family:'Noto Serif TC',serif;
+  font-size:18px;
+  line-height:1.5;
+  letter-spacing:.06em
+}
+.article-destination-copy span{display:block;margin-top:4px;font-size:11px;line-height:1.6;opacity:.78}
+.article-destination-arrow{position:relative;z-index:1;margin-left:auto;font-size:20px;opacity:.7}
+.share-row{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.share-dot{width:42px;height:42px;border-radius:50%;border:1px solid rgba(89,79,71,.16);background:rgba(165,130,84,.14)}
+.note{max-width:760px;margin:18px auto 0;padding:14px 16px;border:1px solid rgba(165,130,84,.22);color:rgba(245,240,232,.65);font-size:12px}
+@media(max-width:760px){
+  .preview-shell{padding:46px 12px 64px}
+  .preview-header h1{font-size:30px}
+  .article-card{padding:38px 22px 34px}
+  .article-card h2{font-size:28px}
+  .article-body{font-size:18px}
+  .article-destination-grid{grid-template-columns:1fr}
+  .article-destination-card{min-height:96px}
+}
+</style>
+</head>
+<body>
+  <main class="preview-shell">
+    <header class="preview-header">
+      <small>ARTICLE FOOTER PREVIEW</small>
+      <h1>文章底部 CI 按鍵預覽</h1>
+      <p>模擬每篇文章閱讀完畢後，延伸至著作與靈性美學館的導引方式。</p>
+    </header>
+
+    <article class="article-card">
+      <div class="article-meta">靈．修行</div>
+      <h2>真正的修行，不是追求更多感應</h2>
+      <div class="article-body">
+        <p>真正改變一個人的，從來不是他看見了多少異象，而是他是否在每一次選擇裡，願意承擔自己的人生。</p>
+        <p>當修行逐漸回到日常，信仰才不再只是抽象觀念，而會進入你的關係、語言、生活節奏，以及你如何對待自己。</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <section class="article-destination-section" aria-label="延伸探索">
+        <div class="article-destination-eyebrow">延伸探索</div>
+        <div class="article-destination-grid">
+          <a class="article-destination-card books" href="../books.html?v=spiritual-books-20260703-refresh">
+            <span class="article-destination-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5V5.5Z"/>
+                <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5A2.5 2.5 0 0 1 20 21.5V5.5Z"/>
+              </svg>
+            </span>
+            <span class="article-destination-copy">
+              <small>延伸閱讀</small>
+              <strong>宇色靈修著作</strong>
+              <span>從文字走入更完整的思想脈絡</span>
+            </span>
+            <span class="article-destination-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="article-destination-card aesthetics" href="../spiritual-aesthetics.html">
+            <span class="article-destination-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                <path d="M12 20c-4.5-1.4-7-4.2-7-8.1 3.2.1 5.6 1.4 7 3.8 1.4-2.4 3.8-3.7 7-3.8 0 3.9-2.5 6.7-7 8.1Z"/>
+                <path d="M12 15.7C8.9 13.9 7.4 11 7.7 7.4 10 8.1 11.4 9.5 12 12c.6-2.5 2-3.9 4.3-4.6.3 3.6-1.2 6.5-4.3 8.3Z"/>
+                <path d="M12 12c-1.8-2-2-4.5 0-7 2 2.5 1.8 5 0 7Z"/>
+              </svg>
+            </span>
+            <span class="article-destination-copy">
+              <small>靈性生活</small>
+              <strong>靈性美學館</strong>
+              <span>讓修行落實於日常選物與生活美感</span>
+            </span>
+            <span class="article-destination-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+
+      <div class="share-row" aria-label="社群分享預覽">
+        <span class="share-dot"></span><span class="share-dot"></span><span class="share-dot"></span><span class="share-dot"></span><span class="share-dot"></span>
+      </div>
+    </article>
+
+    <div class="note">此頁為獨立預覽，不會影響正式文章頁；確認版型後，再將相同設計套用至每一篇文章底部。</div>
+  </main>
+</body>
+</html>
