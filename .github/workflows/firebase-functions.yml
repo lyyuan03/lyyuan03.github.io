@@ -1,0 +1,95 @@
+name: Deploy Firebase Membership Backend
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'functions/**'
+      - 'firebase.json'
+      - 'firestore.rules'
+      - '.firebaserc'
+      - '.github/workflows/firebase-functions.yml'
+
+jobs:
+  deploy-functions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Record backend workflow start
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "firebase membership backend: started"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "started at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/firebase-functions-started.txt
+          git add .github/deploy-triggers/firebase-functions-started.txt
+          git commit -m "Record Firebase membership deployment start" || true
+          git push origin HEAD:main
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+
+      - name: Verify backend
+        run: npm --prefix functions ci && npm --prefix functions test && npm --prefix functions run lint
+
+      - name: Deploy membership functions and rules
+        run: firebase deploy --only functions,firestore:rules --project lyyuan03-membership --non-interactive
+
+      - name: Record successful backend deployment
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "firebase membership backend: success"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "completed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/firebase-functions-success.txt
+          rm -f .github/deploy-triggers/firebase-functions-failed.txt
+          git add -A .github/deploy-triggers
+          git commit -m "Record successful Firebase membership deployment" || true
+          git push origin HEAD:main
+
+      - name: Record backend deployment failure
+        if: failure()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "firebase membership backend: failed"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "failed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/firebase-functions-failed.txt
+          git add .github/deploy-triggers/firebase-functions-failed.txt
+          git commit -m "Record failed Firebase membership deployment" || true
+          git push origin HEAD:main

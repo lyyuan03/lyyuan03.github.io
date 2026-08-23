@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>贊助閱讀付款流程預覽｜靈元院</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500&display=swap">
+<style>
+:root{--gold:#A58254;--gold-light:#C5A26F;--cream:#F5F0E8;--deep:#071106;--ink:#211A14;--serif:'Noto Serif TC','Georgia',serif;--sans:'Noto Sans TC','Arial',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#071106;color:var(--cream);font-family:var(--sans);letter-spacing:.04em}
+a{text-decoration:none;color:inherit}
+.preview-bar{position:sticky;top:0;z-index:20;padding:10px 18px;text-align:center;background:#A58254;color:#17120C;font-size:13px;font-weight:500;letter-spacing:.12em}
+.site-nav{height:72px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(165,130,84,.2);background:rgba(7,17,6,.96)}
+.site-nav-inner{width:min(980px,calc(100% - 36px));display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font-family:var(--serif);font-size:20px;color:var(--gold-light);letter-spacing:.2em}
+.nav-actions{display:flex;gap:10px;align-items:center}.nav-actions a{padding:9px 15px;border:1px solid rgba(165,130,84,.35);font-size:13px;color:rgba(245,240,232,.78)}
+.hero{position:relative;min-height:760px;padding:62px 20px 88px;overflow:hidden;background:linear-gradient(rgba(7,17,6,.8),rgba(7,17,6,.94)),url('forest-path.jpg') center/cover fixed}
+.article-shell{width:min(980px,100%);margin:0 auto;background:rgba(238,233,224,.96);color:#2b251f;min-height:620px;box-shadow:0 18px 60px rgba(0,0,0,.32)}
+.article-head{padding:42px 44px 28px;border-bottom:1px solid rgba(89,79,71,.15)}
+.article-head small{display:block;margin-bottom:10px;color:#8B6A41;font-size:12px;letter-spacing:.18em}.article-head h1{margin:0;font-family:var(--serif);font-size:clamp(27px,4vw,40px);line-height:1.55;letter-spacing:.08em;font-weight:500}.article-head p{margin:16px 0 0;color:#685c50;line-height:1.9;font-family:var(--serif)}
+.article-body{position:relative;padding:34px 44px 74px;overflow:hidden}.article-lines{filter:blur(3px);opacity:.22;user-select:none;pointer-events:none}.article-lines span{display:block;height:14px;border-radius:20px;background:#6b6259;margin:0 0 20px}.article-lines span:nth-child(2n){width:82%}.article-lines span:nth-child(3n){width:68%}.article-lines span:nth-child(4n){width:92%}
+.pay-card{position:absolute;left:50%;top:48px;transform:translateX(-50%);width:min(500px,calc(100% - 36px));padding:32px 34px 28px;text-align:center;background:rgba(250,247,241,.97);border:1px solid rgba(165,130,84,.34);box-shadow:0 18px 48px rgba(40,30,18,.22)}
+.pay-symbol{width:34px;height:34px;margin:0 auto 16px;display:grid;place-items:center;border:1px solid rgba(165,130,84,.55);transform:rotate(45deg);color:#A58254}.pay-symbol span{transform:rotate(-45deg);font-size:12px}
+.pay-card h2{margin:0 0 12px;font-family:var(--serif);font-size:25px;letter-spacing:.1em;color:#2A231D}.pay-card p{margin:0 auto 16px;max-width:390px;color:#5F554A;line-height:1.8;font-size:14px}
+.live-offer{margin:14px 0 16px;padding:14px;border:1px solid rgba(125,94,55,.3);background:#EEE7DA;text-align:left}.live-offer strong{display:block;margin-bottom:8px;color:#553b21;text-align:center}.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.price-item{padding:10px;background:rgba(255,255,255,.45);border:1px solid rgba(89,79,71,.16);text-align:center}.price-item span{display:block;font-size:10px;color:#6d6155}.price-item b{display:block;margin:3px 0;color:#4a321c;font-size:18px}.price-item del{font-size:9px;color:#978a7d}.offer-status{margin-top:9px;color:#6a5743;font-size:11px;line-height:1.6;text-align:center}
+.primary-action{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:12px 18px;background:linear-gradient(135deg,#A58254,#C5A26F);color:#1F170F;font-family:var(--serif);font-size:16px;font-weight:500;letter-spacing:.12em;box-shadow:0 10px 24px rgba(165,130,84,.24);transition:transform .2s,filter .2s}.primary-action:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.secondary-action{display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;margin-top:10px;padding:10px 18px;border:1px solid rgba(89,79,71,.28);color:#56493D;font-size:13px;letter-spacing:.08em;background:rgba(255,255,255,.26)}
+.notice{margin:16px 0 0;padding:13px 14px;text-align:left;background:#EEE7DA;border-left:3px solid #A58254;color:#5C5044;font-size:12px;line-height:1.75}.notice strong{color:#352B22}.micro{margin-top:12px;color:#8E8377;font-size:10px;line-height:1.65}
+@media(max-width:640px){.site-nav{height:auto;padding:14px 0}.site-nav-inner{align-items:flex-start;flex-direction:column}.article-head{padding:30px 24px 22px}.article-body{padding:28px 20px 66px}.pay-card{top:36px;padding:26px 20px 22px}.pay-card h2{font-size:22px}.hero{padding:34px 12px 60px}.price-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="preview-bar">自動金流預覽｜正式付款請由贊助專屬文章進入</div>
+<header class="site-nav"><div class="site-nav-inner"><div class="brand">靈元院</div><div class="nav-actions"><a href="articles.html?id=how-to-judge-true-lingxiu-understanding">返回正式文章</a></div></div></header>
+<main class="hero">
+  <article class="article-shell">
+    <header class="article-head">
+      <small>贊助會員專屬文章</small>
+      <h1>我如何判斷一個人是否真正理解靈修</h1>
+      <p>以下顯示前台將讀取的即時優惠狀態；正式訂單會在會員登入並選擇方案後，由後端自動建立。</p>
+    </header>
+    <section class="article-body">
+      <div class="article-lines" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="pay-card">
+        <div class="pay-symbol"><span>◇</span></div>
+        <h2>本文為贊助會員專屬</h2>
+        <p>正式文章頁會即時顯示優惠名額，並由系統在建立訂單時鎖定實際價格與人次序號。</p>
+        <div id="live-offer" class="live-offer"><strong>正在讀取即時優惠名額…</strong></div>
+        <a class="primary-action" href="articles.html?id=how-to-judge-true-lingxiu-understanding">前往正式文章選擇方案</a>
+        <a class="secondary-action" href="member-dashboard.html">已是會員｜前往會員中心</a>
+        <div class="notice"><strong>自動判讀方式：</strong><br>會員登入後選擇一個月或三個月，Firebase 會在建立訂單的當下判斷是否仍在前 200 人次，並產生專屬綠界付款連結。</div>
+        <div class="micro">此頁只顯示即時名額，不會建立訂單或占用優惠名額。</div>
+      </div>
+    </section>
+  </article>
+</main>
+<script>
+(async () => {
+  const box = document.getElementById('live-offer');
+  try {
+    const response = await fetch('https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=' + Date.now(), { cache: 'no-store' });
+    const offer = await response.json();
+    if (!response.ok || offer.ready !== true) throw new Error('offer-not-ready');
+    const promo = offer.promotionAvailable === true;
+    const price1 = promo ? offer.promoPrice1 : offer.regularPrice1;
+    const price3 = promo ? offer.promoPrice3 : offer.regularPrice3;
+    box.innerHTML = `
+      <strong>${promo ? `前 ${Number(offer.promoLimit || 200)} 名優惠進行中` : '前 200 名優惠已額滿'}</strong>
+      <div class="price-grid">
+        <div class="price-item"><span>一個月觀看權限</span><b>NT$${Number(price1).toLocaleString('zh-TW')}</b>${promo ? `<del>原價 NT$${Number(offer.regularPrice1).toLocaleString('zh-TW')}</del>` : ''}</div>
+        <div class="price-item"><span>三個月觀看權限</span><b>NT$${Number(price3).toLocaleString('zh-TW')}</b>${promo ? `<del>原價 NT$${Number(offer.regularPrice3).toLocaleString('zh-TW')}</del>` : ''}</div>
+      </div>
+      <div class="offer-status">${promo ? `目前尚餘 ${Number(offer.remaining || 0)} 個優惠名額；已占用 ${Number(offer.occupiedCount || 0)}／${Number(offer.promoLimit || 200)} 人次。` : '目前新建立的訂單將自動採一般方案價格。'}</div>`;
+  } catch (error) {
+    console.error(error);
+    box.innerHTML = '<strong>即時優惠名額暫時無法讀取</strong><div class="offer-status">請稍後重新整理，或直接前往正式文章確認。</div>';
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600" role="img" aria-label="元神命運原型文章縮圖">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0d1210"/><stop offset="1" stop-color="#3a302a"/></linearGradient></defs>
+  <rect width="900" height="1600" fill="url(#g)"/>
+  <circle cx="450" cy="350" r="170" fill="#d3aa55" opacity=".16"/>
+  <path d="M450 305c-150 40-260 160-310 300 110-70 215-80 310-15 95-65 200-55 310 15-50-140-160-260-310-300Z" fill="none" stroke="#d4ad58" stroke-width="16"/>
+  <path d="M450 430c-90 115-105 250-45 390h90c60-140 45-275-45-390Z" fill="#c99043"/>
+  <g fill="none" stroke="#d4ad58" stroke-width="16" stroke-linecap="round">
+    <path d="M410 790c-130 145-150 310-55 500"/><path d="M450 790v520"/><path d="M490 790c130 145 150 310 55 500"/>
+    <path d="M365 805c-190 120-255 270-210 430"/><path d="M535 805c190 120 255 270 210 430"/>
+  </g>
+  <path d="M165 1320c170-95 400-95 570 0" fill="none" stroke="#d4ad58" stroke-width="10" opacity=".75"/>
+  <g fill="#e7cf91"><circle cx="220" cy="250" r="8"/><circle cx="700" cy="220" r="7"/><circle cx="760" cy="540" r="6"/><circle cx="150" cy="620" r="5"/></g>
+</svg>

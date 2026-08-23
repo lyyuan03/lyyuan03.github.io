@@ -1,0 +1,29 @@
+[bath]
+files=bath.00.b64,bath.01.b64
+part_lengths=12000,11352
+overlaps=0,0
+merged_b64_len=23352 mod4=0
+decoded_len=17514
+sha256=08502de8b499a362c74d261936912ecb7640cd5e14112e7eba1446895fd33b1f
+header=524946466244000057454250
+riif_declared=17514
+
+[record]
+files=record.00.b64,record.01.b64,record.02.b64,record.03.b64
+part_lengths=12000,12000,12000,9208
+overlaps=0,0,0,0
+merged_b64_len=45208 mod4=0
+decoded_len=33904
+sha256=5fb706e98c36fa766e1598572fb1fb58842ba7d13ee0e9847692e04dad7771ad
+header=524946466884000057454250
+riif_declared=33904
+
+[network]
+files=network.00.b64,network.01.b64,network.02.b64,network.03.b64
+part_lengths=31196,15000,15000,13044
+overlaps=0,0,0,0
+merged_b64_len=74240 mod4=0
+decoded_len=55679
+sha256=63dfc6163a985a1e5be4a02bf1f55981db1949149ab96bdaa78bb1ed14be9726
+header=5249464604aa000057454250
+riif_declared=43532

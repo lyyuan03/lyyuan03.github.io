@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文章後台｜靈元院</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap">
+<style>
+:root{--gold:#A58254;--cream:#F5F0E8;--ink:#17130d;--deep:#071106;--panel:#10180d;--line:rgba(165,130,84,.28);--muted:rgba(245,240,232,.68);--sans:'Noto Sans TC','Arial',sans-serif;--serif:'Noto Serif TC','Georgia',serif}
+*{box-sizing:border-box}body{margin:0;background:#071106;color:var(--cream);font-family:var(--sans);line-height:1.75;letter-spacing:.04em}.admin-shell{min-height:100vh}.admin-top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 28px;background:rgba(7,17,6,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(16px)}.brand{display:flex;flex-direction:column;gap:2px}.brand strong{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:.18em;color:var(--gold)}.brand span{font-size:12px;color:rgba(245,240,232,.55);letter-spacing:.16em}.top-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.admin-main{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:24px;max-width:1280px;margin:0 auto;padding:28px}.panel{background:rgba(16,24,13,.94);border:1px solid var(--line);box-shadow:0 18px 60px rgba(0,0,0,.24)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid rgba(165,130,84,.18)}.panel-head h2{margin:0;font-family:var(--serif);font-weight:500;font-size:18px;letter-spacing:.14em}.article-list{max-height:calc(100vh - 164px);overflow:auto}.article-item{width:100%;display:block;text-align:left;padding:16px 18px;border:0;border-bottom:1px solid rgba(165,130,84,.14);background:transparent;color:var(--cream);cursor:pointer}.article-item:hover,.article-item.is-active{background:rgba(165,130,84,.1)}.article-item-title{font-size:15px;font-weight:500;margin-bottom:5px}.article-item-meta{font-size:12px;color:rgba(245,240,232,.48)}.editor{padding:22px;display:grid;gap:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:grid;gap:7px}.field label{font-size:13px;color:rgba(245,240,232,.72)}input,select,textarea{width:100%;border:1px solid rgba(165,130,84,.32);background:rgba(4,8,3,.62);color:var(--cream);font:inherit;padding:11px 12px;border-radius:0;outline:none}textarea{min-height:320px;resize:vertical;line-height:1.9}.content-preview{padding:18px;background:rgba(245,240,232,.06);border:1px solid rgba(165,130,84,.18);color:rgba(245,240,232,.8);max-height:360px;overflow:auto}.content-preview h1,.content-preview h2,.content-preview h3{font-family:var(--serif);color:var(--gold);font-weight:500}.content-preview p{margin:0 0 1em}.content-preview img{max-width:100%;height:auto;display:block;margin:18px auto;border:1px solid rgba(165,130,84,.18)}.editor-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.upload-note{font-size:12px;color:rgba(245,240,232,.48)}.btn{border:1px solid rgba(165,130,84,.55);background:rgba(165,130,84,.11);color:#CBAA77;padding:10px 16px;font-family:var(--sans);font-size:14px;letter-spacing:.08em;cursor:pointer}.btn:hover{background:rgba(165,130,84,.2)}.btn.primary{background:rgba(165,130,84,.24);color:#F5F0E8}.btn.danger{border-color:rgba(180,90,78,.55);color:#e2a09a;background:rgba(180,90,78,.1)}.btn:disabled{opacity:.55;cursor:wait}.status{font-size:13px;color:rgba(245,240,232,.58)}.empty{padding:28px;color:rgba(245,240,232,.48);text-align:center}.gate{max-width:460px;margin:12vh auto;padding:40px 34px;text-align:center;background:rgba(16,24,13,.94);border:1px solid var(--line)}.gate h1{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.16em;color:var(--gold);margin:0 0 12px}.gate p{color:var(--muted);margin:0 0 24px}.hidden{display:none!important}@media(max-width:860px){.admin-main{grid-template-columns:1fr;padding:18px}.article-list{max-height:300px}.grid{grid-template-columns:1fr}.admin-top{align-items:flex-start;flex-direction:column}}
+.metrics-box{border-bottom:1px solid rgba(165,130,84,.18);background:rgba(165,130,84,.035)}.metrics-head{padding:11px 18px 7px;font-size:11px;letter-spacing:.14em;color:rgba(203,170,119,.76)}.metrics-list{max-height:240px;overflow:auto;padding:0 12px 10px}.metrics-row{padding:9px 7px;border-bottom:1px solid rgba(165,130,84,.1)}.metrics-row:last-child{border-bottom:0}.metrics-title{font-size:12px;color:rgba(245,240,232,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.metrics-values{display:flex;gap:10px;margin-top:3px;font-size:10px;color:rgba(245,240,232,.44)}.metrics-empty{padding:12px 7px;font-size:11px;color:rgba(245,240,232,.4)}
+.membership-panel{grid-column:1/-1;scroll-margin-top:96px}.membership-layout{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(360px,1.2fr);gap:20px;padding:22px}.membership-card{border:1px solid rgba(165,130,84,.2);background:rgba(4,8,3,.28);padding:18px}.membership-card h3{margin:0 0 15px;color:#CBAA77;font-family:var(--serif);font-weight:500;letter-spacing:.12em}.membership-form{display:grid;gap:14px}.membership-subsection{display:grid;gap:13px;padding:16px;border:1px solid rgba(165,130,84,.18);background:rgba(165,130,84,.025)}.membership-subsection-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:9px;border-bottom:1px solid rgba(165,130,84,.16)}.membership-subsection-head strong{color:#D8BD91;font-family:var(--serif);font-size:15px;font-weight:500;letter-spacing:.1em}.membership-subsection-head small{color:rgba(245,240,232,.46);font-size:10px;text-align:right}.membership-subsection[hidden]{display:none!important}.membership-list{display:grid;gap:9px;max-height:520px;overflow:auto}.member-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px;border:1px solid rgba(165,130,84,.16);background:rgba(165,130,84,.035)}.member-row strong{display:block;font-size:14px}.member-row small{display:block;color:rgba(245,240,232,.5);font-size:11px;margin-top:3px}.member-row-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.member-row .btn{padding:7px 10px;font-size:11px}.membership-help{font-size:12px;color:rgba(245,240,232,.5);line-height:1.8}.membership-summary{padding:11px 12px;border:1px solid rgba(165,130,84,.18);background:rgba(165,130,84,.06);font-size:13px;color:rgba(245,240,232,.72)}.check-field{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid rgba(165,130,84,.22);background:rgba(165,130,84,.05)}.check-field input{width:auto;margin-top:5px}.check-field strong{display:block;font-size:13px}.check-field small{display:block;color:rgba(245,240,232,.5);font-size:11px;margin-top:3px}@media(max-width:860px){.membership-layout{grid-template-columns:1fr;padding:16px}.member-row{grid-template-columns:1fr}.member-row-actions{justify-content:flex-start}}
+.save-actions{position:sticky;bottom:12px;z-index:12;padding:12px;border:1px solid rgba(165,130,84,.28);background:rgba(7,17,6,.94);box-shadow:0 10px 30px rgba(0,0,0,.28);backdrop-filter:blur(12px)}
+.save-status-inline{min-width:150px;font-size:13px;color:rgba(245,240,232,.72)}
+.save-status-inline[data-state="saving"],.save-status-inline[data-state="dirty"]{color:#D8BD91}.save-status-inline[data-state="success"]{color:#BFD39C}.save-status-inline[data-state="error"]{color:#F1AAA2}
+.admin-toast{position:fixed;right:24px;bottom:24px;z-index:100;max-width:min(420px,calc(100vw - 32px));padding:14px 18px;border:1px solid rgba(165,130,84,.55);background:rgba(16,24,13,.97);color:#F5F0E8;box-shadow:0 16px 44px rgba(0,0,0,.42);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s,transform .2s}.admin-toast.is-visible{opacity:1;transform:none}.admin-toast.is-success{border-color:rgba(151,181,112,.72)}.admin-toast.is-error{border-color:rgba(218,117,106,.8)}
+@media(max-width:860px){.save-actions{bottom:8px}.save-status-inline{order:3;width:100%}.admin-toast{right:16px;bottom:16px;left:16px;max-width:none}}
+.activity-panel{grid-column:1/-1;scroll-margin-top:96px}.activity-layout{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(380px,1.2fr);gap:20px;padding:22px}.activity-stack{display:grid;gap:20px}.activity-status[data-state="success"]{color:#BFD39C}.activity-status[data-state="error"]{color:#F1AAA2}.activity-status[data-state="saving"]{color:#D8BD91}.event-access-fields{padding:14px;border:1px solid rgba(165,130,84,.22);background:rgba(165,130,84,.05)}@media(max-width:860px){.activity-layout{grid-template-columns:1fr;padding:16px}}
+</style>
+<script src="/analytics-config.js"></script>
+<script src="/analytics.js" defer></script>
+</head>
+<body>
+<div id="login-gate" class="gate">
+  <h1>靈元院文章後台</h1>
+  <p>請使用靈元院指定 Gmail 登入後，管理文章草稿與發布內容。</p>
+  <button id="admin-login" class="btn primary" type="button" disabled>正在確認登入狀態…</button>
+  <p id="gate-status" class="status" role="status" aria-live="polite">正在確認登入狀態…</p>
+</div>
+
+<div id="admin-app" class="admin-shell hidden">
+  <header class="admin-top">
+    <div class="brand">
+      <strong>靈元院文章後台</strong>
+      <span>ARTICLE MANAGEMENT</span>
+    </div>
+    <div class="top-actions">
+      <span id="admin-user" class="status"></span>
+      <button id="export-articles" class="btn" type="button">匯出全部文章</button>
+      <span id="export-status" class="status" aria-live="polite"></span>
+      <a class="btn" href="#activity-management">活動管理</a>
+      <a class="btn" href="#sponsor-members">贊助會員</a>
+      <a class="btn" href="#wellness-members">養生療癒會員</a>
+      <a class="btn" href="#member-video-management">會員影片</a>
+      <a class="btn" href="articles.html" target="_blank">查看前台文章</a>
+      <a class="btn" href="index.html">回首頁</a>
+      <button id="admin-logout" class="btn" type="button">登出</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>文章列表</h2>
+        <button id="new-article" class="btn" type="button">新增</button>
+      </div>
+      <div class="metrics-box">
+        <div class="metrics-head">文章互動統計</div>
+        <div id="article-metrics" class="metrics-list"><div class="metrics-empty">載入中…</div></div>
+      </div>
+      <div id="article-list" class="article-list"><div class="empty">載入中…</div></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>文章內容</h2>
+        <span id="save-status" class="status" role="status" aria-live="polite"></span>
+      </div>
+      <form id="article-form" class="editor">
+        <div class="grid">
+          <div class="field">
+            <label for="title">標題</label>
+            <input id="title" name="title" required>
+          </div>
+          <div class="field">
+            <label for="slug">網址代稱</label>
+            <input id="slug" name="slug" placeholder="可留空，系統會依標題產生">
+          </div>
+          <div class="field">
+            <label for="category">分類</label>
+            <select id="category" name="category">
+              <option value="spiritual">靈．修行</option>
+              <option value="worldly">人．俗世</option>
+              <option value="spirit-world">異．靈界</option>
+              <option value="reading">思．讀物</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="status">狀態</label>
+            <select id="status" name="status">
+              <option value="draft">草稿</option>
+              <option value="published">發布</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid event-access-fields">
+          <div class="field">
+            <label for="accessType">閱讀權限</label>
+            <select id="accessType" name="accessType">
+              <option value="open">一般文章</option>
+              <option value="paid">贊助專屬文章</option>
+              <option value="event">活動限定文章</option>
+            </select>
+          </div>
+          <div class="field" id="event-access-field">
+            <label for="eventId">指定活動</label>
+            <select id="eventId" name="eventId"><option value="">請先選擇活動</option></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="excerpt">摘要</label>
+          <textarea id="excerpt" name="excerpt" style="min-height:96px"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="coverImage">封面圖片網址</label>
+          <input id="coverImage" name="coverImage" placeholder="https://...">
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="bookTitle">延伸書名（每篇必填）</label>
+            <input id="bookTitle" name="bookTitle" placeholder="每篇文章都必須指定一本延伸書籍" required>
+          </div>
+          <div class="field">
+            <label for="bookAuthor">作者</label>
+            <input id="bookAuthor" name="bookAuthor">
+          </div>
+          <div class="field">
+            <label for="bookPublisher">出版社</label>
+            <input id="bookPublisher" name="bookPublisher">
+          </div>
+          <div class="field">
+            <label for="bookPurchaseUrl">書籍連結（每篇必填）</label>
+            <input id="bookPurchaseUrl" name="bookPurchaseUrl" type="url" placeholder="https://www.books.com.tw/..." required>
+          </div>
+          <div class="field">
+            <label for="bookCoverImage">書封圖片網址（每篇必填）</label>
+            <input id="bookCoverImage" name="bookCoverImage" type="url" placeholder="https://.../book-cover.jpg" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="content">內文</label>
+          <div class="editor-tools">
+            <button id="upload-image" class="btn" type="button">插入圖片</button>
+            <input id="image-input" type="file" accept="image/*" multiple hidden>
+            <span id="upload-status" class="upload-note">可一次選擇多張圖片，系統會自動插入文章中。</span>
+          </div>
+          <textarea id="content" name="content" required></textarea>
+        </div>
+
+        <div class="field">
+          <label>即時預覽</label>
+          <div id="preview" class="content-preview"></div>
+        </div>
+
+        <div class="top-actions save-actions">
+          <button id="import-static-article" class="btn primary hidden" type="button">匯入後台編輯</button>
+          <button id="save-article" class="btn primary" type="submit">儲存文章</button>
+          <span id="save-status-inline" class="save-status-inline" role="status" aria-live="polite">尚未修改</span>
+          <button id="delete-article" class="btn danger" type="button">刪除文章</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="activity-management" class="panel activity-panel">
+      <div class="panel-head">
+        <h2>活動管理</h2>
+        <span id="activity-status" class="status activity-status" role="status" aria-live="polite"></span>
+      </div>
+      <div class="activity-layout">
+        <div class="activity-stack">
+          <div class="membership-card">
+            <h3>建立活動</h3>
+            <form id="activity-form" class="membership-form">
+              <div class="field"><label for="activity-name">活動名稱</label><input id="activity-name" required placeholder="例如：瑤池金母聖誕法會"></div>
+              <div class="field"><label for="activity-id">活動代稱</label><input id="activity-id" placeholder="可留空，由系統自動建立"></div>
+              <button class="btn primary" type="submit">新增活動</button>
+              <p class="membership-help">活動建立後，可直接供文章指定，不必再修改網站程式。</p>
+            </form>
+          </div>
+          <div class="membership-card">
+            <h3>活動清單</h3>
+            <div id="activity-list" class="membership-list"><div class="empty">載入中…</div></div>
+          </div>
+        </div>
+        <div class="membership-card">
+          <h3>活動參加者</h3>
+          <form id="activity-participant-form" class="membership-form">
+            <div class="field"><label for="activity-select">選擇活動</label><select id="activity-select"></select></div>
+            <div class="grid">
+              <div class="field">
+                <label for="activity-link-expiry">專屬連結有效期限</label>
+                <input id="activity-link-expiry" type="date">
+              </div>
+              <div class="field">
+                <label>沒有 Google 帳號者</label>
+                <button id="activity-link-generate-all" class="btn" type="button">為尚未建立者批次產生連結</button>
+                <button id="activity-link-export" class="btn" type="button">下載專屬連結名單 CSV</button>
+              </div>
+            </div>
+            <span id="activity-link-status" class="status activity-status" role="status" aria-live="polite">專屬連結可個別複製、停用或重新產生。</span>
+            <div class="field">
+              <label for="activity-participant-emails">批次匯入 Email</label>
+              <textarea id="activity-participant-emails" style="min-height:130px" placeholder="每行一組 Email，也可使用逗號或空白分隔"></textarea>
+            </div>
+            <button id="activity-participant-submit" class="btn primary" type="button">匯入參加者</button>
+            <span id="activity-import-status" class="status activity-status" role="status" aria-live="polite">貼上 Email 後按下匯入。</span>
+            <p class="membership-help">活動資格獨立於贊助會員與養生療癒會員。參加者只會取得指定活動文章的解密金鑰。</p>
+          </form>
+          <div id="activity-participant-list" class="membership-list" style="margin-top:18px"><div class="empty">載入中…</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sponsor-members" class="panel membership-panel">
+      <div class="panel-head">
+        <h2>贊助會員管理</h2>
+        <span id="membership-status" class="status" aria-live="polite"></span>
+      </div>
+      <div class="membership-layout">
+        <div>
+          <div class="membership-card">
+            <h3>方案與付款設定</h3>
+            <form id="membership-settings-form" class="membership-form">
+              <div class="grid">
+                <div class="field"><label for="price-1">首次優惠價｜一個月</label><input id="price-1" type="number" value="150" readonly></div>
+                <div class="field"><label for="price-3">首次優惠價｜三個月</label><input id="price-3" type="number" value="400" readonly></div>
+                              </div>
+              <div class="field"><label for="ecpay-url">首次購買優惠付款連結</label><input id="ecpay-url" type="url" placeholder="https://p.ecpay.com.tw/..."></div>
+              <div class="field"><label for="regular-ecpay-url">原價／續期付款連結</label><input id="regular-ecpay-url" type="url" placeholder="https://p.ecpay.com.tw/..."></div>
+              <button class="btn primary" type="submit">儲存方案設定</button>
+              <p class="membership-help">兩個綠界連結內都需可選擇一個月與三個月方案。系統會依 Email 自動判定優惠資格；同一 Email 僅享一次首次優惠，已使用者後續購買或續期一律套用原價。</p>
+            </form>
+          </div>
+
+          <div class="membership-card" style="margin-top:20px">
+            <h3>新增／編輯會員</h3>
+            <form id="member-form" class="membership-form" onsubmit="return false;">
+              <input id="member-original-email" type="hidden">
+              <div class="grid">
+                <div class="field"><label for="member-name">會員姓名</label><input id="member-name"></div>
+                <div class="field"><label for="member-email">登入 Gmail</label><input id="member-email" type="email" required></div>
+                <div class="field"><label for="member-months">會員方案</label><select id="member-months"><option value="promo-1">一個月｜首次購買優惠 NT$150</option><option value="promo-3">三個月｜首次購買優惠 NT$400</option><option value="regular-1">一個月｜原價／續期價 NT$180</option><option value="regular-3">三個月｜原價／續期價 NT$500</option></select></div>
+                <div class="field"><label for="member-amount">本次實收金額</label><input id="member-amount" type="number" min="0" step="1" required readonly></div>
+              </div>
+              <div class="field"><label for="member-note">行政備註</label><textarea id="member-note" style="min-height:80px"></textarea></div>
+              <div id="member-summary" class="membership-summary">選擇方案後，系統將自動計算金額與效期。</div>
+              <div class="top-actions">
+                <button id="member-send-payment" class="btn primary" type="button">開啟付款通知 Email</button>
+                <button id="member-activate" class="btn" type="button">付款成功，開通並建立通知信</button>
+                <button id="member-form-reset" class="btn" type="button">清除</button>
+              </div>
+              <p class="membership-help">流程只有兩步：先寄出付款連結；確認收到款項後，按「付款成功，開通並建立通知信」。系統會更新會員資格與前台倒數，並固定以靈元院官方信箱 lyyuan03@gmail.com 開啟已填好收件人、方案、開通日與到期日的 Gmail 草稿；行政人員確認內容後按下寄送即可。若瀏覽器尚未登入官方信箱，Google 會先要求登入或切換帳號。會員名單內也可隨時重新產生通知信。</p>
+            </form>
+          </div>
+        </div>
+
+        <div class="membership-card">
+          <h3>會員名單</h3>
+          <div id="membership-list" class="membership-list"><div class="empty">載入中…</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="wellness-members" class="panel membership-panel">
+      <div class="panel-head">
+        <h2>靈元院養生療癒頻道會員</h2>
+        <span id="wellness-member-status" class="status" aria-live="polite"></span>
+      </div>
+      <div class="membership-layout">
+        <div class="membership-card">
+          <h3>新增／編輯頻道會員</h3>
+          <form id="wellness-member-form" class="membership-form">
+            <input id="wellness-member-original-email" type="hidden">
+            <section class="membership-subsection">
+              <div class="membership-subsection-head"><strong>一、會員基本資料</strong><small>先確認身分與目前會籍狀態</small></div>
+              <div class="grid">
+                <div class="field"><label for="wellness-member-name">會員姓名</label><input id="wellness-member-name"></div>
+                <div class="field"><label for="wellness-member-email">登入 Gmail</label><input id="wellness-member-email" type="email" required></div>
+                <div class="field"><label for="wellness-member-level">會員資格</label><select id="wellness-member-level"><option value="wellness">一般會員</option><option value="lingji">靈極會員</option></select></div>
+                <div class="field"><label for="wellness-member-state">會員狀態</label><select id="wellness-member-state"><option value="active">啟用</option><option value="pending">未啟用</option></select></div>
+              </div>
+            </section>
+
+            <section class="membership-subsection">
+              <div class="membership-subsection-head"><strong>二、會籍效期</strong><small>贊助文章加贈權限會跟隨這段期間</small></div>
+              <div class="grid">
+                <div class="field"><label for="wellness-member-first-joined-at">首次加入日期</label><input id="wellness-member-first-joined-at" type="date"></div>
+                <div class="field"><label for="wellness-member-starts-at">本次會期開始日</label><input id="wellness-member-starts-at" type="date"></div>
+                <div class="field"><label for="wellness-member-expires-at">到期日</label><input id="wellness-member-expires-at" type="date"></div>
+              </div>
+            </section>
+
+            <section id="wellness-lingji-period-fields" class="membership-subsection" hidden>
+              <div class="membership-subsection-head"><strong>靈極會員資格期間</strong><small>只有選擇靈極會員時才需要管理</small></div>
+              <div class="grid">
+                <div class="field"><label for="wellness-member-lingji-from">本期靈極資格起日</label><input id="wellness-member-lingji-from" type="date"></div>
+                <div class="field"><label for="wellness-member-lingji-until">本期靈極資格迄日</label><input id="wellness-member-lingji-until" type="date"></div>
+              </div>
+            </section>
+
+            <section class="membership-subsection">
+              <div class="membership-subsection-head"><strong>三、消費與回饋</strong><small>年度累積與單筆滿額分開計算</small></div>
+              <div class="grid">
+                <div class="field"><label for="wellness-member-annual-spend">本年度累積消費</label><input id="wellness-member-annual-spend" type="number" min="0" step="1" value="0"></div>
+                <div class="field"><label for="wellness-member-annual-cycle">年度計算起日</label><input id="wellness-member-annual-cycle" type="date"></div>
+                <div class="field"><label for="wellness-member-cashback">目前可用回饋金</label><input id="wellness-member-cashback" type="number" min="0" step="1000" value="0"></div>
+              </div>
+            </section>
+
+            <section class="membership-subsection">
+              <div class="membership-subsection-head"><strong>四、贊助文章閱讀權限</strong><small>系統自動判讀，不再使用人工勾選</small></div>
+              <div id="wellness-article-benefit-summary" class="membership-summary">
+                <strong id="wellness-article-benefit-title" style="display:block;color:#D8BD91;margin-bottom:4px">贊助文章閱讀權限：尚未符合</strong>
+                <span id="wellness-article-benefit-detail">靈極會員自動開通；一般會員單筆消費滿新台幣 15,000 元後自動開通。</span>
+              </div>
+              <div class="grid">
+                <div class="field"><label for="wellness-member-qualifying-purchase">本次符合權益的單筆消費</label><input id="wellness-member-qualifying-purchase" type="number" min="0" step="1" value="0"></div>
+                <div class="field"><label for="wellness-member-article-reference">消費／訂單編號</label><input id="wellness-member-article-reference" placeholder="選填，方便日後核對"></div>
+              </div>
+              <p class="membership-help">靈極會員於會籍有效期間自動開通；一般會員本次單筆消費達新台幣 15,000 元時開通。權限效期一律跟隨本次養生療癒會員會期。</p>
+            </section>
+            <div class="field"><label for="wellness-member-courses">已購線上課程</label><textarea id="wellness-member-courses" style="min-height:120px" placeholder="每行一門：課程名稱｜開始日｜到期日｜課程網址&#10;例：靈性養護入門｜2026-08-01｜2026-12-01｜https://..."></textarea></div>
+            <p class="membership-help">日期請使用 YYYY-MM-DD；永久觀看的課程請將到期日填「永久」。沒有購買課程可留白。</p>
+            <div class="field"><label for="wellness-member-note">行政備註</label><textarea id="wellness-member-note" style="min-height:80px"></textarea></div>
+            <div class="membership-summary">年度累積消費每年 2 月 1 日重新計算。一般會員累積滿新台幣 100,000 元後，系統會標示符合次年度靈極資格，並於次年 2 月 1 日自動切換會員頁面。</div>
+            <div class="membership-summary">自動付款方案｜新台幣 6,000 元／4個月。系統會寄出會員專屬綠界付款連結；付款成功後自動開通，不需人工登錄。</div>
+            <div class="top-actions">
+              <button class="btn primary" type="submit">儲存養生療癒會員</button>
+              <button id="wellness-member-send-payment" class="btn primary" type="button" disabled>正在確認金流後端…</button>
+              <button id="wellness-member-reset" class="btn" type="button">清除</button>
+            </div>
+          </form>
+        </div>
+        <div class="membership-card">
+          <h3>一般會員／靈極會員名單</h3>
+          <p class="membership-help">此區同時管理養生療癒會員會籍與其加贈的贊助文章權限。靈極會員自動開通；一般會員須有單筆滿新台幣 15,000 元的紀錄。直接購買贊助閱讀方案者，仍由上方「贊助會員」名單獨立管理。</p>
+          <div id="wellness-member-list" class="membership-list"><div class="empty">載入中…</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="member-video-management" class="panel membership-panel">
+      <div class="panel-head">
+        <h2>養生會員私人影片</h2>
+        <span id="member-video-status-message" class="status" aria-live="polite"></span>
+      </div>
+      <div class="membership-layout">
+        <div class="membership-card">
+          <h3>新增／編輯影片入口</h3>
+          <form id="member-video-form" class="membership-form">
+            <input id="member-video-id" type="hidden">
+            <div class="field"><label for="member-video-title">影片標題</label><input id="member-video-title" required></div>
+            <div class="field"><label for="member-video-youtube-url">YouTube 私人影片網址</label><input id="member-video-youtube-url" type="url" placeholder="https://www.youtube.com/watch?v=..." required></div>
+            <div class="field"><label for="member-video-description">影片說明</label><textarea id="member-video-description" style="min-height:110px"></textarea></div>
+            <div class="grid">
+              <div class="field"><label for="member-video-category">主題</label><input id="member-video-category" value="養護與修持"></div>
+              <div class="field"><label for="member-video-cover-url">自訂封面圖片網址</label><input id="member-video-cover-url" type="url" placeholder="https://..."></div>
+              <div class="field"><label for="member-video-duration">影片長度</label><input id="member-video-duration" placeholder="例：18 分鐘"></div>
+              <div class="field"><label for="member-video-access-level">觀看資格</label><select id="member-video-access-level"><option value="wellness">所有養生會員</option><option value="lingji">僅靈極會員</option></select></div>
+              <div class="field"><label for="member-video-status">發布狀態</label><select id="member-video-status"><option value="draft">草稿</option><option value="published">發布</option></select></div>
+              <div class="field"><label for="member-video-published-at">顯示日期</label><input id="member-video-published-at" type="date"></div>
+              <div class="field"><label for="member-video-sort-order">排序</label><input id="member-video-sort-order" type="number" min="0" step="1" value="0"></div>
+            </div>
+            <div class="membership-summary">安全流程：先將影片維持為 YouTube「私人」，並在 YouTube Studio 將每位有效會員的同一個 Gmail 加入私人分享名單。此後台只管理官網顯示權限，不會自動修改 YouTube 私人名單。</div>
+            <div class="top-actions"><button class="btn primary" type="submit">儲存影片入口</button><button id="member-video-reset" class="btn" type="button">清除</button></div>
+          </form>
+        </div>
+        <div class="membership-card">
+          <h3>已建立的會員影片</h3>
+          <p class="membership-help">私人影片不會寫入靜態網頁；會員通過官網資格驗證後，才會取得相符級別的觀看入口。</p>
+          <div id="member-video-list" class="membership-list"><div class="empty">載入中…</div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="admin-toast" class="admin-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script type="module" src="activity-admin.js?v=20260801-personal-links-v2"></script>
+<script type="module" src="article-admin.js?v=20260823-paid-security-final-1"></script>
+<script type="module" src="article-thumbnail-admin.js?v=20260822-thumbnail-source-decouple-1"></script>
+<script type="module" src="article-inline-image-admin.js?v=20260816-six-inline-images-1"></script>
+<script type="module" src="membership-admin.js?v=20260808-renewal-options-1"></script>
+<script type="module" src="wellness-member-admin.js?v=20260804-article-benefit-1"></script>
+<script type="module" src="member-video-admin.js?v=20260805-cover-direct-1"></script>
+</body>
+</html>

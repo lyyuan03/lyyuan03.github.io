@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#07110b"/>
+      <stop offset=".55" stop-color="#183323"/>
+      <stop offset="1" stop-color="#090f0b"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop stop-color="#e0c894" stop-opacity=".52"/>
+      <stop offset="1" stop-color="#e0c894" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1536" height="1024" fill="url(#bg)"/>
+  <circle cx="768" cy="490" r="370" fill="url(#glow)" opacity=".46"/>
+  <g fill="none" stroke="#ceb888" stroke-linecap="round">
+    <path d="M268 426c146-92 247-78 362 5 77 56 199 56 276 0 115-83 216-97 362-5" stroke-width="3" opacity=".25"/>
+    <path d="M304 527c125-69 229-61 330 12 75 54 193 54 268 0 101-73 205-81 330-12" stroke-width="4" opacity=".4"/>
+    <path d="M352 636c102-45 197-34 287 31 72 52 186 52 258 0 90-65 185-76 287-31" stroke-width="5" opacity=".55"/>
+  </g>
+  <g fill="#0c1911" stroke="#d1bd91">
+    <circle cx="768" cy="360" r="72" stroke-width="3"/>
+    <path d="M645 718c12-158 46-269 123-269s111 111 123 269z" stroke-width="4"/>
+  </g>
+  <circle cx="768" cy="530" r="25" fill="#d8c294" opacity=".75"/>
+  <text x="768" y="850" text-anchor="middle" fill="#ded0b4" font-family="serif" font-size="42" letter-spacing="8">處理的目的，是先把人帶回來</text>
+</svg>

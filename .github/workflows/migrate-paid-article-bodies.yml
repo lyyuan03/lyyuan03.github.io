@@ -1,0 +1,96 @@
+# Re-run marker: 20260823 paid static audit expansion
+name: Migrate Paid Article Bodies
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/migrate-paid-article-bodies.mjs'
+      - '.github/workflows/migrate-paid-article-bodies.yml'
+
+jobs:
+  migrate-paid-article-bodies:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Record migration workflow start
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "paid article migration: started"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "started at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/paid-article-migration-started.txt
+          git add .github/deploy-triggers/paid-article-migration-started.txt
+          git commit -m "Record paid article migration start" || true
+          git push origin HEAD:main
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm --prefix functions ci
+
+      - name: Install source parser
+        run: npm install --no-save --package-lock=false acorn@8
+
+      - name: Migrate and verify paid article bodies
+        env:
+          GOOGLE_CLOUD_PROJECT: lyyuan03-membership
+          GCLOUD_PROJECT: lyyuan03-membership
+        run: node scripts/migrate-paid-article-bodies.mjs
+
+      - name: Record successful migration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "paid article migration: success"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "completed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/paid-article-migration-success.txt
+          rm -f .github/deploy-triggers/paid-article-migration-failed.txt
+          git add -A .github/deploy-triggers
+          git commit -m "Record successful paid article migration" || true
+          git push origin HEAD:main
+
+      - name: Record migration failure
+        if: failure()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p .github/deploy-triggers
+          {
+            echo "paid article migration: failed"
+            echo "run id: $GITHUB_RUN_ID"
+            echo "source commit: $GITHUB_SHA"
+            echo "failed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > .github/deploy-triggers/paid-article-migration-failed.txt
+          git add .github/deploy-triggers/paid-article-migration-failed.txt
+          git commit -m "Record failed paid article migration" || true
+          git push origin HEAD:main

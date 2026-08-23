@@ -1,0 +1,259 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function verifiedEmail() {
+      return signedIn()
+        && request.auth.token.email is string
+        && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.email in ["lyyuan03@gmail.com"];
+    }
+
+    function wellnessMember() {
+      return get(/databases/$(database)/documents/memberAccess/$(request.auth.token.email));
+    }
+
+    function sponsorMember() {
+      return get(/databases/$(database)/documents/sponsorMemberAccess/$(request.auth.token.email));
+    }
+
+    function hasWellnessMemberRecord() {
+      return verifiedEmail()
+        && exists(/databases/$(database)/documents/memberAccess/$(request.auth.token.email));
+    }
+
+    function hasSponsorMemberRecord() {
+      return verifiedEmail()
+        && exists(/databases/$(database)/documents/sponsorMemberAccess/$(request.auth.token.email));
+    }
+
+    function hasValidWellnessExpiry() {
+      return wellnessMember().data.keys().hasAny(["expiresAt"])
+        && (
+          wellnessMember().data.expiresAt is string
+          || (wellnessMember().data.expiresAt is timestamp
+            && wellnessMember().data.expiresAt > request.time)
+        );
+    }
+
+    function isActiveWellnessMember() {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && wellnessMember().data.status == "active"
+        && wellnessMember().data.paymentStatus == "paid"
+        && hasValidWellnessExpiry()
+        && wellnessMember().data.memberType == "wellness-channel"
+        && wellnessMember().data.wellnessAccess == true
+        && wellnessMember().data.memberLevel in ["wellness", "lingji"]
+        && (!wellnessMember().data.keys().hasAny(["disabled"])
+          || wellnessMember().data.disabled != true)
+        && (!wellnessMember().data.keys().hasAny(["suspended"])
+          || wellnessMember().data.suspended != true)
+        && (!wellnessMember().data.keys().hasAny(["revokedAt"])
+          || wellnessMember().data.revokedAt == null);
+    }
+
+    function isLingjiMember() {
+      return isActiveWellnessMember()
+        && (wellnessMember().data.memberLevel == "lingji"
+          || wellnessMember().data.wellnessLevel in ["lingji", "wellness-premium"]
+          || wellnessMember().data.annualSpend >= 100000);
+    }
+
+    function hasDirectSponsorArticleAccess() {
+      return hasSponsorMemberRecord()
+        && sponsorMember().data.email == request.auth.token.email
+        && sponsorMember().data.memberType == "sponsor-member"
+        && sponsorMember().data.status == "active"
+        && sponsorMember().data.paymentStatus == "paid"
+        && sponsorMember().data.articleAccess == true
+        && sponsorMember().data.accessScope == "sponsor-paid-articles"
+        && sponsorMember().data.accessVersion is int
+        && sponsorMember().data.accessVersion >= 2
+        && sponsorMember().data.expiresAt is timestamp
+        && sponsorMember().data.expiresAt > request.time
+        && (!sponsorMember().data.keys().hasAny(["startsAt"])
+          || !(sponsorMember().data.startsAt is timestamp)
+          || sponsorMember().data.startsAt <= request.time)
+        && (!sponsorMember().data.keys().hasAny(["disabled"])
+          || sponsorMember().data.disabled != true)
+        && (!sponsorMember().data.keys().hasAny(["suspended"])
+          || sponsorMember().data.suspended != true)
+        && (!sponsorMember().data.keys().hasAny(["revokedAt"])
+          || sponsorMember().data.revokedAt == null);
+    }
+
+    function hasWellnessPaidArticleAccess() {
+      return hasSponsorMemberRecord()
+        && hasWellnessMemberRecord()
+        && sponsorMember().data.email == request.auth.token.email
+        && sponsorMember().data.keys().hasAny(["wellnessBenefit"])
+        && sponsorMember().data.wellnessBenefit is map
+        && sponsorMember().data.wellnessBenefit.active == true
+        && sponsorMember().data.wellnessBenefit.articleAccess == true
+        && sponsorMember().data.wellnessBenefit.status == "active"
+        && sponsorMember().data.wellnessBenefit.accessScope == "sponsor-paid-articles"
+        && sponsorMember().data.wellnessBenefit.accessVersion is int
+        && sponsorMember().data.wellnessBenefit.accessVersion >= 1
+        && sponsorMember().data.wellnessBenefit.expiresAt is timestamp
+        && sponsorMember().data.wellnessBenefit.expiresAt > request.time
+        && (!sponsorMember().data.wellnessBenefit.keys().hasAny(["startsAt"])
+          || !(sponsorMember().data.wellnessBenefit.startsAt is timestamp)
+          || sponsorMember().data.wellnessBenefit.startsAt <= request.time)
+        && wellnessMember().data.email == request.auth.token.email
+        && wellnessMember().data.memberType == "wellness-channel"
+        && wellnessMember().data.status == "active"
+        && wellnessMember().data.paymentStatus == "paid"
+        && wellnessMember().data.wellnessAccess == true
+        && wellnessMember().data.memberLevel in ["wellness", "lingji"]
+        && wellnessMember().data.expiresAt is timestamp
+        && wellnessMember().data.expiresAt > request.time
+        && sponsorMember().data.wellnessBenefit.expiresAt <= wellnessMember().data.expiresAt
+        && (!wellnessMember().data.keys().hasAny(["disabled"])
+          || wellnessMember().data.disabled != true)
+        && (!wellnessMember().data.keys().hasAny(["suspended"])
+          || wellnessMember().data.suspended != true)
+        && (!wellnessMember().data.keys().hasAny(["revokedAt"])
+          || wellnessMember().data.revokedAt == null)
+        && sponsorMember().data.wellnessBenefit.linkedMemberLevel == wellnessMember().data.memberLevel
+        && (
+          (sponsorMember().data.wellnessBenefit.source == "lingji-member"
+            && wellnessMember().data.memberLevel == "lingji")
+          || (
+            sponsorMember().data.wellnessBenefit.source == "single-purchase-15000"
+            && sponsorMember().data.wellnessBenefit.qualifyingPurchaseAmount is number
+            && sponsorMember().data.wellnessBenefit.qualifyingPurchaseAmount >= 15000
+            && sponsorMember().data.wellnessBenefit.confirmedBy is string
+            && sponsorMember().data.wellnessBenefit.confirmedBy.size() > 0
+            && sponsorMember().data.wellnessBenefit.confirmedAt is timestamp
+          )
+        );
+    }
+
+    function canReadPaidArticles() {
+      return isAdmin()
+        || hasDirectSponsorArticleAccess()
+        || hasWellnessPaidArticleAccess();
+    }
+
+    match /articles/{articleId} {
+      allow read: if resource.data.status == "published" || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // 正文與公開文章完全分離。Firestore 在伺服器端先驗證會員資格；
+    // 未登入、已過期、停權或沒有文章權益的帳號不會收到正文資料。
+    match /paidArticleBodies/{articleId} {
+      allow read: if canReadPaidArticles()
+        && (isAdmin() || resource.data.status == "published")
+        && resource.data.active != false;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /articleMetrics/{articleId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly([
+          "articleId", "views", "shares", "copies", "updatedAt"
+        ])
+        && request.resource.data.articleId == articleId
+        && request.resource.data.views is int
+        && request.resource.data.shares is int
+        && request.resource.data.copies is int
+        && request.resource.data.views >= 0
+        && request.resource.data.shares >= 0
+        && request.resource.data.copies >= 0
+        && request.resource.data.views
+          + request.resource.data.shares
+          + request.resource.data.copies == 1
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isAdmin() || (
+        request.resource.data.keys().hasOnly([
+          "articleId", "views", "shares", "copies", "updatedAt"
+        ])
+        && request.resource.data.articleId == articleId
+        && request.resource.data.articleId == resource.data.articleId
+        && request.resource.data.views is int
+        && request.resource.data.shares is int
+        && request.resource.data.copies is int
+        && request.resource.data.views >= resource.data.views
+        && request.resource.data.shares >= resource.data.shares
+        && request.resource.data.copies >= resource.data.copies
+        && request.resource.data.views - resource.data.views <= 1
+        && request.resource.data.shares - resource.data.shares <= 1
+        && request.resource.data.copies - resource.data.copies <= 1
+        && request.resource.data.views - resource.data.views
+          + request.resource.data.shares - resource.data.shares
+          + request.resource.data.copies - resource.data.copies == 1
+        && request.resource.data.updatedAt == request.time
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    match /articleNotifications/{articleId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    match /membershipSettings/{settingId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /memberAccess/{memberEmail} {
+      // 會員只能讀取自己的路徑。不要依賴 resource.data 判斷，
+      // 讓「沒有一般會員紀錄、只有贊助會員紀錄」的帳號也能正常取得 not-found，
+      // 避免文章端 Promise.all 因 permission-denied 連帶清空有效的贊助閱讀資格。
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /sponsorMemberAccess/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail
+          && resource.data.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /membershipHistory/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail
+          && resource.data.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /memberVideos/{videoId} {
+      allow read: if isAdmin() || (
+        isActiveWellnessMember()
+        && resource.data.status == "published"
+        && (resource.data.accessLevel == "wellness"
+          || (resource.data.accessLevel == "lingji" && isLingjiMember()))
+      );
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /membershipOrders/{orderId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

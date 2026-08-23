@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">
+  <defs>
+    <radialGradient id="light" cx="50%" cy="43%" r="62%">
+      <stop offset="0" stop-color="#c8b287" stop-opacity=".36"/>
+      <stop offset=".52" stop-color="#37533e" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#071109" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#122218"/>
+      <stop offset="1" stop-color="#050b07"/>
+    </linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+  </defs>
+  <rect width="1536" height="1024" fill="url(#ground)"/>
+  <circle cx="768" cy="438" r="440" fill="url(#light)"/>
+  <g opacity=".2" filter="url(#blur)" fill="#d8ccb1">
+    <path d="M240 830C390 520 470 315 654 196c-84 202-89 411-21 634z"/>
+    <path d="M1296 830c-150-310-230-515-414-634 84 202 89 411 21 634z"/>
+  </g>
+  <g fill="none" stroke="#c6ad7d" stroke-linecap="round">
+    <circle cx="768" cy="405" r="102" stroke-width="3" opacity=".62"/>
+    <path d="M768 508c-112 0-205 86-227 235m227-235c112 0 205 86 227 235" stroke-width="4" opacity=".55"/>
+    <path d="M693 409c34-28 116-28 150 0-36 25-114 25-150 0z" stroke-width="3" opacity=".82"/>
+    <circle cx="768" cy="409" r="17" fill="#c6ad7d" fill-opacity=".55" stroke="none"/>
+    <path d="M768 263v-64M624 311l-47-47m335 47 47-47" stroke-width="2" opacity=".35"/>
+  </g>
+  <path d="M310 835c238-70 678-70 916 0" fill="none" stroke="#9d865e" stroke-width="2" opacity=".32"/>
+  <text x="768" y="900" text-anchor="middle" fill="#d9c9aa" font-family="serif" font-size="44" letter-spacing="10">辨識，先於驅離</text>
+</svg>
