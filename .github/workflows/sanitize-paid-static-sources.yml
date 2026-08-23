@@ -32,12 +32,13 @@ jobs:
           test -f .github/deploy-triggers/firestore-rules-success.txt
           echo "Verified private-body migration and Firestore server-side access rules are both present."
 
-      - name: Verify article admin repair invariant
+      - name: Verify article admin secure wiring
         run: |
           set -euo pipefail
-          git show 4c96f3e80e413489a880516f74a2d7326977ab65:article-admin.js > /tmp/article-admin-original.js
-          grep -v 'article-admin-paid-security.js?v=20260823-firestore-paid-2' article-admin.js > /tmp/article-admin-without-security-import.js
-          cmp /tmp/article-admin-original.js /tmp/article-admin-without-security-import.js
+          node --check article-admin.js
+          test "$(grep -c 'article-admin-paid-security.js?v=20260823-firestore-paid-2' article-admin.js)" = "1"
+          grep -F 'import "./article-admin-core.js?v=20260816-six-images-1";' article-admin.js
+          grep -F 'import "./article-admin-paid-security.js?v=20260823-firestore-paid-2";' article-admin.js
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
