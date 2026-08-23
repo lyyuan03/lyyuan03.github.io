@@ -1,64 +1,54 @@
 import { db } from "./firebase-config.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { staticArticles } from "./static-articles.js?v=20260823-paid-private-final-1";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";
-const BRAND_VERSION = "20260823-3";
+const BRAND_VERSION = "20260823-photo-title-1";
 
-const SPECIAL_ARTICLE_IMAGES = {
-  "this-book-took-thirty-years": `assets/articles/thumbnails/brand-20260823/this-book-took-thirty-years.svg?v=${BRAND_VERSION}`,
-  "quantum-frequency-work-wish": `assets/articles/thumbnails/brand-20260823/quantum-frequency-work-wish.svg?v=${BRAND_VERSION}`,
-  "2058-future-person-prophecy": `assets/articles/thumbnails/brand-20260823/2058-future-person-prophecy.svg?v=${BRAND_VERSION}`
+const BRAND_FALLBACKS = {
+  spiritual: `assets/articles/thumbnails/brand-system-20260823/spiritual.svg?v=${BRAND_VERSION}`,
+  "spirit-world": `assets/articles/thumbnails/brand-system-20260823/spirit-world.svg?v=${BRAND_VERSION}`,
+  worldly: `assets/articles/thumbnails/brand-system-20260823/worldly.svg?v=${BRAND_VERSION}`,
+  reading: `assets/articles/thumbnails/brand-system-20260823/reading.svg?v=${BRAND_VERSION}`
 };
 
-const BRAND_THEMES = {
-  spiritual: {
-    image: `assets/articles/thumbnails/brand-system-20260823/spiritual.svg?v=${BRAND_VERSION}`,
-    tone: "dark",
-    label: "靈・修行"
-  },
-  "spirit-world": {
-    image: `assets/articles/thumbnails/brand-system-20260823/spirit-world.svg?v=${BRAND_VERSION}`,
-    tone: "dark",
-    label: "異・靈界"
-  },
-  worldly: {
-    image: `assets/articles/thumbnails/brand-system-20260823/worldly.svg?v=${BRAND_VERSION}`,
-    tone: "light",
-    label: "人・俗世"
-  },
-  reading: {
-    image: `assets/articles/thumbnails/brand-system-20260823/reading.svg?v=${BRAND_VERSION}`,
-    tone: "light",
-    label: "思・讀物"
-  }
+const CATEGORY_LABELS = {
+  spiritual: "靈・修行",
+  "spirit-world": "異・靈界",
+  worldly: "人・俗世",
+  reading: "思・讀物"
 };
+
+const articlesById = new Map();
+staticArticles.forEach((article) => {
+  const id = article?.id || article?.slug;
+  if (id) articlesById.set(id, article);
+  if (article?.slug) articlesById.set(article.slug, article);
+});
 
 let hasSettingsDocument = false;
 let applyScheduled = false;
 
-function ensureBrandStyle() {
-  if (document.getElementById("article-brand-thumbnail-style-20260823")) return;
+function ensureStyle() {
+  if (document.getElementById("article-photo-thumbnail-style-20260823")) return;
+  document.getElementById("article-brand-thumbnail-style-20260823")?.remove();
   const style = document.createElement("style");
-  style.id = "article-brand-thumbnail-style-20260823";
+  style.id = "article-photo-thumbnail-style-20260823";
   style.textContent = `
-    .article-card-media[data-brand-thumbnail="true"]{position:relative!important;overflow:hidden!important;background:${MEDIA_BACKGROUND}!important}
-    .article-card-media[data-brand-thumbnail="true"]>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;transform:none!important;filter:none!important;margin:0!important;padding:0!important}
-    .article-brand-thumb-overlay{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;padding:8.5% 8.5% 7.5%;pointer-events:none;text-align:left}
-    .article-brand-thumb-overlay.is-dark{color:#F2EBDD}.article-brand-thumb-overlay.is-light{color:#3F3024}
-    .article-brand-thumb-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-    .article-brand-thumb-brand{font-family:"Source Han Serif TC","Noto Serif TC","Songti TC",serif;font-size:clamp(12px,1.25vw,17px);letter-spacing:.18em;white-space:nowrap}
-    .article-brand-thumb-category{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:clamp(9px,.88vw,12px);letter-spacing:.12em;opacity:.74;white-space:nowrap}
-    .article-brand-thumb-rule{width:31%;height:1px;margin-top:7px;background:#A58254;opacity:.8}
-    .article-brand-thumb-en{margin-top:5px;color:#A58254;font-family:Arial,sans-serif;font-size:clamp(7px,.7vw,10px);letter-spacing:.16em}
-    .article-brand-thumb-title{margin-top:auto;margin-bottom:auto;max-width:68%;font-family:"Source Han Serif TC","Noto Serif TC","Songti TC",serif;font-weight:600;line-height:1.32;letter-spacing:.03em;text-wrap:balance;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;text-shadow:none}
-    .article-brand-thumb-title.len-short{font-size:clamp(20px,2.25vw,31px)}
-    .article-brand-thumb-title.len-medium{font-size:clamp(18px,2.05vw,28px)}
-    .article-brand-thumb-title.len-long{font-size:clamp(16px,1.8vw,25px);max-width:70%}
-    .article-brand-thumb-foot{display:flex;align-items:center;gap:9px;color:#A58254;font-family:Arial,sans-serif;font-size:clamp(7px,.7vw,10px);letter-spacing:.13em}
-    .article-brand-thumb-foot:before{content:"";width:22%;height:1px;background:#A58254;opacity:.62}
-    .article-card-media[data-brand-special="true"] .article-brand-thumb-overlay{display:none!important}
-    @media(max-width:760px){.article-brand-thumb-overlay{padding:7% 7.5% 6.5%}.article-brand-thumb-title{max-width:70%}.article-brand-thumb-title.len-long{max-width:72%}}
+    .article-card-media[data-photo-thumbnail="true"]{position:relative!important;overflow:hidden!important;background:${MEDIA_BACKGROUND}!important}
+    .article-card-media[data-photo-thumbnail="true"]>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;transform:none!important;filter:none!important;margin:0!important;padding:0!important;z-index:0}
+    .article-card-media[data-photo-thumbnail="true"]:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,12,6,.18) 0%,rgba(5,12,6,.06) 32%,rgba(5,12,6,.28) 62%,rgba(5,12,6,.78) 100%)}
+    .article-card-media[data-photo-thumbnail="true"] .article-card-media-gradient{display:none!important}
+    .article-photo-thumb-overlay{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:6.5% 7%;pointer-events:none;color:#F6F1E8;text-align:left}
+    .article-photo-thumb-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .article-photo-thumb-brand{font-family:"Source Han Serif TC","Noto Serif TC","Songti TC",serif;font-size:clamp(11px,1vw,15px);letter-spacing:.18em;text-shadow:0 1px 8px rgba(0,0,0,.55);white-space:nowrap}
+    .article-photo-thumb-category{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:clamp(9px,.78vw,11px);letter-spacing:.1em;padding:3px 7px;border:1px solid rgba(246,241,232,.48);border-radius:999px;background:rgba(7,18,7,.22);backdrop-filter:blur(3px);white-space:nowrap}
+    .article-photo-thumb-title{max-width:82%;font-family:"Source Han Serif TC","Noto Serif TC","Songti TC",serif;font-weight:600;line-height:1.32;letter-spacing:.02em;text-shadow:0 2px 12px rgba(0,0,0,.78);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-wrap:balance}
+    .article-photo-thumb-title.len-short{font-size:clamp(22px,2.55vw,34px)}
+    .article-photo-thumb-title.len-medium{font-size:clamp(20px,2.25vw,31px)}
+    .article-photo-thumb-title.len-long{font-size:clamp(18px,2vw,27px)}
+    @media(max-width:760px){.article-photo-thumb-overlay{padding:6% 6.5%}.article-photo-thumb-title{max-width:88%}.article-photo-thumb-title.len-short{font-size:clamp(21px,7vw,30px)}.article-photo-thumb-title.len-medium{font-size:clamp(19px,6.3vw,27px)}.article-photo-thumb-title.len-long{font-size:clamp(17px,5.7vw,24px)}}
   `;
   document.head.appendChild(style);
 }
@@ -92,12 +82,65 @@ function adjustSystemCounts() {
   summary.dataset.thumbnailSystemAdjusted = "true";
 }
 
-function categoryKeyForCard(card) {
+function categoryKeyForCard(card, article) {
+  if (article?.category && BRAND_FALLBACKS[article.category]) return article.category;
   const meta = (card.querySelector(".article-meta")?.textContent || "").trim();
   if (meta.includes("異") || meta.includes("靈界")) return "spirit-world";
   if (meta.includes("人") || meta.includes("俗世")) return "worldly";
   if (meta.includes("思") || meta.includes("讀物")) return "reading";
   return "spiritual";
+}
+
+function normalizeImageUrl(value = "") {
+  return String(value || "").trim().replace(/^<|>$/g, "");
+}
+
+function firstInlineImage(article) {
+  const content = String(article?.content || "");
+  const markdown = /!\[[^\]]*\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/g;
+  let match;
+  while ((match = markdown.exec(content))) {
+    const src = normalizeImageUrl(match[1]);
+    if (src && !src.startsWith("data:") && !src.startsWith("blob:")) return src;
+  }
+  const html = content.match(/<img\b[^>]*\bsrc=["']([^"']+)["']/i);
+  if (html?.[1]) return normalizeImageUrl(html[1]);
+  return "";
+}
+
+function compactTitle(article, fallbackTitle = "") {
+  const preferred = String(article?.thumbnailTitle || article?.shortTitle || article?.cardTitle || "").trim();
+  if (preferred) return preferred;
+
+  const title = String(article?.title || fallbackTitle || "靈元院文選").replace(/\s+/g, " ").trim();
+  const book = title.match(/《([^》]{1,14})》/);
+  const quoted = title.match(/「([^」]{2,12})」/);
+  if (book && title.includes("？")) {
+    if (quoted) return `《${book[1]}》真的有${quoted[1]}？`;
+    return `《${book[1]}》真的如此神奇？`;
+  }
+
+  const year = title.match(/(?:19|20)\d{2}/)?.[0];
+  if (year && /預言/.test(title) && title.includes("？")) return `${year}預言真的準嗎？`;
+
+  const question = title.split("？")[0].trim();
+  if (title.includes("？")) {
+    const parts = question.split(/[，,：:｜|—–]/).map((item) => item.trim()).filter(Boolean);
+    const candidate = [...parts].reverse().find((item) => [...item].length >= 6 && [...item].length <= 18);
+    if (candidate) return `${candidate.replace(/竟能/g, "真的能")}？`;
+    if ([...question].length <= 18) return `${question}？`;
+  }
+
+  const parts = title.split(/[，,。！？：:｜|—–]/).map((item) => item.trim()).filter(Boolean);
+  if (parts.length >= 2) {
+    const combined = `${parts[0]}，${parts[1]}`;
+    if ([...combined].length <= 18) return combined;
+  }
+  const useful = parts.find((item) => [...item].length >= 6 && [...item].length <= 18);
+  if (useful) return useful;
+
+  const chars = [...title];
+  return chars.length > 18 ? `${chars.slice(0, 18).join("")}…` : title;
 }
 
 function ensureImage(media, titleText) {
@@ -115,34 +158,26 @@ function ensureImage(media, titleText) {
 
 function titleLengthClass(text) {
   const length = [...String(text || "")].length;
-  if (length <= 14) return "len-short";
-  if (length <= 24) return "len-medium";
+  if (length <= 10) return "len-short";
+  if (length <= 16) return "len-medium";
   return "len-long";
 }
 
-function setTextIfChanged(node, value) {
-  if (node && node.textContent !== value) node.textContent = value;
-}
-
-function ensureOverlay(media, titleText, categoryLabel, tone) {
-  let overlay = media.querySelector(".article-brand-thumb-overlay");
+function ensureOverlay(media, titleText, categoryLabel) {
+  media.querySelector(".article-brand-thumb-overlay")?.remove();
+  let overlay = media.querySelector(".article-photo-thumb-overlay");
   if (!overlay) {
     overlay = document.createElement("div");
-    overlay.className = "article-brand-thumb-overlay";
-    overlay.innerHTML = `<div class="article-brand-thumb-head"><div><div class="article-brand-thumb-brand">靈元院</div><div class="article-brand-thumb-rule"></div><div class="article-brand-thumb-en">LYYUAN JOURNAL</div></div><div class="article-brand-thumb-category"></div></div><div class="article-brand-thumb-title"></div><div class="article-brand-thumb-foot">SELECTED READING</div>`;
+    overlay.className = "article-photo-thumb-overlay";
+    overlay.innerHTML = `<div class="article-photo-thumb-top"><div class="article-photo-thumb-brand">靈元院</div><div class="article-photo-thumb-category"></div></div><div class="article-photo-thumb-title"></div>`;
     media.appendChild(overlay);
   }
-  const dark = tone === "dark";
-  if (overlay.classList.contains("is-dark") !== dark) overlay.classList.toggle("is-dark", dark);
-  if (overlay.classList.contains("is-light") === dark) overlay.classList.toggle("is-light", !dark);
-  const titleNode = overlay.querySelector(".article-brand-thumb-title");
-  setTextIfChanged(titleNode, titleText);
-  const lengthClass = titleLengthClass(titleText);
-  if (!titleNode.classList.contains(lengthClass)) {
-    titleNode.classList.remove("len-short", "len-medium", "len-long");
-    titleNode.classList.add(lengthClass);
-  }
-  setTextIfChanged(overlay.querySelector(".article-brand-thumb-category"), categoryLabel);
+  const titleNode = overlay.querySelector(".article-photo-thumb-title");
+  if (titleNode.textContent !== titleText) titleNode.textContent = titleText;
+  titleNode.classList.remove("len-short", "len-medium", "len-long");
+  titleNode.classList.add(titleLengthClass(titleText));
+  const categoryNode = overlay.querySelector(".article-photo-thumb-category");
+  if (categoryNode.textContent !== categoryLabel) categoryNode.textContent = categoryLabel;
 }
 
 function applyCard(card) {
@@ -150,29 +185,27 @@ function applyCard(card) {
   if (!articleId || articleId === SETTINGS_DOC_ID) return;
   const media = card.querySelector(".article-card-media");
   if (!media) return;
-  const titleText = (card.querySelector(".article-list-title")?.textContent || "靈元院文選").trim();
-  const image = ensureImage(media, titleText);
-  if (media.dataset.brandThumbnail !== "true") media.dataset.brandThumbnail = "true";
 
-  const specialImage = SPECIAL_ARTICLE_IMAGES[articleId];
-  if (specialImage) {
-    if (image.getAttribute("src") !== specialImage) image.setAttribute("src", specialImage);
-    if (media.dataset.brandSpecial !== "true") media.dataset.brandSpecial = "true";
-    media.querySelector(".article-brand-thumb-overlay")?.remove();
-    if (card.dataset.thumbnailConfigured !== "brand-special") card.dataset.thumbnailConfigured = "brand-special";
-    return;
-  }
+  const fullTitle = (card.querySelector(".article-list-title")?.textContent || "靈元院文選").trim();
+  const article = articlesById.get(articleId) || null;
+  const categoryKey = categoryKeyForCard(card, article);
+  const image = ensureImage(media, fullTitle);
+  const inlineImage = firstInlineImage(article);
+  const source = inlineImage || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
+  const shortTitle = compactTitle(article, fullTitle);
 
-  if (media.dataset.brandSpecial) delete media.dataset.brandSpecial;
-  const theme = BRAND_THEMES[categoryKeyForCard(card)] || BRAND_THEMES.spiritual;
-  if (image.getAttribute("src") !== theme.image) image.setAttribute("src", theme.image);
-  ensureOverlay(media, titleText, theme.label, theme.tone);
-  if (card.dataset.thumbnailConfigured !== "brand-system") card.dataset.thumbnailConfigured = "brand-system";
+  if (image.getAttribute("src") !== source) image.setAttribute("src", source);
+  image.alt = fullTitle;
+  media.dataset.photoThumbnail = "true";
+  delete media.dataset.brandThumbnail;
+  delete media.dataset.brandSpecial;
+  ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
+  card.dataset.thumbnailConfigured = inlineImage ? "inline-image" : "brand-fallback";
 }
 
 function applyAllCards() {
   applyScheduled = false;
-  ensureBrandStyle();
+  ensureStyle();
   removeSystemCard();
   adjustSystemCounts();
   document.querySelectorAll(".article-card[data-article-id]").forEach(applyCard);
@@ -185,7 +218,7 @@ function scheduleApply() {
 }
 
 function initialize() {
-  ensureBrandStyle();
+  ensureStyle();
   scheduleApply();
   const settingsRef = doc(db, "articles", SETTINGS_DOC_ID);
   onSnapshot(settingsRef, (snapshot) => {
