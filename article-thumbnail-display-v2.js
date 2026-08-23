@@ -4,13 +4,19 @@ import { staticArticles } from "./static-articles.js?v=20260823-paid-private-fin
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";
-const BRAND_VERSION = "20260823-photo-title-1";
+const BRAND_VERSION = "20260823-photo-title-2";
 
 const BRAND_FALLBACKS = {
   spiritual: `assets/articles/thumbnails/brand-system-20260823/spiritual.svg?v=${BRAND_VERSION}`,
   "spirit-world": `assets/articles/thumbnails/brand-system-20260823/spirit-world.svg?v=${BRAND_VERSION}`,
   worldly: `assets/articles/thumbnails/brand-system-20260823/worldly.svg?v=${BRAND_VERSION}`,
   reading: `assets/articles/thumbnails/brand-system-20260823/reading.svg?v=${BRAND_VERSION}`
+};
+
+// 某些舊文章的正文圖片由顯示修正模組動態補入，原始 Markdown 內沒有圖片路徑。
+// 這裡記錄「真正的第一張內文故事圖」，避免誤退回統一 CI 圖。
+const FIRST_IMAGE_OVERRIDES = {
+  "love-beyond-filial-piety-and-ancestor-worship": "assets/articles/love-beyond-filial-piety/from-duty-to-love-v2.webp?v=20260810-original-photo-fix-1"
 };
 
 const CATEGORY_LABELS = {
@@ -38,7 +44,7 @@ function ensureStyle() {
   style.textContent = `
     .article-card-media[data-photo-thumbnail="true"]{position:relative!important;overflow:hidden!important;background:${MEDIA_BACKGROUND}!important}
     .article-card-media[data-photo-thumbnail="true"]>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;transform:none!important;filter:none!important;margin:0!important;padding:0!important;z-index:0}
-    .article-card-media[data-photo-thumbnail="true"]:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,12,6,.18) 0%,rgba(5,12,6,.06) 32%,rgba(5,12,6,.28) 62%,rgba(5,12,6,.78) 100%)}
+    .article-card-media[data-photo-thumbnail="true"]:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,12,6,.16) 0%,rgba(5,12,6,.04) 34%,rgba(5,12,6,.20) 62%,rgba(5,12,6,.72) 100%)}
     .article-card-media[data-photo-thumbnail="true"] .article-card-media-gradient{display:none!important}
     .article-photo-thumb-overlay{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:6.5% 7%;pointer-events:none;color:#F6F1E8;text-align:left}
     .article-photo-thumb-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -190,8 +196,17 @@ function applyCard(card) {
   const article = articlesById.get(articleId) || null;
   const categoryKey = categoryKeyForCard(card, article);
   const image = ensureImage(media, fullTitle);
+
+  // 保留核心列表原本渲染出的照片，作為第三順位備用；避免一抓不到正文圖就變成統一 CI。
+  const originalSource = media.dataset.originalArticleImage || normalizeImageUrl(image.getAttribute("src") || "");
+  if (!media.dataset.originalArticleImage && originalSource && !originalSource.includes("brand-system-20260823")) {
+    media.dataset.originalArticleImage = originalSource;
+  }
+
   const inlineImage = firstInlineImage(article);
-  const source = inlineImage || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
+  const overrideImage = FIRST_IMAGE_OVERRIDES[articleId] || "";
+  const preservedOriginal = media.dataset.originalArticleImage || "";
+  const source = inlineImage || overrideImage || preservedOriginal || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
   const shortTitle = compactTitle(article, fullTitle);
 
   if (image.getAttribute("src") !== source) image.setAttribute("src", source);
@@ -200,7 +215,7 @@ function applyCard(card) {
   delete media.dataset.brandThumbnail;
   delete media.dataset.brandSpecial;
   ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
-  card.dataset.thumbnailConfigured = inlineImage ? "inline-image" : "brand-fallback";
+  card.dataset.thumbnailConfigured = inlineImage ? "inline-image" : overrideImage ? "inline-image-override" : preservedOriginal ? "original-photo" : "brand-fallback";
 }
 
 function applyAllCards() {
