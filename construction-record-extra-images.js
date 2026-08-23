@@ -23,11 +23,11 @@ function installExtraConstructionImages() {
         display:block;
         width:100%;
         height:auto;
+        min-height:0;
         border:0!important;
         box-shadow:none!important;
         background:#d8d0c2;
       }
-      .construction-record-mode .construction-record-view .construction-extra-render.is-loading img{min-height:220px}
       .construction-record-mode .construction-record-view .construction-extra-render figcaption{
         padding:13px 16px 15px;
         color:#725b43;
@@ -39,7 +39,6 @@ function installExtraConstructionImages() {
       }
       @media(max-width:760px){
         .construction-record-mode .construction-record-view .construction-extra-render{margin:28px 0 32px}
-        .construction-record-mode .construction-record-view .construction-extra-render.is-loading img{min-height:150px}
         .construction-record-mode .construction-record-view .construction-extra-render figcaption{padding:11px 13px 13px;font-size:11px}
       }
     `;
@@ -49,56 +48,48 @@ function installExtraConstructionImages() {
   const specs = [
     {
       id: "entrance-path",
-      payload: "assets/construction/2026-lineage-lamp/entrance-path-720.jpg.b64?v=20260822-2",
+      src: "/assets/construction/2026-lineage-lamp/entrance-path.webp?v=20260823-3",
       alt: "靈元院入口與石徑動線 3D 設計示意",
       caption: "入口與石徑動線｜由入口穿越植栽與木構廊架，逐步進入院區的空間設計示意。",
       anchorImage: /dizhi-render-exterior\.jpg/i
     },
     {
       id: "garden-corridor",
-      payload: "assets/construction/2026-lineage-lamp/garden-corridor-500.jpg.b64?v=20260822-2",
+      src: "/assets/construction/2026-lineage-lamp/garden-corridor.webp?v=20260823-3",
       alt: "靈元院庭園與廊道 3D 設計示意",
       caption: "庭園與廊道｜木構建築、植栽與步道彼此銜接，呈現院區安定而內斂的行走尺度。",
       anchorImage: /dizhi-render-garden\.jpg/i
     },
     {
       id: "shrine-hall",
-      payload: "assets/construction/2026-lineage-lamp/shrine-hall-500.jpg.b64?v=20260822-2",
+      src: "/assets/construction/2026-lineage-lamp/shrine-hall.webp?v=20260823-3",
       alt: "靈元院內部修持空間 3D 設計示意",
       caption: "內部修持空間｜以木格柵、柔和光線與水景構成沉靜的核心空間，作為未來修持與禮敬場域的設計想像。",
       headingPattern: /(主殿|殿內|內殿|修持|神尊)/
     }
   ];
 
-  const loadImagePayload = async (spec, image, figure) => {
-    try {
-      const response = await fetch(spec.payload, { cache: "reload" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const base64 = (await response.text()).replace(/\s+/g, "");
-      if (!base64.startsWith("/9j/")) throw new Error("invalid JPEG payload");
-      image.src = `data:image/jpeg;base64,${base64}`;
-      figure.classList.remove("is-loading");
-    } catch (error) {
-      console.warn(`建院設計圖載入失敗：${spec.id}`, error);
-      figure.classList.remove("is-loading");
-      figure.classList.add("is-error");
-    }
-  };
-
   const makeFigure = (spec) => {
     const figure = document.createElement("figure");
-    figure.className = "construction-extra-render is-loading";
+    figure.className = "construction-extra-render";
     figure.dataset.constructionExtra = spec.id;
 
     const image = document.createElement("img");
+    image.src = spec.src;
     image.alt = spec.alt;
-    image.loading = "lazy";
+    image.loading = "eager";
     image.decoding = "async";
+    image.referrerPolicy = "no-referrer-when-downgrade";
+    image.addEventListener("error", () => {
+      const retryUrl = `${spec.src.split("?")[0]}?retry=${Date.now()}`;
+      if (image.dataset.retryDone === "1") return;
+      image.dataset.retryDone = "1";
+      image.src = retryUrl;
+    }, { once: false });
 
     const caption = document.createElement("figcaption");
     caption.textContent = spec.caption;
     figure.append(image, caption);
-    void loadImagePayload(spec, image, figure);
     return figure;
   };
 
@@ -118,7 +109,15 @@ function installExtraConstructionImages() {
     if (!article || !body) return false;
 
     specs.forEach((spec) => {
-      if (body.querySelector(`[data-construction-extra="${spec.id}"]`)) return;
+      const existing = body.querySelector(`[data-construction-extra="${spec.id}"]`);
+      if (existing) {
+        const image = existing.querySelector("img");
+        if (image && !image.currentSrc.includes(spec.src.split("?")[0]) && image.src !== new URL(spec.src, location.origin).href) {
+          image.src = spec.src;
+        }
+        return;
+      }
+
       const figure = makeFigure(spec);
 
       if (spec.anchorImage) {
@@ -158,6 +157,7 @@ function installExtraConstructionImages() {
   ensure();
   window.setTimeout(ensure, 350);
   window.setTimeout(ensure, 1200);
+  window.setTimeout(ensure, 2500);
 
   const root = document.getElementById("article-root") || document.documentElement;
   const observer = new MutationObserver(scheduleEnsure);
