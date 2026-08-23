@@ -1,0 +1,176 @@
+import { auth, db } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const articleId = new URLSearchParams(location.search).get("id") || "";
+const root = document.getElementById("article-root");
+let currentUser = auth.currentUser;
+let requestSerial = 0;
+let metadataCache = null;
+
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
+function renderInline(value = "") {
+  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1">');
+}
+
+function renderContent(value = "") {
+  return String(value || "")
+    .split(/\n{2,}/)
+    .map((block) => {
+      const trimmed = block.trim();
+      if (!trimmed) return "";
+      if (trimmed.startsWith("### ")) return `<h3>${renderInline(trimmed.slice(4))}</h3>`;
+      if (trimmed.startsWith("## ")) return `<h2>${renderInline(trimmed.slice(3))}</h2>`;
+      if (trimmed.startsWith("# ")) return `<h1>${renderInline(trimmed.slice(2))}</h1>`;
+      if (/^!\[[^\]]*\]\([^)]+\)$/.test(trimmed)) return `<figure>${renderInline(trimmed)}</figure>`;
+      return `<p>${renderInline(trimmed).replace(/\n/g, "<br>")}</p>`;
+    })
+    .join("");
+}
+
+function paidView() {
+  if (!articleId) return null;
+  return document.querySelector(`.article-view[data-article-id="${CSS.escape(articleId)}"]`)
+    || document.querySelector(".article-view");
+}
+
+async function paidMetadata() {
+  if (metadataCache) return metadataCache;
+  try {
+    const snapshot = await getDoc(doc(db, "articles", articleId));
+    metadataCache = snapshot.exists() ? snapshot.data() || {} : {};
+  } catch (error) {
+    console.warn("付費文章公開資訊暫時無法確認。", error);
+    metadataCache = {};
+  }
+  return metadataCache;
+}
+
+function setSecureStatus(view, message = "") {
+  let status = view.querySelector("[data-paid-secure-status]");
+  if (!message) {
+    status?.remove();
+    return;
+  }
+  if (!status) {
+    status = document.createElement("div");
+    status.dataset.paidSecureStatus = "true";
+    status.style.cssText = "margin:22px 0;padding:12px 16px;border:1px solid rgba(139,104,63,.2);color:#725D48;font-size:12px;text-align:center;background:rgba(255,255,255,.2)";
+    const preview = view.querySelector(".article-body");
+    preview?.after(status);
+  }
+  status.textContent = message;
+}
+
+function refreshToc(view) {
+  const toc = view.querySelector(".article-toc");
+  if (!toc) return;
+  const headings = [...view.querySelectorAll(".article-body h2, .article-body h3")]
+    .filter((heading) => heading.textContent.trim());
+  headings.forEach((heading, index) => {
+    heading.id = `article-section-${index + 1}`;
+  });
+  const list = toc.querySelector("ol");
+  const count = toc.querySelector(".article-toc-toggle small");
+  if (count) count.textContent = `共 ${headings.length} 節`;
+  if (list) {
+    list.innerHTML = headings.map((heading) =>
+      `<li class="${heading.tagName === "H3" ? "is-sub" : ""}"><a href="#${heading.id}">${escapeHtml(heading.textContent.trim())}</a></li>`
+    ).join("");
+    list.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
+      toc.classList.remove("is-open");
+      toc.querySelector(".article-toc-toggle")?.setAttribute("aria-expanded", "false");
+    }));
+  }
+}
+
+function insertPrivateBody(view, content, version) {
+  if (view.querySelector("[data-paid-private-body]")) return;
+  const privateBody = document.createElement("div");
+  privateBody.className = "article-body paid-private-body";
+  privateBody.dataset.paidPrivateBody = "true";
+  privateBody.dataset.paidContentVersion = String(version || 1);
+  privateBody.innerHTML = renderContent(content);
+
+  view.querySelectorAll(".article-paid-gate, [data-paid-gate-restored]").forEach((gate) => gate.remove());
+
+  const anchor = view.querySelector(".next-reading, .recommended-book, .article-share");
+  if (anchor) view.insertBefore(privateBody, anchor);
+  else view.appendChild(privateBody);
+
+  if (!view.querySelector("[data-paid-secure-unlocked]")) {
+    const protectedMarker = document.createElement("span");
+    protectedMarker.hidden = true;
+    protectedMarker.className = "paid-lock-zone";
+    protectedMarker.dataset.paidSecureUnlocked = "true";
+    view.appendChild(protectedMarker);
+  }
+  view.dataset.paidSecureAccess = "granted";
+  setSecureStatus(view, "");
+  refreshToc(view);
+  document.dispatchEvent(new CustomEvent("lyyuan:paid-article-loaded", {
+    detail: { articleId, contentVersion: Number(version || 1) }
+  }));
+}
+
+async function hydratePaidBody() {
+  if (!articleId || !currentUser?.email) return;
+  const view = paidView();
+  if (!view || view.querySelector("[data-paid-private-body]")) return;
+
+  const metadata = await paidMetadata();
+  if (metadata.accessType !== "paid" && metadata.privatePaidContent !== true) return;
+
+  const serial = ++requestSerial;
+  setSecureStatus(view, "正在確認閱讀資格…");
+  try {
+    // Firestore Security Rules 會在伺服器端驗證登入帳號、會員狀態、期限與文章權益。
+    // 未通過資格驗證時，正文資料不會傳送到瀏覽器。
+    const snapshot = await getDoc(doc(db, "paidArticleBodies", articleId));
+    if (serial !== requestSerial || !view.isConnected) return;
+    if (!snapshot.exists()) throw new Error("PAID_BODY_NOT_FOUND");
+    const body = snapshot.data() || {};
+    const content = String(body.content || "").trim();
+    if (!content) throw new Error("EMPTY_PAID_BODY");
+    insertPrivateBody(view, content, body.contentVersion || metadata.paidContentVersion || 1);
+  } catch (error) {
+    if (serial !== requestSerial || !view.isConnected) return;
+    const code = String(error?.code || "");
+    if (code.includes("permission-denied") || code.includes("unauthenticated")) {
+      setSecureStatus(view, "");
+      return;
+    }
+    console.error("付費文章安全正文載入失敗。", error);
+    setSecureStatus(view, "閱讀資格暫時無法確認，請重新整理頁面；若付款已完成仍無法閱讀，再聯繫行政團隊。");
+  }
+}
+
+function scheduleHydrate() {
+  queueMicrotask(() => void hydratePaidBody());
+}
+
+if (root && articleId) {
+  const observer = new MutationObserver(scheduleHydrate);
+  observer.observe(root, { childList: true, subtree: true });
+}
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  requestSerial += 1;
+  scheduleHydrate();
+});
+
+window.addEventListener("pageshow", scheduleHydrate);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") scheduleHydrate();
+});
+scheduleHydrate();

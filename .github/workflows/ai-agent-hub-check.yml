@@ -1,0 +1,64 @@
+name: AI Agent Hub Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      component:
+        description: "要檢查的 Agent 元件"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - agent-reach
+          - aitoearn
+          - goose
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      AITO_EARN_API_KEY: ${{ secrets.AITO_EARN_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        if: ${{ inputs.component == 'all' || inputs.component == 'agent-reach' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Agent-Reach
+        if: ${{ inputs.component == 'all' || inputs.component == 'agent-reach' }}
+        run: bash ai-agent-hub/scripts/check-agent-reach.sh
+
+      - name: Check AiToEarn configuration
+        if: ${{ inputs.component == 'all' || inputs.component == 'aitoearn' }}
+        shell: bash
+        run: |
+          test -f ai-agent-hub/config/aitoearn.mcp.example.json
+          if [ -z "${AITO_EARN_API_KEY:-}" ]; then
+            echo "AITO_EARN_API_KEY 尚未設定；目前僅完成安全骨架，尚未啟用發布 Agent。"
+          else
+            echo "AITO_EARN_API_KEY 已存在於 GitHub Secrets。"
+          fi
+
+      - name: Check Goose architecture
+        if: ${{ inputs.component == 'all' || inputs.component == 'goose' }}
+        shell: bash
+        run: |
+          echo "Goose 設計為本機執行層，不嵌入 GitHub Pages。"
+          echo "請在本機 clone 此 repo 後由 Goose 操作工作分支，再經檢查後提交。"
+
+      - name: Security guard
+        shell: bash
+        run: |
+          if grep -RIE --exclude='*.example.json' --exclude-dir='.git' '(api[_-]?key|token|secret|cookie)[[:space:]]*[:=][[:space:]]*["'\''][^$<][^"'\'']{8,}' ai-agent-hub 2>/dev/null; then
+            echo "偵測到疑似寫死的敏感資訊，請檢查。"
+            exit 1
+          fi
+          echo "未在 AI Agent Hub 中發現明顯寫死的敏感資訊。"

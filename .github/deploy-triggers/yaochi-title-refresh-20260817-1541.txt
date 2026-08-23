@@ -1,0 +1,2 @@
+Force GitHub Pages deployment for yaochi-event-v2.html after title/subtitle update.
+Revision: 2026-08-17 15:41 Asia/Taipei
