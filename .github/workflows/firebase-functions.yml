@@ -1,16 +1,10 @@
-name: Deploy Firebase Membership Backend
+name: Deploy Firebase Membership Backend (Manual)
 
+# Cloud Functions deployment is intentionally manual while the project service account
+# lacks the required Service Usage / Cloud Functions deployment permissions.
+# Firestore rules have their own independent automatic workflow.
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - 'functions/**'
-      - 'firebase.json'
-      - 'firestore.rules'
-      - '.firebaserc'
-      - '.github/workflows/firebase-functions.yml'
 
 jobs:
   deploy-functions:
@@ -30,7 +24,6 @@ jobs:
           {
             echo "firebase membership backend: started"
             echo "run id: $GITHUB_RUN_ID"
-            echo "source commit: $GITHUB_SHA"
             echo "started at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           } > .github/deploy-triggers/firebase-functions-started.txt
           git add .github/deploy-triggers/firebase-functions-started.txt
@@ -55,8 +48,8 @@ jobs:
       - name: Verify backend
         run: npm --prefix functions ci && npm --prefix functions test && npm --prefix functions run lint
 
-      - name: Deploy membership functions and rules
-        run: firebase deploy --only functions,firestore:rules --project lyyuan03-membership --non-interactive
+      - name: Deploy membership functions
+        run: firebase deploy --only functions --project lyyuan03-membership --non-interactive
 
       - name: Record successful backend deployment
         run: |
@@ -68,7 +61,6 @@ jobs:
           {
             echo "firebase membership backend: success"
             echo "run id: $GITHUB_RUN_ID"
-            echo "source commit: $GITHUB_SHA"
             echo "completed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           } > .github/deploy-triggers/firebase-functions-success.txt
           rm -f .github/deploy-triggers/firebase-functions-failed.txt
@@ -87,7 +79,6 @@ jobs:
           {
             echo "firebase membership backend: failed"
             echo "run id: $GITHUB_RUN_ID"
-            echo "source commit: $GITHUB_SHA"
             echo "failed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           } > .github/deploy-triggers/firebase-functions-failed.txt
           git add .github/deploy-triggers/firebase-functions-failed.txt
