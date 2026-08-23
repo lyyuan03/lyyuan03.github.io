@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "node --test",
-    "lint": "node --check main.js && node --check index.js && node --check sponsor-offer-functions.js && node --check public-sponsor-checkout-functions.js && node --check public-sponsor-checkout-v2-functions.js && node --check paid-article-functions.js && node --check member-offers-functions.js && node --check article-notify-functions.js && node --check ecpay.js"
+    "lint": "node --check main.js && node --check index.js && node --check sponsor-offer-functions.js && node --check public-sponsor-checkout-functions.js && node --check public-sponsor-checkout-v2-functions.js && node --check member-offers-functions.js && node --check article-notify-functions.js && node --check ecpay.js"
   },
   "dependencies": {
     "firebase-admin": "^14.2.0",
