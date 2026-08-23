@@ -25,6 +25,33 @@ jobs:
           git fetch origin main
           git rebase origin/main
 
+      - name: Verify every public ref shares the sanitized root
+        run: |
+          set -euo pipefail
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --tags --force
+          main_roots=$(git rev-list --max-parents=0 origin/main)
+          test "$(printf '%s\n' "$main_roots" | sed '/^$/d' | wc -l | tr -d ' ')" = "1"
+          main_root="$main_roots"
+          bad=0
+          while IFS= read -r ref; do
+            [[ -z "$ref" || "$ref" == "refs/remotes/origin/HEAD" ]] && continue
+            roots=$(git rev-list --max-parents=0 "$ref")
+            if [[ "$roots" != "$main_root" ]]; then
+              echo "Branch ref does not share sanitized root: $ref -> $roots"
+              bad=1
+            fi
+          done < <(git for-each-ref --format='%(refname)' refs/remotes/origin)
+          while IFS= read -r ref; do
+            [[ -z "$ref" ]] && continue
+            roots=$(git rev-list --max-parents=0 "$ref")
+            if [[ "$roots" != "$main_root" ]]; then
+              echo "Tag ref does not share sanitized root: $ref -> $roots"
+              bad=1
+            fi
+          done < <(git for-each-ref --format='%(refname)' refs/tags)
+          test "$bad" = "0"
+          echo "All branch/tag refs share sanitized root: $main_root"
+
       - name: Require verified private migration and deployed Firestore rules
         run: |
           set -euo pipefail
