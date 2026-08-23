@@ -1,20 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
-  <rect width="1200" height="675" fill="#10150D"/>
-  <rect x="34" y="34" width="1132" height="607" rx="2" fill="none" stroke="#A58254" stroke-opacity=".38"/>
-  <path d="M74 118H286" stroke="#A58254" stroke-width="2"/>
-  <text x="74" y="96" fill="#EEE7DA" font-family="Noto Serif CJK TC, serif" font-size="28" letter-spacing="6">靈元院</text>
-  <text x="74" y="142" fill="#A58254" font-family="Arial, sans-serif" font-size="14" letter-spacing="5">LYYUAN JOURNAL</text>
-  <text x="1052" y="98" fill="#B9A788" font-family="Noto Sans CJK TC, sans-serif" font-size="16" text-anchor="end" letter-spacing="3">靈・修行</text>
-  <text x="770" y="410" fill="none" stroke="#A58254" stroke-opacity=".18" stroke-width="2" font-family="Georgia, serif" font-size="230" font-weight="700">2058</text>
-  <g fill="none" stroke="#A58254" stroke-opacity=".28">
-    <path d="M730 488 C820 408 975 408 1095 488" stroke-width="1.5"/>
-    <path d="M770 520 C860 456 985 456 1068 520" stroke-width="1"/>
-    <path d="M902 188V535" stroke-width="1"/>
-    <circle cx="902" cy="342" r="9" fill="#A58254" stroke="none"/>
-  </g>
-  <text x="74" y="300" fill="#EEE7DA" font-family="Noto Serif CJK TC, serif" font-size="54" font-weight="700" letter-spacing="2">來自2058年的未來人</text>
-  <text x="74" y="378" fill="#EEE7DA" font-family="Noto Serif CJK TC, serif" font-size="58" font-weight="700" letter-spacing="2">預言真的準得發毛？</text>
-  <text x="76" y="452" fill="#BEB7A9" font-family="Noto Sans CJK TC, sans-serif" font-size="20" letter-spacing="2">真正值得追問的，是未來究竟有沒有被寫死。</text>
-  <path d="M74 548H510" stroke="#A58254" stroke-opacity=".5"/>
-  <text x="74" y="586" fill="#A58254" font-family="Arial, sans-serif" font-size="13" letter-spacing="4">SPIRITUAL READING · 2026</text>
+<rect width="1200" height="675" fill="#11120D"/><rect x="28" y="28" width="1144" height="619" fill="none" stroke="#A58254" stroke-opacity=".52"/>
+<text x="70" y="88" fill="#F2EBDD" font-family="Noto Serif TC,PingFang TC,serif" font-size="30" letter-spacing="5">靈元院</text><path d="M70 112H286" stroke="#A58254" stroke-width="2"/><text x="70" y="141" fill="#A58254" font-family="Arial,sans-serif" font-size="15" letter-spacing="4">LYYUAN JOURNAL</text><text x="1100" y="88" fill="#C8AE7A" font-family="Noto Sans TC,PingFang TC,sans-serif" font-size="17" text-anchor="end" letter-spacing="3">靈・修行</text>
+<text x="770" y="360" fill="#A58254" fill-opacity=".09" font-family="Georgia,serif" font-size="240" font-weight="700">2058</text><g fill="none" stroke="#A58254"><path d="M930 168V566" stroke-opacity=".45"/><circle cx="930" cy="315" r="86" stroke-opacity=".35"/><circle cx="930" cy="315" r="106" stroke-opacity=".15" stroke-dasharray="3 9"/><circle cx="930" cy="315" r="8" fill="#A58254" fill-opacity=".78"/><path d="M760 560 C840 520 860 455 916 421 C966 390 1012 382 1086 400" stroke-opacity=".5" stroke-width="2"/><path d="M785 590 C866 548 896 520 941 494 C1002 459 1058 457 1132 471" stroke-opacity=".22"/></g>
+<path d="M670 612 C760 574 834 572 908 592 C994 615 1070 607 1160 566 L1160 647 L670 647Z" fill="#171A12"/><path d="M716 604 C790 575 845 575 908 592 C986 612 1060 604 1130 577" fill="none" stroke="#6D5B38" stroke-opacity=".35"/>
+<circle cx="930" cy="315" r="42" fill="#B79053" fill-opacity=".08"/><circle cx="930" cy="315" r="18" fill="#C6A86B" fill-opacity=".14"/>
+<text x="70" y="294" fill="#F3ECDD" font-family="Noto Serif TC,PingFang TC,serif" font-size="54" font-weight="700">來自2058年的未來人</text><text x="70" y="375" fill="#F3ECDD" font-family="Noto Serif TC,PingFang TC,serif" font-size="58" font-weight="700">預言真的準得發毛？</text><text x="72" y="446" fill="#C9C0B1" font-family="Noto Sans TC,PingFang TC,sans-serif" font-size="20" letter-spacing="1.5">真正值得追問的，是未來究竟有沒有被寫死。</text><path d="M70 546H510" stroke="#A58254" stroke-opacity=".55"/><text x="70" y="586" fill="#A58254" font-family="Arial,sans-serif" font-size="14" letter-spacing="3">SPIRITUAL READING・2026</text>
 </svg>
