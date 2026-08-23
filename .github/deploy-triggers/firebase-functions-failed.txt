@@ -1,0 +1,4 @@
+firebase membership backend: failed
+run id: 32613377733
+source commit: c2a0588b75617b76a213edcf143c1216a8ba9b82
+failed at: 2026-08-23T02:39:16Z
