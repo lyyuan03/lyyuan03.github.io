@@ -1,0 +1,4 @@
+firestore rules: started
+run id: 32791344821
+source commit: f0c71f6e1b87c80415392610d3fe40d9972e4e26
+started at: 2026-08-24T23:53:46Z
