@@ -843,7 +843,20 @@ async function loadArticles() {
   if (statusResult.status === "rejected") console.warn("文章狀態索引暫時無法載入。", statusResult.reason);
   const mergedById = new Map();
   staticArticles.forEach((article) => mergedById.set(article.id, article));
-  firestoreArticles.forEach((article) => mergedById.set(article.id, article));
+  firestoreArticles.forEach((article) => {
+    const staticArticle = staticArticles.find((item) => item.id === article.id || item.slug === article.id);
+    if (!staticArticle) {
+      mergedById.set(article.id, article);
+      return;
+    }
+    mergedById.set(article.id, {
+      ...staticArticle,
+      ...article,
+      content: staticArticle.content || article.content || "",
+      coverImage: staticArticle.coverImage || article.coverImage || "",
+      thumbnailImage: staticArticle.thumbnailImage || article.thumbnailImage || ""
+    });
+  });
   const future2058Static = staticArticles.find((article) => article.id === "2058-future-person-prophecy");
   const future2058Firestore = firestoreArticles.find((article) => article.id === "2058-future-person-prophecy");
   if (future2058Static && future2058Firestore) {
