@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const AUTH_VERSION = "20260803-sponsor-authoritative-1";
+const AUTH_VERSION = "20260824-auth-unlock-1";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 
 function installStyles() {
@@ -34,6 +34,12 @@ function installStyles() {
     .site-account-menu button{margin-top:5px;padding-top:12px;border-top:1px solid rgba(165,130,84,.2);color:rgba(245,240,232,.58)}
     #member-login-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,7,4,.72);backdrop-filter:blur(8px)}
     #member-login-modal.is-open{display:flex}
+    html.member-login-open,body.member-login-open{overflow:hidden!important}
+    @media(max-width:768px){
+      html body.site-auth-enabled #site-auth-bar{top:58px!important;left:0!important;right:0!important;width:100%!important;min-width:0!important;height:52px!important;padding:0 14px!important;justify-content:center!important;background:rgba(7,11,6,.97)!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:1201!important}
+      html body.site-auth-enabled #site-auth-bar .site-auth-actions{width:100%!important;max-width:396px!important}
+      html body.site-auth-enabled #site-auth-bar .site-auth-button{width:100%!important;display:block!important}
+    }
     .member-login-card{position:relative;width:min(430px,100%);padding:40px 38px 34px;text-align:center;background:linear-gradient(155deg,rgba(20,28,18,.98),rgba(8,13,7,.98));border:1px solid rgba(165,130,84,.42);box-shadow:0 24px 80px rgba(0,0,0,.62);color:#F5F0E8}
     .member-login-close{position:absolute;top:12px;right:14px;border:0;background:transparent;color:rgba(245,240,232,.55);font-size:25px;cursor:pointer;line-height:1}
     .member-login-mark{font-family:'Cormorant Garamond',serif;color:#A58254;font-size:12px;letter-spacing:.42em;margin-bottom:12px}
@@ -107,7 +113,11 @@ function installMemberModal() {
       <p class="member-login-browser-note">目前正在社群軟體的內建瀏覽器中開啟。若 Google 登入長時間沒有反應，請改用 Safari 或 Chrome 開啟本頁。</p>
     </div>`;
   document.body.appendChild(modal);
-  const close = () => modal.classList.remove("is-open");
+  const close = () => {
+    modal.classList.remove("is-open");
+    document.documentElement.classList.remove("member-login-open");
+    document.body.classList.remove("member-login-open");
+  };
   modal.querySelector(".member-login-close").addEventListener("click", close);
   modal.addEventListener("click", (event) => { if (event.target === modal) close(); });
   document.addEventListener("keydown", (event) => { if (event.key === "Escape") close(); });
@@ -130,6 +140,28 @@ let hasWellnessAccess = false;
 let hasMemberAccess = false;
 let sponsorOffer = null;
 if (isInAppBrowser) browserNote.style.display = "block";
+
+function releaseLoginUi() {
+  modal.classList.remove("is-open");
+  document.documentElement.classList.remove("member-login-open");
+  document.body.classList.remove("member-login-open");
+  googleButton.disabled = false;
+  googleButton.textContent = "選擇會員 Google 帳號";
+}
+
+function withAuthTimeout(promise, timeoutMs = 8000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => window.setTimeout(() => reject(new Error("會員資格確認逾時")), timeoutMs))
+  ]);
+}
+
+window.addEventListener("pageshow", () => {
+  if (auth.currentUser) releaseLoginUi();
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && auth.currentUser) releaseLoginUi();
+});
 
 function toDate(value) {
   if (!value) return null;
@@ -296,6 +328,8 @@ memberButton.addEventListener("click", async (event) => {
     return;
   }
   modal.classList.add("is-open");
+  document.documentElement.classList.add("member-login-open");
+  document.body.classList.add("member-login-open");
 });
 
 signOutButton.addEventListener("click", async () => {
@@ -343,6 +377,7 @@ googleButton.addEventListener("click", async () => {
 
 onAuthStateChanged(auth, async (user) => {
   closeAccountMenu();
+  if (user) releaseLoginUi();
   hasWellnessAccess = false;
   hasMemberAccess = false;
   wellnessVideoLink.hidden = true;
@@ -370,10 +405,10 @@ onAuthStateChanged(auth, async (user) => {
   memberButton.disabled = true;
   try {
     const email = (user.email || "").trim().toLowerCase();
-    const [snapshot, sponsorSnapshot] = await Promise.all([
+    const [snapshot, sponsorSnapshot] = await withAuthTimeout(Promise.all([
       getDoc(doc(db, "memberAccess", email)),
       getDoc(doc(db, "sponsorMemberAccess", email))
-    ]);
+    ]));
     const member = snapshot.exists() ? snapshot.data() : null;
     const sponsorMember = sponsorSnapshot.exists() ? sponsorSnapshot.data() : null;
     if (auth.currentUser?.uid !== user.uid) return;
