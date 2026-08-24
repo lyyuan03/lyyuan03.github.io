@@ -1,0 +1,60 @@
+name: Improve Yaochi FAQ readability
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/improve-yaochi-faq-readability.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  improve-faq:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rewrite FAQ section
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('yaochi-event-v2.html')
+          text = path.read_text(encoding='utf-8')
+
+          css_marker = '    .final-cta{text-align:center;'
+          faq_css = '''    .faq-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:start}\n    .faq-card{padding:28px 28px 26px;border:1px solid var(--line);background:#fffdf9}\n    .faq-card.wide{grid-column:1/-1}\n    .faq-no{display:block;margin-bottom:11px;font-family:var(--serif);font-size:14px;letter-spacing:.15em;color:var(--gold)}\n    .faq-card h3{margin:0 0 14px;font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.55;color:var(--ink)}\n    .faq-card p{margin:0;color:var(--muted);font-size:15.5px;line-height:1.88}\n    .faq-card p + p{margin-top:10px}\n    .faq-card ul{margin:0;padding-left:1.35em;color:var(--muted);font-size:15.5px;line-height:1.88}\n    .faq-card ul + p,.faq-card p + ul{margin-top:14px}\n    .faq-card li + li{margin-top:8px}\n    .faq-card strong{color:#4a3b2d}\n    .faq-highlight{padding:13px 16px;border-left:3px solid var(--gold);background:rgba(165,130,84,.09);color:#5c4d3f}\n\n'''
+          if '.faq-steps{' not in text:
+              pos = text.find(css_marker)
+              if pos == -1:
+                  raise SystemExit('CSS insertion marker not found')
+              text = text[:pos] + faq_css + text[pos:]
+
+          if '.purpose-grid,.steps,.faq-steps{grid-template-columns:1fr}' not in text:
+              text = text.replace('.purpose-grid,.steps{grid-template-columns:1fr}', '.purpose-grid,.steps,.faq-steps{grid-template-columns:1fr}', 1)
+
+          faq_start_marker = '    <section class="paper" id="faq">'
+          register_marker = '    <section class="final-cta" id="register">'
+          start = text.find(faq_start_marker)
+          end = text.find(register_marker, start)
+          if start == -1 or end == -1:
+              raise SystemExit('FAQ/register markers not found')
+
+          faq = '''    <section class="paper" id="faq">\n      <div class="container">\n        <div class="section-heading">\n          <span class="eyebrow">法會參加注意事項</span>\n          <h2>信眾常見 Q&amp;A</h2>\n          <p>關於茹素與解冤赦業期間的注意事項，請依自身狀況安心配合即可。</p>\n        </div>\n        <div class="faq-steps">\n          <article class="faq-card">\n            <span class="faq-no">01</span>\n            <h3>哪些點燈需要吃素？</h3>\n            <ul>\n              <li>需要配合茹素的燈別，只有以下三項：<strong>丙午建院總功德主</strong>、<strong>丙午護法續脈燈首</strong>、<strong>金母．靈修法脈續緣法燈</strong>。</li>\n              <li>其他點燈項目以及建院護持，<strong>皆沒有吃素的規定與限制</strong>，可維持平常的飲食方式。</li>\n            </ul>\n          </article>\n          <article class="faq-card">\n            <span class="faq-no">02</span>\n            <h3>一定要全素嗎？</h3>\n            <ul>\n              <li>原則上以<strong>全素</strong>為主。</li>\n              <li>若因工作、生活環境或身體狀況不方便，也可以採取<strong>鍋邊素</strong>，不需要過度勉強。</li>\n              <li>請依個人的方便與身體狀況做決定即可。</li>\n            </ul>\n          </article>\n          <article class="faq-card">\n            <span class="faq-no">03</span>\n            <h3>為什麼法會期間要吃素？</h3>\n            <p class="faq-highlight">吃素的重點，不只是飲食限制，而是透過外在飲食的調整，讓身心慢慢沉澱、清淨。</p>\n            <ul>\n              <li>讓自己的心更加<strong>虔誠與專注</strong>。</li>\n              <li>幫助轉化身心靈氣，讓狀態更加<strong>安定清明</strong>。</li>\n              <li>以較清淨的身心，承接母娘的<strong>護佑與加持</strong>。</li>\n            </ul>\n          </article>\n          <article class="faq-card wide">\n            <span class="faq-no">04</span>\n            <h3>有登記化解冤親債主或化解無明業障病主，需要注意什麼？</h3>\n            <p>若本次有登記<strong>化解累世冤親債主</strong>或<strong>化解無明業障病主</strong>，可把重點掌握如下：</p>\n            <ul>\n              <li><strong>時間：</strong>8月29日至8月31日三天。</li>\n              <li><strong>盡量避免：</strong>人潮過多、環境複雜、氣場較混雜的場所。</li>\n              <li><strong>正常上班工作：</strong>不在此限。</li>\n              <li><strong>主要目的：</strong>法會完成解冤釋結與相關化解儀式後，讓自己的身心保持安定、清淨，減少受到外在混雜環境影響。</li>\n              <li><strong>溫馨提醒：</strong>無須過度緊張，也不是完全不能外出；在生活許可的情況下，盡量讓生活簡單、作息平穩即可。</li>\n            </ul>\n          </article>\n        </div>\n      </div>\n    </section>\n\n'''
+
+          text = text[:start] + faq + text[end:]
+          path.write_text(text, encoding='utf-8')
+
+      - name: Commit and push
+        run: |
+          if git diff --quiet -- yaochi-event-v2.html; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git config user.name "lyyuan03"
+          git config user.email "actions@users.noreply.github.com"
+          git add yaochi-event-v2.html
+          git commit -m "Improve Yaochi FAQ readability"
+          git push
