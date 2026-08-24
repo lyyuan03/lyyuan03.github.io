@@ -1,0 +1,61 @@
+name: Move Yaochi FAQ above registration
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/move-yaochi-faq-above-register.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  move-faq:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Move FAQ above registration section
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('yaochi-event-v2.html')
+          text = path.read_text(encoding='utf-8')
+
+          faq_start_marker = '    <section class="paper" id="faq">'
+          register_marker = '    <section class="final-cta" id="register">'
+          faq_end_marker = '\n    </section>\n  </main>'
+
+          faq_start = text.find(faq_start_marker)
+          if faq_start == -1:
+              raise SystemExit('FAQ section not found')
+
+          faq_end_anchor = text.find(faq_end_marker, faq_start)
+          if faq_end_anchor == -1:
+              raise SystemExit('FAQ section end not found')
+
+          faq_end = faq_end_anchor + len('\n    </section>')
+          faq_block = text[faq_start:faq_end]
+
+          text_without_faq = text[:faq_start] + text[faq_end:]
+          register_pos = text_without_faq.find(register_marker)
+          if register_pos == -1:
+              raise SystemExit('Registration section not found')
+
+          updated = text_without_faq[:register_pos] + faq_block + '\n\n' + text_without_faq[register_pos:]
+          path.write_text(updated, encoding='utf-8')
+
+      - name: Commit and push change
+        run: |
+          if git diff --quiet -- yaochi-event-v2.html; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git config user.name "lyyuan03"
+          git config user.email "actions@users.noreply.github.com"
+          git add yaochi-event-v2.html
+          git commit -m "Move Yaochi FAQ above registration form"
+          git push
