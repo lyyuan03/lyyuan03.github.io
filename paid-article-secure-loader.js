@@ -10,10 +10,10 @@ let metadataCache = null;
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
+    "&": "&",
+    "<": "<",
+    ">": ">",
+    '"': """,
     "'": "&#039;"
   }[char]));
 }
@@ -128,13 +128,12 @@ async function hydratePaidBody() {
   if (!view || view.querySelector("[data-paid-private-body]")) return;
 
   const metadata = await paidMetadata();
-  if (metadata.accessType !== "paid" && metadata.privatePaidContent !== true) return;
+  const viewLooksPaid = Boolean(view.querySelector(".article-paid-gate, [data-paid-gate-restored], .paid-lock-zone"));
+  if (metadata.accessType !== "paid" && metadata.privatePaidContent !== true && !viewLooksPaid) return;
 
   const serial = ++requestSerial;
   setSecureStatus(view, "正在確認閱讀資格…");
   try {
-    // Firestore Security Rules 會在伺服器端驗證登入帳號、會員狀態、期限與文章權益。
-    // 未通過資格驗證時，正文資料不會傳送到瀏覽器。
     const snapshot = await getDoc(doc(db, "paidArticleBodies", articleId));
     if (serial !== requestSerial || !view.isConnected) return;
     if (!snapshot.exists()) throw new Error("PAID_BODY_NOT_FOUND");
@@ -145,8 +144,12 @@ async function hydratePaidBody() {
   } catch (error) {
     if (serial !== requestSerial || !view.isConnected) return;
     const code = String(error?.code || "");
-    if (code.includes("permission-denied") || code.includes("unauthenticated")) {
+    if (code.includes("unauthenticated")) {
       setSecureStatus(view, "");
+      return;
+    }
+    if (code.includes("permission-denied")) {
+      setSecureStatus(view, "已登入，但此帳號尚未開通贊助／會員文章閱讀資格。請確認使用付款或開通時的 Gmail，或重新整理後再試。");
       return;
     }
     console.error("付費文章安全正文載入失敗。", error);
