@@ -208,7 +208,10 @@ function applyCard(card) {
   const configuredImage = normalizeImageUrl(configured?.thumbnailImage || "");
   const overrideImage = FIRST_IMAGE_OVERRIDES[articleId] || "";
   const preservedOriginal = media.dataset.originalArticleImage || "";
-  const source = configuredImage || preservedOriginal || overrideImage || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
+  const failedSources = new Set((media.dataset.failedThumbnailSources || "").split("\\n").filter(Boolean));
+  const sourceCandidates = [configuredImage, preservedOriginal, overrideImage, article?.coverImage || "", firstInlineImage(article), BRAND_FALLBACKS[categoryKey], BRAND_FALLBACKS.spiritual]
+    .map(normalizeImageUrl).filter((value, index, values) => value && values.indexOf(value) === index);
+  const source = sourceCandidates.find((value) => !failedSources.has(value)) || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
   const shortTitle = compactTitle(article, fullTitle);
   const fit = configured?.thumbnailFit === "contain" ? "contain" : "cover";
   const x = Number.isFinite(Number(configured?.thumbnailPositionX)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionX))) : 50;
@@ -218,6 +221,14 @@ function applyCard(card) {
   media.style.setProperty("--article-thumbnail-position", `${x}% ${y}%`);
   media.style.setProperty("--article-thumbnail-scale", String(scale));
 
+  image.onerror = () => {
+    const failed = normalizeImageUrl(image.getAttribute("src") || "");
+    const failedSet = new Set((media.dataset.failedThumbnailSources || "").split("\\n").filter(Boolean));
+    if (failed) failedSet.add(failed);
+    media.dataset.failedThumbnailSources = [...failedSet].join("\\n");
+    const fallback = sourceCandidates.find((value) => !failedSet.has(value)) || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
+    if (normalizeImageUrl(image.getAttribute("src") || "") !== fallback) image.setAttribute("src", fallback);
+  };
   if (image.getAttribute("src") !== source) image.setAttribute("src", source);
   image.alt = fullTitle;
   media.dataset.photoThumbnail = "true";
