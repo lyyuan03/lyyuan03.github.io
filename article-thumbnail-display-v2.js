@@ -1,6 +1,6 @@
 import { db } from "./firebase-config.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { staticArticles } from "./static-articles.js?v=20260823-paid-private-final-1";
+import { staticArticles } from "./static-articles.js?v=20260824-article-system-repair-1";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";
@@ -34,6 +34,7 @@ staticArticles.forEach((article) => {
 });
 
 let hasSettingsDocument = false;
+let thumbnailSettings = new Map();
 let applyScheduled = false;
 
 function ensureStyle() {
@@ -43,7 +44,7 @@ function ensureStyle() {
   style.id = "article-photo-thumbnail-style-20260823";
   style.textContent = `
     .article-card-media[data-photo-thumbnail="true"]{position:relative!important;overflow:hidden!important;background:${MEDIA_BACKGROUND}!important}
-    .article-card-media[data-photo-thumbnail="true"]>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;transform:none!important;filter:none!important;margin:0!important;padding:0!important;z-index:0}
+    .article-card-media[data-photo-thumbnail="true"]>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:var(--article-thumbnail-fit,cover)!important;object-position:var(--article-thumbnail-position,50% 50%)!important;transform:scale(var(--article-thumbnail-scale,1))!important;filter:none!important;margin:0!important;padding:0!important;z-index:0}
     .article-card-media[data-photo-thumbnail="true"]:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,12,6,.16) 0%,rgba(5,12,6,.04) 34%,rgba(5,12,6,.20) 62%,rgba(5,12,6,.72) 100%)}
     .article-card-media[data-photo-thumbnail="true"] .article-card-media-gradient{display:none!important}
     .article-photo-thumb-overlay{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:6.5% 7%;pointer-events:none;color:#F6F1E8;text-align:left}
@@ -203,11 +204,19 @@ function applyCard(card) {
     media.dataset.originalArticleImage = originalSource;
   }
 
-  const inlineImage = firstInlineImage(article);
+  const configured = thumbnailSettings.get(articleId) || null;
+  const configuredImage = normalizeImageUrl(configured?.thumbnailImage || "");
   const overrideImage = FIRST_IMAGE_OVERRIDES[articleId] || "";
   const preservedOriginal = media.dataset.originalArticleImage || "";
-  const source = inlineImage || overrideImage || preservedOriginal || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
+  const source = configuredImage || preservedOriginal || overrideImage || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
   const shortTitle = compactTitle(article, fullTitle);
+  const fit = configured?.thumbnailFit === "contain" ? "contain" : "cover";
+  const x = Number.isFinite(Number(configured?.thumbnailPositionX)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionX))) : 50;
+  const y = Number.isFinite(Number(configured?.thumbnailPositionY)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionY))) : 50;
+  const scale = Number.isFinite(Number(configured?.thumbnailScale)) ? Math.min(300, Math.max(100, Number(configured.thumbnailScale))) / 100 : 1;
+  media.style.setProperty("--article-thumbnail-fit", fit);
+  media.style.setProperty("--article-thumbnail-position", `${x}% ${y}%`);
+  media.style.setProperty("--article-thumbnail-scale", String(scale));
 
   if (image.getAttribute("src") !== source) image.setAttribute("src", source);
   image.alt = fullTitle;
@@ -215,7 +224,9 @@ function applyCard(card) {
   delete media.dataset.brandThumbnail;
   delete media.dataset.brandSpecial;
   ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
-  card.dataset.thumbnailConfigured = inlineImage ? "inline-image" : overrideImage ? "inline-image-override" : preservedOriginal ? "original-photo" : "brand-fallback";
+  const titleNode = media.querySelector(".article-photo-thumb-title");
+  if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
+  card.dataset.thumbnailConfigured = configuredImage ? "saved-setting" : preservedOriginal ? "original-photo" : overrideImage ? "inline-image-override" : "brand-fallback";
 }
 
 function applyAllCards() {
@@ -238,10 +249,13 @@ function initialize() {
   const settingsRef = doc(db, "articles", SETTINGS_DOC_ID);
   onSnapshot(settingsRef, (snapshot) => {
     hasSettingsDocument = snapshot.exists();
+    const settings = snapshot.exists() ? snapshot.data()?.settings || {} : {};
+    thumbnailSettings = new Map(Object.entries(settings));
     scheduleApply();
   }, (error) => {
     console.warn("文章縮圖設定文件同步失敗。", error);
     hasSettingsDocument = false;
+    thumbnailSettings = new Map();
     scheduleApply();
   });
   const root = document.getElementById("article-root") || document.body;
