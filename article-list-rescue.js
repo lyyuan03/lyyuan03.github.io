@@ -1,4 +1,4 @@
-import { staticArticles } from "./static-articles.js?v=20260823-paid-private-final-1";
+import { staticArticles } from "./static-articles.js?v=20260824-article-system-repair-1";
 
 const root = document.getElementById("article-root");
 const params = new URLSearchParams(location.search);
@@ -102,14 +102,13 @@ function renderDetailFallback() {
 }
 
 function pageNeedsRescue() {
-  if (!root) return false;
-  if (activeId) return !root.querySelector(".article-view");
+  if (!root || activeId) return false;
   return !root.querySelector(".article-card");
 }
 
 function rescueNow() {
   if (!pageNeedsRescue()) return false;
-  return activeId ? renderDetailFallback() : renderListFallback();
+  return renderListFallback();
 }
 
 if (root) {
