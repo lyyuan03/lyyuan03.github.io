@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260823-paid-private-final-1";
+import { staticArticles } from "./static-articles.js?v=20260824-article-system-repair-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -111,6 +111,7 @@ const articleHooks = {
 };
 
 let loadedArticles = [];
+let articlesLoadCompleted = false;
 let articleMetrics = new Map();
 let currentUser = null;
 let currentMemberAccess = null;
@@ -785,8 +786,14 @@ function renderCurrentView() {
   const isDetail = Boolean(activeId);
   document.body.classList.toggle("is-article-detail", isDetail);
   tabs.hidden = isDetail;
-  if (isDetail) renderArticle(loadedArticles.find((article) => article.id === activeId || article.slug === activeId));
-  else renderList(loadedArticles);
+  if (isDetail) {
+    const article = loadedArticles.find((item) => item.id === activeId || item.slug === activeId);
+    if (!article && !articlesLoadCompleted) {
+      root.innerHTML = '<div class="empty">文章載入中…</div>';
+      return;
+    }
+    renderArticle(article);
+  } else renderList(loadedArticles);
 }
 
 function publicationStatusMap(snapshot) {
@@ -820,6 +827,7 @@ function withTimeout(promise, timeoutMs, label) {
 }
 
 async function loadArticles() {
+  articlesLoadCompleted = false;
   renderTabs();
   if (activeId) {
     const immediateArticle = staticArticles.find((article) => (article.id === activeId || article.slug === activeId) && article.status === "published" && article.hidden !== true && article.systemRecord !== true && !LEGACY_FIRESTORE_MANAGED_IDS.has(article.id));
@@ -874,12 +882,14 @@ async function loadArticles() {
   });
   const hydratedArticles = await Promise.all(normalizedArticles.map((article) => activeId && (article.id === activeId || article.slug === activeId) ? withTimeout(hydrateEventArticle(article), 8000, "活動文章權限確認").catch(() => article) : article));
   loadedArticles = hydratedArticles.sort(sortPublished);
+  articlesLoadCompleted = true;
   renderTabs();
   renderCurrentView();
   void loadArticleMetrics().then(() => loadedArticles.forEach((article) => updateMetricSummary(articleKey(article))));
 }
 
 loadArticles().catch((error) => {
+  articlesLoadCompleted = true;
   console.error(error);
   root.innerHTML = '<div class="empty">文章暫時無法載入，請稍後再試。</div>';
 });
