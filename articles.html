@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="靈元院文選，收錄宇色老師的修行、生命、財富、靈界與閱讀觀察。">
 <title>靈元院文選</title>
+<script>if(new URLSearchParams(location.search).get("id"))document.documentElement.classList.add("is-article-detail");</script>
 <link rel="icon" href="logo.png">
 <link rel="preload" href="fonts/SourceHanSerifTC-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="mobile-nav.css?v=20260712-2">
@@ -22,6 +23,8 @@ a{color:inherit}
 .site-nav{max-width:1120px;margin:auto;padding:0 24px;display:flex;min-height:70px;align-items:center;justify-content:center;gap:28px}.site-nav a{text-decoration:none;color:#E2D7C5;font-size:14px;letter-spacing:.12em;opacity:1;visibility:visible}.site-nav a:hover,.site-nav a.active{color:#C69C6D}
 body.site-auth-enabled .site-header{top:var(--site-auth-height,48px)}
 body.site-auth-enabled #site-auth-bar{top:0!important}
+html.is-article-detail .hero,html.is-article-detail .filters,body.is-article-detail .hero,body.is-article-detail .filters{display:none!important}
+html.is-article-detail main,body.is-article-detail main{padding-top:32px}
 .hero{max-width:1040px;margin:0 auto;padding:64px 28px 30px;text-align:center}.hero-kicker{font-size:12px;letter-spacing:.26em;color:#A58254}.hero h1{font-family:var(--serif);font-size:clamp(30px,5vw,54px);font-weight:600;letter-spacing:.08em;margin:10px 0 12px}.hero p{margin:auto;max-width:720px;color:#BDB5A6;font-size:15px}
 .filters{max-width:1040px;margin:0 auto 34px;padding:0 28px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.filters a{border:1px solid rgba(203,189,166,.3);padding:8px 15px;border-radius:999px;text-decoration:none;font-size:13px;color:#C9C1B5}.filters a.active{background:#A58254;color:white;border-color:#A58254}
 main{max-width:1120px;margin:auto;padding:0 24px 80px}.article-result-summary{display:flex;justify-content:space-between;align-items:center;margin:0 auto 20px;max-width:1040px;color:#BDB5A6;font-size:12px}.article-result-summary a{text-decoration:none;color:#C69C6D}.article-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}.article-card{display:block;text-decoration:none;background:var(--panel);color:var(--text);border:1px solid rgba(203,189,166,.4);overflow:hidden;transition:transform .25s ease,box-shadow .25s ease}.article-card:hover{transform:translateY(-4px);box-shadow:0 15px 34px rgba(0,0,0,.22)}.article-card-media{aspect-ratio:16/9;background:#D9D0C1;overflow:hidden;position:relative}.article-card-media img{width:100%;height:100%;object-fit:cover;display:block}.article-card-media-gradient{position:absolute;inset:0;background:linear-gradient(to top,rgba(31,24,17,.2),transparent 45%);pointer-events:none}.article-card-placeholder{height:100%;display:grid;place-items:center;color:#84694A;font-family:var(--serif);letter-spacing:.16em}.article-card-content{padding:20px}.article-card-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.article-meta{font-size:11px;color:#725532;letter-spacing:.14em}.article-access-badge{font-size:10px;border:1px solid;padding:3px 8px;border-radius:999px;white-space:nowrap}.article-access-badge.is-free{color:#4F5228;border-color:rgba(96,99,48,.35);background:rgba(96,99,48,.1)}.article-access-badge.is-paid{color:#6A4D2E;border-color:rgba(139,104,63,.35);background:rgba(165,130,84,.12)}.article-access-badge.is-event{color:#594F47;border-color:rgba(89,79,71,.3);background:rgba(89,79,71,.1)}.article-list-title{font-family:var(--serif);font-size:20px;line-height:1.5;margin:13px 0 12px;color:#3F3024}.article-hook{font-size:13px;color:#493F36;line-height:1.75;margin:12px 0 0}.article-guide{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:12px 0}.article-guide span{font-size:10px;border:1px solid rgba(139,104,63,.27);border-radius:999px;padding:2px 7px;color:#725532;background:rgba(165,130,84,.08)}.article-guide.is-compact{margin:10px 0}.article-metrics{display:flex;gap:12px;margin-top:16px;color:#806A52;font-size:10px}.article-metric{display:flex;gap:4px}.article-load-more-wrap{text-align:center;margin-top:34px}.article-load-more{border:1px solid rgba(203,189,166,.35);background:transparent;color:#D6CCBA;padding:10px 20px;cursor:pointer}.article-load-more small{opacity:.7;margin-left:5px}
@@ -35,7 +38,7 @@ main{max-width:1120px;margin:auto;padding:0 24px 80px}.article-result-summary{di
 <section class="hero"><div class="hero-kicker">LYYUAN JOURNAL</div><h1>文選</h1><p>從修行到俗世，從靈界辨識到閱讀筆記。把複雜的經驗整理成能落實於生活的思考。</p></section>
 <nav class="filters" id="category-tabs"></nav>
 <main id="article-root"><div class="empty">文章載入中…</div></main>
-<script type="module" src="articles-v6.js?v=20260824-article-system-repair-4"></script>
+<script type="module" src="articles-v6.js?v=20260824-article-detail-layout-lock-1"></script>
 <script type="module" src="/article-list-rescue.js?v=20260824-article-system-repair-4"></script>
 <script type="module" src="/article-publication-index-repair.js?v=20260823-1"></script>
 <script src="article-destination-links.js?v=20260813-share-restore-1" defer></script>
