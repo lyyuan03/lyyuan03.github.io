@@ -75,7 +75,7 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   try {
-    await import("./articles-core-20260810-v6.js?v=20260823-paid-security-final-1");
+    await import("./articles-core-20260810-v6.js?v=20260824-article-system-repair-3");
   } catch (error) {
     console.error("文選核心載入失敗。", error);
     if (articleRoot) {
