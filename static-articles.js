@@ -1,18 +1,18 @@
-import { dragonCanonConsciousnessFieldArticle } from "./article-dragon-canon-consciousness-field.js?v=20260822-paid-highlight-1&paid-private=20260823-final-1";
-import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1&paid-private=20260823-final-1";
-import { ghostGateAlwaysOpenArticle } from "./article-ghost-gate-always-open.js?v=20260813-draft-1&paid-private=20260823-final-1";
-import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260816-toc-images-1&paid-private=20260823-final-1";
-import { quantumFrequencyWorkWishArticle } from "./article-quantum-frequency-work-wish.js?v=20260813-content-restore-2&paid-private=20260823-final-1";
-import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=20260730-wealth-discipline-6&paid-private=20260823-final-1";
-import { celebrityDreamSpiritArticle } from "./article-celebrity-dream-spirit.js?v=20260731-celebrity-dream-4&paid-private=20260823-final-1";
-import { fantasyIntuitionYuanshenArticle } from "./article-fantasy-intuition-yuanshen-display.js?v=20260801-fantasy-full-1&paid-private=20260823-final-1";
-import { wealthAsWaterArticle } from "./article-wealth-as-water.js?v=20260801-wealth-consciousness-1&paid-private=20260823-final-1";
-import { youCanNotFearDeathArticle } from "./article-you-can-not-fear-death.js?v=20260802-3&paid-private=20260823-final-1";
-import { howToJudgeTrueLingxiuUnderstandingArticle } from "./article-how-to-judge-true-lingxiu-understanding-display.js?v=20260813-fixed-reading-footer-3&paid-private=20260823-final-1";
-import { loveBeyondFilialPietyArticle } from "./article-love-beyond-filial-piety-photo.js?v=20260810-original-photo-fix-1&paid-private=20260823-final-1";
-import { yuanshenDestinyArchetypeArticle } from "./article-yuanshen-destiny-archetype.js?v=20260807-final-1&paid-private=20260823-final-1";
-import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-years.js?v=20260810-complete-ending-1&paid-private=20260823-final-1";
-import { dragonChantYoutubeAwakeningArticle } from "./article-dragon-chant-youtube-awakening.js?v=20260822-draft-3&paid-private=20260823-final-1";
+import { dragonCanonConsciousnessFieldArticle } from "./article-dragon-canon-consciousness-field.js?v=20260822-paid-highlight-1&paid-private=20260824-article-system-repair-1";
+import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1&paid-private=20260824-article-system-repair-1";
+import { ghostGateAlwaysOpenArticle } from "./article-ghost-gate-always-open.js?v=20260813-draft-1&paid-private=20260824-article-system-repair-1";
+import { futurePerson2058ProphecyArticle } from "./article-2058-future-person-prophecy.js?v=20260816-toc-images-1&paid-private=20260824-article-system-repair-1";
+import { quantumFrequencyWorkWishArticle } from "./article-quantum-frequency-work-wish.js?v=20260813-content-restore-2&paid-private=20260824-article-system-repair-1";
+import { wealthDisciplineArticle } from "./article-wealth-discipline.js?v=20260730-wealth-discipline-6&paid-private=20260824-article-system-repair-1";
+import { celebrityDreamSpiritArticle } from "./article-celebrity-dream-spirit.js?v=20260731-celebrity-dream-4&paid-private=20260824-article-system-repair-1";
+import { fantasyIntuitionYuanshenArticle } from "./article-fantasy-intuition-yuanshen-display.js?v=20260801-fantasy-full-1&paid-private=20260824-article-system-repair-1";
+import { wealthAsWaterArticle } from "./article-wealth-as-water.js?v=20260801-wealth-consciousness-1&paid-private=20260824-article-system-repair-1";
+import { youCanNotFearDeathArticle } from "./article-you-can-not-fear-death.js?v=20260802-3&paid-private=20260824-article-system-repair-1";
+import { howToJudgeTrueLingxiuUnderstandingArticle } from "./article-how-to-judge-true-lingxiu-understanding-display.js?v=20260813-fixed-reading-footer-3&paid-private=20260824-article-system-repair-1";
+import { loveBeyondFilialPietyArticle } from "./article-love-beyond-filial-piety-photo.js?v=20260810-original-photo-fix-1&paid-private=20260824-article-system-repair-1";
+import { yuanshenDestinyArchetypeArticle } from "./article-yuanshen-destiny-archetype.js?v=20260807-final-1&paid-private=20260824-article-system-repair-1";
+import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-years.js?v=20260810-complete-ending-1&paid-private=20260824-article-system-repair-1";
+import { dragonChantYoutubeAwakeningArticle } from "./article-dragon-chant-youtube-awakening.js?v=20260822-draft-3&paid-private=20260824-article-system-repair-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
