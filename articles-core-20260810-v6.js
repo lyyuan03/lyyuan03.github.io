@@ -868,7 +868,7 @@ async function loadArticles() {
   statusById.forEach((status, articleId) => {
     if (!livePublishedIds.has(articleId) && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) mergedById.delete(articleId);
   });
-  const merged = [...mergedById.values()].filter((article) => article.status === "published" && article.hidden !== true && article.systemRecord !== true);
+  const merged = [...mergedById.values()].filter((article) => article.status === "published" && article.hidden !== true && article.systemRecord !== true && article.systemType !== "article-thumbnail-settings" && article.id !== "__article-thumbnail-settings");
   const normalizedArticles = merged.map((article) => {
     if (article.id === "yuanshen-destiny-archetype") {
       let fixedContent = String(article.content || "")
