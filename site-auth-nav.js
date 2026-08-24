@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const AUTH_VERSION = "20260824-auth-unlock-1";
+const AUTH_VERSION = "20260824-auth-mobile-layout-2";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 
 function installStyles() {
@@ -34,11 +34,12 @@ function installStyles() {
     .site-account-menu button{margin-top:5px;padding-top:12px;border-top:1px solid rgba(165,130,84,.2);color:rgba(245,240,232,.58)}
     #member-login-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,7,4,.72);backdrop-filter:blur(8px)}
     #member-login-modal.is-open{display:flex}
-    html.member-login-open,body.member-login-open{overflow:hidden!important}
     @media(max-width:768px){
       html body.site-auth-enabled #site-auth-bar{top:58px!important;left:0!important;right:0!important;width:100%!important;min-width:0!important;height:52px!important;padding:0 14px!important;justify-content:center!important;background:rgba(7,11,6,.97)!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:1201!important}
       html body.site-auth-enabled #site-auth-bar .site-auth-actions{width:100%!important;max-width:396px!important}
       html body.site-auth-enabled #site-auth-bar .site-auth-button{width:100%!important;display:block!important}
+      html.is-article-detail body.site-auth-enabled main,body.site-auth-enabled.is-article-detail main{padding-top:84px!important}
+      html:not(.is-article-detail) body.site-auth-enabled .hero{margin-top:52px!important}
     }
     .member-login-card{position:relative;width:min(430px,100%);padding:40px 38px 34px;text-align:center;background:linear-gradient(155deg,rgba(20,28,18,.98),rgba(8,13,7,.98));border:1px solid rgba(165,130,84,.42);box-shadow:0 24px 80px rgba(0,0,0,.62);color:#F5F0E8}
     .member-login-close{position:absolute;top:12px;right:14px;border:0;background:transparent;color:rgba(245,240,232,.55);font-size:25px;cursor:pointer;line-height:1}
@@ -115,8 +116,6 @@ function installMemberModal() {
   document.body.appendChild(modal);
   const close = () => {
     modal.classList.remove("is-open");
-    document.documentElement.classList.remove("member-login-open");
-    document.body.classList.remove("member-login-open");
   };
   modal.querySelector(".member-login-close").addEventListener("click", close);
   modal.addEventListener("click", (event) => { if (event.target === modal) close(); });
@@ -143,8 +142,6 @@ if (isInAppBrowser) browserNote.style.display = "block";
 
 function releaseLoginUi() {
   modal.classList.remove("is-open");
-  document.documentElement.classList.remove("member-login-open");
-  document.body.classList.remove("member-login-open");
   googleButton.disabled = false;
   googleButton.textContent = "選擇會員 Google 帳號";
 }
@@ -328,8 +325,6 @@ memberButton.addEventListener("click", async (event) => {
     return;
   }
   modal.classList.add("is-open");
-  document.documentElement.classList.add("member-login-open");
-  document.body.classList.add("member-login-open");
 });
 
 signOutButton.addEventListener("click", async () => {
