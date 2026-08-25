@@ -1,10 +1,16 @@
-name: Deploy Firebase Membership Backend (Manual)
+name: Deploy Firebase Membership Backend
 
-# Cloud Functions deployment is intentionally manual while the project service account
-# lacks the required Service Usage / Cloud Functions deployment permissions.
-# Firestore rules have their own independent automatic workflow.
+# 可由 Actions 手動執行，或更新指定請求檔案後執行一次完整部署。
 on:
   workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/deploy-triggers/firebase-functions-request.txt"
+
+concurrency:
+  group: firebase-membership-backend
+  cancel-in-progress: false
 
 jobs:
   deploy-functions:
