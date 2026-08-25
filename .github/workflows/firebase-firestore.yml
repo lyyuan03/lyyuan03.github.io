@@ -9,6 +9,8 @@ on:
       - firestore.rules
       - firebase.json
       - .firebaserc
+      - scripts/lock-paid-article-access-policy.mjs
+      - PAID_ARTICLE_ACCESS_POLICY.md
       - .github/workflows/firebase-firestore.yml
 
 jobs:
@@ -19,6 +21,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Lock paid article membership policy
+        run: node scripts/lock-paid-article-access-policy.mjs
 
       - name: Record Firestore rules deployment start
         run: |
