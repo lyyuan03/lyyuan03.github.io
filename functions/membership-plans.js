@@ -3,13 +3,13 @@
 const SPONSOR_PROMO_LIMIT = 200;
 
 const SPONSOR_PROMO_PLANS = Object.freeze({
-  1: 120,
-  3: 300
+  1: 150,
+  3: 400
 });
 
 const SPONSOR_REGULAR_PLANS = Object.freeze({
-  1: 150,
-  3: 400
+  1: 180,
+  3: 500
 });
 
 function positiveInteger(value, fallback) {
