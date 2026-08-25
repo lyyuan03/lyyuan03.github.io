@@ -484,9 +484,6 @@ function splitMemberContent(content = "", articleId = "") {
     : content.includes(memberMarker)
       ? "member"
       : "open";
-  if (accessType === "paid" && hasPaidAccess(articleId)) {
-    return { publicContent: content.replace(paidMarker, ""), lockedContent: "", accessType: "open" };
-  }
   if (accessType === "open") {
     return { publicContent: content, lockedContent: "", accessType: "open" };
   }
@@ -773,13 +770,16 @@ function renderArticle(article) {
   }
   const articleContent = addGuanyinVowLampImages(article.content || "", articleKeyValue);
   const { publicContent, lockedContent, accessType } = splitMemberContent(articleContent, articleKeyValue);
-  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}"><a class="article-back" href="articles.html">← 返回全部文選</a><div class="article-meta">${categoryLabels[article.category] || "文選"}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${renderArticleGuide(article)}${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKeyValue) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}<div class="article-body">${renderContent(publicContent)}</div>${accessType === "member" ? renderSupportGate(lockedContent) : ""}${accessType === "paid" ? renderPaidGate(article) : ""}${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
+  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}" data-article-access="${escapeHtml(accessType)}"${accessType === "paid" ? ' data-paid-body-state="locked"' : ""}><a class="article-back" href="articles.html">← 返回全部文選</a><div class="article-meta">${categoryLabels[article.category] || "文選"}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${renderArticleGuide(article)}${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKeyValue) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}<div class="article-body">${renderContent(publicContent)}</div>${accessType === "member" ? renderSupportGate(lockedContent) : ""}${accessType === "paid" ? renderPaidGate(article) : ""}${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
   bindLimitedReadingCountdowns();
   if (accessType === "member") bindArticleContinue();
   if (accessType === "paid") bindPaidLogin();
   bindArticleShare(articleKeyValue);
   bindArticleExperience();
   trackArticleView(articleKeyValue);
+  document.dispatchEvent(new CustomEvent("lyyuan:article-rendered", {
+    detail: { articleId: articleKeyValue, accessType }
+  }));
 }
 
 function renderCurrentView() {
