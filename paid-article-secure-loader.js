@@ -1,6 +1,4 @@
-import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { auth, db, doc, getDoc, onAuthStateChanged } from "./firebase-config.js";
 
 const articleId = new URLSearchParams(location.search).get("id") || "";
 const root = document.getElementById("article-root");
@@ -10,10 +8,10 @@ let metadataCache = null;
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({
-    "&": "&",
-    "<": "<",
-    ">": ">",
-    '"': """,
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
     "'": "&#039;"
   }[char]));
 }
@@ -157,14 +155,17 @@ async function hydratePaidBody() {
   }
 }
 
+let hydrateScheduled = false;
 function scheduleHydrate() {
-  queueMicrotask(() => void hydratePaidBody());
+  if (hydrateScheduled) return;
+  hydrateScheduled = true;
+  queueMicrotask(() => {
+    hydrateScheduled = false;
+    void hydratePaidBody();
+  });
 }
 
-if (root && articleId) {
-  const observer = new MutationObserver(scheduleHydrate);
-  observer.observe(root, { childList: true, subtree: true });
-}
+document.addEventListener("lyyuan:article-rendered", scheduleHydrate);
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;

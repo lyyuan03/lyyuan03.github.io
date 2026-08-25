@@ -7,7 +7,6 @@ const activeCategory = params.get("category") || "";
 const rawAccess = params.get("access") || "all";
 const activeAccess = rawAccess === "free" ? "open" : (["all", "open", "paid", "event"].includes(rawAccess) ? rawAccess : "all");
 const paidMarker = "<!-- paid-only -->";
-const memberMarker = "<!-- member-only -->";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -70,37 +69,6 @@ function renderListFallback() {
   return true;
 }
 
-function renderInline(value = "") {
-  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1">');
-}
-function renderContent(value = "") {
-  return String(value || "").split(/\n{2,}/).map((block) => {
-    const text = block.trim();
-    if (!text) return "";
-    if (text.startsWith("### ")) return `<h3>${renderInline(text.slice(4))}</h3>`;
-    if (text.startsWith("## ")) return `<h2>${renderInline(text.slice(3))}</h2>`;
-    if (text.startsWith("# ")) return `<h1>${renderInline(text.slice(2))}</h1>`;
-    if (/^!\[[^\]]*\]\([^)]+\)$/.test(text)) return `<figure>${renderInline(text)}</figure>`;
-    return `<p>${renderInline(text).replace(/\n/g, "<br>")}</p>`;
-  }).join("");
-}
-
-function renderDetailFallback() {
-  if (!root || !activeId) return false;
-  const article = publishedArticles.find((item) => articleKey(item) === activeId || item.slug === activeId);
-  if (!article) return false;
-  const access = articleAccess(article);
-  const rawContent = String(article.content || "");
-  const marker = access === "paid" ? paidMarker : memberMarker;
-  const publicContent = rawContent.includes(marker) ? rawContent.split(marker)[0] : rawContent;
-  const gate = access === "paid" ? '<section class="article-paid-gate"><strong>贊助專屬文章</strong><p>此篇為贊助專屬內容，請使用具有閱讀資格的 Gmail 登入。</p><button class="article-paid-login" type="button">會員登入</button></section>' : "";
-  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKey(article))}"><a class="article-back" href="articles.html">← 返回全部文選</a><div class="article-meta">${escapeHtml(categoryLabels[article.category] || "文選")}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}<div class="article-body">${renderContent(publicContent)}</div>${gate}</article>`;
-  root.querySelector(".article-paid-login")?.addEventListener("click", () => document.getElementById("member-login-button")?.click());
-  document.title = `${article.title}｜靈元院文選`;
-  root.dataset.articleRescued = "true";
-  return true;
-}
-
 function pageNeedsRescue() {
   if (!root || activeId) return false;
   return !root.querySelector(".article-card");
@@ -111,15 +79,4 @@ function rescueNow() {
   return renderListFallback();
 }
 
-if (root) {
-  rescueNow();
-  [120, 350, 800, 1500, 3000, 6000].forEach((delay) => window.setTimeout(rescueNow, delay));
-  const observer = new MutationObserver(() => {
-    window.clearTimeout(window.__lyyuanArticleRescueTimer);
-    window.__lyyuanArticleRescueTimer = window.setTimeout(rescueNow, 30);
-  });
-  observer.observe(root, { childList: true, subtree: true });
-  window.setInterval(() => {
-    if (document.visibilityState === "visible") rescueNow();
-  }, 2000);
-}
+if (root) document.addEventListener("lyyuan:article-rendered", rescueNow);

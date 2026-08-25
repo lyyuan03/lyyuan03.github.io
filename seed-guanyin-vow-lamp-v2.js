@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from "./firebase-config.js";
 
 const ARTICLE_ID = "2026-guanyin-vow-lamp-record-v2";
 const EVENT_ID = "2026-guanyin-enlightenment";

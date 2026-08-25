@@ -1,5 +1,4 @@
-import { db } from "./firebase-config.js";
-import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db, doc, onSnapshot } from "./firebase-config.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MAX_IMAGES = 6;
@@ -100,8 +99,7 @@ function apply() {
 
 function init() {
   installStyles();
-  const root = document.getElementById("article-root") || document.body;
-  new MutationObserver(() => apply()).observe(root, { childList: true, subtree: true });
+  document.addEventListener("lyyuan:article-rendered", apply);
   onSnapshot(doc(db, "articles", SETTINGS_DOC_ID), snapshot => {
     settingsByArticle = new Map(Object.entries(snapshot.exists() ? snapshot.data().inlineImageSettings || {} : {}));
     apply();

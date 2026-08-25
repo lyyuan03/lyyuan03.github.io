@@ -1,7 +1,7 @@
-import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260813-manual-image-markdown-3";
+import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260823-paid-private-final-1";
-import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "./firebase-config.js";
+import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "./firebase-config.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const categoryLabels = {

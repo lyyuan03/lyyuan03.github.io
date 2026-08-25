@@ -144,22 +144,6 @@ function installExtraConstructionImages() {
     return true;
   };
 
-  let scheduled = false;
-  const scheduleEnsure = () => {
-    if (scheduled) return;
-    scheduled = true;
-    window.setTimeout(() => {
-      scheduled = false;
-      ensure();
-    }, 40);
-  };
-
   ensure();
-  window.setTimeout(ensure, 350);
-  window.setTimeout(ensure, 1200);
-  window.setTimeout(ensure, 2500);
-
-  const root = document.getElementById("article-root") || document.documentElement;
-  const observer = new MutationObserver(scheduleEnsure);
-  observer.observe(root, { childList: true, subtree: true });
+  document.addEventListener("lyyuan:article-rendered", ensure);
 }

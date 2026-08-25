@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "./firebase-config.js";
+import { doc, getDoc } from "./firebase-config.js";
 
 const dashboard = document.getElementById("member-dashboard");
 const REMINDER_DAYS = 30;

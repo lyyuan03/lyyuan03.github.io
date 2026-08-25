@@ -1,8 +1,20 @@
-import { auth, db, isAdminEmail } from "./firebase-config.js";
+import {
+  auth,
+  collection,
+  db,
+  doc,
+  getDoc,
+  getDocs,
+  isAdminEmail,
+  onAuthStateChanged,
+  query,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+  where
+} from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260824-article-system-repair-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -117,6 +129,20 @@ let currentUser = null;
 let currentMemberAccess = null;
 let currentSponsorAccess = null;
 let visibleArticleCount = window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
+let articleRenderRevision = 0;
+
+export function notifyArticleRendered(reason = "render") {
+  if (!root) return;
+  articleRenderRevision += 1;
+  document.dispatchEvent(new CustomEvent("lyyuan:article-rendered", {
+    detail: {
+      reason,
+      revision: articleRenderRevision,
+      articleId: activeId,
+      hasArticleBody: Boolean(root.querySelector(".article-body"))
+    }
+  }));
+}
 
 function base64ToBytes(value) {
   const binary = atob(value);
@@ -400,6 +426,7 @@ function renderList(articles) {
 
   if (!filtered.length) {
     root.innerHTML = '<div class="empty">目前沒有符合條件的文章，請選擇其他分類。</div>';
+    notifyArticleRendered("list-empty");
     return;
   }
 
@@ -451,6 +478,7 @@ function renderList(articles) {
   });
   bindLimitedReadingCountdowns();
   bindListMotion();
+  notifyArticleRendered("list");
 }
 
 function bindListMotion() {
@@ -760,6 +788,7 @@ function bindArticleExperience() {
 function renderArticle(article) {
   if (!article) {
     root.innerHTML = '<div class="empty">找不到這篇文章，或文章尚未發布。</div>';
+    notifyArticleRendered("article-missing");
     return;
   }
   document.title = `${article.title}｜靈元院文選`;
@@ -769,6 +798,7 @@ function renderArticle(article) {
     bindEventLogin();
     bindArticleShare(articleKeyValue);
     trackArticleView(articleKeyValue);
+    notifyArticleRendered("article-event-gate");
     return;
   }
   const articleContent = addGuanyinVowLampImages(article.content || "", articleKeyValue);
@@ -780,6 +810,7 @@ function renderArticle(article) {
   bindArticleShare(articleKeyValue);
   bindArticleExperience();
   trackArticleView(articleKeyValue);
+  notifyArticleRendered("article");
 }
 
 function renderCurrentView() {
@@ -905,6 +936,11 @@ loadArticles().catch((error) => {
   articlesLoadCompleted = true;
   console.error(error);
   root.innerHTML = '<div class="empty">文章暫時無法載入，請稍後再試。</div>';
+  notifyArticleRendered("load-error");
+});
+
+document.addEventListener("lyyuan:paid-article-loaded", () => {
+  notifyArticleRendered("paid-article-loaded");
 });
 
 let lastVisibleRefreshAt = Date.now();

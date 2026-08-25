@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, serverTimestamp, setDoc } from "./firebase-config.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const SCALE_MIN = 100;

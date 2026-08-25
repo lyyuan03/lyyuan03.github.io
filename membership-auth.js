@@ -1,5 +1,5 @@
 import { auth, provider, isAdminEmail } from "./firebase-config.js";
-import { signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "./firebase-config.js";
 
 function installStyles() {
   if (document.getElementById("member-auth-styles")) return;

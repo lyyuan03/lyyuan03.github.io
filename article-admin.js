@@ -1,7 +1,7 @@
 import "./article-admin-core.js?v=20260816-six-images-1";
 import "./article-admin-paid-security.js?v=20260823-firestore-paid-2";
 import { db } from "./firebase-config.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, getDocs } from "./firebase-config.js";
 
 const OFFICIAL_SENDER_EMAIL = "lyyuan03@gmail.com";
 const SITE_URL = "https://lyyuan.tw";

@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged } from "./firebase-config.js";
 import {
   collection,
   deleteDoc,
@@ -10,7 +10,7 @@ import {
   setDoc,
   Timestamp,
   where
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "./firebase-config.js";
 import { escapeHtml, formatTaipeiDateTime, safeWebUrl, toDate } from "./member-offers-core.js?v=20260812-2";
 
 const OFFER_DOC_PREFIX = "__member-offer__";

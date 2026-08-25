@@ -42,7 +42,6 @@ installStyles();
 applyKeyQuotes();
 
 const articleRoot = document.getElementById("article-root") || document.documentElement;
-const observer = new MutationObserver(() => applyKeyQuotes(articleRoot));
-observer.observe(articleRoot, { childList: true, subtree: true });
+document.addEventListener("lyyuan:article-rendered", () => applyKeyQuotes(articleRoot));
 
 window.addEventListener("pageshow", () => applyKeyQuotes(articleRoot));

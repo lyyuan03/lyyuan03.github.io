@@ -5,7 +5,7 @@ import {
   setPersistence,
   signInWithPopup,
   signInWithRedirect
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "./firebase-config.js";
 
 const RETURN_URL_KEY = "lyyuan-auth-return-url";
 const AUTH_FLOW_KEY = "lyyuan-auth-flow-v2";
