@@ -7,12 +7,15 @@ const root = document.getElementById("article-root");
 let currentUser = auth.currentUser;
 let requestSerial = 0;
 let metadataCache = null;
+let hydrateScheduled = false;
+let hydrateInFlight = false;
+let hydratePending = false;
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({
-    "&": "&",
-    "<": "<",
-    ">": ">",
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
     '"': "&quot;",
     "'": "&#039;"
   }[char]));
@@ -48,11 +51,11 @@ async function paidMetadata() {
   try {
     const snapshot = await getDoc(doc(db, "articles", articleId));
     metadataCache = snapshot.exists() ? snapshot.data() || {} : {};
+    return metadataCache;
   } catch (error) {
     console.warn("付費文章公開資訊暫時無法確認。", error);
-    metadataCache = {};
+    return null;
   }
-  return metadataCache;
 }
 
 function setSecureStatus(view, message = "") {
@@ -94,12 +97,17 @@ function refreshToc(view) {
 }
 
 function insertPrivateBody(view, content, version) {
-  if (view.querySelector("[data-paid-private-body]")) return;
+  if (view.querySelector("[data-paid-private-body]")) {
+    view.dataset.paidBodyState = "unlocked";
+    return true;
+  }
+  const normalizedContent = String(content || "").trim();
+  if (!normalizedContent) return false;
   const privateBody = document.createElement("div");
   privateBody.className = "article-body paid-private-body";
   privateBody.dataset.paidPrivateBody = "true";
   privateBody.dataset.paidContentVersion = String(version || 1);
-  privateBody.innerHTML = renderContent(content);
+  privateBody.innerHTML = renderContent(normalizedContent);
 
   view.querySelectorAll(".article-paid-gate, [data-paid-gate-restored]").forEach((gate) => gate.remove());
 
@@ -115,23 +123,31 @@ function insertPrivateBody(view, content, version) {
     view.appendChild(protectedMarker);
   }
   view.dataset.paidSecureAccess = "granted";
+  view.dataset.paidBodyState = "unlocked";
   setSecureStatus(view, "");
   refreshToc(view);
   document.dispatchEvent(new CustomEvent("lyyuan:paid-article-loaded", {
     detail: { articleId, contentVersion: Number(version || 1) }
   }));
+  return true;
 }
 
 async function hydratePaidBody() {
   if (!articleId || !currentUser?.email) return;
   const view = paidView();
-  if (!view || view.querySelector("[data-paid-private-body]")) return;
+  if (!view) return;
+  if (view.querySelector("[data-paid-private-body]")) {
+    view.dataset.paidBodyState = "unlocked";
+    return;
+  }
 
-  const metadata = await paidMetadata();
-  const viewLooksPaid = Boolean(view.querySelector(".article-paid-gate, [data-paid-gate-restored], .paid-lock-zone"));
+  const metadata = await paidMetadata() || {};
+  const viewLooksPaid = view.dataset.articleAccess === "paid"
+    || Boolean(view.querySelector(".article-paid-gate, [data-paid-gate-restored], .paid-lock-zone"));
   if (metadata.accessType !== "paid" && metadata.privatePaidContent !== true && !viewLooksPaid) return;
 
   const serial = ++requestSerial;
+  view.dataset.paidBodyState = "loading";
   setSecureStatus(view, "正在確認閱讀資格…");
   try {
     const snapshot = await getDoc(doc(db, "paidArticleBodies", articleId));
@@ -145,25 +161,46 @@ async function hydratePaidBody() {
     if (serial !== requestSerial || !view.isConnected) return;
     const code = String(error?.code || "");
     if (code.includes("unauthenticated")) {
+      view.dataset.paidBodyState = "locked";
       setSecureStatus(view, "");
       return;
     }
     if (code.includes("permission-denied")) {
+      view.dataset.paidBodyState = "locked";
       setSecureStatus(view, "已登入，但此帳號尚未開通贊助／會員文章閱讀資格。請確認使用付款或開通時的 Gmail，或重新整理後再試。");
       return;
     }
     console.error("付費文章安全正文載入失敗。", error);
+    view.dataset.paidBodyState = "error";
     setSecureStatus(view, "閱讀資格暫時無法確認，請重新整理頁面；若付款已完成仍無法閱讀，再聯繫行政團隊。");
   }
 }
 
 function scheduleHydrate() {
-  queueMicrotask(() => void hydratePaidBody());
+  if (hydrateInFlight) {
+    hydratePending = true;
+    return;
+  }
+  if (hydrateScheduled) return;
+  hydrateScheduled = true;
+  queueMicrotask(async () => {
+    hydrateScheduled = false;
+    hydrateInFlight = true;
+    try {
+      await hydratePaidBody();
+    } finally {
+      hydrateInFlight = false;
+      if (hydratePending) {
+        hydratePending = false;
+        scheduleHydrate();
+      }
+    }
+  });
 }
 
 if (root && articleId) {
   const observer = new MutationObserver(scheduleHydrate);
-  observer.observe(root, { childList: true, subtree: true });
+  observer.observe(root, { childList: true });
 }
 
 onAuthStateChanged(auth, (user) => {
@@ -173,6 +210,7 @@ onAuthStateChanged(auth, (user) => {
 });
 
 window.addEventListener("pageshow", scheduleHydrate);
+document.addEventListener("lyyuan:article-rendered", scheduleHydrate);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") scheduleHydrate();
 });
