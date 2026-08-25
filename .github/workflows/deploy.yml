@@ -27,6 +27,8 @@ jobs:
           node-version: 22
       - name: Check JavaScript syntax
         run: find . -path './.git' -prune -o -path '*/node_modules/*' -prune -o -name '*.js' -print0 | xargs -0 -n1 node --check
+      - name: Lock paid article membership policy
+        run: node scripts/lock-paid-article-access-policy.mjs
       - name: Audit paid article runtime
         run: node scripts/audit-paid-article-runtime.mjs
 
@@ -50,4 +52,4 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-# Redeploy trigger: 2026-08-23 12:28 +08:00
+# Redeploy trigger: 2026-08-25 paid-article-policy-lock
