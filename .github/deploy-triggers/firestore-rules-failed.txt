@@ -1,4 +1,0 @@
-firestore rules: failed
-run id: 32838434577
-source commit: a6d6b7027f6b517ece1c80203f504f892dbf2173
-failed at: 2026-08-25T10:41:09Z
