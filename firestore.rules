@@ -44,8 +44,7 @@ service cloud.firestore {
     }
 
     function isActiveWellnessMember() {
-      return signedIn()
-        && request.auth.token.email_verified == true
+      return hasWellnessMemberRecord()
         && wellnessMember().data.status == "active"
         && wellnessMember().data.paymentStatus == "paid"
         && hasValidWellnessExpiry()
@@ -62,9 +61,7 @@ service cloud.firestore {
 
     function isLingjiMember() {
       return isActiveWellnessMember()
-        && (wellnessMember().data.memberLevel == "lingji"
-          || wellnessMember().data.wellnessLevel in ["lingji", "wellness-premium"]
-          || wellnessMember().data.annualSpend >= 100000);
+        && wellnessMember().data.memberLevel == "lingji";
     }
 
     function hasDirectSponsorArticleAccess() {
@@ -91,69 +88,18 @@ service cloud.firestore {
     }
 
     function hasWellnessPaidArticleAccess() {
-      return hasSponsorMemberRecord()
-        && hasWellnessMemberRecord()
-        && sponsorMember().data.email == request.auth.token.email
-        && sponsorMember().data.keys().hasAny(["wellnessBenefit"])
-        && sponsorMember().data.wellnessBenefit is map
-        && sponsorMember().data.wellnessBenefit.active == true
-        && sponsorMember().data.wellnessBenefit.articleAccess == true
-        && sponsorMember().data.wellnessBenefit.status == "active"
-        && sponsorMember().data.wellnessBenefit.accessScope == "sponsor-paid-articles"
-        && sponsorMember().data.wellnessBenefit.accessVersion is int
-        && sponsorMember().data.wellnessBenefit.accessVersion >= 1
-        && sponsorMember().data.wellnessBenefit.expiresAt is timestamp
-        && sponsorMember().data.wellnessBenefit.expiresAt > request.time
-        && (!sponsorMember().data.wellnessBenefit.keys().hasAny(["startsAt"])
-          || !(sponsorMember().data.wellnessBenefit.startsAt is timestamp)
-          || sponsorMember().data.wellnessBenefit.startsAt <= request.time)
-        && wellnessMember().data.email == request.auth.token.email
-        && wellnessMember().data.memberType == "wellness-channel"
-        && wellnessMember().data.status == "active"
-        && wellnessMember().data.paymentStatus == "paid"
-        && wellnessMember().data.wellnessAccess == true
-        && wellnessMember().data.memberLevel in ["wellness", "lingji"]
-        && wellnessMember().data.expiresAt is timestamp
-        && wellnessMember().data.expiresAt > request.time
-        && sponsorMember().data.wellnessBenefit.expiresAt <= wellnessMember().data.expiresAt
-        && (!wellnessMember().data.keys().hasAny(["disabled"])
-          || wellnessMember().data.disabled != true)
-        && (!wellnessMember().data.keys().hasAny(["suspended"])
-          || wellnessMember().data.suspended != true)
-        && (!wellnessMember().data.keys().hasAny(["revokedAt"])
-          || wellnessMember().data.revokedAt == null)
-        && sponsorMember().data.wellnessBenefit.linkedMemberLevel == wellnessMember().data.memberLevel
+      return isActiveWellnessMember()
         && (
-          (sponsorMember().data.wellnessBenefit.source == "lingji-member"
-            && wellnessMember().data.memberLevel == "lingji")
-          || (
-            sponsorMember().data.wellnessBenefit.source == "single-purchase-15000"
-            && sponsorMember().data.wellnessBenefit.qualifyingPurchaseAmount is number
-            && sponsorMember().data.wellnessBenefit.qualifyingPurchaseAmount >= 15000
-            && sponsorMember().data.wellnessBenefit.confirmedBy is string
-            && sponsorMember().data.wellnessBenefit.confirmedBy.size() > 0
-            && sponsorMember().data.wellnessBenefit.confirmedAt is timestamp
-          )
+          wellnessMember().data.memberLevel == "lingji"
+          || (wellnessMember().data.keys().hasAny(["articleAccess"])
+            && wellnessMember().data.articleAccess == true)
         );
-    }
-
-    function isRecordedActiveMember() {
-      return hasWellnessMemberRecord()
-        && wellnessMember().data.status == "active"
-        && (!wellnessMember().data.keys().hasAny(["disabled"])
-          || wellnessMember().data.disabled != true)
-        && (!wellnessMember().data.keys().hasAny(["suspended"])
-          || wellnessMember().data.suspended != true)
-        && (!wellnessMember().data.keys().hasAny(["revokedAt"])
-          || wellnessMember().data.revokedAt == null);
     }
 
     function canReadPaidArticles() {
       return isAdmin()
         || hasDirectSponsorArticleAccess()
-        || hasWellnessPaidArticleAccess()
-        || isActiveWellnessMember()
-        || isRecordedActiveMember();
+        || hasWellnessPaidArticleAccess();
     }
 
     match /articles/{articleId} {
