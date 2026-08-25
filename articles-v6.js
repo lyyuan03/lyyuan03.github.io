@@ -74,16 +74,29 @@ function applyArticleDisplayOverrides() {
 }
 
 async function loadArticleCore() {
-  try {
-    await import("./articles-core-20260810-v6.js?v=20260825-member-paid-unlock-1");
-  } catch (error) {
-    console.error("文選核心載入失敗。", error);
-    if (articleRoot) {
-      articleRoot.innerHTML = '<div class="empty">文章載入失敗，請重新整理頁面後再試。若問題持續，請聯繫網站管理員。</div>';
+  const coreModuleUrls = [
+    "./articles-core-20260810-v6.js?v=20260825-member-paid-unlock-1",
+    "./articles-core-20260810-v6.js?v=20260825-core-load-retry-1"
+  ];
+  let lastError = null;
+
+  for (const [index, moduleUrl] of coreModuleUrls.entries()) {
+    try {
+      await import(moduleUrl);
+      return true;
+    } catch (error) {
+      lastError = error;
+      if (index === 0) {
+        console.warn("文選核心首次載入失敗，正在重試。", error);
+      }
     }
-    return false;
   }
-  return true;
+
+  console.error("文選核心載入失敗，重試後仍未成功。", lastError);
+  if (articleRoot) {
+    articleRoot.innerHTML = '<div class="empty">文章載入失敗，請重新整理頁面後再試。若問題持續，請聯繫網站管理員。</div>';
+  }
+  return false;
 }
 
 async function loadArticleAddons() {
@@ -110,7 +123,15 @@ void loadArticleCore().then((loaded) => {
 });
 
 if (articleRoot) {
-  const articleDisplayObserver = new MutationObserver(applyArticleDisplayOverrides);
+  let articleDisplayFrame = 0;
+  const scheduleArticleDisplayOverrides = () => {
+    if (articleDisplayFrame) return;
+    articleDisplayFrame = requestAnimationFrame(() => {
+      articleDisplayFrame = 0;
+      applyArticleDisplayOverrides();
+    });
+  };
+  const articleDisplayObserver = new MutationObserver(scheduleArticleDisplayOverrides);
   articleDisplayObserver.observe(articleRoot, { childList: true, subtree: true });
 }
 
