@@ -19,6 +19,7 @@ const saveStatusInline = document.getElementById("save-status-inline");
 const adminToast = document.getElementById("admin-toast");
 let hydrationSerial = 0;
 let toastTimer = 0;
+let forwardingSafeSubmit = false;
 
 function showToast(message, state = "success") {
   if (!adminToast) return;
@@ -167,6 +168,7 @@ async function hydrateEditorPaidBody() {
 
 if (form) {
   form.addEventListener("submit", (event) => {
+    if (forwardingSafeSubmit) return;
     const accessType = String(form.elements?.accessType?.value || "");
     if (accessType !== "paid") return;
     const contentField = form.elements?.content;
@@ -188,13 +190,21 @@ if (form) {
     const title = String(form.elements?.title?.value || "").trim();
     const status = String(form.elements?.status?.value || "draft");
 
-    // Capture 階段先換成安全試閱內容；既有 article-admin-core 的 submit listener
-    // 隨後讀取 FormData 時，只會取得試閱＋paid marker，不會取得私有正文。
+    // 外層 submit 不再交給其他 listener，避免 capture callback 結束後的
+    // microtask checkpoint 提前恢復全文。改由同一呼叫堆疊同步派送一個
+    // 只含安全試閱內容的 submit；article-admin-core 會在 dispatchEvent
+    // 返回前同步讀取 FormData，之後才能安全地把完整內容放回編輯器。
+    event.preventDefault();
+    event.stopImmediatePropagation();
     contentField.value = safeContent;
-    queueMicrotask(() => {
+    forwardingSafeSubmit = true;
+    try {
+      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    } finally {
+      forwardingSafeSubmit = false;
       contentField.value = fullContent;
       contentField.dispatchEvent(new Event("input", { bubbles: true }));
-    });
+    }
 
     void persistPrivateBody({ existingId, slug, title, status, split })
       .then(({ contentVersion }) => {
