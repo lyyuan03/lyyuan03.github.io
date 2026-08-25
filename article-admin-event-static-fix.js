@@ -1,5 +1,5 @@
 import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260802-event-admin-fix-1";
 
 const firebaseConfig = {

@@ -119,18 +119,9 @@ function applyToc() {
   });
 }
 
-const root = document.getElementById("article-root") || document.body;
-new MutationObserver(applyToc).observe(root, { childList: true, subtree: true });
+document.addEventListener("lyyuan:article-rendered", applyToc);
 document.addEventListener("DOMContentLoaded", applyToc, { once: true });
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") applyToc(); });
 window.addEventListener("pageshow", applyToc);
-
-let attempts = 0;
-const retry = window.setInterval(() => {
-  applyToc();
-  attempts += 1;
-  if (attempts >= 30 && getView()?.querySelector("#article-2058-toc")) window.clearInterval(retry);
-  else if (attempts >= 60) window.clearInterval(retry);
-}, 500);
 
 applyToc();

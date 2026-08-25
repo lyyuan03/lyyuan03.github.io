@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged } from "./firebase-config.js";
 import {
   collection,
   deleteField,
@@ -8,7 +8,7 @@ import {
   getDocs,
   serverTimestamp,
   writeBatch
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "./firebase-config.js";
 
 const AUTO_REPAIR_SESSION_KEY = "lyyuan-event-access-repair-20260803-1";
 const MAX_BATCH_WRITES = 400;

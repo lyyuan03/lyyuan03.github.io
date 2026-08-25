@@ -1,5 +1,5 @@
 import { auth, db, storage, isAdminEmail } from "./firebase-config.js";
-import { doc, onSnapshot, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, onSnapshot, serverTimestamp, setDoc } from "./firebase-config.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";

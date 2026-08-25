@@ -1,6 +1,6 @@
 // Deprecated legacy title badge.
 // Paid article status is rendered by articles-core as .article-access-badge.
-// Keep this file as a cleanup shim for any older page or cached loader that still references it.
+// Keep this cleanup shim only for older cached loaders that still reference it.
 
 function removeLegacyPaidTitleBadges(root = document) {
   root.querySelectorAll?.(
@@ -14,10 +14,7 @@ function removeLegacyPaidTitleBadges(root = document) {
   document.getElementById("paid-article-badge-style")?.remove();
 }
 
-removeLegacyPaidTitleBadges();
-
-const articleRoot = document.getElementById("article-root");
-if (articleRoot) {
-  new MutationObserver(() => removeLegacyPaidTitleBadges(articleRoot))
-    .observe(articleRoot, { childList: true, subtree: true });
-}
+const articleRoot = document.getElementById("article-root") || document;
+removeLegacyPaidTitleBadges(articleRoot);
+document.addEventListener("lyyuan:article-rendered", () => removeLegacyPaidTitleBadges(articleRoot));
+window.addEventListener("pageshow", () => removeLegacyPaidTitleBadges(articleRoot));

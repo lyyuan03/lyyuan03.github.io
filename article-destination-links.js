@@ -477,9 +477,6 @@
   installStyles();
   enhanceArticlePage();
 
-  const root = document.querySelector(ROOT_SELECTOR) || document.body;
-  new MutationObserver(enhanceArticlePage).observe(root, {
-    childList: true,
-    subtree: true
-  });
+  document.addEventListener("lyyuan:article-rendered", enhanceArticlePage);
+  window.addEventListener("pageshow", enhanceArticlePage);
 })();

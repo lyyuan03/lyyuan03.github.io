@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged } from "./firebase-config.js";
 import {
   collection,
   doc,
@@ -7,7 +7,7 @@ import {
   getDocs,
   serverTimestamp,
   setDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "./firebase-config.js";
 
 const GUANYIN_ARTICLE_ID = "2026-guanyin-vow-lamp-record-v2";
 let currentDiagnosis = null;

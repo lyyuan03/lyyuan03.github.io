@@ -1,23 +1,65 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  browserLocalPersistence,
+  getAuth,
+  getRedirectResult,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  setPersistence,
+  signInWithPopup,
+  signInWithRedirect,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  deleteField,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  onSnapshot,
+  query,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  where,
+  writeBatch
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+export {
+  addDoc,
+  browserLocalPersistence,
+  collection,
+  deleteDoc,
+  deleteField,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  getRedirectResult,
+  onAuthStateChanged,
+  onSnapshot,
+  query,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+  setPersistence,
+  signInWithPopup,
+  signInWithRedirect,
+  signOut,
+  Timestamp,
+  updateDoc,
+  where,
+  writeBatch
+};
 
 const currentPath = location.pathname;
 const isAdminPage = /(^|\/)admin\.html$/i.test(currentPath);
-
-if (/(^|\/)articles\.html$/i.test(currentPath)) {
-  import("./articles-chrome-fix.js?v=20260822-1").catch((error) => {
-    console.error("文選頁首頁尾版型載入失敗：", error);
-  });
-  import("./article-protection.js?v=20260723-member-watermark-1");
-  import("./article-paid-badge.js?v=20260722-3");
-  import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
-  import("./article-inline-image-display.js?v=20260807-inline-image-manager-1");
-  import("./construction-record-page.js?v=20260822-1").catch((error) => {
-    console.error("建院專屬紀錄版型載入失敗：", error);
-  });
-}
 
 if (isAdminPage) {
   import("./article-admin-event-static-fix.js?v=20260802-event-admin-fix-1");

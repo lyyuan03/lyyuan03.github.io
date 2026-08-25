@@ -66,7 +66,5 @@ if (params.get("id") === ARTICLE_ID) {
 
   repairImages();
 
-  const root = document.getElementById("article-root") || document.body;
-  const observer = new MutationObserver(() => repairImages());
-  observer.observe(root, { childList: true, subtree: true });
+  document.addEventListener("lyyuan:article-rendered", () => repairImages());
 }

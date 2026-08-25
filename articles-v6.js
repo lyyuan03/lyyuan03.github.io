@@ -1,5 +1,7 @@
-// Sponsor article access deployment marker: 20260825-member-paid-unlock-1
+// Article render event deployment marker: 20260825-article-render-event-1
 const articleRoot = document.getElementById("article-root");
+const ARTICLE_RENDERED_EVENT = "lyyuan:article-rendered";
+const activeArticleId = new URLSearchParams(location.search).get("id") || "";
 
 const CONSTRUCTION_TITLE_OVERRIDES = new Map([
   ["2026-building-patron-record", "靈元院建院願心見證專頁－丙午建院功德主專屬"],
@@ -73,46 +75,96 @@ function applyArticleDisplayOverrides() {
   applyDragonChantOverrides();
 }
 
+let displayOverrideFrame = 0;
+function scheduleArticleDisplayOverrides() {
+  if (displayOverrideFrame) return;
+  displayOverrideFrame = requestAnimationFrame(() => {
+    displayOverrideFrame = 0;
+    applyArticleDisplayOverrides();
+  });
+}
+
+document.addEventListener(ARTICLE_RENDERED_EVENT, (event) => {
+  if (event.detail?.hasArticleBody) window.clearTimeout(articleLoadFailureTimer);
+  scheduleArticleDisplayOverrides();
+});
+
+const articleLoadFailureTimer = activeArticleId && articleRoot
+  ? window.setTimeout(() => {
+    if (articleRoot.querySelector(".article-body")) return;
+    articleRoot.dataset.articleLoadState = "failed";
+    articleRoot.innerHTML = '<div class="empty" role="alert">載入失敗，請重新整理。</div>';
+  }, 3000)
+  : 0;
+
 async function loadArticleCore() {
   try {
-    await import("./articles-core-20260810-v6.js?v=20260825-member-paid-unlock-1");
+    return await import("./articles-core-20260810-v6.js?v=20260825-article-render-event-1");
   } catch (error) {
     console.error("文選核心載入失敗。", error);
     if (articleRoot) {
       articleRoot.innerHTML = '<div class="empty">文章載入失敗，請重新整理頁面後再試。若問題持續，請聯繫網站管理員。</div>';
     }
-    return false;
+    return null;
   }
-  return true;
 }
 
 async function loadArticleAddons() {
   const addons = [
-    ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
-    ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260823-price-plans-restore-1"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260825-member-paid-unlock-1"],
-    ["建院見證專頁", "./construction-record-page.js?v=20260822-construction-title-1"],
-    ["建院見證封面鎖定", "./construction-cover-lock.js?v=20260822-cover-lock-1"]
+    ["文選頁首頁尾", "./articles-chrome-fix.js?v=20260825-article-render-event-1"],
+    ["文章登入導覽", "./site-auth-nav.js?v=20260825-article-render-event-1"]
   ];
-  const results = await Promise.allSettled(addons.map(([, path]) => import(path)));
-  results.forEach((result, index) => {
-    if (result.status === "rejected") {
-      console.warn(`${addons[index][0]}附加模組載入失敗，文章本體維持正常顯示。`, result.reason);
+
+  if (activeArticleId) {
+    addons.push(
+      ["文章分類", "./article-taxonomy-v2.js?v=20260825-article-render-event-1"],
+      ["文章重點引言", "./article-key-quote-display.js?v=20260825-article-render-event-1"],
+      ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260825-article-render-event-1"],
+      ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260825-article-render-event-1"],
+      ["贊助方案結帳", "./sponsor-checkout.js?v=20260823-auto-activation-1"],
+      ["文章內文圖片", "./article-inline-image-display.js?v=20260825-article-render-event-1"],
+      ["文章延伸連結", "./article-destination-links.js?v=20260825-article-render-event-1"]
+    );
+    if (activeArticleId === "love-beyond-filial-piety-and-ancestor-worship") {
+      addons.push(["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260825-article-render-event-1"]);
     }
-  });
+    if (["2026-building-patron-record", "2026-lineage-lamp-building-record"].includes(activeArticleId)) {
+      addons.push(["建院見證專頁", "./construction-record-page.js?v=20260825-article-render-event-1"]);
+    }
+    if (activeArticleId === "2026-lineage-lamp-building-record") {
+      addons.push(
+        ["建院見證圖片", "./construction-record-extra-images.js?v=20260825-article-render-event-1"],
+        ["建院見證封面", "./construction-cover-lock.js?v=20260825-article-render-event-1"]
+      );
+    }
+    if (activeArticleId === "2058-future-person-prophecy") {
+      addons.push(["2058 文章目錄", "./article-2058-toc.js?v=20260825-article-render-event-1"]);
+    }
+    addons.push(["文章內容保護", "./article-protection.js?v=20260825-article-render-event-1"]);
+  } else {
+    addons.push(
+      ["文章列表後備", "./article-list-rescue.js?v=20260825-article-render-event-1"],
+      ["文章分類", "./article-taxonomy-v2.js?v=20260825-article-render-event-1"],
+      ["文章縮圖", "./article-thumbnail-display-v2.js?v=20260825-article-render-event-1"],
+      ["文章內容保護", "./article-protection.js?v=20260825-article-render-event-1"]
+    );
+  }
+
+  for (const [label, path] of addons) {
+    try {
+      await import(path);
+    } catch (error) {
+      console.warn(`${label}附加模組載入失敗，文章本體維持正常顯示。`, error);
+    }
+  }
 }
 
-void loadArticleCore().then((loaded) => {
-  if (!loaded) return;
-  applyArticleDisplayOverrides();
-  void loadArticleAddons().then(applyArticleDisplayOverrides);
+void loadArticleCore().then(async (articleCore) => {
+  if (!articleCore) return;
+  scheduleArticleDisplayOverrides();
+  await loadArticleAddons();
+  articleCore.notifyArticleRendered("addons-ready");
 });
-
-if (articleRoot) {
-  const articleDisplayObserver = new MutationObserver(applyArticleDisplayOverrides);
-  articleDisplayObserver.observe(articleRoot, { childList: true, subtree: true });
-}
 
 const articleVisualFixStyleId = "article-visual-fixes-20260811";
 if (!document.getElementById(articleVisualFixStyleId)) {

@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged } from "./firebase-config.js";
 import {
   collection,
   deleteField,
@@ -9,7 +9,7 @@ import {
   serverTimestamp,
   setDoc,
   writeBatch
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "./firebase-config.js";
 
 const MAX_BATCH_WRITES = 400;
 const RELOAD_KEY = "lyyuan-event-access-audit-v2-reloaded";

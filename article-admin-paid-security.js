@@ -8,7 +8,7 @@ import {
   serverTimestamp,
   setDoc,
   where
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "./firebase-config.js";
 
 const PAID_MARKER = "<!-- paid-only -->";
 const PRIVATE_COLLECTION = "paidArticleBodies";

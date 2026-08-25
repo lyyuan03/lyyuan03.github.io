@@ -1,6 +1,16 @@
-import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  auth,
+  collection,
+  db,
+  doc,
+  getDoc,
+  getDocs,
+  isAdminEmail,
+  onAuthStateChanged,
+  serverTimestamp,
+  setDoc,
+  updateDoc
+} from "./firebase-config.js";
 
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 const THUMBNAIL_SETTINGS_ID = "__article-thumbnail-settings";
@@ -11,7 +21,7 @@ function buildCleanStatuses(snapshot) {
   snapshot.docs.forEach((item) => {
     const data = item.data() || {};
     if (item.id === THUMBNAIL_SETTINGS_ID || data.systemType === "article-thumbnail-settings") return;
-    if (!['published', 'draft'].includes(data.status)) return;
+    if (!["published", "draft"].includes(data.status)) return;
     statuses[item.id] = {
       status: data.status,
       hidden: data.hidden === true,

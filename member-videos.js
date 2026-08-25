@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "./firebase-config.js";
+import { collection, doc, getDoc, getDocs, query, where } from "./firebase-config.js";
 import { evaluateMember } from "./member-dashboard-logic.js";
 
 const accessPanel = document.getElementById("video-access-panel");

@@ -140,14 +140,7 @@ function installConstructionRecordPage(pageConfig) {
   function watchLatestProgressPhoto(article) {
     if (activeId !== "2026-building-patron-record") return;
     ensureLatestProgressPhoto(article);
-    if (article.querySelector(".construction-latest-progress")) return;
-    const observer = new MutationObserver(() => {
-      ensureLatestProgressPhoto(article);
-      movePatronVisionImageToFirst(article);
-      if (article.querySelector(".construction-latest-progress")) observer.disconnect();
-    });
-    observer.observe(article, { childList: true, subtree: true });
-    window.setTimeout(() => observer.disconnect(), 15000);
+    movePatronVisionImageToFirst(article);
   }
 
   const apply = () => {
@@ -206,9 +199,6 @@ function installConstructionRecordPage(pageConfig) {
     return true;
   };
 
-  if (apply()) return;
-  const observer = new MutationObserver(() => {
-    if (apply()) observer.disconnect();
-  });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  apply();
+  document.addEventListener("lyyuan:article-rendered", apply);
 }
