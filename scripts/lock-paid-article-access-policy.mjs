@@ -9,12 +9,12 @@ const rules = read("firestore.rules");
 const loader = read("paid-article-secure-loader.js");
 const core = read("articles-core-20260810-v6.js");
 
-function functionBlock(source, name, nextName) {
-  const startToken = `function ${name}()`;
+function blockBetween(source, startToken, endToken) {
   const start = source.indexOf(startToken);
-  assert.ok(start >= 0, `Missing function ${name}.`);
-  const end = nextName ? source.indexOf(`function ${nextName}()`, start + startToken.length) : -1;
-  return source.slice(start, end >= 0 ? end : undefined);
+  assert.ok(start >= 0, `Missing policy block start: ${startToken}`);
+  const end = source.indexOf(endToken, start + startToken.length);
+  assert.ok(end > start, `Missing policy block end: ${endToken}`);
+  return source.slice(start, end);
 }
 
 const policy = Object.freeze({
@@ -31,9 +31,9 @@ assert.deepEqual(policy, {
   sponsor: true
 }, "Paid article policy itself must not change.");
 
-const wellnessPaidBlock = functionBlock(rules, "hasWellnessPaidArticleAccess", "canReadPaidArticles");
-const canReadBlock = functionBlock(rules, "canReadPaidArticles");
-const lingjiBlock = functionBlock(rules, "isLingjiMember", "hasDirectSponsorArticleAccess");
+const wellnessPaidBlock = blockBetween(rules, "function hasWellnessPaidArticleAccess()", "function canReadPaidArticles()");
+const canReadBlock = blockBetween(rules, "function canReadPaidArticles()", "match /articles/{articleId}");
+const lingjiBlock = blockBetween(rules, "function isLingjiMember()", "function hasDirectSponsorArticleAccess()");
 
 // Firestore is the final authority. General wellness membership alone MUST NOT grant access.
 assert.ok(wellnessPaidBlock.includes("isActiveWellnessMember()"), "Paid wellness access must require an active wellness membership.");
