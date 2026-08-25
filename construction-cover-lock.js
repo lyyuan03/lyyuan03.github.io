@@ -35,17 +35,7 @@ if (activeId === TARGET_ARTICLE_ID) {
   };
 
   enforceCover();
-  [0, 50, 180, 500, 1200, 2500, 5000].forEach((delay) => {
-    window.setTimeout(enforceCover, delay);
-  });
-
-  const observer = new MutationObserver(scheduleEnforce);
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ["src", "srcset"]
-  });
+  document.addEventListener("lyyuan:article-rendered", scheduleEnforce);
 
   window.addEventListener("pageshow", enforceCover);
   window.addEventListener("load", enforceCover);

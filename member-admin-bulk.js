@@ -1,12 +1,12 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged } from "./firebase-config.js";
 import {
   deleteField,
   doc,
   getDoc,
   serverTimestamp,
   writeBatch
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "./firebase-config.js";
 
 const sections = [
   {

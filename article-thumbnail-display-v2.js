@@ -1,5 +1,4 @@
-import { db } from "./firebase-config.js";
-import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db, doc, onSnapshot } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260824-article-system-repair-1";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
@@ -269,10 +268,7 @@ function initialize() {
     thumbnailSettings = new Map();
     scheduleApply();
   });
-  const root = document.getElementById("article-root") || document.body;
-  new MutationObserver(scheduleApply).observe(root, { childList: true, subtree: true });
-  const tabs = document.getElementById("category-tabs");
-  if (tabs) new MutationObserver(() => requestAnimationFrame(adjustSystemCounts)).observe(tabs, { childList: true, subtree: true });
+  document.addEventListener("lyyuan:article-rendered", scheduleApply);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") scheduleApply();
   });

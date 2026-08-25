@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, onSnapshot, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "./firebase-config.js";
+import { collection, doc, getDoc, onSnapshot, serverTimestamp, setDoc } from "./firebase-config.js";
 
 const CONSTRUCTION_CONTENT_VERSION = 3;
 

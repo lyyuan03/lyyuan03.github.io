@@ -1,4 +1,4 @@
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc } from "./firebase-config.js";
 
 export const OFFER_MEMBER_TYPES = Object.freeze({
   WELLNESS_GENERAL: "wellness_general",

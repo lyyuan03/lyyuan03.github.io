@@ -1,14 +1,18 @@
-import { auth, provider, db, isAdminEmail } from "./firebase-config.js";
 import {
+  auth,
+  browserLocalPersistence,
+  db,
+  doc,
+  getDoc,
+  getRedirectResult,
+  isAdminEmail,
+  onAuthStateChanged,
+  provider,
+  setPersistence,
   signInWithPopup,
   signInWithRedirect,
-  getRedirectResult,
-  signOut,
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  signOut
+} from "./firebase-config.js";
 
 const AUTH_VERSION = "20260824-auth-mobile-layout-2";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
@@ -302,8 +306,12 @@ async function loadSponsorOffer() {
   }
 }
 
-const sponsorOfferObserver = new MutationObserver(() => applySponsorOfferToPage());
-sponsorOfferObserver.observe(document.body, { childList: true, subtree: true });
+if (document.getElementById("article-root")) {
+  document.addEventListener("lyyuan:article-rendered", applySponsorOfferToPage);
+} else {
+  const sponsorOfferObserver = new MutationObserver(() => applySponsorOfferToPage());
+  sponsorOfferObserver.observe(document.body, { childList: true, subtree: true });
+}
 loadSponsorOffer();
 
 setPersistence(auth, browserLocalPersistence).catch(console.error);

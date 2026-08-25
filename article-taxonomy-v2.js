@@ -72,5 +72,5 @@ if (/(^|\/)admin\.html$/i.test(location.pathname)) {
   };
 
   decorate();
-  new MutationObserver(decorate).observe(document.body, { childList: true, subtree: true });
+  document.addEventListener("lyyuan:article-rendered", decorate);
 }

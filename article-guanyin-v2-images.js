@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "./firebase-config.js";
+import { doc, getDoc, serverTimestamp, setDoc } from "./firebase-config.js";
 
 const ARTICLE_ID = "2026-guanyin-vow-lamp-record-v2";
 const IMAGE_ONE = "![每一封疏文，都是一份交付給觀世音菩薩的修行託付](/assets/articles/2026-guanyin-vow-lamp-record/vow-sheets-before-guanyin.webp?v=20260802-1)";

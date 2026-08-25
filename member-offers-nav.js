@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "./firebase-config.js";
+import { collection, getDocs, query, where } from "./firebase-config.js";
 import { evaluateOfferForRoles, loadOfferMemberProfile } from "./member-offers-core.js?v=20260812-2";
 
 const MENU_LINK_ID = "member-offers-menu-link";

@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, getDocs, query, collection, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "./firebase-config.js";
+import { doc, getDoc, getDocs, query, collection, where } from "./firebase-config.js";
 
 const params = new URLSearchParams(location.search);
 const activeId = params.get("id") || "";

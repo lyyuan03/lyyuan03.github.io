@@ -219,8 +219,8 @@ if (isArticlePage) {
     if (protectedArticle()) showProtectedMessage("會員專屬文章不提供列印。");
   });
 
-  const observer = new MutationObserver(syncProtection);
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener("lyyuan:article-rendered", syncProtection);
+  document.addEventListener("lyyuan:paid-article-loaded", syncProtection);
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", syncProtection, { once: true });
   } else {

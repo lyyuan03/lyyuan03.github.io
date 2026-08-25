@@ -141,17 +141,7 @@ async function handleMemberLogin(button) {
 installStyles();
 upgradeSimpleGates();
 
-const articleRoot = document.getElementById("article-root") || document.documentElement;
-const observer = new MutationObserver((mutations) => {
-  for (const mutation of mutations) {
-    for (const node of mutation.addedNodes) {
-      if (!(node instanceof Element)) continue;
-      if (upgradeSimpleGates(node)) return;
-    }
-  }
-  upgradeSimpleGates();
-});
-observer.observe(articleRoot, { childList: true, subtree: true });
+document.addEventListener("lyyuan:article-rendered", () => upgradeSimpleGates());
 
 document.addEventListener("click", (event) => {
   const button = event.target.closest(`${RESTORED_GATE_SELECTOR} [data-paid-member-login]`);
