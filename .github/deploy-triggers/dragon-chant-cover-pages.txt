@@ -1,3 +1,4 @@
 dragon chant cover deploy trigger: 2026-08-26
 primary image: assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3
 runtime cache chain synchronized
+paid transition deployed: 2026-08-26T08:32:00Z
