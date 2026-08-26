@@ -24,6 +24,10 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/sponsorMemberAccess/$(request.auth.token.email));
     }
 
+    function memberEntitlement() {
+      return get(/databases/$(database)/documents/memberEntitlements/$(request.auth.token.email));
+    }
+
     function hasWellnessMemberRecord() {
       return verifiedEmail()
         && exists(/databases/$(database)/documents/memberAccess/$(request.auth.token.email));
@@ -32,6 +36,11 @@ service cloud.firestore {
     function hasSponsorMemberRecord() {
       return verifiedEmail()
         && exists(/databases/$(database)/documents/sponsorMemberAccess/$(request.auth.token.email));
+    }
+
+    function hasMemberEntitlementRecord() {
+      return verifiedEmail()
+        && exists(/databases/$(database)/documents/memberEntitlements/$(request.auth.token.email));
     }
 
     function hasValidWellnessExpiry() {
@@ -74,8 +83,12 @@ service cloud.firestore {
         && sponsorMember().data.accessScope == "sponsor-paid-articles"
         && sponsorMember().data.accessVersion is int
         && sponsorMember().data.accessVersion >= 1
-        && sponsorMember().data.expiresAt is timestamp
-        && sponsorMember().data.expiresAt > request.time
+        && sponsorMember().data.keys().hasAny(["expiresAt"])
+        && (
+          sponsorMember().data.expiresAt is string
+          || (sponsorMember().data.expiresAt is timestamp
+            && sponsorMember().data.expiresAt > request.time)
+        )
         && (!sponsorMember().data.keys().hasAny(["startsAt"])
           || !(sponsorMember().data.startsAt is timestamp)
           || sponsorMember().data.startsAt <= request.time)
@@ -96,10 +109,95 @@ service cloud.firestore {
         );
     }
 
+    function hasCanonicalPaidArticleAccess() {
+      return hasMemberEntitlementRecord()
+        && memberEntitlement().data.email == request.auth.token.email
+        && memberEntitlement().data.schemaVersion is int
+        && memberEntitlement().data.schemaVersion >= 1
+        && memberEntitlement().data.status != "disabled"
+        && (
+          (
+            memberEntitlement().data.keys().hasAny(["sponsorArticleAccess", "sponsorExpiresAt"])
+            && memberEntitlement().data.sponsorArticleAccess == true
+            && memberEntitlement().data.sponsorExpiresAt is timestamp
+            && memberEntitlement().data.sponsorExpiresAt > request.time
+          )
+          || (
+            memberEntitlement().data.keys().hasAny(["wellnessArticleAccess", "wellnessExpiresAt"])
+            && memberEntitlement().data.wellnessArticleAccess == true
+            && memberEntitlement().data.wellnessExpiresAt is timestamp
+            && memberEntitlement().data.wellnessExpiresAt > request.time
+          )
+        );
+    }
+
+    function sponsorSourceNewerThanEntitlement() {
+      return hasSponsorMemberRecord()
+        && sponsorMember().data.keys().hasAny(["updatedAt"])
+        && sponsorMember().data.updatedAt is timestamp
+        && (
+          !hasMemberEntitlementRecord()
+          || !memberEntitlement().data.keys().hasAny(["computedAt"])
+          || !(memberEntitlement().data.computedAt is timestamp)
+          || sponsorMember().data.updatedAt > memberEntitlement().data.computedAt
+        );
+    }
+
+    function wellnessSourceNewerThanEntitlement() {
+      return hasWellnessMemberRecord()
+        && wellnessMember().data.keys().hasAny(["updatedAt"])
+        && wellnessMember().data.updatedAt is timestamp
+        && (
+          !hasMemberEntitlementRecord()
+          || !memberEntitlement().data.keys().hasAny(["computedAt"])
+          || !(memberEntitlement().data.computedAt is timestamp)
+          || wellnessMember().data.updatedAt > memberEntitlement().data.computedAt
+        );
+    }
+
+    function shouldUseLegacyAccessFallback() {
+      return !hasMemberEntitlementRecord()
+        || sponsorSourceNewerThanEntitlement()
+        || wellnessSourceNewerThanEntitlement();
+    }
+
     function canReadPaidArticles() {
       return isAdmin()
-        || hasDirectSponsorArticleAccess()
-        || hasWellnessPaidArticleAccess();
+        || hasCanonicalPaidArticleAccess()
+        || (shouldUseLegacyAccessFallback()
+          && (hasDirectSponsorArticleAccess() || hasWellnessPaidArticleAccess()));
+    }
+
+    function hasCanonicalWellnessVideoAccess() {
+      return hasMemberEntitlementRecord()
+        && memberEntitlement().data.email == request.auth.token.email
+        && memberEntitlement().data.schemaVersion is int
+        && memberEntitlement().data.schemaVersion >= 1
+        && memberEntitlement().data.keys().hasAny(["wellnessVideoAccess", "wellnessExpiresAt"])
+        && memberEntitlement().data.wellnessVideoAccess == true
+        && memberEntitlement().data.wellnessExpiresAt is timestamp
+        && memberEntitlement().data.wellnessExpiresAt > request.time;
+    }
+
+    function hasCanonicalLingjiAccess() {
+      return hasCanonicalWellnessVideoAccess()
+        && memberEntitlement().data.keys().hasAny(["lingjiAccess"])
+        && memberEntitlement().data.lingjiAccess == true;
+    }
+
+    function canReadMemberVideo(accessLevel) {
+      return isAdmin()
+        || (
+          hasCanonicalWellnessVideoAccess()
+          && (accessLevel == "wellness"
+            || (accessLevel == "lingji" && hasCanonicalLingjiAccess()))
+        )
+        || (
+          shouldUseLegacyAccessFallback()
+          && isActiveWellnessMember()
+          && (accessLevel == "wellness"
+            || (accessLevel == "lingji" && isLingjiMember()))
+        );
     }
 
     match /articles/{articleId} {
@@ -182,6 +280,14 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    match /memberEntitlements/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
     match /membershipHistory/{memberEmail} {
       allow read: if isAdmin()
         || (signedIn()
@@ -192,12 +298,8 @@ service cloud.firestore {
     }
 
     match /memberVideos/{videoId} {
-      allow read: if isAdmin() || (
-        isActiveWellnessMember()
-        && resource.data.status == "published"
-        && (resource.data.accessLevel == "wellness"
-          || (resource.data.accessLevel == "lingji" && isLingjiMember()))
-      );
+      allow read: if resource.data.status == "published"
+        && canReadMemberVideo(resource.data.accessLevel);
       allow create, update, delete: if isAdmin();
     }
 
