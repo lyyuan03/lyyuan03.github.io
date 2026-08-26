@@ -1,8 +1,10 @@
-import { app, auth } from "./firebase-config.js";
+import { app, auth, db } from "./firebase-config.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const functions = getFunctions(app, "asia-east1");
 const createRenewalCheckout = httpsCallable(functions, "createSponsorRenewalCheckout");
+const OFFER_CACHE_KEY = "lyyuan:sponsor:dashboard-renewal-offer-v2";
 
 function prepareRenewalButtons(root = document) {
   root.querySelectorAll?.("[data-dashboard-renewal-months]").forEach((button) => {
@@ -19,6 +21,40 @@ function prepareRenewalButtons(root = document) {
 function closePopup(popup) {
   try {
     if (popup && !popup.closed) popup.close();
+  } catch {}
+}
+
+function validHttpsUrl(value = "") {
+  const url = String(value || "").trim();
+  return url.startsWith("https://") ? url : "";
+}
+
+function cachedRegularPaymentUrl() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(OFFER_CACHE_KEY) || "null");
+    return validHttpsUrl(cached?.regularPaymentUrl);
+  } catch {
+    return "";
+  }
+}
+
+async function publishedRegularPaymentUrl() {
+  try {
+    const snapshot = await getDoc(doc(db, "articles", "sponsor-offer-status"));
+    const data = snapshot.exists() ? snapshot.data() || {} : {};
+    if (data.status !== "published" || data.systemRecord !== true) return cachedRegularPaymentUrl();
+    const url = validHttpsUrl(data.regularPaymentUrl);
+    if (url) return url;
+  } catch (error) {
+    console.warn("續期付款公開連結讀取失敗，改用最近一次設定。", error);
+  }
+  return cachedRegularPaymentUrl();
+}
+
+function rememberPlan(months) {
+  try {
+    localStorage.setItem("lyyuan:sponsor:pending-plan", String(months));
+    localStorage.setItem("lyyuan:sponsor:pending-tier", "regular");
   } catch {}
 }
 
@@ -41,36 +77,30 @@ async function openRenewalCheckout(button, months) {
     popup.document.body.innerHTML = '<div style="min-height:100vh;display:grid;place-items:center;font-family:sans-serif;color:#594F47">正在建立綠界安全付款連結…</div>';
   } catch {}
 
-  const originalDisabled = button.disabled;
   button.disabled = true;
+  rememberPlan(months);
 
   try {
     const result = await createRenewalCheckout({
       planMonths: Number(months),
       name: auth.currentUser.displayName || ""
     });
-    const data = result?.data || {};
-    const paymentUrl = String(data.paymentUrl || "").trim();
-    if (!paymentUrl.startsWith("https://")) {
-      throw new Error("付款連結建立失敗。");
-    }
-
-    try {
-      localStorage.setItem("lyyuan:sponsor:pending-plan", String(months));
-      localStorage.setItem("lyyuan:sponsor:pending-tier", "regular");
-    } catch {}
-
+    const paymentUrl = validHttpsUrl(result?.data?.paymentUrl);
+    if (!paymentUrl) throw new Error("付款連結建立失敗。");
     popup.location.replace(paymentUrl);
   } catch (error) {
+    console.warn("專屬續期付款函式暫時不可用，改讀既有綠界付款連結。", error);
+    const fallbackUrl = await publishedRegularPaymentUrl();
+    if (fallbackUrl) {
+      popup.location.replace(fallbackUrl);
+      return;
+    }
+
     closePopup(popup);
     console.error("會員中心續期付款建立失敗。", error);
-    const message = String(error?.message || "")
-      .replace(/^FirebaseError:\s*/i, "")
-      .replace(/^functions\/[\w-]+:\s*/i, "")
-      .trim();
-    alert(message || "目前無法建立綠界付款連結，請稍後再試。");
+    alert("目前綠界續期付款連結尚未完成同步，請稍後再試。");
   } finally {
-    button.disabled = originalDisabled && false;
+    button.disabled = false;
   }
 }
 
