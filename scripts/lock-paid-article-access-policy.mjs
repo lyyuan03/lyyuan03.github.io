@@ -7,6 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 const rules = read("firestore.rules");
 const loader = read("paid-article-secure-loader.js");
+const resolver = read("member-access-resolver.js");
 const core = read("articles-core-20260810-v6.js");
 
 function blockBetween(source, startToken, endToken) {
@@ -31,24 +32,36 @@ assert.deepEqual(policy, {
   sponsor: true
 }, "Paid article policy itself must not change.");
 
-const wellnessPaidBlock = blockBetween(rules, "function hasWellnessPaidArticleAccess()", "function canReadPaidArticles()");
-const canReadBlock = blockBetween(rules, "function canReadPaidArticles()", "match /articles/{articleId}");
+const wellnessPaidBlock = blockBetween(rules, "function hasWellnessPaidArticleAccess()", "function hasCanonicalPaidArticleAccess()");
+const entitlementBlock = blockBetween(rules, "function hasCanonicalPaidArticleAccess()", "function sponsorSourceNewerThanEntitlement()");
+const fallbackBlock = blockBetween(rules, "function shouldUseLegacyAccessFallback()", "function canReadPaidArticles()");
+const canReadBlock = blockBetween(rules, "function canReadPaidArticles()", "function hasCanonicalWellnessVideoAccess()");
 const lingjiBlock = blockBetween(rules, "function isLingjiMember()", "function hasDirectSponsorArticleAccess()");
 const sponsorBlock = blockBetween(rules, "function hasDirectSponsorArticleAccess()", "function hasWellnessPaidArticleAccess()");
 
-// Firestore is the final authority. General wellness membership alone MUST NOT grant access.
-assert.ok(wellnessPaidBlock.includes("isActiveWellnessMember()"), "Paid wellness access must require an active wellness membership.");
+// Canonical entitlements are the primary authority.
+assert.ok(entitlementBlock.includes("memberEntitlements"), "Canonical paid article access must use memberEntitlements.");
+assert.ok(entitlementBlock.includes("sponsorArticleAccess == true"), "Canonical sponsor article access must be explicit.");
+assert.ok(entitlementBlock.includes("wellnessArticleAccess == true"), "Canonical wellness article access must be explicit.");
+assert.ok(entitlementBlock.includes("sponsorExpiresAt > request.time"), "Canonical sponsor access must enforce expiry.");
+assert.ok(entitlementBlock.includes("wellnessExpiresAt > request.time"), "Canonical wellness access must enforce expiry.");
+assert.ok(canReadBlock.includes("hasCanonicalPaidArticleAccess()"), "Paid articles must use canonical entitlements first.");
+assert.ok(canReadBlock.includes("shouldUseLegacyAccessFallback()"), "A bounded legacy fallback must exist for newly changed member records.");
+assert.ok(fallbackBlock.includes("!hasMemberEntitlementRecord()"), "Fallback must cover records not yet migrated.");
+
+// Firestore fallback policy: ordinary wellness membership alone MUST NOT grant article access.
+assert.ok(wellnessPaidBlock.includes("isActiveWellnessMember()"), "Paid wellness fallback must require an active wellness membership.");
 assert.ok(wellnessPaidBlock.includes('memberLevel == "lingji"'), "Current Lingji members must be allowed.");
 assert.ok(wellnessPaidBlock.includes('keys().hasAny(["articleAccess"])'), "General wellness paid access must require an explicit articleAccess field.");
 assert.ok(wellnessPaidBlock.includes("articleAccess == true"), "General wellness paid access must require articleAccess == true.");
 assert.ok(canReadBlock.includes("isAdmin()"), "Admin access must remain available.");
-assert.ok(canReadBlock.includes("hasDirectSponsorArticleAccess()"), "Sponsor article members must remain allowed.");
-assert.ok(canReadBlock.includes("hasWellnessPaidArticleAccess()"), "Wellness paid access must remain routed through the locked helper.");
+assert.ok(canReadBlock.includes("hasDirectSponsorArticleAccess()"), "Sponsor fallback must remain available during synchronization.");
+assert.ok(canReadBlock.includes("hasWellnessPaidArticleAccess()"), "Wellness fallback must remain routed through the locked helper.");
 assert.ok(!canReadBlock.includes("isActiveWellnessMember()"), "LOCK VIOLATION: ordinary active wellness members must not automatically read paid articles.");
 assert.ok(!canReadBlock.includes("isRecordedActiveMember()"), "LOCK VIOLATION: historical/recorded membership must not grant paid access.");
 assert.ok(!lingjiBlock.includes("annualSpend"), "LOCK VIOLATION: annual spend progress must not become current Lingji paid access.");
 
-// Sponsor paid-article membership is its own membership type and MUST NOT depend on wellness/general membership.
+// Sponsor paid-article membership is independent from wellness/general membership.
 assert.ok(sponsorBlock.includes('memberType == "sponsor-member"'), "Direct sponsor access must require sponsor-member type.");
 assert.ok(sponsorBlock.includes('paymentStatus == "paid"'), "Direct sponsor access must require paid status.");
 assert.ok(sponsorBlock.includes('articleAccess == true'), "Direct sponsor access must require articleAccess == true.");
@@ -57,17 +70,26 @@ assert.ok(!sponsorBlock.includes("wellnessMember()"), "LOCK VIOLATION: sponsor a
 assert.ok(!sponsorBlock.includes("hasWellnessMemberRecord()"), "LOCK VIOLATION: sponsor access must not require a wellness/general member record.");
 assert.ok(!sponsorBlock.includes("memberLevel"), "LOCK VIOLATION: sponsor access must not depend on wellness/general member level.");
 
-// Frontend must mirror the server policy, never invent a broader rule.
-assert.ok(loader.includes('wellness.memberLevel === "lingji" || wellness.articleAccess === true'),
-  "Secure loader must allow Lingji or explicit wellness articleAccess only.");
-assert.ok(loader.includes("activeSponsorMember(sponsor, email)"),
-  "Secure loader must allow active sponsor article members.");
-assert.ok(!/wellnessAccess\s*===\s*true[\s\S]{0,120}return true/.test(loader),
+// Frontend must use one resolver and prefer canonical entitlements before legacy data.
+assert.ok(loader.includes('import { resolveMemberAccess } from "./member-access-resolver.js"'),
+  "Secure loader must delegate member decisions to the unified resolver.");
+assert.ok(!loader.includes("activeSponsorMember("),
+  "Secure loader must not duplicate sponsor membership rules.");
+assert.ok(!loader.includes("activeWellnessMember("),
+  "Secure loader must not duplicate wellness membership rules.");
+assert.ok(resolver.includes("activeEntitlement(entitlement, email)"),
+  "Resolver must check canonical entitlements.");
+assert.ok(resolver.includes("activeSponsorMember(sponsor, email)"),
+  "Resolver must keep sponsor fallback during synchronization.");
+assert.ok(resolver.includes('wellness.memberLevel === "lingji" || wellness.articleAccess === true'),
+  "Resolver must only allow Lingji or explicit wellness articleAccess.");
+assert.ok(!/wellnessAccess\s*===\s*true[\s\S]{0,160}return \{ allowed: true/.test(resolver),
   "LOCK VIOLATION: wellnessAccess alone must never unlock paid articles.");
-const sponsorFrontendIndex = loader.indexOf("if (activeSponsorMember(sponsor, email)) return true;");
-const wellnessFrontendIndex = loader.indexOf("if (!activeWellnessMember(wellness, email)) return false;");
-assert.ok(sponsorFrontendIndex >= 0 && wellnessFrontendIndex >= 0 && sponsorFrontendIndex < wellnessFrontendIndex,
-  "LOCK VIOLATION: sponsor access must be decided independently before wellness membership checks.");
+const entitlementFrontendIndex = resolver.indexOf("if (activeEntitlement(entitlement, email))");
+const sponsorFrontendIndex = resolver.indexOf("if (activeSponsorMember(sponsor, email))");
+const wellnessFrontendIndex = resolver.indexOf("if (activeWellnessMember(wellness, email)");
+assert.ok(entitlementFrontendIndex >= 0 && sponsorFrontendIndex > entitlementFrontendIndex && wellnessFrontendIndex > sponsorFrontendIndex,
+  "LOCK VIOLATION: frontend must prefer canonical entitlements, then sponsor fallback, then wellness fallback.");
 assert.ok(core.includes('data-paid-body-state="locked"'),
   "Paid articles must render locked before secure authorization completes.");
 
