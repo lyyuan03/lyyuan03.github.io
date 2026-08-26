@@ -17,7 +17,7 @@ jobs:
       PROJECT_ID: lyyuan03-membership
       ARTICLE_ID: dragon-chant-youtube-awakening
       ARTICLE_FILE: article-dragon-chant-youtube-awakening.js
-      PRIMARY_IMAGE: assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3
+      PRIMARY_IMAGE: 'assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3'
     steps:
       - name: Checkout current main
         uses: actions/checkout@v4
@@ -62,11 +62,12 @@ jobs:
                   raise SystemExit('Dragon chant title anchor not found in articles-v6.js')
               display_text = display_text.replace(title_const, f'{title_const}\n{primary_const}', 1)
 
-          cover_override = '''  const cover = detail?.querySelector(".article-cover");
-          if (cover && cover.getAttribute("src") !== DRAGON_CHANT_PRIMARY_IMAGE) {
-            cover.setAttribute("src", DRAGON_CHANT_PRIMARY_IMAGE);
-          }
-'''
+          cover_override = (
+              '  const cover = detail?.querySelector(".article-cover");\n'
+              '  if (cover && cover.getAttribute("src") !== DRAGON_CHANT_PRIMARY_IMAGE) {\n'
+              '    cover.setAttribute("src", DRAGON_CHANT_PRIMARY_IMAGE);\n'
+              '  }\n'
+          )
           title_line = '  document.title = `${DRAGON_CHANT_TITLE} | 靈元院`;\n'
           if cover_override.strip() not in display_text:
               if title_line not in display_text:
