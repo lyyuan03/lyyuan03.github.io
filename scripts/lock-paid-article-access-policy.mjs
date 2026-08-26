@@ -40,7 +40,7 @@ const lingjiBlock = blockBetween(rules, "function isLingjiMember()", "function h
 const sponsorBlock = blockBetween(rules, "function hasDirectSponsorArticleAccess()", "function hasWellnessPaidArticleAccess()");
 
 // Canonical entitlements are the primary authority.
-assert.ok(entitlementBlock.includes("memberEntitlements"), "Canonical paid article access must use memberEntitlements.");
+assert.ok(entitlementBlock.includes("memberEntitlement()"), "Canonical paid article access must use the memberEntitlements helper.");
 assert.ok(entitlementBlock.includes("sponsorArticleAccess == true"), "Canonical sponsor article access must be explicit.");
 assert.ok(entitlementBlock.includes("wellnessArticleAccess == true"), "Canonical wellness article access must be explicit.");
 assert.ok(entitlementBlock.includes("sponsorExpiresAt > request.time"), "Canonical sponsor access must enforce expiry.");
