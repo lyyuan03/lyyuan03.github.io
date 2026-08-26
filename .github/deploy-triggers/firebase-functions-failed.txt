@@ -1,3 +1,3 @@
 firebase membership backend: failed
-run id: 32940254453
-failed at: 2026-08-26T06:55:41Z
+run id: 32940527876
+failed at: 2026-08-26T06:59:29Z
