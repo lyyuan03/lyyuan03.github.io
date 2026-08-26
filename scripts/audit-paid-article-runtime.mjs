@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 const marker = "<!-- paid-only -->";
-const cacheToken = "20260825-paid-wall-restore-1";
+const cacheToken = "20260826-dragon-primary-image-1";
 
 const { staticArticles } = await import(pathToFileURL(path.join(root, "static-articles.js")).href);
 const paidArticles = staticArticles.filter((article) => article.accessType === "paid" || String(article.content || "").includes(marker));
