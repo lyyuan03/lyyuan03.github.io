@@ -8,10 +8,10 @@ const {
 } = require("../membership-plans");
 
 test("supports the approved promotional and regular sponsor plans", () => {
-  assert.equal(sponsorPlanAmount(1, "promo"), 120);
-  assert.equal(sponsorPlanAmount(3, "promo"), 300);
-  assert.equal(sponsorPlanAmount(1, "regular"), 150);
-  assert.equal(sponsorPlanAmount(3, "regular"), 400);
+  assert.equal(sponsorPlanAmount(1, "promo"), 150);
+  assert.equal(sponsorPlanAmount(3, "promo"), 400);
+  assert.equal(sponsorPlanAmount(1, "regular"), 180);
+  assert.equal(sponsorPlanAmount(3, "regular"), 500);
   assert.equal(sponsorPlanAmount(12, "promo"), null);
   assert.equal(sponsorPlanAmount("custom", "regular"), null);
 });
