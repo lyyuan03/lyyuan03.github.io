@@ -275,8 +275,7 @@ service cloud.firestore {
       allow read: if isAdmin()
         || (signedIn()
           && request.auth.token.email_verified == true
-          && request.auth.token.email == memberEmail
-          && resource.data.email == memberEmail);
+          && request.auth.token.email == memberEmail);
       allow create, update, delete: if isAdmin();
     }
 
@@ -292,8 +291,7 @@ service cloud.firestore {
       allow read: if isAdmin()
         || (signedIn()
           && request.auth.token.email_verified == true
-          && request.auth.token.email == memberEmail
-          && resource.data.email == memberEmail);
+          && request.auth.token.email == memberEmail);
       allow create, update, delete: if isAdmin();
     }
 
