@@ -7,19 +7,30 @@ import "./member-dashboard-expiry-reminder.js?v=20260812-expiry-reminder-4";
 import "./member-offers-integration.js?v=20260813-offer-highlight-1";
 import "./member-offer-video-addon.js?v=20260813-offer-highlight-1";
 
-// 會員中心內容必須永遠清楚可讀；即使進場動畫或 IntersectionObserver 發生異常，
-// 也不允許 .lyy-reveal 停留在 opacity:0 / blur 狀態。
-function lockDashboardReadable() {
+// 會員中心以可讀、可操作為最高優先：停用可能卡在 blur/transform 的進場狀態，
+// 並確保頁面垂直捲動不會被殘留的 overflow / touch-action 狀態鎖住。
+function stabilizeDashboardUi() {
   if (!document.getElementById("member-dashboard-readable-lock")) {
     const style = document.createElement("style");
     style.id = "member-dashboard-readable-lock";
     style.textContent = `
+      html,
+      body {
+        overflow-y: auto !important;
+        max-height: none !important;
+      }
+      body {
+        touch-action: auto !important;
+      }
       html.lyy-motion-on #member-dashboard .lyy-reveal,
       html.lyy-motion-on #member-dashboard .lyy-reveal.lyy-visible,
       #member-dashboard .lyy-reveal {
         opacity: 1 !important;
         filter: none !important;
         -webkit-filter: none !important;
+        transform: none !important;
+        transition: none !important;
+        will-change: auto !important;
       }
       #member-dashboard,
       #member-dashboard .card,
@@ -35,25 +46,37 @@ function lockDashboardReadable() {
     document.head.appendChild(style);
   }
 
+  // 這個 class 只負責會員中心的進場模糊動畫；移除後不影響會員資料與權限邏輯。
+  document.documentElement.classList.remove("lyy-motion-on");
+
+  document.documentElement.style.overflowY = "auto";
+  document.body.style.overflowY = "auto";
+  document.body.style.touchAction = "auto";
+
   document.querySelectorAll("#member-dashboard .lyy-reveal").forEach((element) => {
-    element.classList.add("lyy-visible");
+    element.classList.add("lyy-visible", "lyy-tilt-ready");
     element.style.filter = "none";
     element.style.opacity = "1";
+    element.style.transform = "none";
+    element.style.transitionDelay = "";
   });
 }
 
-lockDashboardReadable();
+stabilizeDashboardUi();
 
-const readableObserver = new MutationObserver(lockDashboardReadable);
-readableObserver.observe(document.body, {
-  childList: true,
-  subtree: true,
-  attributes: true,
-  attributeFilter: ["class", "hidden"]
-});
+const dashboardRoot = document.getElementById("member-dashboard");
+if (dashboardRoot) {
+  const readableObserver = new MutationObserver(() => stabilizeDashboardUi());
+  readableObserver.observe(dashboardRoot, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["hidden", "class"]
+  });
+}
 
-window.addEventListener("pageshow", lockDashboardReadable);
-window.addEventListener("load", lockDashboardReadable, { once: true });
+window.addEventListener("pageshow", stabilizeDashboardUi);
+window.addEventListener("load", stabilizeDashboardUi, { once: true });
 
 const WELLNESS_OLD_LABEL = "養生療癒";
 const WELLNESS_NEW_LABEL = "養生療遇";
