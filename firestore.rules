@@ -298,8 +298,9 @@ service cloud.firestore {
     }
 
     match /memberVideos/{videoId} {
-      allow read: if resource.data.status == "published"
-        && canReadMemberVideo(resource.data.accessLevel);
+      allow read: if isAdmin()
+        || (resource.data.status == "published"
+          && canReadMemberVideo(resource.data.accessLevel));
       allow create, update, delete: if isAdmin();
     }
 
