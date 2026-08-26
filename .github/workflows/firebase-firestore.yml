@@ -9,10 +9,14 @@ on:
       - firestore.rules
       - firebase.json
       - .firebaserc
+      - paid-article-secure-loader.js
+      - member-access-resolver.js
       - scripts/lock-paid-article-access-policy.mjs
       - PAID_ARTICLE_ACCESS_POLICY.md
       - .github/scripts/normalize-sponsor-member-access.sh
+      - .github/scripts/rebuild-member-entitlements.py
       - .github/workflows/firebase-firestore.yml
+      - .github/workflows/member-entitlements-reconcile.yml
 
 jobs:
   deploy-firestore:
@@ -32,6 +36,7 @@ jobs:
         run: node scripts/lock-paid-article-access-policy.mjs
 
       - name: Record Firestore rules deployment start
+        continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -46,7 +51,7 @@ jobs:
           } > .github/deploy-triggers/firestore-rules-started.txt
           git add .github/deploy-triggers/firestore-rules-started.txt
           git commit -m "Record Firestore rules deployment start" || true
-          git push origin HEAD:main
+          git push origin HEAD:main || true
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -58,6 +63,9 @@ jobs:
 
       - name: Normalize sponsor paid-article members
         run: bash .github/scripts/normalize-sponsor-member-access.sh
+
+      - name: Rebuild canonical member entitlements
+        run: python3 .github/scripts/rebuild-member-entitlements.py
 
       - name: Deploy Firestore rules directly through Firebase Rules API
         run: |
@@ -107,6 +115,7 @@ jobs:
           echo "Firestore rules deployed successfully."
 
       - name: Record successful Firestore rules deployment
+        continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -122,10 +131,11 @@ jobs:
           rm -f .github/deploy-triggers/firestore-rules-failed.txt
           git add -A .github/deploy-triggers
           git commit -m "Record successful Firestore rules deployment" || true
-          git push origin HEAD:main
+          git push origin HEAD:main || true
 
       - name: Record Firestore rules deployment failure
         if: failure()
+        continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -140,4 +150,4 @@ jobs:
           } > .github/deploy-triggers/firestore-rules-failed.txt
           git add .github/deploy-triggers/firestore-rules-failed.txt
           git commit -m "Record failed Firestore rules deployment" || true
-          git push origin HEAD:main
+          git push origin HEAD:main || true
