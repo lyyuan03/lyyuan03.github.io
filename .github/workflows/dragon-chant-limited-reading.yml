@@ -213,7 +213,7 @@ jobs:
           from pathlib import Path
           p = Path('static-articles.js')
           text = p.read_text(encoding='utf-8')
-          old = './article-dragon-chant-youtube-awakening.js?v=20260826-limited-open-1&paid-private=20260824-article-system-repair-1'
+          old = './article-dragon-chant-youtube-awakening.js?v=20260826-thumbnail-inline-1&paid-private=20260824-article-system-repair-1'
           new = './article-dragon-chant-youtube-awakening.js?v=20260826-paid-1&paid-private=20260824-article-system-repair-1'
           if new not in text:
               if old not in text:
