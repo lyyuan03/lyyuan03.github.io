@@ -1,3 +1,4 @@
 dragon chant limited reading sync
 published at: 2026-08-26T00:29:00.000Z
 expires at: 2026-08-26T08:29:00.000Z
+manual verification repair trigger: 2026-08-26T08:31:00Z
