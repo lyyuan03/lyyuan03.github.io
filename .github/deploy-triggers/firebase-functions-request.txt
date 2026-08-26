@@ -1,3 +1,3 @@
 firebase membership backend deployment requested
-requested at: 2026-08-26T06:16:00Z
-reason: retry sponsor paid-article access normalizer after workflow logging fix
+requested at: 2026-08-26T06:18:00Z
+reason: deploy sponsor paid-article access normalizer after repairing stale membership plan test
