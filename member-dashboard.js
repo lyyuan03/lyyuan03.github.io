@@ -7,6 +7,54 @@ import "./member-dashboard-expiry-reminder.js?v=20260812-expiry-reminder-4";
 import "./member-offers-integration.js?v=20260813-offer-highlight-1";
 import "./member-offer-video-addon.js?v=20260813-offer-highlight-1";
 
+// 會員中心內容必須永遠清楚可讀；即使進場動畫或 IntersectionObserver 發生異常，
+// 也不允許 .lyy-reveal 停留在 opacity:0 / blur 狀態。
+function lockDashboardReadable() {
+  if (!document.getElementById("member-dashboard-readable-lock")) {
+    const style = document.createElement("style");
+    style.id = "member-dashboard-readable-lock";
+    style.textContent = `
+      html.lyy-motion-on #member-dashboard .lyy-reveal,
+      html.lyy-motion-on #member-dashboard .lyy-reveal.lyy-visible,
+      #member-dashboard .lyy-reveal {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+      }
+      #member-dashboard,
+      #member-dashboard .card,
+      #member-dashboard .section,
+      #member-dashboard .identity,
+      #member-dashboard .stat,
+      #member-dashboard .rights-card,
+      #member-dashboard .course-item {
+        filter: none !important;
+        -webkit-filter: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  document.querySelectorAll("#member-dashboard .lyy-reveal").forEach((element) => {
+    element.classList.add("lyy-visible");
+    element.style.filter = "none";
+    element.style.opacity = "1";
+  });
+}
+
+lockDashboardReadable();
+
+const readableObserver = new MutationObserver(lockDashboardReadable);
+readableObserver.observe(document.body, {
+  childList: true,
+  subtree: true,
+  attributes: true,
+  attributeFilter: ["class", "hidden"]
+});
+
+window.addEventListener("pageshow", lockDashboardReadable);
+window.addEventListener("load", lockDashboardReadable, { once: true });
+
 const WELLNESS_OLD_LABEL = "養生療癒";
 const WELLNESS_NEW_LABEL = "養生療遇";
 
