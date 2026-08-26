@@ -1,3 +1,3 @@
-dragon chant thumbnail sync requested: 2026-08-26
-use first inline article image as thumbnail
-retry: workflow permission fix applied
+dragon chant media sync requested: 2026-08-26
+use first inline article image as thumbnail and article cover
+retry: cover image correction
