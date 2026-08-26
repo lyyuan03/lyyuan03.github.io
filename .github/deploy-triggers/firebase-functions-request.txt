@@ -1,3 +1,3 @@
 firebase membership backend deployment requested
-requested at: 2026-08-26T06:18:00Z
-reason: deploy sponsor paid-article access normalizer after repairing stale membership plan test
+requested at: 2026-08-26T06:50:00Z
+reason: deploy dedicated sponsor renewal checkout so member dashboard 1-month and 3-month renewal buttons create plan-specific ECPay payment links at regular renewal prices
