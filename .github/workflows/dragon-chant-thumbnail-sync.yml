@@ -18,13 +18,14 @@ jobs:
       ARTICLE_ID: dragon-chant-youtube-awakening
       ARTICLE_FILE: article-dragon-chant-youtube-awakening.js
       PRIMARY_IMAGE: 'assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3'
+      CACHE_TOKEN: '20260826-dragon-primary-image-1'
     steps:
       - name: Checkout current main
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Update article cover thumbnail and immediate display override
+      - name: Update article cover thumbnail and runtime cache chain
         shell: bash
         run: |
           set -euo pipefail
@@ -34,6 +35,8 @@ jobs:
           import re
 
           primary = os.environ['PRIMARY_IMAGE']
+          cache_token = os.environ['CACHE_TOKEN']
+          old_cache = '20260825-paid-wall-restore-1'
 
           article = Path(os.environ['ARTICLE_FILE'])
           text = article.read_text(encoding='utf-8')
@@ -73,20 +76,46 @@ jobs:
               if title_line not in display_text:
                   raise SystemExit('Dragon chant detail title line not found')
               display_text = display_text.replace(title_line, f'{title_line}\n{cover_override}', 1)
+
+          display_text = display_text.replace(
+              f'articles-core-20260810-v6.js?v={old_cache}',
+              f'articles-core-20260810-v6.js?v={cache_token}'
+          )
+          display_text = display_text.replace(
+              f'article-paid-gate-restore.js?v={old_cache}',
+              f'article-paid-gate-restore.js?v={cache_token}'
+          )
+          display_text = display_text.replace(
+              f'paid-article-secure-loader.js?v={old_cache}',
+              f'paid-article-secure-loader.js?v={cache_token}'
+          )
           display.write_text(display_text, encoding='utf-8')
 
           page = Path('articles.html')
           page_text = page.read_text(encoding='utf-8')
-          old_script = 'articles-v6.js?v=20260825-paid-wall-restore-1'
-          new_script = 'articles-v6.js?v=20260826-dragon-primary-image-1'
-          if new_script not in page_text:
-              if old_script not in page_text:
-                  raise SystemExit('articles-v6.js cache token anchor not found')
-              page_text = page_text.replace(old_script, new_script, 1)
-              page.write_text(page_text, encoding='utf-8')
+          page_text = re.sub(
+              r'articles-v6\.js\?v=[^"\']+',
+              f'articles-v6.js?v={cache_token}',
+              page_text,
+              count=1,
+          )
+          page.write_text(page_text, encoding='utf-8')
+
+          audit = Path('scripts/audit-paid-article-runtime.mjs')
+          audit_text = audit.read_text(encoding='utf-8')
+          audit_text, audit_count = re.subn(
+              r'const cacheToken = "[^"]+";',
+              f'const cacheToken = "{cache_token}";',
+              audit_text,
+              count=1,
+          )
+          if audit_count != 1:
+              raise SystemExit('Paid runtime audit cache token anchor not found exactly once')
+          audit.write_text(audit_text, encoding='utf-8')
           PY
           node --check "$ARTICLE_FILE"
           node --check articles-v6.js
+          node scripts/audit-paid-article-runtime.mjs
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -120,7 +149,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$ARTICLE_FILE" articles-v6.js articles.html
+          git add "$ARTICLE_FILE" articles-v6.js articles.html scripts/audit-paid-article-runtime.mjs
           git diff --cached --quiet && exit 0
           git commit -m "Use first article image as dragon chant cover"
           git fetch origin main
