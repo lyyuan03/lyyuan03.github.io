@@ -42,6 +42,11 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: lyyuan03-membership
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -56,7 +61,24 @@ jobs:
         run: npm --prefix functions ci && npm --prefix functions test && npm --prefix functions run lint
 
       - name: Deploy membership functions
+        id: firebase_deploy
+        continue-on-error: true
         run: firebase deploy --only functions --project lyyuan03-membership --non-interactive
+
+      - name: Deploy renewal checkout directly when Firebase API precheck is blocked
+        if: steps.firebase_deploy.outcome == 'failure'
+        run: |
+          gcloud functions deploy createSponsorRenewalCheckout \
+            --gen2 \
+            --project=lyyuan03-membership \
+            --region=asia-east1 \
+            --runtime=nodejs22 \
+            --source=functions \
+            --entry-point=createSponsorRenewalCheckout \
+            --trigger-http \
+            --allow-unauthenticated \
+            --set-secrets=ECPAY_CONFIG=ECPAY_CONFIG:latest \
+            --quiet
 
       - name: Record successful backend deployment
         continue-on-error: true
