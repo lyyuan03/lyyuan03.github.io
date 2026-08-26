@@ -176,9 +176,24 @@ function renewalMarkup() {
   `;
 }
 
+function renewalOfferSignature() {
+  return [
+    renewalOffer.regularPrice1,
+    renewalOffer.regularPrice3,
+    renewalOffer.regularPaymentUrl,
+    renewalOfferLive
+  ].join("|");
+}
+
 function renderRenewalOffers() {
+  const signature = renewalOfferSignature();
+  const markup = renewalMarkup();
   document.querySelectorAll("[data-dashboard-renewal-offer]").forEach((node) => {
-    node.innerHTML = renewalMarkup();
+    // 只有續期資料真正改變時才重建內容。無條件改寫 innerHTML 會再次觸發
+    // body 的 MutationObserver，形成每 60ms 一次的無限更新循環並鎖住捲動。
+    if (node.dataset.renewalOfferSignature === signature) return;
+    node.innerHTML = markup;
+    node.dataset.renewalOfferSignature = signature;
   });
 }
 
