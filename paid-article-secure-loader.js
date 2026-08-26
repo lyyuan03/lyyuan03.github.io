@@ -1,4 +1,5 @@
-import { auth, db, isAdminEmail } from "./firebase-config.js";
+import { auth, db } from "./firebase-config.js";
+import { resolveMemberAccess } from "./member-access-resolver.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -38,79 +39,6 @@ function renderContent(value = "") {
       return `<p>${renderInline(trimmed).replace(/\n/g, "<br>")}</p>`;
     })
     .join("");
-}
-
-function accessDate(value) {
-  if (!value) return null;
-  const date = typeof value?.toDate === "function" ? value.toDate() : new Date(value);
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function activeWellnessMember(member = {}, email = "") {
-  const normalizedEmail = String(email || "").trim().toLowerCase();
-  const recordEmail = String(member.email || normalizedEmail).trim().toLowerCase();
-  const expiresAt = accessDate(member.expiresAt);
-  const startsAt = accessDate(member.startsAt || member.firstJoinedAt);
-  const now = new Date();
-  return Boolean(
-    normalizedEmail
-    && recordEmail === normalizedEmail
-    && member.memberType === "wellness-channel"
-    && member.wellnessAccess === true
-    && ["wellness", "lingji"].includes(member.memberLevel)
-    && member.status === "active"
-    && member.paymentStatus === "paid"
-    && member.disabled !== true
-    && member.suspended !== true
-    && !member.revokedAt
-    && (!startsAt || startsAt <= now)
-    && expiresAt
-    && expiresAt > now
-  );
-}
-
-function activeSponsorMember(member = {}, email = "") {
-  const normalizedEmail = String(email || "").trim().toLowerCase();
-  const recordEmail = String(member.email || "").trim().toLowerCase();
-  const expiresAt = accessDate(member.expiresAt);
-  const startsAt = accessDate(member.startsAt || member.firstJoinedAt);
-  const now = new Date();
-  return Boolean(
-    normalizedEmail
-    && recordEmail === normalizedEmail
-    && member.memberType === "sponsor-member"
-    && member.status === "active"
-    && member.paymentStatus === "paid"
-    && member.articleAccess === true
-    && member.accessScope === "sponsor-paid-articles"
-    && Number(member.accessVersion || 0) >= 1
-    && member.disabled !== true
-    && member.suspended !== true
-    && !member.revokedAt
-    && (!startsAt || startsAt <= now)
-    && expiresAt
-    && expiresAt > now
-  );
-}
-
-async function hasUnifiedPaidArticleAccess(user) {
-  if (!user?.email) return false;
-  if (isAdminEmail(user.email)) return true;
-  const email = user.email.trim().toLowerCase();
-  try {
-    const [wellnessSnapshot, sponsorSnapshot] = await Promise.all([
-      getDoc(doc(db, "memberAccess", email)),
-      getDoc(doc(db, "sponsorMemberAccess", email))
-    ]);
-    const wellness = wellnessSnapshot.exists() ? wellnessSnapshot.data() || {} : {};
-    const sponsor = sponsorSnapshot.exists() ? sponsorSnapshot.data() || {} : {};
-    if (activeSponsorMember(sponsor, email)) return true;
-    if (!activeWellnessMember(wellness, email)) return false;
-    return wellness.memberLevel === "lingji" || wellness.articleAccess === true;
-  } catch (error) {
-    console.warn("付費文章會員資格資料暫時無法確認。", error);
-    return false;
-  }
 }
 
 function paidView() {
@@ -223,9 +151,10 @@ async function hydratePaidBody() {
   view.dataset.paidBodyState = "loading";
   setSecureStatus(view, "正在確認閱讀資格…");
 
-  const allowed = await hasUnifiedPaidArticleAccess(currentUser);
+  const access = await resolveMemberAccess(currentUser);
   if (serial !== requestSerial || !view.isConnected) return;
-  if (!allowed) {
+  view.dataset.memberAccessSource = access.source || "none";
+  if (!access.allowed) {
     view.dataset.paidSecureAccess = "denied";
     view.dataset.paidBodyState = "locked";
     setSecureStatus(view, "已登入，但此帳號目前沒有付費文章閱讀權限。靈極會員、已開通付費文章權限的養生一般會員，以及有效的贊助文章會員可閱讀全文。");
@@ -250,7 +179,7 @@ async function hydratePaidBody() {
     }
     if (code.includes("permission-denied")) {
       view.dataset.paidBodyState = "locked";
-      setSecureStatus(view, "已登入，但此帳號目前沒有付費文章閱讀權限。請確認會員資格與付費文章權限設定後再試。");
+      setSecureStatus(view, "已登入，但伺服器尚未同步此帳號的閱讀資格。系統會自動重新核對會員權限，請重新整理頁面後再試。");
       return;
     }
     console.error("付費文章安全正文載入失敗。", error);
