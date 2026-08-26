@@ -11,6 +11,7 @@ on:
       - .firebaserc
       - scripts/lock-paid-article-access-policy.mjs
       - PAID_ARTICLE_ACCESS_POLICY.md
+      - .github/scripts/normalize-sponsor-member-access.sh
       - .github/workflows/firebase-firestore.yml
 
 jobs:
@@ -54,6 +55,9 @@ jobs:
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
+
+      - name: Normalize sponsor paid-article members
+        run: bash .github/scripts/normalize-sponsor-member-access.sh
 
       - name: Deploy Firestore rules directly through Firebase Rules API
         run: |
