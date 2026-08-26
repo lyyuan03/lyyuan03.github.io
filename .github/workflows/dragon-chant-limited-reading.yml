@@ -1,0 +1,250 @@
+name: Dragon Chant Limited Reading Transition
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/deploy-triggers/dragon-chant-limited-reading-trigger.txt'
+  schedule:
+    - cron: '29 8 26 8 *'
+
+permissions:
+  contents: write
+
+jobs:
+  transition:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_ID: lyyuan03-membership
+      ARTICLE_ID: dragon-chant-youtube-awakening
+      ARTICLE_FILE: article-dragon-chant-youtube-awakening.js
+      STATIC_FILE: static-articles.js
+      PUBLISHED_AT: '2026-08-26T00:29:00.000Z'
+      EXPIRES_AT: '2026-08-26T08:29:00.000Z'
+      TARGET_DATE_UTC: '2026-08-26'
+      PRIVATE_START_HEADING: '## 失控的覺醒現象'
+
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve open or paid mode
+        id: mode
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" && "$(date -u +%F)" != "$TARGET_DATE_UTC" ]]; then
+            echo "mode=noop" >> "$GITHUB_OUTPUT"
+            echo "One-time transition date has passed; scheduled run is a no-op."
+            exit 0
+          fi
+          now_epoch="$(date -u +%s)"
+          expires_epoch="$(date -u -d "$EXPIRES_AT" +%s)"
+          if (( now_epoch >= expires_epoch )); then
+            echo "mode=paid" >> "$GITHUB_OUTPUT"
+            echo "Limited reading window has ended; converting to paid."
+          else
+            echo "mode=open" >> "$GITHUB_OUTPUT"
+            echo "Limited reading window is active; keeping full article open."
+          fi
+
+      - name: Authenticate to Google Cloud
+        if: steps.mode.outputs.mode != 'noop'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        if: steps.mode.outputs.mode != 'noop'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Sync published open metadata to Firestore
+        if: steps.mode.outputs.mode == 'open'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          jq -n \
+            --arg published "$PUBLISHED_AT" \
+            --arg expires "$EXPIRES_AT" \
+            --arg now "$NOW_ISO" \
+            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"open"},privatePaidContent:{booleanValue:false},publishedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/article-open.json
+          URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-open-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-open.json "$URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/article-open-response.json
+            exit 1
+          fi
+          test "$(jq -r '.fields.status.stringValue' /tmp/article-open-response.json)" = "published"
+          test "$(jq -r '.fields.accessType.stringValue' /tmp/article-open-response.json)" = "open"
+          echo "Firestore article metadata is published and open until $EXPIRES_AT."
+
+      - name: Prepare secure paid split
+        if: steps.mode.outputs.mode == 'paid'
+        id: split
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import os
+          import re
+
+          article_path = Path(os.environ['ARTICLE_FILE'])
+          source = article_path.read_text(encoding='utf-8')
+          marker = '<!-- paid-only -->'
+          heading = os.environ['PRIVATE_START_HEADING']
+          content_prefix = '  content: `'
+          start = source.find(content_prefix)
+          end = source.rfind('`\n};')
+          if start < 0 or end < 0 or end <= start:
+              raise SystemExit('Article content template literal could not be located safely.')
+          body_start = start + len(content_prefix)
+          body = source[body_start:end]
+
+          if marker in body:
+              public, private = body.split(marker, 1)
+              private = private.strip()
+              if not private:
+                  Path('/tmp/transition-state').write_text('already-paid', encoding='utf-8')
+                  raise SystemExit(0)
+          else:
+              anchor = f'\n\n{heading}'
+              cut = body.find(anchor)
+              if cut < 0:
+                  raise SystemExit(f'Paid split heading not found: {heading}')
+              public = body[:cut].strip()
+              private = body[cut:].strip()
+
+          if not public or not private:
+              raise SystemExit('Paid split must contain both public preview and private body.')
+
+          safe = f'{public}\n\n{marker}'
+          digest = hashlib.sha256(private.encode('utf-8')).hexdigest()
+          Path('/tmp/public-content.txt').write_text(safe, encoding='utf-8')
+          Path('/tmp/private-content.txt').write_text(private, encoding='utf-8')
+          Path('/tmp/content-hash.txt').write_text(digest, encoding='utf-8')
+          Path('/tmp/transition-state').write_text('convert', encoding='utf-8')
+
+          next_source = source[:body_start] + safe + source[end:]
+          next_source = re.sub(r'  accessType: "open",', '  accessType: "paid",', next_source, count=1)
+          now = os.popen("date -u +'%Y-%m-%dT%H:%M:%SZ'").read().strip()
+          next_source = re.sub(r'  updatedAt: "[^"]+",', f'  updatedAt: "{now}",', next_source, count=1)
+          if '  limitedReadingCompletedAt:' not in next_source:
+              next_source = next_source.replace(
+                  '  postLimitedAccessType: "paid",',
+                  f'  postLimitedAccessType: "paid",\n  limitedReadingCompletedAt: "{now}",',
+                  1
+              )
+          Path('/tmp/converted-article.js').write_text(next_source, encoding='utf-8')
+          PY
+          echo "state=$(cat /tmp/transition-state)" >> "$GITHUB_OUTPUT"
+
+      - name: Write private paid body and public metadata to Firestore
+        if: steps.mode.outputs.mode == 'paid' && steps.split.outputs.state == 'convert'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          HASH="$(cat /tmp/content-hash.txt)"
+          PRIVATE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/paidArticleBodies/$ARTICLE_ID"
+          CURRENT_STATUS="$(curl --silent --show-error --output /tmp/private-current.json --write-out '%{http_code}' --header "Authorization: Bearer $ACCESS_TOKEN" "$PRIVATE_URL")"
+          if [[ "$CURRENT_STATUS" == "200" ]]; then
+            PREVIOUS_VERSION="$(jq -r '.fields.contentVersion.integerValue // "0"' /tmp/private-current.json)"
+          elif [[ "$CURRENT_STATUS" == "404" ]]; then
+            PREVIOUS_VERSION=0
+          else
+            cat /tmp/private-current.json
+            exit 1
+          fi
+          VERSION=$((PREVIOUS_VERSION + 1))
+
+          jq -n \
+            --rawfile content /tmp/private-content.txt \
+            --arg articleId "$ARTICLE_ID" \
+            --arg title "元神所吟唱的靈音——它喚醒了一個人沉睡千年的元神" \
+            --arg hash "$HASH" \
+            --arg version "$VERSION" \
+            --arg now "$NOW_ISO" \
+            '{fields:{articleId:{stringValue:$articleId},title:{stringValue:$title},status:{stringValue:"published"},content:{stringValue:$content},contentHash:{stringValue:$hash},contentVersion:{integerValue:$version},source:{stringValue:"scheduled-limited-reading-transition"},active:{booleanValue:true},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/private-write.json
+          PRIVATE_PATCH_URL="$PRIVATE_URL?updateMask.fieldPaths=articleId&updateMask.fieldPaths=title&updateMask.fieldPaths=status&updateMask.fieldPaths=content&updateMask.fieldPaths=contentHash&updateMask.fieldPaths=contentVersion&updateMask.fieldPaths=source&updateMask.fieldPaths=active&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/private-write.json "$PRIVATE_PATCH_URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/private-response.json
+            exit 1
+          fi
+          test "$(jq -r '.fields.contentHash.stringValue' /tmp/private-response.json)" = "$HASH"
+
+          jq -n \
+            --rawfile content /tmp/public-content.txt \
+            --arg hash "$HASH" \
+            --arg version "$VERSION" \
+            --arg expires "$EXPIRES_AT" \
+            --arg now "$NOW_ISO" \
+            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},paidContentHash:{stringValue:$hash},paidContentVersion:{integerValue:$version},limitedReadingUntil:{timestampValue:$expires},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},limitedReadingCompletedAt:{timestampValue:$now},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/public-paid-write.json
+          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=paidContentHash&updateMask.fieldPaths=paidContentVersion&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=limitedReadingCompletedAt&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/public-paid-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/public-paid-write.json "$ARTICLE_URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/public-paid-response.json
+            exit 1
+          fi
+          test "$(jq -r '.fields.accessType.stringValue' /tmp/public-paid-response.json)" = "paid"
+          test "$(jq -r '.fields.privatePaidContent.booleanValue' /tmp/public-paid-response.json)" = "true"
+          test "$(jq -r '.fields.paidContentHash.stringValue' /tmp/public-paid-response.json)" = "$HASH"
+          echo "Private body stored securely as paid content version $VERSION."
+
+      - name: Sanitize public GitHub source after private write is verified
+        if: steps.mode.outputs.mode == 'paid' && steps.split.outputs.state == 'convert'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp /tmp/converted-article.js "$ARTICLE_FILE"
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('static-articles.js')
+          text = p.read_text(encoding='utf-8')
+          old = './article-dragon-chant-youtube-awakening.js?v=20260826-limited-open-1&paid-private=20260824-article-system-repair-1'
+          new = './article-dragon-chant-youtube-awakening.js?v=20260826-paid-1&paid-private=20260824-article-system-repair-1'
+          if new not in text:
+              if old not in text:
+                  raise SystemExit('Expected dragon chant cache token was not found.')
+              text = text.replace(old, new, 1)
+              p.write_text(text, encoding='utf-8')
+          PY
+          node --check "$ARTICLE_FILE"
+          node --check "$STATIC_FILE"
+          grep -F '<!-- paid-only -->' "$ARTICLE_FILE"
+          if grep -F '## 失控的覺醒現象' "$ARTICLE_FILE"; then
+            echo 'Private paid body is still present in public article source.'
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$ARTICLE_FILE" "$STATIC_FILE"
+          git diff --cached --quiet && exit 0
+          git commit -m "Convert dragon chant article to sponsor-only access"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Verify already-paid state
+        if: steps.mode.outputs.mode == 'paid' && steps.split.outputs.state == 'already-paid'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          PRIVATE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/paidArticleBodies/$ARTICLE_ID"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-existing.json --write-out '%{http_code}' --header "Authorization: Bearer $ACCESS_TOKEN" "$PRIVATE_URL")"
+          test "$HTTP_STATUS" = "200"
+          test -n "$(jq -r '.fields.content.stringValue // empty' /tmp/private-existing.json)"
+          echo "Article is already sanitized and its private paid body exists."
