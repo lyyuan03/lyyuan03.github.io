@@ -71,7 +71,7 @@ if (dashboardRoot) {
     childList: true,
     subtree: true,
     attributes: true,
-    attributeFilter: ["hidden", "class"]
+    attributeFilter: ["hidden"]
   });
 }
 
