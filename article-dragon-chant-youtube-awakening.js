@@ -11,7 +11,7 @@ export const dragonChantYoutubeAwakeningArticle = {
   limitedReadingUntil: "2026-08-26T08:29:00.000Z",
   postLimitedAccessType: "paid",
   coverImage: "assets/articles/dragon-chant-youtube-awakening/urgent-call-cover.svg?v=20260822-3",
-  thumbnailImage: "assets/articles/thumbnails/dragon-chant-youtube-awakening.svg?v=20260822-1",
+  thumbnailImage: "assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3",
   excerpt: "一段上傳到 YouTube 的龍吟，隔天引發一通求救電話。那次之後，我再也沒有公開過自己的靈音。",
   accessType: "open",
   topics: ["元神與人格", "靈修辨識", "感應與修為"],

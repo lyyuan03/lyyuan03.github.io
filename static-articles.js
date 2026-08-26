@@ -12,7 +12,7 @@ import { howToJudgeTrueLingxiuUnderstandingArticle } from "./article-how-to-judg
 import { loveBeyondFilialPietyArticle } from "./article-love-beyond-filial-piety-photo.js?v=20260810-original-photo-fix-1&paid-private=20260824-article-system-repair-1";
 import { yuanshenDestinyArchetypeArticle } from "./article-yuanshen-destiny-archetype.js?v=20260807-final-1&paid-private=20260824-article-system-repair-1";
 import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-years.js?v=20260810-complete-ending-1&paid-private=20260824-article-system-repair-1";
-import { dragonChantYoutubeAwakeningArticle } from "./article-dragon-chant-youtube-awakening.js?v=20260826-limited-open-1&paid-private=20260824-article-system-repair-1";
+import { dragonChantYoutubeAwakeningArticle } from "./article-dragon-chant-youtube-awakening.js?v=20260826-thumbnail-inline-1&paid-private=20260824-article-system-repair-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
