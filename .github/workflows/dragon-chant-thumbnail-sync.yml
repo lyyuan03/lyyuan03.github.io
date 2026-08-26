@@ -1,0 +1,108 @@
+name: Dragon Chant Thumbnail Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/deploy-triggers/dragon-chant-thumbnail-sync.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-thumbnail:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_ID: lyyuan03-membership
+      ARTICLE_ID: dragon-chant-youtube-awakening
+      ARTICLE_FILE: article-dragon-chant-youtube-awakening.js
+      THUMBNAIL: assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update article thumbnail and preserve expiry workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          article = Path(os.environ['ARTICLE_FILE'])
+          text = article.read_text(encoding='utf-8')
+          new_thumb = os.environ['THUMBNAIL']
+          text, count = re.subn(
+              r'  thumbnailImage: "[^"]+",',
+              f'  thumbnailImage: "{new_thumb}",',
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit('thumbnailImage field not found exactly once')
+          article.write_text(text, encoding='utf-8')
+
+          static_file = Path('static-articles.js')
+          static_text = static_file.read_text(encoding='utf-8')
+          old_token = './article-dragon-chant-youtube-awakening.js?v=20260826-limited-open-1&paid-private=20260824-article-system-repair-1'
+          new_token = './article-dragon-chant-youtube-awakening.js?v=20260826-thumbnail-inline-1&paid-private=20260824-article-system-repair-1'
+          if new_token not in static_text:
+              if old_token not in static_text:
+                  raise SystemExit('Expected dragon chant static import token not found')
+              static_text = static_text.replace(old_token, new_token, 1)
+              static_file.write_text(static_text, encoding='utf-8')
+
+          transition = Path('.github/workflows/dragon-chant-limited-reading.yml')
+          transition_text = transition.read_text(encoding='utf-8')
+          expected_old = "old = './article-dragon-chant-youtube-awakening.js?v=20260826-limited-open-1&paid-private=20260824-article-system-repair-1'"
+          expected_new = "old = './article-dragon-chant-youtube-awakening.js?v=20260826-thumbnail-inline-1&paid-private=20260824-article-system-repair-1'"
+          if expected_new not in transition_text:
+              if expected_old not in transition_text:
+                  raise SystemExit('Expiry workflow cache token anchor not found')
+              transition_text = transition_text.replace(expected_old, expected_new, 1)
+              transition.write_text(transition_text, encoding='utf-8')
+          PY
+          node --check "$ARTICLE_FILE"
+          node --check static-articles.js
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Sync thumbnail to Firestore
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          jq -n --arg thumbnail "$THUMBNAIL" --arg now "$NOW_ISO" \
+            '{fields:{thumbnailImage:{stringValue:$thumbnail},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/thumbnail.json
+          URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=thumbnailImage&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/thumbnail-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/thumbnail.json "$URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/thumbnail-response.json
+            exit 1
+          fi
+          test "$(jq -r '.fields.thumbnailImage.stringValue' /tmp/thumbnail-response.json)" = "$THUMBNAIL"
+
+      - name: Commit synchronized thumbnail
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$ARTICLE_FILE" static-articles.js .github/workflows/dragon-chant-limited-reading.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "Use first article image as dragon chant thumbnail"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
