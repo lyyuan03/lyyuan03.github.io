@@ -6,6 +6,21 @@ import { LINGJI_THRESHOLD, evaluateMember } from "./member-dashboard-logic.js?v=
 const accessPanel = document.getElementById("dashboard-access-panel");
 const dashboard = document.getElementById("member-dashboard");
 const money = new Intl.NumberFormat("zh-TW", { style: "currency", currency: "TWD", maximumFractionDigits: 0 });
+const MEMBER_DATA_TIMEOUT_MS = 10000;
+
+function readMemberDocument(collectionName, email) {
+  let timeoutId = 0;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = window.setTimeout(
+      () => reject(new Error(`${collectionName} 會員資料讀取逾時`)),
+      MEMBER_DATA_TIMEOUT_MS
+    );
+  });
+  return Promise.race([
+    getDoc(doc(db, collectionName, email)),
+    timeout
+  ]).finally(() => window.clearTimeout(timeoutId));
+}
 
 const treeBackgroundStyle = document.createElement("style");
 treeBackgroundStyle.id = "member-dashboard-tree-background";
@@ -368,14 +383,37 @@ onAuthStateChanged(auth, async (user) => {
   }
   try {
     const email = (user.email || "").trim().toLowerCase();
-    const [snapshot, sponsorSnapshot, historySnapshot] = await Promise.all([
-      getDoc(doc(db, "memberAccess", email)),
-      getDoc(doc(db, "sponsorMemberAccess", email)),
-      getDoc(doc(db, "membershipHistory", email))
+    const [memberResult, sponsorResult, historyResult] = await Promise.allSettled([
+      readMemberDocument("memberAccess", email),
+      readMemberDocument("sponsorMemberAccess", email),
+      readMemberDocument("membershipHistory", email)
     ]);
-    const member = snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
-    const sponsorMember = sponsorSnapshot.exists() ? { id: sponsorSnapshot.id, ...sponsorSnapshot.data() } : null;
-    const history = historySnapshot.exists() ? historySnapshot.data() : {};
+
+    [
+      ["memberAccess", memberResult],
+      ["sponsorMemberAccess", sponsorResult],
+      ["membershipHistory", historyResult]
+    ].forEach(([collectionName, result]) => {
+      if (result.status === "rejected") {
+        console.warn(`會員中心略過無法讀取的 ${collectionName}：`, result.reason);
+      }
+    });
+
+    const snapshot = memberResult.status === "fulfilled" ? memberResult.value : null;
+    const sponsorSnapshot = sponsorResult.status === "fulfilled" ? sponsorResult.value : null;
+    const historySnapshot = historyResult.status === "fulfilled" ? historyResult.value : null;
+    const member = snapshot?.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
+    const sponsorMember = sponsorSnapshot?.exists() ? { id: sponsorSnapshot.id, ...sponsorSnapshot.data() } : null;
+    const history = historySnapshot?.exists() ? historySnapshot.data() : {};
+
+    // 主要會員與贊助資料其中一份有效時即可顯示會員中心；歷史資料只是輔助，不應阻塞頁面。
+    // 若兩份主要資料都無法讀取，或唯一成功的查詢也沒有資料，才顯示載入失敗。
+    const primaryReadFailed = memberResult.status === "rejected";
+    const sponsorReadFailed = sponsorResult.status === "rejected";
+    if ((!snapshot && !sponsorSnapshot)
+      || (!member && !sponsorMember && (primaryReadFailed || sponsorReadFailed))) {
+      throw memberResult.status === "rejected" ? memberResult.reason : sponsorResult.reason;
+    }
     const sponsorActive = Boolean(sponsorMember && isActiveSponsorMember(sponsorMember));
     const primaryMember = member && hasMemberCenterAccess(member)
       ? member
