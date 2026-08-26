@@ -1,2 +1,3 @@
 dragon chant thumbnail sync requested: 2026-08-26
 use first inline article image as thumbnail
+retry: workflow permission fix applied
