@@ -8,6 +8,7 @@ const CONSTRUCTION_TITLE_OVERRIDES = new Map([
 
 const DRAGON_CHANT_ARTICLE_ID = "dragon-chant-youtube-awakening";
 const DRAGON_CHANT_TITLE = "元神所吟唱的靈音——它喚醒了一個人沉睡千年的元神";
+const DRAGON_CHANT_PRIMARY_IMAGE = "assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3";
 
 function applyConstructionTitleOverrides() {
   const activeId = new URLSearchParams(location.search).get("id") || "";
@@ -57,6 +58,11 @@ function applyDragonChantOverrides() {
   const heading = detail?.querySelector(":scope > h2");
   if (heading && heading.textContent !== DRAGON_CHANT_TITLE) heading.textContent = DRAGON_CHANT_TITLE;
   document.title = `${DRAGON_CHANT_TITLE} | 靈元院`;
+
+  const cover = detail?.querySelector(".article-cover");
+  if (cover && cover.getAttribute("src") !== DRAGON_CHANT_PRIMARY_IMAGE) {
+    cover.setAttribute("src", DRAGON_CHANT_PRIMARY_IMAGE);
+  }
 
   const body = detail?.querySelector(".article-body");
   if (!body) return;
