@@ -14,13 +14,27 @@ function stabilizeDashboardUi() {
     const style = document.createElement("style");
     style.id = "member-dashboard-readable-lock";
     style.textContent = `
-      html,
-      body {
-        overflow-y: auto !important;
+      html {
+        min-height: 100% !important;
+        height: auto !important;
         max-height: none !important;
+        overflow-x: hidden !important;
+        overflow-y: scroll !important;
       }
       body {
-        touch-action: auto !important;
+        min-height: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow-x: clip !important;
+        overflow-y: visible !important;
+        overscroll-behavior-y: auto !important;
+        touch-action: pan-y !important;
+      }
+      body > .main,
+      #member-dashboard {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
       }
       html.lyy-motion-on #member-dashboard .lyy-reveal,
       html.lyy-motion-on #member-dashboard .lyy-reveal.lyy-visible,
@@ -49,9 +63,20 @@ function stabilizeDashboardUi() {
   // 這個 class 只負責會員中心的進場模糊動畫；移除後不影響會員資料與權限邏輯。
   document.documentElement.classList.remove("lyy-motion-on");
 
-  document.documentElement.style.overflowY = "auto";
-  document.body.style.overflowY = "auto";
-  document.body.style.touchAction = "auto";
+  // HTML 是唯一的垂直捲動根；BODY 不可再成為第二個捲動容器。
+  // 若兩者同時使用 overflow-y:auto，Chrome 可能只移動外層捲軸而不移動會員內容。
+  document.documentElement.style.setProperty("min-height", "100%", "important");
+  document.documentElement.style.setProperty("height", "auto", "important");
+  document.documentElement.style.setProperty("max-height", "none", "important");
+  document.documentElement.style.setProperty("overflow-x", "hidden", "important");
+  document.documentElement.style.setProperty("overflow-y", "scroll", "important");
+  document.body.style.setProperty("min-height", "100%", "important");
+  document.body.style.setProperty("height", "auto", "important");
+  document.body.style.setProperty("max-height", "none", "important");
+  document.body.style.setProperty("overflow-x", "clip", "important");
+  document.body.style.setProperty("overflow-y", "visible", "important");
+  document.body.style.setProperty("overscroll-behavior-y", "auto", "important");
+  document.body.style.setProperty("touch-action", "pan-y", "important");
 
   document.querySelectorAll("#member-dashboard .lyy-reveal").forEach((element) => {
     element.classList.add("lyy-visible", "lyy-tilt-ready");
