@@ -1,4 +1,4 @@
 firestore rules: failed
-run id: 32938495476
-source commit: 141e1c2e390ba8689fc5d886ab01a88bd5feaccb
-failed at: 2026-08-26T06:31:11Z
+run id: 32938530984
+source commit: bd57eb9261e77949c1c4d04d64bb23e47ba4fd5d
+failed at: 2026-08-26T06:31:44Z
