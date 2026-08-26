@@ -17,14 +17,14 @@ jobs:
       PROJECT_ID: lyyuan03-membership
       ARTICLE_ID: dragon-chant-youtube-awakening
       ARTICLE_FILE: article-dragon-chant-youtube-awakening.js
-      THUMBNAIL: assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3
+      PRIMARY_IMAGE: assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3
     steps:
       - name: Checkout current main
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Update article thumbnail and preserve expiry workflow
+      - name: Update article cover thumbnail and immediate display override
         shell: bash
         run: |
           set -euo pipefail
@@ -33,41 +33,59 @@ jobs:
           import os
           import re
 
+          primary = os.environ['PRIMARY_IMAGE']
+
           article = Path(os.environ['ARTICLE_FILE'])
           text = article.read_text(encoding='utf-8')
-          new_thumb = os.environ['THUMBNAIL']
-          text, count = re.subn(
+          text, thumb_count = re.subn(
               r'  thumbnailImage: "[^"]+",',
-              f'  thumbnailImage: "{new_thumb}",',
+              f'  thumbnailImage: "{primary}",',
               text,
               count=1,
           )
-          if count != 1:
-              raise SystemExit('thumbnailImage field not found exactly once')
+          text, cover_count = re.subn(
+              r'  coverImage: "[^"]+",',
+              f'  coverImage: "{primary}",',
+              text,
+              count=1,
+          )
+          if thumb_count != 1 or cover_count != 1:
+              raise SystemExit('thumbnailImage or coverImage field not found exactly once')
           article.write_text(text, encoding='utf-8')
 
-          static_file = Path('static-articles.js')
-          static_text = static_file.read_text(encoding='utf-8')
-          old_token = './article-dragon-chant-youtube-awakening.js?v=20260826-limited-open-1&paid-private=20260824-article-system-repair-1'
-          new_token = './article-dragon-chant-youtube-awakening.js?v=20260826-thumbnail-inline-1&paid-private=20260824-article-system-repair-1'
-          if new_token not in static_text:
-              if old_token not in static_text:
-                  raise SystemExit('Expected dragon chant static import token not found')
-              static_text = static_text.replace(old_token, new_token, 1)
-              static_file.write_text(static_text, encoding='utf-8')
+          display = Path('articles-v6.js')
+          display_text = display.read_text(encoding='utf-8')
+          primary_const = f'const DRAGON_CHANT_PRIMARY_IMAGE = "{primary}";'
+          title_const = 'const DRAGON_CHANT_TITLE = "元神所吟唱的靈音——它喚醒了一個人沉睡千年的元神";'
+          if primary_const not in display_text:
+              if title_const not in display_text:
+                  raise SystemExit('Dragon chant title anchor not found in articles-v6.js')
+              display_text = display_text.replace(title_const, f'{title_const}\n{primary_const}', 1)
 
-          transition = Path('.github/workflows/dragon-chant-limited-reading.yml')
-          transition_text = transition.read_text(encoding='utf-8')
-          expected_old = "old = './article-dragon-chant-youtube-awakening.js?v=20260826-limited-open-1&paid-private=20260824-article-system-repair-1'"
-          expected_new = "old = './article-dragon-chant-youtube-awakening.js?v=20260826-thumbnail-inline-1&paid-private=20260824-article-system-repair-1'"
-          if expected_new not in transition_text:
-              if expected_old not in transition_text:
-                  raise SystemExit('Expiry workflow cache token anchor not found')
-              transition_text = transition_text.replace(expected_old, expected_new, 1)
-              transition.write_text(transition_text, encoding='utf-8')
+          cover_override = '''  const cover = detail?.querySelector(".article-cover");
+          if (cover && cover.getAttribute("src") !== DRAGON_CHANT_PRIMARY_IMAGE) {
+            cover.setAttribute("src", DRAGON_CHANT_PRIMARY_IMAGE);
+          }
+'''
+          title_line = '  document.title = `${DRAGON_CHANT_TITLE} | 靈元院`;\n'
+          if cover_override.strip() not in display_text:
+              if title_line not in display_text:
+                  raise SystemExit('Dragon chant detail title line not found')
+              display_text = display_text.replace(title_line, f'{title_line}\n{cover_override}', 1)
+          display.write_text(display_text, encoding='utf-8')
+
+          page = Path('articles.html')
+          page_text = page.read_text(encoding='utf-8')
+          old_script = 'articles-v6.js?v=20260825-paid-wall-restore-1'
+          new_script = 'articles-v6.js?v=20260826-dragon-primary-image-1'
+          if new_script not in page_text:
+              if old_script not in page_text:
+                  raise SystemExit('articles-v6.js cache token anchor not found')
+              page_text = page_text.replace(old_script, new_script, 1)
+              page.write_text(page_text, encoding='utf-8')
           PY
           node --check "$ARTICLE_FILE"
-          node --check static-articles.js
+          node --check articles-v6.js
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -77,32 +95,33 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Sync thumbnail to Firestore
+      - name: Sync cover and thumbnail to Firestore
         shell: bash
         run: |
           set -euo pipefail
           ACCESS_TOKEN="$(gcloud auth print-access-token)"
           NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          jq -n --arg thumbnail "$THUMBNAIL" --arg now "$NOW_ISO" \
-            '{fields:{thumbnailImage:{stringValue:$thumbnail},updatedAt:{timestampValue:$now}}}' \
-            > /tmp/thumbnail.json
-          URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=thumbnailImage&updateMask.fieldPaths=updatedAt"
-          HTTP_STATUS="$(curl --silent --show-error --output /tmp/thumbnail-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/thumbnail.json "$URL")"
+          jq -n --arg image "$PRIMARY_IMAGE" --arg now "$NOW_ISO" \
+            '{fields:{thumbnailImage:{stringValue:$image},coverImage:{stringValue:$image},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/article-media.json
+          URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=thumbnailImage&updateMask.fieldPaths=coverImage&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-media-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-media.json "$URL")"
           if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
-            cat /tmp/thumbnail-response.json
+            cat /tmp/article-media-response.json
             exit 1
           fi
-          test "$(jq -r '.fields.thumbnailImage.stringValue' /tmp/thumbnail-response.json)" = "$THUMBNAIL"
+          test "$(jq -r '.fields.thumbnailImage.stringValue' /tmp/article-media-response.json)" = "$PRIMARY_IMAGE"
+          test "$(jq -r '.fields.coverImage.stringValue' /tmp/article-media-response.json)" = "$PRIMARY_IMAGE"
 
-      - name: Commit synchronized thumbnail
+      - name: Commit synchronized primary image
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$ARTICLE_FILE" static-articles.js .github/workflows/dragon-chant-limited-reading.yml
+          git add "$ARTICLE_FILE" articles-v6.js articles.html
           git diff --cached --quiet && exit 0
-          git commit -m "Use first article image as dragon chant thumbnail"
+          git commit -m "Use first article image as dragon chant cover"
           git fetch origin main
           git rebase origin/main
           git push origin HEAD:main
