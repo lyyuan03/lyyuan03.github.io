@@ -1,0 +1,27 @@
+name: Reconcile Member Entitlements
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+jobs:
+  reconcile-member-entitlements:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Normalize sponsor paid-article members
+        run: bash .github/scripts/normalize-sponsor-member-access.sh
+
+      - name: Rebuild canonical member entitlements
+        run: python3 .github/scripts/rebuild-member-entitlements.py
