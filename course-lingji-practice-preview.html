@@ -272,6 +272,16 @@
     .focus-point small{color:var(--gold);font-family:var(--en);font-size:10px;letter-spacing:.17em}
     .focus-point strong{display:block;margin-top:7px;font-family:var(--serif);font-size:16px;font-weight:500;line-height:1.6}
 
+    .course-video-grid{display:grid;grid-template-columns:minmax(250px,.62fr) minmax(0,1.38fr);gap:46px;align-items:center}
+    .course-video-copy .section-intro{max-width:420px}
+    .course-video-quote{margin:22px 0 0;padding-left:18px;border-left:2px solid var(--clay);color:#5f554b;font-family:var(--serif);font-size:16px;line-height:1.75}
+    .course-video-link{display:inline-flex;align-items:center;gap:8px;margin-top:20px;color:var(--gold);font-size:12px;letter-spacing:.1em;border-bottom:1px solid rgba(165,130,84,.48)}
+    .course-video-link:after{content:"↗";font-size:13px}
+    .course-video-frame{position:relative;aspect-ratio:16/9;padding:8px;border:1px solid rgba(165,130,84,.32);background:linear-gradient(145deg,rgba(96,115,134,.24),rgba(112,90,112,.2) 52%,rgba(165,104,87,.2));box-shadow:0 20px 52px rgba(48,39,31,.15)}
+    .course-video-frame:before{content:"";position:absolute;z-index:2;right:-13px;top:28px;width:42px;height:1px;background:var(--clay);pointer-events:none}
+    .course-video-frame iframe{display:block;width:100%;height:100%;border:0;background:#0b1209}
+    .course-video-section .focus-points{margin-top:28px}
+
     .evidence-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr);gap:50px;align-items:center}
     .evidence-copy{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,.72fr);gap:34px;align-items:start}
     .compact-thesis{padding:27px 29px;border:1px solid rgba(200,170,123,.25);background:rgba(255,255,255,.04)}
@@ -390,6 +400,7 @@
       .evidence-copy{grid-template-columns:1fr 1fr}
       .book-visual{max-width:270px;margin:0 auto}
       .decision-grid{grid-template-columns:1fr}
+      .course-video-grid{grid-template-columns:1fr;gap:34px}
       .research-compact{grid-template-columns:minmax(0,1fr) 185px;gap:30px}
       .lesson-chapter,.lesson-chapter:nth-child(2){grid-template-columns:1fr;gap:30px}
       .lesson-chapter:nth-child(2) .chapter-heading{order:0}
@@ -412,6 +423,8 @@
       .focus-points{grid-template-columns:1fr}
       .focus-point{min-height:auto}
       .focus-note{padding:22px 23px;font-size:19px}
+      .course-video-frame{padding:5px}
+      .course-video-frame:before{display:none}
       .evidence-copy{grid-template-columns:1fr}
       .compact-milestones{grid-template-columns:repeat(3,1fr)}
       .compact-milestones .milestone{padding:13px 8px;text-align:center}
@@ -471,7 +484,7 @@
         <p class="hero-copy">跑靈山、會靈、啟靈、說靈語，只是走入靈修世界的開始。真正重要的是，你是否理解自己正在經歷什麼，又是否知道這條路將把你帶往哪裡。</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
-          <a class="btn btn-ghost" href="#curriculum">查看課程內容</a>
+          <a class="btn btn-ghost" href="#course-video">觀看課程影片</a>
         </div>
       </div>
       <div class="hero-art reveal">
@@ -492,20 +505,24 @@
   </section>
 
   <main>
-    <section class="section section-soft">
-      <div class="container focus-grid">
-        <div class="reveal">
-          <span class="section-label">Why This Course</span>
-          <h2>有感應，不等於看得懂自己的修行。</h2>
-          <p class="section-intro">這門課不追求更多神祕經驗，而是幫你建立辨識經驗的觀念與脈絡。</p>
-        </div>
-        <div class="reveal">
-          <blockquote class="focus-note">靈修走得好不好，觀念往往比勤跑靈山更重要。</blockquote>
-          <div class="focus-points" aria-label="課程核心問題">
-            <div class="focus-point"><small>CONTEXT</small><strong>靈修模式從何而來？</strong></div>
-            <div class="focus-point"><small>DISCERNMENT</small><strong>靈乩與乩童如何分辨？</strong></div>
-            <div class="focus-point"><small>PRACTICE</small><strong>如何避免只追求靈動？</strong></div>
+    <section class="section section-soft course-video-section" id="course-video">
+      <div class="container">
+        <div class="course-video-grid">
+          <div class="course-video-copy reveal">
+            <span class="section-label">Course Video</span>
+            <h2>先看影片，認識這門課想說清楚的事。</h2>
+            <p class="section-intro">有感應，不等於看得懂自己的修行。這門課不追求更多神祕經驗，而是幫你建立辨識經驗的觀念與脈絡。</p>
+            <p class="course-video-quote">靈修走得好不好，觀念往往比勤跑靈山更重要。</p>
+            <a class="course-video-link" href="https://www.youtube.com/watch?v=SHv1Hvi8pJc" target="_blank" rel="noopener noreferrer">在 YouTube 觀看</a>
           </div>
+          <div class="course-video-frame reveal">
+            <iframe src="https://www.youtube-nocookie.com/embed/SHv1Hvi8pJc?rel=0" title="靈乩前輩的修行祕密與靈修模式課程影片" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="focus-points reveal" aria-label="課程核心問題">
+          <div class="focus-point"><small>CONTEXT</small><strong>靈修模式從何而來？</strong></div>
+          <div class="focus-point"><small>DISCERNMENT</small><strong>靈乩與乩童如何分辨？</strong></div>
+          <div class="focus-point"><small>PRACTICE</small><strong>如何避免只追求靈動？</strong></div>
         </div>
       </div>
     </section>
