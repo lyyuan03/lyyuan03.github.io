@@ -326,6 +326,65 @@
     .final-cta h2{font-size:clamp(29px,4vw,45px)}
     .final-cta p{margin:16px auto 24px;line-height:1.8}
 
+    /* Editorial revision: research, curriculum, fit and instructor */
+    .research-compact{width:min(1000px,100%);margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:44px;align-items:center}
+    .research-compact h2{max-width:690px}
+    .research-compact .section-intro{max-width:650px}
+    .research-thesis-line{display:flex;justify-content:space-between;gap:28px;align-items:center;margin-top:25px;padding:19px 0;border-top:1px solid rgba(200,170,123,.24);border-bottom:1px solid rgba(200,170,123,.24)}
+    .research-thesis-line h3{margin:0;color:var(--paper);font-family:var(--serif);font-size:18px;font-weight:500;line-height:1.65}
+    .research-thesis-line .research-link{flex:0 0 auto;margin:0}
+    .research-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:22px}
+    .research-stat{padding:4px 22px;border-right:1px solid rgba(200,170,123,.2)}
+    .research-stat:first-child{padding-left:0}
+    .research-stat:last-child{padding-right:0;border-right:0}
+    .research-stat b{display:block;color:var(--gold-light);font-family:var(--en);font-size:25px;font-weight:500;line-height:1.2}
+    .research-stat span{display:block;margin-top:7px;color:rgba(245,240,232,.57);font-size:11px;line-height:1.55}
+    .research-book{position:relative;margin:0;padding:9px;background:linear-gradient(145deg,rgba(96,115,134,.3),rgba(112,90,112,.34) 52%,rgba(165,104,87,.3));box-shadow:0 18px 45px rgba(0,0,0,.27)}
+    .research-book img{width:100%;aspect-ratio:1000/1349;object-fit:cover}
+    .research-book figcaption{padding:10px 2px 1px;color:rgba(245,240,232,.53);font-size:9px;line-height:1.5;letter-spacing:.08em;text-align:center}
+
+    .curriculum-editorial{margin-top:34px;border-top:1px solid rgba(112,90,112,.22)}
+    .lesson-chapter{--chapter-accent:var(--slate);position:relative;display:grid;grid-template-columns:minmax(230px,.72fr) minmax(0,1.28fr);gap:58px;padding:42px 0;border-bottom:1px solid rgba(112,90,112,.22)}
+    .lesson-chapter:nth-child(2){--chapter-accent:var(--clay);grid-template-columns:minmax(0,1.28fr) minmax(230px,.72fr)}
+    .lesson-chapter:nth-child(2) .chapter-heading{order:2}
+    .chapter-heading{position:relative;padding-left:24px;border-left:3px solid var(--chapter-accent)}
+    .chapter-number{display:block;margin-bottom:3px;color:var(--chapter-accent);font-family:var(--en);font-size:50px;font-weight:500;line-height:1;opacity:.83}
+    .chapter-heading small{color:var(--gold);font-family:var(--en);font-size:10px;letter-spacing:.22em}
+    .chapter-heading h3{margin:10px 0 0;font-family:var(--serif);font-size:24px;font-weight:500;line-height:1.55}
+    .chapter-heading p{margin:12px 0 0;color:var(--muted);font-size:12.5px;line-height:1.75}
+    .chapter-topics{display:grid;grid-template-columns:repeat(2,1fr);gap:24px 34px;align-content:center}
+    .chapter-topic{position:relative;padding-left:18px}
+    .chapter-topic:before{content:"";position:absolute;left:0;top:11px;width:7px;height:1px;background:var(--chapter-accent)}
+    .chapter-topic strong{display:block;font-family:var(--serif);font-size:16px;font-weight:500;line-height:1.55}
+    .chapter-topic span{display:block;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.65}
+
+    .gentle-section{position:relative;overflow:hidden}
+    .gentle-section:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 15%,rgba(96,115,134,.11),transparent 32%),radial-gradient(circle at 12% 88%,rgba(165,104,87,.09),transparent 30%);pointer-events:none}
+    .gentle-section>.container{position:relative;z-index:1}
+    .gentle-grid{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:62px;align-items:start}
+    .gentle-lead .section-intro{max-width:480px}
+    .question-flow{border-top:1px solid var(--line)}
+    .question-flow p{position:relative;margin:0;padding:17px 10px 17px 28px;border-bottom:1px solid var(--line);color:#5f554b;font-family:var(--serif);font-size:16px;line-height:1.65}
+    .question-flow p:before{content:"—";position:absolute;left:0;color:var(--clay)}
+    .gentle-message{margin-top:22px;padding:23px 27px;border-radius:3px 28px 3px 28px;background:linear-gradient(120deg,rgba(96,115,134,.12),rgba(112,90,112,.1),rgba(165,104,87,.1));color:#554a42;font-size:13.5px;line-height:1.85}
+    .whisper-row{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:36px;padding-top:27px;border-top:1px solid var(--line)}
+    .whisper{position:relative;margin:0;padding-left:36px;color:#5f554b;font-family:var(--serif);font-size:14px;line-height:1.75}
+    .whisper:before{content:"“";position:absolute;left:0;top:-7px;color:var(--plum);font-family:Georgia,serif;font-size:40px;line-height:1;opacity:.45}
+    .whisper cite{display:block;margin-top:7px;color:var(--gold);font-family:var(--sans);font-size:9px;font-style:normal;letter-spacing:.12em}
+
+    .instructor-feature{position:relative;overflow:hidden;background:#0c1712;color:var(--paper)}
+    .instructor-feature:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 48%,rgba(165,104,87,.14),transparent 34%),radial-gradient(circle at 78% 18%,rgba(96,115,134,.14),transparent 36%)}
+    .instructor-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(300px,410px) minmax(0,1fr);gap:72px;align-items:center;padding:72px 0}
+    .instructor-photo{position:relative;margin:0;padding:10px;border:1px solid rgba(200,170,123,.3);background:linear-gradient(145deg,rgba(96,115,134,.2),rgba(165,104,87,.18));box-shadow:0 24px 60px rgba(0,0,0,.3)}
+    .instructor-photo:before{content:"";position:absolute;z-index:2;left:-14px;top:34px;width:44px;height:1px;background:var(--gold-light)}
+    .instructor-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 42%;filter:saturate(.88) contrast(1.02)}
+    .instructor-copy .section-label{color:var(--gold-light)}
+    .instructor-copy h2{margin:0;font-family:var(--serif);font-size:clamp(36px,4.5vw,55px);font-weight:500;line-height:1.3;letter-spacing:.07em}
+    .instructor-role{margin:11px 0 25px;color:rgba(245,240,232,.5);font-family:var(--en);font-size:14px;letter-spacing:.18em}
+    .instructor-copy p{max-width:660px;margin:0 0 16px;color:rgba(245,240,232,.68);font-size:14.5px;line-height:1.95}
+    .instructor-copy p:last-child{margin-bottom:0}
+    .instructor-quote{margin-top:25px!important;padding:18px 22px;border-left:2px solid var(--clay);background:rgba(255,255,255,.035);color:rgba(245,240,232,.84)!important;font-family:var(--serif);font-size:17px!important;line-height:1.75!important}
+
     @media(max-width:920px){
       .hero{padding:108px 0 66px}
       .hero-grid,.focus-grid,.evidence-grid{grid-template-columns:1fr;gap:38px}
@@ -333,6 +392,11 @@
       .evidence-copy{grid-template-columns:1fr 1fr}
       .book-visual{max-width:270px;margin:0 auto}
       .decision-grid{grid-template-columns:1fr}
+      .research-compact{grid-template-columns:minmax(0,1fr) 185px;gap:30px}
+      .lesson-chapter,.lesson-chapter:nth-child(2){grid-template-columns:1fr;gap:30px}
+      .lesson-chapter:nth-child(2) .chapter-heading{order:0}
+      .gentle-grid{grid-template-columns:1fr;gap:34px}
+      .instructor-layout{grid-template-columns:minmax(270px,340px) minmax(0,1fr);gap:42px}
     }
     @media(max-width:768px){
       .hero{padding:96px 0 54px}
@@ -362,6 +426,22 @@
       .fit-card{padding:25px 23px}
       .compact-faq{padding-top:48px;padding-bottom:48px}
       .final-cta{padding:60px 0 92px}
+      .research-compact{grid-template-columns:1fr;gap:25px}
+      .research-thesis-line{display:block}
+      .research-thesis-line .research-link{margin-top:11px}
+      .research-stats{grid-template-columns:repeat(3,1fr)}
+      .research-stat{padding:3px 9px;text-align:center}
+      .research-stat b{font-size:21px}
+      .research-stat span{font-size:9px}
+      .research-book{width:150px;margin:0 auto}
+      .lesson-chapter,.lesson-chapter:nth-child(2){padding:32px 0}
+      .chapter-heading{padding-left:18px}
+      .chapter-number{font-size:42px}
+      .chapter-topics{grid-template-columns:1fr;gap:18px}
+      .whisper-row{grid-template-columns:1fr;gap:20px}
+      .instructor-layout{grid-template-columns:1fr;gap:34px;padding:54px 0}
+      .instructor-photo{width:min(330px,100%);margin:0 auto}
+      .instructor-copy h2{font-size:37px}
     }
   </style>
   <script src="/analytics-config.js"></script>
@@ -432,34 +512,28 @@
       </div>
     </section>
 
-    <section class="section section-dark">
-      <div class="container evidence-grid">
-        <div class="reveal">
-          <span class="section-label">Research &amp; Practice</span>
-          <h2>學術研究，回到真實的修行現場。</h2>
-          <p class="section-intro">宇色把長年實修、田野觀察與碩士研究交叉整理，讓零散的靈修經驗有一張可理解的地圖。</p>
-          <div class="compact-milestones">
-            <div class="milestone"><b>2014</b><span>完成碩士研究</span></div>
-            <div class="milestone"><b>65</b><span>筆相關文獻</span></div>
-            <div class="milestone"><b>2016</b><span>講座開課至今</span></div>
-          </div>
-          <div class="evidence-copy">
-            <aside class="compact-thesis">
-              <span class="section-label">Master's Thesis</span>
-              <h3 class="thesis-title">《台灣民間信仰中靈修模式之研究》</h3>
-              <p class="thesis-meta">探討會靈山、靈乩養成、道教與瑤池金母信仰等靈修模式。</p>
-              <a class="research-link" href="https://nhuir.nhu.edu.tw/handle/987654321/16921" target="_blank" rel="noopener noreferrer">查看南華大學機構典藏</a>
-            </aside>
-            <div class="instructor-mini">
-              <h3>宇色老師</h3>
-              <p>長期研究元神、靈乩、會靈山與台灣民間信仰。課堂以研究、前輩經驗與實修觀察，協助學員建立穩定清楚的觀念。</p>
+    <section class="section section-dark" id="research">
+      <div class="container">
+        <div class="research-compact">
+          <div class="reveal">
+            <span class="section-label">Research &amp; Practice</span>
+            <h2>一篇論文，整理一條近三十年的修行路。</h2>
+            <p class="section-intro">2014年，宇色將長年實修、田野觀察與學術研究，整理成台灣靈修模式的完整脈絡。</p>
+            <div class="research-thesis-line">
+              <h3>《台灣民間信仰中靈修模式之研究》</h3>
+              <a class="research-link" href="https://nhuir.nhu.edu.tw/handle/987654321/16921" target="_blank" rel="noopener noreferrer">查看論文典藏</a>
+            </div>
+            <div class="research-stats" aria-label="研究與教學經歷">
+              <div class="research-stat"><b>65</b><span>筆相關著作與研究</span></div>
+              <div class="research-stat"><b>2016</b><span>相關講座開課至今</span></div>
+              <div class="research-stat"><b>近30年</b><span>靈修與教學經驗</span></div>
             </div>
           </div>
-        </div>
-        <figure class="book-visual reveal">
+          <figure class="research-book reveal">
           <img src="https://pimg.1px.tw/kinkiosel/1523864931-822990840.jpg" alt="宇色著作《靈修人關鍵報告》封面" loading="lazy">
-          <figcaption>課程延伸閱讀視覺｜《靈修人關鍵報告》</figcaption>
-        </figure>
+            <figcaption>延伸閱讀｜《靈修人關鍵報告》</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -470,24 +544,34 @@
           <h2>兩堂課，把脈絡一次說清楚。</h2>
           <p class="section-intro">不鋪陳過多名詞，直接掌握系統差異、前輩經驗與修行判準。</p>
         </div>
-        <div class="compact-curriculum">
-          <article class="lesson-card reveal">
-            <header class="lesson-head"><small>LESSON 01</small><h3>你所不知道的靈修模式</h3></header>
-            <ol class="lesson-topics">
-              <li><b>01</b><span>瑤池金母、無極老母與靈修派源流</span></li>
-              <li><b>02</b><span>東王公系統為何強調靜心</span></li>
-              <li><b>03</b><span>兩大系統在會靈與修鍊上的差異</span></li>
-              <li><b>04</b><span>靈乩養成、使命與復古收圓</span></li>
-            </ol>
+        <div class="curriculum-editorial">
+          <article class="lesson-chapter reveal">
+            <div class="chapter-heading">
+              <span class="chapter-number">01</span>
+              <small>LESSON ONE</small>
+              <h3>你所不知道的靈修模式</h3>
+              <p>先看懂系統，才能知道自己正在走哪一條路。</p>
+            </div>
+            <div class="chapter-topics">
+              <div class="chapter-topic"><strong>瑤池金母與無極老母</strong><span>靈修派信仰的源流與關係</span></div>
+              <div class="chapter-topic"><strong>東王公系統</strong><span>為何前輩更強調靜心與平衡</span></div>
+              <div class="chapter-topic"><strong>兩大系統的差異</strong><span>會靈、靜心與修鍊路徑的不同</span></div>
+              <div class="chapter-topic"><strong>靈乩養成</strong><span>從能力走向心性、使命與復古收圓</span></div>
+            </div>
           </article>
-          <article class="lesson-card reveal">
-            <header class="lesson-head"><small>LESSON 02</small><h3>靈乩前輩的修行祕密</h3></header>
-            <ol class="lesson-topics">
-              <li><b>01</b><span>乩童、鸞乩、靈乩與聖乩</span></li>
-              <li><b>02</b><span>靈乩與乩童的歷史分水嶺</span></li>
-              <li><b>03</b><span>淡水天元宮靈乩大會的警示</span></li>
-              <li><b>04</b><span>林千代與三霞二黃的修行軌跡</span></li>
-            </ol>
+          <article class="lesson-chapter reveal">
+            <div class="chapter-heading">
+              <span class="chapter-number">02</span>
+              <small>LESSON TWO</small>
+              <h3>靈乩前輩的修行祕密</h3>
+              <p>從前輩生命與歷史事件，看見修為真正的分界。</p>
+            </div>
+            <div class="chapter-topics">
+              <div class="chapter-topic"><strong>乩的四種類型</strong><span>乩童、鸞乩、靈乩與聖乩</span></div>
+              <div class="chapter-topic"><strong>歷史分水嶺</strong><span>靈乩與乩童如何逐漸分流</span></div>
+              <div class="chapter-topic"><strong>淡水天元宮</strong><span>一場靈乩大會留下的修行警示</span></div>
+              <div class="chapter-topic"><strong>林千代與三霞二黃</strong><span>前輩的崛起、修行與沉寂</span></div>
+            </div>
           </article>
         </div>
       </div>
@@ -501,25 +585,41 @@
       </div>
     </section>
 
-    <section class="section section-soft">
+    <section class="section section-soft gentle-section" id="fit">
       <div class="container">
-        <span class="section-label reveal">Fit &amp; Student Voices</span>
-        <h2 class="reveal">適合現在的你嗎？</h2>
-        <div class="decision-grid">
-          <article class="fit-card reveal">
-            <h3>如果你正在……</h3>
-            <ul class="check-list">
-              <li>接觸啟靈、靈動或靈語，卻缺少完整觀念。</li>
-              <li>跑靈山多年，仍不確定自己究竟在修什麼。</li>
-              <li>想從研究與前輩經驗，重新檢視修行方向。</li>
-            </ul>
-            <p class="fit-note">課程不以開啟通靈能力、判定主神或追求神通為目的。</p>
-          </article>
-          <div class="compact-voices reveal" aria-label="過往學員回饋">
-            <blockquote class="voice">靈修最終仍是踏實地回歸自己。<cite>過往學員回饋</cite></blockquote>
-            <blockquote class="voice">幾個小時的內容，是我可能要讀十幾本書，才有機會整理出的觀念。<cite>過往學員回饋</cite></blockquote>
-            <blockquote class="voice">調整練習方式後，身體順暢許多，也能慢慢拉長靜坐時間。<cite>過往學員回饋</cite></blockquote>
+        <div class="gentle-grid">
+          <div class="gentle-lead reveal">
+            <span class="section-label">A Place To Begin</span>
+            <h2>如果你已經走了一段路，卻仍想把方向看得更清楚。</h2>
+            <p class="section-intro">不論剛開始接觸，或已經有靈動與感應，這門課都不是替你貼標籤，而是陪你把經驗放回脈絡裡。</p>
           </div>
+          <div class="reveal">
+            <div class="question-flow" aria-label="常見的靈修疑問">
+              <p>我感受到的，究竟是什麼？</p>
+              <p>不同老師說法不一，該如何判斷？</p>
+              <p>為什麼走了很久，心仍沒有安定？</p>
+            </div>
+            <div class="gentle-message">你不需要先證明自己具有什麼能力，也不必急著判定主神或天命。帶著疑問來，就可以開始。</div>
+          </div>
+        </div>
+        <div class="whisper-row reveal" aria-label="過往學員回饋">
+          <blockquote class="whisper">靈修最終仍是踏實地回歸自己。<cite>過往學員回饋</cite></blockquote>
+          <blockquote class="whisper">幾個小時的內容，是我可能要讀十幾本書，才有機會整理出的觀念。<cite>過往學員回饋</cite></blockquote>
+        </div>
+      </div>
+    </section>
+
+    <section class="instructor-feature" id="instructor">
+      <div class="container instructor-layout">
+        <figure class="instructor-photo reveal">
+          <img src="/assets/course-osel-portrait-v2.webp?v=20260827-1" alt="宇色老師形象照" loading="lazy">
+        </figure>
+        <div class="instructor-copy reveal">
+          <span class="section-label">Instructor</span>
+          <h2>宇色老師</h2>
+          <p class="instructor-role">OSEL · WRITER · SPIRITUAL TEACHER</p>
+          <p>靈修近三十年，長期研究元神、靈乩、會靈山與台灣民間信仰。2014年完成《台灣民間信仰中靈修模式之研究》碩士論文，並將實修經驗、田野觀察與學術研究整理成多部著作與課程。</p>
+          <p class="instructor-quote">我想教的，不是如何得到更多神祕能力，而是如何在經驗發生之後，仍然看得懂自己，也守得住自己的心。</p>
         </div>
       </div>
     </section>
