@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f1a14">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="description" content="以《台灣民間信仰中靈修模式之研究》為研究基礎，帶你理解台灣靈修模式、靈乩養成與前輩修行經驗。">
+  <title>課程預覽｜跟靈乩前輩學靈修的兩堂必修課｜靈元院</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --deep:#0f1a14;
+      --deep-2:#111a10;
+      --gold:#a58254;
+      --gold-light:#c8aa7b;
+      --paper:#f5f0e8;
+      --paper-2:#ede5d8;
+      --ink:#30271f;
+      --muted:#756a5f;
+      --moss:#606330;
+      --brown:#594f47;
+      --line:rgba(165,130,84,.25);
+      --serif:"Noto Serif TC",Georgia,serif;
+      --sans:"Noto Sans TC",Arial,sans-serif;
+      --en:"Cormorant Garamond",serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--deep)}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.9;letter-spacing:.035em}
+    body,button,a{font-family:var(--sans)}
+    img{display:block;max-width:100%}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .container{width:min(1120px,calc(100% - 48px));margin:0 auto}
+    .narrow{width:min(780px,calc(100% - 48px));margin:0 auto}
+    .preview-badge{position:fixed;left:18px;bottom:18px;z-index:90;padding:8px 13px;border:1px solid rgba(200,170,123,.5);background:rgba(15,26,20,.94);color:var(--gold-light);font-size:10px;letter-spacing:.16em;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+
+    nav{position:fixed;top:0;left:0;right:0;background:rgba(10,15,8,.88);backdrop-filter:blur(20px);z-index:100;border-bottom:1px solid rgba(165,130,84,.14)}
+    .nav-inner{display:flex;justify-content:center;align-items:center;height:56px;padding:0 40px}
+    .nav-links{display:flex;gap:30px;list-style:none;align-items:center;margin:0;padding:0}
+    .nav-links>li{position:relative}
+    .nav-links>li>a,.nav-links>li>span{color:rgba(245,240,232,.78);font-size:13.5px;letter-spacing:.14em;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap}
+    .nav-links>li>a:hover,.nav-links>li>span:hover,.nav-links>li>.active{color:var(--gold-light)}
+    .dropdown{display:none;position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%);background:rgba(14,20,12,.98);border:1px solid rgba(165,130,84,.18);box-shadow:0 10px 32px rgba(0,0,0,.5);min-width:190px;padding:6px 0;margin:0;list-style:none;white-space:nowrap}
+    .dropdown:before{content:"";position:absolute;top:-14px;left:0;right:0;height:14px}
+    .dropdown li a,.dropdown li span{display:block;padding:10px 20px;color:rgba(245,240,232,.7);font-size:13px;letter-spacing:.1em}
+    .dropdown li a:hover,.dropdown li a.current{background:rgba(165,130,84,.1);color:var(--gold-light)}
+    .nav-links>li:hover .dropdown{display:block}
+    .dropdown .nav-group-label{padding:10px 18px 5px;border-top:1px solid rgba(165,130,84,.16);pointer-events:none}
+    .dropdown .nav-group-label:first-child{padding-top:8px;border-top:0}
+    .dropdown .nav-group-label span{display:block;color:rgba(165,130,84,.82);font-size:10px;letter-spacing:.16em}
+
+    .hero{position:relative;min-height:760px;padding:150px 0 96px;display:flex;align-items:center;overflow:hidden;background:var(--deep);color:var(--paper)}
+    .hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 78% 35%,rgba(165,130,84,.18),transparent 34%),radial-gradient(circle at 18% 78%,rgba(96,99,48,.15),transparent 30%),linear-gradient(135deg,#0b1209 0%,#111a10 55%,#19160f 100%)}
+    .hero:after{content:"";position:absolute;inset:0;opacity:.16;background-image:linear-gradient(rgba(200,170,123,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(200,170,123,.06) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(to bottom,black,transparent 90%)}
+    .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);gap:70px;align-items:center}
+    .eyebrow{margin:0 0 20px;color:var(--gold-light);font-family:var(--en);font-size:13px;font-weight:500;letter-spacing:.33em;text-transform:uppercase}
+    .hero h1{max-width:720px;margin:0;font-family:var(--serif);font-size:clamp(42px,5.1vw,70px);font-weight:500;line-height:1.35;letter-spacing:.06em}
+    .hero-lead{margin:25px 0 0;color:var(--gold-light);font-family:var(--serif);font-size:clamp(18px,2.1vw,25px);letter-spacing:.08em}
+    .hero-copy{max-width:680px;margin:24px 0 0;color:rgba(245,240,232,.72);font-size:15.5px;line-height:2}
+    .hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:34px}
+    .btn{display:inline-flex;min-height:50px;align-items:center;justify-content:center;padding:13px 27px;border:1px solid var(--gold);font-size:13px;letter-spacing:.16em;transition:transform .25s,background .25s,color .25s,border-color .25s}
+    .btn-primary{background:var(--gold);color:#fff}
+    .btn-primary:hover{background:var(--gold-light);border-color:var(--gold-light);transform:translateY(-2px)}
+    .btn-ghost{color:rgba(245,240,232,.72);border-color:rgba(245,240,232,.25)}
+    .btn-ghost:hover{color:var(--gold-light);border-color:var(--gold);transform:translateY(-2px)}
+    .hero-art{position:relative;padding:18px}
+    .hero-art:before,.hero-art:after{content:"";position:absolute;width:94px;height:94px;border-color:rgba(200,170,123,.5);z-index:3}
+    .hero-art:before{left:0;top:0;border-left:1px solid;border-top:1px solid}
+    .hero-art:after{right:0;bottom:0;border-right:1px solid;border-bottom:1px solid}
+    .hero-image{position:relative;aspect-ratio:4/5;overflow:hidden;background:linear-gradient(145deg,rgba(165,130,84,.22),rgba(96,99,48,.13));box-shadow:0 28px 80px rgba(0,0,0,.42)}
+    .hero-image:before{content:"靈乩・靈修・辨證";position:absolute;inset:0;display:grid;place-items:center;color:rgba(200,170,123,.68);font-family:var(--serif);font-size:24px;letter-spacing:.24em}
+    .hero-image img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;filter:saturate(.72) contrast(1.05) brightness(.78)}
+    .hero-image:after{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(to top,rgba(7,12,7,.78),transparent 55%),linear-gradient(135deg,rgba(96,99,48,.16),rgba(165,130,84,.08));pointer-events:none}
+    .hero-seal{position:absolute;right:34px;bottom:38px;z-index:3;width:84px;height:84px;display:grid;place-items:center;border:1px solid rgba(200,170,123,.7);color:var(--gold-light);font-family:var(--serif);font-size:20px;letter-spacing:.15em;writing-mode:vertical-rl;background:rgba(10,15,8,.58);backdrop-filter:blur(8px)}
+
+    .facts{position:relative;z-index:4;margin-top:-42px}
+    .facts-grid{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(48,39,31,.12)}
+    .fact{min-height:118px;padding:25px 28px;border-right:1px solid var(--line)}
+    .fact:last-child{border-right:0}
+    .fact small{display:block;margin-bottom:7px;color:var(--gold);font-family:var(--en);font-size:11px;letter-spacing:.22em}
+    .fact strong{display:block;font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:.06em}
+
+    .section{padding:104px 0}
+    .section-soft{background:var(--paper)}
+    .section-paper{background:var(--paper-2)}
+    .section-dark{position:relative;overflow:hidden;background:var(--deep);color:var(--paper)}
+    .section-dark:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 10% 15%,rgba(96,99,48,.17),transparent 33%),radial-gradient(circle at 90% 78%,rgba(165,130,84,.16),transparent 32%)}
+    .section-dark>.container,.section-dark>.narrow{position:relative;z-index:1}
+    .section-label{display:block;margin-bottom:13px;color:var(--gold);font-family:var(--en);font-size:12px;font-weight:500;letter-spacing:.28em;text-transform:uppercase}
+    .section-dark .section-label{color:var(--gold-light)}
+    .section h2{margin:0;font-family:var(--serif);font-size:clamp(30px,4vw,48px);font-weight:500;line-height:1.5;letter-spacing:.06em}
+    .section-intro{max-width:750px;margin:22px 0 0;color:var(--muted);font-size:16px;line-height:2.05}
+    .section-dark .section-intro{color:rgba(245,240,232,.7)}
+    .opening-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:75px;align-items:start}
+    .opening-quote{margin:0;padding:38px 42px;border-left:2px solid var(--gold);background:#fff;font-family:var(--serif);font-size:clamp(20px,2.7vw,30px);line-height:1.8;box-shadow:0 18px 46px rgba(48,39,31,.08)}
+    .opening-copy p{margin:0 0 20px;color:#5f554b;font-size:15.5px;line-height:2.1}
+    .opening-copy p:last-child{margin-bottom:0}
+
+    .research-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.78fr);gap:70px;align-items:center}
+    .research-card{padding:42px;border:1px solid rgba(200,170,123,.27);background:rgba(255,255,255,.035);box-shadow:0 22px 60px rgba(0,0,0,.18)}
+    .thesis-title{margin:0 0 15px;color:var(--paper);font-family:var(--serif);font-size:25px;line-height:1.7}
+    .thesis-meta{margin:0;color:rgba(245,240,232,.55);font-size:13px;line-height:2}
+    .research-link{display:inline-flex;margin-top:23px;color:var(--gold-light);font-size:12px;letter-spacing:.12em;border-bottom:1px solid rgba(200,170,123,.48)}
+    .milestones{display:grid;grid-template-columns:repeat(2,1fr);margin-top:34px;border-top:1px solid rgba(200,170,123,.22);border-left:1px solid rgba(200,170,123,.22)}
+    .milestone{padding:25px 22px;border-right:1px solid rgba(200,170,123,.22);border-bottom:1px solid rgba(200,170,123,.22)}
+    .milestone b{display:block;color:var(--gold-light);font-family:var(--en);font-size:32px;font-weight:500;letter-spacing:.04em}
+    .milestone span{display:block;margin-top:5px;color:rgba(245,240,232,.62);font-size:12px;line-height:1.7}
+
+    .curriculum-head{display:flex;justify-content:space-between;gap:40px;align-items:end;margin-bottom:48px}
+    .curriculum-head .section-intro{max-width:520px;margin-bottom:3px}
+    .module-stack{display:grid;gap:34px}
+    .module{display:grid;grid-template-columns:250px minmax(0,1fr);border:1px solid var(--line);background:#fff;box-shadow:0 18px 55px rgba(48,39,31,.08)}
+    .module-side{padding:38px 30px;background:linear-gradient(150deg,#1a2819,#10180e);color:var(--paper)}
+    .module-no{display:block;color:var(--gold-light);font-family:var(--en);font-size:12px;letter-spacing:.25em}
+    .module-side h3{margin:20px 0 0;font-family:var(--serif);font-size:25px;font-weight:500;line-height:1.65;letter-spacing:.05em}
+    .module-side p{margin:18px 0 0;color:rgba(245,240,232,.58);font-size:13px;line-height:1.9}
+    .module-list{display:grid;grid-template-columns:repeat(2,1fr)}
+    .topic{padding:30px 32px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .topic:nth-child(2n){border-right:0}
+    .topic:nth-last-child(-n+2){border-bottom:0}
+    .topic small{display:block;color:var(--gold);font-family:var(--en);font-size:11px;letter-spacing:.18em}
+    .topic h4{margin:9px 0 0;font-family:var(--serif);font-size:18px;font-weight:500;line-height:1.65}
+    .topic p{margin:11px 0 0;color:var(--muted);font-size:13.5px;line-height:1.85}
+
+    .principle{padding:105px 0;background:linear-gradient(150deg,#1b2116,#30251b);color:var(--paper);text-align:center}
+    .principle-mark{width:54px;height:1px;margin:0 auto 30px;background:var(--gold)}
+    .principle blockquote{max-width:880px;margin:0 auto;font-family:var(--serif);font-size:clamp(26px,4vw,45px);font-weight:400;line-height:1.75;letter-spacing:.08em}
+    .principle p{margin:24px 0 0;color:rgba(245,240,232,.55);font-size:13px;letter-spacing:.12em}
+
+    .audience-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;margin-top:46px}
+    .audience-card{padding:38px 40px;border:1px solid var(--line);background:#fff}
+    .audience-card.dark-card{background:var(--deep);color:var(--paper);border-color:rgba(165,130,84,.25)}
+    .audience-card h3{margin:0 0 24px;font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.06em}
+    .check-list{list-style:none;margin:0;padding:0}
+    .check-list li{position:relative;padding:13px 0 13px 29px;border-top:1px solid var(--line);color:var(--muted);font-size:14px;line-height:1.8}
+    .check-list li:before{content:"";position:absolute;left:1px;top:24px;width:12px;height:1px;background:var(--gold)}
+    .dark-card .check-list li{color:rgba(245,240,232,.66);border-color:rgba(165,130,84,.2)}
+
+    .teacher-grid{display:grid;grid-template-columns:280px minmax(0,1fr);gap:68px;align-items:center}
+    .teacher-mark{aspect-ratio:1;display:grid;place-items:center;border:1px solid rgba(200,170,123,.38);background:radial-gradient(circle,rgba(165,130,84,.18),transparent 64%);position:relative}
+    .teacher-mark:before,.teacher-mark:after{content:"";position:absolute;border:1px solid rgba(200,170,123,.24);border-radius:50%}
+    .teacher-mark:before{inset:28px}
+    .teacher-mark:after{inset:52px}
+    .teacher-mark span{position:relative;z-index:1;color:var(--gold-light);font-family:var(--serif);font-size:48px;letter-spacing:.12em}
+    .teacher-copy h2{margin-bottom:4px}
+    .teacher-name{margin:10px 0 24px;color:var(--gold-light);font-family:var(--en);font-size:18px;letter-spacing:.22em}
+    .teacher-copy p{margin:0 0 18px;color:rgba(245,240,232,.67);font-size:15px;line-height:2.05}
+    .teacher-copy p:last-child{margin-bottom:0}
+
+    .testimonials{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:46px}
+    .testimonial{position:relative;padding:38px 32px 32px;background:#fff;border:1px solid var(--line);box-shadow:0 14px 38px rgba(48,39,31,.07)}
+    .testimonial:before{content:"“";position:absolute;left:25px;top:5px;color:rgba(165,130,84,.23);font-family:Georgia,serif;font-size:72px;line-height:1}
+    .testimonial p{position:relative;margin:0;color:#5f554b;font-size:14px;line-height:2}
+    .testimonial span{display:block;margin-top:23px;padding-top:17px;border-top:1px solid var(--line);color:var(--gold);font-size:11px;letter-spacing:.15em}
+
+    .faq-list{margin-top:42px;border-top:1px solid var(--line)}
+    details{border-bottom:1px solid var(--line);background:rgba(255,255,255,.35)}
+    summary{position:relative;padding:25px 50px 25px 20px;cursor:pointer;list-style:none;font-family:var(--serif);font-size:17px;font-weight:500;letter-spacing:.04em}
+    summary::-webkit-details-marker{display:none}
+    summary:after{content:"＋";position:absolute;right:20px;top:24px;color:var(--gold);font-family:var(--sans);font-weight:300}
+    details[open] summary:after{content:"－"}
+    details p{margin:0;padding:0 52px 25px 20px;color:var(--muted);font-size:14px;line-height:1.95}
+
+    .final-cta{position:relative;overflow:hidden;padding:105px 0;text-align:center;background:var(--deep);color:var(--paper)}
+    .final-cta:before{content:"";position:absolute;inset:-40%;background:radial-gradient(circle,rgba(165,130,84,.19),transparent 42%)}
+    .final-cta .narrow{position:relative;z-index:1}
+    .final-cta h2{margin:0;font-family:var(--serif);font-size:clamp(32px,4.7vw,52px);font-weight:500;line-height:1.55;letter-spacing:.07em}
+    .final-cta p{margin:22px auto 31px;max-width:640px;color:rgba(245,240,232,.65);font-size:15px;line-height:2}
+    .final-note{display:block;margin-top:17px;color:rgba(245,240,232,.36);font-size:11px;letter-spacing:.08em}
+
+    footer{background:rgba(6,9,5,.98);border-top:1px solid rgba(165,130,84,.1);padding:36px 0 28px}
+    .footer-inner{display:flex;flex-direction:column;align-items:center;gap:14px}
+    .footer-brand-mark{width:130px;max-width:42vw;filter:brightness(.78)}
+    .footer-links{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+    .footer-links a{color:rgba(245,240,232,.38);display:flex;transition:.2s}
+    .footer-links a:hover{color:var(--gold);transform:translateY(-2px)}
+    .footer-links svg{display:block}
+    .footer-copy{margin:0;font-size:11px;color:rgba(245,240,232,.2);letter-spacing:.12em}
+    .mobile-cta{display:none}
+
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.on{opacity:1;transform:none}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.btn{transition:none}}
+
+    @media(max-width:920px){
+      .hero{min-height:auto;padding:132px 0 86px}
+      .hero-grid,.research-grid{grid-template-columns:1fr;gap:48px}
+      .hero-art{width:min(520px,100%);margin:0 auto}
+      .hero-image{aspect-ratio:16/10}
+      .opening-grid{grid-template-columns:1fr;gap:38px}
+      .curriculum-head{display:block}
+      .module{grid-template-columns:1fr}
+      .module-side{padding:30px 32px}
+      .teacher-grid{grid-template-columns:220px minmax(0,1fr);gap:42px}
+      .testimonials{grid-template-columns:1fr}
+    }
+    @media(max-width:768px){
+      .container,.narrow{width:min(100% - 30px,680px)}
+      .nav-inner{height:58px;padding:0 10px;justify-content:flex-start;overflow:visible}
+      .nav-links{width:100%;min-width:0;gap:5px;flex-wrap:nowrap;justify-content:space-between}
+      .nav-links>li{flex:0 0 auto}
+      .nav-links>li>a,.nav-links>li>span{font-size:11.5px;letter-spacing:.04em}
+      .dropdown{position:absolute;top:calc(100% + 15px);left:50%;transform:translateX(-50%);max-width:calc(100vw - 24px)}
+      .nav-links>li:hover .dropdown{display:none}
+      .nav-links>li.open .dropdown{display:block}
+      .nav-links>li:nth-last-child(-n+2) .dropdown{left:auto;right:0;transform:none}
+      .preview-badge{left:10px;bottom:72px;font-size:9px}
+      .hero{padding:116px 0 74px}
+      .hero h1{font-size:clamp(37px,11vw,54px);line-height:1.42}
+      .hero-copy{font-size:14.5px}
+      .hero-actions{align-items:stretch;flex-direction:column}
+      .hero-actions .btn{width:100%}
+      .facts{margin-top:0}
+      .facts-grid{grid-template-columns:1fr}
+      .fact{min-height:auto;border-right:0;border-bottom:1px solid var(--line)}
+      .fact:last-child{border-bottom:0}
+      .section{padding:78px 0}
+      .section h2{font-size:31px}
+      .opening-quote{padding:30px 27px;font-size:22px}
+      .research-card{padding:30px 25px}
+      .milestones{grid-template-columns:1fr}
+      .module-list{grid-template-columns:1fr}
+      .topic,.topic:nth-child(2n),.topic:nth-last-child(-n+2){border-right:0;border-bottom:1px solid var(--line)}
+      .topic:last-child{border-bottom:0}
+      .principle{padding:78px 0}
+      .audience-grid{grid-template-columns:1fr}
+      .audience-card{padding:31px 27px}
+      .teacher-grid{grid-template-columns:1fr}
+      .teacher-mark{width:190px;margin:0 auto}
+      .final-cta{padding:82px 0 112px}
+      .mobile-cta{position:fixed;left:0;right:0;bottom:0;z-index:89;display:block;padding:9px 12px max(9px,env(safe-area-inset-bottom));background:rgba(10,15,8,.97);border-top:1px solid rgba(165,130,84,.22)}
+      .mobile-cta a{display:flex;min-height:46px;align-items:center;justify-content:center;background:var(--gold);color:#fff;font-size:13px;letter-spacing:.14em}
+    }
+  </style>
+  <script src="/analytics-config.js"></script>
+  <script src="/analytics.js" defer></script>
+</head>
+<body>
+  <div class="preview-badge">PREVIEW · 課程頁預覽</div>
+
+  <nav aria-label="主要導覽">
+    <div class="nav-inner">
+      <ul class="nav-links">
+        <li><a href="https://lyyuan.tw/">首頁</a></li>
+        <li><span class="has-dropdown active">活動</span><ul class="dropdown"><li><a href="/niandian.html">年度點燈</a></li><li><a href="/dizhi.html">奠基法會</a></li><li><a href="/lixing.html">例行法儀</a></li><li><a href="/fahui.html">報名法儀</a></li><li><a class="current" href="/course-lingji-practice-preview.html">課程</a></li></ul></li>
+        <li><a class="has-dropdown" href="/articles.html">文選</a><ul class="dropdown"><li><a href="/articles.html">全部</a></li><li><a href="/articles.html?category=spiritual">靈．修行</a></li><li><a href="/articles.html?category=worldly">人．俗世</a></li><li><a href="/articles.html?category=spirit-world">異．靈界</a></li><li><a href="/articles.html?category=reading">思．讀物</a></li></ul></li>
+        <li><a href="/membership.html">會員</a></li>
+        <li><span class="has-dropdown">選物</span><ul class="dropdown"><li><a href="/books.html">宇色靈修著作</a></li><li><a href="/spiritual-aesthetics.html">靈性美學館</a></li></ul></li>
+        <li><span class="has-dropdown">影像</span><ul class="dropdown"><li class="nav-group-label"><span>靈元院官方</span></li><li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">YT ｜ 靈元院</a></li><li class="nav-group-label"><span>宇色老師</span></li><li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">YT ｜ 宇色心養生</a></li><li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank" rel="noopener noreferrer">Podcast ｜ 宇色人間書影</a></li><li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8%E7%94%9F/id1556418378" target="_blank" rel="noopener noreferrer">Podcast ｜ 宇色心養生</a></li></ul></li>
+        <li><span class="has-dropdown">社群</span><ul class="dropdown"><li class="nav-group-label"><span>靈元院官方</span></li><li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">FB ｜ 靈元院</a></li><li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer">IG ｜ 靈元院</a></li><li class="nav-group-label"><span>宇色老師</span></li><li><a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">FB ｜ 我在人間－宇色</a></li><li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank" rel="noopener noreferrer">IG ｜ 我在人間－宇色</a></li></ul></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div class="reveal">
+        <p class="eyebrow">Online Course · Spiritual Practice</p>
+        <h1>跟靈乩前輩學靈修的兩堂必修課</h1>
+        <p class="hero-lead">靈乩前輩的修行祕密 × 你所不知道的靈修模式</p>
+        <p class="hero-copy">跑靈山、會靈、啟靈、說靈語，只是走入靈修世界的開始。真正重要的是，你是否理解自己正在經歷什麼，又是否知道這條路將把你帶往哪裡。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
+          <a class="btn btn-ghost" href="#curriculum">查看課程內容</a>
+        </div>
+      </div>
+      <div class="hero-art reveal">
+        <div class="hero-image">
+          <img src="https://pimg.1px.tw/kinkiosel/1537862233-3097905204.jpg" alt="靈乩前輩的修行祕密與靈修模式線上課程主視覺" fetchpriority="high">
+        </div>
+        <div class="hero-seal" aria-hidden="true">靈修辨證</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="facts" aria-label="課程概要">
+    <div class="container facts-grid">
+      <div class="fact"><small>FORMAT</small><strong>線上課程</strong></div>
+      <div class="fact"><small>PROGRAM</small><strong>兩堂主題講座</strong></div>
+      <div class="fact"><small>CORE</small><strong>靈修模式 × 靈乩養成</strong></div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section section-soft">
+      <div class="container opening-grid">
+        <div class="reveal">
+          <span class="section-label">Why This Course</span>
+          <h2>走了多年靈修路，卻仍不知道自己究竟在修什麼？</h2>
+        </div>
+        <div class="opening-copy reveal">
+          <blockquote class="opening-quote">靈修走得好不好，觀念往往比勤跑靈山更重要。</blockquote>
+          <p>近年預約問事中，宇色發現許多靈修人走過多年的會靈、跑靈山、赦因果與接旨令，擁有靈動與感應，心中卻仍然沒有一張完整的地圖。</p>
+          <p>真正的問題不在於經歷得太少，而是缺少足以理解這些經歷的觀念：靈修模式從何而來？不同系統的修法為何不一樣？靈乩與乩童的差別是什麼？一味追求靈動，又可能讓修行走向什麼結果？</p>
+          <p>這門課將過往零散、神祕且少有人整理的資料，放回台灣民間信仰的歷史與修行脈絡中，讓你重新看懂自己走過的路。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="container research-grid">
+        <div class="reveal">
+          <span class="section-label">Research Foundation</span>
+          <h2>不是傳聞拼湊，而是一整年的研究與近三十年的實修經驗</h2>
+          <p class="section-intro">2014年，宇色完成碩士學位，研究的不是諮商或心理，而是自己長年置身其中、也最想釐清的台灣靈修世界。</p>
+          <div class="milestones">
+            <div class="milestone"><b>2014</b><span>完成碩士研究</span></div>
+            <div class="milestone"><b>65</b><span>筆專書、論文與前人研究</span></div>
+            <div class="milestone"><b>2016</b><span>開始開設相關講座</span></div>
+            <div class="milestone"><b>30</b><span>近三十年靈修與教學經驗</span></div>
+          </div>
+        </div>
+        <aside class="research-card reveal">
+          <span class="section-label">Master's Thesis</span>
+          <h3 class="thesis-title">《台灣民間信仰中靈修模式之研究》</h3>
+          <p class="thesis-meta">從靈修、會靈山、民間信仰、靈乩、道教與瑤池金母信仰等角度，探討台灣靈修的崛起、不同模式及靈乩養成歷程。</p>
+          <a class="research-link" href="https://nhuir.nhu.edu.tw/handle/987654321/16921" target="_blank" rel="noopener noreferrer">查看南華大學機構典藏</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-paper" id="curriculum">
+      <div class="container">
+        <div class="curriculum-head reveal">
+          <div><span class="section-label">Course Curriculum</span><h2>兩堂課，重新建立你的靈修地圖</h2></div>
+          <p class="section-intro">從靈修系統的源流，到靈乩前輩的生命經驗，理解能力、心法、修為與使命之間真正的關係。</p>
+        </div>
+        <div class="module-stack">
+          <article class="module reveal">
+            <div class="module-side">
+              <span class="module-no">LESSON 01</span>
+              <h3>台灣民間信仰中，你所不知道的靈修模式</h3>
+              <p>從瑤池金母、東王公與會靈山系統，理解台灣靈修派不同的修行路徑。</p>
+            </div>
+            <div class="module-list">
+              <div class="topic"><small>01</small><h4>瑤池金母與無極老母</h4><p>理解瑤池金母如何從神話走入民間，成為台灣靈修信仰的重要主神，以及無極老母與瑤池金母之間的關係。</p></div>
+              <div class="topic"><small>02</small><h4>東王公靈修系統</h4><p>東王公系統為何主張靜心？前輩黃阿寬為何警告，一味以靈動方式會靈，可能造成修行與精神狀態失衡？</p></div>
+              <div class="topic"><small>03</small><h4>兩大系統的差異</h4><p>比較瑤池金母系統與東王公系統在會靈、靜心、身心修鍊及元神修持上的不同。</p></div>
+              <div class="topic"><small>04</small><h4>靈乩養成與復古收圓</h4><p>靈修人如何走向靈乩階段？代天行道、開宮辦事與復古收圓，分別代表什麼樣的使命觀？</p></div>
+            </div>
+          </article>
+
+          <article class="module reveal">
+            <div class="module-side">
+              <span class="module-no">LESSON 02</span>
+              <h3>靈乩前輩的修行祕密</h3>
+              <p>從乩的歷史、類型與前輩故事，辨識一位神職人員是否真正具有修為。</p>
+            </div>
+            <div class="module-list">
+              <div class="topic"><small>01</small><h4>台灣民間信仰中「乩」的種類</h4><p>認識乩童、鸞乩、靈乩與聖乩的差別，以及東方的乩與西方薩滿、巫者及靈媒之間的關係。</p></div>
+              <div class="topic"><small>02</small><h4>靈乩與乩童的混淆</h4><p>從台灣宗教發展的重要分水嶺，理解靈乩的使命、修行模式與外在特質。</p></div>
+              <div class="topic"><small>03</small><h4>六十年前的靈乩大鬥法</h4><p>淡水天元宮的一場靈乩大會，如何因人性演變成鬥法，又留下什麼值得後人警惕的修行課題？</p></div>
+              <div class="topic"><small>04</small><h4>林千代與三霞二黃</h4><p>從林千代、方美霞、陳玉霞、許秋霞與兩位黃姓前輩的故事，看見靈乩的崛起、修行與沉寂。</p></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="principle">
+      <div class="narrow reveal">
+        <div class="principle-mark"></div>
+        <blockquote>靈修真正要完成的，不是累積更多神祕經驗，而是讓每一次經驗，最終都能回到心性的改變。</blockquote>
+        <p>靈山在何處？靈山在汝心頭。</p>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="container">
+        <span class="section-label reveal">Who It Is For</span>
+        <h2 class="reveal">這門課適合現在的你嗎？</h2>
+        <div class="audience-grid">
+          <article class="audience-card reveal">
+            <h3>適合這樣的你</h3>
+            <ul class="check-list">
+              <li>已接觸靈修、啟靈、靈動或靈語，卻缺少完整觀念。</li>
+              <li>跑靈山、會靈多年，仍不確定自己究竟在修什麼。</li>
+              <li>想理解瑤池金母與東王公靈修系統的不同。</li>
+              <li>想辨識乩童、鸞乩、靈乩與聖乩的差異。</li>
+              <li>希望從研究與前輩經驗，重新檢視自己的修行方向。</li>
+            </ul>
+          </article>
+          <article class="audience-card dark-card reveal">
+            <h3>這門課不教什麼</h3>
+            <ul class="check-list">
+              <li>不以快速開啟通靈能力或追求神通為目的。</li>
+              <li>不替學員判定主神、天命或靈界身分。</li>
+              <li>不鼓勵脫離日常生活與現實責任的修行方式。</li>
+              <li>不以課程內容取代醫療、心理諮商或其他專業協助。</li>
+              <li>不將靈動與感應直接等同於修為或靈性層次。</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="container teacher-grid">
+        <div class="teacher-mark reveal" aria-hidden="true"><span>宇色</span></div>
+        <div class="teacher-copy reveal">
+          <span class="section-label">Instructor</span>
+          <h2>宇色老師</h2>
+          <p class="teacher-name">OSEL · SPIRITUAL WRITER &amp; TEACHER</p>
+          <p>宇色投入靈修近三十年，長期研究元神、靈乩、會靈山與台灣民間信仰，並將親身經驗、田野觀察與學術研究整理成多部靈修著作。</p>
+          <p>這門課不是單純講述神祕故事，而是將難以整理的靈修現象放回歷史、宗教與修行脈絡中，協助學員理解自身經驗，建立更穩定、更清楚的靈修觀念。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-paper">
+      <div class="container">
+        <span class="section-label reveal">Student Voices</span>
+        <h2 class="reveal">過往學員回饋</h2>
+        <div class="testimonials">
+          <article class="testimonial reveal"><p>課程很精彩。萬物之中的神祕色彩無窮無盡，而靈修最終仍是踏實地回歸自己。</p><span>過往學員回饋</span></article>
+          <article class="testimonial reveal"><p>課堂上調整靜坐姿勢後，回家練習時氣真的順暢許多，身體不再那麼僵硬，也能慢慢拉長靜坐時間。雖然進步像點滴一樣緩慢，但我知道自己沒有停在原地。</p><span>過往學員回饋</span></article>
+          <article class="testimonial reveal"><p>幾個小時的課程內容，是我可能要讀十幾本書，才有機會逐步整理出的觀念。從知識到對自己心性的察覺，都不是三言兩語可以說完的。</p><span>過往學員回饋</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="narrow">
+        <span class="section-label reveal">Frequently Asked Questions</span>
+        <h2 class="reveal">課程常見問題</h2>
+        <div class="faq-list reveal">
+          <details><summary>完全沒有靈修經驗，也可以參加嗎？</summary><p>可以。課程會從台灣民間信仰的靈修模式開始建立觀念，不要求學員必須已經啟靈、靈動或說靈語。</p></details>
+          <details><summary>已經跑靈山很多年，這門課還適合我嗎？</summary><p>適合。這門課的重點不是增加更多神祕經驗，而是重新整理你已經歷過的現象，理解不同修行系統與前輩經驗背後的脈絡。</p></details>
+          <details><summary>這門課會教我開啟通靈能力嗎？</summary><p>不會。課程著重觀念、辨識與修行方向，不以快速開啟特殊能力或判定個人靈界身分為目的。</p></details>
+          <details><summary>海外學員可以報名嗎？</summary><p>本課程為線上形式，原則上不受地區限制；實際付款方式與課程寄發方式，請以報名頁面的最新說明為準。</p></details>
+          <details><summary>購買後如何取得課程？可以觀看多久？</summary><p>正式觀看方式與期限將依現行課程方案公告。預覽頁確認後，會在正式頁面補上完整且明確的資訊。</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" id="register">
+      <div class="narrow reveal">
+        <span class="section-label">Begin Your Study</span>
+        <h2>走得更遠以前，先看懂自己正在走的路。</h2>
+        <p>從台灣民間信仰的靈修模式，到靈乩前輩留下的經驗，重新建立一套能夠辨識、思考與安定自己的修行觀念。</p>
+        <a class="btn btn-primary" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
+        <span class="final-note">線上課程｜報名及觀看方式以報名頁面公告為準</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院">
+        <div class="footer-links">
+          <a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a>
+          <a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a>
+          <a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a>
+          <a href="https://t.me/lyyuan_channel" target="_blank" rel="noopener noreferrer" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a>
+          <a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></a>
+        </div>
+        <p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="mobile-cta"><a href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a></div>
+
+  <script>
+    (()=>{
+      const nav=document.querySelector('nav');
+      if(!nav)return;
+      const triggers=[...nav.querySelectorAll('.nav-links>li>.has-dropdown')];
+      const mq=window.matchMedia('(max-width:768px)');
+      const close=()=>nav.querySelectorAll('.open').forEach(item=>item.classList.remove('open'));
+      triggers.forEach(trigger=>{
+        if(trigger.matches('a[href]'))return;
+        const item=trigger.closest('li');
+        trigger.addEventListener('click',event=>{
+          if(!mq.matches)return;
+          event.preventDefault();
+          event.stopPropagation();
+          const open=item.classList.contains('open');
+          close();
+          if(!open)item.classList.add('open');
+        });
+      });
+      document.addEventListener('click',event=>{if(!nav.contains(event.target))close()});
+    })();
+
+    if('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+        if(entry.isIntersecting){entry.target.classList.add('on');observer.unobserve(entry.target)}
+      }),{threshold:.1,rootMargin:'0px 0px -40px'});
+      document.querySelectorAll('.reveal').forEach(element=>observer.observe(element));
+    }else{
+      document.querySelectorAll('.reveal').forEach(element=>element.classList.add('on'));
+    }
+  </script>
+  <script type="module" src="/site-auth-nav.js?v=20260824-auth-mobile-layout-2"></script>
+</body>
+</html>
