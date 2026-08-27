@@ -259,8 +259,20 @@
     .fact small{margin-bottom:3px}
     .fact strong{font-size:18px}
     .section{padding:72px 0}
+    section[id]{scroll-margin-top:124px}
     .section h2{font-size:clamp(28px,3.5vw,42px);line-height:1.45}
     .section-intro{margin-top:15px;font-size:15px;line-height:1.85}
+
+    .course-subnav{position:sticky;top:56px;z-index:82;border-bottom:1px solid rgba(165,130,84,.2);background:rgba(250,247,241,.95);box-shadow:0 9px 26px rgba(48,39,31,.08);backdrop-filter:blur(18px)}
+    .course-subnav-inner{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:30px}
+    .course-subnav-links{display:flex;align-items:center;gap:30px;min-width:0;overflow-x:auto;scrollbar-width:none}
+    .course-subnav-links::-webkit-scrollbar{display:none}
+    .course-subnav-links a{position:relative;flex:0 0 auto;padding:17px 0 15px;color:#6f655b;font-size:12.5px;letter-spacing:.08em;white-space:nowrap}
+    .course-subnav-links a:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--clay);transform:scaleX(0);transform-origin:left;transition:transform .2s}
+    .course-subnav-links a:hover{color:var(--ink)}
+    .course-subnav-links a:hover:after{transform:scaleX(1)}
+    .course-subnav-cta{flex:0 0 auto;display:inline-flex;min-height:38px;align-items:center;justify-content:center;padding:8px 20px;background:var(--gold);color:#fff;font-size:11.5px;letter-spacing:.12em;transition:background .2s}
+    .course-subnav-cta:hover{background:var(--clay)}
 
     .focus-grid{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:58px;align-items:start}
     .focus-note{margin:0;padding:26px 29px;border-left:3px solid var(--clay);background:#fff;font-family:var(--serif);font-size:21px;line-height:1.7;box-shadow:0 14px 34px rgba(48,39,31,.07)}
@@ -414,6 +426,12 @@
       .hero-lead{font-size:17px;line-height:1.7}
       .hero-copy{font-size:14px;line-height:1.75}
       .hero-image{aspect-ratio:3/2}
+      section[id]{scroll-margin-top:112px}
+      .course-subnav{top:58px}
+      .course-subnav-inner{width:100%;min-height:49px;padding-left:15px}
+      .course-subnav-links{gap:22px;padding-right:15px}
+      .course-subnav-links a{padding:13px 0 11px;font-size:11.5px}
+      .course-subnav-cta{display:none}
       .facts-grid{grid-template-columns:repeat(3,1fr)}
       .fact{padding:13px 10px;text-align:center;border-right:1px solid var(--line);border-bottom:0}
       .fact strong{font-size:13px;line-height:1.5}
@@ -503,6 +521,19 @@
       <div class="fact"><small>CORE</small><strong>靈修模式 × 靈乩養成</strong></div>
     </div>
   </section>
+
+  <div class="course-subnav" aria-label="課程內容導覽">
+    <div class="container course-subnav-inner">
+      <div class="course-subnav-links">
+        <a href="#course-video">課程介紹</a>
+        <a href="#research">研究基礎</a>
+        <a href="#curriculum">課程內容</a>
+        <a href="#instructor">講師介紹</a>
+        <a href="#faq">常見問題</a>
+      </div>
+      <a class="course-subnav-cta" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
+    </div>
+  </div>
 
   <main>
     <section class="section section-soft course-video-section" id="course-video">
@@ -639,7 +670,7 @@
       </div>
     </section>
 
-    <section class="section section-paper compact-faq">
+    <section class="section section-paper compact-faq" id="faq">
       <div class="narrow">
         <span class="section-label reveal">Frequently Asked Questions</span>
         <h2 class="reveal">課程常見問題</h2>
