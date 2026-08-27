@@ -187,9 +187,7 @@
     .footer-copy{margin:0;font-size:11px;color:rgba(245,240,232,.2);letter-spacing:.12em}
     .mobile-cta{display:none}
 
-    .reveal{opacity:1;transform:none}
-    .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
-    .js .reveal.on{opacity:1;transform:none}
+    .reveal,.js .reveal,.js .reveal.on{opacity:1;transform:none;transition:none}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .reveal{opacity:1;transform:none;transition:none}.btn{transition:none}}
 
     @media(max-width:920px){
