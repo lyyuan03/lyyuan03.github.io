@@ -7,6 +7,7 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="description" content="以《台灣民間信仰中靈修模式之研究》為研究基礎，帶你理解台灣靈修模式、靈乩養成與前輩修行經驗。">
   <title>課程預覽｜跟靈乩前輩學靈修的兩堂必修課｜靈元院</title>
+  <script>document.documentElement.classList.add('js')</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -182,9 +183,10 @@
     .footer-copy{margin:0;font-size:11px;color:rgba(245,240,232,.2);letter-spacing:.12em}
     .mobile-cta{display:none}
 
-    .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
-    .reveal.on{opacity:1;transform:none}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.btn{transition:none}}
+    .reveal{opacity:1;transform:none}
+    .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+    .js .reveal.on{opacity:1;transform:none}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .reveal{opacity:1;transform:none;transition:none}.btn{transition:none}}
 
     @media(max-width:920px){
       .hero{min-height:auto;padding:132px 0 86px}
