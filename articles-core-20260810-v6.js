@@ -113,6 +113,7 @@ const articleHooks = {
 
 let loadedArticles = [];
 let articlesLoadCompleted = false;
+let articlesLoadSerial = 0;
 let articleMetrics = new Map();
 let currentUser = null;
 let currentMemberAccess = null;
@@ -858,6 +859,7 @@ function withTimeout(promise, timeoutMs, label) {
 }
 
 async function loadArticles() {
+  const loadSerial = ++articlesLoadSerial;
   articlesLoadCompleted = false;
   renderTabs();
   const adminDraftPreview = isAdminEmail(currentUser?.email);
@@ -868,12 +870,14 @@ async function loadArticles() {
   const statusRequest = getDoc(doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID));
   const [articlesResult, statusResult] = await Promise.allSettled([withTimeout(articlesRequest, 8000, adminDraftPreview ? "管理者文章載入" : "已發布文章載入"), withTimeout(statusRequest, 8000, "文章狀態索引載入")]);
   if (articlesResult.status === "rejected") {
+    if (loadSerial !== articlesLoadSerial) return;
     articlesLoadCompleted = true;
     loadedArticles = [];
     console.warn(adminDraftPreview ? "Firebase 管理者文章暫時無法載入。" : "Firebase 已發布文章暫時無法載入。", articlesResult.reason);
     root.innerHTML = '<div class="empty">後台文章暫時無法載入，請稍後再試。</div>';
     return;
   }
+  if (loadSerial !== articlesLoadSerial) return;
   const firestoreArticles = articlesResult.value.docs
     .map((item) => ({ id: item.id, ...item.data(), __articleSource: "firestore" }))
     .filter((article) => article.hidden !== true && article.systemRecord !== true);
@@ -957,6 +961,7 @@ async function loadArticles() {
     return article;
   });
   const hydratedArticles = await Promise.all(normalizedArticles.map((article) => activeId && (article.id === activeId || article.slug === activeId) ? withTimeout(hydrateEventArticle(article), 8000, "活動文章權限確認").catch(() => article) : article));
+  if (loadSerial !== articlesLoadSerial) return;
   loadedArticles = hydratedArticles.sort(sortPublished);
   articlesLoadCompleted = true;
   renderTabs();
@@ -964,12 +969,8 @@ async function loadArticles() {
   void loadArticleMetrics().then(() => loadedArticles.forEach((article) => updateMetricSummary(articleKey(article))));
 }
 
-loadArticles().catch((error) => {
-  articlesLoadCompleted = true;
-  console.error(error);
-  root.innerHTML = '<div class="empty">文章暫時無法載入，請稍後再試。</div>';
-});
-
+// 首次載入統一交給 onAuthStateChanged。
+ // 先確認登入身分再決定是否可讀取草稿，避免「公開文章查詢」與「管理者草稿查詢」互相覆蓋。
 let lastVisibleRefreshAt = Date.now();
 document.addEventListener("visibilitychange", async () => {
   if (document.visibilityState !== "visible") return;
