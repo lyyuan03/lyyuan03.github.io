@@ -1,4 +1,4 @@
-// Sponsor article access deployment marker: 20260828-admin-draft-preview-3
+// Sponsor article access deployment marker: 20260828-admin-draft-preview-4
 const articleRoot = document.getElementById("article-root");
 
 const CONSTRUCTION_TITLE_OVERRIDES = new Map([
@@ -81,8 +81,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260828-admin-draft-preview-3",
-    "./articles-core-20260810-v6.js?v=20260828-admin-draft-preview-3&retry=1"
+    "./articles-core-20260810-v6.js?v=20260828-admin-draft-preview-4",
+    "./articles-core-20260810-v6.js?v=20260828-admin-draft-preview-4&retry=1"
   ];
   let lastError = null;
 
@@ -109,8 +109,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260828-admin-draft-preview-3"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260828-admin-draft-preview-3"],
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260828-admin-draft-preview-4"],
+    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260828-admin-draft-preview-4"],
     ["建院見證專頁", "./construction-record-page.js?v=20260822-construction-title-1"],
     ["建院限定閱讀", "./construction-cover-lock.js?v=20260825-email-decrypt-fix-2"]
   ];
