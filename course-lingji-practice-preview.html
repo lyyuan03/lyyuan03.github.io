@@ -532,12 +532,144 @@
       .instructor-photo{width:min(330px,100%);margin:0 auto}
       .instructor-copy h2{font-size:37px}
     }
+
+    /* Motion direction: spiritual geometry × restrained futurism */
+    .page-progress{position:fixed;top:56px;left:0;right:0;z-index:121;height:2px;pointer-events:none;background:linear-gradient(90deg,var(--slate),var(--plum),var(--clay),var(--gold-light));transform:scaleX(0);transform-origin:left center;box-shadow:0 0 14px rgba(200,170,123,.5);will-change:transform}
+
+    .hero{--motion-x:0px;--motion-y:0px;min-height:660px;padding:138px 0 106px;isolation:isolate;background:#09110d}
+    .hero:before{background:radial-gradient(circle at 74% 38%,rgba(112,90,112,.2),transparent 25%),radial-gradient(circle at 24% 70%,rgba(96,115,134,.18),transparent 30%),radial-gradient(circle at 54% 42%,rgba(165,130,84,.12),transparent 36%),linear-gradient(135deg,#08100c 0%,#0f1a14 50%,#17150f 100%);background-size:120% 120%;animation:ambientDrift 18s ease-in-out infinite alternate}
+    .hero:after{opacity:.2;background-image:linear-gradient(rgba(200,170,123,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(96,115,134,.07) 1px,transparent 1px);background-size:74px 74px;mask-image:radial-gradient(circle at 63% 46%,black,transparent 74%);animation:gridDrift 24s linear infinite}
+    .hero-grid{position:relative;z-index:3;display:block}
+    .hero-content{position:relative;max-width:1040px}
+    .eyebrow{display:flex;align-items:center;gap:16px;margin-bottom:17px}
+    .eyebrow:after{content:"";width:118px;height:1px;background:linear-gradient(90deg,var(--gold-light),transparent);transform-origin:left}
+    .hero h1{max-width:100%;font-size:clamp(50px,6.6vw,88px);line-height:1.18;letter-spacing:.045em}
+    .hero-title-line{display:block}
+    .hero-title-accent{width:max-content;max-width:100%;color:var(--gold-light);background:linear-gradient(96deg,#f4eee4 0%,#d5bb8d 42%,#f4eee4 76%,#aab7c3 100%);background-size:220% auto;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:titleLight 9s ease-in-out infinite}
+    .hero-lead{max-width:920px;margin-top:22px;font-size:clamp(20px,2.2vw,27px);line-height:1.65}
+    .hero-copy{max-width:790px;margin-top:18px;color:rgba(245,240,232,.76);font-size:17px;font-weight:400;line-height:1.85}
+    .hero-actions{margin-top:30px}
+    .hero-cosmos{position:absolute;z-index:1;right:-4vw;top:50%;width:min(54vw,720px);aspect-ratio:1;pointer-events:none;opacity:.66;transform:translate3d(var(--motion-x),calc(-50% + var(--motion-y)),0);transition:transform .5s cubic-bezier(.2,.7,.2,1);filter:drop-shadow(0 0 30px rgba(200,170,123,.08))}
+    .cosmos-orbit{position:absolute;left:50%;top:50%;border:1px solid rgba(200,170,123,.2);border-radius:50%;transform:translate(-50%,-50%);will-change:transform}
+    .cosmos-orbit:before,.cosmos-orbit:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 16px rgba(200,170,123,.75)}
+    .cosmos-orbit:before{left:50%;top:-4px}
+    .cosmos-orbit:after{right:7%;bottom:18%}
+    .orbit-one{width:82%;height:82%;border-color:rgba(200,170,123,.22);animation:orbitClockwise 34s linear infinite}
+    .orbit-two{width:60%;height:60%;border-style:dashed;border-color:rgba(96,115,134,.28);animation:orbitCounter 25s linear infinite}
+    .orbit-three{width:38%;height:38%;border-color:rgba(112,90,112,.35);animation:orbitClockwise 17s linear infinite}
+    .cosmos-axis{position:absolute;left:50%;top:50%;background:linear-gradient(90deg,transparent,rgba(200,170,123,.23),transparent);transform:translate(-50%,-50%)}
+    .axis-horizontal{width:94%;height:1px}
+    .axis-vertical{width:1px;height:94%;background:linear-gradient(transparent,rgba(96,115,134,.24),transparent)}
+    .cosmos-core{position:absolute;left:50%;top:50%;width:16px;height:16px;border:1px solid rgba(245,240,232,.7);border-radius:50%;background:rgba(200,170,123,.22);transform:translate(-50%,-50%);box-shadow:0 0 0 9px rgba(200,170,123,.05),0 0 34px rgba(200,170,123,.45);animation:corePulse 4.6s ease-in-out infinite}
+
+    .facts{margin-top:-47px}
+    .facts-grid{position:relative;overflow:hidden;background:rgba(12,22,17,.96);border:1px solid rgba(200,170,123,.22);color:var(--paper);box-shadow:0 24px 62px rgba(13,18,14,.27);backdrop-filter:blur(18px)}
+    .fact{position:relative;min-height:104px;padding:22px 28px 20px 84px;overflow:hidden;border-top:0!important;border-right:1px solid rgba(200,170,123,.16);background:linear-gradient(135deg,rgba(255,255,255,.025),transparent 60%)}
+    .fact:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,var(--slate),var(--gold-light));transform-origin:left}
+    .fact:nth-child(2):before{background:linear-gradient(90deg,var(--plum),var(--gold-light))}
+    .fact:nth-child(3):before{background:linear-gradient(90deg,var(--clay),var(--gold-light))}
+    .fact:after{content:"";position:absolute;inset:-40% auto -40% -38%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);transform:skewX(-18deg);pointer-events:none}
+    .fact-index{position:absolute;left:23px;top:50%;color:rgba(200,170,123,.28);font-family:var(--en);font-size:38px;line-height:1;transform:translateY(-50%)}
+    .fact small{margin-bottom:2px;color:rgba(200,170,123,.82);font-size:11.5px}
+    .fact strong{color:var(--paper);font-size:22px;line-height:1.5}
+    .facts-grid.on .fact:after{animation:factScan 7.8s ease-in-out infinite}
+    .facts-grid.on .fact:nth-child(2):after{animation-delay:1.3s}
+    .facts-grid.on .fact:nth-child(3):after{animation-delay:2.6s}
+
+    .btn{position:relative;overflow:hidden}
+    .btn:after{content:"";position:absolute;inset:-1px;pointer-events:none;background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.22) 48%,transparent 70%);transform:translateX(-125%);transition:transform .65s ease}
+    .btn:hover:after{transform:translateX(125%)}
+    .course-subnav-links a.active{color:var(--ink)}
+    .course-subnav-links a.active:after{transform:scaleX(1)}
+    .section-label{display:flex;align-items:center;gap:11px;width:max-content;max-width:100%}
+    .section-label:after{content:"";width:42px;height:1px;background:linear-gradient(90deg,currentColor,transparent);opacity:.65}
+    .section-dark:before,.instructor-feature:before{animation:darkAura 15s ease-in-out infinite alternate}
+    .gentle-section:before{animation:softAura 16s ease-in-out infinite alternate}
+    .course-video-frame{overflow:hidden}
+    .course-video-frame:after{content:"";position:absolute;z-index:3;left:-35%;top:0;width:22%;height:100%;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(255,255,255,.11),transparent);transform:skewX(-16deg);animation:frameScan 10s ease-in-out infinite}
+    .instructor-photo{overflow:hidden}
+    .instructor-photo:after{content:"";position:absolute;z-index:3;inset:0;pointer-events:none;border:1px solid transparent;background:linear-gradient(115deg,rgba(200,170,123,.55),transparent 28%,transparent 70%,rgba(96,115,134,.42)) border-box;mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);mask-composite:exclude;opacity:.5;animation:borderBreath 6s ease-in-out infinite}
+    .compact-principle .principle-mark{animation:lineBreath 4.8s ease-in-out infinite}
+
+    .motion-ready .reveal{opacity:0;transform:translate3d(0,28px,0);transition:opacity .82s ease,transform .9s cubic-bezier(.2,.65,.2,1)}
+    .motion-ready .reveal.on{opacity:1;transform:none}
+    .motion-ready .hero-content .eyebrow,.motion-ready .hero-content h1,.motion-ready .hero-content .hero-lead,.motion-ready .hero-content .hero-copy,.motion-ready .hero-content .hero-actions{opacity:0;transform:translate3d(0,24px,0)}
+    .motion-ready .hero-content.on .eyebrow,.motion-ready .hero-content.on h1,.motion-ready .hero-content.on .hero-lead,.motion-ready .hero-content.on .hero-copy,.motion-ready .hero-content.on .hero-actions{animation:contentRise .9s cubic-bezier(.2,.65,.2,1) forwards}
+    .motion-ready .hero-content.on h1{animation-delay:.08s}
+    .motion-ready .hero-content.on .hero-lead{animation-delay:.18s}
+    .motion-ready .hero-content.on .hero-copy{animation-delay:.28s}
+    .motion-ready .hero-content.on .hero-actions{animation-delay:.38s}
+    .motion-ready .facts-grid .fact{opacity:0;transform:translate3d(0,22px,0)}
+    .motion-ready .facts-grid.on .fact{animation:contentRise .72s cubic-bezier(.2,.65,.2,1) forwards}
+    .motion-ready .facts-grid.on .fact:nth-child(2){animation-delay:.12s}
+    .motion-ready .facts-grid.on .fact:nth-child(3){animation-delay:.24s}
+    .motion-ready .learning-path .path-steps:before{transform:scaleX(0);transform-origin:left}
+    .motion-ready .learning-path.on .path-steps:before{animation:pathDraw 1.25s .25s ease forwards}
+    .motion-ready .learning-path .path-step{opacity:0;transform:translate3d(0,14px,0) scale(.96)}
+    .motion-ready .learning-path.on .path-step{animation:nodeReveal .58s ease forwards}
+    .motion-ready .learning-path.on .path-step:nth-child(1){animation-delay:.2s}
+    .motion-ready .learning-path.on .path-step:nth-child(2){animation-delay:.36s}
+    .motion-ready .learning-path.on .path-step:nth-child(3){animation-delay:.52s}
+    .motion-ready .learning-path.on .path-step:nth-child(4){animation-delay:.68s}
+    .motion-ready .learning-path.on .path-step:nth-child(5){animation-delay:.84s}
+    .motion-ready .book-shelf .book-item,.motion-ready .stage-grid .stage-card{opacity:0;transform:translate3d(0,22px,0)}
+    .motion-ready .book-shelf.on .book-item,.motion-ready .stage-grid.on .stage-card{animation:contentRise .68s ease forwards}
+    .motion-ready .book-shelf.on a:nth-child(2) .book-item,.motion-ready .stage-grid.on .stage-card:nth-child(2){animation-delay:.13s}
+    .motion-ready .book-shelf.on a:nth-child(3) .book-item,.motion-ready .stage-grid.on .stage-card:nth-child(3){animation-delay:.26s}
+
+    @keyframes ambientDrift{0%{background-position:0% 0%;filter:saturate(.92)}100%{background-position:100% 70%;filter:saturate(1.08)}}
+    @keyframes gridDrift{to{background-position:74px 74px}}
+    @keyframes orbitClockwise{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+    @keyframes orbitCounter{from{transform:translate(-50%,-50%) rotate(360deg)}to{transform:translate(-50%,-50%) rotate(0deg)}}
+    @keyframes corePulse{0%,100%{opacity:.58;box-shadow:0 0 0 8px rgba(200,170,123,.04),0 0 24px rgba(200,170,123,.28)}50%{opacity:1;box-shadow:0 0 0 14px rgba(200,170,123,.06),0 0 42px rgba(200,170,123,.5)}}
+    @keyframes titleLight{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    @keyframes factScan{0%,18%{left:-38%;opacity:0}28%{opacity:1}48%,100%{left:118%;opacity:0}}
+    @keyframes frameScan{0%,68%{left:-35%;opacity:0}76%{opacity:1}92%,100%{left:125%;opacity:0}}
+    @keyframes contentRise{to{opacity:1;transform:none}}
+    @keyframes pathDraw{to{transform:scaleX(1)}}
+    @keyframes nodeReveal{to{opacity:1;transform:none}}
+    @keyframes darkAura{0%{transform:translate3d(-1.5%,-1%,0) scale(1.02)}100%{transform:translate3d(1.5%,1%,0) scale(1.07)}}
+    @keyframes softAura{0%{transform:translate3d(-1%,0,0)}100%{transform:translate3d(1%,1%,0)}}
+    @keyframes borderBreath{0%,100%{opacity:.24}50%{opacity:.68}}
+    @keyframes lineBreath{0%,100%{width:46px;opacity:.62}50%{width:82px;opacity:1}}
+
+    @media(max-width:920px){
+      .hero{min-height:620px;padding:126px 0 96px}
+      .hero-content{max-width:840px}
+      .hero-cosmos{right:-24vw;width:760px;opacity:.48}
+      .hero h1{font-size:clamp(48px,8vw,72px)}
+    }
+    @media(max-width:768px){
+      .page-progress{top:58px}
+      .hero{padding:118px 0 78px}
+      .hero h1{font-size:clamp(40px,12vw,56px);line-height:1.24}
+      .hero-title-accent{width:auto}
+      .hero-lead{font-size:19px;line-height:1.6}
+      .hero-copy{font-size:15.5px;line-height:1.75}
+      .hero-cosmos{right:-310px;width:610px;opacity:.34}
+      .eyebrow:after{width:64px}
+      .facts{margin-top:-28px}
+      .facts-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+      .facts-grid::-webkit-scrollbar{display:none}
+      .fact{flex:0 0 78%;min-height:102px;padding:20px 21px 18px 73px;text-align:left;scroll-snap-align:center}
+      .fact-index{left:20px;font-size:34px}
+      .fact small{font-size:10.5px}
+      .fact strong{font-size:20px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .page-progress{display:none}
+      .hero:before,.hero:after,.hero-title-accent,.cosmos-orbit,.cosmos-core,.facts-grid.on .fact:after,.course-video-frame:after,.instructor-photo:after,.compact-principle .principle-mark,.section-dark:before,.instructor-feature:before,.gentle-section:before{animation:none!important}
+      .hero-cosmos{transform:translate3d(0,-50%,0)!important;transition:none}
+      .motion-ready .reveal,.motion-ready .reveal.on,.motion-ready .hero-content *,.motion-ready .facts-grid .fact,.motion-ready .learning-path .path-step,.motion-ready .book-shelf .book-item,.motion-ready .stage-grid .stage-card{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
+      .motion-ready .learning-path .path-steps:before{transform:scaleX(1)!important;animation:none!important}
+    }
   </style>
   <script src="/analytics-config.js"></script>
   <script src="/analytics.js" defer></script>
 </head>
 <body>
   <div class="preview-badge">PREVIEW · 課程頁預覽</div>
+  <div class="page-progress" aria-hidden="true"></div>
 
   <nav aria-label="主要導覽">
     <div class="nav-inner">
@@ -554,10 +686,18 @@
   </nav>
 
   <header class="hero">
+    <div class="hero-cosmos" aria-hidden="true">
+      <span class="cosmos-orbit orbit-one"></span>
+      <span class="cosmos-orbit orbit-two"></span>
+      <span class="cosmos-orbit orbit-three"></span>
+      <span class="cosmos-axis axis-horizontal"></span>
+      <span class="cosmos-axis axis-vertical"></span>
+      <span class="cosmos-core"></span>
+    </div>
     <div class="container hero-grid">
-      <div class="reveal">
+      <div class="hero-content reveal">
         <p class="eyebrow">Online Course · Spiritual Practice</p>
-        <h1>跟靈乩前輩學靈修的兩堂必修課</h1>
+        <h1><span class="hero-title-line">跟靈乩前輩學靈修的</span><span class="hero-title-line hero-title-accent">兩堂必修課</span></h1>
         <p class="hero-lead">靈乩前輩的修行祕密 × 你所不知道的靈修模式</p>
         <p class="hero-copy">有感應，不代表已經看懂靈修。從台灣民間信仰的源流、不同靈修系統，到靈乩前輩的生命經驗，幫你把難以整理的現象，放回可以理解與判斷的脈絡。</p>
         <div class="hero-actions">
@@ -565,20 +705,14 @@
           <a class="btn btn-ghost" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
         </div>
       </div>
-      <div class="hero-art reveal">
-        <div class="hero-image">
-          <img src="https://pimg.1px.tw/kinkiosel/1537862233-3097905204.jpg" alt="靈乩前輩的修行祕密與靈修模式線上課程主視覺" fetchpriority="high">
-        </div>
-        <div class="hero-seal" aria-hidden="true">靈修辨證</div>
-      </div>
     </div>
   </header>
 
   <section class="facts" aria-label="課程概要">
-    <div class="container facts-grid">
-      <div class="fact"><small>FOUNDATION</small><strong>研究 × 實修</strong></div>
-      <div class="fact"><small>PROGRAM</small><strong>兩堂主題講座</strong></div>
-      <div class="fact"><small>OUTCOME</small><strong>建立靈修判斷</strong></div>
+    <div class="container facts-grid reveal">
+      <div class="fact"><span class="fact-index" aria-hidden="true">01</span><small>FOUNDATION</small><strong>研究 × 實修</strong></div>
+      <div class="fact"><span class="fact-index" aria-hidden="true">02</span><small>PROGRAM</small><strong>兩堂主題講座</strong></div>
+      <div class="fact"><span class="fact-index" aria-hidden="true">03</span><small>OUTCOME</small><strong>建立靈修判斷</strong></div>
     </div>
   </section>
 
@@ -847,14 +981,60 @@
       document.addEventListener('click',event=>{if(!nav.contains(event.target))close()});
     })();
 
-    if('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
-        if(entry.isIntersecting){entry.target.classList.add('on');observer.unobserve(entry.target)}
-      }),{threshold:.1,rootMargin:'0px 0px -40px'});
-      document.querySelectorAll('.reveal').forEach(element=>observer.observe(element));
-    }else{
-      document.querySelectorAll('.reveal').forEach(element=>element.classList.add('on'));
-    }
+    (()=>{
+      const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reveals=[...document.querySelectorAll('.reveal')];
+
+      if('IntersectionObserver' in window&&!reduceMotion){
+        document.documentElement.classList.add('motion-ready');
+        const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            entry.target.classList.add('on');
+            observer.unobserve(entry.target);
+          }
+        }),{threshold:.08,rootMargin:'0px 0px -10%'});
+        requestAnimationFrame(()=>reveals.forEach(element=>observer.observe(element)));
+      }else{
+        reveals.forEach(element=>element.classList.add('on'));
+      }
+
+      const progress=document.querySelector('.page-progress');
+      const subnavLinks=[...document.querySelectorAll('.course-subnav-links a[href^="#"]')];
+      const sectionLinks=subnavLinks.map(link=>({link,target:document.querySelector(link.getAttribute('href'))})).filter(item=>item.target);
+      let scrollTicking=false;
+      const updateScrollState=()=>{
+        const scrollRange=document.documentElement.scrollHeight-window.innerHeight;
+        const ratio=scrollRange>0?Math.min(1,Math.max(0,window.scrollY/scrollRange)):0;
+        if(progress)progress.style.transform=`scaleX(${ratio})`;
+        let current=sectionLinks[0];
+        sectionLinks.forEach(item=>{
+          if(item.target.getBoundingClientRect().top<=window.innerHeight*.42)current=item;
+        });
+        subnavLinks.forEach(link=>link.classList.toggle('active',current&&link===current.link));
+        scrollTicking=false;
+      };
+      window.addEventListener('scroll',()=>{
+        if(scrollTicking)return;
+        scrollTicking=true;
+        requestAnimationFrame(updateScrollState);
+      },{passive:true});
+      updateScrollState();
+
+      const hero=document.querySelector('.hero');
+      if(hero&&!reduceMotion&&window.matchMedia('(pointer:fine)').matches){
+        hero.addEventListener('pointermove',event=>{
+          const rect=hero.getBoundingClientRect();
+          const x=((event.clientX-rect.left)/rect.width-.5)*22;
+          const y=((event.clientY-rect.top)/rect.height-.5)*16;
+          hero.style.setProperty('--motion-x',`${x}px`);
+          hero.style.setProperty('--motion-y',`${y}px`);
+        });
+        hero.addEventListener('pointerleave',()=>{
+          hero.style.setProperty('--motion-x','0px');
+          hero.style.setProperty('--motion-y','0px');
+        });
+      }
+    })();
   </script>
   <script type="module" src="/site-auth-nav.js?v=20260824-auth-mobile-layout-2"></script>
 </body>
