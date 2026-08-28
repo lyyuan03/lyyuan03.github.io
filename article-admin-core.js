@@ -1,5 +1,5 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260813-manual-image-markdown-3";
-import { staticArticles } from "./static-articles.js?v=20260828-yuanqin-final-text-2";
+import { staticArticles } from "./static-articles.js?v=20260828-yuanqin-final-article-images-6";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -14,11 +14,11 @@ const categoryLabels = {
 const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],
   ["2058-future-person-prophecy", "20260816-six-images-1"],
-  ["yuanqin-debt-heart", "20260828-final-text-backend-sync-2"]
+  ["yuanqin-debt-heart", "20260828-final-article-images-backend-sync-6"]
 ]);
 const staticImageSyncRevisions = new Map([
   ["2058-future-person-prophecy", "20260813-2058-inline-slots-4"],
-  ["yuanqin-debt-heart", "20260828-six-images-cover-sync-1"]
+  ["yuanqin-debt-heart", "20260828-final-article-images-cover-sync-6"]
 ]);
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
