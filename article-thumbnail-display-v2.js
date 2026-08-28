@@ -23,6 +23,12 @@ const FIRST_IMAGE_OVERRIDES = {
   "love-beyond-filial-piety-and-ancestor-worship": "assets/articles/love-beyond-filial-piety/from-duty-to-love-v2.webp?v=20260810-original-photo-fix-1"
 };
 
+// 這兩篇文章的縮圖只保留純照片，不在照片上重複疊加靈元院、分類或文章標題文字。
+const TEXT_FREE_THUMBNAIL_IDS = new Set([
+  "yuanqin-debt-heart",
+  "ghost-gate-always-open"
+]);
+
 const CATEGORY_LABELS = {
   spiritual: "靈・修行",
   "spirit-world": "異・靈界",
@@ -239,9 +245,17 @@ function applyCard(card) {
   media.dataset.photoThumbnail = "true";
   delete media.dataset.brandThumbnail;
   delete media.dataset.brandSpecial;
-  ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
-  const titleNode = media.querySelector(".article-photo-thumb-title");
-  if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
+
+  if (TEXT_FREE_THUMBNAIL_IDS.has(articleId)) {
+    media.querySelectorAll(".article-photo-thumb-overlay, .article-brand-thumb-overlay").forEach((node) => node.remove());
+    media.dataset.textFreeThumbnail = "true";
+  } else {
+    delete media.dataset.textFreeThumbnail;
+    ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
+    const titleNode = media.querySelector(".article-photo-thumb-title");
+    if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
+  }
+
   card.dataset.thumbnailConfigured = configuredImage ? "saved-setting" : preservedOriginal ? "original-photo" : overrideImage ? "inline-image-override" : "brand-fallback";
 }
 
