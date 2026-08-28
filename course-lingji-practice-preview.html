@@ -557,13 +557,13 @@
     .forest-ridge-front{color:#10261a;opacity:.96}
     .ancient-tree{transform-box:fill-box;transform-origin:82% 100%;animation:treeBreathe 8.5s ease-in-out infinite alternate}
     .tree-body{filter:drop-shadow(-15px 17px 22px rgba(0,0,0,.28))}
-    .tree-trunk,.tree-limb{fill:url(#hero-tree-trunk);stroke:rgba(221,193,139,.62);stroke-width:2.15;stroke-linejoin:round}
+    .tree-trunk{fill:url(#hero-tree-trunk);stroke:rgba(221,193,139,.62);stroke-width:2.15;stroke-linejoin:round}
+    .tree-branch{fill:none;stroke:url(#hero-tree-trunk);stroke-linecap:round;stroke-linejoin:round}
+    .branch-heavy{stroke-width:50}
+    .branch-mid{stroke-width:34}
+    .branch-fine{stroke-width:21}
     .tree-bark path{fill:none;stroke:url(#hero-tree-gold);stroke-width:1.2;stroke-linecap:round;opacity:.42}
     .canopy-soft{fill:url(#hero-canopy);opacity:.84;filter:url(#hero-canopy-soft);animation:canopyBreathe 9s ease-in-out infinite alternate}
-    .leaf-clusters{transform-box:fill-box;transform-origin:center;animation:leafDrift 7.5s ease-in-out infinite alternate}
-    .leaf-clusters ellipse{fill:#36583d;stroke:rgba(202,218,190,.17);stroke-width:1.4;opacity:.78}
-    .leaf-clusters ellipse:nth-child(3n+2){fill:#416548;opacity:.67}
-    .leaf-clusters ellipse:nth-child(3n){fill:#294b33;opacity:.83}
     .canopy-edge{fill:none;stroke:rgba(221,228,205,.42);stroke-width:2.2;opacity:.88;filter:url(#hero-canopy-soft)}
     .tree-flow-base use,.tree-flow-motion use{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
     .tree-flow-base use{stroke:url(#hero-tree-gold);stroke-width:1.35;opacity:.56}
@@ -573,6 +573,8 @@
     .tree-flow-motion use:nth-child(3),.tree-flow-motion use:nth-child(8){animation-delay:-2.3s}
     .tree-flow-motion use:nth-child(4),.tree-flow-motion use:nth-child(9){animation-delay:-3.45s}
     .tree-flow-motion use:nth-child(5),.tree-flow-motion use:nth-child(10){animation-delay:-4.6s}
+    .tree-flow-motion use:nth-child(11){animation-delay:-2.85s}
+    .tree-flow-motion use:nth-child(12){animation-delay:-4.1s}
     .forest-light{position:absolute;z-index:2;right:1%;top:-3%;width:54%;height:82%;border-radius:50%;background:radial-gradient(ellipse,rgba(230,232,198,.28),rgba(178,201,166,.11) 42%,transparent 73%);filter:blur(14px);animation:forestLight 8.5s ease-in-out infinite alternate}
     .forest-mist{position:absolute;z-index:3;left:-34%;width:168%;height:142px;opacity:.58;filter:blur(17px);mix-blend-mode:screen;will-change:transform;background:radial-gradient(ellipse at 13% 55%,rgba(236,241,232,.5),transparent 19%),radial-gradient(ellipse at 41% 44%,rgba(220,232,221,.42),transparent 24%),radial-gradient(ellipse at 69% 58%,rgba(236,241,232,.38),transparent 21%),radial-gradient(ellipse at 91% 43%,rgba(214,226,216,.36),transparent 18%)}
     .forest-mist:after{content:"";position:absolute;left:8%;right:8%;top:45%;height:1px;background:linear-gradient(90deg,transparent,rgba(235,220,186,.22),transparent);filter:blur(2px)}
@@ -658,7 +660,6 @@
     @keyframes ridgeDrift{0%{transform:translate3d(-7px,0,0)}100%{transform:translate3d(8px,2px,0)}}
     @keyframes treeBreathe{0%{transform:rotate(-.22deg) translateY(1px)}100%{transform:rotate(.38deg) translateY(-4px)}}
     @keyframes canopyBreathe{0%{opacity:.87;transform:translate3d(-2px,2px,0) scale(.995)}100%{opacity:1;transform:translate3d(3px,-3px,0) scale(1.012)}}
-    @keyframes leafDrift{0%{transform:translate3d(-2px,1px,0)}100%{transform:translate3d(4px,-3px,0)}}
     @keyframes treeCurrent{to{stroke-dashoffset:-100}}
     @keyframes forestLight{0%{opacity:.58;transform:translate3d(-2%,1%,0) scale(.96)}100%{opacity:1;transform:translate3d(2%,-1%,0) scale(1.06)}}
     @keyframes mistAcross{0%{transform:translate3d(-9%,0,0)}50%{transform:translate3d(3%,6px,0)}100%{transform:translate3d(14%,0,0)}}
@@ -716,7 +717,7 @@
     }
     @media(prefers-reduced-motion:reduce){
       .page-progress{display:none}
-      .hero:before,.hero-title-accent,.mountain-back,.forest-ridge-back,.ancient-tree,.canopy-soft,.leaf-clusters,.tree-flow-motion use,.forest-light,.forest-mist,.facts-grid.on .fact:after,.course-video-frame:after,.instructor-photo:after,.compact-principle .principle-mark,.section-dark:before,.instructor-feature:before,.gentle-section:before{animation:none!important}
+      .hero:before,.hero-title-accent,.mountain-back,.forest-ridge-back,.ancient-tree,.canopy-soft,.tree-flow-motion use,.forest-light,.forest-mist,.facts-grid.on .fact:after,.course-video-frame:after,.instructor-photo:after,.compact-principle .principle-mark,.section-dark:before,.instructor-feature:before,.gentle-section:before{animation:none!important}
       .forest-scene{transform:scale(1.025)!important;transition:none}
       .motion-ready .reveal,.motion-ready .reveal.on,.motion-ready .hero-content *,.motion-ready .facts-grid .fact,.motion-ready .learning-path .path-step,.motion-ready .book-shelf .book-item,.motion-ready .stage-grid .stage-card{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
       .motion-ready .learning-path .path-steps:before{transform:scaleX(1)!important;animation:none!important}
@@ -775,16 +776,18 @@
             <stop offset=".54" stop-color="#f5d792"></stop>
             <stop offset="1" stop-color="#fff2c9"></stop>
           </linearGradient>
-          <path id="tree-flow-1" pathLength="100" d="M1592 792C1509 716 1453 646 1451 558c-2-97 30-157 21-234-8-73-54-135-50-205 2-43 15-83 40-126"></path>
-          <path id="tree-flow-2" pathLength="100" d="M1574 794c-84-74-137-141-137-229 0-108 19-171-28-238-57-82-158-113-285-151-56-17-108-38-155-69"></path>
-          <path id="tree-flow-3" pathLength="100" d="M1554 795c-85-69-130-135-131-215-2-104-18-155-83-194-74-45-173-53-285-38"></path>
-          <path id="tree-flow-4" pathLength="100" d="M1535 796c-87-65-128-123-130-195-3-91-37-123-103-136-77-15-166-3-262 27"></path>
-          <path id="tree-flow-5" pathLength="100" d="M1516 797c-82-58-119-112-122-177-5-88-55-158-135-219-66-51-142-84-228-111"></path>
-          <path id="tree-flow-6" pathLength="100" d="M1603 775c-91-49-139-105-141-175-2-74 36-126 60-190 27-72 25-148-5-231-19-51-22-106-8-166"></path>
-          <path id="tree-flow-7" pathLength="100" d="M1599 756c-84-35-126-78-129-133-4-70 26-110 72-162 53-60 76-135 69-226"></path>
-          <path id="tree-flow-8" pathLength="100" d="M1620 741c-103-48-178-51-250-14-105 54-208 46-348-28"></path>
-          <path id="tree-flow-9" pathLength="100" d="M1618 760c-104-42-183-36-258 7-96 54-212 43-368-39"></path>
-          <path id="tree-flow-10" pathLength="100" d="M1560 788c-76-73-114-139-111-198 4-85-10-169-57-251-43-76-109-136-201-183"></path>
+          <path id="tree-flow-1" pathLength="100" d="M1168 804c37-104 50-177 38-246-13-75 14-132 67-190 56-62 52-128 16-194-33-60-84-109-151-148"></path>
+          <path id="tree-flow-2" pathLength="100" d="M1191 806c35-101 47-173 36-238-12-72 15-123 59-176 45-53 47-111 15-171-43-80-119-133-222-166"></path>
+          <path id="tree-flow-3" pathLength="100" d="M1216 807c30-97 39-164 29-225-12-69 5-118 48-169 61-72 69-151 25-237-29-57-42-116-30-181"></path>
+          <path id="tree-flow-4" pathLength="100" d="M1242 808c25-93 31-158 21-215-11-66 3-112 48-163 62-70 94-153 95-249 0-62 16-121 49-178"></path>
+          <path id="tree-flow-5" pathLength="100" d="M1268 808c20-86 22-146 13-204-10-65 7-106 52-151 65-66 128-103 219-125 55-13 103-39 145-77"></path>
+          <path id="tree-flow-6" pathLength="100" d="M1294 807c12-82 8-140-1-194-9-59 5-98 47-135 64-57 135-74 229-65"></path>
+          <path id="tree-flow-7" pathLength="100" d="M1321 806c2-73-8-127-14-176-7-56 9-91 49-120 54-39 114-49 188-31"></path>
+          <path id="tree-flow-8" pathLength="100" d="M1200 770c-79-4-151 13-215 52-66 40-140 49-223 28"></path>
+          <path id="tree-flow-9" pathLength="100" d="M1293 770c69-20 136-21 201-3 65 19 131 16 199-9"></path>
+          <path id="tree-flow-10" pathLength="100" d="M1182 801c28-88 44-153 34-211-11-64-4-112-49-153-65-59-151-72-259-51"></path>
+          <path id="tree-flow-11" pathLength="100" d="M1231 805c24-92 30-159 19-219-11-65 6-112 45-158 42-50 30-96-21-132-67-47-148-67-245-60"></path>
+          <path id="tree-flow-12" pathLength="100" d="M1281 807c15-83 14-144 5-199-9-61 10-103 55-141 48-40 93-82 125-137 34-59 53-127 56-204"></path>
           <g id="hero-pine">
             <path d="M27 116h8L33 67h-4z" fill="currentColor"></path>
             <path d="M31 0 10 39h12L4 68h15L0 101h62L43 68h15L40 39h12z" fill="currentColor"></path>
@@ -816,50 +819,40 @@
           <use href="#hero-pine" transform="translate(1218 582) scale(1.32)"></use>
           <use href="#hero-pine" transform="translate(1410 536) scale(1.8)"></use>
         </g>
-        <g class="tree-position" transform="translate(-115 0)">
         <g class="ancient-tree">
+          <g class="canopy-soft">
+            <path d="M872 151c30-69 118-91 183-54 50-57 153-51 190 15 64 5 106 53 97 105-10 59-77 84-145 62-63 47-159 43-210 1-69 28-155-4-157-65-2-27 13-48 42-64z"></path>
+            <path d="M1078 50c31-73 124-96 191-55 64-47 163-27 188 43 61 5 102 47 96 98-8 57-71 85-138 66-56 45-148 46-205 8-66 27-149-4-153-61-3-37 6-68 21-99z"></path>
+            <path d="M1344 51c37-67 126-82 186-38 70-39 163-6 178 65 57 13 88 61 72 108-18 52-82 66-140 38-59 37-143 26-188-17-66 18-138-23-132-78 3-31 11-57 24-78z"></path>
+            <path d="M878 300c35-64 120-78 181-37 62-40 154-10 173 57 58 10 93 54 81 103-14 55-79 75-142 52-59 41-151 35-200-6-64 24-143-11-142-67 0-44 17-78 49-102z"></path>
+            <path d="M1160 269c32-65 117-84 181-47 61-44 157-21 184 44 61 6 101 49 94 99-8 56-70 83-135 64-58 44-150 43-205 4-65 27-145-5-147-61-2-43 7-76 28-103z"></path>
+            <path d="M1401 260c32-61 112-79 171-43 63-39 150-10 169 54 54 10 87 53 75 98-14 52-75 71-134 49-57 39-140 32-187-6-59 22-133-10-134-63-1-37 12-66 40-89z"></path>
+          </g>
           <g class="tree-body">
-            <path class="tree-trunk" d="M1508 806c-54-95-65-184-54-272 11-86 38-142 20-221-15-69-49-122-57-185-7-57 3-104 34-148h96c-32 76-30 145-8 226 24 90 13 182-21 270-39 101-21 213 72 330z"></path>
-            <path class="tree-limb" d="M1477 477c-107-56-238-70-381-31l10-54c145-42 285-27 396 36z"></path>
-            <path class="tree-limb" d="M1472 361c-93-89-215-139-374-164l23-48c157 18 293 73 390 163z"></path>
-            <path class="tree-limb" d="M1478 273c-58-87-139-157-248-211l38-38c110 47 199 115 257 203z"></path>
-            <path class="tree-limb" d="M1504 422c48-84 104-153 177-207l-4 67c-61 49-109 111-151 181z"></path>
+            <path class="tree-trunk" d="M1157 810c45-110 59-187 47-253-14-79 12-138 61-197 46-55 51-111 17-180l64-27c51 100 36 190-22 267-43 57-48 115-21 184 31 80 85 148 143 206z"></path>
+            <path class="tree-branch branch-heavy" d="M1280 430c-99-75-215-111-357-108"></path>
+            <path class="tree-branch branch-mid" d="M1294 358c-74-102-171-171-291-208"></path>
+            <path class="tree-branch branch-mid" d="M1306 321c-24-112-18-214 24-306"></path>
+            <path class="tree-branch branch-heavy" d="M1312 440c73-73 163-112 271-117"></path>
+            <path class="tree-branch branch-mid" d="M1324 370c78-82 158-146 257-194"></path>
+            <path class="tree-branch branch-fine" d="M1228 487c-83-58-172-83-271-75"></path>
+            <path class="tree-branch branch-fine" d="M1271 401c-54-82-120-139-201-174"></path>
+            <path class="tree-branch branch-fine" d="M1340 402c58-64 122-104 195-122"></path>
           </g>
           <g class="tree-bark">
-            <path d="M1517 785c-51-91-53-179-42-253 13-86 33-143 19-216-14-70-42-123-49-185"></path>
-            <path d="M1546 791c-60-99-69-192-48-286 21-94 39-158 15-252-18-72-30-141-13-215"></path>
-            <path d="M1479 472c-98-45-215-56-345-25"></path>
-            <path d="M1475 355c-90-77-204-122-343-147"></path>
-            <path d="M1480 269c-57-79-129-139-222-188"></path>
+            <path d="M1186 787c44-102 50-172 39-231-12-70 10-127 59-185 46-56 49-112 24-175"></path>
+            <path d="M1223 798c36-98 42-169 32-226-11-68 8-120 54-174 44-52 56-110 35-181"></path>
+            <path d="M1282 423c-94-66-205-97-332-94"></path>
+            <path d="M1296 352c-71-92-162-155-270-190"></path>
+            <path d="M1318 436c70-65 153-100 250-106"></path>
           </g>
-          <g class="canopy-soft">
-            <path d="M1004 98c74-92 210-111 305-61 82-62 217-49 276 38 81 1 147 54 151 120 5 67-63 111-151 104-67 65-191 77-280 30-83 48-210 34-249-43-64-8-105-48-100-93 4-37 20-68 48-95z"></path>
-            <path d="M1045 288c63-65 172-83 254-44 75-53 197-39 239 38 74-1 124 43 119 97-5 56-71 86-144 66-65 51-168 54-238 13-70 40-177 25-204-38-55-15-76-61-50-100 7-11 15-21 24-32z"></path>
-            <path d="M1211 39c52-67 148-82 218-44 68-39 167-21 199 43 58 1 103 37 103 83 0 49-54 80-116 69-52 45-137 46-192 16-60 28-147 6-161-46-49-18-65-70-32-105z"></path>
-          </g>
-          <g class="leaf-clusters">
-            <ellipse cx="1032" cy="170" rx="92" ry="76"></ellipse>
-            <ellipse cx="1126" cy="102" rx="105" ry="84"></ellipse>
-            <ellipse cx="1235" cy="118" rx="112" ry="91"></ellipse>
-            <ellipse cx="1341" cy="73" rx="102" ry="78"></ellipse>
-            <ellipse cx="1450" cy="112" rx="116" ry="88"></ellipse>
-            <ellipse cx="1564" cy="154" rx="122" ry="93"></ellipse>
-            <ellipse cx="1124" cy="279" rx="103" ry="76"></ellipse>
-            <ellipse cx="1245" cy="267" rx="122" ry="91"></ellipse>
-            <ellipse cx="1370" cy="247" rx="115" ry="84"></ellipse>
-            <ellipse cx="1494" cy="286" rx="128" ry="95"></ellipse>
-            <ellipse cx="1188" cy="385" rx="99" ry="68"></ellipse>
-            <ellipse cx="1322" cy="377" rx="123" ry="78"></ellipse>
-            <ellipse cx="1461" cy="390" rx="116" ry="73"></ellipse>
-          </g>
-          <path class="canopy-edge" d="M1004 98c74-92 210-111 305-61 82-62 217-49 276 38 81 1 147 54 151 120M1045 288c63-65 172-83 254-44 75-53 197-39 239 38"></path>
+          <path class="canopy-edge" d="M872 151c30-69 118-91 183-54 50-57 153-51 190 15M1078 50c31-73 124-96 191-55 64-47 163-27 188 43M1344 51c37-67 126-82 186-38 70-39 163-6 178 65"></path>
           <g class="tree-flow-base">
-            <use href="#tree-flow-1"></use><use href="#tree-flow-2"></use><use href="#tree-flow-3"></use><use href="#tree-flow-4"></use><use href="#tree-flow-5"></use><use href="#tree-flow-6"></use><use href="#tree-flow-7"></use><use href="#tree-flow-8"></use><use href="#tree-flow-9"></use><use href="#tree-flow-10"></use>
+            <use href="#tree-flow-1"></use><use href="#tree-flow-2"></use><use href="#tree-flow-3"></use><use href="#tree-flow-4"></use><use href="#tree-flow-5"></use><use href="#tree-flow-6"></use><use href="#tree-flow-7"></use><use href="#tree-flow-8"></use><use href="#tree-flow-9"></use><use href="#tree-flow-10"></use><use href="#tree-flow-11"></use><use href="#tree-flow-12"></use>
           </g>
           <g class="tree-flow-motion">
-            <use href="#tree-flow-1"></use><use href="#tree-flow-2"></use><use href="#tree-flow-3"></use><use href="#tree-flow-4"></use><use href="#tree-flow-5"></use><use href="#tree-flow-6"></use><use href="#tree-flow-7"></use><use href="#tree-flow-8"></use><use href="#tree-flow-9"></use><use href="#tree-flow-10"></use>
+            <use href="#tree-flow-1"></use><use href="#tree-flow-2"></use><use href="#tree-flow-3"></use><use href="#tree-flow-4"></use><use href="#tree-flow-5"></use><use href="#tree-flow-6"></use><use href="#tree-flow-7"></use><use href="#tree-flow-8"></use><use href="#tree-flow-9"></use><use href="#tree-flow-10"></use><use href="#tree-flow-11"></use><use href="#tree-flow-12"></use>
           </g>
-        </g>
         </g>
       </svg>
       <span class="forest-light"></span>
