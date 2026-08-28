@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260828-draft-admin-sync-3";
+import "./article-admin-core.js?v=20260828-final-article-images-6";
 import "./article-admin-paid-security.js?v=20260825-paid-save-race-1";
 import { db } from "./firebase-config.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
