@@ -1,6 +1,6 @@
 import { db } from "./firebase-config.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { staticArticles } from "./static-articles.js?v=20260824-article-system-repair-1";
+import { staticArticles } from "./static-articles.js?v=20260828-yuanqin-six-images-1";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";
@@ -15,6 +15,10 @@ const BRAND_FALLBACKS = {
 
 // 某些舊文章的正文圖片由顯示修正模組動態補入，原始 Markdown 內沒有圖片路徑。
 // 這裡記錄「真正的第一張內文故事圖」，避免誤退回統一 CI 圖。
+const FORCED_THUMBNAIL_IMAGES = {
+  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-4"
+};
+
 const FIRST_IMAGE_OVERRIDES = {
   "love-beyond-filial-piety-and-ancestor-worship": "assets/articles/love-beyond-filial-piety/from-duty-to-love-v2.webp?v=20260810-original-photo-fix-1"
 };
@@ -206,10 +210,11 @@ function applyCard(card) {
 
   const configured = thumbnailSettings.get(articleId) || null;
   const configuredImage = normalizeImageUrl(configured?.thumbnailImage || "");
+  const forcedImage = FORCED_THUMBNAIL_IMAGES[articleId] || "";
   const overrideImage = FIRST_IMAGE_OVERRIDES[articleId] || "";
   const preservedOriginal = media.dataset.originalArticleImage || "";
   const failedSources = new Set((media.dataset.failedThumbnailSources || "").split("\\n").filter(Boolean));
-  const sourceCandidates = [configuredImage, preservedOriginal, overrideImage, article?.coverImage || "", firstInlineImage(article), BRAND_FALLBACKS[categoryKey], BRAND_FALLBACKS.spiritual]
+  const sourceCandidates = [forcedImage, configuredImage, preservedOriginal, overrideImage, article?.coverImage || "", firstInlineImage(article), BRAND_FALLBACKS[categoryKey], BRAND_FALLBACKS.spiritual]
     .map(normalizeImageUrl).filter((value, index, values) => value && values.indexOf(value) === index);
   const source = sourceCandidates.find((value) => !failedSources.has(value)) || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
   const shortTitle = compactTitle(article, fullTitle);
