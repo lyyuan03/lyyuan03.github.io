@@ -283,6 +283,11 @@ function articlePublishedTime(article = {}) {
 }
 
 function sortPublished(a, b) {
+  if (isAdminEmail(currentUser?.email)) {
+    const aDraft = a?.status === "draft";
+    const bDraft = b?.status === "draft";
+    if (aDraft !== bDraft) return aDraft ? -1 : 1;
+  }
   const timeDiff = articlePublishedTime(b) - articlePublishedTime(a);
   if (timeDiff !== 0) return timeDiff;
   return String(articleKey(a)).localeCompare(String(articleKey(b)), "zh-Hant");
@@ -436,6 +441,7 @@ function renderList(articles) {
         const key = articleKey(article);
         const access = articleAccess(article);
         const accessLabel = access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
+        const isDraftPreview = article.status === "draft" && isAdminEmail(currentUser?.email);
         return `
           <a class="article-card" data-article-id="${escapeHtml(key)}" href="${standaloneArticlePaths.get(key) || `articles.html?id=${encodeURIComponent(key)}`}${magicToken ? `&event=${encodeURIComponent(article.eventId || magicEventId)}&token=${encodeURIComponent(magicToken)}` : ""}">
             <div class="article-card-media">
@@ -445,7 +451,7 @@ function renderList(articles) {
             <div class="article-card-content">
               <div class="article-card-heading">
                 <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
-                <span class="article-access-badge is-${access}">${accessLabel}</span>
+                <span class="article-card-badges">${isDraftPreview ? '<span class="article-access-badge is-draft">草稿預覽</span>' : ""}<span class="article-access-badge is-${access}">${accessLabel}</span></span>
               </div>
               <h2 class="article-list-title">${escapeHtml(article.title || "未命名文章")}</h2>
               ${renderArticleGuide(article, true)}
@@ -638,7 +644,9 @@ async function hydrateEventArticle(article) {
   const key = await eventArticleKey(article);
   if (!key) return article;
   try {
-    const content = await decryptEventContent(article.encryptedContent, article.contentIv, key);
+    const iv = article.eventIv || article.contentIv || "";
+    if (!iv) return article;
+    const content = await decryptEventContent(article.encryptedContent, iv, key);
     return { ...article, content, eventAccessGranted: true };
   } catch (error) {
     console.warn("活動限定文章解密失敗。", error);
@@ -782,8 +790,10 @@ function renderArticle(article) {
   }
   document.title = `${article.title}｜靈元院文選`;
   const articleKeyValue = article.id || article.slug || activeId;
+  const isDraftPreview = article.status === "draft" && isAdminEmail(currentUser?.email);
+  const draftNotice = isDraftPreview ? '<div class="article-draft-notice"><strong>草稿預覽</strong>｜僅靈元院管理者帳號可見，尚未公開。</div>' : "";
   if (articleIsEvent(article) && !article.eventAccessGranted) {
-    root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}"><a class="article-back" href="articles.html">← 返回全部文選</a><div class="article-meta">${categoryLabels[article.category] || "文選"}｜活動限定</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}${article.excerpt ? `<div class="article-body"><p>${escapeHtml(article.excerpt)}</p></div>` : ""}${renderEventGate(article)}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
+    root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}"><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}<div class="article-meta">${categoryLabels[article.category] || "文選"}｜活動限定</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}${article.excerpt ? `<div class="article-body"><p>${escapeHtml(article.excerpt)}</p></div>` : ""}${renderEventGate(article)}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
     bindEventLogin();
     bindArticleShare(articleKeyValue);
     trackArticleView(articleKeyValue);
@@ -791,7 +801,7 @@ function renderArticle(article) {
   }
   const articleContent = addGuanyinVowLampImages(article.content || "", articleKeyValue);
   const { publicContent, lockedContent, accessType } = splitMemberContent(articleContent, articleKeyValue);
-  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}" data-article-access="${escapeHtml(accessType)}"${accessType === "paid" ? ' data-paid-body-state="locked"' : ""}><a class="article-back" href="articles.html">← 返回全部文選</a><div class="article-meta">${categoryLabels[article.category] || "文選"}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${renderArticleGuide(article)}${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKeyValue) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}<div class="article-body">${renderContent(publicContent)}</div>${accessType === "member" ? renderSupportGate(lockedContent) : ""}${accessType === "paid" ? renderPaidGate(article) : ""}${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
+  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}" data-article-access="${escapeHtml(accessType)}"${accessType === "paid" ? ' data-paid-body-state="locked"' : ""}><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}<div class="article-meta">${categoryLabels[article.category] || "文選"}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${renderArticleGuide(article)}${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKeyValue) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}<div class="article-body">${renderContent(publicContent)}</div>${accessType === "member" ? renderSupportGate(lockedContent) : ""}${accessType === "paid" ? renderPaidGate(article) : ""}${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
   bindLimitedReadingCountdowns();
   if (accessType === "member") bindArticleContinue();
   if (accessType === "paid") bindPaidLogin();
@@ -850,25 +860,28 @@ function withTimeout(promise, timeoutMs, label) {
 async function loadArticles() {
   articlesLoadCompleted = false;
   renderTabs();
-  // 詳細文章頁先等後台文章載入完成，避免先閃出 GitHub 靜態舊稿。
-  const publishedRequest = getDocs(query(collection(db, "articles"), where("status", "==", "published")));
+  const adminDraftPreview = isAdminEmail(currentUser?.email);
+  // 一般訪客只能查詢已發布文章；管理者登入時才讀取全部後台文章，以便在前台核對草稿版型。
+  const articlesRequest = adminDraftPreview
+    ? getDocs(collection(db, "articles"))
+    : getDocs(query(collection(db, "articles"), where("status", "==", "published")));
   const statusRequest = getDoc(doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID));
-  const [publishedResult, statusResult] = await Promise.allSettled([withTimeout(publishedRequest, 8000, "已發布文章載入"), withTimeout(statusRequest, 8000, "文章狀態索引載入")]);
-  if (publishedResult.status === "rejected") {
+  const [articlesResult, statusResult] = await Promise.allSettled([withTimeout(articlesRequest, 8000, adminDraftPreview ? "管理者文章載入" : "已發布文章載入"), withTimeout(statusRequest, 8000, "文章狀態索引載入")]);
+  if (articlesResult.status === "rejected") {
     articlesLoadCompleted = true;
     loadedArticles = [];
-    console.warn("Firebase 已發布文章暫時無法載入。", publishedResult.reason);
+    console.warn(adminDraftPreview ? "Firebase 管理者文章暫時無法載入。" : "Firebase 已發布文章暫時無法載入。", articlesResult.reason);
     root.innerHTML = '<div class="empty">後台文章暫時無法載入，請稍後再試。</div>';
     return;
   }
-  const firestoreArticles = publishedResult.value.docs
-    .map((item) => ({ id: item.id, ...item.data() }))
+  const firestoreArticles = articlesResult.value.docs
+    .map((item) => ({ id: item.id, ...item.data(), __articleSource: "firestore" }))
     .filter((article) => article.hidden !== true && article.systemRecord !== true);
   const indexedStatuses = statusResult.status === "fulfilled" && statusResult.value.exists() ? statusResult.value.data().statuses || {} : {};
   const statusById = new Map(Object.entries(indexedStatuses));
   if (statusResult.status === "rejected") console.warn("文章狀態索引暫時無法載入。", statusResult.reason);
   const mergedById = new Map();
-  staticArticles.forEach((article) => mergedById.set(article.id, article));
+  staticArticles.forEach((article) => mergedById.set(article.id, { ...article, __articleSource: "static" }));
   firestoreArticles.forEach((article) => {
     const articleSlug = String(article.slug || "");
     const staticArticle = staticArticles.find((item) =>
@@ -890,7 +903,8 @@ async function loadArticles() {
       ...staticArticle,
       ...article,
       id: canonicalId,
-      slug: article.slug || staticArticle.slug || canonicalId
+      slug: article.slug || staticArticle.slug || canonicalId,
+      __articleSource: "firestore"
     });
   });
   const future2058Static = staticArticles.find((article) => article.id === "2058-future-person-prophecy");
@@ -898,13 +912,21 @@ async function loadArticles() {
   if (future2058Static && future2058Firestore) {
     mergedById.set("2058-future-person-prophecy", { ...future2058Firestore, content: future2058Static.content, coverImage: future2058Static.coverImage || future2058Firestore.coverImage || "", thumbnailImage: future2058Static.thumbnailImage || future2058Firestore.thumbnailImage || "", updatedAt: future2058Static.updatedAt || future2058Firestore.updatedAt });
   }
-  const livePublishedIds = new Set(firestoreArticles.map((article) => article.id));
+  const liveFirestoreIds = new Set(firestoreArticles.map((article) => article.id));
   const quantumFrequencyStaticArticle = staticArticles.find((article) => article.id === "quantum-frequency-work-wish");
   if (quantumFrequencyStaticArticle) mergedById.set("quantum-frequency-work-wish", quantumFrequencyStaticArticle);
   statusById.forEach((status, articleId) => {
-    if (!livePublishedIds.has(articleId) && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) mergedById.delete(articleId);
+    if (!liveFirestoreIds.has(articleId) && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) mergedById.delete(articleId);
   });
-  const merged = [...mergedById.values()].filter((article) => article.status === "published" && article.hidden !== true && article.systemRecord !== true && article.systemType !== "article-thumbnail-settings" && article.id !== "__article-thumbnail-settings");
+  const merged = [...mergedById.values()].filter((article) => {
+    const published = article.status === "published";
+    const adminDraft = adminDraftPreview && article.__articleSource === "firestore" && article.status === "draft";
+    return (published || adminDraft)
+      && article.hidden !== true
+      && article.systemRecord !== true
+      && article.systemType !== "article-thumbnail-settings"
+      && article.id !== "__article-thumbnail-settings";
+  });
   const normalizedArticles = merged.map((article) => {
     if (article.id === "yuanshen-destiny-archetype") {
       let fixedContent = String(article.content || "")
@@ -964,10 +986,13 @@ onAuthStateChanged(auth, async (user) => {
   await loadMemberAccess(user);
   if (isAdminEmail(user?.email)) {
     try {
-      if (await syncPublicationStatusIndexForAdmin()) await loadArticles();
+      await syncPublicationStatusIndexForAdmin();
     } catch (error) {
       console.warn("文章狀態索引同步失敗。", error);
     }
   }
+  // 登入、登出或切換帳號時都重新載入文章。
+  // 這可確保管理者登出後，先前載入的草稿立即從前台記憶體移除。
+  await loadArticles();
   renderCurrentView();
 });
