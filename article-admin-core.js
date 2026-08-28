@@ -281,8 +281,35 @@ function normalizeAdminAccessType(article = {}) {
 function articleTime(value) {
   if (!value) return 0;
   if (typeof value?.toMillis === "function") return value.toMillis();
-  const parsed = Date.parse(value);
+  if (typeof value?.toDate === "function") return value.toDate().getTime();
+  if (typeof value?.seconds === "number") {
+    return (value.seconds * 1000) + Math.floor(Number(value.nanoseconds || 0) / 1e6);
+  }
+  if (value instanceof Date) return value.getTime();
+  const parsed = Date.parse(String(value));
   return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function articlePublishedTime(article = {}) {
+  return articleTime(article.publishedAt)
+    || articleTime(article.createdAt)
+    || articleTime(article.updatedAt);
+}
+
+function sortAdminArticles(a, b) {
+  const aPublished = a?.status === "published";
+  const bPublished = b?.status === "published";
+  if (aPublished !== bPublished) return aPublished ? -1 : 1;
+
+  const aTime = aPublished
+    ? articlePublishedTime(a)
+    : (articleTime(a.updatedAt) || articleTime(a.createdAt));
+  const bTime = bPublished
+    ? articlePublishedTime(b)
+    : (articleTime(b.updatedAt) || articleTime(b.createdAt));
+
+  if (bTime !== aTime) return bTime - aTime;
+  return String(a?.id || a?.slug || "").localeCompare(String(b?.id || b?.slug || ""), "zh-Hant");
 }
 
 function staticArticlePayload(article, revision) {
@@ -363,7 +390,9 @@ async function syncRevisedStaticArticles(snapshot) {
     const payload = staticArticlePayload(article, revision);
     if (!current) {
       payload.createdAt = serverTimestamp();
-      if (payload.status === "published") payload.publishedAt = serverTimestamp();
+      if (payload.status === "published") {
+    payload.publishedAt = article.publishedAt || article.updatedAt || serverTimestamp();
+  }
     }
     await setDoc(doc(db, "articles", articleId), payload, { merge: true });
     didSync = true;
@@ -603,8 +632,20 @@ async function loadArticles() {
       staticArticles.map((article) => [article.id, { ...article, source: "github-static" }])
     );
     firestoreArticles.forEach((article) => {
-      const staticArticle = staticArticles.find((item) => item.id === article.id);
-      if (staticImageSyncRevisions.has(article.id) && staticArticle) {
+      const articleSlug = String(article.slug || "");
+      const staticArticle = staticArticles.find((item) =>
+        item.id === article.id
+        || item.slug === article.id
+        || (articleSlug && item.id === articleSlug)
+        || (articleSlug && item.slug === articleSlug)
+      );
+
+      if (staticArticle && staticArticle.id !== article.id) {
+        mergedArticles.delete(staticArticle.id);
+      }
+
+      const revisionKey = staticArticle?.id || article.id;
+      if (staticImageSyncRevisions.has(revisionKey) && staticArticle) {
         mergedArticles.set(article.id, {
           ...article,
           coverImage: staticArticle.coverImage || article.coverImage || "",
@@ -614,9 +655,7 @@ async function loadArticles() {
         mergedArticles.set(article.id, article);
       }
     });
-    articles = [...mergedArticles.values()].sort((a, b) =>
-      articleTime(b.updatedAt || b.publishedAt) - articleTime(a.updatedAt || a.publishedAt)
-    );
+    articles = [...mergedArticles.values()].sort(sortAdminArticles);
     renderList();
     renderMetricsDashboard();
   } catch (error) {
@@ -642,8 +681,12 @@ async function saveArticle(event) {
   saveButton.textContent = "儲存中…";
   setSaveStatus("正在儲存，請稍候…", "saving");
   try {
-    const articleRef = currentId ? doc(db, "articles", currentId) : doc(collection(db, "articles"));
+    const existingId = currentId;
+    const articleRef = existingId ? doc(db, "articles", existingId) : doc(collection(db, "articles"));
     currentId = articleRef.id;
+    const existingSnapshot = existingId ? await getDoc(articleRef) : null;
+    const existingData = existingSnapshot?.exists() ? existingSnapshot.data() : null;
+    const currentArticleRecord = articles.find((article) => article.id === currentId);
     const payload = {
       ...data,
       updatedAt: serverTimestamp()
@@ -670,8 +713,11 @@ async function saveArticle(event) {
       payload.magicLinkAccess = {};
     }
 
-    if (data.status === "published") payload.publishedAt = serverTimestamp();
-    if (!articles.some((article) => article.id === currentId)) payload.createdAt = serverTimestamp();
+    // publishedAt 代表第一次正式發布時間；日後修改文章只更新 updatedAt，不再改變首頁排序。
+    if (data.status === "published" && !existingData?.publishedAt) {
+      payload.publishedAt = currentArticleRecord?.publishedAt || serverTimestamp();
+    }
+    if (!existingData) payload.createdAt = serverTimestamp();
     await setDoc(articleRef, payload, { merge: true });
 
     // 發布／取消發布必須同時完成文章本體與狀態索引，避免後台顯示成功但前台仍讀到舊狀態。
