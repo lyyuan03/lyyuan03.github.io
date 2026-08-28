@@ -29,6 +29,115 @@ let events = [];
 let members = [];
 let magicLinks = {};
 
+const ARTICLE_EVENT_PICKER_LIMIT = 30;
+let articleEventSearchInput = null;
+let articleEventSearchHint = null;
+
+function articleEventSearchText(value = "") {
+  return String(value || "").trim().toLocaleLowerCase("zh-TW");
+}
+
+function articleEventOptionHtml(event, selectedId = "") {
+  const inactive = event.status === "inactive" ? "（停用）" : "";
+  return `<option value="${escapeHtml(event.id)}"${event.id === selectedId ? " selected" : ""}>${escapeHtml(event.name)}${inactive}</option>`;
+}
+
+function renderArticleEventSearchOptions() {
+  const select = document.getElementById("eventId");
+  if (!select || !articleEventSearchInput) return;
+
+  const selectedId = select.value || "";
+  const query = articleEventSearchText(articleEventSearchInput.value);
+  const sourceEvents = Array.isArray(events) && events.length
+    ? events
+    : (Array.isArray(window.__lyyuanActivityEvents) ? window.__lyyuanActivityEvents : []);
+
+  let visibleEvents;
+  if (query) {
+    visibleEvents = sourceEvents
+      .filter((event) => articleEventSearchText(`${event.name || ""} ${event.id || ""}`).includes(query))
+      .slice()
+      .reverse();
+  } else {
+    visibleEvents = sourceEvents
+      .filter((event) => event.status !== "inactive")
+      .slice()
+      .reverse()
+      .slice(0, ARTICLE_EVENT_PICKER_LIMIT);
+  }
+
+  const selectedEvent = sourceEvents.find((event) => event.id === selectedId);
+  if (selectedEvent && !visibleEvents.some((event) => event.id === selectedId)) {
+    visibleEvents.unshift(selectedEvent);
+  }
+
+  const html = '<option value="">無指定活動</option>' + visibleEvents
+    .map((event) => articleEventOptionHtml(event, selectedId))
+    .join("");
+
+  if (select.innerHTML !== html) select.innerHTML = html;
+  if (selectedId && visibleEvents.some((event) => event.id === selectedId)) select.value = selectedId;
+
+  if (articleEventSearchHint) {
+    const activeCount = sourceEvents.filter((event) => event.status !== "inactive").length;
+    if (query) {
+      articleEventSearchHint.textContent = `搜尋到 ${visibleEvents.length} 筆活動｜可用活動名稱或代稱搜尋全部歷史活動。`;
+    } else {
+      articleEventSearchHint.textContent = `共 ${sourceEvents.length} 筆活動（啟用 ${activeCount} 筆）｜未搜尋時顯示最近 ${Math.min(ARTICLE_EVENT_PICKER_LIMIT, activeCount)} 筆啟用活動；輸入關鍵字可搜尋全部。`;
+    }
+  }
+}
+
+function installArticleEventSearch() {
+  const select = document.getElementById("eventId");
+  if (!select) return;
+
+  articleEventSearchInput = document.getElementById("event-search");
+  articleEventSearchHint = document.getElementById("event-search-hint");
+
+  if (!articleEventSearchInput) {
+    articleEventSearchInput = document.createElement("input");
+    articleEventSearchInput.id = "event-search";
+    articleEventSearchInput.type = "search";
+    articleEventSearchInput.autocomplete = "off";
+    articleEventSearchInput.placeholder = "搜尋活動名稱或代稱，例如：觀音、金母、2026";
+    articleEventSearchInput.setAttribute("aria-label", "搜尋指定活動");
+    select.insertAdjacentElement("beforebegin", articleEventSearchInput);
+    articleEventSearchInput.addEventListener("input", renderArticleEventSearchOptions);
+  }
+
+  if (!articleEventSearchHint) {
+    articleEventSearchHint = document.createElement("small");
+    articleEventSearchHint.id = "event-search-hint";
+    articleEventSearchHint.className = "upload-note";
+    select.insertAdjacentElement("afterend", articleEventSearchHint);
+  }
+
+  if (!select.dataset.eventSearchObserved) {
+    select.dataset.eventSearchObserved = "1";
+    const observer = new MutationObserver(() => renderArticleEventSearchOptions());
+    observer.observe(select, { childList: true });
+
+    document.getElementById("article-list")?.addEventListener("click", () => {
+      window.setTimeout(() => {
+        if (!articleEventSearchInput) return;
+        articleEventSearchInput.value = "";
+        renderArticleEventSearchOptions();
+      }, 0);
+    });
+
+    document.getElementById("new-article")?.addEventListener("click", () => {
+      window.setTimeout(() => {
+        if (!articleEventSearchInput) return;
+        articleEventSearchInput.value = "";
+        renderArticleEventSearchOptions();
+      }, 0);
+    });
+  }
+
+  renderArticleEventSearchOptions();
+}
+
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
@@ -129,6 +238,8 @@ async function saveEvents(nextEvents) {
   await setDoc(settingsRef, { events, updatedAt: serverTimestamp() }, { merge: true });
   renderEvents();
   publishEventsToArticleAdmin();
+  installArticleEventSearch();
+  renderArticleEventSearchOptions();
 }
 
 async function ensureDefaultEvent() {
@@ -502,7 +613,7 @@ eventForm?.addEventListener("submit", async (event) => {
     setStatus("活動代稱已存在，請更換後再儲存。", "error");
     return;
   }
-  await saveEvents([...events, { id, name, status: "active" }]);
+  await saveEvents([...events, { id, name, status: "active", createdAt: new Date().toISOString() }]);
   eventSelect.value = id;
   nameInput.value = "";
   idInput.value = "";
