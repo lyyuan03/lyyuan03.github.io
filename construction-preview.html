@@ -11,9 +11,60 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#E8E1D3;font-family:var(--sans);line-height:1.7}a{color:inherit}.site-header{position:sticky;top:0;z-index:20;background:rgba(7,18,7,.97);border-bottom:1px solid rgba(203,189,166,.22)}.site-nav{max-width:1120px;margin:auto;padding:0 24px;display:flex;min-height:70px;align-items:center;justify-content:center;gap:28px}.site-nav a{text-decoration:none;color:#E2D7C5;font-size:14px;letter-spacing:.12em}.preview-bar{position:sticky;top:70px;z-index:19;background:#2a2118;border-bottom:1px solid rgba(203,189,166,.28);padding:10px 16px}.preview-inner{max-width:980px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}.preview-label{font-size:12px;letter-spacing:.12em;color:#d9c7aa}.preview-actions{display:flex;gap:8px;flex-wrap:wrap}.preview-actions a{font-size:12px;text-decoration:none;border:1px solid rgba(203,189,166,.3);padding:7px 11px;color:#d9c7aa}.preview-actions a.active{background:#A58254;color:white;border-color:#A58254}main{max-width:1180px;margin:auto;padding:38px 24px 80px}.article-view{max-width:980px;margin:0 auto;background:var(--panel);color:var(--text);padding:44px 64px 66px;border:1px solid rgba(203,189,166,.46);box-shadow:0 24px 70px rgba(0,0,0,.2)}.record-head{margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid rgba(139,104,63,.2)}.kicker{font-size:10px;letter-spacing:.28em;color:#8B683F;margin-bottom:9px}.badge{display:inline-flex;border:1px solid rgba(139,104,63,.36);background:rgba(165,130,84,.08);color:#6A4D2E;font-size:11px;letter-spacing:.13em;padding:6px 11px}.meta{font-size:11px;color:#806A52;letter-spacing:.14em;margin:18px 0 0}.article-view>h1{font-family:var(--serif);font-size:clamp(30px,5vw,46px);line-height:1.48;margin:10px 0 24px;color:#59452F}.article-cover{display:block;width:100%;height:auto;margin:26px auto 34px;border:1px solid var(--line)}.toc{margin:26px 0 34px;border:1px solid rgba(89,79,71,.22);background:rgba(165,130,84,.055)}.toc summary{cursor:pointer;padding:12px 15px;color:#493724}.toc ol{margin:0;padding:0 24px 18px 44px}.toc a{text-decoration:none;color:#5A4631;font-family:var(--serif);font-size:13px}.article-body{font-family:var(--serif);font-size:18px;line-height:2.05;color:#40362D}.article-body p{margin:0 0 26px}.article-body h2{margin-top:54px;padding-top:24px;border-top:1px solid rgba(139,104,63,.22);font-size:27px;color:#604831}.article-body figure{position:relative;margin:34px 0 40px;overflow:hidden;border:1px solid rgba(139,104,63,.24);background:rgba(165,130,84,.045)}.article-body figure img{display:block;width:100%;height:auto}.article-body figcaption{padding:13px 16px 15px;color:#725b43;font-family:var(--sans);font-size:12px;line-height:1.75;border-top:1px solid rgba(139,104,63,.18)}.article-body figure.logo::after{content:"";position:absolute;right:16px;bottom:54px;width:112px;height:42px;background:url("assets/footer-logo-gold.svg") right bottom/contain no-repeat;opacity:.9;filter:drop-shadow(0 1px 3px rgba(0,0,0,.28));pointer-events:none}.video-pending{margin:24px 0 34px;padding:28px 24px;border:1px solid rgba(139,104,63,.28);background:linear-gradient(135deg,rgba(96,99,48,.08),rgba(165,130,84,.08));text-align:center;color:#725532;font-family:var(--sans);font-size:13px;letter-spacing:.08em}.note{margin:48px 0 0;padding:18px 20px;border-top:1px solid rgba(139,104,63,.2);border-bottom:1px solid rgba(139,104,63,.2);font-size:12px;line-height:1.85;color:#806A52;text-align:center}.hidden{display:none!important}
 @media(max-width:760px){.site-nav{min-height:58px;padding:0 14px;gap:16px;overflow:auto;justify-content:flex-start}.preview-bar{top:58px}.preview-inner{align-items:flex-start;flex-direction:column}.article-view{padding:30px 22px 44px}.article-body{font-size:17px;line-height:1.95}.article-body h2{font-size:23px;margin-top:42px}.article-body figure.logo::after{right:10px;bottom:50px;width:82px;height:32px}}
 </style>
+  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-1">
 </head>
 <body>
-<header class="site-header"><nav class="site-nav"><a href="index.html">首頁</a><a href="activity.html">活動</a><a href="articles.html">文選</a><a href="membership.html">會員</a><a href="books.html">選物</a><a href="videos.html">影像</a><a href="community.html">社群</a></nav></header>
+<nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-1">
+  <div class="global-nav-inner">
+    <ul class="global-nav-links">
+      <li class="global-nav-item"><a class="global-nav-link" href="/">首頁</a></li>
+      <li class="global-nav-item"><a class="global-nav-link" href="/courses/lingji-practice.html">課程</a></li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-activity">活動</button>
+        <ul class="global-nav-dropdown" id="global-nav-activity">
+          <li><a href="/niandian.html">年度點燈</a></li>
+          <li><a href="/dizhi.html">奠基法會</a></li>
+          <li><a href="/lixing.html">例行法儀</a></li>
+          <li><a href="/fahui.html">報名法儀</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger is-active" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-articles">文選</button>
+        <ul class="global-nav-dropdown" id="global-nav-articles">
+          <li><a href="/articles.html">全部文選</a></li>
+          <li><a href="/articles.html?category=spiritual">靈．修行</a></li>
+          <li><a href="/articles.html?category=worldly">人．俗世</a></li>
+          <li><a href="/articles.html?category=spirit-world">異．靈界</a></li>
+          <li><a href="/articles.html?category=reading">思．讀物</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item"><a class="global-nav-link" href="/membership.html">會員</a></li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-shop">選物</button>
+        <ul class="global-nav-dropdown" id="global-nav-shop">
+          <li><a href="/books.html">宇色靈修著作</a></li>
+          <li><a href="/spiritual-aesthetics.html">靈性美學館</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-media">影音・社群</button>
+        <ul class="global-nav-dropdown" id="global-nav-media">
+          <li class="global-nav-group">靈元院官方</li>
+          <li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">YT｜靈元院</a></li>
+          <li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">FB｜靈元院</a></li>
+          <li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer">IG｜靈元院</a></li>
+          <li class="global-nav-group">宇色老師</li>
+          <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">YT｜宇色心養生</a></li>
+          <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank" rel="noopener noreferrer">Podcast｜宇色人間書影</a></li>
+          <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank" rel="noopener noreferrer">Podcast｜宇色心養生</a></li>
+          <li><a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">FB｜我在人間－宇色</a></li>
+          <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank" rel="noopener noreferrer">IG｜我在人間－宇色</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="global-nav-spacer" aria-hidden="true" style="height:56px"></div>
 <div class="preview-bar"><div class="preview-inner"><div class="preview-label">PREVIEW MODE｜此頁僅供版面確認，不影響正式文章</div><div class="preview-actions"><a id="btn-patron" href="construction-preview.html?view=patron">總功德主版</a><a id="btn-witness" href="construction-preview.html?view=witness">建院願心見證版</a></div></div></div>
 <main>
 <article class="article-view" id="patron-view">
@@ -129,5 +180,6 @@ document.title=(view==='patron'?'總功德主版':'建院願心見證版')+'｜�
 async function loadLatestProgress(){const img=document.querySelector('#latest-progress img');if(!img)return;try{const r=await fetch('assets/lingyuan-progress-202608.webp.b64',{cache:'no-store'});if(!r.ok)throw new Error(r.status);const b=(await r.text()).trim();img.src='data:image/webp;base64,'+b}catch(e){document.getElementById('latest-progress').style.display='none'}}
 loadLatestProgress();
 </script>
+  <script src="/site-navigation.js?v=20260828-ia-1" defer></script>
 </body>
 </html>

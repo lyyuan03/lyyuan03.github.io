@@ -32,9 +32,60 @@ main{max-width:1120px;margin:auto;padding:0 24px 80px}.article-result-summary{di
 @media(max-width:900px){.article-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.site-nav{min-height:58px;padding:0 14px;gap:16px;overflow:auto;justify-content:flex-start}.hero{padding:44px 18px 24px}.filters{padding:0 18px}.article-grid{grid-template-columns:1fr}.article-view{padding:30px 22px 45px}.article-body{font-size:17px;line-height:1.95}.article-view>h2{font-size:29px}.article-share{align-items:flex-start;flex-direction:column}.article-result-summary{padding:0 2px}body.site-auth-enabled .site-header{top:var(--site-auth-height,52px)}}
 </style>
+  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-1">
 </head>
 <body>
-<header class="site-header"><nav class="site-nav"><a href="index.html">首頁</a><a href="activity.html">活動</a><a href="articles.html" class="active">文選</a><a href="membership.html">會員</a><a href="books.html">選物</a><a href="videos.html">影像</a><a href="community.html">社群</a></nav></header>
+<nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-1">
+  <div class="global-nav-inner">
+    <ul class="global-nav-links">
+      <li class="global-nav-item"><a class="global-nav-link" href="/">首頁</a></li>
+      <li class="global-nav-item"><a class="global-nav-link" href="/courses/lingji-practice.html">課程</a></li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-activity">活動</button>
+        <ul class="global-nav-dropdown" id="global-nav-activity">
+          <li><a href="/niandian.html">年度點燈</a></li>
+          <li><a href="/dizhi.html">奠基法會</a></li>
+          <li><a href="/lixing.html">例行法儀</a></li>
+          <li><a href="/fahui.html">報名法儀</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger is-active" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-articles">文選</button>
+        <ul class="global-nav-dropdown" id="global-nav-articles">
+          <li><a href="/articles.html" aria-current="page">全部文選</a></li>
+          <li><a href="/articles.html?category=spiritual">靈．修行</a></li>
+          <li><a href="/articles.html?category=worldly">人．俗世</a></li>
+          <li><a href="/articles.html?category=spirit-world">異．靈界</a></li>
+          <li><a href="/articles.html?category=reading">思．讀物</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item"><a class="global-nav-link" href="/membership.html">會員</a></li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-shop">選物</button>
+        <ul class="global-nav-dropdown" id="global-nav-shop">
+          <li><a href="/books.html">宇色靈修著作</a></li>
+          <li><a href="/spiritual-aesthetics.html">靈性美學館</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-media">影音・社群</button>
+        <ul class="global-nav-dropdown" id="global-nav-media">
+          <li class="global-nav-group">靈元院官方</li>
+          <li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">YT｜靈元院</a></li>
+          <li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">FB｜靈元院</a></li>
+          <li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer">IG｜靈元院</a></li>
+          <li class="global-nav-group">宇色老師</li>
+          <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">YT｜宇色心養生</a></li>
+          <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank" rel="noopener noreferrer">Podcast｜宇色人間書影</a></li>
+          <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank" rel="noopener noreferrer">Podcast｜宇色心養生</a></li>
+          <li><a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">FB｜我在人間－宇色</a></li>
+          <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank" rel="noopener noreferrer">IG｜我在人間－宇色</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="global-nav-spacer" aria-hidden="true" style="height:56px"></div>
 <section class="hero"><div class="hero-kicker">LYYUAN JOURNAL</div><h1>文選</h1><p>從修行到俗世，從靈界辨識到閱讀筆記。把複雜的經驗整理成能落實於生活的思考。</p></section>
 <nav class="filters" id="category-tabs"></nav>
 <main id="article-root"><div class="empty">文章載入中…</div></main>
@@ -48,5 +99,6 @@ main{max-width:1120px;margin:auto;padding:0 24px 80px}.article-result-summary{di
 <script type="module" src="/construction-record-extra-images.js?v=20260823-direct-webp-3"></script>
 <script type="module" src="/article-2058-toc.js?v=20260816-4"></script>
 <script type="module" src="/site-auth-nav.js?v=20260824-auth-mobile-layout-2"></script>
+  <script src="/site-navigation.js?v=20260828-ia-1" defer></script>
 </body>
 </html>
