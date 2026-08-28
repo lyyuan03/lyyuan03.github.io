@@ -539,7 +539,7 @@
     .hero{--motion-x:0px;--motion-y:0px;min-height:660px;padding:138px 0 106px;isolation:isolate;background:#0a1710}
     .hero:before{z-index:0;background:radial-gradient(ellipse at 81% 35%,rgba(196,206,174,.26),transparent 32%),radial-gradient(circle at 72% 55%,rgba(134,157,119,.2),transparent 35%),radial-gradient(circle at 18% 76%,rgba(83,105,74,.22),transparent 34%),linear-gradient(135deg,#07110b 0%,#102218 55%,#20291c 100%);background-size:118% 118%;animation:forestAmbient 14s ease-in-out infinite alternate}
     .hero:after{z-index:2;opacity:1;background:linear-gradient(90deg,rgba(5,13,9,.97) 0%,rgba(6,15,10,.88) 37%,rgba(7,16,11,.32) 66%,rgba(7,15,10,.035) 100%),linear-gradient(to top,rgba(5,12,8,.7),transparent 50%),linear-gradient(to bottom,rgba(6,13,9,.16),transparent 32%);mask-image:none}
-    .hero-grid{position:relative;z-index:3;display:block}
+    .hero-grid{position:relative;z-index:4;display:block}
     .hero-content{position:relative;max-width:1040px}
     .eyebrow{display:flex;align-items:center;gap:16px;margin-bottom:17px}
     .eyebrow:after{content:"";width:118px;height:1px;background:linear-gradient(90deg,var(--gold-light),transparent);transform-origin:left}
@@ -576,7 +576,7 @@
     .tree-flow-motion use:nth-child(11){animation-delay:-2.85s}
     .tree-flow-motion use:nth-child(12){animation-delay:-4.1s}
     .forest-light{position:absolute;z-index:2;right:1%;top:-3%;width:54%;height:82%;border-radius:50%;background:radial-gradient(ellipse,rgba(230,232,198,.28),rgba(178,201,166,.11) 42%,transparent 73%);filter:blur(14px);animation:forestLight 8.5s ease-in-out infinite alternate}
-    .forest-mist{position:absolute;z-index:3;left:-34%;width:168%;height:142px;opacity:.58;filter:blur(17px);mix-blend-mode:screen;will-change:transform;background:radial-gradient(ellipse at 13% 55%,rgba(236,241,232,.5),transparent 19%),radial-gradient(ellipse at 41% 44%,rgba(220,232,221,.42),transparent 24%),radial-gradient(ellipse at 69% 58%,rgba(236,241,232,.38),transparent 21%),radial-gradient(ellipse at 91% 43%,rgba(214,226,216,.36),transparent 18%)}
+    .forest-mist{position:absolute;z-index:3;left:-34%;width:168%;height:142px;opacity:.5;filter:blur(17px);mix-blend-mode:screen;pointer-events:none;will-change:transform;background:radial-gradient(ellipse at 13% 55%,rgba(236,241,232,.48),transparent 19%),radial-gradient(ellipse at 41% 44%,rgba(220,232,221,.4),transparent 24%),radial-gradient(ellipse at 69% 58%,rgba(236,241,232,.36),transparent 21%),radial-gradient(ellipse at 91% 43%,rgba(214,226,216,.34),transparent 18%)}
     .forest-mist:after{content:"";position:absolute;left:8%;right:8%;top:45%;height:1px;background:linear-gradient(90deg,transparent,rgba(235,220,186,.22),transparent);filter:blur(2px)}
     .mist-one{bottom:15%;animation:mistAcross 18s linear infinite}
     .mist-two{bottom:37%;height:116px;opacity:.39;transform:translateX(-10%);animation:mistAcrossReverse 24s linear infinite}
@@ -856,10 +856,10 @@
         </g>
       </svg>
       <span class="forest-light"></span>
-      <span class="forest-mist mist-one"></span>
-      <span class="forest-mist mist-two"></span>
-      <span class="forest-mist mist-three"></span>
     </div>
+    <span class="forest-mist mist-one" aria-hidden="true"></span>
+    <span class="forest-mist mist-two" aria-hidden="true"></span>
+    <span class="forest-mist mist-three" aria-hidden="true"></span>
     <div class="container hero-grid">
       <div class="hero-content reveal">
         <p class="eyebrow">Online Course · Spiritual Practice</p>
