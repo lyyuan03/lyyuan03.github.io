@@ -23,11 +23,11 @@ const FIRST_IMAGE_OVERRIDES = {
   "love-beyond-filial-piety-and-ancestor-worship": "assets/articles/love-beyond-filial-piety/from-duty-to-love-v2.webp?v=20260810-original-photo-fix-1"
 };
 
-// 這兩篇文章的縮圖只保留純照片，不在照片上重複疊加靈元院、分類或文章標題文字。
-const TEXT_FREE_THUMBNAIL_IDS = new Set([
-  "yuanqin-debt-heart",
-  "ghost-gate-always-open"
-]);
+// 這兩篇使用原始照片時，裁掉照片本身已燒入的舊文字，並恢復全站統一的縮圖版型。
+const CLEAN_CROP_OVERRIDES = {
+  "yuanqin-debt-heart": { scale: 2.0, origin: "82% 50%" },
+  "ghost-gate-always-open": { scale: 1.9, origin: "90% 50%" }
+};
 
 const CATEGORY_LABELS = {
   spiritual: "靈・修行",
@@ -54,7 +54,7 @@ function ensureStyle() {
   style.id = "article-photo-thumbnail-style-20260823";
   style.textContent = `
     .article-card-media[data-photo-thumbnail="true"]{position:relative!important;overflow:hidden!important;background:${MEDIA_BACKGROUND}!important}
-    .article-card-media[data-photo-thumbnail="true"]>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:var(--article-thumbnail-fit,cover)!important;object-position:var(--article-thumbnail-position,50% 50%)!important;transform:scale(var(--article-thumbnail-scale,1))!important;filter:none!important;margin:0!important;padding:0!important;z-index:0}
+    .article-card-media[data-photo-thumbnail="true"]>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:var(--article-thumbnail-fit,cover)!important;object-position:var(--article-thumbnail-position,50% 50%)!important;transform:scale(var(--article-thumbnail-scale,1))!important;transform-origin:var(--article-thumbnail-origin,50% 50%)!important;filter:none!important;margin:0!important;padding:0!important;z-index:0}
     .article-card-media[data-photo-thumbnail="true"]:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,12,6,.16) 0%,rgba(5,12,6,.04) 34%,rgba(5,12,6,.20) 62%,rgba(5,12,6,.72) 100%)}
     .article-card-media[data-photo-thumbnail="true"] .article-card-media-gradient{display:none!important}
     .article-photo-thumb-overlay{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:6.5% 7%;pointer-events:none;color:#F6F1E8;text-align:left}
@@ -224,13 +224,15 @@ function applyCard(card) {
     .map(normalizeImageUrl).filter((value, index, values) => value && values.indexOf(value) === index);
   const source = sourceCandidates.find((value) => !failedSources.has(value)) || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
   const shortTitle = compactTitle(article, fullTitle);
-  const fit = configured?.thumbnailFit === "contain" ? "contain" : "cover";
+  const cleanCrop = CLEAN_CROP_OVERRIDES[articleId] || null;
+  const fit = cleanCrop ? "cover" : configured?.thumbnailFit === "contain" ? "contain" : "cover";
   const x = Number.isFinite(Number(configured?.thumbnailPositionX)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionX))) : 50;
   const y = Number.isFinite(Number(configured?.thumbnailPositionY)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionY))) : 50;
-  const scale = Number.isFinite(Number(configured?.thumbnailScale)) ? Math.min(300, Math.max(100, Number(configured.thumbnailScale))) / 100 : 1;
+  const scale = cleanCrop?.scale || (Number.isFinite(Number(configured?.thumbnailScale)) ? Math.min(300, Math.max(100, Number(configured.thumbnailScale))) / 100 : 1);
   media.style.setProperty("--article-thumbnail-fit", fit);
   media.style.setProperty("--article-thumbnail-position", `${x}% ${y}%`);
   media.style.setProperty("--article-thumbnail-scale", String(scale));
+  media.style.setProperty("--article-thumbnail-origin", cleanCrop?.origin || "50% 50%");
 
   image.onerror = () => {
     const failed = normalizeImageUrl(image.getAttribute("src") || "");
@@ -246,17 +248,12 @@ function applyCard(card) {
   delete media.dataset.brandThumbnail;
   delete media.dataset.brandSpecial;
 
-  if (TEXT_FREE_THUMBNAIL_IDS.has(articleId)) {
-    media.querySelectorAll(".article-photo-thumb-overlay, .article-brand-thumb-overlay").forEach((node) => node.remove());
-    media.dataset.textFreeThumbnail = "true";
-  } else {
-    delete media.dataset.textFreeThumbnail;
-    ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
-    const titleNode = media.querySelector(".article-photo-thumb-title");
-    if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
-  }
+  delete media.dataset.textFreeThumbnail;
+  ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
+  const titleNode = media.querySelector(".article-photo-thumb-title");
+  if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
 
-  card.dataset.thumbnailConfigured = configuredImage ? "saved-setting" : preservedOriginal ? "original-photo" : overrideImage ? "inline-image-override" : "brand-fallback";
+  card.dataset.thumbnailConfigured = cleanCrop ? "clean-crop-standard-template" : configuredImage ? "saved-setting" : preservedOriginal ? "original-photo" : overrideImage ? "inline-image-override" : "brand-fallback";
 }
 
 function applyAllCards() {
