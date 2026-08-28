@@ -24,21 +24,26 @@ footer{background:rgba(6,9,5,.95);border-top:1px solid rgba(165,130,84,.1);paddi
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
-  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-1">
+  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-3">
 </head>
 <body>
-<nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-2">
+<nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
   <div class="global-nav-inner">
     <ul class="global-nav-links">
       <li class="global-nav-item"><a class="global-nav-link" href="/">首頁</a></li>
       <li class="global-nav-item">
         <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-activity">活動</button>
-        <ul class="global-nav-dropdown" id="global-nav-activity">
+        <ul class="global-nav-dropdown global-nav-activity-menu" id="global-nav-activity">
           <li><a href="/niandian.html">年度點燈</a></li>
           <li><a href="/dizhi.html">奠基法會</a></li>
           <li><a href="/lixing.html">例行法儀</a></li>
           <li><a href="/fahui.html">報名法儀</a></li>
-          <li><a href="/courses/lingji-practice.html">課程</a></li>
+          <li class="global-nav-course-tree">
+            <a class="global-nav-course-parent" href="/courses/">課程</a>
+            <ul class="global-nav-sublist" aria-label="課程子目錄">
+              <li><a href="/courses/lingji-practice.html">跟靈乩前輩學靈修的兩堂必修課</a></li>
+            </ul>
+          </li>
         </ul>
       </li>
       <li class="global-nav-item">
@@ -110,6 +115,6 @@ const themeReports={wealth:{title:'財富與人生',why:'你的答案顯示，�
 function showResult(){let score={wealth:0,love:0,karma:0,spirit:0,faith:0,practice:0};ans.slice(3).forEach(v=>{if(v&&score[v]!==undefined)score[v]++});let top=Object.keys(score).sort((a,b)=>score[b]-score[a])[0]||'practice';const pr=profileReports[profile],tr=themeReports[top],chosen=rec[top];quizCard.style.display='none';result.style.display='block';result.innerHTML=`<div class="result-inner"><div class="result-eyebrow">YOUR READING MAP</div><h3>${profileNames[profile]}｜${tr.title}</h3><p class="result-lead">這不是單純的書籍推薦，而是一份依照你目前狀態整理出的閱讀路徑。</p><div class="result-section"><h4>你的閱讀人格</h4><p>${pr[0]}</p></div><div class="result-section"><h4>宇色老師想對你說</h4><div class="teacher-message"><p>${pr[1]}</p><p>${tr.why}</p></div></div><div class="result-section"><h4>宇色老師為什麼想先把這三本書交給你？</h4><div class="reading-list">${chosen.map((b,i)=>`<div class="book-rec"><a href="${b[1]}" target="_blank"><img src="${b[2]}" alt="${b[0]}"></a><div><small>${tr.books[i][0]}</small><h5>${b[0]}</h5><p>${tr.books[i][1]}</p><a href="${b[1]}" target="_blank">前往購書頁</a></div></div>`).join('')}</div></div><div class="result-section"><h4>建議閱讀順序</h4><div class="reading-path">${chosen.map((b,i)=>`${i?'<span class="path-arrow">→</span>':''}<span class="path-pill">${i+1}. ${b[0]}</span>`).join('')}</div></div><div class="final-blessing">我始終相信，每一本書都有它出現在生命中的時間。<br>今天你會來到這裡，或許不是偶然。<br>願這三本書，陪你走過此刻的人生，也陪你慢慢看見真正的自己。</div></div>`;result.scrollIntoView({behavior:'smooth',block:'center'});}renderQ();
 </script>
 <script type="module" src="/site-auth-nav.js?v=20260804-strict-wellness-1"></script>
-  <script src="/site-navigation.js?v=20260828-ia-1" defer></script>
+  <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
 </body>
 </html>

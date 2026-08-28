@@ -79,21 +79,26 @@ nav{position:fixed;z-index:100;top:0;left:0;right:0;height:56px;background:rgba(
 @media(max-width:520px){.article-share-restored{margin-top:28px}.article-share-restored .article-share-icon{width:42px;height:42px}}
 </style>
 
-  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-1">
+  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-3">
 </head>
 <body class="article-static-page">
-<nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-2">
+<nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
   <div class="global-nav-inner">
     <ul class="global-nav-links">
       <li class="global-nav-item"><a class="global-nav-link" href="/">首頁</a></li>
       <li class="global-nav-item">
         <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-activity">活動</button>
-        <ul class="global-nav-dropdown" id="global-nav-activity">
+        <ul class="global-nav-dropdown global-nav-activity-menu" id="global-nav-activity">
           <li><a href="/niandian.html">年度點燈</a></li>
           <li><a href="/dizhi.html">奠基法會</a></li>
           <li><a href="/lixing.html">例行法儀</a></li>
           <li><a href="/fahui.html">報名法儀</a></li>
-          <li><a href="/courses/lingji-practice.html">課程</a></li>
+          <li class="global-nav-course-tree">
+            <a class="global-nav-course-parent" href="/courses/">課程</a>
+            <ul class="global-nav-sublist" aria-label="課程子目錄">
+              <li><a href="/courses/lingji-practice.html">跟靈乩前輩學靈修的兩堂必修課</a></li>
+            </ul>
+          </li>
         </ul>
       </li>
       <li class="global-nav-item">
@@ -278,5 +283,5 @@ nav{position:fixed;z-index:100;top:0;left:0;right:0;height:56px;background:rgba(
 })();
 </script>
 
-  <script src="/site-navigation.js?v=20260828-ia-1" defer></script>
+  <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
 </body></html>

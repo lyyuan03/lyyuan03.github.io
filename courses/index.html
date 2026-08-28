@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>宇色線上課程總覽｜靈元院</title>
+  <meta name="description" content="靈元院宇色線上課程總覽。從靈修辨識、元神與靈動，到靈魂覺醒、富足意識與身心養護，依學習路徑找到適合自己的課程。">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://lyyuan.tw/courses/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="宇色線上課程｜靈元院">
+  <meta property="og:description" content="從靈修辨識，到生命意識與身心養護：依路徑找到適合自己的線上課程。">
+  <meta property="og:url" content="https://lyyuan.tw/courses/">
+  <meta name="theme-color" content="#0b160e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;600&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/analytics-config.js"></script>
+  <script src="/analytics.js" defer></script>
+  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-3">
+  <style>
+    :root{--ink:#182019;--deep:#071009;--forest:#102218;--forest-2:#183323;--paper:#f4f0e8;--paper-2:#ebe5da;--cream:#faf7f0;--gold:#b79359;--gold-light:#d6b87f;--line:rgba(109,88,56,.22);--serif:"Noto Serif TC",serif;--sans:"Noto Sans TC",sans-serif;--en:"Cormorant Garamond",serif}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--deep)}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:400;line-height:1.8;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .container{width:min(1180px,calc(100% - 48px));margin-inline:auto}
+    .page-progress{position:fixed;z-index:1400;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#856735,#e4c98f);transform:scaleX(0);transform-origin:left}
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .85s cubic-bezier(.2,.7,.2,1)}
+    .reveal.on{opacity:1;transform:none}
+    .eyebrow,.section-label{display:inline-flex;align-items:center;gap:12px;color:var(--gold);font-family:var(--en);font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase}
+    .eyebrow:after,.section-label:after{content:"";width:62px;height:1px;background:currentColor;opacity:.7}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 25px;border:1px solid transparent;font-size:14px;letter-spacing:.08em;transition:background .25s,color .25s,border-color .25s,transform .25s}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:var(--gold);color:#fff;border-color:var(--gold)}
+    .btn-primary:hover{background:#a4814c}
+    .btn-ghost{border-color:rgba(230,211,174,.44);color:#f8f3e9;background:rgba(4,10,6,.18)}
+    .btn-ghost:hover{border-color:var(--gold-light);background:rgba(198,164,104,.1)}
+    .hero{position:relative;isolation:isolate;min-height:700px;display:flex;align-items:center;overflow:hidden;background:radial-gradient(circle at 73% 30%,#2a4931 0,rgba(26,48,33,.7) 24%,transparent 50%),linear-gradient(115deg,#07100a 5%,#10251a 56%,#09140d 100%);color:#f8f3e9}
+    .hero:after{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(90deg,rgba(2,8,4,.92) 0,rgba(4,12,7,.66) 47%,rgba(3,9,5,.1) 78%),linear-gradient(0deg,rgba(4,10,6,.82),transparent 33%);pointer-events:none}
+    .forest-scene{position:absolute;z-index:0;inset:-3%;width:106%;height:106%;filter:saturate(.92) brightness(1.12);transform:translate3d(var(--motion-x,0),var(--motion-y,0),0) scale(1.03);transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+    .mountain-back{fill:#5d7a63;opacity:.3;animation:mountainBreath 13s ease-in-out infinite alternate}
+    .mountain-mid{fill:#31513a;opacity:.72}
+    .pine-back{color:#24422d;opacity:.8}
+    .pine-front{color:#0b2114;opacity:.96}
+    .tree-canopy{fill:url(#hub-canopy);filter:url(#hub-soft);opacity:.97;animation:treeBreath 8s ease-in-out infinite alternate;transform-origin:1260px 260px}
+    .tree-trunk{fill:url(#hub-trunk);stroke:rgba(230,203,146,.5);stroke-width:3}
+    .tree-branch{fill:none;stroke:url(#hub-trunk);stroke-linecap:round;stroke-linejoin:round}
+    .gold-flow-base,.gold-flow-motion{fill:none;stroke-linecap:round;filter:url(#hub-glow)}
+    .gold-flow-base{stroke:rgba(220,183,109,.25);stroke-width:2}
+    .gold-flow-motion{stroke:url(#hub-gold);stroke-width:3;stroke-dasharray:11 89;animation:goldTravel 7s linear infinite}
+    .forest-light{position:absolute;z-index:1;right:8%;top:6%;width:46%;height:74%;background:radial-gradient(ellipse,rgba(227,201,145,.17),transparent 67%);filter:blur(14px);animation:lightBreath 7s ease-in-out infinite alternate}
+    .mist{position:absolute;z-index:3;left:-22%;width:145%;height:125px;border-radius:50%;background:linear-gradient(90deg,transparent 4%,rgba(225,232,218,.08) 28%,rgba(240,238,218,.18) 50%,rgba(213,229,215,.07) 76%,transparent 96%);filter:blur(21px);pointer-events:none}
+    .mist-one{bottom:24%;animation:mistMove 18s ease-in-out infinite alternate}
+    .mist-two{bottom:10%;opacity:.7;animation:mistMove 25s ease-in-out -7s infinite alternate-reverse}
+    .mist-three{top:24%;opacity:.42;animation:mistMove 31s ease-in-out -12s infinite alternate}
+    .hero-inner{position:relative;z-index:4;padding:122px 0 85px}
+    .course-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:25px;color:rgba(245,240,232,.55);font-size:12px;letter-spacing:.09em}
+    .course-breadcrumb a{color:var(--gold-light);border-bottom:1px solid rgba(214,184,127,.36)}
+    .hero-copy{max-width:760px}
+    .hero h1{margin:16px 0 14px;font-family:var(--serif);font-size:clamp(56px,7.1vw,104px);font-weight:500;line-height:1.08;letter-spacing:.02em;text-shadow:0 12px 34px rgba(0,0,0,.28)}
+    .hero h1 span{display:block;color:var(--gold-light);font-size:.58em;letter-spacing:.12em}
+    .hero-lead{max-width:720px;margin:0;color:#f3eee5;font-family:var(--serif);font-size:clamp(22px,2.5vw,32px);line-height:1.55}
+    .hero-text{max-width:700px;margin:17px 0 0;color:rgba(248,243,233,.72);font-size:16px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+    .hero-facts{display:flex;gap:0;margin-top:48px;border-top:1px solid rgba(230,211,174,.2);width:min(730px,100%)}
+    .hero-fact{flex:1;padding:19px 26px 0 0}
+    .hero-fact+.hero-fact{padding-left:26px;border-left:1px solid rgba(230,211,174,.18)}
+    .hero-fact b{display:block;color:var(--gold-light);font-family:var(--en);font-size:30px;font-weight:500;line-height:1}
+    .hero-fact span{display:block;margin-top:8px;color:rgba(248,243,233,.62);font-size:12px;letter-spacing:.08em}
+    .course-index-nav{position:sticky;z-index:900;top:56px;background:rgba(248,245,237,.94);border-bottom:1px solid rgba(105,82,48,.17);backdrop-filter:blur(14px)}
+    .course-index-nav-inner{display:flex;align-items:center;justify-content:space-between;min-height:62px;gap:20px}
+    .course-index-links{display:flex;align-items:center;gap:29px;overflow:auto;scrollbar-width:none}
+    .course-index-links::-webkit-scrollbar{display:none}
+    .course-index-links a{flex:none;padding:20px 0 17px;color:#5d635b;font-size:13px;letter-spacing:.08em;border-bottom:2px solid transparent}
+    .course-index-links a:hover,.course-index-links a.active{color:#8f6d3b;border-color:#b79359}
+    .mini-cta{flex:none;color:#8e6936;font-size:13px;font-weight:500;letter-spacing:.06em}
+    .section{padding:106px 0}
+    .intro{background:var(--cream)}
+    .intro-grid{display:grid;grid-template-columns:.76fr 1.24fr;gap:95px;align-items:start}
+    .intro h2,.catalogue-head h2,.registration h2{margin:13px 0 0;font-family:var(--serif);font-size:clamp(36px,4.2vw,58px);font-weight:500;line-height:1.34;letter-spacing:.02em}
+    .intro-copy{padding-top:36px}
+    .intro-copy p{margin:0 0 18px;color:#555e56;font-size:17px;line-height:2}
+    .intro-copy strong{color:#1b2e20;font-family:var(--serif);font-size:23px;font-weight:600}
+    .learning-map{margin-top:70px;padding:35px 0 11px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .map-head{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:32px}
+    .map-head h3{margin:6px 0 0;font-family:var(--serif);font-size:27px;font-weight:600}
+    .map-head p{margin:0;color:#6a7069;font-size:14px}
+    .map-steps{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:12px;padding-bottom:25px}
+    .map-steps:before{content:"";position:absolute;top:13px;right:4%;left:4%;height:1px;background:linear-gradient(90deg,#b79359,#567059);transform:scaleX(0);transform-origin:left;transition:transform 1.5s ease}
+    .map-steps.on:before{transform:scaleX(1)}
+    .map-step{position:relative;padding-top:34px;color:#555f57;font-size:12px;line-height:1.55;text-align:center}
+    .map-step:before{content:"";position:absolute;z-index:1;top:7px;left:calc(50% - 6px);width:12px;height:12px;border:2px solid var(--cream);border-radius:50%;background:#aa8854;box-shadow:0 0 0 1px rgba(142,107,55,.4)}
+    .catalogue{background:var(--paper)}
+    .catalogue-head{display:grid;grid-template-columns:1fr .8fr;gap:65px;align-items:end;margin-bottom:77px}
+    .catalogue-intro{margin:0;color:#5f665f;font-size:16px;line-height:1.9}
+    .path{scroll-margin-top:130px;margin-top:92px}
+    .path:first-of-type{margin-top:0}
+    .path-header{display:grid;grid-template-columns:115px 1fr;align-items:end;gap:25px;padding-bottom:23px;border-bottom:1px solid rgba(80,70,50,.35)}
+    .path-number{color:#a48250;font-family:var(--en);font-size:17px;letter-spacing:.2em}
+    .path-title-row{display:flex;align-items:end;justify-content:space-between;gap:30px}
+    .path-title-row h3{margin:0;font-family:var(--serif);font-size:clamp(32px,3.8vw,49px);font-weight:500;line-height:1.2}
+    .path-title-row p{max-width:475px;margin:0;color:#697069;font-size:14px;text-align:right}
+    .course-row{display:grid;grid-template-columns:115px minmax(0,1fr) 205px;gap:25px;align-items:center;padding:34px 0;border-bottom:1px solid var(--line);transition:padding .3s,background .3s}
+    .course-row:hover{padding-right:18px;padding-left:18px;background:rgba(255,252,246,.76)}
+    .course-row.featured{position:relative;margin-top:14px;padding-right:24px;padding-left:24px;background:linear-gradient(90deg,rgba(25,52,35,.98),rgba(13,32,21,.96));color:#f8f2e7;border:1px solid rgba(183,147,89,.28)}
+    .course-row.featured:hover{background:linear-gradient(90deg,#1b3b28,#10291b)}
+    .course-no{align-self:start;color:#99774a;font-family:var(--en);font-size:29px;line-height:1.1}
+    .course-main{min-width:0}
+    .course-tags{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+    .tag{display:inline-flex;padding:3px 9px;border:1px solid rgba(151,116,65,.28);color:#8b6839;font-size:10px;font-weight:500;letter-spacing:.12em}
+    .featured .tag{border-color:rgba(218,184,125,.34);color:#dabb81}
+    .status{color:#7c837b;font-size:11px;letter-spacing:.08em}
+    .featured .status{color:rgba(246,239,225,.58)}
+    .course-row h4{margin:0;font-family:var(--serif);font-size:clamp(22px,2.4vw,31px);font-weight:600;line-height:1.45}
+    .course-meta{margin:7px 0;color:#876943;font-size:13px;font-weight:500;letter-spacing:.04em}
+    .featured .course-meta{color:#d7b879}
+    .course-desc{max-width:760px;margin:7px 0 0;color:#626a62;font-size:14.5px;line-height:1.85}
+    .featured .course-desc{color:rgba(246,239,225,.7)}
+    .course-actions{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+    .course-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;color:#7d5c31;border-bottom:1px solid rgba(126,93,50,.32);font-size:13px;font-weight:500;letter-spacing:.07em}
+    .course-link:after{content:"↗";font-size:15px;transition:transform .2s}
+    .course-link.internal:after{content:"→"}
+    .course-link:hover:after{transform:translate(3px,-2px)}
+    .featured .course-link{color:#dfc38d;border-color:rgba(218,184,125,.3)}
+    .coming{display:block;padding:10px 0;color:#8b8e88;font-size:12px;letter-spacing:.08em;text-align:right}
+    .source-note{display:flex;justify-content:space-between;gap:30px;margin-top:35px;color:#737871;font-size:12px}
+    .source-note a{color:#8e6a39;border-bottom:1px solid rgba(142,106,57,.35)}
+    .registration{position:relative;overflow:hidden;background:#102519;color:#f7f2e8}
+    .registration:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 82% 12%,rgba(202,171,112,.15),transparent 40%),linear-gradient(125deg,transparent 50%,rgba(2,8,4,.35))}
+    .registration-grid{position:relative;display:grid;grid-template-columns:.9fr 1.1fr;gap:90px;align-items:start}
+    .registration h2{color:#fff}
+    .registration-copy{margin:20px 0 0;color:rgba(247,242,232,.68);font-size:15px}
+    .notice-list{border-top:1px solid rgba(215,184,127,.25)}
+    .notice{display:grid;grid-template-columns:45px 1fr;gap:18px;padding:22px 0;border-bottom:1px solid rgba(215,184,127,.18)}
+    .notice b{color:#d6b87f;font-family:var(--en);font-size:19px;font-weight:500}
+    .notice strong{display:block;font-family:var(--serif);font-size:18px;font-weight:600}
+    .notice p{margin:5px 0 0;color:rgba(247,242,232,.62);font-size:13.5px}
+    .registration-actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:30px}
+    footer{padding:54px 0;background:#071009;color:rgba(247,242,232,.58);border-top:1px solid rgba(198,164,104,.18)}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;gap:35px}
+    .footer-brand{display:flex;align-items:center;gap:16px}
+    .footer-brand img{width:64px;height:auto;opacity:.92}
+    .footer-brand p{margin:0;font-family:var(--serif);font-size:18px;color:#e2c997}
+    .footer-brand small{display:block;color:rgba(247,242,232,.4);font-family:var(--sans);font-size:10px;letter-spacing:.15em}
+    .footer-links{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;letter-spacing:.07em}
+    .footer-links a:hover{color:#d6b87f}
+    .mobile-cta{display:none}
+    @keyframes goldTravel{to{stroke-dashoffset:-100}}
+    @keyframes mistMove{from{transform:translate3d(-6%,0,0) scaleX(.96)}to{transform:translate3d(8%,-12px,0) scaleX(1.05)}}
+    @keyframes mountainBreath{to{transform:translateY(-7px)}}
+    @keyframes treeBreath{to{transform:translateY(-5px) scale(1.008)}}
+    @keyframes lightBreath{to{opacity:.52;transform:scale(1.08)}}
+    @media(max-width:900px){
+      .container{width:min(100% - 34px,1180px)}
+      .hero{min-height:720px}
+      .hero:after{background:linear-gradient(90deg,rgba(2,8,4,.88),rgba(4,12,7,.56) 75%,rgba(3,9,5,.25)),linear-gradient(0deg,rgba(4,10,6,.8),transparent 38%)}
+      .forest-scene{left:-25%;width:135%}
+      .intro-grid,.catalogue-head,.registration-grid{grid-template-columns:1fr;gap:34px}
+      .intro-copy{padding-top:0}
+      .map-steps{grid-template-columns:repeat(4,1fr);row-gap:22px}
+      .map-steps:before{display:none}
+      .map-step:after{content:"";position:absolute;top:13px;right:-12px;width:24px;height:1px;background:rgba(167,131,75,.35)}
+      .map-step:nth-child(4):after,.map-step:last-child:after{display:none}
+      .path-header{grid-template-columns:80px 1fr}
+      .course-row{grid-template-columns:80px 1fr 170px}
+    }
+    @media(max-width:680px){
+      .container{width:calc(100% - 28px)}
+      .hero{min-height:720px}
+      .hero-inner{padding:105px 0 72px}
+      .hero h1{font-size:clamp(49px,15vw,68px)}
+      .hero h1 span{font-size:.52em}
+      .hero-lead{font-size:21px}
+      .hero-text{font-size:14px}
+      .hero-facts{display:grid;grid-template-columns:repeat(3,1fr)}
+      .hero-fact{padding:16px 7px 0!important;border-left:0!important;text-align:center}
+      .hero-fact+.hero-fact{border-left:1px solid rgba(230,211,174,.18)!important}
+      .hero-fact b{font-size:23px}
+      .hero-fact span{font-size:10px}
+      .forest-scene{left:-72%;width:190%;opacity:.83}
+      .course-index-nav{top:58px}
+      .course-index-nav-inner{min-height:54px}
+      .course-index-links{gap:22px}
+      .course-index-links a{padding:16px 0 13px;font-size:12px}
+      .mini-cta{display:none}
+      .section{padding:75px 0}
+      .intro h2,.catalogue-head h2,.registration h2{font-size:36px}
+      .intro-copy p{font-size:15px}
+      .map-head{display:block}
+      .map-head p{margin-top:10px}
+      .map-steps{grid-template-columns:repeat(2,1fr)}
+      .map-step:after{display:none}
+      .path{margin-top:72px}
+      .path-header{display:block}
+      .path-number{display:block;margin-bottom:7px}
+      .path-title-row{display:block}
+      .path-title-row h3{font-size:34px}
+      .path-title-row p{margin-top:10px;text-align:left}
+      .course-row,.course-row.featured{display:grid;grid-template-columns:46px 1fr;gap:13px;padding:27px 0}
+      .course-row:hover{padding-right:0;padding-left:0}
+      .course-row.featured,.course-row.featured:hover{padding:26px 18px}
+      .course-no{font-size:23px}
+      .course-main{grid-column:2}
+      .course-actions{grid-column:2;display:flex;flex-direction:row;flex-wrap:wrap;margin-top:5px}
+      .course-link{min-width:130px;flex:1}
+      .coming{text-align:left}
+      .source-note{display:block}
+      .source-note a{display:inline-block;margin-top:8px}
+      .footer-inner{display:block;text-align:center}
+      .footer-brand{justify-content:center}
+      .footer-links{justify-content:center;margin-top:25px}
+      body{padding-bottom:58px}
+      .mobile-cta{position:fixed;z-index:1100;right:0;bottom:0;left:0;display:block;padding:8px 12px;background:rgba(7,16,9,.96);border-top:1px solid rgba(198,164,104,.3);backdrop-filter:blur(14px)}
+      .mobile-cta a{display:flex;align-items:center;justify-content:center;height:42px;background:#b79359;color:#fff;font-size:13px;letter-spacing:.08em}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      .reveal{opacity:1;transform:none;transition:none}
+      .forest-scene,.tree-canopy,.gold-flow-motion,.mist,.forest-light,.mountain-back{animation:none!important;transition:none!important}
+      .map-steps:before{transform:scaleX(1)}
+    }
+  </style>
+</head>
+<body>
+  <div class="page-progress" aria-hidden="true"></div>
+  <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
+  <div class="global-nav-inner">
+    <ul class="global-nav-links">
+      <li class="global-nav-item"><a class="global-nav-link" href="/">首頁</a></li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger is-active" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-activity">活動</button>
+        <ul class="global-nav-dropdown global-nav-activity-menu" id="global-nav-activity">
+          <li><a href="/niandian.html">年度點燈</a></li>
+          <li><a href="/dizhi.html">奠基法會</a></li>
+          <li><a href="/lixing.html">例行法儀</a></li>
+          <li><a href="/fahui.html">報名法儀</a></li>
+          <li class="global-nav-course-tree">
+            <a class="global-nav-course-parent" href="/courses/" aria-current="page">課程</a>
+            <ul class="global-nav-sublist" aria-label="課程子目錄">
+              <li><a href="/courses/lingji-practice.html">跟靈乩前輩學靈修的兩堂必修課</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-articles">文選</button>
+        <ul class="global-nav-dropdown" id="global-nav-articles">
+          <li><a href="/articles.html">全部文選</a></li>
+          <li><a href="/articles.html?category=spiritual">靈．修行</a></li>
+          <li><a href="/articles.html?category=worldly">人．俗世</a></li>
+          <li><a href="/articles.html?category=spirit-world">異．靈界</a></li>
+          <li><a href="/articles.html?category=reading">思．讀物</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item"><a class="global-nav-link" href="/membership.html">會員</a></li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-shop">選物</button>
+        <ul class="global-nav-dropdown" id="global-nav-shop">
+          <li><a href="/books.html">宇色靈修著作</a></li>
+          <li><a href="/spiritual-aesthetics.html">靈性美學館</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-media">影音・社群</button>
+        <ul class="global-nav-dropdown" id="global-nav-media">
+          <li class="global-nav-group">靈元院官方</li>
+          <li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">YT｜靈元院</a></li>
+          <li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">FB｜靈元院</a></li>
+          <li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer">IG｜靈元院</a></li>
+          <li class="global-nav-group">宇色老師</li>
+          <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">YT｜宇色心養生</a></li>
+          <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank" rel="noopener noreferrer">Podcast｜宇色人間書影</a></li>
+          <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank" rel="noopener noreferrer">Podcast｜宇色心養生</a></li>
+          <li><a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">FB｜我在人間－宇色</a></li>
+          <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank" rel="noopener noreferrer">IG｜我在人間－宇色</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+  <header class="hero" id="top">
+    <svg class="forest-scene" viewBox="0 0 1600 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="hub-soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.4"/></filter>
+        <filter id="hub-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <linearGradient id="hub-trunk" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0d2114"/><stop offset=".5" stop-color="#405b3d"/><stop offset="1" stop-color="#152d1e"/></linearGradient>
+        <radialGradient id="hub-canopy" cx="42%" cy="38%" r="68%"><stop offset="0" stop-color="#587157"/><stop offset=".5" stop-color="#2d4b33"/><stop offset="1" stop-color="#122a1b"/></radialGradient>
+        <linearGradient id="hub-gold" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#9b7440"/><stop offset=".55" stop-color="#ebcf91"/><stop offset="1" stop-color="#fff1c1"/></linearGradient>
+        <path id="hub-flow-a" pathLength="100" d="M1190 780c36-111 49-190 31-259-18-70 6-133 63-188 59-57 65-130 25-218"/>
+        <path id="hub-flow-b" pathLength="100" d="M1222 784c25-98 29-170 17-231-13-67 12-120 63-164 67-58 103-130 108-218"/>
+        <path id="hub-flow-c" pathLength="100" d="M1252 784c15-90 13-153 3-208-10-56 12-102 59-138 70-53 146-69 229-48"/>
+        <path id="hub-flow-d" pathLength="100" d="M1205 782c-74-2-141 17-201 56-67 43-143 54-225 31"/>
+        <path id="hub-flow-e" pathLength="100" d="M1234 778c66-25 133-28 201-10 68 18 135 12 204-18"/>
+        <g id="hub-pine"><path d="M25 116h9l-2-50h-5z" fill="currentColor"/><path d="M30 0 9 39h13L4 70h15L0 104h63L44 70h15L41 39h12z" fill="currentColor"/></g>
+      </defs>
+      <path class="mountain-back" d="M-80 560C95 420 245 492 402 350c152-137 262-86 396 24 115 95 205 45 318-44 165-130 301-33 565 194v279H-80z"/>
+      <path class="mountain-mid" d="M-100 665C85 542 213 589 362 488c125-85 225-73 350 16 112 80 207 72 328-17 178-132 346-84 641 111v205H-100z"/>
+      <g class="pine-back"><use href="#hub-pine" transform="translate(40 480) scale(1.15)"/><use href="#hub-pine" transform="translate(160 510) scale(.9)"/><use href="#hub-pine" transform="translate(280 460) scale(1.3)"/><use href="#hub-pine" transform="translate(430 520) scale(.84)"/><use href="#hub-pine" transform="translate(560 472) scale(1.12)"/><use href="#hub-pine" transform="translate(710 510) scale(.9)"/><use href="#hub-pine" transform="translate(845 462) scale(1.27)"/><use href="#hub-pine" transform="translate(1010 500) scale(1.02)"/></g>
+      <g class="pine-front"><use href="#hub-pine" transform="translate(-15 578) scale(1.52)"/><use href="#hub-pine" transform="translate(155 604) scale(1.18)"/><use href="#hub-pine" transform="translate(330 552) scale(1.63)"/><use href="#hub-pine" transform="translate(525 612) scale(1.1)"/><use href="#hub-pine" transform="translate(680 565) scale(1.5)"/><use href="#hub-pine" transform="translate(870 602) scale(1.22)"/><use href="#hub-pine" transform="translate(1035 552) scale(1.67)"/><use href="#hub-pine" transform="translate(1390 554) scale(1.78)"/></g>
+      <g>
+        <g class="tree-canopy"><ellipse cx="1100" cy="178" rx="185" ry="120"/><ellipse cx="1295" cy="104" rx="220" ry="139"/><ellipse cx="1490" cy="190" rx="218" ry="142"/><ellipse cx="1268" cy="286" rx="262" ry="150"/><ellipse cx="1515" cy="328" rx="205" ry="135"/></g>
+        <path class="tree-trunk" d="M1148 800c55-118 70-207 48-279-20-68 4-130 60-190 48-51 56-109 27-174l85-35c47 103 25 197-47 277-47 53-53 112-23 182 36 85 92 156 154 219z"/>
+        <path class="tree-branch" stroke-width="55" d="M1283 431c-102-81-222-118-366-110"/>
+        <path class="tree-branch" stroke-width="40" d="M1300 360c-75-104-172-173-294-210"/>
+        <path class="tree-branch" stroke-width="43" d="M1318 424c82-76 179-112 290-108"/>
+        <path class="tree-branch" stroke-width="29" d="M1336 358c75-82 158-139 250-169"/>
+        <g class="gold-flow-base"><use href="#hub-flow-a"/><use href="#hub-flow-b"/><use href="#hub-flow-c"/><use href="#hub-flow-d"/><use href="#hub-flow-e"/></g>
+        <g class="gold-flow-motion"><use href="#hub-flow-a"/><use href="#hub-flow-b"/><use href="#hub-flow-c"/><use href="#hub-flow-d"/><use href="#hub-flow-e"/></g>
+      </g>
+    </svg>
+    <span class="forest-light" aria-hidden="true"></span><span class="mist mist-one" aria-hidden="true"></span><span class="mist mist-two" aria-hidden="true"></span><span class="mist mist-three" aria-hidden="true"></span>
+    <div class="container hero-inner">
+      <div class="hero-copy reveal">
+        <div class="course-breadcrumb" aria-label="麵包屑"><a href="/">首頁</a><span aria-hidden="true">／</span><span>活動</span><span aria-hidden="true">／</span><span aria-current="page">課程</span></div>
+        <p class="eyebrow">Online Courses · Spiritual Practice</p>
+        <h1>宇色線上課程<span>從理解開始，回到自己的判斷</span></h1>
+        <p class="hero-lead">從靈修辨識，到身心、財富、關係與靈魂覺醒。</p>
+        <p class="hero-text">這些看似分散的課程，其實是一套相互串聯的學習路徑。先看懂現象與信仰脈絡，再把理解帶回生活、身體與自己的意識。</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="#catalogue">瀏覽所有課程</a><a class="btn btn-ghost" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往課程報名</a></div>
+        <div class="hero-facts" aria-label="課程資訊"><div class="hero-fact"><b>8</b><span>套課程系列</span></div><div class="hero-fact"><b>ONLINE</b><span>非直播彈性觀看</span></div><div class="hero-fact"><b>30 DAYS</b><span>購課後觀看期限</span></div></div>
+      </div>
+    </div>
+  </header>
+  <div class="course-index-nav" aria-label="課程總覽導覽"><div class="container course-index-nav-inner"><div class="course-index-links"><a href="#overview">學習路徑</a><a href="#spiritual">靈修辨識</a><a href="#consciousness">生命意識</a><a href="#wellness">身心養護</a><a href="#registration">報名須知</a></div><a class="mini-cta" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">課程報名 ↗</a></div></div>
+  <main>
+    <section class="section intro" id="overview">
+      <div class="container">
+        <div class="intro-grid">
+          <div class="reveal"><span class="section-label">Course Architecture</span><h2>不是分散的商品，<br>而是一條學習路徑。</h2></div>
+          <div class="intro-copy reveal"><p><strong>先理解，再辨識；最後才是選擇。</strong></p><p>宇色的課程從「我遇到的現象是什麼」開始，逐步整理元神、啟靈、靈動、靈語、會靈與靈乩，再延伸到財富、關係、身體與集體意識。</p><p>你不必一次買完所有課程。請依照現在最想釐清的問題，從其中一條路徑開始。</p></div>
+        </div>
+        <div class="learning-map reveal">
+          <div class="map-head"><div><span class="section-label">Learning Route</span><h3>從現象，走回可以判斷的脈絡</h3></div><p>每一站都可以單獨學習，也能依序串聯。</p></div>
+          <div class="map-steps reveal" aria-label="課程學習順序"><div class="map-step">認識靈修</div><div class="map-step">元神與啟靈</div><div class="map-step">靈動與靈語</div><div class="map-step">會靈與靈乩</div><div class="map-step">靈魂覺醒</div><div class="map-step">財富與關係</div><div class="map-step">身心養護</div></div>
+        </div>
+      </div>
+    </section>
+    <section class="section catalogue" id="catalogue">
+      <div class="container">
+        <div class="catalogue-head reveal"><div><span class="section-label">Course Catalogue</span><h2>依照你現在的問題，<br>找到適合的起點。</h2></div><p class="catalogue-intro">課程依學習目的整理成三條路徑。所有可報名項目均連至目前正式報名頁；「兩堂必修課」另有完整課程介紹。</p></div>
+        <section class="path" id="spiritual">
+          <div class="path-header reveal"><span class="path-number">PATH 01</span><div class="path-title-row"><h3>靈修辨識</h3><p>適合正在釐清靈修、元神、靈動與民間信仰脈絡的人。</p></div></div>
+          <article class="course-row reveal"><span class="course-no">01</span><div class="course-main"><div class="course-tags"><span class="tag">核心課程</span><span class="status">開放報名</span></div><h4>宇色的靈修思路：從實修到修練元神的 12 堂課</h4><p class="course-meta">2 章 · 12 單元 · 約 120 分鐘</p><p class="course-desc">從靈修入門判斷、元神與啟靈，到身心反應、靈動、靈語、會靈、靈乩與通靈，建立完整的基礎座標。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
+          <article class="course-row featured reveal"><span class="course-no">02</span><div class="course-main"><div class="course-tags"><span class="tag">本期主課程</span><span class="status">完整課程頁</span></div><h4>跟靈乩前輩學靈修的兩堂必修課</h4><p class="course-meta">2 堂 · 約 4 小時 · 附課程 PPT</p><p class="course-desc">從台灣民間信仰靈修模式的形成，到林千代與「三霞二黃」等前輩的生命經驗，看懂靈乩、乩童與不同靈修系統的差異。</p></div><div class="course-actions"><a class="course-link internal" href="/courses/lingji-practice.html">完整課程介紹</a><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">立即報名</a></div></article>
+          <article class="course-row reveal"><span class="course-no">03</span><div class="course-main"><div class="course-tags"><span class="tag">專題系列</span><span class="status">開放報名</span></div><h4>靈動的奧祕：排除體內穢氣，轉化業力與習氣</h4><p class="course-meta">2 集線上課程</p><p class="course-desc">理解身體為何出現自發動作、靈動與氣動如何區分，以及如何避免把每一種身體反應都神祕化。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
+        </section>
+        <section class="path" id="consciousness">
+          <div class="path-header reveal"><span class="path-number">PATH 02</span><div class="path-title-row"><h3>生命意識</h3><p>從個人覺醒、金錢信念到愛與關係，重新看見內在模式。</p></div></div>
+          <article class="course-row reveal"><span class="course-no">04</span><div class="course-main"><div class="course-tags"><span class="tag">導讀課程</span><span class="status">開放學習</span></div><h4>《請問覺醒》12 堂靈魂覺醒啟示錄</h4><p class="course-meta">3 小時 9 分鐘 · 17 個影音／課程序列</p><p class="course-desc">從個人意識、集體恐懼與災難經驗，談死亡、重生與後疫情時代的靈魂覺醒。</p></div><div class="course-actions"><a class="course-link" href="https://maplebook.kaik.io/learning/soulawakening" target="_blank" rel="noopener noreferrer">進入課程頁</a></div></article>
+          <article class="course-row reveal"><span class="course-no">05</span><div class="course-main"><div class="course-tags"><span class="tag">心法修練</span><span class="status">開放報名</span></div><h4>富足意識心法 2 堂線上修練課</h4><p class="course-meta">2 堂 · 約 1 小時</p><p class="course-desc">把富足從外在開運與依賴，帶回自己的心念、價值觀與使用金錢的方式，重新整理匱乏思維。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
+          <article class="course-row reveal"><span class="course-no">06</span><div class="course-main"><div class="course-tags"><span class="tag">心煉講座</span><span class="status">即將開放</span></div><h4>《請問愛》線上心煉講座</h4><p class="course-meta">COMING SOON</p><p class="course-desc">從占有、恐懼、欲望與匱乏中辨識愛的樣貌，重新理解自己如何進入關係、如何說出「我愛你」。</p></div><div class="course-actions"><span class="coming">即將開放報名</span></div></article>
+        </section>
+        <section class="path" id="wellness">
+          <div class="path-header reveal"><span class="path-number">PATH 03</span><div class="path-title-row"><h3>身心養護</h3><p>將身體、飲食、情緒與修行狀態放在同一個脈絡中照顧。</p></div></div>
+          <article class="course-row reveal"><span class="course-no">07</span><div class="course-main"><div class="course-tags"><span class="tag">會員必修</span><span class="status">開放報名</span></div><h4>身心療遇養護頻道會員 4 堂必修課</h4><p class="course-meta">4 堂 · 松果體食療 2 堂＋強化補品 2 堂</p><p class="course-desc">從飲食與營養補充，理解身體狀態、注意力與修行經驗如何互相影響，建立日常的養護方法。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
+          <article class="course-row reveal"><span class="course-no">08</span><div class="course-main"><div class="course-tags"><span class="tag">身心修練</span><span class="status">開放報名</span></div><h4>如何透過淨心輕鬆排毒，達到身心修練</h4><p class="course-meta">2 集線上課程</p><p class="course-desc">把「淨心」理解為整理情緒、雜念、習慣與身心狀態，從身體整理走向更穩定的修練狀態。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
+        </section>
+        <div class="source-note"><span>課程狀態、費用與實際開放項目，以正式報名頁顯示為準。</span><a href="https://kinkiosel.pixnet.net/blog/posts/1033478333" target="_blank" rel="noopener noreferrer">查看原課程資訊 ↗</a></div>
+      </div>
+    </section>
+    <section class="section registration" id="registration">
+      <div class="container registration-grid">
+        <div class="reveal"><span class="section-label">Before Registration</span><h2>開始之前，<br>先確認三件事。</h2><p class="registration-copy">線上課程為非直播觀看。報名前請先準備好收課用的 Gmail，並於購買後的開放期間內完成學習。</p><div class="registration-actions"><a class="btn btn-primary" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往正式報名頁</a><a class="btn btn-ghost" href="/courses/lingji-practice.html">先看兩堂必修課</a></div></div>
+        <div class="notice-list reveal"><div class="notice"><b>01</b><div><strong>使用 Gmail 收課</strong><p>報名時請填寫可正常登入的 Gmail，作為課程開通與觀看識別。</p></div></div><div class="notice"><b>02</b><div><strong>確認 30 天觀看期限</strong><p>購課後請依通知期限安排學習；實際開通方式與起算日以報名頁說明為準。</p></div></div><div class="notice"><b>03</b><div><strong>先看課程目的，再選擇</strong><p>各系列處理的問題不同。請先閱讀課程內容，費用、退費與觀看規則以正式報名頁為準。</p></div></div></div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="container footer-inner"><div class="footer-brand"><img src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><p>靈元院<small>LING YUAN YUAN</small></p></div><div class="footer-links"><a href="/">首頁</a><a href="/courses/">線上課程</a><a href="/articles.html">文選</a><a href="/membership.html">會員</a><a href="mailto:lyyuan03@gmail.com">聯絡我們</a></div></div></footer>
+  <div class="mobile-cta"><a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往課程報名</a></div>
+  <script>
+    (function(){
+      var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var reveals=[].slice.call(document.querySelectorAll(".reveal"));
+      if("IntersectionObserver" in window&&!reduce){
+        var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("on");observer.unobserve(entry.target);}});},{threshold:.08,rootMargin:"0px 0px -8%"});
+        requestAnimationFrame(function(){reveals.forEach(function(el){observer.observe(el);});});
+      }else{reveals.forEach(function(el){el.classList.add("on");});}
+      var progress=document.querySelector(".page-progress");
+      var sectionLinks=[].slice.call(document.querySelectorAll(".course-index-links a[href^='#']")).map(function(link){return{link:link,target:document.querySelector(link.getAttribute("href"))};}).filter(function(item){return item.target;});
+      var ticking=false;
+      function update(){
+        var range=document.documentElement.scrollHeight-window.innerHeight;
+        var ratio=range>0?Math.min(1,Math.max(0,window.scrollY/range)):0;
+        if(progress)progress.style.transform="scaleX("+ratio+")";
+        var current=sectionLinks[0];
+        sectionLinks.forEach(function(item){if(item.target.getBoundingClientRect().top<=window.innerHeight*.43)current=item;});
+        sectionLinks.forEach(function(item){item.link.classList.toggle("active",current&&item.link===current.link);});
+        ticking=false;
+      }
+      window.addEventListener("scroll",function(){if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});update();
+      var hero=document.querySelector(".hero");
+      if(hero&&!reduce&&matchMedia("(pointer:fine)").matches){
+        hero.addEventListener("pointermove",function(event){var rect=hero.getBoundingClientRect();var x=(event.clientX-rect.left)/rect.width-.5;var y=(event.clientY-rect.top)/rect.height-.5;hero.style.setProperty("--motion-x",(x*10)+"px");hero.style.setProperty("--motion-y",(y*7)+"px");});
+        hero.addEventListener("pointerleave",function(){hero.style.setProperty("--motion-x","0px");hero.style.setProperty("--motion-y","0px");});
+      }
+    })();
+  </script>
+  <script type="module" src="/site-auth-nav.js?v=20260824-auth-mobile-layout-2"></script>
+  <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
+</body>
+</html>

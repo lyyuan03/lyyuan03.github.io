@@ -730,7 +730,7 @@
   </style>
   <script src="/analytics-config.js"></script>
   <script src="/analytics.js" defer></script>
-  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-1">
+  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-3">
   <style>
     .course-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 17px;color:rgba(245,240,232,.5);font-size:11px;letter-spacing:.1em}
     .course-breadcrumb a{color:var(--gold-light);border-bottom:1px solid rgba(200,170,123,.38)}
@@ -741,18 +741,23 @@
 <body>
   <div class="page-progress" aria-hidden="true"></div>
 
-  <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-2">
+  <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
   <div class="global-nav-inner">
     <ul class="global-nav-links">
       <li class="global-nav-item"><a class="global-nav-link" href="/">首頁</a></li>
       <li class="global-nav-item">
         <button class="global-nav-trigger is-active" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-activity">活動</button>
-        <ul class="global-nav-dropdown" id="global-nav-activity">
+        <ul class="global-nav-dropdown global-nav-activity-menu" id="global-nav-activity">
           <li><a href="/niandian.html">年度點燈</a></li>
           <li><a href="/dizhi.html">奠基法會</a></li>
           <li><a href="/lixing.html">例行法儀</a></li>
           <li><a href="/fahui.html">報名法儀</a></li>
-          <li><a href="/courses/lingji-practice.html" aria-current="page">課程</a></li>
+          <li class="global-nav-course-tree">
+            <a class="global-nav-course-parent" href="/courses/">課程</a>
+            <ul class="global-nav-sublist" aria-label="課程子目錄">
+              <li><a href="/courses/lingji-practice.html" aria-current="page">跟靈乩前輩學靈修的兩堂必修課</a></li>
+            </ul>
+          </li>
         </ul>
       </li>
       <li class="global-nav-item">
@@ -910,14 +915,14 @@
     <span class="forest-mist mist-three" aria-hidden="true"></span>
     <div class="container hero-grid">
       <div class="hero-content reveal">
-        <div class="course-breadcrumb" aria-label="麵包屑"><a href="/">首頁</a><span aria-hidden="true">／</span><span>活動</span><span aria-hidden="true">／</span><a href="/courses/lingji-practice.html">課程</a><span aria-hidden="true">／</span><span aria-current="page">兩堂必修課</span></div>
+        <div class="course-breadcrumb" aria-label="麵包屑"><a href="/">首頁</a><span aria-hidden="true">／</span><span>活動</span><span aria-hidden="true">／</span><a href="/courses/">課程</a><span aria-hidden="true">／</span><span aria-current="page">兩堂必修課</span></div>
         <p class="eyebrow">Online Course · Spiritual Practice</p>
         <h1><span class="hero-title-line">跟靈乩前輩學靈修的</span><span class="hero-title-line hero-title-accent">兩堂必修課</span></h1>
         <p class="hero-lead">靈乩前輩的修行祕密 × 你所不知道的靈修模式</p>
         <p class="hero-copy">有感應，不代表已經看懂靈修。從台灣民間信仰的源流、不同靈修系統，到靈乩前輩的生命經驗，幫你把難以整理的現象，放回可以理解與判斷的脈絡。</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#course-video">觀看課程介紹</a>
-          <a class="btn btn-ghost" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
+          <a class="btn btn-ghost" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往課程報名</a>
         </div>
       </div>
     </div>
@@ -941,7 +946,7 @@
         <a href="#instructor">講師介紹</a>
         <a href="#faq">常見問題</a>
       </div>
-      <a class="course-subnav-cta" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
+      <a class="course-subnav-cta" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往課程報名</a>
     </div>
   </div>
 
@@ -1178,7 +1183,7 @@
         <span class="section-label">Begin Your Study</span>
         <h2>走得更遠以前，先看懂自己正在走的路。</h2>
         <p>用兩堂課，建立能辨識、思考，也能安定自己的修行觀念。</p>
-        <a class="btn btn-primary" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">查看課程與報名方式</a>
+        <a class="btn btn-primary" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看課程與報名方式</a>
         <span class="final-note">線上課程｜報名及觀看方式以報名頁面公告為準</span>
       </div>
     </section>
@@ -1200,7 +1205,7 @@
     </div>
   </footer>
 
-  <div class="mobile-cta"><a href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a></div>
+  <div class="mobile-cta"><a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往課程報名</a></div>
 
   <script>
     (()=>{
@@ -1280,6 +1285,6 @@
     })();
   </script>
   <script type="module" src="/site-auth-nav.js?v=20260824-auth-mobile-layout-2"></script>
-  <script src="/site-navigation.js?v=20260828-ia-1" defer></script>
+  <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
 </body>
 </html>
