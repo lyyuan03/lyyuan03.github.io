@@ -118,7 +118,12 @@ let articleMetrics = new Map();
 let currentUser = null;
 let currentMemberAccess = null;
 let currentSponsorAccess = null;
+let lastAdminPreviewState = false;
 let visibleArticleCount = window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
+
+function adminPreviewEnabled() {
+  return isAdminEmail(auth.currentUser?.email || currentUser?.email || "");
+}
 
 function base64ToBytes(value) {
   const binary = atob(value);
@@ -284,7 +289,7 @@ function articlePublishedTime(article = {}) {
 }
 
 function sortPublished(a, b) {
-  if (isAdminEmail(currentUser?.email)) {
+  if (adminPreviewEnabled()) {
     const aDraft = a?.status === "draft";
     const bDraft = b?.status === "draft";
     if (aDraft !== bDraft) return aDraft ? -1 : 1;
@@ -432,11 +437,11 @@ function renderList(articles) {
 
   const visibleArticles = filtered.slice(0, visibleArticleCount);
   const remainingCount = filtered.length - visibleArticles.length;
-  const adminDraftCount = isAdminEmail(currentUser?.email)
+  const adminDraftCount = adminPreviewEnabled()
     ? filtered.filter((article) => article.status === "draft").length
     : 0;
   root.innerHTML = `
-    ${isAdminEmail(currentUser?.email) ? `<div class="article-admin-preview-summary"><strong>管理者預覽模式</strong>｜目前可見草稿 ${adminDraftCount} 篇</div>` : ""}
+    ${adminPreviewEnabled() ? `<div class="article-admin-preview-summary"><strong>管理者預覽模式</strong>｜目前可見草稿 ${adminDraftCount} 篇</div>` : ""}
     <div class="article-result-summary">
       <span>共 ${filtered.length} 篇文章</span>
       <a href="#article-filters">重新選擇分類</a>
@@ -446,7 +451,7 @@ function renderList(articles) {
         const key = articleKey(article);
         const access = articleAccess(article);
         const accessLabel = access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
-        const isDraftPreview = article.status === "draft" && isAdminEmail(currentUser?.email);
+        const isDraftPreview = article.status === "draft" && adminPreviewEnabled();
         return `
           <a class="article-card" data-article-id="${escapeHtml(key)}" href="${standaloneArticlePaths.get(key) || `articles.html?id=${encodeURIComponent(key)}`}${magicToken ? `&event=${encodeURIComponent(article.eventId || magicEventId)}&token=${encodeURIComponent(magicToken)}` : ""}">
             <div class="article-card-media">
@@ -581,7 +586,7 @@ function hasWellnessArticleBenefit(record, member, userEmail) {
 }
 
 function hasPaidAccess(articleId = "") {
-  if (isAdminEmail(currentUser?.email)) return true;
+  if (adminPreviewEnabled()) return true;
   if (!currentUser?.email || !currentSponsorAccess) return false;
   const userEmail = currentUser.email.trim().toLowerCase();
   const directAccess = hasDirectSponsorAccess(currentSponsorAccess, userEmail);
@@ -635,7 +640,7 @@ async function eventArticleKey(article) {
       return unwrapEventKey(record, magicToken);
     }
   }
-  if (isAdminEmail(currentUser?.email)) {
+  if (adminPreviewEnabled()) {
     const snapshot = await getDoc(doc(db, "membershipSettings", "eventArticleKeys"));
     return snapshot.exists() ? snapshot.data().keys?.[key] || "" : "";
   }
@@ -795,7 +800,7 @@ function renderArticle(article) {
   }
   document.title = `${article.title}｜靈元院文選`;
   const articleKeyValue = article.id || article.slug || activeId;
-  const isDraftPreview = article.status === "draft" && isAdminEmail(currentUser?.email);
+  const isDraftPreview = article.status === "draft" && adminPreviewEnabled();
   const draftNotice = isDraftPreview ? '<div class="article-draft-notice"><strong>草稿預覽</strong>｜僅靈元院管理者帳號可見，尚未公開。</div>' : "";
   if (articleIsEvent(article) && !article.eventAccessGranted) {
     root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}"><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}<div class="article-meta">${categoryLabels[article.category] || "文選"}｜活動限定</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}${article.excerpt ? `<div class="article-body"><p>${escapeHtml(article.excerpt)}</p></div>` : ""}${renderEventGate(article)}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
@@ -866,7 +871,9 @@ async function loadArticles() {
   const loadSerial = ++articlesLoadSerial;
   articlesLoadCompleted = false;
   renderTabs();
-  const adminDraftPreview = isAdminEmail(currentUser?.email);
+  const adminDraftPreview = adminPreviewEnabled();
+  lastAdminPreviewState = adminDraftPreview;
+  document.body.dataset.adminDraftPreview = adminDraftPreview ? "true" : "false";
   // 一般訪客只能查詢已發布文章；管理者登入時才讀取全部後台文章，以便在前台核對草稿版型。
   const articlesRequest = adminDraftPreview
     ? getDocs(collection(db, "articles"))
@@ -1006,3 +1013,16 @@ onAuthStateChanged(auth, async (user) => {
   await loadArticles();
   renderCurrentView();
 });
+
+// 某些瀏覽器會先完成 Firebase 登入還原，再晚一拍通知此模組。
+// 額外以 auth.currentUser 監看管理者狀態，避免導覽列已辨識管理者但文章核心仍停在公開模式。
+let adminPreviewWatchTicks = 0;
+const adminPreviewWatch = window.setInterval(() => {
+  adminPreviewWatchTicks += 1;
+  const nextState = adminPreviewEnabled();
+  if (nextState !== lastAdminPreviewState) {
+    lastAdminPreviewState = nextState;
+    void loadArticles().catch((error) => console.warn("管理者草稿預覽重新載入失敗。", error));
+  }
+  if (adminPreviewWatchTicks >= 40) window.clearInterval(adminPreviewWatch);
+}, 250);
