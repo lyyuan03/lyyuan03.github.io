@@ -371,6 +371,22 @@ async function syncRevisedStaticArticles(snapshot) {
   return didSync;
 }
 
+async function importMissingStaticDrafts(snapshot) {
+  const existingIds = new Set(snapshot.docs.map((item) => item.id));
+  let didImport = false;
+  for (const article of staticArticles) {
+    if (article.status !== "draft" || !article.id || existingIds.has(article.id)) continue;
+    const revision = `draft-auto-import:${article.updatedAt || "1"}`;
+    const payload = staticArticlePayload(article, revision);
+    payload.createdAt = serverTimestamp();
+    payload.importedFromStaticDraft = true;
+    await setDoc(doc(db, "articles", article.id), payload, { merge: true });
+    existingIds.add(article.id);
+    didImport = true;
+  }
+  return didImport;
+}
+
 async function syncRevisedStaticArticleImages(snapshot) {
   const firestoreById = new Map(snapshot.docs.map((item) => [item.id, item.data()]));
   let didSync = false;
@@ -463,17 +479,32 @@ async function importStaticArticle(articleId) {
   showAdminToast("網站文章已匯入後台，現在可以直接編輯與儲存。", "success");
 }
 
-function renderList() {
-  if (!articles.length) {
-    listEl.innerHTML = '<div class="empty">目前尚無文章</div>';
-    return;
-  }
-  listEl.innerHTML = articles.map((article) => `
+function renderArticleRows(items) {
+  return items.map((article) => `
     <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${article.id}">
       <div class="article-item-title">${escapeHtml(article.title || "未命名文章")}</div>
       <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}｜${article.source === "github-static" ? "網站文章" : "後台文章"}</div>
     </button>
   `).join("");
+}
+
+function renderList() {
+  if (!articles.length) {
+    listEl.innerHTML = '<div class="empty">目前尚無文章</div>';
+    return;
+  }
+  const drafts = articles.filter((article) => article.status !== "published");
+  const published = articles.filter((article) => article.status === "published");
+  listEl.innerHTML = `
+    <div class="article-list-group">
+      <div class="article-list-group-head"><strong>草稿區</strong><span>${drafts.length} 篇</span></div>
+      ${drafts.length ? renderArticleRows(drafts) : '<div class="article-list-empty">目前沒有草稿</div>'}
+    </div>
+    <div class="article-list-group">
+      <div class="article-list-group-head"><strong>已發布</strong><span>${published.length} 篇</span></div>
+      ${published.length ? renderArticleRows(published) : '<div class="article-list-empty">目前沒有已發布文章</div>'}
+    </div>
+  `;
   listEl.querySelectorAll("[data-id]").forEach((button) => {
     button.addEventListener("click", () => {
       currentId = button.dataset.id;
@@ -533,10 +564,13 @@ async function loadArticles() {
   listEl.innerHTML = '<div class="empty">載入中…</div>';
   try {
     let snapshot = await getDocs(collection(db, "articles"));
+    const didDraftImport = await importMissingStaticDrafts(snapshot);
+    if (didDraftImport) snapshot = await getDocs(collection(db, "articles"));
     const didImageSync = await syncRevisedStaticArticleImages(snapshot);
     const didContentSync = await syncRevisedStaticArticles(snapshot);
-    if (didImageSync || didContentSync) {
+    if (didDraftImport || didImageSync || didContentSync) {
       snapshot = await getDocs(collection(db, "articles"));
+      if (didDraftImport) showAdminToast("新的網站草稿已自動加入後台，可直接編修。", "success");
       if (didContentSync) showAdminToast("網站文章內容已完成前後台同步。", "success");
       if (didImageSync) showAdminToast("網站文章圖片已完成前後台同步。", "success");
     }
