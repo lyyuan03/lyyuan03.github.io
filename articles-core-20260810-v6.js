@@ -830,10 +830,7 @@ function withTimeout(promise, timeoutMs, label) {
 async function loadArticles() {
   articlesLoadCompleted = false;
   renderTabs();
-  if (activeId) {
-    const immediateArticle = staticArticles.find((article) => (article.id === activeId || article.slug === activeId) && article.status === "published" && article.hidden !== true && article.systemRecord !== true && !LEGACY_FIRESTORE_MANAGED_IDS.has(article.id));
-    if (immediateArticle) renderArticle(immediateArticle);
-  }
+  // 詳細文章頁先等後台文章載入完成，避免先閃出 GitHub 靜態舊稿。
   const publishedRequest = getDocs(query(collection(db, "articles"), where("status", "==", "published")));
   const statusRequest = getDoc(doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID));
   const [publishedResult, statusResult] = await Promise.allSettled([withTimeout(publishedRequest, 8000, "已發布文章載入"), withTimeout(statusRequest, 8000, "文章狀態索引載入")]);
@@ -845,16 +842,27 @@ async function loadArticles() {
   const mergedById = new Map();
   staticArticles.forEach((article) => mergedById.set(article.id, article));
   firestoreArticles.forEach((article) => {
-    const staticArticle = staticArticles.find((item) => item.id === article.id || item.slug === article.id);
+    const articleSlug = String(article.slug || "");
+    const staticArticle = staticArticles.find((item) =>
+      item.id === article.id
+      || item.slug === article.id
+      || (articleSlug && item.id === articleSlug)
+      || (articleSlug && item.slug === articleSlug)
+    );
     if (!staticArticle) {
       mergedById.set(article.id, article);
       return;
     }
-    // 後台 Firestore 是已建立文章的唯一主來源；GitHub 靜態版只在後台沒有該文章時作備援。
-    // 不再用靜態 content / 圖片覆蓋後台內容，避免前後台顯示不一致。
-    mergedById.set(article.id, {
+
+    // Firestore 文件 ID 可能與網址代稱 slug 不同；只要 ID 或 slug 任一相同，都視為同一篇文章。
+    // 以 GitHub 靜態文章的公開 ID 作為合併鍵，但正文、標題、狀態與圖片皆由後台 Firestore 覆蓋。
+    const canonicalId = staticArticle.id || article.id;
+    mergedById.delete(article.id);
+    mergedById.set(canonicalId, {
       ...staticArticle,
-      ...article
+      ...article,
+      id: canonicalId,
+      slug: article.slug || staticArticle.slug || canonicalId
     });
   });
   const future2058Static = staticArticles.find((article) => article.id === "2058-future-person-prophecy");
