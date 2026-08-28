@@ -6,7 +6,7 @@ export const yuanqinDebtHeartArticle = {
   displayCategory: "靈修",
   series: "靈修辨證",
   status: "draft",
-  updatedAt: "2026-08-28T08:00:00.000Z",
+  updatedAt: "2026-08-28T08:05:00.000Z",
   coverImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6",
   thumbnailImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6",
   excerpt: "每一年都在超渡、解冤、迴向，真正沒有結束的，究竟是外面的祂，還是心裡那個結？",
@@ -160,8 +160,6 @@ export const yuanqinDebtHeartArticle = {
 恨父親，也許等的是一句「我以你為榮」。恨母親控制，也許缺的是從小到大從未被尊重。放不下前任，也許不是因為還愛，而是不能接受自己曾經那麼用力，最後卻被留下。這些東西慢慢被看見，解冤才開始有它的意義。
 
 宗教如果只要求受傷的人「放下」，其實很殘忍。要看的是痛底下還抓著什麼。
-
-![他還在，你卻已經自由了](assets/articles/yuanqin-debt-heart/04-freedom-release.webp?v=20260828-6)
 
 ![名字一宣讀，這段關係就被帶到壇前](assets/articles/yuanqin-debt-heart/03-name-ritual.webp?v=20260828-6)
 
