@@ -62,7 +62,7 @@
     .hero h1{margin:16px 0 14px;font-family:var(--serif);font-size:clamp(56px,7.1vw,104px);font-weight:500;line-height:1.08;letter-spacing:.02em;text-shadow:0 12px 34px rgba(0,0,0,.28)}
     .hero h1 span{display:block;color:var(--gold-light);font-size:.58em;letter-spacing:.12em}.mobile-break{display:none}
     .hero-lead{max-width:720px;margin:0;color:#f3eee5;font-family:var(--serif);font-size:clamp(22px,2.5vw,32px);line-height:1.55}
-    .hero-text{max-width:700px;margin:17px 0 0;color:rgba(248,243,233,.72);font-size:16px}
+    .hero-text{max-width:760px;margin:17px 0 0;color:rgba(248,243,233,.78);font-size:18px;line-height:1.85}
     .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
     .hero-facts{display:flex;gap:0;margin-top:48px;border-top:1px solid rgba(230,211,174,.2);width:min(730px,100%)}
     .hero-fact{flex:1;padding:19px 26px 0 0}
@@ -73,70 +73,70 @@
     .course-index-nav-inner{display:flex;align-items:center;justify-content:space-between;min-height:62px;gap:20px}
     .course-index-links{display:flex;align-items:center;gap:29px;overflow:auto;scrollbar-width:none}
     .course-index-links::-webkit-scrollbar{display:none}
-    .course-index-links a{flex:none;padding:20px 0 17px;color:#5d635b;font-size:13px;letter-spacing:.08em;border-bottom:2px solid transparent}
+    .course-index-links a{flex:none;padding:20px 0 17px;color:#5d635b;font-size:14px;letter-spacing:.08em;border-bottom:2px solid transparent}
     .course-index-links a:hover,.course-index-links a.active{color:#8f6d3b;border-color:#b79359}
     .mini-cta{flex:none;color:#8e6936;font-size:13px;font-weight:500;letter-spacing:.06em}
-    .section{padding:106px 0}
+    .section{padding:78px 0}
     .intro{background:var(--cream)}
-    .intro-grid{display:grid;grid-template-columns:.76fr 1.24fr;gap:95px;align-items:start}
-    .intro h2,.catalogue-head h2,.registration h2{margin:13px 0 0;font-family:var(--serif);font-size:clamp(36px,4.2vw,58px);font-weight:500;line-height:1.34;letter-spacing:.02em}
-    .intro-copy{padding-top:36px}
-    .intro-copy p{margin:0 0 18px;color:#555e56;font-size:17px;line-height:2}
-    .intro-copy strong{color:#1b2e20;font-family:var(--serif);font-size:23px;font-weight:600}
-    .learning-map{margin-top:70px;padding:35px 0 11px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-    .map-head{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:32px}
-    .map-head h3{margin:6px 0 0;font-family:var(--serif);font-size:27px;font-weight:600}
-    .map-head p{margin:0;color:#6a7069;font-size:14px}
-    .map-steps{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:12px;padding-bottom:25px}
+    .intro-grid{display:grid;grid-template-columns:.88fr 1.12fr;gap:52px;align-items:start}
+    .intro h2,.catalogue-head h2,.registration h2{margin:13px 0 0;font-family:var(--serif);font-size:clamp(40px,4.5vw,62px);font-weight:500;line-height:1.3;letter-spacing:.02em}
+    .intro-copy{padding-top:17px}
+    .intro-copy p{margin:0 0 15px;color:#465248;font-size:18px;line-height:1.85}
+    .intro-copy strong{color:#1b2e20;font-family:var(--serif);font-size:26px;font-weight:600;line-height:1.55}
+    .learning-map{margin-top:48px;padding:26px 0 7px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .map-head{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:24px}
+    .map-head h3{margin:6px 0 0;font-family:var(--serif);font-size:32px;font-weight:600}
+    .map-head p{margin:0;color:#5d685f;font-size:16px}
+    .map-steps{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:12px;padding-bottom:20px}
     .map-steps:before{content:"";position:absolute;top:13px;right:4%;left:4%;height:1px;background:linear-gradient(90deg,#b79359,#567059);transform:scaleX(0);transform-origin:left;transition:transform 1.5s ease}
     .map-steps.on:before{transform:scaleX(1)}
-    .map-step{position:relative;padding-top:34px;color:#555f57;font-size:12px;line-height:1.55;text-align:center}
+    .map-step{position:relative;padding:35px 5px 0;color:#273a2d;font-size:15px;font-weight:500;line-height:1.5;text-align:center;transition:color .25s,transform .25s}.map-step:hover{color:#8a6535;transform:translateY(-3px)}.map-step:nth-child(even):before{background:#54705a}
     .map-step:before{content:"";position:absolute;z-index:1;top:7px;left:calc(50% - 6px);width:12px;height:12px;border:2px solid var(--cream);border-radius:50%;background:#aa8854;box-shadow:0 0 0 1px rgba(142,107,55,.4)}
     .catalogue{background:var(--paper)}
-    .catalogue-head{display:grid;grid-template-columns:1fr .8fr;gap:65px;align-items:end;margin-bottom:77px}
-    .catalogue-intro{margin:0;color:#5f665f;font-size:16px;line-height:1.9}
-    .path{scroll-margin-top:130px;margin-top:92px}
+    .catalogue-head{display:grid;grid-template-columns:1fr .9fr;gap:50px;align-items:end;margin-bottom:50px}
+    .catalogue-intro{margin:0;color:#4e5a51;font-size:18px;line-height:1.8}
+    .path{scroll-margin-top:130px;margin-top:64px}
     .path:first-of-type{margin-top:0}
-    .path-header{display:grid;grid-template-columns:115px 1fr;align-items:end;gap:25px;padding-bottom:23px;border-bottom:1px solid rgba(80,70,50,.35)}
-    .path-number{color:#a48250;font-family:var(--en);font-size:17px;letter-spacing:.2em}
+    .path-header{display:grid;grid-template-columns:72px 1fr;align-items:end;gap:20px;padding-bottom:16px;border-bottom:1px solid rgba(80,70,50,.35)}
+    .path-number{color:#a48250;font-family:var(--en);font-size:18px;letter-spacing:.2em}
     .path-title-row{display:flex;align-items:end;justify-content:space-between;gap:30px}
-    .path-title-row h3{margin:0;font-family:var(--serif);font-size:clamp(32px,3.8vw,49px);font-weight:500;line-height:1.2}
-    .path-title-row p{max-width:475px;margin:0;color:#697069;font-size:14px;text-align:right}
-    .course-row{display:grid;grid-template-columns:115px minmax(0,1fr) 205px;gap:25px;align-items:center;padding:34px 0;border-bottom:1px solid var(--line);transition:padding .3s,background .3s}
-    .course-row:hover{padding-right:18px;padding-left:18px;background:rgba(255,252,246,.76)}
-    .course-row.featured{position:relative;margin-top:14px;padding-right:24px;padding-left:24px;background:linear-gradient(90deg,rgba(25,52,35,.98),rgba(13,32,21,.96));color:#f8f2e7;border:1px solid rgba(183,147,89,.28)}
-    .course-row.featured:hover{background:linear-gradient(90deg,#1b3b28,#10291b)}
-    .course-no{align-self:start;color:#99774a;font-family:var(--en);font-size:29px;line-height:1.1}
+    .path-title-row h3{margin:0;font-family:var(--serif);font-size:clamp(36px,4vw,53px);font-weight:500;line-height:1.2}
+    .path-title-row p{max-width:520px;margin:0;color:#566159;font-size:17px;line-height:1.7;text-align:right}
+    .course-row{display:grid;grid-template-columns:72px minmax(0,1fr) 178px;gap:20px;align-items:center;padding:24px 0;border-bottom:1px solid var(--line);transition:transform .28s ease,background .28s ease}
+    .course-row:hover{background:rgba(255,252,246,.82);transform:translateX(7px)}
+    .course-row.featured{position:relative;margin-top:0;padding:24px 14px;background:linear-gradient(90deg,rgba(183,147,89,.12),rgba(255,252,246,.25) 72%,transparent);color:var(--ink);border:0;border-left:3px solid #b79359;border-bottom:1px solid var(--line)}
+    .course-row.featured:hover{background:linear-gradient(90deg,rgba(183,147,89,.18),rgba(255,252,246,.42) 72%,transparent)}
+    .course-no{align-self:start;color:#99774a;font-family:var(--en);font-size:32px;line-height:1.1}
     .course-main{min-width:0}
-    .course-tags{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
-    .tag{display:inline-flex;padding:3px 9px;border:1px solid rgba(151,116,65,.28);color:#8b6839;font-size:10px;font-weight:500;letter-spacing:.12em}
-    .featured .tag{border-color:rgba(218,184,125,.34);color:#dabb81}
-    .status{color:#7c837b;font-size:11px;letter-spacing:.08em}
-    .featured .status{color:rgba(246,239,225,.58)}
-    .course-row h4{margin:0;font-family:var(--serif);font-size:clamp(22px,2.4vw,31px);font-weight:600;line-height:1.45}
-    .course-meta{margin:7px 0;color:#876943;font-size:13px;font-weight:500;letter-spacing:.04em}
-    .featured .course-meta{color:#d7b879}
-    .course-desc{max-width:760px;margin:7px 0 0;color:#626a62;font-size:14.5px;line-height:1.85}
-    .featured .course-desc{color:rgba(246,239,225,.7)}
+    .course-tags{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:7px}
+    .tag{display:inline-flex;padding:4px 10px;border:1px solid rgba(151,116,65,.3);color:#79582f;font-size:12px;font-weight:500;letter-spacing:.12em}
+    .featured .tag{border-color:rgba(151,116,65,.34);color:#79582f;background:rgba(183,147,89,.08)}
+    .status{color:#68736a;font-size:13px;letter-spacing:.08em}
+    .featured .status{color:#68736a}
+    .course-row h4{margin:0;font-family:var(--serif);font-size:clamp(28px,2.75vw,37px);font-weight:600;line-height:1.38}
+    .course-meta{margin:7px 0 0;color:#795b35;font-size:15px;font-weight:500;letter-spacing:.04em}
+    .featured .course-meta{color:#795b35}
+    .course-desc{max-width:840px;margin:8px 0 0;color:#465249;font-size:17px;line-height:1.75}
+    .featured .course-desc{color:#465249}
     .course-actions{display:flex;flex-direction:column;align-items:stretch;gap:8px}
-    .course-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;color:#7d5c31;border-bottom:1px solid rgba(126,93,50,.32);font-size:13px;font-weight:500;letter-spacing:.07em}
+    .course-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;color:#715028;border-bottom:1px solid rgba(126,93,50,.32);font-size:15px;font-weight:500;letter-spacing:.07em}
     .course-link:after{content:"↗";font-size:15px;transition:transform .2s}
     .course-link.internal:after{content:"→"}
     .course-link:hover:after{transform:translate(3px,-2px)}
-    .featured .course-link{color:#dfc38d;border-color:rgba(218,184,125,.3)}
+    .featured .course-link{color:#715028;border-color:rgba(126,93,50,.32)}
     .coming{display:block;padding:10px 0;color:#8b8e88;font-size:12px;letter-spacing:.08em;text-align:right}
-    .source-note{display:flex;justify-content:space-between;gap:30px;margin-top:35px;color:#737871;font-size:12px}
+    .source-note{display:flex;justify-content:space-between;gap:30px;margin-top:28px;color:#626b63;font-size:14px}
     .source-note a{color:#8e6a39;border-bottom:1px solid rgba(142,106,57,.35)}
     .registration{position:relative;overflow:hidden;background:#102519;color:#f7f2e8}
     .registration:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 82% 12%,rgba(202,171,112,.15),transparent 40%),linear-gradient(125deg,transparent 50%,rgba(2,8,4,.35))}
-    .registration-grid{position:relative;display:grid;grid-template-columns:.9fr 1.1fr;gap:90px;align-items:start}
+    .registration-grid{position:relative;display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:start}
     .registration h2{color:#fff}
-    .registration-copy{margin:20px 0 0;color:rgba(247,242,232,.68);font-size:15px}
+    .registration-copy{margin:18px 0 0;color:rgba(247,242,232,.76);font-size:17px;line-height:1.85}
     .notice-list{border-top:1px solid rgba(215,184,127,.25)}
-    .notice{display:grid;grid-template-columns:45px 1fr;gap:18px;padding:22px 0;border-bottom:1px solid rgba(215,184,127,.18)}
+    .notice{display:grid;grid-template-columns:45px 1fr;gap:18px;padding:18px 0;border-bottom:1px solid rgba(215,184,127,.18)}
     .notice b{color:#d6b87f;font-family:var(--en);font-size:19px;font-weight:500}
-    .notice strong{display:block;font-family:var(--serif);font-size:18px;font-weight:600}
-    .notice p{margin:5px 0 0;color:rgba(247,242,232,.62);font-size:13.5px}
+    .notice strong{display:block;font-family:var(--serif);font-size:22px;font-weight:600}
+    .notice p{margin:5px 0 0;color:rgba(247,242,232,.7);font-size:15.5px;line-height:1.75}
     .registration-actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:30px}
     footer{padding:54px 0;background:#071009;color:rgba(247,242,232,.58);border-top:1px solid rgba(198,164,104,.18)}
     .footer-inner{display:flex;align-items:center;justify-content:space-between;gap:35px}
@@ -164,7 +164,7 @@
       .map-step:after{content:"";position:absolute;top:13px;right:-12px;width:24px;height:1px;background:rgba(167,131,75,.35)}
       .map-step:nth-child(4):after,.map-step:last-child:after{display:none}
       .path-header{grid-template-columns:80px 1fr}
-      .course-row{grid-template-columns:80px 1fr 170px}
+      .course-row{grid-template-columns:62px 1fr 165px}
     }
     @media(max-width:680px){
       .container{width:calc(100% - 28px)}
@@ -173,7 +173,7 @@
       .hero h1{font-size:clamp(49px,15vw,68px)}
       .hero h1 span{font-size:.52em}\n      .mobile-break{display:block}
       .hero-lead{font-size:21px}
-      .hero-text{font-size:14px}
+      .hero-text{font-size:16px}
       .hero-facts{display:grid;grid-template-columns:repeat(3,1fr)}
       .hero-fact{padding:16px 7px 0!important;border-left:0!important;text-align:center}
       .hero-fact+.hero-fact{border-left:1px solid rgba(230,211,174,.18)!important}
@@ -185,22 +185,22 @@
       .course-index-links{gap:22px}
       .course-index-links a{padding:16px 0 13px;font-size:12px}
       .mini-cta{display:none}
-      .section{padding:75px 0}
-      .intro h2,.catalogue-head h2,.registration h2{font-size:36px}
-      .intro-copy p{font-size:15px}
+      .section{padding:58px 0}
+      .intro h2,.catalogue-head h2,.registration h2{font-size:40px}
+      .intro-copy p{font-size:17px}
       .map-head{display:block}
       .map-head p{margin-top:10px}
       .map-steps{grid-template-columns:repeat(2,1fr)}
       .map-step:after{display:none}
-      .path{margin-top:72px}
+      .path{margin-top:52px}
       .path-header{display:block}
       .path-number{display:block;margin-bottom:7px}
       .path-title-row{display:block}
       .path-title-row h3{font-size:34px}
       .path-title-row p{margin-top:10px;text-align:left}
-      .course-row,.course-row.featured{display:grid;grid-template-columns:46px 1fr;gap:13px;padding:27px 0}
-      .course-row:hover{padding-right:0;padding-left:0}
-      .course-row.featured,.course-row.featured:hover{padding:26px 18px}
+      .course-row,.course-row.featured{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:21px 0}
+      .course-row:hover{transform:none}
+      .course-row.featured,.course-row.featured:hover{padding:20px 13px}
       .course-no{font-size:23px}
       .course-main{grid-column:2}
       .course-actions{grid-column:2;display:flex;flex-direction:row;flex-wrap:wrap;margin-top:5px}
@@ -315,60 +315,60 @@
       <div class="hero-copy reveal">
         <div class="course-breadcrumb" aria-label="麵包屑"><a href="/">首頁</a><span aria-hidden="true">／</span><span>活動</span><span aria-hidden="true">／</span><span aria-current="page">課程</span></div>
         <p class="eyebrow">Online Courses · Spiritual Practice</p>
-        <h1>宇色線上課程<span>從理解開始，<br class="mobile-break">回到自己的判斷</span></h1>
-        <p class="hero-lead">從靈修辨識，到身心、財富、關係與靈魂覺醒。</p>
-        <p class="hero-text">這些看似分散的課程，其實是一套相互串聯的學習路徑。先看懂現象與信仰脈絡，再把理解帶回生活、身體與自己的意識。</p>
-        <div class="hero-actions"><a class="btn btn-primary" href="#catalogue">瀏覽所有課程</a><a class="btn btn-ghost" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往課程報名</a></div>
+        <h1>宇色線上課程<span>你現在最想解開哪一個問題？</span></h1>
+        <p class="hero-lead">靈修、覺醒、財富、關係與身心照顧，從你最有感的地方開始。</p>
+        <p class="hero-text">不用照表操課，也不必一次全部學完。看看哪一個問題正好說中你，就從那一堂開始。</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="#catalogue">看看有哪些課</a><a class="btn btn-ghost" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">直接看報名課程</a></div>
         <div class="hero-facts" aria-label="課程資訊"><div class="hero-fact"><b>8</b><span>套課程系列</span></div><div class="hero-fact"><b>ONLINE</b><span>非直播彈性觀看</span></div><div class="hero-fact"><b>30 DAYS</b><span>購課後觀看期限</span></div></div>
       </div>
     </div>
   </header>
-  <div class="course-index-nav" aria-label="課程總覽導覽"><div class="container course-index-nav-inner"><div class="course-index-links"><a href="#overview">學習路徑</a><a href="#spiritual">靈修辨識</a><a href="#consciousness">生命意識</a><a href="#wellness">身心養護</a><a href="#registration">報名須知</a></div><a class="mini-cta" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">課程報名 ↗</a></div></div>
+  <div class="course-index-nav" aria-label="課程總覽導覽"><div class="container course-index-nav-inner"><div class="course-index-links"><a href="#overview">怎麼選課</a><a href="#spiritual">先懂靈修</a><a href="#consciousness">覺醒與生活</a><a href="#wellness">照顧身心</a><a href="#registration">上課前先看</a></div><a class="mini-cta" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">課程報名 ↗</a></div></div>
   <main>
     <section class="section intro" id="overview">
       <div class="container">
         <div class="intro-grid">
-          <div class="reveal"><span class="section-label">Course Architecture</span><h2>不是分散的商品，<br>而是一條學習路徑。</h2></div>
-          <div class="intro-copy reveal"><p><strong>先理解，再辨識；最後才是選擇。</strong></p><p>宇色的課程從「我遇到的現象是什麼」開始，逐步整理元神、啟靈、靈動、靈語、會靈與靈乩，再延伸到財富、關係、身體與集體意識。</p><p>你不必一次買完所有課程。請依照現在最想釐清的問題，從其中一條路徑開始。</p></div>
+          <div class="reveal"><span class="section-label">Start Here</span><h2>八套課程，<br>從你最在意的問題開始。</h2></div>
+          <div class="intro-copy reveal"><p><strong>不用先把靈修弄懂，才有資格來上課。</strong></p><p>有人卡在元神與靈動，有人想知道自己究竟要不要走靈修；也有人只是想把財富、關係或身體照顧好。這些課，就是從大家一再問我的問題裡整理出來的。</p><p>你不必照順序，也不必一次學完。先看看哪一句最像你現在的狀態，那一堂就是你的起點。</p></div>
         </div>
         <div class="learning-map reveal">
-          <div class="map-head"><div><span class="section-label">Learning Route</span><h3>從現象，走回可以判斷的脈絡</h3></div><p>每一站都可以單獨學習，也能依序串聯。</p></div>
-          <div class="map-steps reveal" aria-label="課程學習順序"><div class="map-step">認識靈修</div><div class="map-step">元神與啟靈</div><div class="map-step">靈動與靈語</div><div class="map-step">會靈與靈乩</div><div class="map-step">靈魂覺醒</div><div class="map-step">財富與關係</div><div class="map-step">身心養護</div></div>
+          <div class="map-head"><div><span class="section-label">Pick Your Question</span><h3>今天的你，最想先弄懂哪一件事？</h3></div><p>點進最有感的主題就好，不用從第一堂開始。</p></div>
+          <div class="map-steps reveal" aria-label="你現在最想了解的問題"><div class="map-step">我適合靈修嗎？</div><div class="map-step">元神是什麼？</div><div class="map-step">靈動怎麼分？</div><div class="map-step">靈乩與乩童？</div><div class="map-step">什麼是覺醒？</div><div class="map-step">如何走出匱乏？</div><div class="map-step">怎麼照顧身心？</div></div>
         </div>
       </div>
     </section>
     <section class="section catalogue" id="catalogue">
       <div class="container">
-        <div class="catalogue-head reveal"><div><span class="section-label">Course Catalogue</span><h2>依照你現在的問題，<br>找到適合的起點。</h2></div><p class="catalogue-intro">課程依學習目的整理成三條路徑。所有可報名項目均連至目前正式報名頁；「兩堂必修課」另有完整課程介紹。</p></div>
+        <div class="catalogue-head reveal"><div><span class="section-label">All Courses</span><h2>找到那一堂，<br>正好回答你現在的問題。</h2></div><p class="catalogue-intro">我把課程分成三個方向，讓你不用在一長串課名裡慢慢猜。先選你最在意的問題，再看看哪一堂最適合。</p></div>
         <section class="path" id="spiritual">
-          <div class="path-header reveal"><span class="path-number">PATH 01</span><div class="path-title-row"><h3>靈修辨識</h3><p>適合正在釐清靈修、元神、靈動與民間信仰脈絡的人。</p></div></div>
-          <article class="course-row reveal"><span class="course-no">01</span><div class="course-main"><div class="course-tags"><span class="tag">核心課程</span><span class="status">開放報名</span></div><h4>宇色的靈修思路：從實修到修練元神的 12 堂課</h4><p class="course-meta">2 章 · 12 單元 · 約 120 分鐘</p><p class="course-desc">從靈修入門判斷、元神與啟靈，到身心反應、靈動、靈語、會靈、靈乩與通靈，建立完整的基礎座標。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
-          <article class="course-row featured reveal"><span class="course-no">02</span><div class="course-main"><div class="course-tags"><span class="tag">本期主課程</span><span class="status">完整課程頁</span></div><h4>跟靈乩前輩學靈修的兩堂必修課</h4><p class="course-meta">2 堂 · 約 4 小時 · 附課程 PPT</p><p class="course-desc">從台灣民間信仰靈修模式的形成，到林千代與「三霞二黃」等前輩的生命經驗，看懂靈乩、乩童與不同靈修系統的差異。</p></div><div class="course-actions"><a class="course-link internal" href="/courses/lingji-practice.html">完整課程介紹</a><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">立即報名</a></div></article>
-          <article class="course-row reveal"><span class="course-no">03</span><div class="course-main"><div class="course-tags"><span class="tag">專題系列</span><span class="status">開放報名</span></div><h4>靈動的奧秘：排除體內穢氣，轉化業力與習氣</h4><p class="course-meta">2 集線上課程</p><p class="course-desc">理解身體為何出現自發動作、靈動與氣動如何區分，以及如何避免把每一種身體反應都神祕化。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
+          <div class="path-header reveal"><span class="path-number">PATH 01</span><div class="path-title-row"><h3>先把靈修弄懂</h3><p>如果你對元神、啟靈、靈動與靈乩愈聽愈亂，就從這裡開始。</p></div></div>
+          <article class="course-row reveal"><span class="course-no">01</span><div class="course-main"><div class="course-tags"><span class="tag">核心課程</span><span class="status">開放報名</span></div><h4>宇色的靈修思路：從實修到修練元神的 12 堂課</h4><p class="course-meta">2 章 · 12 單元 · 約 120 分鐘</p><p class="course-desc">元神、啟靈、靈動、靈語到底差在哪裡？如果你聽過很多說法，卻愈聽愈混亂，這 12 堂會幫你把基本觀念一次排好。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">看看課程與費用</a></div></article>
+          <article class="course-row featured reveal"><span class="course-no">02</span><div class="course-main"><div class="course-tags"><span class="tag">本期主課程</span><span class="status">完整課程頁</span></div><h4>跟靈乩前輩學靈修的兩堂必修課</h4><p class="course-meta">2 堂 · 約 4 小時 · 附課程 PPT</p><p class="course-desc">乩童和靈乩是一樣的嗎？為什麼有人會靈動、有人要替神明辦事？從台灣靈修文化與前輩的真實經驗，帶你看懂其中差別。</p></div><div class="course-actions"><a class="course-link internal" href="/courses/lingji-practice.html">先看完整介紹</a><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">我想報名</a></div></article>
+          <article class="course-row reveal"><span class="course-no">03</span><div class="course-main"><div class="course-tags"><span class="tag">專題系列</span><span class="status">開放報名</span></div><h4>靈動的奧秘：排除體內穢氣，轉化業力與習氣</h4><p class="course-meta">2 集線上課程</p><p class="course-desc">身體自己動起來，究竟是氣動、靈動，還是一般的身體反應？這兩集會把容易混在一起的說法拆開來談。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">看看課程與費用</a></div></article>
         </section>
         <section class="path" id="consciousness">
-          <div class="path-header reveal"><span class="path-number">PATH 02</span><div class="path-title-row"><h3>生命意識</h3><p>從個人覺醒、金錢信念到愛與關係，重新看見內在模式。</p></div></div>
-          <article class="course-row reveal"><span class="course-no">04</span><div class="course-main"><div class="course-tags"><span class="tag">導讀課程</span><span class="status">開放學習</span></div><h4>《請問覺醒》12 堂靈魂覺醒啟示錄</h4><p class="course-meta">3 小時 9 分鐘 · 17 個影音／課程序列</p><p class="course-desc">從個人意識、集體恐懼與災難經驗，談死亡、重生與後疫情時代的靈魂覺醒。</p></div><div class="course-actions"><a class="course-link" href="https://maplebook.kaik.io/learning/soulawakening" target="_blank" rel="noopener noreferrer">進入課程頁</a></div></article>
-          <article class="course-row reveal"><span class="course-no">05</span><div class="course-main"><div class="course-tags"><span class="tag">心法修練</span><span class="status">開放報名</span></div><h4>《請問財富》富足意識心法 2 堂線上修練課</h4><p class="course-meta">2 堂 · 約 1 小時</p><p class="course-desc">把富足從外在開運與依賴，帶回自己的心念、價值觀與使用金錢的方式，重新整理匱乏思維。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
-          <article class="course-row reveal"><span class="course-no">06</span><div class="course-main"><div class="course-tags"><span class="tag">2026 新上架</span><span class="status">開放報名</span></div><h4>《請問愛》線上心煉講座</h4><p class="course-meta">4 堂線上課程</p><p class="course-desc">從占有、恐懼、欲望與匱乏中辨識愛的樣貌，重新理解自己如何進入關係、如何說出「我愛你」。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
+          <div class="path-header reveal"><span class="path-number">PATH 02</span><div class="path-title-row"><h3>把覺醒帶回生活</h3><p>覺醒不只談靈性，也會碰到金錢、關係、恐懼，以及你怎麼生活。</p></div></div>
+          <article class="course-row reveal"><span class="course-no">04</span><div class="course-main"><div class="course-tags"><span class="tag">導讀課程</span><span class="status">開放學習</span></div><h4>《請問覺醒》12 堂靈魂覺醒啟示錄</h4><p class="course-meta">3 小時 9 分鐘 · 17 個影音／課程序列</p><p class="course-desc">覺醒之後，生活真的會不一樣嗎？這堂課從個人意識、集體恐懼與疫情經驗，談我們如何面對改變、死亡與重生。</p></div><div class="course-actions"><a class="course-link" href="https://maplebook.kaik.io/learning/soulawakening" target="_blank" rel="noopener noreferrer">打開這堂課</a></div></article>
+          <article class="course-row reveal"><span class="course-no">05</span><div class="course-main"><div class="course-tags"><span class="tag">心法修練</span><span class="status">開放報名</span></div><h4>《請問財富》富足意識心法 2 堂線上修練課</h4><p class="course-meta">2 堂 · 約 1 小時</p><p class="course-desc">為什麼一直努力，心裡還是覺得不夠？這兩堂不談外在開運，而是回頭整理你對金錢、價值與匱乏的想法。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">看看課程與費用</a></div></article>
+          <article class="course-row reveal"><span class="course-no">06</span><div class="course-main"><div class="course-tags"><span class="tag">2026 新上架</span><span class="status">開放報名</span></div><h4>《請問愛》線上心煉講座</h4><p class="course-meta">4 堂線上課程</p><p class="course-desc">我們說的「愛」，裡面會不會也藏著占有、恐懼與害怕失去？四堂課陪你重新看見自己如何愛人，也如何被愛。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">看看課程與費用</a></div></article>
         </section>
         <section class="path" id="wellness">
-          <div class="path-header reveal"><span class="path-number">PATH 03</span><div class="path-title-row"><h3>身心養護</h3><p>將身體、飲食、情緒與修行狀態放在同一個脈絡中照顧。</p></div></div>
-          <article class="course-row reveal"><span class="course-no">07</span><div class="course-main"><div class="course-tags"><span class="tag">會員必修</span><span class="status">開放報名</span></div><h4>身心療遇養護頻道會員 4 堂必修課</h4><p class="course-meta">4 堂 · 松果體食療 2 堂＋強化補品 2 堂</p><p class="course-desc">從飲食與營養補充，理解身體狀態、注意力與修行經驗如何互相影響，建立日常的養護方法。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
-          <article class="course-row reveal"><span class="course-no">08</span><div class="course-main"><div class="course-tags"><span class="tag">身心修練</span><span class="status">開放報名</span></div><h4>如何透過靜心，輕鬆排毒達到身心修煉</h4><p class="course-meta">2 集線上課程</p><p class="course-desc">把「靜心」理解為整理情緒、雜念、習慣與身心狀態，從身體整理走向更穩定的修練狀態。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">查看報名資訊</a></div></article>
+          <div class="path-header reveal"><span class="path-number">PATH 03</span><div class="path-title-row"><h3>先照顧好身體與心</h3><p>當身體很累、心很亂，再多道理也聽不進去；這一區先把自己照顧好。</p></div></div>
+          <article class="course-row reveal"><span class="course-no">07</span><div class="course-main"><div class="course-tags"><span class="tag">會員必修</span><span class="status">開放報名</span></div><h4>身心療遇養護頻道會員 4 堂必修課</h4><p class="course-meta">4 堂 · 松果體食療 2 堂＋強化補品 2 堂</p><p class="course-desc">靈修時常常累、注意力不集中，可能不只是意志力的問題。從飲食與營養補充，看看身體如何影響情緒與修行狀態。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">看看課程與費用</a></div></article>
+          <article class="course-row reveal"><span class="course-no">08</span><div class="course-main"><div class="course-tags"><span class="tag">身心修練</span><span class="status">開放報名</span></div><h4>如何透過靜心，輕鬆排毒達到身心修煉</h4><p class="course-meta">2 集線上課程</p><p class="course-desc">當腦中很吵、情緒很滿，身體也會跟著沉重。這兩集從靜心與日常整理開始，讓身體和心慢慢鬆下來。</p></div><div class="course-actions"><a class="course-link" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">看看課程與費用</a></div></article>
         </section>
         <div class="source-note"><span>課程狀態、費用與實際開放項目，以正式報名頁顯示為準。</span><a href="https://kinkiosel.pixnet.net/blog/posts/1033478333" target="_blank" rel="noopener noreferrer">查看原課程資訊 ↗</a></div>
       </div>
     </section>
     <section class="section registration" id="registration">
       <div class="container registration-grid">
-        <div class="reveal"><span class="section-label">Before Registration</span><h2>開始之前，<br>先確認三件事。</h2><p class="registration-copy">線上課程為非直播觀看。報名前請先準備好收課用的 Gmail，並於購買後的開放期間內完成學習。</p><div class="registration-actions"><a class="btn btn-primary" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往正式報名頁</a><a class="btn btn-ghost" href="/courses/lingji-practice.html">先看兩堂必修課</a></div></div>
-        <div class="notice-list reveal"><div class="notice"><b>01</b><div><strong>使用 Gmail 收課</strong><p>報名時請填寫可正常登入的 Gmail，作為課程開通與觀看識別。</p></div></div><div class="notice"><b>02</b><div><strong>確認 30 天觀看期限</strong><p>購課後請依通知期限安排學習；實際開通方式與起算日以報名頁說明為準。</p></div></div><div class="notice"><b>03</b><div><strong>先看課程目的，再選擇</strong><p>各系列處理的問題不同。請先閱讀課程內容，費用、退費與觀看規則以正式報名頁為準。</p></div></div></div>
+        <div class="reveal"><span class="section-label">A Quick Note</span><h2>上課前，<br>先看這三件事就好。</h2><p class="registration-copy">這些都是可以自己安排時間觀看的線上課程。準備好 Gmail，也記得在開通後 30 天內看完。</p><div class="registration-actions"><a class="btn btn-primary" href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">去看看所有課程</a><a class="btn btn-ghost" href="/courses/lingji-practice.html">先認識兩堂必修課</a></div></div>
+        <div class="notice-list reveal"><div class="notice"><b>01</b><div><strong>準備一個能登入的 Gmail</strong><p>課程會依照你報名時填寫的 Gmail 開通，請先確認帳號沒有填錯。</p></div></div><div class="notice"><b>02</b><div><strong>開通後有 30 天可以看</strong><p>不用一天看完，但記得替自己排時間。實際起算日以報名通知為準。</p></div></div><div class="notice"><b>03</b><div><strong>先看你需要什麼，不必全買</strong><p>從現在最困擾、最想弄懂的問題開始。費用與退費規則以正式報名頁為準。</p></div></div></div>
       </div>
     </section>
   </main>
   <footer><div class="container footer-inner"><div class="footer-brand"><img src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><p>靈元院<small>LING YUAN YUAN</small></p></div><div class="footer-links"><a href="/">首頁</a><a href="/courses/">線上課程</a><a href="/articles.html">文選</a><a href="/membership.html">會員</a><a href="mailto:lyyuan03@gmail.com">聯絡我們</a></div></div></footer>
-  <div class="mobile-cta"><a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">前往課程報名</a></div>
+  <div class="mobile-cta"><a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">直接看報名課程</a></div>
   <script>
     (function(){
       var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
