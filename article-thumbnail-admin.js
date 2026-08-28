@@ -25,7 +25,7 @@ const THUMBNAIL_SETTING_KEYS = [
 ];
 
 const FORCED_THUMBNAIL_IMAGES = {
-  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-4"
+  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6"
 };
 
 const RECOVERY_SETTINGS = {
