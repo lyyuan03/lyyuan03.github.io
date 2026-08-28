@@ -596,6 +596,8 @@ async function refresh() {
   if (linkExpiryInput && !linkExpiryInput.value) linkExpiryInput.value = defaultExpiryDate();
   renderEvents();
   publishEventsToArticleAdmin();
+  installArticleEventSearch();
+  renderArticleEventSearchOptions();
 }
 
 eventSelect?.addEventListener("change", renderParticipants);
