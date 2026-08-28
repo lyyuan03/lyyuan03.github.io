@@ -6,9 +6,9 @@ export const yuanqinDebtHeartArticle = {
   displayCategory: "靈修",
   series: "靈修辨證",
   status: "draft",
-  updatedAt: "2026-08-28T07:29:00.000Z",
-  coverImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-4",
-  thumbnailImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-4",
+  updatedAt: "2026-08-28T08:00:00.000Z",
+  coverImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6",
+  thumbnailImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6",
   excerpt: "每一年都在超渡、解冤、迴向，真正沒有結束的，究竟是外面的祂，還是心裡那個結？",
   accessType: "paid",
   topics: ["冤親債主", "解冤釋結", "心性修持"],
@@ -43,6 +43,8 @@ export const yuanqinDebtHeartArticle = {
 
 我對「冤結」的理解，從這裡開始。
 
+![為什麼冤親債主永遠度不完？](assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6)
+
 ## 人一定都有前世的冤親債主嗎？
 
 現在有很多宗教或修行上的說法，好像都預設每一個人一定會有冤親債主。這個說法本身未必成立。
@@ -68,6 +70,8 @@ export const yuanqinDebtHeartArticle = {
 另外一些人，一輩子都活在糾結裡。愛很深，恨也很深；嫉妒很深，執著也很深。這種心就比較難度化。人的靈魂從無明開始，一世又一世進入不同的生命狀態，每一世所處的環境、經驗與條件都不一樣，帶到人世間的心性本來就不會完全相同。若把來到世間的生命想成許多光點，每個光點落下的位置、遭遇全部不同，最後形成的生命狀態自然也不一樣。
 
 所以，不必一直追問上輩子做過什麼。先看這一輩子正在經歷什麼。家裡有沒有很深的糾結，朋友之間有沒有恩怨，愛情與親情有沒有一直拉扯，心裡有沒有很深的嫉妒、憎恨與執著。如果有，需要面對的冤親債主，往往就在這些心念裡。
+
+![最痛那一刀，往往來自最親的人](assets/articles/yuanqin-debt-heart/05-family-grievance.webp?v=20260828-6)
 
 ## 冤親債主是真的存在，還是只是人的投射？
 
@@ -117,6 +121,8 @@ export const yuanqinDebtHeartArticle = {
 
 白天你對人說：「我已經放下了。」晚上睡不著，又在腦中和他吵了一次。朋友只要提起那個名字，你的表情就變了。看見對方過得很好，心裡仍不舒服。你以為自己只是記得，那股作用其實一直都在。
 
+![白天放下，夜裡還在跟祂爭吵](assets/articles/yuanqin-debt-heart/02-night-argument.webp?v=20260828-6)
+
 這就是我所說的「結」。它不一定從靈界開始。很多時候，它就從人的心開始。
 
 結多半不是某一天忽然炸開，而是嫉妒、控制、占有、報復，以及帶著索取的愛，長期累積出來的。對方可能早已離開，甚至早已忘記。若你晚上仍在腦中重吵一次，那股作用就還在。
@@ -147,11 +153,17 @@ export const yuanqinDebtHeartArticle = {
 
 解，是讓這段作用有機會被看見。化，是讓原本凝結的力量開始鬆動。這不是要你假裝沒受過傷，也不是要求你立刻原諒任何人。很多傷，本來就不是旁人一句「放下吧」處理得了的。
 
+![不是把誰趕走，是那股抓著的力開始鬆](assets/articles/yuanqin-debt-heart/06-release-grip.webp?v=20260828-6)
+
 童年被父母否定過的人，到了中年仍可能為一句肯定而努力。婚姻被背叛的人，不會因為旁人勸他看開，傷口就忽然消失。為家庭付出半輩子、最後被當成理所當然的人，也不可能誦了幾部經，委屈就自動不見。
 
 恨父親，也許等的是一句「我以你為榮」。恨母親控制，也許缺的是從小到大從未被尊重。放不下前任，也許不是因為還愛，而是不能接受自己曾經那麼用力，最後卻被留下。這些東西慢慢被看見，解冤才開始有它的意義。
 
 宗教如果只要求受傷的人「放下」，其實很殘忍。要看的是痛底下還抓著什麼。
+
+![他還在，你卻已經自由了](assets/articles/yuanqin-debt-heart/04-freedom-release.webp?v=20260828-6)
+
+![名字一宣讀，這段關係就被帶到壇前](assets/articles/yuanqin-debt-heart/03-name-ritual.webp?v=20260828-6)
 
 <!-- paid-only -->`
 };
