@@ -105,7 +105,7 @@ async function decryptEventContent(encryptedContent, iv, rawKey) {
 
 function renderEventOptions(selected = "") {
   if (!eventIdInput) return;
-  eventIdInput.innerHTML = '<option value="">請選擇活動</option>' + eventOptions.map((event) =>
+  eventIdInput.innerHTML = '<option value="">無指定活動</option>' + eventOptions.map((event) =>
     `<option value="${escapeHtml(event.id)}"${event.id === selected ? " selected" : ""}>${escapeHtml(event.name)}${event.status === "inactive" ? "（停用）" : ""}</option>`
   ).join("");
 }
@@ -113,8 +113,10 @@ function renderEventOptions(selected = "") {
 function toggleEventAccess() {
   if (!eventAccessField) return;
   const isEvent = accessTypeInput?.value === "event";
-  eventAccessField.classList.toggle("hidden", !isEvent);
+  eventAccessField.classList.remove("hidden");
   if (eventIdInput) eventIdInput.required = isEvent;
+  const label = eventAccessField.querySelector('label[for="eventId"]');
+  if (label) label.textContent = isEvent ? "指定活動（活動限定必選）" : "指定活動（選填）";
 }
 
 async function loadEventOptions() {
@@ -297,8 +299,8 @@ function staticArticlePayload(article, revision) {
     bookPurchaseUrl: article.bookPurchaseUrl || "",
     bookCoverImage: article.bookCoverImage || "",
     accessType: normalizeAdminAccessType(article),
-    eventId: "",
-    eventName: "",
+    eventId: article.eventId || "",
+    eventName: article.eventName || "",
     encryptedContent: "",
     eventIv: "",
     encryption: "",
@@ -623,7 +625,9 @@ async function saveArticle(event) {
       distributedCount = await distributeEventKey(data.eventId, currentId, protectedContent.key);
       payload.magicLinkAccess = await buildMagicLinkAccess(data.eventId, protectedContent.key);
     } else {
-      payload.eventId = "";
+      payload.eventName = data.eventId
+        ? (eventOptions.find((event) => event.id === data.eventId)?.name || data.eventId)
+        : "";
       payload.encryptedContent = "";
       payload.eventIv = "";
       payload.encryption = "";
