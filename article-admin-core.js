@@ -118,15 +118,25 @@ function toggleEventAccess() {
 }
 
 async function loadEventOptions() {
-  const snapshot = await getDoc(doc(db, "membershipSettings", "eventManagement"));
-  eventOptions = snapshot.exists() && Array.isArray(snapshot.data().events) ? snapshot.data().events : [];
+  try {
+    const snapshot = await getDoc(doc(db, "membershipSettings", "eventManagement"));
+    eventOptions = snapshot.exists() && Array.isArray(snapshot.data().events) ? snapshot.data().events : [];
+  } catch (error) {
+    console.warn("指定活動清單直接讀取失敗，改用活動管理模組已載入資料。", error);
+    eventOptions = Array.isArray(window.__lyyuanActivityEvents) ? window.__lyyuanActivityEvents : [];
+  }
   renderEventOptions(eventIdInput?.value || "");
   toggleEventAccess();
 }
 
 async function loadAdminEventKeys() {
-  const snapshot = await getDoc(doc(db, "membershipSettings", "eventArticleKeys"));
-  return snapshot.exists() ? snapshot.data().keys || {} : {};
+  try {
+    const snapshot = await getDoc(doc(db, "membershipSettings", "eventArticleKeys"));
+    return snapshot.exists() ? snapshot.data().keys || {} : {};
+  } catch (error) {
+    console.warn("活動文章金鑰暫時無法載入；先載入文章列表，活動文章內文稍後再重試。", error);
+    return {};
+  }
 }
 
 async function saveAdminEventKey(articleId, key) {
@@ -1034,6 +1044,12 @@ window.addEventListener("activity-events-updated", (event) => {
   toggleEventAccess();
 });
 
+if (Array.isArray(window.__lyyuanActivityEvents)) {
+  eventOptions = window.__lyyuanActivityEvents;
+  renderEventOptions(eventIdInput?.value || "");
+  toggleEventAccess();
+}
+
 onAuthStateChanged(auth, async (user) => {
   loginButton.disabled = false;
   if (!user) {
@@ -1054,5 +1070,14 @@ onAuthStateChanged(auth, async (user) => {
   gate.classList.add("hidden");
   app.classList.remove("hidden");
   userLabel.textContent = user.email || "管理員";
-  await Promise.all([loadEventOptions(), loadArticles()]);
+  const [eventResult, articleResult] = await Promise.allSettled([loadEventOptions(), loadArticles()]);
+  if (eventResult.status === "rejected") {
+    console.error("指定活動載入失敗：", eventResult.reason);
+    renderEventOptions(eventIdInput?.value || "");
+    toggleEventAccess();
+  }
+  if (articleResult.status === "rejected") {
+    console.error("文章列表載入失敗：", articleResult.reason);
+    listEl.innerHTML = '<div class="empty">文章載入失敗，請重新整理頁面後再試。</div>';
+  }
 });
