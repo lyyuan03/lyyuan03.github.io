@@ -5,10 +5,11 @@ export const yuanqinDebtHeartArticle = {
   category: "spiritual",
   displayCategory: "靈修",
   series: "靈修辨證",
-  status: "draft",
+  status: "published",
+  publishedAt: "2026-08-28T11:05:00.000Z",
   updatedAt: "2026-08-28T08:05:00.000Z",
-  coverImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6",
-  thumbnailImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6",
+  coverImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-clean-text-1",
+  thumbnailImage: "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-clean-text-1",
   excerpt: "每一年都在超渡、解冤、迴向，真正沒有結束的，究竟是外面的祂，還是心裡那個結？",
   accessType: "paid",
   topics: ["冤親債主", "解冤釋結", "心性修持"],
@@ -43,7 +44,7 @@ export const yuanqinDebtHeartArticle = {
 
 我對「冤結」的理解，從這裡開始。
 
-![為什麼冤親債主永遠度不完？](assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6)
+![為什麼冤親債主永遠度不完？](assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-clean-text-1)
 
 ## 人一定都有前世的冤親債主嗎？
 
@@ -71,7 +72,7 @@ export const yuanqinDebtHeartArticle = {
 
 所以，不必一直追問上輩子做過什麼。先看這一輩子正在經歷什麼。家裡有沒有很深的糾結，朋友之間有沒有恩怨，愛情與親情有沒有一直拉扯，心裡有沒有很深的嫉妒、憎恨與執著。如果有，需要面對的冤親債主，往往就在這些心念裡。
 
-![最痛那一刀，往往來自最親的人](assets/articles/yuanqin-debt-heart/05-family-grievance.webp?v=20260828-6)
+![最痛那一刀，往往來自最親的人](assets/articles/yuanqin-debt-heart/05-family-grievance.webp?v=20260828-clean-text-1)
 
 ## 冤親債主是真的存在，還是只是人的投射？
 
@@ -121,7 +122,7 @@ export const yuanqinDebtHeartArticle = {
 
 白天你對人說：「我已經放下了。」晚上睡不著，又在腦中和他吵了一次。朋友只要提起那個名字，你的表情就變了。看見對方過得很好，心裡仍不舒服。你以為自己只是記得，那股作用其實一直都在。
 
-![白天放下，夜裡還在跟祂爭吵](assets/articles/yuanqin-debt-heart/02-night-argument.webp?v=20260828-6)
+![白天放下，夜裡還在跟祂爭吵](assets/articles/yuanqin-debt-heart/02-night-argument.webp?v=20260828-clean-text-1)
 
 這就是我所說的「結」。它不一定從靈界開始。很多時候，它就從人的心開始。
 
@@ -153,7 +154,7 @@ export const yuanqinDebtHeartArticle = {
 
 解，是讓這段作用有機會被看見。化，是讓原本凝結的力量開始鬆動。這不是要你假裝沒受過傷，也不是要求你立刻原諒任何人。很多傷，本來就不是旁人一句「放下吧」處理得了的。
 
-![不是把誰趕走，是那股抓著的力開始鬆](assets/articles/yuanqin-debt-heart/06-release-grip.webp?v=20260828-6)
+![不是把誰趕走，是那股抓著的力開始鬆](assets/articles/yuanqin-debt-heart/06-release-grip.webp?v=20260828-clean-text-1)
 
 童年被父母否定過的人，到了中年仍可能為一句肯定而努力。婚姻被背叛的人，不會因為旁人勸他看開，傷口就忽然消失。為家庭付出半輩子、最後被當成理所當然的人，也不可能誦了幾部經，委屈就自動不見。
 
@@ -161,7 +162,7 @@ export const yuanqinDebtHeartArticle = {
 
 宗教如果只要求受傷的人「放下」，其實很殘忍。要看的是痛底下還抓著什麼。
 
-![名字一宣讀，這段關係就被帶到壇前](assets/articles/yuanqin-debt-heart/03-name-ritual.webp?v=20260828-6)
+![名字一宣讀，這段關係就被帶到壇前](assets/articles/yuanqin-debt-heart/03-name-ritual.webp?v=20260828-clean-text-1)
 
 <!-- paid-only -->`
 };

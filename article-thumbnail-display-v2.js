@@ -1,6 +1,6 @@
 import { db } from "./firebase-config.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { staticArticles } from "./static-articles.js?v=20260828-yuanqin-six-images-1";
+import { staticArticles } from "./static-articles.js?v=20260828-yuanqin-clean-text-1";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";
@@ -16,7 +16,7 @@ const BRAND_FALLBACKS = {
 // 某些舊文章的正文圖片由顯示修正模組動態補入，原始 Markdown 內沒有圖片路徑。
 // 這裡記錄「真正的第一張內文故事圖」，避免誤退回統一 CI 圖。
 const FORCED_THUMBNAIL_IMAGES = {
-  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-4"
+  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-clean-text-1"
 };
 
 const FIRST_IMAGE_OVERRIDES = {
