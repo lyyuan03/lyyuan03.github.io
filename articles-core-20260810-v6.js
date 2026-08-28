@@ -264,8 +264,28 @@ function renderArticleGuide(article, compact = false) {
   </div>`;
 }
 
+function articleTime(value) {
+  if (!value) return 0;
+  if (typeof value?.toMillis === "function") return value.toMillis();
+  if (typeof value?.toDate === "function") return value.toDate().getTime();
+  if (typeof value?.seconds === "number") {
+    return (value.seconds * 1000) + Math.floor(Number(value.nanoseconds || 0) / 1e6);
+  }
+  if (value instanceof Date) return value.getTime();
+  const parsed = Date.parse(String(value));
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function articlePublishedTime(article = {}) {
+  return articleTime(article.publishedAt)
+    || articleTime(article.createdAt)
+    || articleTime(article.updatedAt);
+}
+
 function sortPublished(a, b) {
-  return Date.parse(b.publishedAt || b.updatedAt || 0) - Date.parse(a.publishedAt || a.updatedAt || 0);
+  const timeDiff = articlePublishedTime(b) - articlePublishedTime(a);
+  if (timeDiff !== 0) return timeDiff;
+  return String(articleKey(a)).localeCompare(String(articleKey(b)), "zh-Hant");
 }
 
 function renderTabs() {
@@ -834,8 +854,16 @@ async function loadArticles() {
   const publishedRequest = getDocs(query(collection(db, "articles"), where("status", "==", "published")));
   const statusRequest = getDoc(doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID));
   const [publishedResult, statusResult] = await Promise.allSettled([withTimeout(publishedRequest, 8000, "已發布文章載入"), withTimeout(statusRequest, 8000, "文章狀態索引載入")]);
-  const firestoreArticles = publishedResult.status === "fulfilled" ? publishedResult.value.docs.map((item) => ({ id: item.id, ...item.data() })).filter((article) => article.hidden !== true && article.systemRecord !== true) : [];
-  if (publishedResult.status === "rejected") console.warn("Firebase 已發布文章暫時無法載入，改顯示靜態文章。", publishedResult.reason);
+  if (publishedResult.status === "rejected") {
+    articlesLoadCompleted = true;
+    loadedArticles = [];
+    console.warn("Firebase 已發布文章暫時無法載入。", publishedResult.reason);
+    root.innerHTML = '<div class="empty">後台文章暫時無法載入，請稍後再試。</div>';
+    return;
+  }
+  const firestoreArticles = publishedResult.value.docs
+    .map((item) => ({ id: item.id, ...item.data() }))
+    .filter((article) => article.hidden !== true && article.systemRecord !== true);
   const indexedStatuses = statusResult.status === "fulfilled" && statusResult.value.exists() ? statusResult.value.data().statuses || {} : {};
   const statusById = new Map(Object.entries(indexedStatuses));
   if (statusResult.status === "rejected") console.warn("文章狀態索引暫時無法載入。", statusResult.reason);
