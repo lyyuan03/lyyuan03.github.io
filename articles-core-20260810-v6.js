@@ -850,12 +850,11 @@ async function loadArticles() {
       mergedById.set(article.id, article);
       return;
     }
+    // 後台 Firestore 是已建立文章的唯一主來源；GitHub 靜態版只在後台沒有該文章時作備援。
+    // 不再用靜態 content / 圖片覆蓋後台內容，避免前後台顯示不一致。
     mergedById.set(article.id, {
       ...staticArticle,
-      ...article,
-      content: staticArticle.content || article.content || "",
-      coverImage: staticArticle.coverImage || article.coverImage || "",
-      thumbnailImage: staticArticle.thumbnailImage || article.thumbnailImage || ""
+      ...article
     });
   });
   const future2058Static = staticArticles.find((article) => article.id === "2058-future-person-prophecy");
