@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0f1a14">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="description" content="以《台灣民間信仰中靈修模式之研究》為研究基礎，帶你理解台灣靈修模式、靈乩養成與前輩修行經驗。">
+  <meta name="description" content="從台灣民間信仰源流、靈修系統差異與靈乩前輩經驗，建立理解自身靈修現象的脈絡與判斷。">
   <title>課程預覽｜跟靈乩前輩學靈修的兩堂必修課｜靈元院</title>
   <script>document.documentElement.classList.add('js')</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -292,7 +292,27 @@
     .course-video-frame{position:relative;aspect-ratio:16/9;padding:8px;border:1px solid rgba(165,130,84,.32);background:linear-gradient(145deg,rgba(96,115,134,.24),rgba(112,90,112,.2) 52%,rgba(165,104,87,.2));box-shadow:0 20px 52px rgba(48,39,31,.15)}
     .course-video-frame:before{content:"";position:absolute;z-index:2;right:-13px;top:28px;width:42px;height:1px;background:var(--clay);pointer-events:none}
     .course-video-frame iframe{display:block;width:100%;height:100%;border:0;background:#0b1209}
-    .course-video-section .focus-points{margin-top:28px}
+    .course-boundary{margin-top:24px;padding:20px 22px;border-left:3px solid var(--clay);background:rgba(255,255,255,.62)}
+    .course-boundary small{display:block;color:var(--clay);font-family:var(--en);font-size:10px;letter-spacing:.18em}
+    .course-boundary h3{margin:6px 0 0;font-family:var(--serif);font-size:17px;font-weight:500;line-height:1.6}
+    .course-boundary p{margin:7px 0 0;color:var(--muted);font-size:12.5px;line-height:1.75}
+
+    .learning-path{margin-top:38px;padding-top:30px;border-top:1px solid var(--line);scroll-margin-top:174px}
+    .learning-path-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:19px}
+    .learning-path-head small{color:var(--gold);font-family:var(--en);font-size:10px;letter-spacing:.2em}
+    .learning-path-head h3{max-width:650px;margin:5px 0 0;font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.55}
+    .learning-path-head p{max-width:360px;margin:0;color:var(--muted);font-size:12px;line-height:1.7;text-align:right}
+    .path-steps{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);background:#fff}
+    .path-step{position:relative;min-width:0;padding:20px 17px 18px;border-right:1px solid var(--line)}
+    .path-step:last-child{border-right:0}
+    .path-step b{display:block;color:var(--gold);font-family:var(--en);font-size:18px;font-weight:500;line-height:1}
+    .path-step strong{display:block;margin-top:10px;font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.5}
+    .path-step span{display:block;margin-top:5px;color:var(--muted);font-size:10.5px;line-height:1.6}
+    .path-step:nth-child(1){border-top:3px solid var(--slate)}
+    .path-step:nth-child(2){border-top:3px solid var(--moss)}
+    .path-step:nth-child(3){border-top:3px solid var(--plum)}
+    .path-step:nth-child(4){border-top:3px solid var(--clay)}
+    .path-step:nth-child(5){border-top:3px solid var(--gold)}
 
     .evidence-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr);gap:50px;align-items:center}
     .evidence-copy{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,.72fr);gap:34px;align-items:start}
@@ -392,6 +412,21 @@
     .whisper:before{content:"“";position:absolute;left:0;top:-7px;color:var(--plum);font-family:Georgia,serif;font-size:40px;line-height:1;opacity:.45}
     .whisper cite{display:block;margin-top:7px;color:var(--gold);font-family:var(--sans);font-size:9px;font-style:normal;letter-spacing:.12em}
 
+    .stage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:30px}
+    .stage-card{position:relative;padding:24px 23px;border:1px solid var(--line);background:rgba(255,255,255,.68)}
+    .stage-card:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--slate)}
+    .stage-card:nth-child(2):before{background:var(--plum)}
+    .stage-card:nth-child(3):before{background:var(--clay)}
+    .stage-card small{display:block;color:var(--gold);font-family:var(--en);font-size:9px;letter-spacing:.18em}
+    .stage-card h3{margin:7px 0 0;font-family:var(--serif);font-size:17px;font-weight:500;line-height:1.55}
+    .stage-card p{margin:9px 0 0;color:var(--muted);font-size:12px;line-height:1.72}
+    .outcome-panel{display:grid;grid-template-columns:minmax(210px,.62fr) minmax(0,1.38fr);gap:35px;align-items:center;margin-top:22px;padding:27px 29px;background:linear-gradient(120deg,#243442,#5d5064 55%,#84564d);color:#fff}
+    .outcome-panel small{display:block;color:#e4c89e;font-family:var(--en);font-size:10px;letter-spacing:.19em}
+    .outcome-panel h3{margin:7px 0 0;font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.55}
+    .outcome-list{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 26px;list-style:none;margin:0;padding:0}
+    .outcome-list li{position:relative;padding-left:17px;color:rgba(255,255,255,.75);font-size:11.5px;line-height:1.65}
+    .outcome-list li:before{content:"";position:absolute;left:0;top:10px;width:7px;height:1px;background:#e4c89e}
+
     .instructor-feature{position:relative;overflow:hidden;background:#0c1712;color:var(--paper)}
     .instructor-feature:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 48%,rgba(165,104,87,.14),transparent 34%),radial-gradient(circle at 78% 18%,rgba(96,115,134,.14),transparent 36%)}
     .instructor-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(300px,410px) minmax(0,1fr);gap:72px;align-items:center;padding:72px 0}
@@ -413,6 +448,13 @@
       .book-visual{max-width:270px;margin:0 auto}
       .decision-grid{grid-template-columns:1fr}
       .course-video-grid{grid-template-columns:1fr;gap:34px}
+      .learning-path-head{display:block}
+      .learning-path-head p{margin-top:8px;text-align:left}
+      .path-steps{grid-template-columns:repeat(3,1fr)}
+      .path-step:nth-child(3){border-right:0}
+      .path-step:nth-child(-n+3){border-bottom:1px solid var(--line)}
+      .path-step:nth-child(4){grid-column:1/2}
+      .stage-grid{grid-template-columns:1fr}
       .research-compact{grid-template-columns:minmax(0,1fr) 185px;gap:30px}
       .lesson-chapter,.lesson-chapter:nth-child(2){grid-template-columns:1fr;gap:30px}
       .lesson-chapter:nth-child(2) .chapter-heading{order:0}
@@ -443,6 +485,12 @@
       .focus-note{padding:22px 23px;font-size:19px}
       .course-video-frame{padding:5px}
       .course-video-frame:before{display:none}
+      .learning-path{margin-top:30px;padding-top:24px}
+      .learning-path-head h3{font-size:20px}
+      .path-steps{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+      .path-steps::-webkit-scrollbar{display:none}
+      .path-step,.path-step:nth-child(4){flex:0 0 72%;grid-column:auto;border-right:1px solid var(--line);border-bottom:0;scroll-snap-align:start}
+      .path-step:last-child{border-right:0}
       .evidence-copy{grid-template-columns:1fr}
       .compact-milestones{grid-template-columns:repeat(3,1fr)}
       .compact-milestones .milestone{padding:13px 8px;text-align:center}
@@ -468,6 +516,10 @@
       .chapter-number{font-size:42px}
       .chapter-topics{grid-template-columns:1fr;gap:18px}
       .whisper-row{grid-template-columns:1fr;gap:20px}
+      .stage-grid{gap:11px;margin-top:24px}
+      .stage-card{padding:21px 20px}
+      .outcome-panel{grid-template-columns:1fr;gap:18px;padding:24px 22px}
+      .outcome-list{grid-template-columns:1fr;gap:8px}
       .instructor-layout{grid-template-columns:1fr;gap:34px;padding:54px 0}
       .instructor-photo{width:min(330px,100%);margin:0 auto}
       .instructor-copy h2{font-size:37px}
@@ -499,10 +551,10 @@
         <p class="eyebrow">Online Course · Spiritual Practice</p>
         <h1>跟靈乩前輩學靈修的兩堂必修課</h1>
         <p class="hero-lead">靈乩前輩的修行祕密 × 你所不知道的靈修模式</p>
-        <p class="hero-copy">跑靈山、會靈、啟靈、說靈語，只是走入靈修世界的開始。真正重要的是，你是否理解自己正在經歷什麼，又是否知道這條路將把你帶往哪裡。</p>
+        <p class="hero-copy">有感應，不代表已經看懂靈修。從台灣民間信仰的源流、不同靈修系統，到靈乩前輩的生命經驗，幫你把難以整理的現象，放回可以理解與判斷的脈絡。</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
-          <a class="btn btn-ghost" href="#course-video">觀看課程影片</a>
+          <a class="btn btn-primary" href="#course-video">觀看課程介紹</a>
+          <a class="btn btn-ghost" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
         </div>
       </div>
       <div class="hero-art reveal">
@@ -516,9 +568,9 @@
 
   <section class="facts" aria-label="課程概要">
     <div class="container facts-grid">
-      <div class="fact"><small>FORMAT</small><strong>線上課程</strong></div>
+      <div class="fact"><small>FOUNDATION</small><strong>研究 × 實修</strong></div>
       <div class="fact"><small>PROGRAM</small><strong>兩堂主題講座</strong></div>
-      <div class="fact"><small>CORE</small><strong>靈修模式 × 靈乩養成</strong></div>
+      <div class="fact"><small>OUTCOME</small><strong>建立靈修判斷</strong></div>
     </div>
   </section>
 
@@ -526,8 +578,9 @@
     <div class="container course-subnav-inner">
       <div class="course-subnav-links">
         <a href="#course-video">課程介紹</a>
-        <a href="#research">研究基礎</a>
+        <a href="#learning-path">學習路徑</a>
         <a href="#curriculum">課程內容</a>
+        <a href="#research">研究基礎</a>
         <a href="#instructor">講師介紹</a>
         <a href="#faq">常見問題</a>
       </div>
@@ -541,44 +594,34 @@
         <div class="course-video-grid">
           <div class="course-video-copy reveal">
             <span class="section-label">Course Video</span>
-            <h2>先看影片，認識這門課想說清楚的事。</h2>
+            <h2>先看影片，理解這門課為何從「辨識」開始。</h2>
             <p class="section-intro">有感應，不等於看得懂自己的修行。這門課不追求更多神祕經驗，而是幫你建立辨識經驗的觀念與脈絡。</p>
-            <p class="course-video-quote">靈修走得好不好，觀念往往比勤跑靈山更重要。</p>
+            <div class="course-boundary">
+              <small>COURSE BOUNDARY</small>
+              <h3>這不是一門教你開啟更多能力的課</h3>
+              <p>不替你判定主神、天命或靈界身分，也不以快速啟靈、靈動或通靈為目的。</p>
+            </div>
             <a class="course-video-link" href="https://www.youtube.com/watch?v=SHv1Hvi8pJc" target="_blank" rel="noopener noreferrer">在 YouTube 觀看</a>
           </div>
           <div class="course-video-frame reveal">
             <iframe src="https://www.youtube-nocookie.com/embed/SHv1Hvi8pJc?rel=0" title="靈乩前輩的修行祕密與靈修模式課程影片" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
           </div>
         </div>
-        <div class="focus-points reveal" aria-label="課程核心問題">
-          <div class="focus-point"><small>CONTEXT</small><strong>靈修模式從何而來？</strong></div>
-          <div class="focus-point"><small>DISCERNMENT</small><strong>靈乩與乩童如何分辨？</strong></div>
-          <div class="focus-point"><small>PRACTICE</small><strong>如何避免只追求靈動？</strong></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-dark" id="research">
-      <div class="container">
-        <div class="research-compact">
-          <div class="reveal">
-            <span class="section-label">Research &amp; Practice</span>
-            <h2>一篇論文，整理一條近三十年的修行路。</h2>
-            <p class="section-intro">2014年，宇色將長年實修、田野觀察與學術研究，整理成台灣靈修模式的完整脈絡。</p>
-            <div class="research-thesis-line">
-              <h3>《台灣民間信仰中靈修模式之研究》</h3>
-              <a class="research-link" href="https://nhuir.nhu.edu.tw/handle/987654321/16921" target="_blank" rel="noopener noreferrer">查看論文典藏</a>
+        <div class="learning-path reveal" id="learning-path">
+          <div class="learning-path-head">
+            <div>
+              <small>LEARNING PATH</small>
+              <h3>兩堂課，建立五個層次的靈修判斷</h3>
             </div>
-            <div class="research-stats" aria-label="研究與教學經歷">
-              <div class="research-stat"><b>65</b><span>筆相關著作與研究</span></div>
-              <div class="research-stat"><b>2016</b><span>相關講座開課至今</span></div>
-              <div class="research-stat"><b>近30年</b><span>靈修與教學經驗</span></div>
-            </div>
+            <p>從外在信仰脈絡開始，最後回到自己的經驗與心性。</p>
           </div>
-          <figure class="research-book reveal">
-          <img src="https://pimg.1px.tw/kinkiosel/1523864931-822990840.jpg" alt="宇色著作《靈修人關鍵報告》封面" loading="lazy">
-            <figcaption>延伸閱讀｜《靈修人關鍵報告》</figcaption>
-          </figure>
+          <div class="path-steps" aria-label="五層學習路徑">
+            <div class="path-step"><b>01</b><strong>看懂源流</strong><span>台灣靈修派如何形成</span></div>
+            <div class="path-step"><b>02</b><strong>理解系統</strong><span>瑤池金母與東王公的差異</span></div>
+            <div class="path-step"><b>03</b><strong>分辨角色</strong><span>乩童、鸞乩、靈乩與聖乩</span></div>
+            <div class="path-step"><b>04</b><strong>參照前輩</strong><span>從生命與歷史事件學習</span></div>
+            <div class="path-step"><b>05</b><strong>回到自身</strong><span>檢視感應、心性與方向</span></div>
+          </div>
         </div>
       </div>
     </section>
@@ -588,7 +631,7 @@
         <div class="reveal">
           <span class="section-label">Course Curriculum</span>
           <h2>兩堂課，把脈絡一次說清楚。</h2>
-          <p class="section-intro">不鋪陳過多名詞，直接掌握系統差異、前輩經驗與修行判準。</p>
+          <p class="section-intro">不是兩個各自獨立的故事，而是一條從理解信仰源流，到重新檢視自身修行的連續路徑。</p>
         </div>
         <div class="curriculum-editorial">
           <article class="lesson-chapter reveal">
@@ -623,6 +666,31 @@
       </div>
     </section>
 
+    <section class="section section-dark" id="research">
+      <div class="container">
+        <div class="research-compact">
+          <div class="reveal">
+            <span class="section-label">Research &amp; Practice</span>
+            <h2>這兩堂課，整理的不只是個人經驗。</h2>
+            <p class="section-intro">2014年，宇色將長年實修、田野觀察與學術研究，整理成台灣靈修模式的完整脈絡。</p>
+            <div class="research-thesis-line">
+              <h3>《台灣民間信仰中靈修模式之研究》</h3>
+              <a class="research-link" href="https://nhuir.nhu.edu.tw/handle/987654321/16921" target="_blank" rel="noopener noreferrer">查看論文典藏</a>
+            </div>
+            <div class="research-stats" aria-label="研究與教學經歷">
+              <div class="research-stat"><b>65</b><span>筆相關著作與研究</span></div>
+              <div class="research-stat"><b>2016</b><span>相關講座開課至今</span></div>
+              <div class="research-stat"><b>近30年</b><span>靈修與教學經驗</span></div>
+            </div>
+          </div>
+          <figure class="research-book reveal">
+            <img src="https://pimg.1px.tw/kinkiosel/1523864931-822990840.jpg" alt="宇色著作《靈修人關鍵報告》封面" loading="lazy">
+            <figcaption>延伸閱讀｜《靈修人關鍵報告》</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
     <section class="principle compact-principle">
       <div class="narrow reveal">
         <div class="principle-mark"></div>
@@ -633,20 +701,40 @@
 
     <section class="section section-soft gentle-section" id="fit">
       <div class="container">
-        <div class="gentle-grid">
-          <div class="gentle-lead reveal">
-            <span class="section-label">A Place To Begin</span>
-            <h2>如果你已經走了一段路，卻仍想把方向看得更清楚。</h2>
-            <p class="section-intro">不論剛開始接觸，或已經有靈動與感應，這門課都不是替你貼標籤，而是陪你把經驗放回脈絡裡。</p>
+        <div class="reveal">
+          <span class="section-label">Who This Is For</span>
+          <h2>依你所在的位置，帶走不同的答案。</h2>
+          <p class="section-intro">同一套脈絡，回應不同階段最常遇到的疑問。</p>
+        </div>
+        <div class="stage-grid reveal" aria-label="三種學習階段">
+          <article class="stage-card">
+            <small>BEGINNING</small>
+            <h3>剛開始接觸靈修</h3>
+            <p>建立名詞與信仰脈絡，不再只靠不同老師的說法拼湊理解。</p>
+          </article>
+          <article class="stage-card">
+            <small>EXPERIENCED</small>
+            <h3>已跑靈山、會靈多年</h3>
+            <p>重新整理過往經驗，理解自己接觸的系統，以及方向為何仍不清楚。</p>
+          </article>
+          <article class="stage-card">
+            <small>SENSITIVE</small>
+            <h3>已有靈動、感應或靈語</h3>
+            <p>分辨現象、能力與修為，不再以感應強弱判斷修行程度。</p>
+          </article>
+        </div>
+        <div class="outcome-panel reveal">
+          <div>
+            <small>AFTER THE COURSE</small>
+            <h3>完成兩堂課後，<br>你將能夠</h3>
           </div>
-          <div class="reveal">
-            <div class="question-flow" aria-label="常見的靈修疑問">
-              <p>我感受到的，究竟是什麼？</p>
-              <p>不同老師說法不一，該如何判斷？</p>
-              <p>為什麼走了很久，心仍沒有安定？</p>
-            </div>
-            <div class="gentle-message">你不需要先證明自己具有什麼能力，也不必急著判定主神或天命。帶著疑問來，就可以開始。</div>
-          </div>
+          <ul class="outcome-list">
+            <li>說出台灣靈修主要系統的源流與差異</li>
+            <li>分辨乩童、鸞乩、靈乩與聖乩</li>
+            <li>理解靈動與感應不等同修為</li>
+            <li>看見一味追求靈動可能帶來的風險</li>
+            <li>用新的判準重新檢視自己的修行方向</li>
+          </ul>
         </div>
         <div class="whisper-row reveal" aria-label="過往學員回饋">
           <blockquote class="whisper">靈修最終仍是踏實地回歸自己。<cite>過往學員回饋</cite></blockquote>
@@ -677,7 +765,8 @@
         <div class="faq-list reveal">
           <details><summary>完全沒有靈修經驗，也可以參加嗎？</summary><p>可以。課程會從台灣民間信仰的靈修模式開始建立觀念，不要求學員必須已經啟靈、靈動或說靈語。</p></details>
           <details><summary>已經跑靈山很多年，這門課還適合我嗎？</summary><p>適合。這門課的重點不是增加更多神祕經驗，而是重新整理你已經歷過的現象，理解不同修行系統與前輩經驗背後的脈絡。</p></details>
-          <details><summary>課程會教我開啟通靈能力嗎？</summary><p>不會。課程著重觀念、辨識與修行方向，不以快速開啟特殊能力或判定個人靈界身分為目的。</p></details>
+          <details><summary>課程會教我開啟通靈能力，或替我判定主神與天命嗎？</summary><p>不會。課程著重觀念、辨識與修行方向，不以快速開啟特殊能力，也不判定個人的主神、天命或靈界身分。</p></details>
+          <details><summary>跟宇色老師的著作與免費影片有什麼不同？</summary><p>著作與影片多半針對個別主題深入說明；這門課把台灣靈修源流、系統差異、乩的類型與前輩經驗，整理成兩堂可以連續理解的完整路徑。</p></details>
         </div>
       </div>
     </section>
@@ -687,7 +776,7 @@
         <span class="section-label">Begin Your Study</span>
         <h2>走得更遠以前，先看懂自己正在走的路。</h2>
         <p>用兩堂課，建立能辨識、思考，也能安定自己的修行觀念。</p>
-        <a class="btn btn-primary" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">前往課程報名</a>
+        <a class="btn btn-primary" href="https://www.beclass.com/rid=2648b3462dd23de1ae44" target="_blank" rel="noopener noreferrer">查看課程與報名方式</a>
         <span class="final-note">線上課程｜報名及觀看方式以報名頁面公告為準</span>
       </div>
     </section>
