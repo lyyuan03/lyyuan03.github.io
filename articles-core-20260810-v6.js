@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260824-article-system-repair-1";
+import { staticArticles } from "./static-articles.js?v=20260828-yuanqin-six-images-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -73,6 +73,7 @@ const articleGuides = {
 };
 
 const articleThumbnailImages = {
+  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-4",
   "2058-future-person-prophecy": "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260813-3",
   "this-book-took-thirty-years": "assets/articles/this-book-took-thirty-years/cover.jpg?v=20260810-photoreal-2",
   "celebrity-death-dream-spirit-five-checks": "assets/articles/thumbnails/celebrity-dream-spirit.svg?v=20260731-clean-1",
