@@ -81,8 +81,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260828-admin-draft-preview-5",
-    "./articles-core-20260810-v6.js?v=20260828-admin-draft-preview-5&retry=1"
+    "./articles-core-20260810-v6.js?v=20260828-yuanqin-clean-text-1",
+    "./articles-core-20260810-v6.js?v=20260828-yuanqin-clean-text-1&retry=1"
   ];
   let lastError = null;
 
