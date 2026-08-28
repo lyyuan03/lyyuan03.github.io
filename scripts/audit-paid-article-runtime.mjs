@@ -6,7 +6,6 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 const marker = "<!-- paid-only -->";
-const cacheToken = "20260828-article-order-source-3";
 
 const { staticArticles } = await import(pathToFileURL(path.join(root, "static-articles.js")).href);
 const paidArticles = staticArticles.filter((article) => article.accessType === "paid" || String(article.content || "").includes(marker));
@@ -26,6 +25,10 @@ const gate = read("article-paid-gate-restore.js");
 const bootstrap = read("articles-v6.js");
 const page = read("articles.html");
 const firestoreRules = read("firestore.rules");
+
+const coreCacheMatch = bootstrap.match(/articles-core-20260810-v6\.js\?v=([^"&]+)/);
+assert.ok(coreCacheMatch?.[1], "Unable to detect the current article core cache token.");
+const cacheToken = coreCacheMatch[1];
 
 assert.ok(!core.includes('accessType === "paid" && hasPaidAccess'), "Core must not remove the paid gate before the private body loads.");
 assert.ok(core.includes('data-article-access="${escapeHtml(accessType)}"'), "Rendered articles must expose their access type.");
