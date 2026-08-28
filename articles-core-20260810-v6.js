@@ -432,7 +432,11 @@ function renderList(articles) {
 
   const visibleArticles = filtered.slice(0, visibleArticleCount);
   const remainingCount = filtered.length - visibleArticles.length;
+  const adminDraftCount = isAdminEmail(currentUser?.email)
+    ? filtered.filter((article) => article.status === "draft").length
+    : 0;
   root.innerHTML = `
+    ${isAdminEmail(currentUser?.email) ? `<div class="article-admin-preview-summary"><strong>管理者預覽模式</strong>｜目前可見草稿 ${adminDraftCount} 篇</div>` : ""}
     <div class="article-result-summary">
       <span>共 ${filtered.length} 篇文章</span>
       <a href="#article-filters">重新選擇分類</a>
