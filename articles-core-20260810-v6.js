@@ -796,7 +796,7 @@ function renderArticle(article) {
     root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}"><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}<div class="article-meta">${categoryLabels[article.category] || "文選"}｜活動限定</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}${article.excerpt ? `<div class="article-body"><p>${escapeHtml(article.excerpt)}</p></div>` : ""}${renderEventGate(article)}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
     bindEventLogin();
     bindArticleShare(articleKeyValue);
-    trackArticleView(articleKeyValue);
+    if (!isDraftPreview) trackArticleView(articleKeyValue);
     return;
   }
   const articleContent = addGuanyinVowLampImages(article.content || "", articleKeyValue);
@@ -807,7 +807,7 @@ function renderArticle(article) {
   if (accessType === "paid") bindPaidLogin();
   bindArticleShare(articleKeyValue);
   bindArticleExperience();
-  trackArticleView(articleKeyValue);
+  if (!isDraftPreview) trackArticleView(articleKeyValue);
   document.dispatchEvent(new CustomEvent("lyyuan:article-rendered", {
     detail: { articleId: articleKeyValue, accessType }
   }));
@@ -914,7 +914,10 @@ async function loadArticles() {
   }
   const liveFirestoreIds = new Set(firestoreArticles.map((article) => article.id));
   const quantumFrequencyStaticArticle = staticArticles.find((article) => article.id === "quantum-frequency-work-wish");
-  if (quantumFrequencyStaticArticle) mergedById.set("quantum-frequency-work-wish", quantumFrequencyStaticArticle);
+  const quantumFrequencyFirestoreArticle = firestoreArticles.find((article) => article.id === "quantum-frequency-work-wish");
+  if (quantumFrequencyStaticArticle && !(adminDraftPreview && quantumFrequencyFirestoreArticle?.status === "draft")) {
+    mergedById.set("quantum-frequency-work-wish", quantumFrequencyStaticArticle);
+  }
   statusById.forEach((status, articleId) => {
     if (!liveFirestoreIds.has(articleId) && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) mergedById.delete(articleId);
   });
@@ -928,6 +931,8 @@ async function loadArticles() {
       && article.id !== "__article-thumbnail-settings";
   });
   const normalizedArticles = merged.map((article) => {
+    // 管理者預覽草稿時，一律以後台實際儲存內容為準，不套用公開文章的舊版靜態覆寫。
+    if (adminDraftPreview && article.status === "draft") return article;
     if (article.id === "yuanshen-destiny-archetype") {
       let fixedContent = String(article.content || "")
         .replace(/stone-origin\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260808-final-images-2")
