@@ -533,12 +533,12 @@
       .instructor-copy h2{font-size:37px}
     }
 
-    /* Motion direction: spiritual geometry × restrained futurism */
+    /* Motion direction: mountain forest × drifting mist */
     .page-progress{position:fixed;top:56px;left:0;right:0;z-index:121;height:2px;pointer-events:none;background:linear-gradient(90deg,var(--slate),var(--plum),var(--clay),var(--gold-light));transform:scaleX(0);transform-origin:left center;box-shadow:0 0 14px rgba(200,170,123,.5);will-change:transform}
 
-    .hero{--motion-x:0px;--motion-y:0px;min-height:660px;padding:138px 0 106px;isolation:isolate;background:#09110d}
-    .hero:before{background:radial-gradient(circle at 74% 38%,rgba(112,90,112,.2),transparent 25%),radial-gradient(circle at 24% 70%,rgba(96,115,134,.18),transparent 30%),radial-gradient(circle at 54% 42%,rgba(165,130,84,.12),transparent 36%),linear-gradient(135deg,#08100c 0%,#0f1a14 50%,#17150f 100%);background-size:120% 120%;animation:ambientDrift 18s ease-in-out infinite alternate}
-    .hero:after{opacity:.2;background-image:linear-gradient(rgba(200,170,123,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(96,115,134,.07) 1px,transparent 1px);background-size:74px 74px;mask-image:radial-gradient(circle at 63% 46%,black,transparent 74%);animation:gridDrift 24s linear infinite}
+    .hero{--motion-x:0px;--motion-y:0px;min-height:660px;padding:138px 0 106px;isolation:isolate;background:#07110c}
+    .hero:before{z-index:0;background:radial-gradient(circle at 72% 32%,rgba(146,165,139,.14),transparent 29%),radial-gradient(circle at 18% 76%,rgba(83,105,74,.2),transparent 34%),linear-gradient(135deg,#07100b 0%,#0c1a12 52%,#172016 100%);background-size:118% 118%;animation:forestAmbient 18s ease-in-out infinite alternate}
+    .hero:after{z-index:2;opacity:1;background:linear-gradient(90deg,rgba(5,13,9,.96) 0%,rgba(6,15,10,.83) 39%,rgba(7,16,11,.36) 70%,rgba(7,15,10,.12) 100%),linear-gradient(to top,rgba(5,12,8,.82),transparent 48%),linear-gradient(to bottom,rgba(6,13,9,.24),transparent 35%);mask-image:none}
     .hero-grid{position:relative;z-index:3;display:block}
     .hero-content{position:relative;max-width:1040px}
     .eyebrow{display:flex;align-items:center;gap:16px;margin-bottom:17px}
@@ -549,18 +549,37 @@
     .hero-lead{max-width:920px;margin-top:22px;font-size:clamp(20px,2.2vw,27px);line-height:1.65}
     .hero-copy{max-width:790px;margin-top:18px;color:rgba(245,240,232,.76);font-size:17px;font-weight:400;line-height:1.85}
     .hero-actions{margin-top:30px}
-    .hero-cosmos{position:absolute;z-index:1;right:-4vw;top:50%;width:min(54vw,720px);aspect-ratio:1;pointer-events:none;opacity:.66;transform:translate3d(var(--motion-x),calc(-50% + var(--motion-y)),0);transition:transform .5s cubic-bezier(.2,.7,.2,1);filter:drop-shadow(0 0 30px rgba(200,170,123,.08))}
-    .cosmos-orbit{position:absolute;left:50%;top:50%;border:1px solid rgba(200,170,123,.2);border-radius:50%;transform:translate(-50%,-50%);will-change:transform}
-    .cosmos-orbit:before,.cosmos-orbit:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 16px rgba(200,170,123,.75)}
-    .cosmos-orbit:before{left:50%;top:-4px}
-    .cosmos-orbit:after{right:7%;bottom:18%}
-    .orbit-one{width:82%;height:82%;border-color:rgba(200,170,123,.22);animation:orbitClockwise 34s linear infinite}
-    .orbit-two{width:60%;height:60%;border-style:dashed;border-color:rgba(96,115,134,.28);animation:orbitCounter 25s linear infinite}
-    .orbit-three{width:38%;height:38%;border-color:rgba(112,90,112,.35);animation:orbitClockwise 17s linear infinite}
-    .cosmos-axis{position:absolute;left:50%;top:50%;background:linear-gradient(90deg,transparent,rgba(200,170,123,.23),transparent);transform:translate(-50%,-50%)}
-    .axis-horizontal{width:94%;height:1px}
-    .axis-vertical{width:1px;height:94%;background:linear-gradient(transparent,rgba(96,115,134,.24),transparent)}
-    .cosmos-core{position:absolute;left:50%;top:50%;width:16px;height:16px;border:1px solid rgba(245,240,232,.7);border-radius:50%;background:rgba(200,170,123,.22);transform:translate(-50%,-50%);box-shadow:0 0 0 9px rgba(200,170,123,.05),0 0 34px rgba(200,170,123,.45);animation:corePulse 4.6s ease-in-out infinite}
+    .hero-forest{position:absolute;z-index:1;inset:0;overflow:hidden;pointer-events:none}
+    .forest-scene{position:absolute;left:-3%;top:-3%;width:106%;height:106%;opacity:.92;transform:translate3d(var(--motion-x),var(--motion-y),0) scale(1.025);transition:transform .7s cubic-bezier(.2,.7,.2,1);filter:saturate(.82)}
+    .mountain-back{fill:#3c5543;opacity:.27;animation:mountainBreathe 16s ease-in-out infinite alternate}
+    .mountain-mid{fill:#243b2c;opacity:.64}
+    .forest-ridge-back{color:#172b1e;opacity:.78;animation:ridgeDrift 18s ease-in-out infinite alternate}
+    .forest-ridge-front{color:#0a1710;opacity:.97}
+    .ancient-tree{fill:#07110b;transform-box:fill-box;transform-origin:75% 100%;animation:treeBreathe 11s ease-in-out infinite alternate}
+    .canopy-soft{fill:#102219;opacity:.9;filter:url(#hero-canopy-soft)}
+    .forest-light{position:absolute;z-index:2;right:7%;top:5%;width:44%;height:72%;border-radius:50%;background:radial-gradient(ellipse,rgba(222,230,210,.15),rgba(175,194,165,.045) 44%,transparent 72%);filter:blur(12px);animation:forestLight 10s ease-in-out infinite alternate}
+    .forest-mist{position:absolute;z-index:3;left:-32%;width:165%;height:132px;opacity:.42;filter:blur(18px);will-change:transform;background:radial-gradient(ellipse at 16% 54%,rgba(232,237,225,.34),transparent 18%),radial-gradient(ellipse at 48% 42%,rgba(218,227,215,.28),transparent 22%),radial-gradient(ellipse at 79% 57%,rgba(232,237,225,.24),transparent 20%)}
+    .mist-one{bottom:16%;animation:mistAcross 24s linear infinite}
+    .mist-two{bottom:35%;height:106px;opacity:.25;transform:translateX(-10%);animation:mistAcrossReverse 31s linear infinite}
+    .mist-three{bottom:3%;height:168px;opacity:.34;filter:blur(26px);animation:mistAcross 38s linear infinite reverse}
+
+    .inquiry-section{position:relative;overflow:hidden;padding:90px 0 94px;background:linear-gradient(145deg,#f4efe7 0%,#eee8dc 100%)}
+    .inquiry-section:before{content:"";position:absolute;right:-13%;bottom:-54%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(96,99,48,.1),transparent 66%);pointer-events:none}
+    .inquiry-layout{position:relative;display:grid;grid-template-columns:minmax(280px,.72fr) minmax(0,1.28fr);gap:74px;align-items:start}
+    .inquiry-heading h2{margin:0;font-family:var(--serif);font-size:clamp(35px,4.25vw,52px);font-weight:500;line-height:1.48;letter-spacing:.055em}
+    .inquiry-heading p{margin:22px 0 0;color:#665c52;font-size:17px;font-weight:400;line-height:1.95}
+    .inquiry-proof{display:grid;grid-template-columns:1fr;gap:10px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line);font-family:var(--serif)}
+    .inquiry-proof span{display:flex;align-items:center;gap:12px;font-size:15px;line-height:1.65}
+    .inquiry-proof b{color:var(--gold);font-family:var(--en);font-size:36px;font-weight:500;line-height:1}
+    .question-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:42px;border-top:1px solid rgba(89,79,71,.2)}
+    .question-item{position:relative;min-height:112px;margin:0;padding:22px 4px 20px 43px;border-bottom:1px solid rgba(89,79,71,.2);color:#3f352c;font-family:var(--serif);font-size:19px;font-weight:500;line-height:1.75}
+    .question-item span{position:absolute;left:2px;top:24px;color:var(--gold);font-family:var(--en);font-size:14px;letter-spacing:.08em}
+    .root-answer{position:relative;display:grid;grid-template-columns:116px minmax(0,1fr);gap:28px;align-items:center;margin-top:30px;padding:25px 30px;background:#0e1c14;color:var(--paper);box-shadow:0 18px 50px rgba(36,47,38,.16)}
+    .root-answer:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--gold-light),var(--moss))}
+    .root-mark{display:grid;place-items:center;min-height:88px;border-right:1px solid rgba(200,170,123,.22);color:var(--gold-light);font-family:var(--en);font-size:12px;letter-spacing:.19em;text-align:center}
+    .root-mark b{display:block;margin-top:3px;font-family:var(--serif);font-size:25px;font-weight:500;letter-spacing:.13em}
+    .root-copy strong{display:block;font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.6}
+    .root-copy p{margin:8px 0 0;color:rgba(245,240,232,.7);font-size:15.5px;line-height:1.85}
 
     .facts{margin-top:-47px}
     .facts-grid{position:relative;overflow:hidden;background:rgba(12,22,17,.96);border:1px solid rgba(200,170,123,.22);color:var(--paper);box-shadow:0 24px 62px rgba(13,18,14,.27);backdrop-filter:blur(18px)}
@@ -617,11 +636,13 @@
     .motion-ready .book-shelf.on a:nth-child(2) .book-item,.motion-ready .stage-grid.on .stage-card:nth-child(2){animation-delay:.13s}
     .motion-ready .book-shelf.on a:nth-child(3) .book-item,.motion-ready .stage-grid.on .stage-card:nth-child(3){animation-delay:.26s}
 
-    @keyframes ambientDrift{0%{background-position:0% 0%;filter:saturate(.92)}100%{background-position:100% 70%;filter:saturate(1.08)}}
-    @keyframes gridDrift{to{background-position:74px 74px}}
-    @keyframes orbitClockwise{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
-    @keyframes orbitCounter{from{transform:translate(-50%,-50%) rotate(360deg)}to{transform:translate(-50%,-50%) rotate(0deg)}}
-    @keyframes corePulse{0%,100%{opacity:.58;box-shadow:0 0 0 8px rgba(200,170,123,.04),0 0 24px rgba(200,170,123,.28)}50%{opacity:1;box-shadow:0 0 0 14px rgba(200,170,123,.06),0 0 42px rgba(200,170,123,.5)}}
+    @keyframes forestAmbient{0%{background-position:0% 0%;filter:saturate(.9)}100%{background-position:100% 70%;filter:saturate(1.05)}}
+    @keyframes mountainBreathe{0%{transform:translate3d(-9px,2px,0);opacity:.24}100%{transform:translate3d(10px,-5px,0);opacity:.34}}
+    @keyframes ridgeDrift{0%{transform:translate3d(-7px,0,0)}100%{transform:translate3d(8px,2px,0)}}
+    @keyframes treeBreathe{0%{transform:rotate(-.35deg) translateY(0)}100%{transform:rotate(.45deg) translateY(-3px)}}
+    @keyframes forestLight{0%{opacity:.48;transform:translate3d(-2%,1%,0) scale(.96)}100%{opacity:.85;transform:translate3d(2%,-1%,0) scale(1.05)}}
+    @keyframes mistAcross{0%{transform:translate3d(-7%,0,0)}50%{transform:translate3d(4%,5px,0)}100%{transform:translate3d(12%,0,0)}}
+    @keyframes mistAcrossReverse{0%{transform:translate3d(9%,0,0)}50%{transform:translate3d(0,-4px,0)}100%{transform:translate3d(-11%,0,0)}}
     @keyframes titleLight{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
     @keyframes factScan{0%,18%{left:-38%;opacity:0}28%{opacity:1}48%,100%{left:118%;opacity:0}}
     @keyframes frameScan{0%,68%{left:-35%;opacity:0}76%{opacity:1}92%,100%{left:125%;opacity:0}}
@@ -636,8 +657,11 @@
     @media(max-width:920px){
       .hero{min-height:620px;padding:126px 0 96px}
       .hero-content{max-width:840px}
-      .hero-cosmos{right:-24vw;width:760px;opacity:.48}
+      .forest-scene{left:-14%;width:126%;opacity:.77}
+      .forest-light{right:-6%;width:64%}
       .hero h1{font-size:clamp(48px,8vw,72px)}
+      .inquiry-layout{grid-template-columns:1fr;gap:42px}
+      .inquiry-heading{max-width:720px}
     }
     @media(max-width:768px){
       .page-progress{top:58px}
@@ -646,7 +670,10 @@
       .hero-title-accent{width:auto}
       .hero-lead{font-size:19px;line-height:1.6}
       .hero-copy{font-size:15.5px;line-height:1.75}
-      .hero-cosmos{right:-310px;width:610px;opacity:.34}
+      .hero:after{background:linear-gradient(90deg,rgba(5,13,9,.94),rgba(5,13,9,.72) 73%,rgba(5,13,9,.3)),linear-gradient(to top,rgba(5,12,8,.84),transparent 55%)}
+      .forest-scene{left:-50%;width:175%;opacity:.58}
+      .forest-light{right:-22%;width:82%;opacity:.6}
+      .forest-mist{width:210%;left:-55%}
       .eyebrow:after{width:64px}
       .facts{margin-top:-28px}
       .facts-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
@@ -655,11 +682,22 @@
       .fact-index{left:20px;font-size:34px}
       .fact small{font-size:10.5px}
       .fact strong{font-size:20px}
+      .inquiry-section{padding:67px 0 72px}
+      .inquiry-layout{gap:30px}
+      .inquiry-heading h2{font-size:36px}
+      .inquiry-heading p{font-size:16px;line-height:1.85}
+      .question-list{grid-template-columns:1fr}
+      .question-item{min-height:auto;padding:18px 2px 18px 40px;font-size:18px;line-height:1.72}
+      .question-item span{top:20px}
+      .root-answer{grid-template-columns:1fr;gap:16px;padding:24px 22px}
+      .root-mark{display:block;min-height:auto;padding-bottom:13px;border-right:0;border-bottom:1px solid rgba(200,170,123,.22);text-align:left}
+      .root-mark b{display:inline;margin-left:9px;font-size:22px}
+      .root-copy strong{font-size:21px}
     }
     @media(prefers-reduced-motion:reduce){
       .page-progress{display:none}
-      .hero:before,.hero:after,.hero-title-accent,.cosmos-orbit,.cosmos-core,.facts-grid.on .fact:after,.course-video-frame:after,.instructor-photo:after,.compact-principle .principle-mark,.section-dark:before,.instructor-feature:before,.gentle-section:before{animation:none!important}
-      .hero-cosmos{transform:translate3d(0,-50%,0)!important;transition:none}
+      .hero:before,.hero-title-accent,.mountain-back,.forest-ridge-back,.ancient-tree,.forest-light,.forest-mist,.facts-grid.on .fact:after,.course-video-frame:after,.instructor-photo:after,.compact-principle .principle-mark,.section-dark:before,.instructor-feature:before,.gentle-section:before{animation:none!important}
+      .forest-scene{transform:scale(1.025)!important;transition:none}
       .motion-ready .reveal,.motion-ready .reveal.on,.motion-ready .hero-content *,.motion-ready .facts-grid .fact,.motion-ready .learning-path .path-step,.motion-ready .book-shelf .book-item,.motion-ready .stage-grid .stage-card{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
       .motion-ready .learning-path .path-steps:before{transform:scaleX(1)!important;animation:none!important}
     }
@@ -686,13 +724,58 @@
   </nav>
 
   <header class="hero">
-    <div class="hero-cosmos" aria-hidden="true">
-      <span class="cosmos-orbit orbit-one"></span>
-      <span class="cosmos-orbit orbit-two"></span>
-      <span class="cosmos-orbit orbit-three"></span>
-      <span class="cosmos-axis axis-horizontal"></span>
-      <span class="cosmos-axis axis-vertical"></span>
-      <span class="cosmos-core"></span>
+    <div class="hero-forest" aria-hidden="true">
+      <svg class="forest-scene" viewBox="0 0 1600 760" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <defs>
+          <filter id="hero-canopy-soft" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="4"></feGaussianBlur>
+          </filter>
+          <g id="hero-pine">
+            <path d="M27 116h8L33 67h-4z" fill="currentColor"></path>
+            <path d="M31 0 10 39h12L4 68h15L0 101h62L43 68h15L40 39h12z" fill="currentColor"></path>
+          </g>
+        </defs>
+        <path class="mountain-back" d="M-80 557C105 434 236 489 397 352c156-132 257-87 395 22 118 93 204 48 314-37 159-124 297-34 574 194v271H-80z"></path>
+        <path class="mountain-mid" d="M-100 662C73 548 216 585 355 491c126-85 221-78 345 12 109 78 209 79 330-15 169-132 332-86 650 108v206H-100z"></path>
+        <g class="forest-ridge-back">
+          <use href="#hero-pine" transform="translate(55 475) scale(1.18)"></use>
+          <use href="#hero-pine" transform="translate(162 502) scale(.93)"></use>
+          <use href="#hero-pine" transform="translate(270 451) scale(1.34)"></use>
+          <use href="#hero-pine" transform="translate(405 508) scale(.88)"></use>
+          <use href="#hero-pine" transform="translate(530 468) scale(1.14)"></use>
+          <use href="#hero-pine" transform="translate(665 505) scale(.9)"></use>
+          <use href="#hero-pine" transform="translate(770 463) scale(1.22)"></use>
+          <use href="#hero-pine" transform="translate(910 498) scale(.96)"></use>
+          <use href="#hero-pine" transform="translate(1035 452) scale(1.31)"></use>
+          <use href="#hero-pine" transform="translate(1195 485) scale(1.04)"></use>
+          <use href="#hero-pine" transform="translate(1325 438) scale(1.4)"></use>
+        </g>
+        <g class="forest-ridge-front">
+          <use href="#hero-pine" transform="translate(-10 570) scale(1.55)"></use>
+          <use href="#hero-pine" transform="translate(142 596) scale(1.2)"></use>
+          <use href="#hero-pine" transform="translate(315 548) scale(1.66)"></use>
+          <use href="#hero-pine" transform="translate(512 606) scale(1.12)"></use>
+          <use href="#hero-pine" transform="translate(660 564) scale(1.52)"></use>
+          <use href="#hero-pine" transform="translate(835 594) scale(1.24)"></use>
+          <use href="#hero-pine" transform="translate(1010 543) scale(1.74)"></use>
+          <use href="#hero-pine" transform="translate(1218 582) scale(1.32)"></use>
+          <use href="#hero-pine" transform="translate(1410 536) scale(1.8)"></use>
+        </g>
+        <g class="ancient-tree">
+          <path d="M1515 786c-72-167-74-283-44-411 17-74 5-158-36-246l64-21c29 83 37 168 16 267-24 113-18 243 55 411z"></path>
+          <path d="M1477 360c-93-89-204-121-335-147l19-34c126 18 241 54 348 132z"></path>
+          <path d="M1466 277c-30-73-83-130-157-178l36-22c74 43 134 99 173 170z"></path>
+          <path d="M1491 441c-116-46-221-48-330-30l6-36c113-26 231-18 343 26z"></path>
+          <g class="canopy-soft">
+            <path d="M1060 122c74-92 218-101 307-39 74-55 214-35 256 59 65 9 117 61 106 119-13 66-88 94-170 75-71 59-193 56-267 12-76 34-199 10-221-66-48-20-71-66-49-105 9-17 22-35 38-55z"></path>
+            <path d="M1091 312c61-64 173-75 247-31 75-50 190-24 218 50 63 9 99 53 85 99-16 52-89 66-155 43-65 44-159 39-217 2-70 28-170 0-180-60-50-26-49-72 2-103z"></path>
+          </g>
+        </g>
+      </svg>
+      <span class="forest-light"></span>
+      <span class="forest-mist mist-one"></span>
+      <span class="forest-mist mist-two"></span>
+      <span class="forest-mist mist-three"></span>
     </div>
     <div class="container hero-grid">
       <div class="hero-content reveal">
@@ -731,6 +814,34 @@
   </div>
 
   <main>
+    <section class="section inquiry-section" id="questions">
+      <div class="container inquiry-layout">
+        <div class="inquiry-heading reveal">
+          <span class="section-label">Questions We Keep Hearing</span>
+          <h2>你是否也有<br>以下這些問題？</h2>
+          <p>宇色走入靈修近三十年、出版 16 本著作。這些年收到的提問看似千變萬化，卻總在幾個核心上反覆出現。</p>
+          <div class="inquiry-proof"><span><b>30</b>年實修與研究</span><span><b>16</b>本靈修著作</span></div>
+        </div>
+        <div class="inquiry-body">
+          <div class="question-list reveal" aria-label="常見靈修疑問">
+            <p class="question-item"><span>01</span>你真的知道什麼是靈修？每個人都適合走進靈修嗎？</p>
+            <p class="question-item"><span>02</span>有敏感體質、靈擾或被說「帶天命」，就一定要修、一定要辦事嗎？</p>
+            <p class="question-item"><span>03</span>元神、主神、靈乩與乩童，究竟該如何分辨？</p>
+            <p class="question-item"><span>04</span>法門、老師與道場這麼多，什麼才是真正適合自己的？</p>
+            <p class="question-item"><span>05</span>靈動、靈語、寫天文與跑靈山，真的是修為的證明嗎？</p>
+            <p class="question-item"><span>06</span>修行多年仍沒有方向，甚至影響家庭與生活，問題的源頭在哪裡？</p>
+          </div>
+          <div class="root-answer reveal">
+            <div class="root-mark">RETURN TO THE<b>源頭</b></div>
+            <div class="root-copy">
+              <strong>靈修問題像雜草；若只追著現象處理，新的疑問仍會繼續長出來。</strong>
+              <p>這兩堂課整理的是根：看懂信仰源流、辨識不同系統與角色，再回到自己的經驗與心性。完成課程後，你得到的不是一套代替你決定的答案，而是面對下一個問題時，能夠自己判斷的能力。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section section-soft course-video-section" id="course-video">
       <div class="container">
         <div class="course-video-grid">
