@@ -1,5 +1,5 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260813-manual-image-markdown-3";
-import { staticArticles } from "./static-articles.js?v=20260823-paid-private-final-1";
+import { staticArticles } from "./static-articles.js?v=20260828-yuanqin-six-images-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -13,10 +13,12 @@ const categoryLabels = {
 
 const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],
-  ["2058-future-person-prophecy", "20260816-six-images-1"]
+  ["2058-future-person-prophecy", "20260816-six-images-1"],
+  ["yuanqin-debt-heart", "20260828-six-images-backend-sync-1"]
 ]);
 const staticImageSyncRevisions = new Map([
-  ["2058-future-person-prophecy", "20260813-2058-inline-slots-4"]
+  ["2058-future-person-prophecy", "20260813-2058-inline-slots-4"],
+  ["yuanqin-debt-heart", "20260828-six-images-cover-sync-1"]
 ]);
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
@@ -535,8 +537,8 @@ async function loadArticles() {
     const didContentSync = await syncRevisedStaticArticles(snapshot);
     if (didImageSync || didContentSync) {
       snapshot = await getDocs(collection(db, "articles"));
-      if (didContentSync) showAdminToast("《你可以不怕死》前後台內容已完成同步。", "success");
-      if (didImageSync) showAdminToast("2058 未來人文章前後台圖片已完成同步。", "success");
+      if (didContentSync) showAdminToast("網站文章內容已完成前後台同步。", "success");
+      if (didImageSync) showAdminToast("網站文章圖片已完成前後台同步。", "success");
     }
     await syncPublicationStatusIndex(snapshot);
     try {
