@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260816-six-images-1";
+import "./article-admin-core.js?v=20260828-event-selector-recovery-1";
 import "./article-admin-paid-security.js?v=20260825-paid-save-race-1";
 import { db } from "./firebase-config.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
