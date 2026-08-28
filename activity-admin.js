@@ -119,11 +119,16 @@ function setStatus(message, state = "") {
   statusEl.dataset.state = state;
 }
 
+function publishEventsToArticleAdmin() {
+  window.__lyyuanActivityEvents = Array.isArray(events) ? events.map((event) => ({ ...event })) : [];
+  window.dispatchEvent(new CustomEvent("activity-events-updated", { detail: { events: window.__lyyuanActivityEvents } }));
+}
+
 async function saveEvents(nextEvents) {
   events = nextEvents;
   await setDoc(settingsRef, { events, updatedAt: serverTimestamp() }, { merge: true });
   renderEvents();
-  window.dispatchEvent(new CustomEvent("activity-events-updated", { detail: { events } }));
+  publishEventsToArticleAdmin();
 }
 
 async function ensureDefaultEvent() {
@@ -479,6 +484,7 @@ async function refresh() {
   await Promise.all([ensureDefaultEvent(), loadMembers(), loadMagicLinks()]);
   if (linkExpiryInput && !linkExpiryInput.value) linkExpiryInput.value = defaultExpiryDate();
   renderEvents();
+  publishEventsToArticleAdmin();
 }
 
 eventSelect?.addEventListener("change", renderParticipants);
