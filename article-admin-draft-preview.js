@@ -219,6 +219,7 @@ function ensureBanner(count) {
     banner.className = "article-admin-preview-summary";
     root.before(banner);
   }
+  banner.dataset.draftCount = String(count);
   banner.innerHTML = `<strong>管理者預覽模式</strong>｜目前可見草稿 ${count} 篇｜僅 ${ADMIN_EMAIL} 可見`;
 }
 
@@ -350,7 +351,10 @@ if (root) {
       if (!root.querySelector('[data-admin-draft-preview-detail="true"]')) schedulePreview();
       return;
     }
-    if (root.querySelector(".article-grid") && !document.getElementById("article-admin-draft-preview-banner")) schedulePreview();
+    const banner = document.getElementById("article-admin-draft-preview-banner");
+    const expectedDrafts = Number(banner?.dataset?.draftCount || 0);
+    const hasDraftCard = Boolean(root.querySelector('[data-admin-draft-preview-added="true"]'));
+    if (root.querySelector(".article-grid") && (!banner || (expectedDrafts > 0 && !hasDraftCard))) schedulePreview();
   }).observe(root, { childList: true, subtree: true });
 }
 
