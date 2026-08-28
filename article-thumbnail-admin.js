@@ -24,6 +24,10 @@ const THUMBNAIL_SETTING_KEYS = [
   "thumbnailImage"
 ];
 
+const FORCED_THUMBNAIL_IMAGES = {
+  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-4"
+};
+
 const RECOVERY_SETTINGS = {
   "2026-guanyin-vow-lamp-record-v2": {
     thumbnailFit: "cover",
@@ -296,21 +300,28 @@ function initialize() {
       if (serial !== loadSerial) return;
       const saved = settingsSnapshot.exists() ? settingsSnapshot.data().settings?.[articleId] : null;
       const fallback = articleSnapshot.exists() ? articleSnapshot.data() : {};
-      const recovery = !saved && RECOVERY_SETTINGS[articleId]
+      const forcedThumbnailImage = FORCED_THUMBNAIL_IMAGES[articleId] || "";
+      const forced = forcedThumbnailImage && String(saved?.thumbnailImage || "") !== forcedThumbnailImage
+        ? normalizeSettings({
+            ...(saved || fallback || {}),
+            thumbnailImage: forcedThumbnailImage
+          }, articleId)
+        : null;
+      const recovery = !saved && !forced && RECOVERY_SETTINGS[articleId]
         ? normalizeSettings({
             ...RECOVERY_SETTINGS[articleId],
             thumbnailImage: fallback.thumbnailImage || ""
           }, articleId)
         : null;
-      const legacy = !saved && !recovery && hasLegacySettings(fallback)
+      const legacy = !saved && !forced && !recovery && hasLegacySettings(fallback)
         ? normalizeSettings({
             ...fallback,
             thumbnailImage: fallback.thumbnailImage || ""
           }, articleId)
         : null;
-      const source = saved || recovery || legacy || {};
+      const source = forced || saved || recovery || legacy || {};
       const hadInvalidScale = Number(source?.thumbnailScale) < SCALE_MIN;
-      if (legacy || recovery) await writeSettings(articleId, source);
+      if (forced || legacy || recovery) await writeSettings(articleId, source);
       applySettings(source, articleId);
       status.textContent = hadInvalidScale
         ? "舊縮放比例低於 100%，已自動修正並儲存"
