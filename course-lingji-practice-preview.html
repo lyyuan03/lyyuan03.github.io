@@ -258,10 +258,10 @@
     .fact:nth-child(3){border-top:3px solid var(--clay)}
     .fact small{margin-bottom:3px}
     .fact strong{font-size:18px}
-    .section{padding:72px 0}
+    .section{padding:66px 0}
     section[id]{scroll-margin-top:174px}
-    .section h2{font-size:clamp(28px,3.5vw,42px);line-height:1.45}
-    .section-intro{margin-top:15px;font-size:15px;line-height:1.85}
+    .section h2{font-size:clamp(27px,3.15vw,39px);line-height:1.48}
+    .section-intro{max-width:700px;margin-top:14px;font-size:14.5px;line-height:1.82}
 
     .course-subnav{position:sticky;top:104px;z-index:82;border-bottom:1px solid rgba(165,130,84,.2);background:rgba(250,247,241,.97);box-shadow:0 9px 26px rgba(48,39,31,.08);backdrop-filter:blur(18px)}
     .course-subnav-inner{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:30px}
@@ -285,6 +285,7 @@
     .focus-point strong{display:block;margin-top:7px;font-family:var(--serif);font-size:16px;font-weight:500;line-height:1.6}
 
     .course-video-grid{display:grid;grid-template-columns:minmax(250px,.62fr) minmax(0,1.38fr);gap:46px;align-items:center}
+    .course-video-copy h2{font-size:clamp(27px,2.65vw,32px)}
     .course-video-copy .section-intro{max-width:420px}
     .course-video-quote{margin:22px 0 0;padding-left:18px;border-left:2px solid var(--clay);color:#5f554b;font-family:var(--serif);font-size:16px;line-height:1.75}
     .course-video-link{display:inline-flex;align-items:center;gap:8px;margin-top:20px;color:var(--gold);font-size:12px;letter-spacing:.1em;border-bottom:1px solid rgba(165,130,84,.48)}
@@ -292,27 +293,26 @@
     .course-video-frame{position:relative;aspect-ratio:16/9;padding:8px;border:1px solid rgba(165,130,84,.32);background:linear-gradient(145deg,rgba(96,115,134,.24),rgba(112,90,112,.2) 52%,rgba(165,104,87,.2));box-shadow:0 20px 52px rgba(48,39,31,.15)}
     .course-video-frame:before{content:"";position:absolute;z-index:2;right:-13px;top:28px;width:42px;height:1px;background:var(--clay);pointer-events:none}
     .course-video-frame iframe{display:block;width:100%;height:100%;border:0;background:#0b1209}
-    .course-boundary{margin-top:24px;padding:20px 22px;border-left:3px solid var(--clay);background:rgba(255,255,255,.62)}
+    .course-boundary{margin-top:20px;padding:17px 19px;border-left:3px solid var(--clay);background:rgba(255,255,255,.62)}
     .course-boundary small{display:block;color:var(--clay);font-family:var(--en);font-size:10px;letter-spacing:.18em}
-    .course-boundary h3{margin:6px 0 0;font-family:var(--serif);font-size:17px;font-weight:500;line-height:1.6}
-    .course-boundary p{margin:7px 0 0;color:var(--muted);font-size:12.5px;line-height:1.75}
+    .course-boundary h3{margin:5px 0 0;font-family:var(--serif);font-size:16px;font-weight:500;line-height:1.58}
+    .course-boundary p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
 
-    .learning-path{margin-top:38px;padding-top:30px;border-top:1px solid var(--line);scroll-margin-top:174px}
-    .learning-path-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:19px}
+    .learning-path{margin-top:34px;padding:27px 30px 25px;border:1px solid rgba(165,130,84,.2);background:rgba(255,255,255,.42);scroll-margin-top:174px}
+    .learning-path-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:24px}
     .learning-path-head small{color:var(--gold);font-family:var(--en);font-size:10px;letter-spacing:.2em}
-    .learning-path-head h3{max-width:650px;margin:5px 0 0;font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.55}
-    .learning-path-head p{max-width:360px;margin:0;color:var(--muted);font-size:12px;line-height:1.7;text-align:right}
-    .path-steps{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);background:#fff}
-    .path-step{position:relative;min-width:0;padding:20px 17px 18px;border-right:1px solid var(--line)}
-    .path-step:last-child{border-right:0}
-    .path-step b{display:block;color:var(--gold);font-family:var(--en);font-size:18px;font-weight:500;line-height:1}
-    .path-step strong{display:block;margin-top:10px;font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.5}
-    .path-step span{display:block;margin-top:5px;color:var(--muted);font-size:10.5px;line-height:1.6}
-    .path-step:nth-child(1){border-top:3px solid var(--slate)}
-    .path-step:nth-child(2){border-top:3px solid var(--moss)}
-    .path-step:nth-child(3){border-top:3px solid var(--plum)}
-    .path-step:nth-child(4){border-top:3px solid var(--clay)}
-    .path-step:nth-child(5){border-top:3px solid var(--gold)}
+    .learning-path-head h3{max-width:650px;margin:5px 0 0;font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.5}
+    .learning-path-head p{max-width:350px;margin:0;color:var(--muted);font-size:11.5px;line-height:1.65;text-align:right}
+    .path-steps{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:12px;background:transparent}
+    .path-steps:before{content:"";position:absolute;left:9%;right:9%;top:27px;height:2px;background:linear-gradient(90deg,var(--slate),var(--moss),var(--plum),var(--clay),var(--gold));opacity:.62}
+    .path-step{--step-color:var(--slate);position:relative;z-index:1;min-width:0;padding:0 8px;text-align:center}
+    .path-step:nth-child(2){--step-color:var(--moss)}
+    .path-step:nth-child(3){--step-color:var(--plum)}
+    .path-step:nth-child(4){--step-color:var(--clay)}
+    .path-step:nth-child(5){--step-color:var(--gold)}
+    .path-step b{width:54px;height:54px;margin:0 auto;display:grid;place-items:center;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:var(--step-color);color:#fff;font-family:var(--en);font-size:14px;font-weight:500;line-height:1;box-shadow:0 8px 20px rgba(48,39,31,.13)}
+    .path-step strong{display:block;margin-top:13px;font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.45}
+    .path-step span{display:block;max-width:155px;margin:5px auto 0;color:var(--muted);font-size:10.5px;line-height:1.55}
 
     .evidence-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr);gap:50px;align-items:center}
     .evidence-copy{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,.72fr);gap:34px;align-items:start}
@@ -341,8 +341,8 @@
     .lesson-topics li:last-child{border-bottom:0}
     .lesson-topics b{color:var(--gold);font-family:var(--en);font-size:11px;font-weight:500}
 
-    .principle.compact-principle{padding:54px 0;background:linear-gradient(118deg,#334652 0%,#62576c 47%,#8b5d52 100%)}
-    .compact-principle blockquote{font-size:clamp(22px,3vw,34px);line-height:1.65}
+    .principle.compact-principle{padding:48px 0;background:linear-gradient(118deg,#334652 0%,#62576c 47%,#8b5d52 100%)}
+    .compact-principle blockquote{font-size:clamp(21px,2.7vw,31px);line-height:1.62}
     .compact-principle .principle-mark{margin-bottom:20px;background:#e7c99a}
     .compact-principle p{margin-top:15px;color:rgba(255,255,255,.64)}
 
@@ -367,32 +367,36 @@
     .final-cta p{margin:16px auto 24px;line-height:1.8}
 
     /* Editorial revision: research, curriculum, fit and instructor */
-    .research-compact{width:min(1000px,100%);margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:44px;align-items:center}
-    .research-compact h2{max-width:690px}
-    .research-compact .section-intro{max-width:650px}
-    .research-thesis-line{display:flex;justify-content:space-between;gap:28px;align-items:center;margin-top:25px;padding:19px 0;border-top:1px solid rgba(200,170,123,.24);border-bottom:1px solid rgba(200,170,123,.24)}
-    .research-thesis-line h3{margin:0;color:var(--paper);font-family:var(--serif);font-size:18px;font-weight:500;line-height:1.65}
+    .research-compact{width:min(1080px,100%);margin:0 auto;display:grid;grid-template-columns:minmax(380px,.82fr) minmax(470px,1.18fr);gap:58px;align-items:center}
+    .research-compact h2{max-width:520px;font-size:clamp(27px,2.7vw,34px)}
+    .research-compact .section-intro{max-width:520px}
+    .research-thesis-line{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:22px;padding:16px 0;border-top:1px solid rgba(200,170,123,.24);border-bottom:1px solid rgba(200,170,123,.24)}
+    .research-thesis-line h3{margin:0;color:var(--paper);font-family:var(--serif);font-size:16px;font-weight:500;line-height:1.6}
     .research-thesis-line .research-link{flex:0 0 auto;margin:0}
-    .research-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:22px}
-    .research-stat{padding:4px 22px;border-right:1px solid rgba(200,170,123,.2)}
+    .research-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:19px}
+    .research-stat{padding:3px 16px;border-right:1px solid rgba(200,170,123,.2)}
     .research-stat:first-child{padding-left:0}
     .research-stat:last-child{padding-right:0;border-right:0}
-    .research-stat b{display:block;color:var(--gold-light);font-family:var(--en);font-size:25px;font-weight:500;line-height:1.2}
-    .research-stat span{display:block;margin-top:7px;color:rgba(245,240,232,.57);font-size:11px;line-height:1.55}
-    .research-book{position:relative;margin:0;padding:9px;background:linear-gradient(145deg,rgba(96,115,134,.3),rgba(112,90,112,.34) 52%,rgba(165,104,87,.3));box-shadow:0 18px 45px rgba(0,0,0,.27)}
-    .research-book img{width:100%;aspect-ratio:1000/1349;object-fit:cover}
-    .research-book figcaption{padding:10px 2px 1px;color:rgba(245,240,232,.53);font-size:9px;line-height:1.5;letter-spacing:.08em;text-align:center}
+    .research-stat b{display:block;color:var(--gold-light);font-family:var(--en);font-size:23px;font-weight:500;line-height:1.2}
+    .research-stat span{display:block;margin-top:6px;color:rgba(245,240,232,.57);font-size:10px;line-height:1.5}
+    .book-shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;align-items:end}
+    .book-shelf>a{min-width:0}
+    .book-item{position:relative;margin:0;padding:10px 10px 11px;border:1px solid rgba(200,170,123,.2);background:rgba(255,255,255,.045);transition:transform .25s,border-color .25s,background .25s}
+    .book-item:hover{transform:translateY(-5px);border-color:rgba(200,170,123,.52);background:rgba(255,255,255,.075)}
+    .book-item img{width:100%;height:240px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 13px 18px rgba(0,0,0,.32))}
+    .book-item figcaption{min-height:48px;padding:11px 2px 0;color:rgba(245,240,232,.65);font-size:9.5px;line-height:1.55;text-align:center}
+    .book-source{grid-column:1/-1;margin:0;color:rgba(245,240,232,.34);font-size:9px;letter-spacing:.08em;text-align:right}
 
     .curriculum-editorial{margin-top:34px;border-top:1px solid rgba(112,90,112,.22)}
-    .lesson-chapter{--chapter-accent:var(--slate);position:relative;display:grid;grid-template-columns:minmax(230px,.72fr) minmax(0,1.28fr);gap:58px;padding:42px 0;border-bottom:1px solid rgba(112,90,112,.22)}
+    .lesson-chapter{--chapter-accent:var(--slate);position:relative;display:grid;grid-template-columns:minmax(220px,.7fr) minmax(0,1.3fr);gap:48px;padding:36px 0;border-bottom:1px solid rgba(112,90,112,.22)}
     .lesson-chapter:nth-child(2){--chapter-accent:var(--clay);grid-template-columns:minmax(0,1.28fr) minmax(230px,.72fr)}
     .lesson-chapter:nth-child(2) .chapter-heading{order:2}
     .chapter-heading{position:relative;padding-left:24px;border-left:3px solid var(--chapter-accent)}
-    .chapter-number{display:block;margin-bottom:3px;color:var(--chapter-accent);font-family:var(--en);font-size:50px;font-weight:500;line-height:1;opacity:.83}
+    .chapter-number{display:block;margin-bottom:3px;color:var(--chapter-accent);font-family:var(--en);font-size:44px;font-weight:500;line-height:1;opacity:.83}
     .chapter-heading small{color:var(--gold);font-family:var(--en);font-size:10px;letter-spacing:.22em}
-    .chapter-heading h3{margin:10px 0 0;font-family:var(--serif);font-size:24px;font-weight:500;line-height:1.55}
+    .chapter-heading h3{margin:9px 0 0;font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.52}
     .chapter-heading p{margin:12px 0 0;color:var(--muted);font-size:12.5px;line-height:1.75}
-    .chapter-topics{display:grid;grid-template-columns:repeat(2,1fr);gap:24px 34px;align-content:center}
+    .chapter-topics{display:grid;grid-template-columns:repeat(2,1fr);gap:20px 30px;align-content:center}
     .chapter-topic{position:relative;padding-left:18px}
     .chapter-topic:before{content:"";position:absolute;left:0;top:11px;width:7px;height:1px;background:var(--chapter-accent)}
     .chapter-topic strong{display:block;font-family:var(--serif);font-size:16px;font-weight:500;line-height:1.55}
@@ -412,33 +416,33 @@
     .whisper:before{content:"“";position:absolute;left:0;top:-7px;color:var(--plum);font-family:Georgia,serif;font-size:40px;line-height:1;opacity:.45}
     .whisper cite{display:block;margin-top:7px;color:var(--gold);font-family:var(--sans);font-size:9px;font-style:normal;letter-spacing:.12em}
 
-    .stage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:30px}
-    .stage-card{position:relative;padding:24px 23px;border:1px solid var(--line);background:rgba(255,255,255,.68)}
+    .stage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:27px}
+    .stage-card{position:relative;padding:20px 20px 18px;border:1px solid var(--line);background:rgba(255,255,255,.68)}
     .stage-card:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--slate)}
     .stage-card:nth-child(2):before{background:var(--plum)}
     .stage-card:nth-child(3):before{background:var(--clay)}
     .stage-card small{display:block;color:var(--gold);font-family:var(--en);font-size:9px;letter-spacing:.18em}
     .stage-card h3{margin:7px 0 0;font-family:var(--serif);font-size:17px;font-weight:500;line-height:1.55}
     .stage-card p{margin:9px 0 0;color:var(--muted);font-size:12px;line-height:1.72}
-    .outcome-panel{display:grid;grid-template-columns:minmax(210px,.62fr) minmax(0,1.38fr);gap:35px;align-items:center;margin-top:22px;padding:27px 29px;background:linear-gradient(120deg,#243442,#5d5064 55%,#84564d);color:#fff}
+    .outcome-panel{display:grid;grid-template-columns:minmax(190px,.48fr) minmax(0,1.52fr);gap:25px;align-items:center;margin-top:18px;padding:22px 25px;background:linear-gradient(120deg,#243442,#5d5064 55%,#84564d);color:#fff}
     .outcome-panel small{display:block;color:#e4c89e;font-family:var(--en);font-size:10px;letter-spacing:.19em}
-    .outcome-panel h3{margin:7px 0 0;font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.55}
-    .outcome-list{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 26px;list-style:none;margin:0;padding:0}
+    .outcome-panel h3{margin:6px 0 0;font-family:var(--serif);font-size:19px;font-weight:500;line-height:1.5}
+    .outcome-list{display:grid;grid-template-columns:repeat(2,1fr);gap:7px 22px;list-style:none;margin:0;padding:0}
     .outcome-list li{position:relative;padding-left:17px;color:rgba(255,255,255,.75);font-size:11.5px;line-height:1.65}
     .outcome-list li:before{content:"";position:absolute;left:0;top:10px;width:7px;height:1px;background:#e4c89e}
 
     .instructor-feature{position:relative;overflow:hidden;background:#0c1712;color:var(--paper)}
     .instructor-feature:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 48%,rgba(165,104,87,.14),transparent 34%),radial-gradient(circle at 78% 18%,rgba(96,115,134,.14),transparent 36%)}
-    .instructor-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(300px,410px) minmax(0,1fr);gap:72px;align-items:center;padding:72px 0}
+    .instructor-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(300px,390px) minmax(0,1fr);gap:64px;align-items:center;padding:66px 0}
     .instructor-photo{position:relative;margin:0;padding:10px;border:1px solid rgba(200,170,123,.3);background:linear-gradient(145deg,rgba(96,115,134,.2),rgba(165,104,87,.18));box-shadow:0 24px 60px rgba(0,0,0,.3)}
     .instructor-photo:before{content:"";position:absolute;z-index:2;left:-14px;top:34px;width:44px;height:1px;background:var(--gold-light)}
-    .instructor-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 42%;filter:saturate(.88) contrast(1.02)}
+    .instructor-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 38%;filter:none}
     .instructor-copy .section-label{color:var(--gold-light)}
-    .instructor-copy h2{margin:0;font-family:var(--serif);font-size:clamp(36px,4.5vw,55px);font-weight:500;line-height:1.3;letter-spacing:.07em}
+    .instructor-copy h2{margin:0;font-family:var(--serif);font-size:clamp(34px,4vw,49px);font-weight:500;line-height:1.3;letter-spacing:.07em}
     .instructor-role{margin:11px 0 25px;color:rgba(245,240,232,.5);font-family:var(--en);font-size:14px;letter-spacing:.18em}
     .instructor-copy p{max-width:660px;margin:0 0 16px;color:rgba(245,240,232,.68);font-size:14.5px;line-height:1.95}
     .instructor-copy p:last-child{margin-bottom:0}
-    .instructor-quote{margin-top:25px!important;padding:18px 22px;border-left:2px solid var(--clay);background:rgba(255,255,255,.035);color:rgba(245,240,232,.84)!important;font-family:var(--serif);font-size:17px!important;line-height:1.75!important}
+    .instructor-quote{margin-top:23px!important;padding:16px 20px;border-left:2px solid var(--clay);background:rgba(255,255,255,.035);color:rgba(245,240,232,.84)!important;font-family:var(--serif);font-size:16px!important;line-height:1.72!important}
 
     @media(max-width:920px){
       .hero{padding:108px 0 66px}
@@ -450,12 +454,10 @@
       .course-video-grid{grid-template-columns:1fr;gap:34px}
       .learning-path-head{display:block}
       .learning-path-head p{margin-top:8px;text-align:left}
-      .path-steps{grid-template-columns:repeat(3,1fr)}
-      .path-step:nth-child(3){border-right:0}
-      .path-step:nth-child(-n+3){border-bottom:1px solid var(--line)}
-      .path-step:nth-child(4){grid-column:1/2}
-      .stage-grid{grid-template-columns:1fr}
-      .research-compact{grid-template-columns:minmax(0,1fr) 185px;gap:30px}
+      .path-steps{gap:8px}
+      .path-step{padding-left:3px;padding-right:3px}
+      .research-compact{grid-template-columns:1fr;gap:30px}
+      .book-item img{height:215px}
       .lesson-chapter,.lesson-chapter:nth-child(2){grid-template-columns:1fr;gap:30px}
       .lesson-chapter:nth-child(2) .chapter-heading{order:0}
       .gentle-grid{grid-template-columns:1fr;gap:34px}
@@ -485,12 +487,14 @@
       .focus-note{padding:22px 23px;font-size:19px}
       .course-video-frame{padding:5px}
       .course-video-frame:before{display:none}
-      .learning-path{margin-top:30px;padding-top:24px}
+      .learning-path{margin-top:28px;padding:23px 18px 20px}
       .learning-path-head h3{font-size:20px}
-      .path-steps{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+      .path-steps{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px}
+      .path-steps:before{display:none}
       .path-steps::-webkit-scrollbar{display:none}
-      .path-step,.path-step:nth-child(4){flex:0 0 72%;grid-column:auto;border-right:1px solid var(--line);border-bottom:0;scroll-snap-align:start}
-      .path-step:last-child{border-right:0}
+      .path-step,.path-step:nth-child(4){flex:0 0 68%;padding:17px 15px 16px;border:1px solid var(--line);background:rgba(255,255,255,.72);scroll-snap-align:start}
+      .path-step b{width:48px;height:48px}
+      .path-step strong{margin-top:10px}
       .evidence-copy{grid-template-columns:1fr}
       .compact-milestones{grid-template-columns:repeat(3,1fr)}
       .compact-milestones .milestone{padding:13px 8px;text-align:center}
@@ -510,15 +514,19 @@
       .research-stat{padding:3px 9px;text-align:center}
       .research-stat b{font-size:21px}
       .research-stat span{font-size:9px}
-      .research-book{width:150px;margin:0 auto}
+      .book-shelf{gap:7px}
+      .book-item{padding:6px 5px 7px}
+      .book-item img{height:145px}
+      .book-item figcaption{min-height:52px;padding-top:8px;font-size:8px}
+      .book-source{text-align:center}
       .lesson-chapter,.lesson-chapter:nth-child(2){padding:32px 0}
       .chapter-heading{padding-left:18px}
       .chapter-number{font-size:42px}
       .chapter-topics{grid-template-columns:1fr;gap:18px}
       .whisper-row{grid-template-columns:1fr;gap:20px}
-      .stage-grid{gap:11px;margin-top:24px}
-      .stage-card{padding:21px 20px}
-      .outcome-panel{grid-template-columns:1fr;gap:18px;padding:24px 22px}
+      .stage-grid{grid-template-columns:1fr;gap:10px;margin-top:24px}
+      .stage-card{padding:19px 19px 17px}
+      .outcome-panel{grid-template-columns:1fr;gap:16px;padding:21px 20px}
       .outcome-list{grid-template-columns:1fr;gap:8px}
       .instructor-layout{grid-template-columns:1fr;gap:34px;padding:54px 0}
       .instructor-photo{width:min(330px,100%);margin:0 auto}
@@ -595,11 +603,11 @@
           <div class="course-video-copy reveal">
             <span class="section-label">Course Video</span>
             <h2>先看影片，理解這門課為何從「辨識」開始。</h2>
-            <p class="section-intro">有感應，不等於看得懂自己的修行。這門課不追求更多神祕經驗，而是幫你建立辨識經驗的觀念與脈絡。</p>
+            <p class="section-intro">有感應，不等於看得懂自己的修行。真正重要的不是證明自己與眾不同，而是知道這些經驗從何而來，又該如何回到心性。</p>
             <div class="course-boundary">
               <small>COURSE BOUNDARY</small>
               <h3>這不是一門教你開啟更多能力的課</h3>
-              <p>不替你判定主神、天命或靈界身分，也不以快速啟靈、靈動或通靈為目的。</p>
+              <p>不替你判定主神、天命或靈界身分，而是帶你看懂系統、分辨角色，理解靈動、感應與修為不是同一件事。</p>
             </div>
             <a class="course-video-link" href="https://www.youtube.com/watch?v=SHv1Hvi8pJc" target="_blank" rel="noopener noreferrer">在 YouTube 觀看</a>
           </div>
@@ -620,7 +628,7 @@
             <div class="path-step"><b>02</b><strong>理解系統</strong><span>瑤池金母與東王公的差異</span></div>
             <div class="path-step"><b>03</b><strong>分辨角色</strong><span>乩童、鸞乩、靈乩與聖乩</span></div>
             <div class="path-step"><b>04</b><strong>參照前輩</strong><span>從生命與歷史事件學習</span></div>
-            <div class="path-step"><b>05</b><strong>回到自身</strong><span>檢視感應、心性與方向</span></div>
+            <div class="path-step"><b>05</b><strong>回到自己</strong><span>檢視感應、心性與方向</span></div>
           </div>
         </div>
       </div>
@@ -669,10 +677,10 @@
     <section class="section section-dark" id="research">
       <div class="container">
         <div class="research-compact">
-          <div class="reveal">
+          <div class="research-copy reveal">
             <span class="section-label">Research &amp; Practice</span>
-            <h2>這兩堂課，整理的不只是個人經驗。</h2>
-            <p class="section-intro">2014年，宇色將長年實修、田野觀察與學術研究，整理成台灣靈修模式的完整脈絡。</p>
+            <h2>從論文到著作，整理一條近三十年的靈修路。</h2>
+            <p class="section-intro">課程以碩士論文為研究基礎，延續三本靈修著作的長年整理，串起台灣靈修的源流、迷思、辨識與心性。</p>
             <div class="research-thesis-line">
               <h3>《台灣民間信仰中靈修模式之研究》</h3>
               <a class="research-link" href="https://nhuir.nhu.edu.tw/handle/987654321/16921" target="_blank" rel="noopener noreferrer">查看論文典藏</a>
@@ -683,10 +691,27 @@
               <div class="research-stat"><b>近30年</b><span>靈修與教學經驗</span></div>
             </div>
           </div>
-          <figure class="research-book reveal">
-            <img src="https://pimg.1px.tw/kinkiosel/1523864931-822990840.jpg" alt="宇色著作《靈修人關鍵報告》封面" loading="lazy">
-            <figcaption>延伸閱讀｜《靈修人關鍵報告》</figcaption>
-          </figure>
+          <div class="book-shelf reveal" aria-label="宇色老師相關著作">
+            <a href="https://www.books.com.tw/products/0010784866" target="_blank" rel="noopener noreferrer">
+              <figure class="book-item">
+                <img src="/assets/course-book-key-report.webp?v=20260828-1" alt="宇色著作《靈修人關鍵報告》封面" loading="lazy">
+                <figcaption>《靈修人關鍵報告》</figcaption>
+              </figure>
+            </a>
+            <a href="https://www.books.com.tw/products/0010719221" target="_blank" rel="noopener noreferrer">
+              <figure class="book-item">
+                <img src="/assets/course-book-mizang.webp?v=20260828-1" alt="宇色著作《我在人間的靈修迷藏》封面" loading="lazy">
+                <figcaption>《我在人間的靈修迷藏》</figcaption>
+              </figure>
+            </a>
+            <a href="https://www.books.com.tw/products/0011060075" target="_blank" rel="noopener noreferrer">
+              <figure class="book-item">
+                <img src="/assets/course-book-yuanshen.webp?v=20260828-1" alt="宇色著作《我在人間的元神覺醒》封面" loading="lazy">
+                <figcaption>《我在人間的元神覺醒》</figcaption>
+              </figure>
+            </a>
+            <p class="book-source">書封來源｜博客來</p>
+          </div>
         </div>
       </div>
     </section>
@@ -694,8 +719,8 @@
     <section class="principle compact-principle">
       <div class="narrow reveal">
         <div class="principle-mark"></div>
-        <blockquote>修行不是累積更多神祕經驗，而是把每一次經驗，帶回心性的改變。</blockquote>
-        <p>靈山在何處？靈山在汝心頭。</p>
+        <blockquote>真正的修行，不是不斷增加什麼，而是不斷放下什麼。</blockquote>
+        <p>前行之路，即是歸返之路。</p>
       </div>
     </section>
 
@@ -746,14 +771,14 @@
     <section class="instructor-feature" id="instructor">
       <div class="container instructor-layout">
         <figure class="instructor-photo reveal">
-          <img src="/assets/course-osel-portrait-v2.webp?v=20260827-1" alt="宇色老師形象照" loading="lazy">
+          <img src="/assets/course-osel-portrait-v3.webp?v=20260828-1" alt="宇色老師形象照" loading="lazy">
         </figure>
         <div class="instructor-copy reveal">
           <span class="section-label">Instructor</span>
           <h2>宇色老師</h2>
           <p class="instructor-role">OSEL · WRITER · SPIRITUAL TEACHER</p>
           <p>靈修近三十年，長期研究元神、靈乩、會靈山與台灣民間信仰。2014年完成《台灣民間信仰中靈修模式之研究》碩士論文，並將實修經驗、田野觀察與學術研究整理成多部著作與課程。</p>
-          <p class="instructor-quote">我想教的，不是如何得到更多神祕能力，而是如何在經驗發生之後，仍然看得懂自己，也守得住自己的心。</p>
+          <p class="instructor-quote">真正的老師，不是讓你永遠追隨他，而是陪你走到有一天，不再需要依靠他。</p>
         </div>
       </div>
     </section>
