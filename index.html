@@ -256,6 +256,22 @@ section{position:relative}
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
+  <style id="home-course-entry-style">
+.home-course-entry{position:relative;overflow:hidden;padding:88px 24px;background:linear-gradient(135deg,#0d1710 0%,#172218 58%,#221d14 100%);border-top:1px solid rgba(165,130,84,.2);border-bottom:1px solid rgba(165,130,84,.18);color:#f5f0e8}
+.home-course-entry::before{content:"";position:absolute;inset:-25%;background:radial-gradient(circle at 76% 45%,rgba(165,130,84,.18),transparent 27%),radial-gradient(circle at 18% 72%,rgba(86,105,72,.18),transparent 30%);pointer-events:none}
+.home-course-entry-inner{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);gap:72px;align-items:center;max-width:1080px;margin:0 auto}
+.home-course-entry-kicker{display:block;margin-bottom:14px;color:#c8aa7b;font-family:var(--en);font-size:12px;letter-spacing:.28em;text-transform:uppercase}
+.home-course-entry h2{margin:0;color:#f5f0e8;font-family:var(--serif);font-size:clamp(34px,4.7vw,54px);font-weight:400;line-height:1.48;letter-spacing:.065em}
+.home-course-entry-copy>p{max-width:680px;margin:20px 0 27px;color:rgba(245,240,232,.7);font-size:15.5px;line-height:2}
+.home-course-entry-cta{display:inline-flex;align-items:center;gap:13px;padding:12px 0;color:#d5b67f;font-size:13px;letter-spacing:.13em;border-bottom:1px solid rgba(200,170,123,.5);transition:gap .22s,color .22s}
+.home-course-entry-cta:hover{gap:19px;color:#f0d6a6}
+.home-course-entry-principle{padding:35px 38px;border:1px solid rgba(200,170,123,.3);background:rgba(7,13,8,.48);box-shadow:0 22px 60px rgba(0,0,0,.22)}
+.home-course-entry-principle span{display:block;color:rgba(245,240,232,.52);font-size:12px;letter-spacing:.13em}
+.home-course-entry-principle strong{display:block;margin:13px 0 18px;color:#e3c690;font-family:var(--serif);font-size:clamp(22px,2.8vw,31px);font-weight:400;line-height:1.7;letter-spacing:.055em}
+.home-course-entry-principle p{margin:0;padding-top:17px;border-top:1px solid rgba(200,170,123,.2);color:rgba(245,240,232,.68);font-size:14px;line-height:1.9}
+@media(max-width:760px){.home-course-entry{padding:66px 20px}.home-course-entry-inner{grid-template-columns:1fr;gap:35px}.home-course-entry-principle{padding:29px 25px}.home-course-entry h2{font-size:34px}}
+</style>
+  <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-1">
 </head>
 <body>
 
@@ -263,17 +279,73 @@ section{position:relative}
 <div class="ly-scroll-light" aria-hidden="true"></div>
 <div class="ly-aura a" aria-hidden="true"></div>
 <div class="ly-aura b" aria-hidden="true"></div>
-<nav><div class="nav-inner"><ul class="nav-links">
-<li><a href="https://lyyuan.tw/" class="active">首頁</a></li>
-<li><span class="has-dropdown">活動</span><ul class="dropdown"><li><a href="niandian.html">年度點燈</a></li><li><a href="dizhi.html">奠基法會</a></li><li><a href="lixing.html">例行法儀</a></li><li><a href="fahui.html">報名法儀</a></li><li><a class="nav-disabled">課程</a></li></ul></li>
-<li><a class="has-dropdown" href="articles.html">文選</a><ul class="dropdown"><li><a href="articles.html">全部</a></li><li><a href="articles.html?category=spiritual">靈．修行</a></li><li><a href="articles.html?category=worldly">人．俗世</a></li><li><a href="articles.html?category=spirit-world">異．靈界</a></li><li><a href="articles.html?category=reading">思．讀物</a></li></ul></li>
-<li><a href="membership.html">會員</a></li>
-<li><span class="has-dropdown">選物</span><ul class="dropdown"><li><a href="https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh">宇色靈修著作</a></li><li><a href="spiritual-aesthetics.html">靈性美學館</a></li></ul></li>
-<li><span class="has-dropdown">影像</span><ul class="dropdown"><li class="nav-group-label"><span>靈元院官方</span></li><li><a href="https://www.youtube.com/@lyyuan03" target="_blank">YT ｜ 靈元院</a></li><li class="nav-group-label"><span>宇色老師</span></li><li><a href="https://www.youtube.com/KINKIOSEL" target="_blank">YT ｜ 宇色心養生</a></li><li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank">Podcast ｜ 宇色人間書影</a></li><li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8%E7%94%9F/id1556418378" target="_blank">Podcast ｜ 宇色心養生</a></li></ul></li>
-<li><span class="has-dropdown">社群</span><ul class="dropdown"><li class="nav-group-label"><span>靈元院官方</span></li><li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank">FB ｜ 靈元院</a></li><li><a href="https://www.instagram.com/lyyuan03/" target="_blank">IG ｜ 靈元院</a></li><li class="nav-group-label"><span>宇色老師</span></li><li><a href="https://www.facebook.com/authorosel/" target="_blank">FB ｜ 我在人間－宇色</a></li><li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank">IG ｜ 我在人間－宇色</a></li></ul></li>
-</ul></div></nav>
+<nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-1">
+  <div class="global-nav-inner">
+    <ul class="global-nav-links">
+      <li class="global-nav-item"><a class="global-nav-link" href="/" aria-current="page">首頁</a></li>
+      <li class="global-nav-item"><a class="global-nav-link" href="/courses/lingji-practice.html">課程</a></li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-activity">活動</button>
+        <ul class="global-nav-dropdown" id="global-nav-activity">
+          <li><a href="/niandian.html">年度點燈</a></li>
+          <li><a href="/dizhi.html">奠基法會</a></li>
+          <li><a href="/lixing.html">例行法儀</a></li>
+          <li><a href="/fahui.html">報名法儀</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-articles">文選</button>
+        <ul class="global-nav-dropdown" id="global-nav-articles">
+          <li><a href="/articles.html">全部文選</a></li>
+          <li><a href="/articles.html?category=spiritual">靈．修行</a></li>
+          <li><a href="/articles.html?category=worldly">人．俗世</a></li>
+          <li><a href="/articles.html?category=spirit-world">異．靈界</a></li>
+          <li><a href="/articles.html?category=reading">思．讀物</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item"><a class="global-nav-link" href="/membership.html">會員</a></li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-shop">選物</button>
+        <ul class="global-nav-dropdown" id="global-nav-shop">
+          <li><a href="/books.html">宇色靈修著作</a></li>
+          <li><a href="/spiritual-aesthetics.html">靈性美學館</a></li>
+        </ul>
+      </li>
+      <li class="global-nav-item">
+        <button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-media">影音・社群</button>
+        <ul class="global-nav-dropdown" id="global-nav-media">
+          <li class="global-nav-group">靈元院官方</li>
+          <li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">YT｜靈元院</a></li>
+          <li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">FB｜靈元院</a></li>
+          <li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer">IG｜靈元院</a></li>
+          <li class="global-nav-group">宇色老師</li>
+          <li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">YT｜宇色心養生</a></li>
+          <li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank" rel="noopener noreferrer">Podcast｜宇色人間書影</a></li>
+          <li><a href="https://podcasts.apple.com/podcast/%E5%AE%87%E8%89%B2%E5%BF%83%E9%A4%8A%E7%94%9F/id1556418378" target="_blank" rel="noopener noreferrer">Podcast｜宇色心養生</a></li>
+          <li><a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">FB｜我在人間－宇色</a></li>
+          <li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank" rel="noopener noreferrer">IG｜我在人間－宇色</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
 <header class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><svg class="seal-decor top-right" viewBox="0 0 100 100" fill="none"><rect x="8" y="8" width="84" height="84" rx="4" stroke="#A58254" stroke-width="2"/><rect x="14" y="14" width="72" height="72" rx="2" stroke="#A58254" stroke-width="1"/><text x="50" y="58" text-anchor="middle" font-family="serif" font-size="28" fill="#A58254" letter-spacing="2">虛空</text></svg><div class="hero-content"><p class="hero-eyebrow">LING · YUAN · YUAN</p><img src="logo.png" alt="靈元院 Logo" class="hero-logo"><div class="hero-rule"></div><div class="hero-poem-wrap"><div class="hero-poem">穿過五欲六塵的層層煙迷<br>俯首越過靜謐陰翳<br>靜聽內在神性靈喚<br>照鑑明台真理</div></div><div class="brand-block"><div class="brand-row"><span class="brand-char">靈</span><span class="brand-divider"></span><span class="brand-def">元靈本源</span><span class="brand-en">Spirituality we inherit from the Source</span></div><div class="brand-row"><span class="brand-char">元</span><span class="brand-divider"></span><span class="brand-def">自性本始</span><span class="brand-en">Oneness, who we are from the Beginning</span></div><div class="brand-row"><span class="brand-char">院</span><span class="brand-divider"></span><span class="brand-def">謐靜空間</span><span class="brand-en">Temple where we enjoy the Silence</span></div></div><div class="closing-block"><p class="closing-zh">空無、幽玄、靜穆，<br>一隅大隱隱於市，人神相會之靈山秘境。</p><p class="closing-en">With spacious emptiness, delicate subtleness and silent respectfulness,<br>it is a spiritual mountain, a secret space where man and divinity meet,<br>quietly hidden in a busy city.</p></div><div class="hero-actions"><a class="hero-primary" href="articles.html">進入文選</a></div></div><div class="scroll-hint"><span>SCROLL</span><div class="scroll-hint-line"></div></div></header>
 <section class="about-section"><p class="about-section-title">ABOUT · LING YUAN YUAN</p><div class="about-grid"><div class="about-item"><span class="about-item-label">ORIGIN &amp; LINEAGE</span><h3>靈元院緣起與法脈</h3><p>奉靈山派創始神無極瑤池金母慈示，於台中設立專屬靈修之會靈聖地。</p><p>以喚醒元神靈性為靈修根本，提供自修者一個心靈棲居靜修之所。</p><p>靈元院規制與儀軌，依循靈山派無極法精神與無極瑤池金母降示之教導，向世人分享靈山派獨樹一幟的元神修煉奧秘、信仰神學與空間美學。</p></div><div class="about-item"><span class="about-item-label">SACRED AESTHETICS</span><h3>靜心修持的靈性空間美學</h3><p>本院舉凡道場題名、布置擺設、靈性美學以及空間規劃，均依無極瑤池金母親降指示，及空間氣場流動而設計。</p><p>形成一處隱匿於都市叢林中，寧靜且適於靈修人親近無極瑤池金母、靈山法靜修的環境。</p><div class="about-quote"><p>空無、幽玄、靜穆，<br>一隅大隱隱於市，人神相會之靈山秘境。</p></div></div><div class="about-item"><span class="about-item-label">SPIRITUAL PRACTICE</span><h3>元神修煉之道</h3><p>靈元院的修法儀軌，以喚醒每一位靈修人的元神為目的，讓靈修者在心靈棲居之處，感受到無極瑤池金母的恩典。</p><p>在眾仙佛菩薩的指導之下，每一位龍鳳兒都能暫時遠離塵囂紛擾，找回內在的寧靜，喚醒沈睡的元神，回歸靈性本源。</p></div></div></section>
+<section class="home-course-entry" aria-labelledby="home-course-title">
+  <div class="home-course-entry-inner" data-reveal>
+    <div class="home-course-entry-copy">
+      <span class="home-course-entry-kicker">Online Course · Spiritual Practice</span>
+      <h2 id="home-course-title">跟靈乩前輩學靈修的<br>兩堂必修課</h2>
+      <p>三十年靈修經驗與十六本著作所反覆面對的疑問，整理成兩堂建立辨識與判斷的課：不再追著每一個現象跑，而是看懂問題從哪裡長出來。</p>
+      <a class="home-course-entry-cta" href="/courses/lingji-practice.html">查看完整課程介紹 <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="home-course-entry-principle">
+      <span>COURSE PRINCIPLE</span>
+      <strong>不是處理一株又一株雜草，<br>而是回到源頭，建立判斷力。</strong>
+      <p>上完兩堂課，面對元神、天命、靈動、法門與老師等問題，你能先辨識脈絡，再決定自己該怎麼走。</p>
+    </div>
+  </div>
+</section>
 <section class="featured-reading" aria-labelledby="featured-title">
   <div class="featured-inner">
     <div class="section-heading" data-reveal>
@@ -540,5 +612,6 @@ const renderLatestArticles = (articles) => {
 })();
 </script>
 
+  <script src="/site-navigation.js?v=20260828-ia-1" defer></script>
 </body>
 </html>
