@@ -16,10 +16,11 @@ function stabilizeDashboardUi() {
     style.textContent = `
       html {
         min-height: 100% !important;
+        scroll-behavior: auto !important;
         height: auto !important;
         max-height: none !important;
         overflow-x: hidden !important;
-        overflow-y: scroll !important;
+        overflow-y: auto !important;
       }
       body {
         min-height: 100% !important;
@@ -29,12 +30,45 @@ function stabilizeDashboardUi() {
         overflow-y: visible !important;
         overscroll-behavior-y: auto !important;
         touch-action: pan-y !important;
+        isolation: auto !important;
       }
       body > .main,
       #member-dashboard {
         height: auto !important;
         max-height: none !important;
         overflow: visible !important;
+        contain: none !important;
+      }
+      .lyy-sacred-atmosphere {
+        background-attachment: scroll !important;
+      }
+      #member-dashboard {
+        perspective: none !important;
+      }
+      #member-dashboard .card,
+      #member-dashboard .course-item {
+        transform-style: flat !important;
+        backface-visibility: visible !important;
+        -webkit-backface-visibility: visible !important;
+        will-change: auto !important;
+      }
+      html.member-dashboard-scroll-active .lyy-sacred-atmosphere:before,
+      html.member-dashboard-scroll-active .lyy-orbit,
+      html.member-dashboard-scroll-active .lyy-radial-script,
+      html.member-dashboard-scroll-active .lyy-heaven-beam,
+      html.member-dashboard-scroll-active .hero:before,
+      html.member-dashboard-scroll-active .hero:after,
+      html.member-dashboard-scroll-active .dashboard:before,
+      html.member-dashboard-scroll-active .tier-card,
+      html.member-dashboard-scroll-active .tier-card:before,
+      html.member-dashboard-scroll-active .tier-card:after,
+      html.member-dashboard-scroll-active .tier-card-symbol,
+      html.member-dashboard-scroll-active .stat:after,
+      html.member-dashboard-scroll-active .section-head:after,
+      html.member-dashboard-scroll-active .card > .lyy-edge-light:before,
+      html.member-dashboard-scroll-active .course-item > .lyy-edge-light:before,
+      html.member-dashboard-scroll-active .tier-card > .lyy-card-sheen {
+        animation-play-state: paused !important;
       }
       html.lyy-motion-on #member-dashboard .lyy-reveal,
       html.lyy-motion-on #member-dashboard .lyy-reveal.lyy-visible,
@@ -61,6 +95,7 @@ function stabilizeDashboardUi() {
   }
 
   // 這個 class 只負責會員中心的進場模糊動畫；移除後不影響會員資料與權限邏輯。
+  document.documentElement.classList.add("member-dashboard-stable");
   document.documentElement.classList.remove("lyy-motion-on");
 
   // HTML 是唯一的垂直捲動根；BODY 不可再成為第二個捲動容器。
@@ -69,7 +104,7 @@ function stabilizeDashboardUi() {
   document.documentElement.style.setProperty("height", "auto", "important");
   document.documentElement.style.setProperty("max-height", "none", "important");
   document.documentElement.style.setProperty("overflow-x", "hidden", "important");
-  document.documentElement.style.setProperty("overflow-y", "scroll", "important");
+  document.documentElement.style.setProperty("overflow-y", "auto", "important");
   document.body.style.setProperty("min-height", "100%", "important");
   document.body.style.setProperty("height", "auto", "important");
   document.body.style.setProperty("max-height", "none", "important");
@@ -77,6 +112,7 @@ function stabilizeDashboardUi() {
   document.body.style.setProperty("overflow-y", "visible", "important");
   document.body.style.setProperty("overscroll-behavior-y", "auto", "important");
   document.body.style.setProperty("touch-action", "pan-y", "important");
+  document.body.style.setProperty("isolation", "auto", "important");
 
   document.querySelectorAll("#member-dashboard .lyy-reveal").forEach((element) => {
     element.classList.add("lyy-visible", "lyy-tilt-ready");
@@ -102,6 +138,24 @@ if (dashboardRoot) {
 
 window.addEventListener("pageshow", stabilizeDashboardUi);
 window.addEventListener("load", stabilizeDashboardUi, { once: true });
+
+let dashboardScrollIdleTimer = 0;
+function finishDashboardScroll() {
+  window.clearTimeout(dashboardScrollIdleTimer);
+  document.documentElement.classList.remove("member-dashboard-scroll-active");
+  window.dispatchEvent(new Event("lyy:dashboard-scroll-end"));
+}
+function stabilizeDuringDashboardScroll() {
+  const root = document.documentElement;
+  if (!root.classList.contains("member-dashboard-scroll-active")) {
+    root.classList.add("member-dashboard-scroll-active");
+    window.dispatchEvent(new Event("lyy:dashboard-scroll-start"));
+  }
+  window.clearTimeout(dashboardScrollIdleTimer);
+  dashboardScrollIdleTimer = window.setTimeout(finishDashboardScroll, 180);
+}
+window.addEventListener("scroll", stabilizeDuringDashboardScroll, { passive: true });
+window.addEventListener("pagehide", finishDashboardScroll);
 
 const WELLNESS_OLD_LABEL = "養生療癒";
 const WELLNESS_NEW_LABEL = "養生療遇";
