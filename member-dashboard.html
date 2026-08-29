@@ -44,6 +44,35 @@ html.lyy-motion-on #member-dashboard .lyy-reveal.lyy-visible {
   transition:none!important;
   will-change:auto!important;
 }
+/* The member offer is live content, never a disabled or grayscale state. */
+html #member-offer-dashboard-entry {
+  opacity:1!important;
+  visibility:visible!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  transform:none!important;
+  animation:none!important;
+  background:
+    radial-gradient(circle at 84% 18%,rgba(165,130,84,.24),transparent 34%),
+    linear-gradient(135deg,#E8D0A3 0%,#FFF7E8 54%,#DCC08D 100%)!important;
+  border:1px solid rgba(139,104,63,.78)!important;
+  box-shadow:0 18px 44px rgba(89,79,71,.18),0 0 0 1px rgba(255,255,255,.62) inset!important;
+}
+html #member-offer-dashboard-entry .member-offer-entry-inner,
+html #member-offer-dashboard-entry .member-offer-entry-copy,
+html #member-offer-dashboard-entry .member-offer-entry-actions {
+  opacity:1!important;
+  visibility:visible!important;
+  filter:none!important;
+}
+html #member-offer-dashboard-entry h2 {color:#493724!important}
+html #member-offer-dashboard-entry p {color:#66513D!important}
+html #member-offer-dashboard-entry .member-offer-main-button {
+  background:linear-gradient(135deg,#74512F,#A58254)!important;
+  color:#FFFDF8!important;
+  border-color:#74512F!important;
+  opacity:1!important;
+}
 @media(min-width:769px) {
   html body #site-auth-bar {
     overflow:visible!important;
@@ -659,7 +688,7 @@ body.lyy-lingji-awaken .lyy-tier-awakening{animation:lyyAwaken 2.8s cubic-bezier
 })();
 </script>
 <script type="module" src="/site-auth-nav.js?v=20260829-dashboard-menu-fix-1"></script>
-<script type="module" src="/member-dashboard.js?v=20260829-compositor-scroll-fix-2"></script>
+<script type="module" src="/member-dashboard.js?v=20260829-offer-color-block-1"></script>
   <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
 </body>
 </html>
