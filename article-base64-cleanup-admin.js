@@ -4,9 +4,11 @@ import { collection, doc, getDocs, serverTimestamp, setDoc } from "https://www.g
 const ARTICLE_COLLECTION = "articles";
 const PAID_COLLECTION = "paidArticleBodies";
 const suspiciousPattern = /data:image|base64,/i;
-const base64MarkdownPattern = /!\[[^\]]*\]\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi;
+const base64MarkdownPattern = /!\[[^\]]*\]\s*\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi;
 const orphanBase64Pattern = /\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi;
 const bareBase64Pattern = /data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+/gi;
+const emptyImageSyntaxPattern = /(^|\n)\s*!\[\]\s*(?=\n|$)/g;
+const emptyParensPattern = /(^|\n)\s*\(\s*\)\s*(?=\n|$)/g;
 const pendingImageMarker = "[圖片待重新上傳]";
 
 let results = [];
@@ -23,6 +25,8 @@ function cleanContent(value) {
   cleaned = cleaned.replace(orphanBase64Pattern, markRemoved);
   cleaned = cleaned.replace(bareBase64Pattern, markRemoved);
   cleaned = cleaned
+    .replace(emptyImageSyntaxPattern, "$1")
+    .replace(emptyParensPattern, "$1")
     .replace(/\\n\\n(?=\s*\[圖片待重新上傳\])/g, "\n\n")
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n[ \t]*\n[ \t]*\n+/g, "\n\n")
@@ -351,10 +355,24 @@ function installProtection() {
 
   if (form) {
     form.addEventListener("submit", function (event) {
-      if (!suspiciousPattern.test(String(field.value || ""))) return;
+      const current = String(field.value || "");
+      if (!suspiciousPattern.test(current)) return;
+
+      const cleaned = cleanContent(current);
+      if (cleaned.removed > 0 && !suspiciousPattern.test(cleaned.cleaned)) {
+        field.value = cleaned.cleaned;
+        field.dispatchEvent(new Event("input", { bubbles: true }));
+        toast(
+          "已自動移除 " + cleaned.removed + " 段 Base64 圖片資料，保留其他文字並繼續儲存。",
+          "success"
+        );
+        return;
+      }
+
+      // 只有無法安全辨識的 Base64 才阻止寫入，避免破壞正文。
       event.preventDefault();
       event.stopImmediatePropagation();
-      toast("已阻止儲存：正文仍含 data:image 或 base64,。請先清理。", "error");
+      toast("仍偵測到無法安全清理的 Base64 內容，已停止儲存，避免誤刪正文。", "error");
       field.focus();
     }, true);
   }
