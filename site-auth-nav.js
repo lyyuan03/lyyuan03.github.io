@@ -27,6 +27,7 @@ function installStyles() {
     .site-auth-button:disabled{opacity:.55;cursor:wait;transform:none}
     .site-account-menu{position:absolute;top:calc(100% + 9px);right:0;z-index:1300;width:220px;padding:7px;background:rgba(12,18,10,.99);border:1px solid rgba(165,130,84,.34);box-shadow:0 16px 42px rgba(0,0,0,.46)}
     .site-account-menu[hidden]{display:none!important}
+    .site-account-menu.is-open{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
     .site-account-menu [hidden]{display:none!important}
     .site-account-menu:before{content:'';position:absolute;left:0;right:0;top:-10px;height:10px}
     .site-account-menu a,.site-account-menu button{display:block;width:100%;padding:11px 14px;border:0;background:transparent;color:rgba(245,240,232,.78);font-family:'Noto Sans TC','Arial',sans-serif;font-size:13px;line-height:1.5;letter-spacing:.08em;text-align:left;text-decoration:none;cursor:pointer}
@@ -83,7 +84,7 @@ function installBar() {
   bar.setAttribute("data-auth-version", AUTH_VERSION);
   bar.innerHTML = `
     <div class="site-auth-actions" aria-label="網站登入">
-      <button id="member-login-button" class="site-auth-button" type="button" aria-haspopup="false" aria-expanded="false">會員登入</button>
+      <button id="member-login-button" class="site-auth-button" type="button" aria-haspopup="false" aria-expanded="false" aria-controls="site-account-menu">會員登入</button>
       <div id="site-account-menu" class="site-account-menu" hidden>
         <a href="/member-dashboard.html">我的會員中心</a>
         <a href="/member-videos.html" data-wellness-video-link>養生會員影片</a>
@@ -214,15 +215,19 @@ function isActiveMember(member = {}) {
   return Boolean(isActiveWellnessMember(member) || Number(member.cashbackBalance) > 0 || hasCourses);
 }
 
+function setAccountMenuOpen(open) {
+  accountMenu.hidden = !open;
+  accountMenu.classList.toggle("is-open", open);
+  memberButton.setAttribute("aria-expanded", String(open));
+}
+
 function closeAccountMenu() {
-  accountMenu.hidden = true;
-  memberButton.setAttribute("aria-expanded", "false");
+  setAccountMenuOpen(false);
 }
 
 function toggleAccountMenu() {
-  const willOpen = accountMenu.hidden;
-  accountMenu.hidden = !willOpen;
-  memberButton.setAttribute("aria-expanded", String(willOpen));
+  const willOpen = accountMenu.hidden || !accountMenu.classList.contains("is-open");
+  setAccountMenuOpen(willOpen);
 }
 
 function formatMoney(value) {
