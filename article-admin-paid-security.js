@@ -19,7 +19,6 @@ const saveStatusInline = document.getElementById("save-status-inline");
 const adminToast = document.getElementById("admin-toast");
 let hydrationSerial = 0;
 let toastTimer = 0;
-let forwardingSafeSubmit = false;
 
 function showToast(message, state = "success") {
   if (!adminToast) return;
@@ -166,58 +165,9 @@ async function hydrateEditorPaidBody() {
   }
 }
 
-if (form) {
-  form.addEventListener("submit", (event) => {
-    if (forwardingSafeSubmit) return;
-    const accessType = String(form.elements?.accessType?.value || "");
-    if (accessType !== "paid") return;
-    const contentField = form.elements?.content;
-    if (!contentField) return;
-
-    const split = splitPaidContent(contentField.value);
-    if (!split || !split.publicContent || !split.privateContent) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      setStatus("無法儲存｜請設定付費分隔位置", "error");
-      showToast("付費文章必須保留 <!-- paid-only -->，而且分隔線前後都需要有內容。", "error");
-      return;
-    }
-
-    const fullContent = contentField.value;
-    const safeContent = safePublicContent(split);
-    const existingId = activeArticleId();
-    const slug = String(form.elements?.slug?.value || "").trim();
-    const title = String(form.elements?.title?.value || "").trim();
-    const status = String(form.elements?.status?.value || "draft");
-
-    // 阻止原始 submit 繼續傳遞，改以安全試閱內容同步重送一次。
-    // 巢狀 dispatchEvent 返回前，既有 article-admin-core listener 已同步讀取 FormData；
-    // 隨後才在同一個 call stack 還原完整正文，不再依賴 microtask 的執行順序。
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    contentField.value = safeContent;
-    forwardingSafeSubmit = true;
-    try {
-      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-    } finally {
-      forwardingSafeSubmit = false;
-      contentField.value = fullContent;
-      contentField.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-
-    void persistPrivateBody({ existingId, slug, title, status, split })
-      .then(({ contentVersion }) => {
-        setStatus(`已安全儲存｜付費正文版本 ${contentVersion}`, "success");
-        showToast("付費文章已分離儲存：公開區只有試閱，完整正文已寫入私有資料區。", "success");
-      })
-      .catch((error) => {
-        console.error("付費文章私有正文安全儲存失敗。", error);
-        setStatus("文章試閱已儲存｜私有正文儲存失敗", "error");
-        showToast("公開區未寫入付費正文，但私有正文儲存未完成。請保留目前編輯畫面並再按一次儲存。", "error");
-      });
-  }, true);
-}
-
+// 付費正文的儲存已由 article-admin-core.js 統一處理。
+ // 此模組只負責將私有正文載入編輯器，不再攔截 submit，
+ // 避免兩套儲存流程互相競速，造成「試閱已儲存、私有正文失敗」。
 listEl?.addEventListener("click", () => {
   window.setTimeout(() => void hydrateEditorPaidBody(), 40);
 }, true);
