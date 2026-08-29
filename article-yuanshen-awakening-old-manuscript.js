@@ -1,7 +1,7 @@
 export const yuanshenAwakeningOldManuscriptArticle = {
   id: "yuanshen-awakening-old-manuscript",
   slug: "yuanshen-awakening-old-manuscript",
-  title: "一段被拿掉的舊稿",
+  title: "《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄",
   category: "spiritual",
   displayCategory: "靈修",
   series: "靈修辨證",
