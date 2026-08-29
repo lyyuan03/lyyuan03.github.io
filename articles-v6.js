@@ -109,8 +109,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260829-base64-clean-1"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260829-admin-authoritative-2"],
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260829-yaochi-draft-3"],
+    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260829-yaochi-draft-3"],
     ["建院見證專頁", "./construction-record-page.js?v=20260822-construction-title-1"],
     ["建院限定閱讀", "./construction-cover-lock.js?v=20260825-email-decrypt-fix-2"]
   ];
