@@ -310,6 +310,10 @@ async function preparePaidArticleSave(articleId, data, existingData = null) {
       articleId,
       title: data.title,
       status: data.status === "draft" ? "draft" : "published",
+      previousContentBackup: existingPrivateContent || "",
+      previousContentHashBackup: String(previousPrivate.contentHash || ""),
+      previousContentVersionBackup: Number(previousPrivate.contentVersion || 0),
+      previousBackupAt: existingPrivateContent ? serverTimestamp() : null,
       content: privateContent,
       contentHash,
       contentVersion,
@@ -770,6 +774,8 @@ async function saveArticle(event) {
     const currentArticleRecord = articles.find((article) => article.id === currentId);
     const payload = {
       ...data,
+      previousContentBackup: String(existingData?.content || ""),
+      previousContentBackupAt: existingData?.content ? serverTimestamp() : null,
       updatedAt: serverTimestamp()
     };
 
