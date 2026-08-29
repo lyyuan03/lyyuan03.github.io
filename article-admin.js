@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260829-no-auto-overwrite-backup-1";
+import "./article-admin-core.js?v=20260829-yaochi-draft-sync-3";
 import "./article-admin-paid-security.js?v=20260829-no-auto-overwrite-1";
 import "./article-admin-secure-import.js?v=20260828-yuanqin-secure-import-1";
 import { db } from "./firebase-config.js";
@@ -41,7 +41,7 @@ function showToast(message, state = "success") {
   toastTimer = window.setTimeout(() => adminToast.classList.remove("is-visible"), state === "error" ? 6000 : 3600);
 }
 
-function normalizeEmail(value = "") {
+function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
@@ -274,11 +274,4 @@ function replaceAdminWellnessWording(root = document) {
 }
 
 replaceAdminWellnessWording();
-const adminWellnessWordingObserver = new MutationObserver(() => replaceAdminWellnessWording());
-adminWellnessWordingObserver.observe(document.body, {
-  childList: true,
-  subtree: true,
-  characterData: true,
-  attributes: true,
-  attributeFilter: ["placeholder", "title", "aria-label"]
-});
+new MutationObserver(() => replaceAdminWellnessWording()).observe(document.body, { childList: true, subtree: true });
