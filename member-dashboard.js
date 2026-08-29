@@ -39,7 +39,10 @@ function stabilizeDashboardUi() {
         overflow: visible !important;
         contain: none !important;
       }
-      .lyy-sacred-atmosphere {
+      .lyy-sacred-atmosphere,
+      body.member-tier-general .lyy-sacred-atmosphere,
+      body.member-tier-lingji .lyy-sacred-atmosphere,
+      body.member-tier-sponsor .lyy-sacred-atmosphere {
         background-attachment: scroll !important;
       }
       #member-dashboard {
