@@ -29,6 +29,8 @@ function sanitizeUnsafePaidContent(value = "") {
     .replace(/!\[[^\]]*\]\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi, "")
     .replace(/\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi, "")
     .replace(/data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+/gi, "")
+    .replace(/(^|\n)\s*\[圖片待重新上傳\]\s*(?=\n|$)/g, "$1")
+    .replace(/(^|\n)\s*!\[\]\s*(?=\n|$)/g, "$1")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
