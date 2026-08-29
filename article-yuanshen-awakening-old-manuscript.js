@@ -6,8 +6,9 @@ export const yuanshenAwakeningOldManuscriptArticle = {
   displayCategory: "靈修",
   series: "靈修辨證",
   status: "draft",
-  updatedAt: "2026-08-28T15:07:00.000Z",
-  excerpt: "二十多年前，有人斷言我的元神是阿修羅。二十多年後，我反而更確定：真正的覺醒，不是等別人告訴你是誰。",
+  updatedAt: "2026-08-29T00:55:00.000Z",
+  coverImage: "https://wsrv.nl/?w=1200&output=webp&q=90&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg",
+  excerpt: "一本剛出版的新書，讓我重新想起二十多年前一段曾被出版社拿掉的舊稿。多年後再看，那件事留下的影響，早已不是當年的爭議本身。",
   accessType: "paid",
   topics: ["元神覺醒", "靈修辨識", "自我認識"],
   readingLevel: "深度",
@@ -15,9 +16,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
   bookAuthor: "宇色 Osel",
   bookPublisher: "柿子文化",
   bookPurchaseUrl: "https://www.books.com.tw/products/0011060075?sloc=main",
-  content: `<!-- paid-only -->
-
-《我在人間・元神覺醒》出版之後，我突然想到一件已經很久以前的事。
+  bookCoverImage: "https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg",
+  content: `《我在人間・元神覺醒》出版之後，我突然想到一件已經很久以前的事。
 
 算一算，應該是二十多年前，甚至已經快接近三十年了。
 
@@ -38,6 +38,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 只是走到今天，再回頭看，我才發現這件事其實影響我很深，而且它後來也慢慢變成我看待修行的一個很重要的原則。
 
 這個故事，要從一個我完全不認識的人開始說起。
+
+## 那時候，我只寫自己的事
 
 那個時候，我還沒有出版過任何一本書，只是在網路上寫一些自己的文章。
 
@@ -89,6 +91,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 我做的，一直就是自己的事。
 
+## 有人說，我的觀念擋到了別人的財路
+
 我就問他：
 
 「我到底擋到誰了？」
@@ -105,6 +109,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 這樣也會擋到別人的路嗎？
 
+## 一個完全不認識我的人，要看我的元神
+
 結果沒多久，真的就有人來找我了。
 
 對方說，他的老師想要看我的元神。
@@ -118,6 +124,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 所以我沒有理。
 
 結果對方後來直接告訴我，他的老師已經「看過」了。
+
+<!-- paid-only -->
 
 然後轉來三句話。
 
@@ -171,6 +179,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 這件事情表面上，到這裡也就結束了。
 
+## 母娘後來給我的提醒
+
 但是後來真正影響我的，不是那個人講了什麼，而是母娘對這件事情給我的一個提醒。
 
 母娘讓我知道，每一個人都有自己要走的路。
@@ -200,6 +210,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 也不是因為我不知道自己在做什麼。
 
 而是我後來愈來愈覺得，一個人真正要處理的是自己的人生，不是每天去處理別人的嘴。
+
+## 修行的人，為什麼不能談錢？
 
 後來類似的事情，其實還發生過。
 
@@ -234,6 +246,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 我記得的，是後來有很多讀者告訴我，他們看完之後，第一次重新去看自己跟金錢的關係。
 
 也有人跟我說，他以前一直覺得談錢很俗氣，後來才慢慢知道，談財富不代表離開修行。
+
+## 別人的批評，我一定要全部收下來嗎？
 
 其實這些年，我也看過很多其他的批評。
 
@@ -311,6 +325,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 如果別人給你的每一個評價，你都一定要全盤收下來，那最後你的人生到底是在誰的手上？
 
+## 有人因為這些文字，走得比較自在
+
 這些年，也有更多讀者寫信給我。
 
 有人跟我說，他以前走靈修走得很緊張。
@@ -344,6 +360,8 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 所以很多事情，我現在真的不太去分誰輸誰贏。
 
 時間拉長之後，每一個人最後都會活成自己的答案。
+
+## 二十多年後，再回頭看這件事
 
 這件事一晃，也已經二十多年了。
 
