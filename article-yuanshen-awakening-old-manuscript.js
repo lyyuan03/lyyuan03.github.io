@@ -6,7 +6,7 @@ export const yuanshenAwakeningOldManuscriptArticle = {
   displayCategory: "靈修",
   series: "靈修辨證",
   status: "draft",
-  updatedAt: "2026-08-29T00:55:00.000Z",
+  updatedAt: "2026-08-29T01:06:00.000Z",
   coverImage: "https://wsrv.nl/?w=1200&output=webp&q=90&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg",
   excerpt: "一本剛出版的新書，讓我重新想起二十多年前一段曾被出版社拿掉的舊稿。多年後再看，那件事留下的影響，早已不是當年的爭議本身。",
   accessType: "paid",
