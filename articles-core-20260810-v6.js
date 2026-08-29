@@ -995,31 +995,9 @@ async function loadArticles() {
       && article.systemType !== "article-thumbnail-settings"
       && article.id !== "__article-thumbnail-settings";
   });
-  const normalizedArticles = merged.map((article) => {
-    // 後台 Firestore 有紀錄時，標題、摘要、正文、書目、圖片與狀態全部以後台為準。
-    // 僅保留不改變文章文字來源的顯示修正。
-    if (article.id === "yuanshen-destiny-archetype") {
-      let fixedContent = String(article.content || "")
-        .replace(/stone-origin\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260808-final-images-2")
-        .replace(/roc-awakening\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "roc-awakening.jpg?v=20260808-final-images-2")
-        .replace(/nine-tailed-bird\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "nine-tailed-bird.jpg?v=20260808-final-images-2");
-      const imageSections = [
-        ["## 天庭巨石所化的元神", "stone-origin.jpg", "![天庭巨石所化的元神](assets/articles/yuanshen-destiny-archetype/stone-origin.jpg?v=20260808-final-images-2)"],
-        ["## 大鵬鳥元神──與岳飛的奇妙連結", "roc-awakening.jpg", "![大鵬鳥元神](assets/articles/yuanshen-destiny-archetype/roc-awakening.jpg?v=20260808-final-images-2)"],
-        ["## 九尾七彩神鳥──活在天命裡而不自知", "nine-tailed-bird.jpg", "![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260808-final-images-2)"],
-      ];
-      imageSections.forEach(([heading, filename, markdown]) => {
-        if (fixedContent.includes(heading) && !fixedContent.includes(filename)) {
-          fixedContent = fixedContent.replace(`${heading}\n\n`, `${heading}\n\n${markdown}\n\n`);
-        }
-      });
-      return { ...article, content: fixedContent };
-    }
-    if (article.id === "celebrity-death-dream-spirit-five-checks" && !article.bookPurchaseUrl) {
-      return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
-    }
-    return article;
-  });
+  // 前台不再自行修補或覆寫任何已進 Firestore 的文章欄位。
+  // 後台儲存什麼，前台就顯示什麼；GitHub 靜態稿僅供尚未匯入後台的文章使用。
+  const normalizedArticles = merged.map((article) => article);
   const hydratedArticles = await Promise.all(normalizedArticles.map((article) => activeId && (article.id === activeId || article.slug === activeId) ? withTimeout(hydrateEventArticle(article), 8000, "活動文章權限確認").catch(() => article) : article));
   if (loadSerial !== articlesLoadSerial) return;
   loadedArticles = hydratedArticles.sort(sortPublished);
