@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const ARTICLE_ID = "yuanshen-awakening-old-manuscript";
 const REVISION = "20260829-known-paragraphs-safe-1";
@@ -58,12 +58,29 @@ function cleanPublicImageRemnants(value = "") {
     .trim();
 }
 
-async function migrateKnownParagraphs() {
-  const articleRef = doc(db, "articles", ARTICLE_ID);
-  const paidRef = doc(db, "paidArticleBodies", ARTICLE_ID);
-  const [articleSnapshot, paidSnapshot] = await Promise.all([getDoc(articleRef), getDoc(paidRef)]);
+async function resolveArticleDoc() {
+  const directRef = doc(db, "articles", ARTICLE_ID);
+  const directSnapshot = await getDoc(directRef);
+  if (directSnapshot.exists()) {
+    return { id: directSnapshot.id, ref: directRef, snapshot: directSnapshot };
+  }
 
-  if (!articleSnapshot.exists() || !paidSnapshot.exists()) return;
+  const slugSnapshot = await getDocs(query(collection(db, "articles"), where("slug", "==", ARTICLE_ID)));
+  const match = slugSnapshot.docs[0];
+  if (!match) return null;
+  return { id: match.id, ref: match.ref, snapshot: match };
+}
+
+async function migrateKnownParagraphs() {
+  const resolved = await resolveArticleDoc();
+  if (!resolved) return;
+
+  const articleRef = resolved.ref;
+  const paidRef = doc(db, "paidArticleBodies", resolved.id);
+  const articleSnapshot = resolved.snapshot;
+  const paidSnapshot = await getDoc(paidRef);
+
+  if (!paidSnapshot.exists()) return;
   const article = articleSnapshot.data() || {};
   if (article.knownParagraphRecoveryRevision === REVISION) return;
 
