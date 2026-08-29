@@ -1,47 +1,21 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
+import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-full-chapter-recovery-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const ARTICLE_ID = "yuanshen-awakening-old-manuscript";
-const REVISION = "20260829-known-paragraphs-safe-1";
+const ARTICLE_SLUG = "yuanshen-awakening-old-manuscript";
+const PAID_MARKER = "<!-- paid-only -->";
+const REVISION = "20260829-full-chapter-recovery-1";
 
-const BLOCK_ONE = `也因為這件事，讓我更加確定了一個觀念：**通靈，終究抵不過法律。**
-
-嘴上說得再玄、講得再神，鬼神之事說得天花亂墜，都不代表一個人可以凌駕現實世界的規則。當事情真正走進法律、證據與責任的範圍裡，所有無法被證明的神通與說法，都必須退到一旁。
-
-因為人活在人間，就必須面對人間的法則。`;
-
-const BLOCK_TWO = `雖然他後來沉默了，但他的老師依然持續在網路上關注我的文章，甚至試圖以匿名的方式，影射、批判我的教導與觀點。
-
-只是到了那個時候，這些事情對我而言，早已沒有什麼殺傷力了。
-
-你沒有指名道姓，我也不需要對號入座；你有你的立場，我有我的觀點。再多的影射與暗示，如果始終只能躲在匿名的背後，其實也沒有什麼值得我回應的。
-
-所以後來，我選擇不再理會。
-
-不是因為我不知道，而是因為我知道，卻已經不覺得有回應的必要。`;
-
-function restoreKnownParagraphs(value = "") {
-  let text = String(value || "").trim();
-  let changed = false;
-
-  if (!text.includes("通靈，終究抵不過法律")) {
-    const anchor = "後來，對方就沒有再來了。";
-    if (text.includes(anchor)) {
-      text = text.replace(anchor, anchor + "\n\n" + BLOCK_ONE);
-      changed = true;
-    }
-  }
-
-  if (!text.includes("雖然他後來沉默了，但他的老師依然持續在網路上關注我的文章")) {
-    const heading = "## 母娘後來給我的提醒";
-    if (text.includes(heading)) {
-      text = text.replace(heading, BLOCK_TWO + "\n\n" + heading);
-      changed = true;
-    }
-  }
-
-  return { text: text.replace(/\n{3,}/g, "\n\n").trim(), changed };
+function splitRestoredContent(value = "") {
+  const text = String(value || "").trim();
+  const index = text.indexOf(PAID_MARKER);
+  if (index < 0) throw new Error("PAID_MARKER_NOT_FOUND");
+  const publicContent = text.slice(0, index).trim();
+  const privateContent = text.slice(index + PAID_MARKER.length).trim();
+  if (publicContent.length < 500) throw new Error("PUBLIC_CONTENT_TOO_SHORT");
+  if (privateContent.length < 2000) throw new Error("PRIVATE_CONTENT_TOO_SHORT");
+  return { publicContent, privateContent };
 }
 
 async function sha256(value = "") {
@@ -51,83 +25,96 @@ async function sha256(value = "") {
     .join("");
 }
 
-function cleanPublicImageRemnants(value = "") {
-  return String(value || "")
-    .replace(/(^|\n)\s*!\[\]\s*(?=\n|$)/g, "$1")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
 async function resolveArticleDoc() {
-  const directRef = doc(db, "articles", ARTICLE_ID);
+  const directRef = doc(db, "articles", ARTICLE_SLUG);
   const directSnapshot = await getDoc(directRef);
   if (directSnapshot.exists()) {
     return { id: directSnapshot.id, ref: directRef, snapshot: directSnapshot };
   }
 
-  const slugSnapshot = await getDocs(query(collection(db, "articles"), where("slug", "==", ARTICLE_ID)));
+  const slugSnapshot = await getDocs(query(collection(db, "articles"), where("slug", "==", ARTICLE_SLUG)));
   const match = slugSnapshot.docs[0];
   if (!match) return null;
   return { id: match.id, ref: match.ref, snapshot: match };
 }
 
-async function migrateKnownParagraphs() {
+function setStatus(message, state = "") {
+  const status = document.getElementById("save-status-inline") || document.getElementById("save-status");
+  if (!status) return;
+  status.textContent = message;
+  if (state) status.dataset.state = state;
+}
+
+async function restoreFullChapter() {
   const resolved = await resolveArticleDoc();
-  if (!resolved) return;
+  if (!resolved) throw new Error("ARTICLE_NOT_FOUND");
 
-  const articleRef = resolved.ref;
+  const article = resolved.snapshot.data() || {};
+  if (article.fullChapterRecoveryRevision === REVISION) return;
+
+  const restored = splitRestoredContent(yuanshenAwakeningOldManuscriptArticle.content || "");
   const paidRef = doc(db, "paidArticleBodies", resolved.id);
-  const articleSnapshot = resolved.snapshot;
   const paidSnapshot = await getDoc(paidRef);
+  const paid = paidSnapshot.exists() ? paidSnapshot.data() || {} : {};
+  const nextVersion = Math.max(
+    0,
+    Number(paid.contentVersion || 0),
+    Number(article.paidContentVersion || 0)
+  ) + 1;
+  const hash = await sha256(restored.privateContent);
 
-  if (!paidSnapshot.exists()) return;
-  const article = articleSnapshot.data() || {};
-  if (article.knownParagraphRecoveryRevision === REVISION) return;
+  setStatus("正在完整找回這篇文章全章文字…", "saving");
 
-  const paid = paidSnapshot.data() || {};
-  const current = String(paid.content || "").trim();
-  const cleanedPublicContent = cleanPublicImageRemnants(article.content || "");
-
-  // 安全原則：私有正文不存在或過短時完全不碰，不再拿 GitHub 舊稿覆蓋。
-  if (current.length < 500) {
-    console.warn("元神書外手記私有正文不足，停止自動補文，避免覆寫人工內容。");
-    return;
-  }
-
-  const restored = restoreKnownParagraphs(current);
-  let version = Math.max(1, Number(paid.contentVersion || article.paidContentVersion || 1));
-  let hash = String(paid.contentHash || article.paidContentHash || "");
-
-  if (restored.changed) {
-    version += 1;
-    hash = await sha256(restored.text);
-    await setDoc(paidRef, {
-      content: restored.text,
-      contentHash: hash,
-      contentVersion: version,
-      source: "known-paragraph-safe-recovery",
-      active: true,
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-
-    const verify = await getDoc(paidRef);
-    if (!verify.exists() || String(verify.data()?.content || "") !== restored.text) {
-      throw new Error("KNOWN_PARAGRAPH_RECOVERY_VERIFY_FAILED");
-    }
-  }
-
-  await setDoc(articleRef, {
-    content: cleanedPublicContent,
-    knownParagraphRecoveryRevision: REVISION,
-    paidContentHash: hash,
-    paidContentVersion: version,
+  await setDoc(paidRef, {
+    articleId: resolved.id,
+    title: article.title || yuanshenAwakeningOldManuscriptArticle.title,
+    status: article.status === "draft" ? "draft" : "published",
+    content: restored.privateContent,
+    contentHash: hash,
+    contentVersion: nextVersion,
+    source: "full-chapter-recovery",
+    active: true,
+    fullChapterRecoveryRevision: REVISION,
     updatedAt: serverTimestamp()
   }, { merge: true });
+
+  await setDoc(resolved.ref, {
+    content: (restored.publicContent + "\n\n" + PAID_MARKER).trim(),
+    accessType: "paid",
+    privatePaidContent: true,
+    paidContentHash: hash,
+    paidContentVersion: nextVersion,
+    fullChapterRecoveryRevision: REVISION,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  const [verifyArticle, verifyPaid] = await Promise.all([
+    getDoc(resolved.ref),
+    getDoc(paidRef)
+  ]);
+
+  if (
+    !verifyArticle.exists()
+    || !verifyPaid.exists()
+    || verifyArticle.data()?.fullChapterRecoveryRevision !== REVISION
+    || verifyPaid.data()?.fullChapterRecoveryRevision !== REVISION
+    || String(verifyPaid.data()?.content || "") !== restored.privateContent
+  ) {
+    throw new Error("FULL_CHAPTER_VERIFY_FAILED");
+  }
+
+  setStatus("全章已找回｜後台人工修改已補回｜前台將同步更新", "success");
+
+  if (sessionStorage.getItem("yuanshen-full-chapter-recovery") !== REVISION) {
+    sessionStorage.setItem("yuanshen-full-chapter-recovery", REVISION);
+    window.setTimeout(() => location.reload(), 900);
+  }
 }
 
 onAuthStateChanged(auth, (user) => {
   if (!user || !isAdminEmail(user.email)) return;
-  void migrateKnownParagraphs().catch((error) => {
-    console.error("已知遺失段落安全復原失敗：", error);
+  void restoreFullChapter().catch((error) => {
+    console.error("元神書外手記全章復原失敗：", error);
+    setStatus("全章復原失敗，系統未再覆寫其他文章", "error");
   });
 });
