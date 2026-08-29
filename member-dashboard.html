@@ -30,6 +30,43 @@ footer{padding:38px 0 30px;text-align:center;background:#161B13;border-top:1px s
 /* hide removed member dashboard sections */
 .period-section,.progress-section{display:none!important}
 </style>
+<style id="member-dashboard-visibility-and-menu-fix">
+/* Keep essential member data visible even if the decorative reveal module is delayed. */
+html #member-dashboard .stats > .stat,
+html #member-dashboard .lyy-reveal,
+html.lyy-motion-on #member-dashboard .lyy-reveal,
+html.lyy-motion-on #member-dashboard .lyy-reveal.lyy-visible {
+  opacity:1!important;
+  visibility:visible!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  transform:none!important;
+  transition:none!important;
+  will-change:auto!important;
+}
+@media(min-width:769px) {
+  html body #site-auth-bar {
+    overflow:visible!important;
+    isolation:isolate!important;
+    pointer-events:auto!important;
+  }
+  html body #site-auth-bar .site-auth-actions {
+    overflow:visible!important;
+  }
+  html body #site-auth-bar #site-account-menu {
+    position:fixed!important;
+    top:58px!important;
+    right:24px!important;
+    left:auto!important;
+    width:220px!important;
+    max-height:calc(100vh - 76px)!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    z-index:2147483000!important;
+    transform:none!important;
+  }
+}
+</style>
 <style id="lyy-sacred-member-motion">
 /* 靈元院會員中心｜神聖科技動態層：僅增添視覺與互動，不改動既有內容及會員判讀 */
 :root{--motion-bronze:#A58254;--motion-gold:#D8B878;--motion-pale-gold:#F2DCA7;--motion-jade:#53623A;--motion-deep-jade:#101B13;--motion-ivory:#F8F2E8;--motion-x:50vw;--motion-y:24vh}
@@ -621,7 +658,7 @@ body.lyy-lingji-awaken .lyy-tier-awakening{animation:lyyAwaken 2.8s cubic-bezier
   updateScrollSignal();
 })();
 </script>
-<script type="module" src="/site-auth-nav.js?v=20260807-thumbnail-cleanup-1"></script>
+<script type="module" src="/site-auth-nav.js?v=20260829-dashboard-menu-fix-1"></script>
 <script type="module" src="/member-dashboard.js?v=20260829-compositor-scroll-fix-2"></script>
   <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
 </body>
