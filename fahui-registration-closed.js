@@ -142,11 +142,40 @@
     );
   };
 
+  const forceEmptyRegistrationState = () => {
+    const list = document.querySelector(".announcement-list");
+    if (!list) return;
+
+    list.innerHTML = "";
+    const card = document.createElement("div");
+    card.className = "announcement-item empty-state";
+    card.style.display = "block";
+    card.style.minHeight = "0";
+    card.style.background = "rgba(248,244,236,.92)";
+    card.style.border = "1px solid rgba(165,130,84,.24)";
+    card.style.boxShadow = "0 10px 36px rgba(0,0,0,.2)";
+
+    const message = document.createElement("div");
+    message.className = "announcement-empty";
+    message.textContent = "目前尚無開放報名之法會";
+    message.style.padding = "42px 30px";
+    message.style.textAlign = "center";
+    message.style.fontFamily = "var(--font-serif)";
+    message.style.fontSize = "20px";
+    message.style.fontWeight = "500";
+    message.style.letterSpacing = ".12em";
+    message.style.color = "var(--ink-mid)";
+
+    card.appendChild(message);
+    list.appendChild(card);
+  };
+
   const applyPageState = () => {
     ensureStyles();
     applyUpcomingState();
     applyRegistrationClosedState();
     repairArticleNavigation();
+    forceEmptyRegistrationState();
   };
 
   if (document.readyState === "loading") {
