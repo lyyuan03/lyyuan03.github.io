@@ -1,4 +1,4 @@
 firestore rules: success
-run id: 33245262408
-source commit: 75701dc7e7d0278ee1accc281b07d84c4f42fc0a
-completed at: 2026-08-29T09:21:15Z
+run id: 33245441561
+source commit: 5233f07a9b7dc3759ea018802c6ad407a7e941cb
+completed at: 2026-08-29T09:25:53Z
