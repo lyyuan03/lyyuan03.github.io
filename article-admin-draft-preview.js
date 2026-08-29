@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260828-yuanshen-five-story-images-1";
+import { staticArticles } from "./static-articles.js?v=20260829-yuanshen-title-preview-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -166,12 +166,33 @@ async function hydratePaidDraft(article) {
 
 async function loadDrafts() {
   const snapshot = await getDocs(collection(db, "articles"));
-  const firestoreArticles = snapshot.docs.map((item) => ({
-    id: item.id,
-    ...item.data(),
-    __firestoreId: item.id,
-    __source: "firestore"
-  }));
+  const targetStaticDraft = staticArticles.find((article) => article.id === "yuanshen-awakening-old-manuscript") || null;
+  const firestoreArticles = snapshot.docs.map((item) => {
+    const data = item.data() || {};
+    const isTarget = item.id === "yuanshen-awakening-old-manuscript" || data.slug === "yuanshen-awakening-old-manuscript";
+    return {
+      id: item.id,
+      ...data,
+      ...(isTarget && targetStaticDraft ? {
+        title: targetStaticDraft.title || data.title || "",
+        category: targetStaticDraft.category || data.category || "spiritual",
+        displayCategory: targetStaticDraft.displayCategory || data.displayCategory || "",
+        series: targetStaticDraft.series || data.series || "",
+        excerpt: targetStaticDraft.excerpt || data.excerpt || "",
+        coverImage: targetStaticDraft.coverImage || data.coverImage || "",
+        bookTitle: targetStaticDraft.bookTitle || data.bookTitle || "",
+        bookAuthor: targetStaticDraft.bookAuthor || data.bookAuthor || "",
+        bookPublisher: targetStaticDraft.bookPublisher || data.bookPublisher || "",
+        bookPurchaseUrl: targetStaticDraft.bookPurchaseUrl || data.bookPurchaseUrl || "",
+        bookCoverImage: targetStaticDraft.bookCoverImage || data.bookCoverImage || "",
+        accessType: "paid",
+        status: "draft",
+        topics: Array.isArray(targetStaticDraft.topics) ? targetStaticDraft.topics : (Array.isArray(data.topics) ? data.topics : [])
+      } : {}),
+      __firestoreId: item.id,
+      __source: "firestore"
+    };
+  });
 
   const byIdentity = new Map();
   firestoreArticles.forEach((article) => {
