@@ -51,6 +51,13 @@ async function sha256(value = "") {
     .join("");
 }
 
+function cleanPublicImageRemnants(value = "") {
+  return String(value || "")
+    .replace(/(^|\n)\s*!\[\]\s*(?=\n|$)/g, "$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 async function migrateKnownParagraphs() {
   const articleRef = doc(db, "articles", ARTICLE_ID);
   const paidRef = doc(db, "paidArticleBodies", ARTICLE_ID);
@@ -62,6 +69,7 @@ async function migrateKnownParagraphs() {
 
   const paid = paidSnapshot.data() || {};
   const current = String(paid.content || "").trim();
+  const cleanedPublicContent = cleanPublicImageRemnants(article.content || "");
 
   // 安全原則：私有正文不存在或過短時完全不碰，不再拿 GitHub 舊稿覆蓋。
   if (current.length < 500) {
@@ -92,6 +100,7 @@ async function migrateKnownParagraphs() {
   }
 
   await setDoc(articleRef, {
+    content: cleanedPublicContent,
     knownParagraphRecoveryRevision: REVISION,
     paidContentHash: hash,
     paidContentVersion: version,
