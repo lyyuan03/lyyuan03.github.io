@@ -4,7 +4,7 @@ import "./sponsor-checkout-v3.js?v=20260808-email-renewal-1";
 import "./sponsor-dashboard-renewal-checkout-fix.js?v=20260826-renewal-ecpay-2";
 import "./sponsor-dashboard-renewal.js?v=20260826-renewal-render-loop-fix-1";
 import "./member-dashboard-expiry-reminder.js?v=20260812-expiry-reminder-4";
-import "./member-offers-integration.js?v=20260813-offer-highlight-1";
+import "./member-offers-integration.js?v=20260829-offer-color-block-1";
 import "./member-offer-video-addon.js?v=20260813-offer-highlight-1";
 
 // 會員中心以可讀、可操作為最高優先：停用可能卡在 blur/transform 的進場狀態，
