@@ -22,6 +22,9 @@ const staticImageSyncRevisions = new Map([
 ]);
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
+const PAID_MARKER = "<!-- paid-only -->";
+const PAID_BODY_COLLECTION = "paidArticleBodies";
+
 
 let articles = [];
 let currentId = null;
@@ -250,6 +253,93 @@ function renderContent(value = "") {
       return `<p>${renderInline(trimmed).replace(/\n/g, "<br>")}</p>`;
     })
     .join("");
+}
+
+function splitPaidContentForSave(value = "") {
+  const content = String(value || "");
+  const markerIndex = content.indexOf(PAID_MARKER);
+  if (markerIndex < 0) return null;
+  return {
+    publicContent: content.slice(0, markerIndex).trim(),
+    privateContent: content.slice(markerIndex + PAID_MARKER.length).trim()
+  };
+}
+
+function safePaidPublicContent(publicContent = "") {
+  return (String(publicContent || "").trim() + "\n\n" + PAID_MARKER).trim();
+}
+
+async function sha256Text(value = "") {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(value || "")));
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function preparePaidArticleSave(articleId, data, existingData = null) {
+  const privateRef = doc(db, PAID_BODY_COLLECTION, articleId);
+  const privateSnapshot = await getDoc(privateRef);
+  const previousPrivate = privateSnapshot.exists() ? privateSnapshot.data() || {} : {};
+  const existingPrivateContent = String(previousPrivate.content || "").trim();
+
+  const split = splitPaidContentForSave(data.content);
+  let publicContent = "";
+  let privateContent = "";
+
+  if (split) {
+    publicContent = split.publicContent;
+    privateContent = split.privateContent || existingPrivateContent;
+  } else {
+    // 若編輯器因私有正文載入失敗而只顯示公開試閱，仍允許安全儲存公開文字；
+    // 私有正文沿用 Firestore 既有版本，避免後台修改被卡住或誤刪全文。
+    publicContent = String(data.content || "").trim();
+    privateContent = existingPrivateContent;
+  }
+
+  if (!publicContent) throw new Error("PAID_PUBLIC_CONTENT_EMPTY");
+  if (!privateContent) throw new Error("PAID_PRIVATE_CONTENT_EMPTY");
+
+  const safeContent = safePaidPublicContent(publicContent);
+  const previousHash = String(previousPrivate.contentHash || existingData?.paidContentHash || "");
+  const contentHash = await sha256Text(privateContent);
+  const contentChanged = contentHash !== previousHash || String(previousPrivate.content || "") !== privateContent;
+  const previousVersion = Math.max(
+    0,
+    Number(previousPrivate.contentVersion || 0),
+    Number(existingData?.paidContentVersion || 0)
+  );
+  const contentVersion = contentChanged ? previousVersion + 1 : Math.max(1, previousVersion);
+
+  if (contentChanged || !privateSnapshot.exists()) {
+    await setDoc(privateRef, {
+      articleId,
+      title: data.title,
+      status: data.status === "draft" ? "draft" : "published",
+      content: privateContent,
+      contentHash,
+      contentVersion,
+      source: "article-admin-core",
+      active: true,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
+    const verifyPrivate = await getDoc(privateRef);
+    if (!verifyPrivate.exists() || String(verifyPrivate.data()?.content || "") !== privateContent) {
+      throw new Error("PAID_PRIVATE_VERIFY_FAILED");
+    }
+  } else if (
+    String(previousPrivate.title || "") !== data.title
+    || String(previousPrivate.status || "") !== (data.status === "draft" ? "draft" : "published")
+  ) {
+    await setDoc(privateRef, {
+      title: data.title,
+      status: data.status === "draft" ? "draft" : "published",
+      active: true,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
+  return { safeContent, privateContent, contentHash, contentVersion };
 }
 
 function getFormData() {
@@ -692,6 +782,17 @@ async function saveArticle(event) {
       updatedAt: serverTimestamp()
     };
 
+    let paidSave = null;
+    if (data.accessType === "paid") {
+      paidSave = await preparePaidArticleSave(currentId, data, existingData);
+      payload.content = paidSave.safeContent;
+      payload.privatePaidContent = true;
+      payload.paidContentHash = paidSave.contentHash;
+      payload.paidContentVersion = paidSave.contentVersion;
+    } else {
+      payload.privatePaidContent = false;
+    }
+
     let distributedCount = 0;
     if (data.accessType === "event") {
       payload.eventName = eventOptions.find((event) => event.id === data.eventId)?.name || data.eventId;
@@ -711,6 +812,10 @@ async function saveArticle(event) {
       payload.eventIv = "";
       payload.encryption = "";
       payload.magicLinkAccess = {};
+      if (data.accessType !== "paid") {
+        payload.paidContentHash = "";
+        payload.paidContentVersion = 0;
+      }
     }
 
     // publishedAt 代表第一次正式發布時間；日後修改文章只更新 updatedAt，不再改變首頁排序。
@@ -725,6 +830,21 @@ async function saveArticle(event) {
     const persistedArticle = publicationSnapshot.docs.find((item) => item.id === currentId)?.data();
     if (!persistedArticle || persistedArticle.status !== data.status) {
       throw new Error("文章狀態寫入後驗證失敗");
+    }
+    if (data.accessType === "paid") {
+      if (
+        String(persistedArticle.content || "").trim() !== String(paidSave?.safeContent || "").trim()
+        || Number(persistedArticle.paidContentVersion || 0) !== Number(paidSave?.contentVersion || 0)
+      ) {
+        throw new Error("付費文章前後台同步驗證失敗");
+      }
+      const privateVerify = await getDoc(doc(db, PAID_BODY_COLLECTION, currentId));
+      if (
+        !privateVerify.exists()
+        || String(privateVerify.data()?.content || "") !== String(paidSave?.privateContent || "")
+      ) {
+        throw new Error("付費文章私有正文同步驗證失敗");
+      }
     }
     await syncPublicationStatusIndex(publicationSnapshot);
     const persistedIndex = await getDoc(doc(db, "articleMetrics", ARTICLE_STATUS_INDEX_ID));
@@ -747,7 +867,11 @@ async function saveArticle(event) {
 
     await loadArticles();
     const savedAt = savedTimeLabel();
-    const accessNote = data.accessType === "event" ? `｜已授權 ${distributedCount} 位活動參加者` : "";
+    const accessNote = data.accessType === "event"
+      ? `｜已授權 ${distributedCount} 位活動參加者`
+      : data.accessType === "paid"
+        ? `｜前台正文同步版本 ${paidSave?.contentVersion || 1}`
+        : "";
     const thumbnailNote = thumbnailSaved ? "｜縮圖位置已同步" : "";
     if (thumbnailSaveError) {
       setSaveStatus(`文章已儲存｜${savedAt}｜縮圖位置儲存失敗`, "error");
