@@ -940,17 +940,10 @@ async function loadArticles() {
       __articleSource: "firestore"
     });
   });
-  const future2058Static = staticArticles.find((article) => article.id === "2058-future-person-prophecy");
-  const future2058Firestore = firestoreArticles.find((article) => article.id === "2058-future-person-prophecy");
-  if (future2058Static && future2058Firestore) {
-    mergedById.set("2058-future-person-prophecy", { ...future2058Firestore, content: future2058Static.content, coverImage: future2058Static.coverImage || future2058Firestore.coverImage || "", thumbnailImage: future2058Static.thumbnailImage || future2058Firestore.thumbnailImage || "", updatedAt: future2058Static.updatedAt || future2058Firestore.updatedAt });
-  }
+  // Firestore 是文章後台的唯一權威來源：
+  // 只要同一篇文章已有 Firestore 紀錄，前台一律使用後台儲存內容。
+  // GitHub 靜態文章只作為「尚未匯入後台」文章的備援來源。
   const liveFirestoreIds = new Set(firestoreArticles.map((article) => article.id));
-  const quantumFrequencyStaticArticle = staticArticles.find((article) => article.id === "quantum-frequency-work-wish");
-  const quantumFrequencyFirestoreArticle = firestoreArticles.find((article) => article.id === "quantum-frequency-work-wish");
-  if (quantumFrequencyStaticArticle && !(adminDraftPreview && quantumFrequencyFirestoreArticle?.status === "draft")) {
-    mergedById.set("quantum-frequency-work-wish", quantumFrequencyStaticArticle);
-  }
   statusById.forEach((status, articleId) => {
     if (!liveFirestoreIds.has(articleId) && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) mergedById.delete(articleId);
   });
@@ -964,31 +957,8 @@ async function loadArticles() {
       && article.id !== "__article-thumbnail-settings";
   });
   const normalizedArticles = merged.map((article) => {
-    // 管理者預覽這篇贊助草稿時，標題與書目等展示資訊以最新 GitHub 草稿為準；
-    // 付費正文仍由 Firestore 私有資料載入，避免舊 Firestore 標題覆蓋最新草稿。
-    if (adminDraftPreview && article.status === "draft" && article.id === "yuanshen-awakening-old-manuscript") {
-      const staticDraft = staticArticles.find((item) => item.id === "yuanshen-awakening-old-manuscript");
-      if (staticDraft) {
-        return {
-          ...article,
-          title: staticDraft.title || article.title,
-          category: staticDraft.category || article.category,
-          displayCategory: staticDraft.displayCategory || article.displayCategory,
-          series: staticDraft.series || article.series,
-          excerpt: staticDraft.excerpt || article.excerpt,
-          coverImage: staticDraft.coverImage || article.coverImage,
-          bookTitle: staticDraft.bookTitle || article.bookTitle,
-          bookAuthor: staticDraft.bookAuthor || article.bookAuthor,
-          bookPublisher: staticDraft.bookPublisher || article.bookPublisher,
-          bookPurchaseUrl: staticDraft.bookPurchaseUrl || article.bookPurchaseUrl,
-          bookCoverImage: staticDraft.bookCoverImage || article.bookCoverImage,
-          accessType: "paid",
-          topics: Array.isArray(staticDraft.topics) ? staticDraft.topics : article.topics
-        };
-      }
-    }
-    // 其他管理者草稿仍一律以後台實際儲存內容為準。
-    if (adminDraftPreview && article.status === "draft") return article;
+    // 後台 Firestore 有紀錄時，標題、摘要、正文、書目、圖片與狀態全部以後台為準。
+    // 僅保留不改變文章文字來源的顯示修正。
     if (article.id === "yuanshen-destiny-archetype") {
       let fixedContent = String(article.content || "")
         .replace(/stone-origin\.(?:svg|jpg)(?:\?[^)\s"']*)?/g, "stone-origin.jpg?v=20260808-final-images-2")
@@ -1000,16 +970,15 @@ async function loadArticles() {
         ["## 九尾七彩神鳥──活在天命裡而不自知", "nine-tailed-bird.jpg", "![九尾七彩神鳥元神](assets/articles/yuanshen-destiny-archetype/nine-tailed-bird.jpg?v=20260808-final-images-2)"],
       ];
       imageSections.forEach(([heading, filename, markdown]) => {
-        if (fixedContent.includes(heading) && !fixedContent.includes(filename)) fixedContent = fixedContent.replace(`${heading}\n\n`, `${heading}\n\n${markdown}\n\n`);
+        if (fixedContent.includes(heading) && !fixedContent.includes(filename)) {
+          fixedContent = fixedContent.replace(`${heading}\n\n`, `${heading}\n\n${markdown}\n\n`);
+        }
       });
-      return { ...article, coverImage: "assets/articles/yuanshen-destiny-archetype/book-cover.jpg?v=20260808-final-images-2", content: fixedContent };
+      return { ...article, content: fixedContent };
     }
-    if (article.id === "2058-future-person-prophecy") {
-      const staticArticle = staticArticles.find((item) => item.id === article.id);
-      const fixedContent = String(staticArticle?.content || article.content || "");
-      return { ...article, content: fixedContent, excerpt: staticArticle?.excerpt || article.excerpt || "", coverImage: "assets/articles/2058-future-person-prophecy/cover.webp?v=20260813-3", thumbnailImage: "assets/articles/2058-future-person-prophecy/thumbnail.webp?v=20260813-3", bookTitle: "喚醒天生好命", bookAuthor: "宇色Osel", bookPublisher: "高寶", bookPurchaseUrl: "https://www.books.com.tw/products/0011003625?loc=P_br_r0vq68ygz_D_2aabd0_B_1" };
+    if (article.id === "celebrity-death-dream-spirit-five-checks" && !article.bookPurchaseUrl) {
+      return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
     }
-    if (article.id === "celebrity-death-dream-spirit-five-checks") return { ...article, bookPurchaseUrl: "https://www.books.com.tw/products/0011029318?loc=P_0005_053" };
     return article;
   });
   const hydratedArticles = await Promise.all(normalizedArticles.map((article) => activeId && (article.id === activeId || article.slug === activeId) ? withTimeout(hydrateEventArticle(article), 8000, "活動文章權限確認").catch(() => article) : article));
