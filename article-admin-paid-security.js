@@ -150,14 +150,17 @@ async function hydrateEditorPaidBody() {
   const contentField = form.elements?.content;
   if (accessType !== "paid" || !articleId || !contentField) return;
   const split = splitPaidContent(contentField.value);
-  if (!split || split.privateContent) return;
+  if (split?.privateContent) return;
+  const publicContent = split
+    ? split.publicContent
+    : String(contentField.value || "").trim();
 
   try {
     const snapshot = await getDoc(doc(db, PRIVATE_COLLECTION, articleId));
     if (serial !== hydrationSerial || !snapshot.exists()) return;
     const privateContent = String(snapshot.data()?.content || "").trim();
     if (!privateContent) return;
-    contentField.value = `${split.publicContent}\n\n${PAID_MARKER}\n\n${privateContent}`;
+    contentField.value = `${publicContent}\n\n${PAID_MARKER}\n\n${privateContent}`;
     contentField.dispatchEvent(new Event("input", { bubbles: true }));
   } catch (error) {
     console.error("後台付費文章私有正文載入失敗。", error);
