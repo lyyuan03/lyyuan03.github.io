@@ -1,7 +1,7 @@
 import { auth, db } from "./firebase-config.js";
 import { resolveMemberAccess } from "./member-access-resolver.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const articleId = new URLSearchParams(location.search).get("id") || "";
 const root = document.getElementById("article-root");
@@ -12,6 +12,7 @@ let hydrateScheduled = false;
 let hydrateInFlight = false;
 let hydratePending = false;
 let paidBodyUnsubscribe = null;
+let resolvedArticleDocId = articleId;
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -62,8 +63,24 @@ function paidView() {
 async function paidMetadata() {
   if (metadataCache) return metadataCache;
   try {
-    const snapshot = await getDoc(doc(db, "articles", articleId));
-    metadataCache = snapshot.exists() ? snapshot.data() || {} : {};
+    const direct = await getDoc(doc(db, "articles", articleId));
+    if (direct.exists()) {
+      resolvedArticleDocId = direct.id;
+      metadataCache = direct.data() || {};
+      return metadataCache;
+    }
+
+    // 前台網址通常使用 slug；Firestore 文件 ID 可能是自動產生的另一個值。
+    // 找不到同名文件時，改以 slug 對應實際文件 ID，確保付費正文與後台同一筆資料。
+    const slugSnapshot = await getDocs(query(collection(db, "articles"), where("slug", "==", articleId)));
+    const match = slugSnapshot.docs[0];
+    if (match) {
+      resolvedArticleDocId = match.id;
+      metadataCache = match.data() || {};
+      return metadataCache;
+    }
+
+    metadataCache = {};
     return metadataCache;
   } catch (error) {
     console.warn("付費文章公開資訊暫時無法確認。", error);
@@ -166,7 +183,7 @@ function insertPrivateBody(view, content, version, contentHash = "") {
 function ensurePaidBodyRealtimeSync() {
   if (paidBodyUnsubscribe || !articleId || !currentUser?.email) return;
 
-  paidBodyUnsubscribe = onSnapshot(doc(db, "paidArticleBodies", articleId), (snapshot) => {
+  paidBodyUnsubscribe = onSnapshot(doc(db, "paidArticleBodies", resolvedArticleDocId || articleId), (snapshot) => {
     if (!snapshot.exists()) return;
     const view = paidView();
     if (!view || !view.isConnected) return;
@@ -213,7 +230,7 @@ async function hydratePaidBody() {
   }
 
   try {
-    const snapshot = await getDoc(doc(db, "paidArticleBodies", articleId));
+    const snapshot = await getDoc(doc(db, "paidArticleBodies", resolvedArticleDocId || articleId));
     if (serial !== requestSerial || !view.isConnected) return;
     if (!snapshot.exists()) throw new Error("PAID_BODY_NOT_FOUND");
     const body = snapshot.data() || {};
