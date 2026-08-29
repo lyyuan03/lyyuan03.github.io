@@ -6,7 +6,7 @@ export const yuanshenAwakeningOldManuscriptArticle = {
   displayCategory: "靈修",
   series: "靈修辨證",
   status: "draft",
-  updatedAt: "2026-08-29T09:45:00.000Z",
+  updatedAt: "2026-08-29T09:58:00.000Z",
   coverImage: "https://wsrv.nl/?w=1200&output=webp&q=90&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg",
   excerpt: "一本剛出版的新書，讓我重新想起二十多年前一段曾被出版社拿掉的舊稿。多年後再看，那件事留下的影響，早已不是當年的爭議本身。",
   accessType: "paid",
@@ -31,7 +31,7 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 我覺得，現在好像可以講了。
 
-[圖片待重新上傳]
+![書外手記內文圖片 1](assets/articles/yuanshen-awakening-old-manuscript/image-1.webp?v=20260829-restored-1)
 
 不過裡面有些人物、細節，還有可能讓人辨認出身分的地方，我還是會做一些保留。
 
@@ -53,7 +53,7 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 「宇色，你最近要小心一點，已經有人開始在外面講你了。」
 
-[圖片待重新上傳]
+![書外手記內文圖片 2](assets/articles/yuanshen-awakening-old-manuscript/image-2.webp?v=20260829-restored-1)
 
 我那時候聽到的第一個反應，其實不是生氣。
 
@@ -139,7 +139,7 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 你這一世來到人間，是來危害人的。
 
-[圖片待重新上傳]
+![書外手記內文圖片 3](assets/articles/yuanshen-awakening-old-manuscript/image-3.webp?v=20260829-restored-1)
 
 問題是，我跟那位老師從來沒有見過面。
 
@@ -209,7 +209,7 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 你不需要踩著別人的背，讓自己站得更高。
 
-[圖片待重新上傳]
+![書外手記內文圖片 4](assets/articles/yuanshen-awakening-old-manuscript/image-4.webp?v=20260829-restored-1)
 
 你有你的命，他有他的命。
 
@@ -443,7 +443,7 @@ export const yuanshenAwakeningOldManuscriptArticle = {
 
 如果你的心一直跟著外面的答案跑，那不管你聽過多少靈異的事情，看過多少不可思議的現象，你其實還是不知道自己是誰。
 
-[圖片待重新上傳]
+![書外手記內文圖片 5](assets/articles/yuanshen-awakening-old-manuscript/image-5.webp?v=20260829-restored-1)
 
 這也是我走了近三十年之後，現在愈來愈確定的一件事。
 
