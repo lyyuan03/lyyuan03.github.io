@@ -11,15 +11,10 @@ const categoryLabels = {
   reading: "思．讀物"
 };
 
-const staticArticleSyncRevisions = new Map([
-  ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],
-  ["2058-future-person-prophecy", "20260816-six-images-1"],
-  ["yuanqin-debt-heart", "20260828-final-article-images-backend-sync-7"],
-]);
-const staticImageSyncRevisions = new Map([
-  ["2058-future-person-prophecy", "20260813-2058-inline-slots-4"],
-  ["yuanqin-debt-heart", "20260828-final-article-images-cover-sync-6"]
-]);
+// Firestore 後台是文章唯一權威來源。
+// GitHub 靜態文章只用於「尚未匯入後台」的文章，不得再反向覆寫既有後台內容。
+const staticArticleSyncRevisions = new Map();
+const staticImageSyncRevisions = new Map();
 const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-offer-status"]);
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 const PAID_MARKER = "<!-- paid-only -->";
@@ -684,14 +679,9 @@ async function loadArticles() {
   try {
     let snapshot = await getDocs(collection(db, "articles"));
     const didDraftImport = await importMissingStaticDrafts(snapshot);
-    if (didDraftImport) snapshot = await getDocs(collection(db, "articles"));
-    const didImageSync = await syncRevisedStaticArticleImages(snapshot);
-    const didContentSync = await syncRevisedStaticArticles(snapshot);
-    if (didDraftImport || didImageSync || didContentSync) {
+    if (didDraftImport) {
       snapshot = await getDocs(collection(db, "articles"));
-      if (didDraftImport) showAdminToast("新的網站草稿已自動加入後台，可直接編修。", "success");
-      if (didContentSync) showAdminToast("網站文章內容已完成前後台同步。", "success");
-      if (didImageSync) showAdminToast("網站文章圖片已完成前後台同步。", "success");
+      showAdminToast("新的網站草稿已自動加入後台，可直接編修。", "success");
     }
     await syncPublicationStatusIndex(snapshot);
     try {
@@ -734,16 +724,7 @@ async function loadArticles() {
         mergedArticles.delete(staticArticle.id);
       }
 
-      const revisionKey = staticArticle?.id || article.id;
-      if (staticImageSyncRevisions.has(revisionKey) && staticArticle) {
-        mergedArticles.set(article.id, {
-          ...article,
-          coverImage: staticArticle.coverImage || article.coverImage || "",
-          thumbnailImage: staticArticle.thumbnailImage || article.thumbnailImage || ""
-        });
-      } else {
-        mergedArticles.set(article.id, article);
-      }
+      mergedArticles.set(article.id, article);
     });
     articles = [...mergedArticles.values()].sort(sortAdminArticles);
     renderList();
