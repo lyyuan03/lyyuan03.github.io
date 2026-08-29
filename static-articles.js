@@ -16,6 +16,7 @@ import { dragonChantYoutubeAwakeningArticle } from "./article-dragon-chant-youtu
 import { yuanqinDebtHeartArticle } from "./article-yuanqin-debt-heart.js?v=20260828-clean-text-2&paid-private=20260824-article-system-repair-1";
 import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-thirty-years-practice-1";
 import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-morning.js?v=20260829-draft-3";
+import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260829-draft-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -97,6 +98,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
+  reconciliationAbsolutionHeartArticle,
   dragonCanonConsciousnessFieldArticle,
   ghostGateAlwaysOpenEnhancedArticle,
   futurePerson2058ProphecyArticle,
