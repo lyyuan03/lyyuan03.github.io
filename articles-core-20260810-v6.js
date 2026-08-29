@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260829-yuanshen-title-preview-1";
+import { staticArticles } from "./static-articles.js?v=20260829-base64-clean-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -176,12 +176,30 @@ function escapeHtml(value = "") {
   }[char]));
 }
 
+function sanitizeUnsafeArticleContent(value = "") {
+  let content = String(value || "");
+  const markdownDataImage = /!\[[^\]]*\]\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi;
+  const orphanDataImage = /\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi;
+  const bareDataImage = /data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+/gi;
+  content = content
+    .replace(markdownDataImage, "")
+    .replace(orphanDataImage, "")
+    .replace(bareDataImage, "")
+    .replace(/\\n\\n(?=\s*(?:\[圖片待重新上傳\]|$))/g, "\n\n")
+    .replace(/(^|\n)\s*\[圖片待重新上傳\]\s*(?=\n|$)/g, "$1")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n");
+  return content;
+}
+
 function renderInline(value = "") {
-  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1">');
+  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (_, alt, src) {
+    return /^data:image/i.test(src) ? "" : '<img src="' + src + '" alt="' + alt + '">';
+  });
 }
 
 function renderContent(value = "") {
-  return value
+  return sanitizeUnsafeArticleContent(value)
     .replace(memberMarker, "")
     .replace(paidMarker, "")
     .split(/\n{2,}/)
