@@ -33,8 +33,7 @@ const params = new URLSearchParams(location.search);
 const activeCategory = params.get("category") || "";
 const activeAccess = params.get("access") || "all";
 const activeId = params.get("id") || "";
-const standaloneArticlePaths = new Map([["this-book-took-thirty-years", "/article/this-book-took-thirty-years-v5.html"]]);
-if (standaloneArticlePaths.has(activeId)) location.replace(standaloneArticlePaths.get(activeId));
+const standaloneArticlePaths = new Map();
 const magicToken = params.get("token") || "";
 const magicEventId = params.get("event") || "";
 const memberMarker = "<!-- member-only -->";
@@ -256,18 +255,21 @@ function articleAccess(article) {
 }
 
 function getArticleThumbnail(article) {
-  return articleThumbnailImages[articleKey(article)] || article?.thumbnailImage || article?.coverImage || "";
+  return article?.thumbnailImage || article?.coverImage || articleThumbnailImages[articleKey(article)] || "";
 }
 
 function getArticleHook(article) {
-  return articleHooks[articleKey(article)] || article?.excerpt || "";
+  return article?.excerpt || articleHooks[articleKey(article)] || "";
 }
 
 function getArticleGuide(article) {
   const key = articleKey(article);
-  return articleGuides[key] || {
-    topics: Array.isArray(article?.topics) ? article.topics.slice(0, 2) : [],
-    level: article?.readingLevel || ""
+  const fallback = articleGuides[key] || {};
+  const articleTopics = Array.isArray(article?.topics) ? article.topics.filter(Boolean) : [];
+  return {
+    ...fallback,
+    topics: articleTopics.length ? articleTopics : (fallback.topics || []),
+    level: article?.readingLevel || fallback.level || ""
   };
 }
 
