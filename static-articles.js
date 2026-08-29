@@ -15,7 +15,7 @@ import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-
 import { dragonChantYoutubeAwakeningArticle } from "./article-dragon-chant-youtube-awakening.js?v=20260826-paid-1&paid-private=20260824-article-system-repair-1";
 import { yuanqinDebtHeartArticle } from "./article-yuanqin-debt-heart.js?v=20260828-clean-text-2&paid-private=20260824-article-system-repair-1";
 import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-thirty-years-practice-1";
-import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-morning.js?v=20260829-draft-2";
+import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-morning.js?v=20260829-draft-3";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -26,7 +26,7 @@ const featuredWealthDisciplineArticle = {
 
 const featuredYaochiBirthdayMorningArticle = {
   ...yaochiBirthdayMorningArticle,
-  updatedAt: "2026-08-29T13:11:00.000Z"
+  updatedAt: "2026-08-29T13:40:00.000Z"
 };
 
 const ghostGateAlwaysOpenEnhancedArticle = (() => {

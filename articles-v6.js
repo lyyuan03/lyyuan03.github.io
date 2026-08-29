@@ -81,8 +81,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260829-admin-authoritative-2",
-    "./articles-core-20260810-v6.js?v=20260829-admin-authoritative-2&retry=1"
+    "./articles-core-20260810-v6.js?v=20260829-yaochi-draft-3",
+    "./articles-core-20260810-v6.js?v=20260829-yaochi-draft-3&retry=1"
   ];
   let lastError = null;
 
