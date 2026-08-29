@@ -1,11 +1,11 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-full-chapter-images-recovery-1";
+import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-full-chapter-images-recovery-2";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const ARTICLE_SLUG = "yuanshen-awakening-old-manuscript";
 const PAID_MARKER = "<!-- paid-only -->";
-const REVISION = "20260829-full-chapter-images-recovery-1";
+const REVISION = "20260829-full-chapter-images-recovery-2";
 
 function splitRestoredContent(value = "") {
   const text = String(value || "").trim();
