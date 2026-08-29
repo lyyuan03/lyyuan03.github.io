@@ -14,7 +14,7 @@ import { yuanshenDestinyArchetypeArticle } from "./article-yuanshen-destiny-arch
 import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-years.js?v=20260810-complete-ending-1&paid-private=20260824-article-system-repair-1";
 import { dragonChantYoutubeAwakeningArticle } from "./article-dragon-chant-youtube-awakening.js?v=20260826-paid-1&paid-private=20260824-article-system-repair-1";
 import { yuanqinDebtHeartArticle } from "./article-yuanqin-debt-heart.js?v=20260828-clean-text-2&paid-private=20260824-article-system-repair-1";
-import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-base64-clean-1";
+import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-full-chapter-recovery-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
