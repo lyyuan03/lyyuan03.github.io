@@ -5,6 +5,9 @@ const ARTICLE_COLLECTION = "articles";
 const PAID_COLLECTION = "paidArticleBodies";
 const suspiciousPattern = /data:image|base64,/i;
 const base64MarkdownPattern = /!\[[^\]]*\]\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi;
+const orphanBase64Pattern = /\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi;
+const bareBase64Pattern = /data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+/gi;
+const pendingImageMarker = "[圖片待重新上傳]";
 
 let results = [];
 let busy = false;
@@ -12,10 +15,18 @@ let busy = false;
 function cleanContent(value) {
   const source = String(value || "");
   let removed = 0;
-  const cleaned = source.replace(base64MarkdownPattern, function () {
+  const markRemoved = function () {
     removed += 1;
-    return "";
-  }).replace(/[ \t]+\n/g, "\n").replace(/\n[ \t]*\n[ \t]*\n+/g, "\n\n").trim();
+    return "\n\n" + pendingImageMarker + "\n\n";
+  };
+  let cleaned = source.replace(base64MarkdownPattern, markRemoved);
+  cleaned = cleaned.replace(orphanBase64Pattern, markRemoved);
+  cleaned = cleaned.replace(bareBase64Pattern, markRemoved);
+  cleaned = cleaned
+    .replace(/\\n\\n(?=\s*\[圖片待重新上傳\])/g, "\n\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]*\n[ \t]*\n+/g, "\n\n")
+    .trim();
   return { cleaned: cleaned, removed: removed };
 }
 
