@@ -205,15 +205,28 @@ async function hydratePaidBody() {
   if (!articleId || !currentUser?.email) return;
   const view = paidView();
   if (!view) return;
-  if (view.querySelector("[data-paid-private-body]")) {
-    view.dataset.paidBodyState = "unlocked";
-    return;
-  }
 
   const metadata = await paidMetadata() || {};
   const viewLooksPaid = view.dataset.articleAccess === "paid"
     || Boolean(view.querySelector(".article-paid-gate, [data-paid-gate-restored], .paid-lock-zone"));
-  if (metadata.accessType !== "paid" && metadata.privatePaidContent !== true && !viewLooksPaid) return;
+  const stillPaid = metadata.accessType === "paid" || metadata.privatePaidContent === true || viewLooksPaid;
+
+  if (!stillPaid) {
+    if (paidBodyUnsubscribe) {
+      paidBodyUnsubscribe();
+      paidBodyUnsubscribe = null;
+    }
+    view.querySelector("[data-paid-private-body]")?.remove();
+    view.dataset.paidBodyState = "";
+    view.dataset.paidSecureAccess = "";
+    return;
+  }
+
+  if (view.querySelector("[data-paid-private-body]")) {
+    view.dataset.paidBodyState = "unlocked";
+    ensurePaidBodyRealtimeSync();
+    return;
+  }
 
   const serial = ++requestSerial;
   view.dataset.paidBodyState = "loading";
@@ -300,7 +313,12 @@ onAuthStateChanged(auth, (user) => {
 });
 
 window.addEventListener("pageshow", scheduleHydrate);
-document.addEventListener("lyyuan:article-rendered", scheduleHydrate);
+document.addEventListener("lyyuan:article-rendered", () => {
+  // 文章本體更新後重新讀取 accessType / paidContentVersion，
+  // 避免沿用舊 metadata 造成前台仍顯示上一版狀態。
+  metadataCache = null;
+  scheduleHydrate();
+});
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") scheduleHydrate();
 });
