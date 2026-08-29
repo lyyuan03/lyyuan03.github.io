@@ -1,7 +1,7 @@
 import { auth, db } from "./firebase-config.js";
 import { resolveMemberAccess } from "./member-access-resolver.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const articleId = new URLSearchParams(location.search).get("id") || "";
 const root = document.getElementById("article-root");
@@ -11,6 +11,7 @@ let metadataCache = null;
 let hydrateScheduled = false;
 let hydrateInFlight = false;
 let hydratePending = false;
+let paidBodyUnsubscribe = null;
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -22,12 +23,23 @@ function escapeHtml(value = "") {
   }[char]));
 }
 
+function sanitizeUnsafePaidContent(value = "") {
+  return String(value || "")
+    .replace(/!\[[^\]]*\]\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi, "")
+    .replace(/\(\s*data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+\s*\)/gi, "")
+    .replace(/data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n\t ]+/gi, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function renderInline(value = "") {
-  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1">');
+  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (_, alt, src) {
+    return /^data:image/i.test(src) ? "" : '<img src="' + src + '" alt="' + alt + '">';
+  });
 }
 
 function renderContent(value = "") {
-  return String(value || "")
+  return sanitizeUnsafePaidContent(value)
     .split(/\n{2,}/)
     .map((block) => {
       const trimmed = block.trim();
@@ -97,17 +109,35 @@ function refreshToc(view) {
   }
 }
 
-function insertPrivateBody(view, content, version) {
-  if (view.querySelector("[data-paid-private-body]")) {
+function insertPrivateBody(view, content, version, contentHash = "") {
+  const normalizedContent = String(content || "").trim();
+  if (!normalizedContent) return false;
+
+  const existing = view.querySelector("[data-paid-private-body]");
+  if (existing) {
+    const nextVersion = String(version || 1);
+    const nextHash = String(contentHash || "");
+    const changed = existing.dataset.paidContentVersion !== nextVersion
+      || (nextHash && existing.dataset.paidContentHash !== nextHash);
+
+    if (changed) {
+      existing.innerHTML = renderContent(normalizedContent);
+      existing.dataset.paidContentVersion = nextVersion;
+      existing.dataset.paidContentHash = nextHash;
+      refreshToc(view);
+      document.dispatchEvent(new CustomEvent("lyyuan:paid-article-loaded", {
+        detail: { articleId, contentVersion: Number(version || 1) }
+      }));
+    }
     view.dataset.paidBodyState = "unlocked";
     return true;
   }
-  const normalizedContent = String(content || "").trim();
-  if (!normalizedContent) return false;
+
   const privateBody = document.createElement("div");
   privateBody.className = "article-body paid-private-body";
   privateBody.dataset.paidPrivateBody = "true";
   privateBody.dataset.paidContentVersion = String(version || 1);
+  privateBody.dataset.paidContentHash = String(contentHash || "");
   privateBody.innerHTML = renderContent(normalizedContent);
 
   view.querySelectorAll(".article-paid-gate, [data-paid-gate-restored]").forEach((gate) => gate.remove());
@@ -131,6 +161,27 @@ function insertPrivateBody(view, content, version) {
     detail: { articleId, contentVersion: Number(version || 1) }
   }));
   return true;
+}
+
+function ensurePaidBodyRealtimeSync() {
+  if (paidBodyUnsubscribe || !articleId || !currentUser?.email) return;
+
+  paidBodyUnsubscribe = onSnapshot(doc(db, "paidArticleBodies", articleId), (snapshot) => {
+    if (!snapshot.exists()) return;
+    const view = paidView();
+    if (!view || !view.isConnected) return;
+    const body = snapshot.data() || {};
+    const content = String(body.content || "").trim();
+    if (!content) return;
+    insertPrivateBody(
+      view,
+      content,
+      body.contentVersion || 1,
+      body.contentHash || ""
+    );
+  }, (error) => {
+    console.warn("付費文章即時正文同步暫時無法使用。", error);
+  });
 }
 
 async function hydratePaidBody() {
@@ -168,7 +219,13 @@ async function hydratePaidBody() {
     const body = snapshot.data() || {};
     const content = String(body.content || "").trim();
     if (!content) throw new Error("EMPTY_PAID_BODY");
-    insertPrivateBody(view, content, body.contentVersion || metadata.paidContentVersion || 1);
+    insertPrivateBody(
+      view,
+      content,
+      body.contentVersion || metadata.paidContentVersion || 1,
+      body.contentHash || metadata.paidContentHash || ""
+    );
+    ensurePaidBodyRealtimeSync();
   } catch (error) {
     if (serial !== requestSerial || !view.isConnected) return;
     const code = String(error?.code || "");
@@ -216,6 +273,10 @@ if (root && articleId) {
 }
 
 onAuthStateChanged(auth, (user) => {
+  if (paidBodyUnsubscribe) {
+    paidBodyUnsubscribe();
+    paidBodyUnsubscribe = null;
+  }
   currentUser = user;
   requestSerial += 1;
   scheduleHydrate();
