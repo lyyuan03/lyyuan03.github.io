@@ -4,7 +4,7 @@ import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/fi
 
 const ARTICLE_ID = "yuanshen-awakening-old-manuscript";
 const PAID_MARKER = "<!-- paid-only -->";
-const RECOVERY_REVISION = "20260829-preserve-backend-edits-1";
+const RECOVERY_REVISION = "20260829-restore-missing-user-paragraphs-2";
 const HISTORY_SOURCE =
   "https://raw.githubusercontent.com/lyyuan03/lyyuan03.github.io/5269e63adb24a3a17a82d9409ffeaba38e22122f/article-yuanshen-awakening-old-manuscript.js";
 
@@ -40,6 +40,50 @@ function splitPaidContent(value = "") {
     publicContent: text.slice(0, index).trim(),
     privateContent: text.slice(index + PAID_MARKER.length).trim()
   };
+}
+
+const USER_MISSING_BLOCK_ONE = `也因為這件事，讓我更加確定了一個觀念：**通靈，終究抵不過法律。**
+
+嘴上說得再玄、講得再神，鬼神之事說得天花亂墜，都不代表一個人可以凌駕現實世界的規則。當事情真正走進法律、證據與責任的範圍裡，所有無法被證明的神通與說法，都必須退到一旁。
+
+因為人活在人間，就必須面對人間的法則。`;
+
+const USER_MISSING_BLOCK_TWO = `雖然他後來沉默了，但他的老師依然持續在網路上關注我的文章，甚至試圖以匿名的方式，影射、批判我的教導與觀點。
+
+只是到了那個時候，這些事情對我而言，早已沒有什麼殺傷力了。
+
+你沒有指名道姓，我也不需要對號入座；你有你的立場，我有我的觀點。再多的影射與暗示，如果始終只能躲在匿名的背後，其實也沒有什麼值得我回應的。
+
+所以後來，我選擇不再理會。
+
+不是因為我不知道，而是因為我知道，卻已經不覺得有回應的必要。`;
+
+function restoreKnownUserParagraphs(value = "") {
+  let text = String(value || "").trim();
+
+  if (!text.includes("通靈，終究抵不過法律")) {
+    const anchor = "後來，對方就沒有再來了。";
+    if (text.includes(anchor)) {
+      text = text.replace(
+        anchor,
+        anchor + "\n\n" + USER_MISSING_BLOCK_ONE
+      );
+    }
+  }
+
+  if (!text.includes("雖然他後來沉默了，但他的老師依然持續在網路上關注我的文章")) {
+    const heading = "## 母娘後來給我的提醒";
+    if (text.includes(heading)) {
+      text = text.replace(
+        heading,
+        USER_MISSING_BLOCK_TWO + "\n\n" + heading
+      );
+    } else {
+      text = text + "\n\n" + USER_MISSING_BLOCK_TWO;
+    }
+  }
+
+  return text.replace(/\n{3,}/g, "\n\n").trim();
 }
 
 function decodeHistoricalTemplate(rawSource = "") {
@@ -126,10 +170,11 @@ async function recoverManuscript() {
 
   // 私有正文優先保留 Firestore 現有版本，因為這裡最可能包含使用者後來在後台做的人工修訂。
   // 只有私有正文真的不存在時，才從 GitHub 安全分離前的歷史版本補回。
-  const privateContent =
+  const privateContent = restoreKnownUserParagraphs(
     currentPrivateClean.text.length >= 500
       ? currentPrivateClean.text
-      : history.privateContent;
+      : history.privateContent
+  );
 
   if (!privateContent) throw new Error("PRIVATE_BODY_RECOVERY_FAILED");
 
