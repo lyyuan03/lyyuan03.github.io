@@ -179,22 +179,20 @@ export function recommendedBookForArticle(article = {}) {
   const explicitTitle = String(article.bookTitle || "").trim();
   const knownTitleKey = knownBookKeyFromTitle(explicitTitle);
   const mappedArticleKey = recommendedBookByArticle[articleKey(article)] || "";
-  const key = mappedArticleKey
-    || knownTitleKey
+  const key = knownTitleKey
+    || mappedArticleKey
     || recommendedBookByCategory[article.category]
     || "yuanshenAwakening";
   const fallback = recommendedBookCatalog[key] || recommendedBookCatalog.yuanshenAwakening;
-  const hasCustomCover = Boolean(String(article.bookCoverImage || "").trim());
-  // 已核對的文章對應優先於舊 Firestore 欄位，避免歷史錯誤連結覆蓋正確書目。
-  const mayUseExplicitText = hasCustomCover
-    || (!mappedArticleKey && (!explicitTitle || Boolean(knownTitleKey)));
 
+  // Firestore 後台是文章書目欄位的唯一權威來源；
+  // 後台有填值就直接使用，只有空白欄位才採用既有預設。
   return {
     ...fallback,
-    title: mayUseExplicitText && explicitTitle ? explicitTitle : fallback.title,
-    author: mayUseExplicitText && article.bookAuthor ? article.bookAuthor : fallback.author,
-    publisher: mayUseExplicitText && article.bookPublisher ? article.bookPublisher : fallback.publisher,
-    purchaseUrl: mayUseExplicitText && article.bookPurchaseUrl ? article.bookPurchaseUrl : fallback.purchaseUrl,
-    coverImage: hasCustomCover ? article.bookCoverImage : fallback.coverImage
+    title: explicitTitle || fallback.title,
+    author: String(article.bookAuthor || "").trim() || fallback.author,
+    publisher: String(article.bookPublisher || "").trim() || fallback.publisher,
+    purchaseUrl: String(article.bookPurchaseUrl || "").trim() || fallback.purchaseUrl,
+    coverImage: String(article.bookCoverImage || "").trim() || fallback.coverImage
   };
 }
