@@ -161,7 +161,9 @@ async function hydrateEditorPaidBody() {
     const privateContent = String(snapshot.data()?.content || "").trim();
     if (!privateContent) return;
     contentField.value = `${publicContent}\n\n${PAID_MARKER}\n\n${privateContent}`;
-    contentField.dispatchEvent(new Event("input", { bubbles: true }));
+    // 這是從 Firestore 載入既有正文，不是使用者修改。
+    // 不派送 input 事件，避免重新整理後被誤標成「內容已修改，尚未儲存」。
+    window.articleInlineImageAdmin?.refresh?.();
   } catch (error) {
     console.error("後台付費文章私有正文載入失敗。", error);
     showToast("文章試閱內容已載入，但私有正文暫時無法讀取，請先不要覆寫儲存。", "error");
