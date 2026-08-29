@@ -486,16 +486,26 @@ async function syncRevisedStaticArticles(snapshot) {
 }
 
 async function importMissingStaticDrafts(snapshot) {
-  const existingIds = new Set(snapshot.docs.map((item) => item.id));
+  const existingKeys = new Set();
+  snapshot.docs.forEach((item) => {
+    existingKeys.add(item.id);
+    const data = item.data() || {};
+    if (data.slug) existingKeys.add(String(data.slug));
+  });
+
   let didImport = false;
   for (const article of staticArticles) {
-    if (article.status !== "draft" || !article.id || existingIds.has(article.id)) continue;
+    const staticKeys = [article.id, article.slug].filter(Boolean).map(String);
+    const alreadyImported = staticKeys.some((key) => existingKeys.has(key));
+    if (article.status !== "draft" || !article.id || alreadyImported) continue;
+
     const revision = `draft-auto-import:${article.updatedAt || "1"}`;
     const payload = staticArticlePayload(article, revision);
     payload.createdAt = serverTimestamp();
     payload.importedFromStaticDraft = true;
     await setDoc(doc(db, "articles", article.id), payload, { merge: true });
-    existingIds.add(article.id);
+
+    staticKeys.forEach((key) => existingKeys.add(key));
     didImport = true;
   }
   return didImport;
