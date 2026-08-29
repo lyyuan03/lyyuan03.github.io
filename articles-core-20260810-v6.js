@@ -2,7 +2,7 @@ import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260829-base64-clean-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -119,6 +119,9 @@ let currentUser = null;
 let currentMemberAccess = null;
 let currentSponsorAccess = null;
 let lastAdminPreviewState = false;
+let activeArticleUnsubscribe = null;
+let activeArticleWatchDocId = "";
+let activeArticleWatchUpdatedAt = 0;
 let visibleArticleCount = window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
 
 function adminPreviewEnabled() {
@@ -841,6 +844,42 @@ function renderArticle(article) {
   }));
 }
 
+function watchActiveFirestoreArticle(article) {
+  const docId = article?.__articleSource === "firestore"
+    ? String(article.__firestoreId || article.id || "")
+    : "";
+
+  if (!activeId || !docId) {
+    if (activeArticleUnsubscribe) activeArticleUnsubscribe();
+    activeArticleUnsubscribe = null;
+    activeArticleWatchDocId = "";
+    activeArticleWatchUpdatedAt = 0;
+    return;
+  }
+
+  if (activeArticleWatchDocId === docId && activeArticleUnsubscribe) return;
+
+  if (activeArticleUnsubscribe) activeArticleUnsubscribe();
+  activeArticleWatchDocId = docId;
+  activeArticleWatchUpdatedAt = articleTime(article.updatedAt);
+
+  activeArticleUnsubscribe = onSnapshot(doc(db, "articles", docId), (snapshot) => {
+    if (!snapshot.exists()) return;
+    const next = snapshot.data() || {};
+    const nextUpdatedAt = articleTime(next.updatedAt);
+
+    // 初次監聽不重複載入；後台每次儲存都會更新 updatedAt，
+    // 一旦版本改變，已開啟的前台文章立即重新讀取 Firestore。
+    if (!nextUpdatedAt || nextUpdatedAt === activeArticleWatchUpdatedAt) return;
+    activeArticleWatchUpdatedAt = nextUpdatedAt;
+    void loadArticles().catch((error) => {
+      console.warn("前台文章即時同步失敗，保留目前顯示內容。", error);
+    });
+  }, (error) => {
+    console.warn("前台文章即時監聽暫時無法使用。", error);
+  });
+}
+
 function renderCurrentView() {
   const isDetail = Boolean(activeId);
   document.body.classList.toggle("is-article-detail", isDetail);
@@ -908,7 +947,7 @@ async function loadArticles() {
   }
   if (loadSerial !== articlesLoadSerial) return;
   const firestoreArticles = articlesResult.value.docs
-    .map((item) => ({ id: item.id, ...item.data(), __articleSource: "firestore" }))
+    .map((item) => ({ id: item.id, ...item.data(), __articleSource: "firestore", __firestoreId: item.id }))
     .filter((article) => article.hidden !== true && article.systemRecord !== true);
   const indexedStatuses = statusResult.status === "fulfilled" && statusResult.value.exists() ? statusResult.value.data().statuses || {} : {};
   const statusById = new Map(Object.entries(indexedStatuses));
@@ -985,6 +1024,10 @@ async function loadArticles() {
   if (loadSerial !== articlesLoadSerial) return;
   loadedArticles = hydratedArticles.sort(sortPublished);
   articlesLoadCompleted = true;
+  const activeArticleForWatch = activeId
+    ? loadedArticles.find((item) => item.id === activeId || item.slug === activeId)
+    : null;
+  watchActiveFirestoreArticle(activeArticleForWatch);
   renderTabs();
   renderCurrentView();
   void loadArticleMetrics().then(() => loadedArticles.forEach((article) => updateMetricSummary(articleKey(article))));
