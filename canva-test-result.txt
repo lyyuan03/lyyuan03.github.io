@@ -1,0 +1,2 @@
+exact http=200 bytes=11368 info=JPEG image data, Exif standard: [TIFF image data, little-endian, direntries=6, orientation=upper-left, xresolution=86, yresolution=94, resolutionunit=2], baseline, precision 8, 199x112, components 3
+large http=403 bytes=17 info=ASCII text, with no line terminators
