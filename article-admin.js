@@ -1,5 +1,5 @@
-import "./article-admin-core.js?v=20260829-firestore-single-source-1";
-import "./article-admin-paid-security.js?v=20260829-core-save-1";
+import "./article-admin-core.js?v=20260829-firestore-single-source-2";
+import "./article-admin-paid-security.js?v=20260829-core-save-2";
 import "./article-admin-secure-import.js?v=20260828-yuanqin-secure-import-1";
 import { db } from "./firebase-config.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
