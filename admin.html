@@ -40,6 +40,7 @@
       <button id="export-articles" class="btn" type="button">匯出全部文章</button>
       <span id="export-status" class="status" aria-live="polite"></span>
       <a class="btn" href="#activity-management">活動管理</a>
+      <a class="btn" href="#base64-cleanup-panel">Base64 檢查</a>
       <a class="btn" href="#sponsor-members">贊助會員</a>
       <a class="btn" href="#wellness-members">養生療癒會員</a>
       <a class="btn" href="#member-video-management">會員影片</a>
@@ -165,6 +166,26 @@
           <button id="delete-article" class="btn danger" type="button">刪除文章</button>
         </div>
       </form>
+    </section>
+
+    <section id="base64-cleanup-panel" class="panel membership-panel">
+      <div class="panel-head">
+        <h2>文章 Base64 異常檢查</h2>
+        <span id="base64-cleanup-status" class="status" role="status" aria-live="polite">尚未掃描</span>
+      </div>
+      <div class="membership-layout" style="grid-template-columns:1fr">
+        <div class="membership-card">
+          <h3>掃描與清理</h3>
+          <p class="membership-help">掃描 Firestore 的 articles.content 與 paidArticleBodies.content。掃描只會列出異常與清理後預覽，不會修改資料；只有確認後才會寫回。</p>
+          <div class="top-actions" style="margin:14px 0">
+            <button id="base64-scan-button" class="btn primary" type="button">掃描 Base64 異常文章</button>
+            <button id="base64-apply-button" class="btn danger" type="button" disabled>確認並清理選取文章</button>
+          </div>
+          <div id="base64-cleanup-results" class="membership-list">
+            <div class="empty">按下掃描後，這裡會列出所有含 data:image 或 base64, 的正文。</div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="activity-management" class="panel activity-panel">
@@ -387,6 +408,7 @@
 <script type="module" src="article-admin.js?v=20260829-yuanshen-title-backend-sync-1"></script>
 <script type="module" src="article-thumbnail-admin.js?v=20260828-yuanqin-final-article-images-6"></script>
 <script type="module" src="article-inline-image-admin.js?v=20260816-six-inline-images-1"></script>
+<script type="module" src="article-base64-cleanup-admin.js?v=20260829-base64-safety-1"></script>
 <script type="module" src="membership-admin.js?v=20260808-renewal-options-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20260804-article-benefit-1"></script>
 <script type="module" src="member-video-admin.js?v=20260805-cover-direct-1"></script>
