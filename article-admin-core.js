@@ -15,7 +15,6 @@ const staticArticleSyncRevisions = new Map([
   ["reading-you-can-not-fear-death", "20260802-backend-sync-1"],
   ["2058-future-person-prophecy", "20260816-six-images-1"],
   ["yuanqin-debt-heart", "20260828-final-article-images-backend-sync-7"],
-  ["yuanshen-awakening-old-manuscript", "20260829-base64-clean-backend-sync-1"]
 ]);
 const staticImageSyncRevisions = new Map([
   ["2058-future-person-prophecy", "20260813-2058-inline-slots-4"],
