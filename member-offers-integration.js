@@ -29,11 +29,15 @@ function injectStyles() {
     padding:27px 30px;
     isolation:isolate;
     background:
-      radial-gradient(circle at 84% 18%,rgba(165,130,84,.10),transparent 31%),
-      linear-gradient(135deg,rgba(239,225,201,.93),rgba(255,252,247,.96))!important;
-    border-color:rgba(165,130,84,.42)!important;
-    box-shadow:0 16px 38px rgba(89,79,71,.11),0 0 0 1px rgba(255,255,255,.42) inset;
-    animation:memberOfferEntryReveal .9s cubic-bezier(.16,.78,.24,1) both;
+      radial-gradient(circle at 84% 18%,rgba(165,130,84,.24),transparent 34%),
+      linear-gradient(135deg,#E8D0A3 0%,#FFF7E8 54%,#DCC08D 100%)!important;
+    border:1px solid rgba(139,104,63,.78)!important;
+    box-shadow:0 18px 44px rgba(89,79,71,.18),0 0 0 1px rgba(255,255,255,.62) inset;
+    opacity:1!important;
+    visibility:visible!important;
+    filter:none!important;
+    transform:none!important;
+    animation:none!important;
     transition:top .25s ease,box-shadow .35s ease,border-color .35s ease;
   }
   .member-offer-entry:hover{
@@ -134,7 +138,7 @@ function injectStyles() {
     min-height:42px;
     padding:9px 18px;
     border:1px solid rgba(139,104,63,.48);
-    background:#A58254;
+    background:linear-gradient(135deg,#74512F,#A58254);
     color:#FFFDF8;
     white-space:nowrap;
     font-size:12px;
@@ -156,7 +160,7 @@ function injectStyles() {
     height:118px;
     transform:translateY(-50%);
     background:url('/assets/footer-logo-gold.svg?v=20260721-1') center/contain no-repeat;
-    opacity:.045;
+    opacity:.09;
     pointer-events:none;
     filter:sepia(.12);
   }
