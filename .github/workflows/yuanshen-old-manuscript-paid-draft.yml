@@ -20,7 +20,7 @@ jobs:
       ARTICLE_ID: yuanshen-awakening-old-manuscript
       ARTICLE_FILE: article-yuanshen-awakening-old-manuscript.js
       STATIC_FILE: static-articles.js
-      TITLE: 一段被拿掉的舊稿
+      TITLE: 《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄
 
     steps:
       - name: Checkout current main
@@ -121,7 +121,7 @@ jobs:
           fi
           test "$(jq -r '.fields.contentHash.stringValue' /tmp/private-response.json)" = "$HASH"
 
-          jq -n             --rawfile content /tmp/public-content.txt             --arg hash "$HASH"             --arg version "$VERSION"             --arg now "$NOW_ISO"             '{fields:{title:{stringValue:"一段被拿掉的舊稿"},slug:{stringValue:"yuanshen-awakening-old-manuscript"},category:{stringValue:"spiritual"},displayCategory:{stringValue:"靈修"},series:{stringValue:"靈修辨證"},status:{stringValue:"draft"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},paidContentHash:{stringValue:$hash},paidContentVersion:{integerValue:$version},coverImage:{stringValue:"https://wsrv.nl/?w=1200&output=webp&q=90&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},excerpt:{stringValue:"一本剛出版的新書，讓我重新想起二十多年前一段曾被出版社拿掉的舊稿。多年後再看，那件事留下的影響，早已不是當年的爭議本身。"},readingLevel:{stringValue:"深度"},bookTitle:{stringValue:"我在人間的元神覺醒"},bookAuthor:{stringValue:"宇色 Osel"},bookPublisher:{stringValue:"柿子文化"},bookPurchaseUrl:{stringValue:"https://www.books.com.tw/products/0011060075?sloc=main"},bookCoverImage:{stringValue:"https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},topics:{arrayValue:{values:[{stringValue:"元神覺醒"},{stringValue:"靈修辨識"},{stringValue:"自我認識"}]}},updatedAt:{timestampValue:$now}}}'             > /tmp/article-write.json
+          jq -n             --rawfile content /tmp/public-content.txt             --arg hash "$HASH"             --arg version "$VERSION"             --arg now "$NOW_ISO"             '{fields:{title:{stringValue:"《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄"},slug:{stringValue:"yuanshen-awakening-old-manuscript"},category:{stringValue:"spiritual"},displayCategory:{stringValue:"靈修"},series:{stringValue:"靈修辨證"},status:{stringValue:"draft"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},paidContentHash:{stringValue:$hash},paidContentVersion:{integerValue:$version},coverImage:{stringValue:"https://wsrv.nl/?w=1200&output=webp&q=90&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},excerpt:{stringValue:"一本剛出版的新書，讓我重新想起二十多年前一段曾被出版社拿掉的舊稿。多年後再看，那件事留下的影響，早已不是當年的爭議本身。"},readingLevel:{stringValue:"深度"},bookTitle:{stringValue:"我在人間的元神覺醒"},bookAuthor:{stringValue:"宇色 Osel"},bookPublisher:{stringValue:"柿子文化"},bookPurchaseUrl:{stringValue:"https://www.books.com.tw/products/0011060075?sloc=main"},bookCoverImage:{stringValue:"https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},topics:{arrayValue:{values:[{stringValue:"元神覺醒"},{stringValue:"靈修辨識"},{stringValue:"自我認識"}]}},updatedAt:{timestampValue:$now}}}'             > /tmp/article-write.json
 
           ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID"
           HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-write.json "$ARTICLE_URL")"
