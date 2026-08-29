@@ -189,6 +189,7 @@ function sanitizeUnsafeArticleContent(value = "") {
     .replace(bareDataImage, "")
     .replace(/\\n\\n(?=\s*(?:\[圖片待重新上傳\]|$))/g, "\n\n")
     .replace(/(^|\n)\s*\[圖片待重新上傳\]\s*(?=\n|$)/g, "$1")
+    .replace(/(^|\n)\s*!\[\]\s*(?=\n|$)/g, "$1")
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n");
   return content;
