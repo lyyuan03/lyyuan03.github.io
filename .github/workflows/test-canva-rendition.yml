@@ -25,17 +25,8 @@ jobs:
             if [ "$item" = exact ]; then url="$EXACT"; else url="$LARGE"; fi
             code="$(curl -L -sS -o "/tmp/$item.jpg" -w '%{http_code}' "$url" || true)"
             bytes="$(wc -c < "/tmp/$item.jpg" 2>/dev/null || echo 0)"
-            echo "$item http=$code bytes=$bytes" >> canva-test-result.txt
-            python - "$item" >> canva-test-result.txt <<'PY'
-import sys
-from PIL import Image
-p=f"/tmp/{sys.argv[1]}.jpg"
-try:
-    im=Image.open(p)
-    print(f"{sys.argv[1]} size={im.size[0]}x{im.size[1]} mode={im.mode}")
-except Exception as e:
-    print(f"{sys.argv[1]} invalid={e}")
-PY
+            info="$(file -b "/tmp/$item.jpg" 2>/dev/null || true)"
+            echo "$item http=$code bytes=$bytes info=$info" >> canva-test-result.txt
           done
           rm -f .github/workflows/test-canva-rendition.yml
       - name: Commit result
