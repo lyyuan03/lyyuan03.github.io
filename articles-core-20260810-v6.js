@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { staticArticles } from "./static-articles.js?v=20260829-base64-clean-1";
-import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
+import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260829-admin-authoritative-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
