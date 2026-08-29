@@ -166,14 +166,36 @@ jobs:
           git rebase origin/main
           git push origin HEAD:main
 
-      - name: Verify already-sanitized draft
+      - name: Sync and verify already-sanitized draft metadata
         if: steps.split.outputs.state == 'already-sanitized'
         shell: bash
         run: |
           set -euo pipefail
           ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
           PRIVATE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/paidArticleBodies/$ARTICLE_ID"
           HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-existing.json --write-out '%{http_code}' --header "Authorization: Bearer $ACCESS_TOKEN" "$PRIVATE_URL")"
           test "$HTTP_STATUS" = "200"
-          test "$(jq -r '.fields.status.stringValue' /tmp/private-existing.json)" = "draft"
           test -n "$(jq -r '.fields.content.stringValue // empty' /tmp/private-existing.json)"
+
+          jq -n --arg title "$TITLE" --arg now "$NOW_ISO"             '{fields:{title:{stringValue:$title},status:{stringValue:"draft"},active:{booleanValue:true},updatedAt:{timestampValue:$now}}}'             > /tmp/private-meta.json
+          PRIVATE_PATCH_URL="$PRIVATE_URL?updateMask.fieldPaths=title&updateMask.fieldPaths=status&updateMask.fieldPaths=active&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-meta-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/private-meta.json "$PRIVATE_PATCH_URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/private-meta-response.json
+            exit 1
+          fi
+          test "$(jq -r '.fields.title.stringValue' /tmp/private-meta-response.json)" = "$TITLE"
+          test "$(jq -r '.fields.status.stringValue' /tmp/private-meta-response.json)" = "draft"
+
+          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID"
+          jq -n --rawfile content /tmp/public-content.txt --arg title "$TITLE" --arg now "$NOW_ISO"             '{fields:{title:{stringValue:$title},slug:{stringValue:"yuanshen-awakening-old-manuscript"},category:{stringValue:"spiritual"},displayCategory:{stringValue:"靈修"},series:{stringValue:"靈修辨證"},status:{stringValue:"draft"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},coverImage:{stringValue:"https://wsrv.nl/?w=1200&output=webp&q=90&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},excerpt:{stringValue:"一本剛出版的新書，讓我重新想起二十多年前一段曾被出版社拿掉的舊稿。多年後再看，那件事留下的影響，早已不是當年的爭議本身。"},readingLevel:{stringValue:"深度"},bookTitle:{stringValue:"我在人間的元神覺醒"},bookAuthor:{stringValue:"宇色 Osel"},bookPublisher:{stringValue:"柿子文化"},bookPurchaseUrl:{stringValue:"https://www.books.com.tw/products/0011060075?sloc=main"},bookCoverImage:{stringValue:"https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},topics:{arrayValue:{values:[{stringValue:"元神覺醒"},{stringValue:"靈修辨識"},{stringValue:"自我認識"}]}},updatedAt:{timestampValue:$now}}}'             > /tmp/article-meta.json
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-meta-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-meta.json "$ARTICLE_URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/article-meta-response.json
+            exit 1
+          fi
+          test "$(jq -r '.fields.title.stringValue' /tmp/article-meta-response.json)" = "$TITLE"
+          test "$(jq -r '.fields.status.stringValue' /tmp/article-meta-response.json)" = "draft"
+          test "$(jq -r '.fields.accessType.stringValue' /tmp/article-meta-response.json)" = "paid"
