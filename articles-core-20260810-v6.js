@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260828-yuanqin-clean-text-2";
+import { staticArticles } from "./static-articles.js?v=20260829-yuanshen-title-preview-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260813-fixed-reading-footer-3";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -946,7 +946,30 @@ async function loadArticles() {
       && article.id !== "__article-thumbnail-settings";
   });
   const normalizedArticles = merged.map((article) => {
-    // 管理者預覽草稿時，一律以後台實際儲存內容為準，不套用公開文章的舊版靜態覆寫。
+    // 管理者預覽這篇贊助草稿時，標題與書目等展示資訊以最新 GitHub 草稿為準；
+    // 付費正文仍由 Firestore 私有資料載入，避免舊 Firestore 標題覆蓋最新草稿。
+    if (adminDraftPreview && article.status === "draft" && article.id === "yuanshen-awakening-old-manuscript") {
+      const staticDraft = staticArticles.find((item) => item.id === "yuanshen-awakening-old-manuscript");
+      if (staticDraft) {
+        return {
+          ...article,
+          title: staticDraft.title || article.title,
+          category: staticDraft.category || article.category,
+          displayCategory: staticDraft.displayCategory || article.displayCategory,
+          series: staticDraft.series || article.series,
+          excerpt: staticDraft.excerpt || article.excerpt,
+          coverImage: staticDraft.coverImage || article.coverImage,
+          bookTitle: staticDraft.bookTitle || article.bookTitle,
+          bookAuthor: staticDraft.bookAuthor || article.bookAuthor,
+          bookPublisher: staticDraft.bookPublisher || article.bookPublisher,
+          bookPurchaseUrl: staticDraft.bookPurchaseUrl || article.bookPurchaseUrl,
+          bookCoverImage: staticDraft.bookCoverImage || article.bookCoverImage,
+          accessType: "paid",
+          topics: Array.isArray(staticDraft.topics) ? staticDraft.topics : article.topics
+        };
+      }
+    }
+    // 其他管理者草稿仍一律以後台實際儲存內容為準。
     if (adminDraftPreview && article.status === "draft") return article;
     if (article.id === "yuanshen-destiny-archetype") {
       let fixedContent = String(article.content || "")
