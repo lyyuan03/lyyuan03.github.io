@@ -1,11 +1,11 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-full-chapter-images-recovery-2";
+import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260829-thirty-years-practice-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const ARTICLE_SLUG = "yuanshen-awakening-old-manuscript";
 const PAID_MARKER = "<!-- paid-only -->";
-const REVISION = "20260829-image-url-only-repair-1";
+const REVISION = "20260829-thirty-years-practice-1";
 const RAW_BASE = "https://raw.githubusercontent.com/lyyuan03/lyyuan03.github.io/ff0b24b28b9b77562beb9fd31d77e981d2b2b89e/assets/articles/yuanshen-awakening-old-manuscript";
 
 function splitRestoredContent(value = "") {
@@ -30,6 +30,24 @@ function repairImageUrls(value = "") {
     text = text.replace(relativePattern, absolute);
   }
   return text;
+}
+
+const PRACTICE_PARAGRAPH = `網路上的世界，本來就是真真假假、假假真真；其實人活在現實裡也是如此。看見的未必是全貌，聽見的也未必是真相。若一個人的心總是跟著外面的聲音起落，那麼別人的一句話，就足以把自己的心帶走。
+
+修行不是讓人變得沒有感覺。該在意的仍然會在意，該判斷的仍然要判斷；只是事情進到心裡之後，不會停留那麼久。看清楚，處理該處理的，剩下的就讓它過去。很多當下看似很大的風波，時間一拉長，也不過是生命裡的一道波瀾。
+
+真正困住人的，往往不是別人說了什麼，而是自己有多少東西非守不可：名聲、面子、輸贏、被肯定、被理解。愈在意這些，愈容易被外面的眼光牽著走。修行走得愈深，不是名利從此不存在，而是名利不能反過來牽動你的心。
+
+走在靈修這條路上，很多事情其實會看得更清楚。看得清，不代表每一件事都要出手；知道，也不代表每一句話都要回應。真正的功夫，不是證明自己從此不起波瀾，而是波瀾起來的時候，心仍然有自己的位置；事情過去之後，也有能力讓它過去。`;
+
+function insertPracticeParagraph(value = "") {
+  let text = String(value || "");
+  if (text.includes("網路上的世界，本來就是真真假假、假假真真")) return text;
+
+  const anchor = "不是因為我不知道，而是因為我知道，卻已經不覺得有回應的必要。";
+  if (!text.includes(anchor)) return text;
+
+  return text.replace(anchor, anchor + "\n\n" + PRACTICE_PARAGRAPH);
 }
 
 async function sha256(value = "") {
@@ -83,6 +101,7 @@ async function repairChapterImages() {
 
   publicContent = repairImageUrls(publicContent);
   privateContent = repairImageUrls(privateContent);
+  privateContent = insertPracticeParagraph(privateContent);
 
   const previousVersion = Math.max(
     0,
@@ -92,7 +111,7 @@ async function repairChapterImages() {
   const hash = await sha256(privateContent);
   const nextVersion = previousVersion + 1;
 
-  setStatus("正在修復五張原圖，現有文字不會被覆寫…", "saving");
+  setStatus("正在同步新增修行段落與五張原圖，現有文字不會被覆寫…", "saving");
 
   await setDoc(paidRef, {
     content: privateContent,
@@ -124,7 +143,7 @@ async function repairChapterImages() {
     throw new Error("IMAGE_URL_REPAIR_VERIFY_FAILED");
   }
 
-  setStatus("五張原圖已修復｜現有文字已保留", "success");
+  setStatus("新段落已加入｜五張原圖正常｜現有文字已保留", "success");
 
   if (sessionStorage.getItem("yuanshen-image-url-repair") !== REVISION) {
     sessionStorage.setItem("yuanshen-image-url-repair", REVISION);
