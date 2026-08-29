@@ -1,0 +1,67 @@
+name: Sync Yaochi Birthday Draft
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'article-2026-yaochi-birthday-morning.js'
+      - 'assets/articles/yaochi-birthday-morning/**'
+      - '.github/workflows/yaochi-birthday-draft.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sync-draft:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_ID: lyyuan03-membership
+      ARTICLE_ID: 2026-yaochi-birthday-morning
+      ARTICLE_FILE: article-2026-yaochi-birthday-morning.js
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Write draft to Firestore
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+          source=Path("article-2026-yaochi-birthday-morning.js").read_text(encoding="utf-8")
+          def field(name):
+              m=re.search(r'^  '+re.escape(name)+r': "([^"]*)"', source, re.M)
+              if not m: raise SystemExit("missing "+name)
+              return m.group(1)
+          m=re.search(r'  content: String\.raw`([\s\S]*)`\n};\s*$', source)
+          if not m: raise SystemExit("content not found")
+          content=m.group(1)
+          fields={
+            "title":{"stringValue":field("title")},
+            "slug":{"stringValue":field("slug")},
+            "category":{"stringValue":field("category")},
+            "displayCategory":{"stringValue":field("displayCategory")},
+            "series":{"stringValue":field("series")},
+            "status":{"stringValue":"draft"},
+            "accessType":{"stringValue":field("accessType")},
+            "content":{"stringValue":content},
+            "coverImage":{"stringValue":field("coverImage")},
+            "thumbnailImage":{"stringValue":field("thumbnailImage")},
+            "excerpt":{"stringValue":field("excerpt")},
+            "readingLevel":{"stringValue":field("readingLevel")},
+            "source":{"stringValue":"github-yaochi-draft-sync:20260829"},
+            "updatedAt":{"timestampValue":"2026-08-29T13:40:00Z"}
+          }
+          Path("/tmp/article.json").write_text(json.dumps({"fields":fields},ensure_ascii=False),encoding="utf-8")
+          PY
+          TOKEN="$(gcloud auth print-access-token)"
+          URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID"
+          STATUS="$(curl --silent --show-error --output /tmp/response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article.json "$URL")"
+          cat /tmp/response.json
+          test "$STATUS" -ge 200
+          test "$STATUS" -lt 300
+          test "$(jq -r '.fields.status.stringValue' /tmp/response.json)" = "draft"
