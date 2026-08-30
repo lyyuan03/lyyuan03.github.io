@@ -48,7 +48,7 @@ jobs:
               print(
                   f"{label}: chars={len(text)} blocks={len(blocks)} "
                   f"headings={len(re.findall(r'(?m)^#{1,6}\\s+', text))} "
-                  f"images={len(re.findall(r'!\\[', text))} "
+                  f"images={text.count('![')} "
                   f"markers={text.count('<!-- paid-only -->')} "
                   f"sha256={hashlib.sha256(text.encode()).hexdigest()[:16]}"
               )
