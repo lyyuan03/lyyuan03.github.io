@@ -9,7 +9,7 @@ on:
       - '.github/workflows/yuanshen-old-manuscript-paid-draft.yml'
       - '.github/deploy-triggers/yuanshen-old-manuscript-limited-reading.txt'
   schedule:
-    - cron: '0 2 1 9 *'
+    - cron: '0 14 30 8 *'
 
 permissions:
   contents: read
@@ -26,8 +26,8 @@ jobs:
       ARTICLE_ID: yuanshen-awakening-old-manuscript
       ARTICLE_FILE: article-yuanshen-awakening-old-manuscript.js
       PUBLISHED_AT: '2026-08-30T02:00:00.000Z'
-      EXPIRES_AT: '2026-09-01T02:00:00.000Z'
-      TARGET_DATE_UTC: '2026-09-01'
+      EXPIRES_AT: '2026-08-30T14:00:00.000Z'
+      TARGET_DATE_UTC: '2026-08-30'
 
     steps:
       - name: Checkout current main
@@ -51,7 +51,7 @@ jobs:
             echo "The limited reading window has ended; sponsor-only access will be enforced."
           else
             echo "mode=open" >> "$GITHUB_OUTPUT"
-            echo "The 48-hour limited reading window is active."
+            echo "The 12-hour limited reading window is active."
           fi
 
       - name: Prepare sanitized public preview
@@ -133,7 +133,7 @@ jobs:
             --arg published "$PUBLISHED_AT" \
             --arg expires "$EXPIRES_AT" \
             --arg now "$NOW_ISO" \
-            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"open"},content:{stringValue:$content},privatePaidContent:{booleanValue:false},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"48"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},promotionType:{stringValue:"book-launch"},updatedAt:{timestampValue:$now}}}' \
+            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"open"},content:{stringValue:$content},privatePaidContent:{booleanValue:false},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"12"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},promotionType:{stringValue:"book-launch"},updatedAt:{timestampValue:$now}}}' \
             > /tmp/article-open.json
 
           ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt"
@@ -158,7 +158,7 @@ jobs:
             --arg published "$PUBLISHED_AT" \
             --arg expires "$EXPIRES_AT" \
             --arg now "$NOW_ISO" \
-            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"48"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},limitedReadingCompletedAt:{timestampValue:$now},promotionType:{stringValue:"book-launch"},updatedAt:{timestampValue:$now}}}' \
+            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"12"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},limitedReadingCompletedAt:{timestampValue:$now},promotionType:{stringValue:"book-launch"},updatedAt:{timestampValue:$now}}}' \
             > /tmp/article-paid.json
 
           ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=limitedReadingCompletedAt&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt"
@@ -191,4 +191,4 @@ jobs:
 
       - name: Report final mode
         if: steps.mode.outputs.mode != 'noop'
-        run: echo "Article transition completed in ${{ steps.mode.outputs.mode }} mode; deadline is 2026-09-01 10:00 Asia/Taipei."
+        run: echo "Article transition completed in ${{ steps.mode.outputs.mode }} mode; deadline is 2026-08-30 22:00 Asia/Taipei."
