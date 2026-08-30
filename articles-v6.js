@@ -81,8 +81,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260829-reconciliation-images-2",
-    "./articles-core-20260810-v6.js?v=20260829-reconciliation-images-2&retry=1"
+    "./articles-core-20260810-v6.js?v=20260830-limited-reading-1",
+    "./articles-core-20260810-v6.js?v=20260830-limited-reading-1&retry=1"
   ];
   let lastError = null;
 

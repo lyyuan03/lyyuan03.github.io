@@ -1,4 +1,4 @@
-name: Yuanshen Old Manuscript Paid Draft Sync
+name: Yuanshen Old Manuscript Limited Reading
 
 on:
   workflow_dispatch:
@@ -6,196 +6,189 @@ on:
     branches:
       - main
     paths:
-      - 'article-yuanshen-awakening-old-manuscript.js'
       - '.github/workflows/yuanshen-old-manuscript-paid-draft.yml'
+      - '.github/deploy-triggers/yuanshen-old-manuscript-limited-reading.txt'
+  schedule:
+    - cron: '0 2 1 9 *'
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: yuanshen-old-manuscript-limited-reading
+  cancel-in-progress: false
 
 jobs:
-  sync-paid-draft:
+  transition:
     runs-on: ubuntu-latest
     env:
       PROJECT_ID: lyyuan03-membership
       ARTICLE_ID: yuanshen-awakening-old-manuscript
       ARTICLE_FILE: article-yuanshen-awakening-old-manuscript.js
-      STATIC_FILE: static-articles.js
-      TITLE: 《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄
+      PUBLISHED_AT: '2026-08-30T02:00:00.000Z'
+      EXPIRES_AT: '2026-09-01T02:00:00.000Z'
+      TARGET_DATE_UTC: '2026-09-01'
 
     steps:
       - name: Checkout current main
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Prepare sponsor draft split
-        id: split
+      - name: Resolve open or paid mode
+        id: mode
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" && "$(date -u +%F)" != "$TARGET_DATE_UTC" ]]; then
+            echo "mode=noop" >> "$GITHUB_OUTPUT"
+            echo "The one-time transition date has passed; scheduled run is a no-op."
+            exit 0
+          fi
+
+          now_epoch="$(date -u +%s)"
+          expires_epoch="$(date -u -d "$EXPIRES_AT" +%s)"
+          if (( now_epoch >= expires_epoch )); then
+            echo "mode=paid" >> "$GITHUB_OUTPUT"
+            echo "The limited reading window has ended; sponsor-only access will be enforced."
+          else
+            echo "mode=open" >> "$GITHUB_OUTPUT"
+            echo "The 48-hour limited reading window is active."
+          fi
+
+      - name: Prepare sanitized public preview
+        if: steps.mode.outputs.mode != 'noop'
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib, os, re
+          import os
 
-          path = Path(os.environ['ARTICLE_FILE'])
-          source = path.read_text(encoding='utf-8')
-          marker = '<!-- paid-only -->'
+          source = Path(os.environ['ARTICLE_FILE']).read_text(encoding='utf-8')
           prefix = '  content: `'
           start = source.find(prefix)
           end = source.rfind('`\n};')
           if start < 0 or end < 0 or end <= start:
               raise SystemExit('Article template literal not found.')
-          body_start = start + len(prefix)
-          body = source[body_start:end]
 
-          if marker not in body:
-              raise SystemExit('Paid marker missing.')
-          public, private = body.split(marker, 1)
-          public = public.strip()
-          private = private.strip()
+          body = source[start + len(prefix):end].strip()
+          marker = '<!-- paid-only -->'
+          if body.count(marker) != 1:
+              raise SystemExit('The public article source must contain exactly one paid marker.')
 
-          if not public:
-              raise SystemExit('Sponsor draft must keep a public preview before paid marker.')
+          public, leaked_private = body.split(marker, 1)
+          if leaked_private.strip():
+              raise SystemExit('Private sponsor content must not remain in the public GitHub source.')
+          if not public.strip():
+              raise SystemExit('The public preview is empty.')
 
-          if not private:
-              Path('/tmp/state').write_text('already-sanitized', encoding='utf-8')
-              Path('/tmp/public-content.txt').write_text(public + '\n\n' + marker, encoding='utf-8')
-              raise SystemExit(0)
-
-          digest = hashlib.sha256(private.encode('utf-8')).hexdigest()
-          safe = public + '\n\n' + marker
-          Path('/tmp/private-content.txt').write_text(private, encoding='utf-8')
-          Path('/tmp/public-content.txt').write_text(safe, encoding='utf-8')
-          Path('/tmp/content-hash.txt').write_text(digest, encoding='utf-8')
-          Path('/tmp/state').write_text('convert', encoding='utf-8')
-
-          clean = source[:body_start] + safe + source[end:]
-          clean = re.sub(r'  updatedAt: "[^"]+",', '  updatedAt: "2026-08-29T00:55:00.000Z",', clean, count=1)
-          Path('/tmp/sanitized-article.js').write_text(clean, encoding='utf-8')
+          Path('/tmp/public-preview.txt').write_text(public.strip() + '\n\n' + marker, encoding='utf-8')
           PY
-          echo "state=$(cat /tmp/state)" >> "$GITHUB_OUTPUT"
 
       - name: Authenticate to Google Cloud
+        if: steps.mode.outputs.mode != 'noop'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Set up Google Cloud SDK
+        if: steps.mode.outputs.mode != 'noop'
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Sync secure sponsor draft to Firestore
-        if: steps.split.outputs.state == 'convert'
+      - name: Load and verify secure sponsor body
+        if: steps.mode.outputs.mode != 'noop'
         shell: bash
         run: |
           set -euo pipefail
           ACCESS_TOKEN="$(gcloud auth print-access-token)"
-          NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          HASH="$(cat /tmp/content-hash.txt)"
           PRIVATE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/paidArticleBodies/$ARTICLE_ID"
-
-          CURRENT_STATUS="$(curl --silent --show-error --output /tmp/private-current.json --write-out '%{http_code}' --header "Authorization: Bearer $ACCESS_TOKEN" "$PRIVATE_URL")"
-          if [[ "$CURRENT_STATUS" == "200" ]]; then
-            PREVIOUS_HASH="$(jq -r '.fields.contentHash.stringValue // ""' /tmp/private-current.json)"
-            PREVIOUS_VERSION="$(jq -r '.fields.contentVersion.integerValue // "0"' /tmp/private-current.json)"
-          elif [[ "$CURRENT_STATUS" == "404" ]]; then
-            PREVIOUS_HASH=""
-            PREVIOUS_VERSION=0
-          else
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-current.json --write-out '%{http_code}' --header "Authorization: Bearer $ACCESS_TOKEN" "$PRIVATE_URL")"
+          if [[ "$HTTP_STATUS" != "200" ]]; then
             cat /tmp/private-current.json
             exit 1
           fi
+          jq -r '.fields.content.stringValue // ""' /tmp/private-current.json > /tmp/private-content.txt
+          test -s /tmp/private-content.txt
+          test "$(jq -r '.fields.active.booleanValue // false' /tmp/private-current.json)" = "true"
 
-          if [[ "$PREVIOUS_HASH" == "$HASH" && "$PREVIOUS_VERSION" -gt 0 ]]; then
-            VERSION="$PREVIOUS_VERSION"
-          else
-            VERSION=$((PREVIOUS_VERSION + 1))
-          fi
-
-          jq -n             --rawfile content /tmp/private-content.txt             --arg articleId "$ARTICLE_ID"             --arg title "$TITLE"             --arg hash "$HASH"             --arg version "$VERSION"             --arg now "$NOW_ISO"             '{fields:{articleId:{stringValue:$articleId},title:{stringValue:$title},status:{stringValue:"draft"},content:{stringValue:$content},contentHash:{stringValue:$hash},contentVersion:{integerValue:$version},source:{stringValue:"github-paid-draft-sync:20260829"},active:{booleanValue:true},updatedAt:{timestampValue:$now}}}'             > /tmp/private-write.json
-
-          PRIVATE_PATCH_URL="$PRIVATE_URL?updateMask.fieldPaths=articleId&updateMask.fieldPaths=title&updateMask.fieldPaths=status&updateMask.fieldPaths=content&updateMask.fieldPaths=contentHash&updateMask.fieldPaths=contentVersion&updateMask.fieldPaths=source&updateMask.fieldPaths=active&updateMask.fieldPaths=updatedAt"
-          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/private-write.json "$PRIVATE_PATCH_URL")"
-          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
-            cat /tmp/private-response.json
-            exit 1
-          fi
-          test "$(jq -r '.fields.contentHash.stringValue' /tmp/private-response.json)" = "$HASH"
-
-          jq -n             --rawfile content /tmp/public-content.txt             --arg hash "$HASH"             --arg version "$VERSION"             --arg now "$NOW_ISO"             '{fields:{title:{stringValue:"《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄"},slug:{stringValue:"yuanshen-awakening-old-manuscript"},category:{stringValue:"spiritual"},displayCategory:{stringValue:"靈修"},series:{stringValue:"靈修辨證"},status:{stringValue:"draft"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},paidContentHash:{stringValue:$hash},paidContentVersion:{integerValue:$version},coverImage:{stringValue:"https://wsrv.nl/?w=1200&output=webp&q=90&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},excerpt:{stringValue:"一本剛出版的新書，讓我重新想起二十多年前一段曾被出版社拿掉的舊稿。多年後再看，那件事留下的影響，早已不是當年的爭議本身。"},readingLevel:{stringValue:"深度"},bookTitle:{stringValue:"我在人間的元神覺醒"},bookAuthor:{stringValue:"宇色 Osel"},bookPublisher:{stringValue:"柿子文化"},bookPurchaseUrl:{stringValue:"https://www.books.com.tw/products/0011060075?sloc=main"},bookCoverImage:{stringValue:"https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},topics:{arrayValue:{values:[{stringValue:"元神覺醒"},{stringValue:"靈修辨識"},{stringValue:"自我認識"}]}},updatedAt:{timestampValue:$now}}}'             > /tmp/article-write.json
-
-          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID"
-          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-write.json "$ARTICLE_URL")"
-          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
-            cat /tmp/article-response.json
-            exit 1
-          fi
-          test "$(jq -r '.fields.status.stringValue' /tmp/article-response.json)" = "draft"
-          test "$(jq -r '.fields.accessType.stringValue' /tmp/article-response.json)" = "paid"
-          test "$(jq -r '.fields.privatePaidContent.booleanValue' /tmp/article-response.json)" = "true"
-
-      - name: Sanitize public source and refresh cache
-        if: steps.split.outputs.state == 'convert'
+      - name: Publish full article for the limited window
+        if: steps.mode.outputs.mode == 'open'
         shell: bash
         run: |
           set -euo pipefail
-          cp /tmp/sanitized-article.js "$ARTICLE_FILE"
           python3 - <<'PY'
           from pathlib import Path
-          p = Path('static-articles.js')
-          text = p.read_text(encoding='utf-8')
-          old = './article-yuanshen-awakening-old-manuscript.js?v=20260828-five-story-images-1'
-          new = './article-yuanshen-awakening-old-manuscript.js?v=20260829-paid-draft-format-1'
-          if new not in text:
-              if old not in text:
-                  raise SystemExit('Expected cache token not found.')
-              text = text.replace(old, new, 1)
-              p.write_text(text, encoding='utf-8')
+
+          preview = Path('/tmp/public-preview.txt').read_text(encoding='utf-8').strip()
+          private = Path('/tmp/private-content.txt').read_text(encoding='utf-8').strip()
+          marker = '<!-- paid-only -->'
+          if not preview.endswith(marker) or not private:
+              raise SystemExit('Unable to assemble the limited-reading article safely.')
+          Path('/tmp/limited-open-content.txt').write_text(preview + '\n\n' + private, encoding='utf-8')
           PY
-          node --check "$ARTICLE_FILE"
-          node --check "$STATIC_FILE"
-          test "$(grep -c '<!-- paid-only -->' "$ARTICLE_FILE")" = "1"
-          grep -F 'status: "draft"' "$ARTICLE_FILE"
-          grep -F 'accessType: "paid"' "$ARTICLE_FILE"
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$ARTICLE_FILE" "$STATIC_FILE"
-          git diff --cached --quiet && exit 0
-          git commit -m "Secure yuanshen old manuscript sponsor draft"
-          git fetch origin main
-          git rebase origin/main
-          git push origin HEAD:main
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          jq -n \
+            --rawfile content /tmp/limited-open-content.txt \
+            --arg published "$PUBLISHED_AT" \
+            --arg expires "$EXPIRES_AT" \
+            --arg now "$NOW_ISO" \
+            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"open"},content:{stringValue:$content},privatePaidContent:{booleanValue:false},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"48"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},promotionType:{stringValue:"book-launch"},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/article-open.json
 
-      - name: Sync and verify already-sanitized draft metadata
-        if: steps.split.outputs.state == 'already-sanitized'
+          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-open-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-open.json "$ARTICLE_URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/article-open-response.json
+            exit 1
+          fi
+          test "$(jq -r '.fields.status.stringValue' /tmp/article-open-response.json)" = "published"
+          test "$(jq -r '.fields.accessType.stringValue' /tmp/article-open-response.json)" = "open"
+          test "$(jq -r '.fields.privatePaidContent.booleanValue' /tmp/article-open-response.json)" = "false"
+
+      - name: Convert article to sponsor-only access
+        if: steps.mode.outputs.mode == 'paid'
         shell: bash
         run: |
           set -euo pipefail
           ACCESS_TOKEN="$(gcloud auth print-access-token)"
           NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          jq -n \
+            --rawfile content /tmp/public-preview.txt \
+            --arg published "$PUBLISHED_AT" \
+            --arg expires "$EXPIRES_AT" \
+            --arg now "$NOW_ISO" \
+            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"48"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},limitedReadingCompletedAt:{timestampValue:$now},promotionType:{stringValue:"book-launch"},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/article-paid.json
 
+          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=limitedReadingCompletedAt&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-paid-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-paid.json "$ARTICLE_URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/article-paid-response.json
+            exit 1
+          fi
+          test "$(jq -r '.fields.status.stringValue' /tmp/article-paid-response.json)" = "published"
+          test "$(jq -r '.fields.accessType.stringValue' /tmp/article-paid-response.json)" = "paid"
+          test "$(jq -r '.fields.privatePaidContent.booleanValue' /tmp/article-paid-response.json)" = "true"
+
+      - name: Keep secure sponsor body active
+        if: steps.mode.outputs.mode != 'noop'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           PRIVATE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/paidArticleBodies/$ARTICLE_ID"
-          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-existing.json --write-out '%{http_code}' --header "Authorization: Bearer $ACCESS_TOKEN" "$PRIVATE_URL")"
-          test "$HTTP_STATUS" = "200"
-          test -n "$(jq -r '.fields.content.stringValue // empty' /tmp/private-existing.json)"
-
-          jq -n --arg title "$TITLE" --arg now "$NOW_ISO"             '{fields:{title:{stringValue:$title},status:{stringValue:"draft"},active:{booleanValue:true},updatedAt:{timestampValue:$now}}}'             > /tmp/private-meta.json
-          PRIVATE_PATCH_URL="$PRIVATE_URL?updateMask.fieldPaths=title&updateMask.fieldPaths=status&updateMask.fieldPaths=active&updateMask.fieldPaths=updatedAt"
-          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-meta-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/private-meta.json "$PRIVATE_PATCH_URL")"
+          jq -n --arg now "$NOW_ISO" '{fields:{status:{stringValue:"published"},active:{booleanValue:true},updatedAt:{timestampValue:$now}}}' > /tmp/private-meta.json
+          PATCH_URL="$PRIVATE_URL?updateMask.fieldPaths=status&updateMask.fieldPaths=active&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-meta-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/private-meta.json "$PATCH_URL")"
           if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
             cat /tmp/private-meta-response.json
             exit 1
           fi
-          test "$(jq -r '.fields.title.stringValue' /tmp/private-meta-response.json)" = "$TITLE"
-          test "$(jq -r '.fields.status.stringValue' /tmp/private-meta-response.json)" = "draft"
+          test "$(jq -r '.fields.status.stringValue' /tmp/private-meta-response.json)" = "published"
+          test "$(jq -r '.fields.active.booleanValue' /tmp/private-meta-response.json)" = "true"
 
-          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID"
-          jq -n --rawfile content /tmp/public-content.txt --arg title "$TITLE" --arg now "$NOW_ISO"             '{fields:{title:{stringValue:$title},slug:{stringValue:"yuanshen-awakening-old-manuscript"},category:{stringValue:"spiritual"},displayCategory:{stringValue:"靈修"},series:{stringValue:"靈修辨證"},status:{stringValue:"draft"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},coverImage:{stringValue:"https://wsrv.nl/?w=1200&output=webp&q=90&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},excerpt:{stringValue:"一本剛出版的新書，讓我重新想起二十多年前一段曾被出版社拿掉的舊稿。多年後再看，那件事留下的影響，早已不是當年的爭議本身。"},readingLevel:{stringValue:"深度"},bookTitle:{stringValue:"我在人間的元神覺醒"},bookAuthor:{stringValue:"宇色 Osel"},bookPublisher:{stringValue:"柿子文化"},bookPurchaseUrl:{stringValue:"https://www.books.com.tw/products/0011060075?sloc=main"},bookCoverImage:{stringValue:"https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"},topics:{arrayValue:{values:[{stringValue:"元神覺醒"},{stringValue:"靈修辨識"},{stringValue:"自我認識"}]}},updatedAt:{timestampValue:$now}}}'             > /tmp/article-meta.json
-          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-meta-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-meta.json "$ARTICLE_URL")"
-          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
-            cat /tmp/article-meta-response.json
-            exit 1
-          fi
-          test "$(jq -r '.fields.title.stringValue' /tmp/article-meta-response.json)" = "$TITLE"
-          test "$(jq -r '.fields.status.stringValue' /tmp/article-meta-response.json)" = "draft"
-          test "$(jq -r '.fields.accessType.stringValue' /tmp/article-meta-response.json)" = "paid"
+      - name: Report final mode
+        if: steps.mode.outputs.mode != 'noop'
+        run: echo "Article transition completed in ${{ steps.mode.outputs.mode }} mode; deadline is 2026-09-01 10:00 Asia/Taipei."

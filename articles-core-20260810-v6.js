@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260829-reconciliation-images-2";
+import { staticArticles } from "./static-articles.js?v=20260830-limited-reading-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260829-admin-authoritative-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -312,6 +312,16 @@ function articlePublishedTime(article = {}) {
     || articleTime(article.updatedAt);
 }
 
+function refreshLimitedReadingDeadlines(articles = []) {
+  limitedReadingDeadlines.clear();
+  articles.forEach((article) => {
+    const deadline = articleTime(article?.limitedReadingUntil);
+    if (!deadline || article?.limitedReadingMode !== "full-open-then-paid") return;
+    const keys = [articleKey(article), article?.slug].filter(Boolean);
+    keys.forEach((key) => limitedReadingDeadlines.set(String(key), deadline));
+  });
+}
+
 function sortPublished(a, b) {
   if (adminPreviewEnabled()) {
     const aDraft = a?.status === "draft";
@@ -435,7 +445,17 @@ function bindLimitedReadingCountdowns() {
       const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
       const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
       const seconds = String(totalSeconds % 60).padStart(2, "0");
-      node.textContent = `限時閱讀｜${hours}：${minutes}：${seconds}`;
+      const deadlineLabel = new Intl.DateTimeFormat("zh-TW", {
+        timeZone: "Asia/Taipei",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).format(new Date(deadline));
+      node.textContent = node.closest(".article-card")
+        ? `限時免費｜剩餘 ${hours}：${minutes}：${seconds}`
+        : `限時免費閱讀｜${deadlineLabel} 轉為贊助會員專屬｜剩餘 ${hours}：${minutes}：${seconds}`;
     });
     return hasActiveCountdown;
   };
@@ -989,6 +1009,7 @@ async function loadArticles() {
   statusById.forEach((status, articleId) => {
     if (!liveFirestoreIds.has(articleId) && (status.status !== "published" || status.hidden === true || status.systemRecord === true)) mergedById.delete(articleId);
   });
+  refreshLimitedReadingDeadlines([...mergedById.values()]);
   const merged = [...mergedById.values()].filter((article) => {
     const published = article.status === "published";
     const adminDraft = adminDraftPreview && article.__articleSource === "firestore" && article.status === "draft";
