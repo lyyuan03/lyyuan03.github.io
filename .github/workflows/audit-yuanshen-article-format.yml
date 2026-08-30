@@ -1,0 +1,61 @@
+name: Audit Yuanshen Article Format Backups
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-yuanshen-article-format.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_ID: lyyuan03-membership
+      ARTICLE_ID: yuanshen-awakening-old-manuscript
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Read structural metadata without exposing article text
+        shell: bash
+        run: |
+          set -euo pipefail
+          token="$(gcloud auth print-access-token)"
+          base="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents"
+          curl --fail --silent --show-error --header "Authorization: Bearer $token" "$base/articles/$ARTICLE_ID" > /tmp/article.json
+          curl --fail --silent --show-error --header "Authorization: Bearer $token" "$base/paidArticleBodies/$ARTICLE_ID" > /tmp/paid.json
+          python3 - <<'PY'
+          import hashlib, json, re
+          from pathlib import Path
+
+          def value(fields, key):
+              node = fields.get(key, {})
+              for kind in ("stringValue", "timestampValue", "integerValue", "booleanValue"):
+                  if kind in node:
+                      return node[kind]
+              return None
+
+          def stats(label, text):
+              if not isinstance(text, str):
+                  print(f"{label}: absent")
+                  return
+              blocks = [x for x in re.split(r"\\n\\s*\\n", text.strip()) if x.strip()]
+              print(
+                  f"{label}: chars={len(text)} blocks={len(blocks)} "
+                  f"headings={len(re.findall(r'(?m)^#{1,6}\\s+', text))} "
+                  f"images={len(re.findall(r'!\\[', text))} "
+                  f"markers={text.count('<!-- paid-only -->')} "
+                  f"sha256={hashlib.sha256(text.encode()).hexdigest()[:16]}"
+              )
+
+          for doc_label, path in (("article", "/tmp/article.json"), ("paid", "/tmp/paid.json")):
+              fields = json.loads(Path(path).read_text())["fields"]
+              print(f"{doc_label}: updatedAt={value(fields,'updatedAt')} previousBackupAt={value(fields,'previousContentBackupAt') or value(fields,'previousBackupAt')} version={value(fields,'contentVersion')} previousVersion={value(fields,'previousContentVersionBackup')}")
+              stats(f"{doc_label}.content", value(fields, "content"))
+              stats(f"{doc_label}.previousContentBackup", value(fields, "previousContentBackup"))
+          PY
