@@ -44,7 +44,7 @@ jobs:
               if not isinstance(text, str):
                   print(f"{label}: absent")
                   return
-              blocks = [x for x in re.split(r"\\n\\s*\\n", text.strip()) if x.strip()]
+              blocks = [x for x in re.split(r"\n\s*\n", text.strip()) if x.strip()]
               print(
                   f"{label}: chars={len(text)} blocks={len(blocks)} "
                   f"headings={len(re.findall(r'(?m)^#{1,6}\\s+', text))} "
@@ -58,4 +58,5 @@ jobs:
               print(f"{doc_label}: updatedAt={value(fields,'updatedAt')} previousBackupAt={value(fields,'previousContentBackupAt') or value(fields,'previousBackupAt')} version={value(fields,'contentVersion')} previousVersion={value(fields,'previousContentVersionBackup')}")
               stats(f"{doc_label}.content", value(fields, "content"))
               stats(f"{doc_label}.previousContentBackup", value(fields, "previousContentBackup"))
+              stats(f"{doc_label}.limitedReadingPreservedPublicPreview", value(fields, "limitedReadingPreservedPublicPreview"))
           PY
