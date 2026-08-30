@@ -171,6 +171,67 @@ jobs:
           test "$(jq -r '.fields.accessType.stringValue' /tmp/article-paid-response.json)" = "paid"
           test "$(jq -r '.fields.privatePaidContent.booleanValue' /tmp/article-paid-response.json)" = "true"
 
+      - name: Synchronize every article record with the same slug
+        if: steps.mode.outputs.mode != 'noop'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          QUERY_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents:runQuery"
+
+          jq -n --arg slug "$ARTICLE_ID" '{
+            structuredQuery: {
+              from: [{collectionId: "articles"}],
+              where: {
+                fieldFilter: {
+                  field: {fieldPath: "slug"},
+                  op: "EQUAL",
+                  value: {stringValue: $slug}
+                }
+              }
+            }
+          }' > /tmp/article-slug-query.json
+
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-slug-results.json --write-out '%{http_code}' --request POST --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-slug-query.json "$QUERY_URL")"
+          if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+            cat /tmp/article-slug-results.json
+            exit 1
+          fi
+
+          jq -r '.[].document.name // empty' /tmp/article-slug-results.json > /tmp/article-targets.txt
+          echo "projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID" >> /tmp/article-targets.txt
+          sort -u /tmp/article-targets.txt -o /tmp/article-targets.txt
+          test -s /tmp/article-targets.txt
+
+          if [[ "${{ steps.mode.outputs.mode }}" == "open" ]]; then
+            PAYLOAD=/tmp/article-open.json
+            MASK='updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt'
+            EXPECTED_ACCESS=open
+            EXPECTED_PRIVATE=false
+          else
+            PAYLOAD=/tmp/article-paid.json
+            MASK='updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=limitedReadingCompletedAt&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt'
+            EXPECTED_ACCESS=paid
+            EXPECTED_PRIVATE=true
+          fi
+
+          MATCH_COUNT=0
+          while IFS= read -r document_name; do
+            [[ -n "$document_name" ]] || continue
+            MATCH_COUNT=$((MATCH_COUNT + 1))
+            PATCH_URL="https://firestore.googleapis.com/v1/$document_name?$MASK"
+            HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-slug-patch.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @"$PAYLOAD" "$PATCH_URL")"
+            if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
+              cat /tmp/article-slug-patch.json
+              exit 1
+            fi
+            test "$(jq -r '.fields.status.stringValue' /tmp/article-slug-patch.json)" = "published"
+            test "$(jq -r '.fields.accessType.stringValue' /tmp/article-slug-patch.json)" = "$EXPECTED_ACCESS"
+            test "$(jq -r '.fields.privatePaidContent.booleanValue' /tmp/article-slug-patch.json)" = "$EXPECTED_PRIVATE"
+          done < /tmp/article-targets.txt
+
+          echo "Synchronized $MATCH_COUNT article record(s) for slug $ARTICLE_ID."
+
       - name: Keep secure sponsor body active
         if: steps.mode.outputs.mode != 'noop'
         shell: bash
