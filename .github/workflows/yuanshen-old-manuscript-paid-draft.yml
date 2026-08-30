@@ -110,6 +110,17 @@ jobs:
           test -s /tmp/private-content.txt
           test "$(jq -r '.fields.active.booleanValue // false' /tmp/private-current.json)" = "true"
 
+          ARTICLE_READ_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-before-restore.json --write-out '%{http_code}' --header "Authorization: Bearer $ACCESS_TOKEN" "$ARTICLE_READ_URL")"
+          if [[ "$HTTP_STATUS" != "200" ]]; then
+            cat /tmp/article-before-restore.json
+            exit 1
+          fi
+          jq -r '.fields.limitedReadingPreservedPublicPreview.stringValue // .fields.previousContentBackup.stringValue // ""' /tmp/article-before-restore.json > /tmp/restored-public-preview.txt
+          test -s /tmp/restored-public-preview.txt
+          test "$(grep -o '<!-- paid-only -->' /tmp/restored-public-preview.txt | wc -l | tr -d ' ')" = "1"
+          mv /tmp/restored-public-preview.txt /tmp/public-preview.txt
+
       - name: Publish full article for the limited window
         if: steps.mode.outputs.mode == 'open'
         shell: bash
@@ -130,13 +141,14 @@ jobs:
           NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           jq -n \
             --rawfile content /tmp/limited-open-content.txt \
+            --rawfile preview /tmp/public-preview.txt \
             --arg published "$PUBLISHED_AT" \
             --arg expires "$EXPIRES_AT" \
             --arg now "$NOW_ISO" \
-            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"open"},content:{stringValue:$content},privatePaidContent:{booleanValue:false},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"12"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},promotionType:{stringValue:"book-launch"},updatedAt:{timestampValue:$now}}}' \
+            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"open"},content:{stringValue:$content},privatePaidContent:{booleanValue:false},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"12"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},promotionType:{stringValue:"book-launch"},limitedReadingPreservedPublicPreview:{stringValue:$preview},updatedAt:{timestampValue:$now}}}' \
             > /tmp/article-open.json
 
-          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt"
+          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=limitedReadingPreservedPublicPreview&updateMask.fieldPaths=updatedAt"
           HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-open-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-open.json "$ARTICLE_URL")"
           if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
             cat /tmp/article-open-response.json
@@ -158,10 +170,10 @@ jobs:
             --arg published "$PUBLISHED_AT" \
             --arg expires "$EXPIRES_AT" \
             --arg now "$NOW_ISO" \
-            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"12"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},limitedReadingCompletedAt:{timestampValue:$now},promotionType:{stringValue:"book-launch"},updatedAt:{timestampValue:$now}}}' \
+            '{fields:{status:{stringValue:"published"},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},publishedAt:{timestampValue:$published},limitedReadingStartedAt:{timestampValue:$published},limitedReadingUntil:{timestampValue:$expires},limitedReadingDurationHours:{integerValue:"12"},postLimitedAccessType:{stringValue:"paid"},limitedReadingMode:{stringValue:"full-open-then-paid"},limitedReadingCompletedAt:{timestampValue:$now},promotionType:{stringValue:"book-launch"},limitedReadingPreservedPublicPreview:{stringValue:$content},updatedAt:{timestampValue:$now}}}' \
             > /tmp/article-paid.json
 
-          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=limitedReadingCompletedAt&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt"
+          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID?updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=limitedReadingCompletedAt&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=limitedReadingPreservedPublicPreview&updateMask.fieldPaths=updatedAt"
           HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-paid-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-paid.json "$ARTICLE_URL")"
           if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 300 ]]; then
             cat /tmp/article-paid-response.json
@@ -205,12 +217,12 @@ jobs:
 
           if [[ "${{ steps.mode.outputs.mode }}" == "open" ]]; then
             PAYLOAD=/tmp/article-open.json
-            MASK='updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt'
+            MASK='updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=limitedReadingPreservedPublicPreview&updateMask.fieldPaths=updatedAt'
             EXPECTED_ACCESS=open
             EXPECTED_PRIVATE=false
           else
             PAYLOAD=/tmp/article-paid.json
-            MASK='updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=limitedReadingCompletedAt&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=updatedAt'
+            MASK='updateMask.fieldPaths=status&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=publishedAt&updateMask.fieldPaths=limitedReadingStartedAt&updateMask.fieldPaths=limitedReadingUntil&updateMask.fieldPaths=limitedReadingDurationHours&updateMask.fieldPaths=postLimitedAccessType&updateMask.fieldPaths=limitedReadingMode&updateMask.fieldPaths=limitedReadingCompletedAt&updateMask.fieldPaths=promotionType&updateMask.fieldPaths=limitedReadingPreservedPublicPreview&updateMask.fieldPaths=updatedAt'
             EXPECTED_ACCESS=paid
             EXPECTED_PRIVATE=true
           fi
