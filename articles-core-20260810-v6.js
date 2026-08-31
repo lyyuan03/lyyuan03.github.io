@@ -1,5 +1,5 @@
-import { auth, db, isAdminEmail } from "./firebase-config.js";
-import { staticArticles } from "./static-articles.js?v=20260830-limited-reading-1";
+import { auth, db, isAdminEmail } from "./firebase-config.js?v=20260831-permissions-1";
+import { staticArticles } from "./static-articles.js?v=20260831-permissions-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260829-admin-authoritative-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -241,7 +241,7 @@ function articleIsPaid(article) {
 }
 
 function articleIsEvent(article) {
-  return article?.accessType === "event" || Boolean(article?.eventId);
+  return Boolean(article?.requiredPermission) || article?.accessType === "event" || Boolean(article?.eventId);
 }
 
 function articleIsLimitedOpen(article) {
@@ -494,7 +494,7 @@ function renderList(articles) {
       ${visibleArticles.map((article) => {
         const key = articleKey(article);
         const access = articleAccess(article);
-        const accessLabel = access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀";
+        const accessLabel = article.accessBadge || (access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀");
         const isDraftPreview = article.status === "draft" && adminPreviewEnabled();
         return `
           <a class="article-card" data-article-id="${escapeHtml(key)}" href="${standaloneArticlePaths.get(key) || `articles.html?id=${encodeURIComponent(key)}`}${magicToken ? `&event=${encodeURIComponent(article.eventId || magicEventId)}&token=${encodeURIComponent(magicToken)}` : ""}">
@@ -507,6 +507,7 @@ function renderList(articles) {
                 <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
                 <span class="article-card-badges">${isDraftPreview ? '<span class="article-access-badge is-draft">草稿預覽</span>' : ""}<span class="article-access-badge is-${access}">${accessLabel}</span></span>
               </div>
+              ${article.requiredPermission && article.series ? `<div class="article-series">${escapeHtml(article.series)}</div>` : ""}
               <h2 class="article-list-title">${escapeHtml(article.title || "未命名文章")}</h2>
               ${renderArticleGuide(article, true)}
               ${renderLimitedReadingCountdown(key, articleIsPaid(article))}
@@ -694,6 +695,21 @@ async function eventArticleKey(article) {
 
 async function hydrateEventArticle(article) {
   if (!articleIsEvent(article)) return article;
+  if (article.requiredPermission) {
+    // 身分判斷交給 Firestore Rules；不下載全文再以 CSS／前端陣列隱藏。
+    if (!currentUser?.email) return { ...article, content: "", eventAccessGranted: false };
+    try {
+      const bodyId = article.__firestoreId || article.id || article.slug;
+      const snapshot = await getDoc(doc(db, "eventArticleBodies", bodyId));
+      if (!snapshot.exists()) return { ...article, content: "", eventAccessGranted: false };
+      const body = snapshot.data();
+      if (body.requiredPermission !== article.requiredPermission || body.active === false) return article;
+      return { ...article, content: body.content || "", eventAccessGranted: true };
+    } catch (error) {
+      if (error?.code !== "permission-denied") console.warn("活動文章暫時無法載入。", error);
+      return { ...article, content: "", eventAccessGranted: false };
+    }
+  }
   if (!currentUser && !magicToken) return article;
   const key = await eventArticleKey(article);
   if (!key) return article;
@@ -729,8 +745,10 @@ function renderPaidGate(article) {
   return `<section class="article-paid-gate"><strong>贊助專屬文章</strong><p>此篇為贊助專屬內容，請使用具有閱讀資格的 Gmail 登入。</p><button class="article-paid-login" type="button">會員登入</button></section>`;
 }
 function bindPaidLogin() { document.querySelector(".article-paid-login")?.addEventListener("click", () => document.getElementById("member-login-button")?.click()); }
-function renderEventGate(article) { return `<section class="article-paid-gate"><strong>活動限定文章</strong><p>此篇僅提供指定活動參與者閱讀。</p></section>`; }
-function bindEventLogin() {}
+function renderEventGate(article) {
+  return `<section class="article-paid-gate" data-event-gate><strong>${escapeHtml(article.accessBadge || "活動限定文章")}</strong><p>${escapeHtml(article.accessDeniedMessage || "此篇僅提供指定活動參與者閱讀。")}</p><p>${currentUser ? "目前登入的 Gmail 尚未取得本篇閱讀資格。如已登記，請聯繫靈元院核對報名 Gmail。" : "請使用報名時填寫、已取得閱讀資格的 Gmail 登入。"}</p>${!currentUser ? '<button class="article-event-login article-paid-login" type="button">使用 Gmail 登入</button>' : ""}</section>`;
+}
+function bindEventLogin() { document.querySelector(".article-event-login")?.addEventListener("click", () => document.getElementById("member-login-button")?.click()); }
 
 function renderRecommendedBook(article) {
   const book = recommendedBookForArticle(article);
@@ -847,7 +865,7 @@ function renderArticle(article) {
   const isDraftPreview = article.status === "draft" && adminPreviewEnabled();
   const draftNotice = isDraftPreview ? '<div class="article-draft-notice"><strong>草稿預覽</strong>｜僅靈元院管理者帳號可見，尚未公開。</div>' : "";
   if (articleIsEvent(article) && !article.eventAccessGranted) {
-    root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}"><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}<div class="article-meta">${categoryLabels[article.category] || "文選"}｜活動限定</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}${article.excerpt ? `<div class="article-body"><p>${escapeHtml(article.excerpt)}</p></div>` : ""}${renderEventGate(article)}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
+    root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}"><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}${article.requiredPermission ? `<div class="article-series">${escapeHtml(article.series || "")}</div><span class="article-access-badge is-event">${escapeHtml(article.accessBadge || "活動限定")}</span>` : ""}<div class="article-meta">${categoryLabels[article.category] || "文選"}｜活動限定</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}${article.excerpt ? `<div class="article-body"><p>${escapeHtml(article.excerpt)}</p></div>` : ""}${renderEventGate(article)}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
     bindEventLogin();
     bindArticleShare(articleKeyValue);
     if (!isDraftPreview) trackArticleView(articleKeyValue);
@@ -855,7 +873,7 @@ function renderArticle(article) {
   }
   const articleContent = addGuanyinVowLampImages(article.content || "", articleKeyValue);
   const { publicContent, lockedContent, accessType } = splitMemberContent(articleContent, articleKeyValue);
-  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}" data-article-access="${escapeHtml(accessType)}"${accessType === "paid" ? ' data-paid-body-state="locked"' : ""}><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}<div class="article-meta">${categoryLabels[article.category] || "文選"}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${renderArticleGuide(article)}${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKeyValue) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}<div class="article-body">${renderContent(publicContent)}</div>${accessType === "member" ? renderSupportGate(lockedContent) : ""}${accessType === "paid" ? renderPaidGate(article) : ""}${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
+  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}" data-article-access="${escapeHtml(accessType)}"${accessType === "paid" ? ' data-paid-body-state="locked"' : ""}><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}${article.requiredPermission ? `<div class="article-series">${escapeHtml(article.series || "")}</div><span class="article-access-badge is-event">${escapeHtml(article.accessBadge || "活動限定")}</span>` : ""}<div class="article-meta">${categoryLabels[article.category] || "文選"}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${renderArticleGuide(article)}${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKeyValue) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}<div class="article-body">${renderContent(publicContent)}</div>${accessType === "member" ? renderSupportGate(lockedContent) : ""}${accessType === "paid" ? renderPaidGate(article) : ""}${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
   bindLimitedReadingCountdowns();
   if (accessType === "member") bindArticleContinue();
   if (accessType === "paid") bindPaidLogin();

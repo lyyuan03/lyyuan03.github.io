@@ -50,7 +50,7 @@ function activeArticleId() {
 
 async function hydrateStaticEventArticle() {
   const id = activeArticleId();
-  const article = staticArticles.find((item) => item.id === id && item.accessType === "event");
+  const article = staticArticles.find((item) => item.id === id && item.accessType === "event" && !item.requiredPermission);
   const content = document.getElementById("content");
   const saveButton = document.getElementById("save-article");
   if (!content || !saveButton) return;

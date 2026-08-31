@@ -1,0 +1,37 @@
+name: Secure Jinmu Event Series
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - jinmu-event-series.js
+      - functions/jinmu-series-sync.mjs
+      - .github/workflows/jinmu-event-series-sync.yml
+permissions:
+  contents: read
+concurrency:
+  group: jinmu-event-series-sync
+  cancel-in-progress: false
+jobs:
+  secure-series:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - run: npm --prefix functions ci
+      - name: Deploy Firestore security rules
+        run: node functions/jinmu-series-sync.mjs rules
+      - name: Migrate existing four bodies without duplicate articles
+        run: node functions/jinmu-series-sync.mjs migrate
+      - name: Verify six permission cases against live Firestore
+        run: node functions/jinmu-series-sync.mjs test
+      - name: Preserve event permissions in existing member sync functions
+        run: npx --yes firebase-tools deploy --only functions:syncEntitlementsFromSponsor,functions:syncEntitlementsFromWellness --project lyyuan03-membership --non-interactive

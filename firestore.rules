@@ -43,6 +43,33 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/memberEntitlements/$(request.auth.token.email));
     }
 
+    function hasEventPermission(permission) {
+      let email = request.auth.token.email.lower();
+      let path = /databases/$(database)/documents/memberEntitlements/$(email);
+      return verifiedEmail()
+        && email.matches('^[^@]+@gmail[.]com$')
+        && exists(path)
+        && get(path).data.email == email
+        && get(path).data.keys().hasAny(["permissions"])
+        && get(path).data.permissions is list
+        && get(path).data.permissions.hasAny([permission])
+        && (!get(path).data.keys().hasAny(["disabled"]) || get(path).data.disabled != true)
+        && (!get(path).data.keys().hasAny(["suspended"]) || get(path).data.suspended != true)
+        && (!get(path).data.keys().hasAny(["status"]) || get(path).data.status != "disabled");
+    }
+
+    function safePublicEventArticle() {
+      return !request.resource.data.keys().hasAny(["requiredPermission"])
+        || (request.resource.data.accessType == "event"
+          && request.resource.data.content == ""
+          && (!request.resource.data.keys().hasAny(["previousContentBackup"])
+            || request.resource.data.previousContentBackup == "")
+          && (!request.resource.data.keys().hasAny(["encryptedContent"])
+            || request.resource.data.encryptedContent == "")
+          && (!request.resource.data.keys().hasAny(["magicLinkAccess"])
+            || request.resource.data.magicLinkAccess.size() == 0));
+    }
+
     function hasValidWellnessExpiry() {
       return wellnessMember().data.keys().hasAny(["expiresAt"])
         && (
@@ -202,7 +229,21 @@ service cloud.firestore {
 
     match /articles/{articleId} {
       allow read: if resource.data.status == "published" || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow create: if isAdmin() && safePublicEventArticle();
+      allow update: if isAdmin() && safePublicEventArticle()
+        && (!resource.data.keys().hasAny(["requiredPermission"])
+          || request.resource.data.requiredPermission == resource.data.requiredPermission);
+      allow delete: if isAdmin();
+    }
+
+    match /eventArticleBodies/{articleId} {
+      allow get: if isAdmin()
+        || (resource.data.status == "published"
+          && resource.data.active == true
+          && get(/databases/$(database)/documents/articles/$(articleId)).data.status == "published"
+          && resource.data.requiredPermission is string
+          && hasEventPermission(resource.data.requiredPermission));
+      allow list, create, update, delete: if isAdmin();
     }
 
     match /paidArticleBodies/{articleId} {

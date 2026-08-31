@@ -1,7 +1,8 @@
-import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260813-manual-image-markdown-3";
-import { staticArticles } from "./static-articles.js?v=20260829-reconciliation-images-2";
+import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260831-permissions-1";
+import { staticArticles } from "./static-articles.js?v=20260831-permissions-1";
+import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissions-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const categoryLabels = {
@@ -19,6 +20,7 @@ const SYSTEM_ARTICLE_IDS = new Set(["__article-thumbnail-settings", "sponsor-off
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 const PAID_MARKER = "<!-- paid-only -->";
 const PAID_BODY_COLLECTION = "paidArticleBodies";
+const EVENT_BODY_COLLECTION = "eventArticleBodies";
 
 
 let articles = [];
@@ -105,7 +107,11 @@ async function decryptEventContent(encryptedContent, iv, rawKey) {
 
 function renderEventOptions(selected = "") {
   if (!eventIdInput) return;
-  eventIdInput.innerHTML = '<option value="">無指定活動</option>' + eventOptions.map((event) =>
+  const options = [...eventOptions];
+  jinmuEventArticles.forEach((article) => {
+    if (!options.some((event) => event.id === article.eventId)) options.push({ id: article.eventId, name: article.accessBadge });
+  });
+  eventIdInput.innerHTML = '<option value="">無指定活動</option>' + options.map((event) =>
     `<option value="${escapeHtml(event.id)}"${event.id === selected ? " selected" : ""}>${escapeHtml(event.name)}${event.status === "inactive" ? "（停用）" : ""}</option>`
   ).join("");
 }
@@ -712,7 +718,15 @@ async function loadArticles() {
       .filter((item) => !SYSTEM_ARTICLE_IDS.has(item.id) && item.data().systemType !== "article-thumbnail-settings")
       .map(async (item) => {
       const article = { id: item.id, ...item.data(), source: "firestore" };
-      if (article.accessType === "event" && article.encryptedContent && article.eventIv && adminKeys[item.id]) {
+      if (article.requiredPermission) {
+        try {
+          const body = await getDoc(doc(db, EVENT_BODY_COLLECTION, item.id));
+          article.content = body.exists() ? body.data().content || "" : "";
+        } catch (error) {
+          article.content = "";
+          console.error("活動私有正文載入失敗：", item.id, error);
+        }
+      } else if (article.accessType === "event" && article.encryptedContent && article.eventIv && adminKeys[item.id]) {
         try {
           article.content = await decryptEventContent(article.encryptedContent, article.eventIv, adminKeys[item.id]);
         } catch (error) {
@@ -751,6 +765,11 @@ async function loadArticles() {
 async function saveArticle(event) {
   event.preventDefault();
   const data = getFormData();
+  const secureMetadata = jinmuEventArticles.find((article) => article.id === currentId);
+  if (secureMetadata) {
+    data.accessType = "event";
+    data.eventId = secureMetadata.eventId;
+  }
   if (!data.title || !data.content) {
     setSaveStatus("無法儲存｜請填寫標題與內文", "error");
     showAdminToast("文章尚未儲存：請至少填寫標題與內文。", "error");
@@ -791,7 +810,31 @@ async function saveArticle(event) {
     }
 
     let distributedCount = 0;
-    if (data.accessType === "event") {
+    let secureBodySave = null;
+    if (secureMetadata || existingData?.requiredPermission) {
+      const requiredPermission = existingData?.requiredPermission || secureMetadata.requiredPermission;
+      const bodyRef = doc(db, EVENT_BODY_COLLECTION, currentId);
+      const previousBody = await getDoc(bodyRef);
+      secureBodySave = { ref: bodyRef, payload: {
+        articleId: currentId,
+        title: data.title,
+        requiredPermission,
+        status: data.status,
+        active: true,
+        content: data.content,
+        contentHash: await sha256Text(data.content),
+        previousContentBackup: previousBody.exists() ? previousBody.data().content || "" : "",
+        updatedAt: serverTimestamp()
+      } };
+      Object.assign(payload, {
+        requiredPermission,
+        series: existingData?.series || secureMetadata?.series || "",
+        accessBadge: existingData?.accessBadge || secureMetadata?.accessBadge || "活動限定",
+        accessDeniedMessage: existingData?.accessDeniedMessage || secureMetadata?.accessDeniedMessage || "",
+        content: "", previousContentBackup: "", previousContentBackupAt: null,
+        encryptedContent: "", eventIv: "", encryption: "", magicLinkAccess: {}
+      });
+    } else if (data.accessType === "event") {
       payload.eventName = eventOptions.find((event) => event.id === data.eventId)?.name || data.eventId;
       const protectedContent = await encryptEventContent(data.content);
       payload.content = "";
@@ -820,7 +863,16 @@ async function saveArticle(event) {
       payload.publishedAt = currentArticleRecord?.publishedAt || serverTimestamp();
     }
     if (!existingData) payload.createdAt = serverTimestamp();
-    await setDoc(articleRef, payload, { merge: true });
+    if (secureBodySave) {
+      const batch = writeBatch(db);
+      batch.set(secureBodySave.ref, secureBodySave.payload, { merge: true });
+      batch.set(articleRef, payload, { merge: true });
+      await batch.commit();
+      const verifyBody = await getDoc(secureBodySave.ref);
+      if (!verifyBody.exists() || verifyBody.data().content !== data.content) throw new Error("活動私有正文同步驗證失敗");
+    } else {
+      await setDoc(articleRef, payload, { merge: true });
+    }
 
     // 發布／取消發布必須同時完成文章本體與狀態索引，避免後台顯示成功但前台仍讀到舊狀態。
     const publicationSnapshot = await getDocs(collection(db, "articles"));
@@ -864,7 +916,9 @@ async function saveArticle(event) {
 
     await loadArticles();
     const savedAt = savedTimeLabel();
-    const accessNote = data.accessType === "event"
+    const accessNote = secureMetadata
+      ? "｜私有正文已驗證；閱讀資格依 Gmail permission"
+      : data.accessType === "event"
       ? `｜已授權 ${distributedCount} 位活動參加者`
       : data.accessType === "paid"
         ? `｜前台正文同步版本 ${paidSave?.contentVersion || 1}`

@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260829-reconciliation-images-2";
+import "./article-admin-core.js?v=20260831-permissions-1";
 import "./article-admin-paid-security.js?v=20260829-no-auto-overwrite-1";
 import "./article-admin-secure-import.js?v=20260828-yuanqin-secure-import-1";
 import { db } from "./firebase-config.js";

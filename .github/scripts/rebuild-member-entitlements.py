@@ -201,7 +201,10 @@ def entitlement_fields(email: str, sponsor: dict, wellness: dict, has_sponsor: b
 
 def patch_entitlement(email: str, fields: dict) -> None:
     doc_id = urllib.parse.quote(email, safe="")
-    request_json("PATCH", f"{BASE_URL}/memberEntitlements/{doc_id}", {"fields": fields})
+    # 僅更新本流程負責的付費／養生欄位，保留活動 permissions 與其他既有欄位。
+    mask_fields = set(fields) | {"sponsorExpiresAt", "wellnessExpiresAt"}
+    query = urllib.parse.urlencode([("updateMask.fieldPaths", name) for name in sorted(mask_fields)])
+    request_json("PATCH", f"{BASE_URL}/memberEntitlements/{doc_id}?{query}", {"fields": fields})
 
 
 def delete_entitlement(email: str) -> None:
@@ -220,7 +223,8 @@ def main() -> int:
     for email in emails:
         has_sponsor = email in sponsor_docs
         has_wellness = email in wellness_docs
-        if not has_sponsor and not has_wellness:
+        independent_permissions = entitlement_docs.get(email, {}).get("fields", {}).get("permissions", [])
+        if not has_sponsor and not has_wellness and not independent_permissions:
             delete_entitlement(email)
             deleted += 1
             print(f"Deleted orphan entitlement: {email}")

@@ -20,6 +20,8 @@ on:
 
 jobs:
   deploy-firestore:
+    # 丙午私有文章遷移有獨立的部署／實測流程，避免同次提交重複重建會員資料。
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[jinmu-secure]')
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -1,60 +1,10 @@
-name: Sync Reconciliation Draft
-
+name: Retired Reconciliation Draft Sync
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'article-reconciliation-absolution-heart.js'
-      - 'assets/articles/reconciliation-absolution-heart/**'
-      - '.github/workflows/reconciliation-absolution-draft.yml'
-
 permissions:
   contents: read
-
 jobs:
-  sync-draft:
+  retired:
     runs-on: ubuntu-latest
-    env:
-      PROJECT_ID: lyyuan03-membership
-      ARTICLE_ID: reconciliation-absolution-heart
-      ARTICLE_FILE: article-reconciliation-absolution-heart.js
     steps:
-      - uses: actions/checkout@v4
-      - uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-      - uses: google-github-actions/setup-gcloud@v2
-      - name: Write draft to Firestore
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          import json, re
-          source=Path("article-reconciliation-absolution-heart.js").read_text(encoding="utf-8")
-          def field(name):
-              m=re.search(r'^  '+re.escape(name)+r': "([^"]*)"', source, re.M)
-              if not m: raise SystemExit("missing "+name)
-              return m.group(1)
-          m=re.search(r'  content: String\.raw`([\s\S]*)`\n};\s*$', source)
-          if not m: raise SystemExit("content not found")
-          fields={
-            "title":{"stringValue":field("title")},"slug":{"stringValue":field("slug")},
-            "category":{"stringValue":field("category")},"displayCategory":{"stringValue":field("displayCategory")},
-            "series":{"stringValue":field("series")},"status":{"stringValue":"draft"},
-            "accessType":{"stringValue":field("accessType")},"content":{"stringValue":m.group(1)},
-            "coverImage":{"stringValue":field("coverImage")},"thumbnailImage":{"stringValue":field("thumbnailImage")},
-            "excerpt":{"stringValue":field("excerpt")},"readingLevel":{"stringValue":field("readingLevel")},
-            "source":{"stringValue":"github-reconciliation-draft-sync:20260829"},
-            "updatedAt":{"timestampValue":"2026-08-29T14:30:00Z"}
-          }
-          Path("/tmp/article.json").write_text(json.dumps({"fields":fields},ensure_ascii=False),encoding="utf-8")
-          PY
-          TOKEN="$(gcloud auth print-access-token)"
-          URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID"
-          STATUS="$(curl --silent --show-error --output /tmp/response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article.json "$URL")"
-          cat /tmp/response.json
-          test "$STATUS" -ge 200
-          test "$STATUS" -lt 300
-          test "$(jq -r '.fields.status.stringValue' /tmp/response.json)" = "draft"
+      - run: echo "Retired. Existing event bodies are managed by Firestore admin and Secure Jinmu Event Series. No public static body sync is permitted."

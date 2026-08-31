@@ -71,9 +71,10 @@ async function rebuildEntitlement(emailParam) {
   if (!email) return;
 
   const db = getFirestore();
-  const [sponsorSnapshot, wellnessSnapshot] = await Promise.all([
+  const [sponsorSnapshot, wellnessSnapshot, entitlementSnapshot] = await Promise.all([
     db.doc(`sponsorMemberAccess/${email}`).get(),
-    db.doc(`memberAccess/${email}`).get()
+    db.doc(`memberAccess/${email}`).get(),
+    db.doc(`memberEntitlements/${email}`).get()
   ]);
 
   const sponsor = sponsorSnapshot.exists ? sponsorSnapshot.data() || {} : {};
@@ -82,7 +83,9 @@ async function rebuildEntitlement(emailParam) {
   const sponsorAccess = sponsorState(sponsor, email, now);
   const wellnessAccess = wellnessState(wellness, email, now);
 
-  if (!sponsorSnapshot.exists && !wellnessSnapshot.exists) {
+  const hasIndependentPermissions = Array.isArray(entitlementSnapshot.data()?.permissions)
+    && entitlementSnapshot.data().permissions.length > 0;
+  if (!sponsorSnapshot.exists && !wellnessSnapshot.exists && !hasIndependentPermissions) {
     await db.doc(`memberEntitlements/${email}`).delete().catch(() => {});
     return;
   }

@@ -14,9 +14,6 @@ if (/(^|\/)articles\.html$/i.test(currentPath)) {
   import("./article-paid-badge.js?v=20260722-3");
   import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
   import("./article-inline-image-display.js?v=20260807-inline-image-manager-1");
-  import("./construction-record-page.js?v=20260822-1").catch((error) => {
-    console.error("建院專屬紀錄版型載入失敗：", error);
-  });
 }
 
 if (isAdminPage) {
@@ -29,8 +26,8 @@ if (isAdminPage) {
   import("./article-admin-paid-security.js?v=20260823-private-paid-save-1").catch((error) => {
     console.error("付費文章私有正文保護模組載入失敗：", error);
   });
-  import("./construction-record-admin.js?v=20260822-1").catch((error) => {
-    console.error("建院專屬紀錄後台初始化失敗：", error);
+  import("./jinmu-permission-admin.js?v=20260831-permissions-1").catch((error) => {
+    console.error("丙午活動權限匯入模組載入失敗：", error);
   });
 }
 

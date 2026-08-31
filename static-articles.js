@@ -15,8 +15,9 @@ import { thisBookTookThirtyYearsArticle } from "./article-this-book-took-thirty-
 import { dragonChantYoutubeAwakeningArticle } from "./article-dragon-chant-youtube-awakening.js?v=20260826-paid-1&paid-private=20260824-article-system-repair-1";
 import { yuanqinDebtHeartArticle } from "./article-yuanqin-debt-heart.js?v=20260828-clean-text-2&paid-private=20260824-article-system-repair-1";
 import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260830-limited-reading-1";
-import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-morning.js?v=20260829-draft-3";
-import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260830-content-1";
+import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-morning.js?v=20260831-permissions-1";
+import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260831-permissions-1";
+import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissions-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -98,6 +99,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
+  ...jinmuEventArticles.slice(2),
   reconciliationAbsolutionHeartArticle,
   dragonCanonConsciousnessFieldArticle,
   ghostGateAlwaysOpenEnhancedArticle,
