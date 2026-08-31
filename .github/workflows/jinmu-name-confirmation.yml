@@ -1,0 +1,38 @@
+name: Apply Confirmed Event Registration Name
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/jinmu-name-confirmation.yml
+      - functions/jinmu-name-confirmation.mjs
+      - .github/private-imports/jinmu-name-confirmation.enc.json
+permissions:
+  contents: read
+concurrency:
+  group: jinmu-name-confirmation
+  cancel-in-progress: false
+jobs:
+  single-gmail-confirmation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm --prefix functions ci
+      - run: npm --prefix functions test
+      - name: Prepare private one-time confirmation transport
+        if: hashFiles('.github/private-imports/jinmu-name-confirmation.enc.json') == ''
+        run: node functions/jinmu-name-confirmation.mjs prepare
+      - name: Apply only the confirmed Gmail and read back its permissions
+        if: hashFiles('.github/private-imports/jinmu-name-confirmation.enc.json') != ''
+        run: node functions/jinmu-name-confirmation.mjs import
+      - name: Verify live article access rules and retained Gmail permissions
+        if: hashFiles('.github/private-imports/jinmu-name-confirmation.enc.json') != ''
+        run: node functions/jinmu-series-sync.mjs test
