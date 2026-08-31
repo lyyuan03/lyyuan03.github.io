@@ -60,7 +60,7 @@ function updateImages(content) {
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   let legacyGallery = [];
-  if (!witnessBefore.data()?.content?.includes("assets/construction/2026-lineage-lamp/entrance-path.webp")) {
+  if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2 && !witnessBefore.data()?.content?.includes("assets/construction/2026-lineage-lamp/entrance-path.webp")) {
     // Recover only the three existing image specifications before retiring their public injector.
     // Body text remains authoritative in Firestore; no old preview HTML is restored.
     const response = await fetch("https://raw.githubusercontent.com/lyyuan03/lyyuan03.github.io/113e589ab16e70462138be7483fd98bb6bc2f18b/construction-record-extra-images.js", { signal: AbortSignal.timeout(20000) });
@@ -81,8 +81,9 @@ async function migrate() {
       const privateBody = snapshots[index + 4].data();
       let content = privateBody?.content || old.content || decryptLegacy(old, keys[meta.id]);
       if (!content || content.length < 200) throw new Error(`Complete body unavailable: ${meta.id}`);
-      if (meta.id === "reconciliation-absolution-heart") content = updateImages(content);
-      if (meta.id === "2026-lineage-lamp-building-record" && !content.includes("assets/construction/2026-lineage-lamp/entrance-path.webp")) {
+      // One-time conversion only: subsequent runs must preserve intentional admin body/image edits.
+      if (meta.id === "reconciliation-absolution-heart" && privateBody?.jinmuSeriesMigrationVersion !== 2) content = updateImages(content);
+      if (meta.id === "2026-lineage-lamp-building-record" && privateBody?.jinmuSeriesMigrationVersion !== 2 && !content.includes("assets/construction/2026-lineage-lamp/entrance-path.webp")) {
         const markdown = (spec) => `\n\n![${spec.alt}](${spec.src})\n\n${spec.caption}`;
         const exterior = /!\[[^\]]*\]\([^)]*images\/dizhi-render-exterior\.jpg[^)]*\)/;
         const garden = /!\[[^\]]*\]\([^)]*images\/dizhi-render-garden\.jpg[^)]*\)/;
@@ -104,7 +105,7 @@ async function migrate() {
         content, contentHash: createHash("sha256").update(content).digest("hex"),
         status: "published", active: true,
         ...(privateBody ? {} : { migrationSourceBackup: old }),
-        source: "jinmu-series-migration-v1", updatedAt: FieldValue.serverTimestamp()
+        source: "jinmu-series-migration-v1", jinmuSeriesMigrationVersion: 2, updatedAt: FieldValue.serverTimestamp()
       }, { merge: true });
       transaction.set(publicRefs[index], publicPayload);
       statuses[meta.id] = { status: "published", hidden: false, systemRecord: false };
