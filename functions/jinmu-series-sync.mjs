@@ -58,6 +58,17 @@ function updateImages(content) {
 }
 
 async function migrate() {
+  const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
+  let legacyGallery = [];
+  if (!witnessBefore.data()?.content?.includes("assets/construction/2026-lineage-lamp/entrance-path.webp")) {
+    // Recover only the three existing image specifications before retiring their public injector.
+    // Body text remains authoritative in Firestore; no old preview HTML is restored.
+    const response = await fetch("https://raw.githubusercontent.com/lyyuan03/lyyuan03.github.io/113e589ab16e70462138be7483fd98bb6bc2f18b/construction-record-extra-images.js", { signal: AbortSignal.timeout(20000) });
+    if (!response.ok) throw new Error("Legacy construction gallery unavailable");
+    const source = await response.text();
+    legacyGallery = [...source.matchAll(/src: "([^"]+)",\s+alt: "([^"]+)",\s+caption: "([^"]+)"/g)].map((m) => ({ src: m[1], alt: m[2], caption: m[3] }));
+    if (legacyGallery.length !== 3) throw new Error("Expected three existing construction gallery images");
+  }
   const summaries = await db.runTransaction(async (transaction) => {
     const publicRefs = jinmuEventArticles.map((article) => db.doc(`articles/${article.id}`));
     const bodyRefs = jinmuEventArticles.map((article) => db.doc(`eventArticleBodies/${article.id}`));
@@ -71,6 +82,14 @@ async function migrate() {
       let content = privateBody?.content || old.content || decryptLegacy(old, keys[meta.id]);
       if (!content || content.length < 200) throw new Error(`Complete body unavailable: ${meta.id}`);
       if (meta.id === "reconciliation-absolution-heart") content = updateImages(content);
+      if (meta.id === "2026-lineage-lamp-building-record" && !content.includes("assets/construction/2026-lineage-lamp/entrance-path.webp")) {
+        const markdown = (spec) => `\n\n![${spec.alt}](${spec.src})\n\n${spec.caption}`;
+        const exterior = /!\[[^\]]*\]\([^)]*images\/dizhi-render-exterior\.jpg[^)]*\)/;
+        const garden = /!\[[^\]]*\]\([^)]*images\/dizhi-render-garden\.jpg[^)]*\)/;
+        if (!exterior.test(content) || !garden.test(content)) throw new Error("Construction gallery anchors unavailable");
+        content = content.replace(exterior, (m) => m + markdown(legacyGallery[0]));
+        content = content.replace(garden, (m) => m + markdown(legacyGallery[1]) + markdown(legacyGallery[2]));
+      }
       // 明確公開欄位白名單；不將舊 content／備份／ciphertext 留在 public document。
       const preserved = {};
       for (const key of ["bookTitle", "bookAuthor", "bookPublisher", "bookPurchaseUrl", "bookCoverImage", "createdAt", "publishedAt", "readingLevel", "topics", "thumbnailSettings", "thumbnailPosition"]) {
@@ -157,6 +176,26 @@ async function testRules() {
     }
   }
   console.log(JSON.stringify({ stage: "live-security-tests", anonymousDenied: true, publicMetadataOnly: true, cases: results, temporaryUsersDeleted: true }));
+  const receipt = (await db.doc("membershipSettings/jinmuPermissionImportReceipt").get()).data();
+  if (receipt?.status === "verified") {
+    const imported = await db.collection("memberEntitlements").where("eventPermissionsSource", "==", "2026-jinmu-gmail-excel-audit").get();
+    const counts = { am: 0, pm: 0, patron: 0, supporter: 0, both: 0 };
+    let disabledMembers = 0;
+    for (const snapshot of imported.docs) {
+      const record = snapshot.data();
+      if (!/^[^\s@]+@gmail\.com$/.test(snapshot.id) || record.email !== snapshot.id || !Array.isArray(record.permissions)) throw new Error("Imported Gmail key or permission array invalid");
+      const has = (value) => record.permissions.includes(`2026-jinmu-${value}`);
+      counts.am += Number(has("am")); counts.pm += Number(has("pm"));
+      counts.patron += Number(has("build-patron")); counts.supporter += Number(has("build-supporter"));
+      counts.both += Number(has("am") && has("pm"));
+      if (has("build-patron") && !has("build-supporter")) throw new Error("Patron lost supporter permission");
+      if (record.disabled || record.suspended || record.status === "disabled") disabledMembers += 1;
+    }
+    if (imported.size < receipt.importedEmails || Object.entries(receipt.counts).some(([key, value]) => counts[key] < value)) throw new Error("Previously imported event permissions were lost");
+    const transport = await db.doc("membershipSettings/jinmuPermissionImportTransport").get();
+    if (transport.exists) throw new Error("One-time private import key still exists");
+    console.log(JSON.stringify({ stage: "real-gmail-readback", records: imported.size, counts, disabledMembers, gmailKeysValid: true, permissionsRetained: true, oneTimePrivateKeyAbsent: true }));
+  }
 }
 
 const action = process.argv[2];
