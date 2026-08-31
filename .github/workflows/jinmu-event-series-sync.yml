@@ -16,6 +16,8 @@ jobs:
   secure-series:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

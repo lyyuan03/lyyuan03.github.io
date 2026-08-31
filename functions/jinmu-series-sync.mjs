@@ -3,11 +3,14 @@ import { createDecipheriv, randomUUID, createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { jinmuEventArticles } from "../jinmu-event-series.js";
 const require = createRequire(import.meta.url);
-const { initializeApp, applicationDefault } = require("firebase-admin/app");
+const { initializeApp, applicationDefault, cert } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getAuth } = require("firebase-admin/auth");
 const project = "lyyuan03-membership";
-const app = initializeApp({ credential: applicationDefault(), projectId: project });
+const credential = process.env.FIREBASE_SERVICE_ACCOUNT_JSON
+  ? cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON))
+  : applicationDefault();
+const app = initializeApp({ credential, projectId: project });
 const db = getFirestore(app);
 const auth = getAuth(app);
 const apiKey = "AIzaSyAgHy-nPOErzs7NDJossVGPITbenXOfjQY";

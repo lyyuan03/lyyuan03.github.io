@@ -108,8 +108,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260830-limited-reading-1"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260830-limited-reading-1"]
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260831-permissions-1"],
+    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260831-permissions-1"]
   ];
   const importWithRetry = async (path) => {
     try {
