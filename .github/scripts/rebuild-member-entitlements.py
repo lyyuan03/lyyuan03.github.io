@@ -20,10 +20,13 @@ def access_token() -> str:
     return subprocess.check_output(["gcloud", "auth", "print-access-token"], text=True).strip()
 
 
-TOKEN = access_token()
+TOKEN = None
 
 
 def request_json(method: str, url: str, body: dict | None = None) -> dict:
+    global TOKEN
+    if TOKEN is None:
+        TOKEN = access_token()
     data = None if body is None else json.dumps(body, separators=(",", ":")).encode("utf-8")
     request = urllib.request.Request(url, data=data, method=method)
     request.add_header("Authorization", f"Bearer {TOKEN}")
@@ -51,6 +54,8 @@ def decode_value(value: dict):
         return value["timestampValue"]
     if "nullValue" in value:
         return None
+    if "arrayValue" in value:
+        return [decode_value(item) for item in value["arrayValue"].get("values", [])]
     if "mapValue" in value:
         return {key: decode_value(item) for key, item in value["mapValue"].get("fields", {}).items()}
     return None
@@ -71,6 +76,8 @@ def encode_value(value):
         return {"doubleValue": value}
     if isinstance(value, dict):
         return {"mapValue": {"fields": {key: encode_value(item) for key, item in value.items()}}}
+    if isinstance(value, list):
+        return {"arrayValue": {"values": [encode_value(item) for item in value]}}
     return {"stringValue": str(value)}
 
 
@@ -227,7 +234,6 @@ def main() -> int:
         if not has_sponsor and not has_wellness and not independent_permissions:
             delete_entitlement(email)
             deleted += 1
-            print(f"Deleted orphan entitlement: {email}")
             continue
 
         sponsor = sponsor_docs.get(email, {}).get("fields", {})
@@ -235,7 +241,6 @@ def main() -> int:
         fields = entitlement_fields(email, sponsor, wellness, has_sponsor, has_wellness)
         patch_entitlement(email, fields)
         updated += 1
-        print(f"Rebuilt entitlement: {email}")
 
     print(f"Member entitlement rebuild complete: {updated} updated, {deleted} deleted.")
     return 0
