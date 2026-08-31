@@ -1,0 +1,34 @@
+name: One-time Jinmu Public Backup Cleanup
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/jinmu-public-history-cleanup.yml
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: jinmu-public-history-cleanup
+  cancel-in-progress: false
+jobs:
+  authorized-cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install pinned history-cleaning utility
+        run: python3 -m pip install git-filter-repo==2.47.0
+      - name: Remove only verified public article backups
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/cleanup-jinmu-public-history.mjs
+      - name: Install existing Firebase verification dependencies
+        run: npm --prefix functions ci
+      - name: Verify current article access and all Gmail permissions
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node functions/jinmu-series-sync.mjs test

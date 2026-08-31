@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "repository": "lyyuan03/lyyuan03.github.io",
+  "approvedMain": "8a74992fc91145cacb4c97161f6b2c255b95455d",
+  "expectedBranches": 94,
+  "expectedContaminatedBlobs": 17,
+  "scopedPaths": [
+    "construction-preview.html",
+    "construction-record-admin.js",
+    "article-2026-yaochi-birthday-morning.js",
+    "article-reconciliation-absolution-heart.js"
+  ],
+  "logWorkflows": [
+    "yaochi-birthday-draft.yml",
+    "reconciliation-absolution-draft.yml",
+    "fix-construction-gallery.yml"
+  ],
+  "localBackupSha256": "83b34fc0f7147b970834acff31731e5d5c5ecdbc6643751d5500f947886689a6"
+}
