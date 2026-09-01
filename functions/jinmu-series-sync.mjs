@@ -57,6 +57,119 @@ function updateImages(content) {
   return next;
 }
 
+const MANAGED_JINMU_EVENTS = [
+  { id: "2026-jinmu-am", pattern: /文選[①1]|上午(?:場)?/ },
+  { id: "2026-jinmu-pm", pattern: /文選[②2]|下午(?:場)?/ },
+  { id: "2026-jinmu-build-patron", pattern: /總功德主/ },
+  { id: "2026-jinmu-build-supporter", pattern: /建院.*(?:護持|助建)|(?:護持|助建).*建院/ }
+];
+
+function canonicalManagedJinmuPermission(name = "", suppliedId = "") {
+  const normalizedId = String(suppliedId || "").trim().toLowerCase();
+  if (MANAGED_JINMU_EVENTS.some((event) => event.id === normalizedId)) return normalizedId;
+
+  const label = `${name} ${suppliedId}`;
+  const buildMatch = MANAGED_JINMU_EVENTS.slice(2).find((event) => event.pattern.test(label));
+  if (buildMatch) return buildMatch.id;
+  if (!/(金母|瑤池|yaochi|jinmu)/i.test(label)) return "";
+  return MANAGED_JINMU_EVENTS.slice(0, 2).find((event) => event.pattern.test(label))?.id || "";
+}
+
+function mergedManagedAccess(existing, incoming) {
+  const previous = existing && typeof existing === "object" ? existing : {};
+  const next = incoming && typeof incoming === "object" ? incoming : {};
+  return {
+    ...previous,
+    ...next,
+    status: previous.status === "active" || next.status === "active"
+      ? "active"
+      : (next.status || previous.status || "inactive")
+  };
+}
+
+async function migrateManagedJinmuActivities() {
+  const settingsRef = db.doc("membershipSettings/eventManagement");
+  const magicLinksRef = db.doc("membershipSettings/eventMagicLinkSecrets");
+  const [settingsSnapshot, magicLinksSnapshot, memberSnapshot] = await Promise.all([
+    settingsRef.get(),
+    magicLinksRef.get(),
+    db.collection("memberAccess").get()
+  ]);
+  const currentEvents = settingsSnapshot.data()?.events;
+  if (!Array.isArray(currentEvents) || !currentEvents.length) {
+    return { eventsChanged: 0, memberRecordsChanged: 0, linksChanged: false };
+  }
+
+  const idMap = new Map();
+  const eventsById = new Map();
+  for (const event of currentEvents) {
+    const oldId = String(event?.id || "").trim();
+    if (!oldId) continue;
+    const canonicalId = canonicalManagedJinmuPermission(event?.name || "", oldId) || oldId;
+    if (canonicalId !== oldId) idMap.set(oldId, canonicalId);
+    const nextEvent = { ...event, id: canonicalId };
+    const existing = eventsById.get(canonicalId);
+    eventsById.set(canonicalId, existing
+      ? {
+          ...existing,
+          ...nextEvent,
+          status: existing.status === "active" || nextEvent.status === "active" ? "active" : (nextEvent.status || existing.status)
+        }
+      : nextEvent);
+  }
+
+  if (!idMap.size) {
+    return { eventsChanged: 0, memberRecordsChanged: 0, linksChanged: false };
+  }
+
+  const writer = db.bulkWriter();
+  let memberRecordsChanged = 0;
+  for (const snapshot of memberSnapshot.docs) {
+    const currentAccess = snapshot.data()?.eventAccess;
+    if (!currentAccess || typeof currentAccess !== "object") continue;
+    const nextAccess = { ...currentAccess };
+    let changed = false;
+    for (const [oldId, canonicalId] of idMap) {
+      if (!Object.prototype.hasOwnProperty.call(nextAccess, oldId)) continue;
+      nextAccess[canonicalId] = mergedManagedAccess(nextAccess[canonicalId], nextAccess[oldId]);
+      delete nextAccess[oldId];
+      changed = true;
+    }
+    if (!changed) continue;
+    writer.update(snapshot.ref, { eventAccess: nextAccess, updatedAt: FieldValue.serverTimestamp() });
+    memberRecordsChanged += 1;
+  }
+  await writer.close();
+
+  const currentLinks = magicLinksSnapshot.data()?.links;
+  const nextLinks = currentLinks && typeof currentLinks === "object" ? { ...currentLinks } : {};
+  let linksChanged = false;
+  for (const [oldId, canonicalId] of idMap) {
+    if (!Object.prototype.hasOwnProperty.call(nextLinks, oldId)) continue;
+    nextLinks[canonicalId] = { ...(nextLinks[canonicalId] || {}), ...(nextLinks[oldId] || {}) };
+    delete nextLinks[oldId];
+    linksChanged = true;
+  }
+
+  await settingsRef.set({
+    events: [...eventsById.values()],
+    updatedAt: FieldValue.serverTimestamp()
+  }, { mergeFields: ["events", "updatedAt"] });
+  if (magicLinksSnapshot.exists && linksChanged) {
+    await magicLinksRef.set({
+      links: nextLinks,
+      updatedAt: FieldValue.serverTimestamp()
+    }, { mergeFields: ["links", "updatedAt"] });
+  }
+
+  return {
+    eventsChanged: idMap.size,
+    memberRecordsChanged,
+    linksChanged,
+    idMap: Object.fromEntries(idMap)
+  };
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -96,7 +209,13 @@ async function migrate() {
     transaction.set(db.doc("articleMetrics/__article-publication-status"), { statuses, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
     return prepared.map(({ meta, content }) => ({ id: meta.id, requiredPermission: meta.requiredPermission, bodyCharacters: content.length, imagesReplaced: meta.id === "reconciliation-absolution-heart" ? 5 : 0 }));
   });
-  console.log(JSON.stringify({ stage: "migration", status: "verified-in-transaction", articles: summaries }));
+  const managedActivities = await migrateManagedJinmuActivities();
+  console.log(JSON.stringify({
+    stage: "migration",
+    status: "verified-in-transaction",
+    articles: summaries,
+    managedActivities
+  }));
 }
 
 async function requestDocument(collection, id, token = "") {
@@ -112,7 +231,8 @@ async function testRules() {
     ["C", ["2026-jinmu-am", "2026-jinmu-pm"], [true, true, false, false]],
     ["D", ["2026-jinmu-build-patron", "2026-jinmu-build-supporter"], [false, false, true, true]],
     ["E", ["2026-jinmu-build-supporter"], [false, false, false, true]],
-    ["F", [], [false, false, false, false]]
+    ["F", [], [false, false, false, false]],
+    ["G", [], [true, false, false, false], "2026-jinmu-am"]
   ];
   for (const meta of jinmuEventArticles) {
     const publicResponse = await requestDocument("articles", meta.id);
@@ -124,7 +244,7 @@ async function testRules() {
     if (privateResponse.status !== 403) throw new Error(`Anonymous body must be denied: ${meta.id} (${privateResponse.status})`);
   }
   const results = [];
-  for (const [label, permissions, expected] of cases) {
+  for (const [label, permissions, expected, managedPermission] of cases) {
     const uid = `jinmu-test-${randomUUID()}`;
     const email = `${uid}@gmail.com`;
     let created = false;
@@ -136,6 +256,13 @@ async function testRules() {
         // F 是一般贊助會員但無活動 permission；仍必須拒絕四篇。
         sponsorArticleAccess: label === "F", sponsorExpiresAt: new Date("2099-01-01")
       });
+      if (managedPermission) {
+        await db.doc(`memberAccess/${email}`).set({
+          email,
+          eventAccess: { [managedPermission]: { status: "active" } },
+          status: "active"
+        });
+      }
       const customToken = await auth.createCustomToken(uid);
       const tokenResponse = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${apiKey}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: customToken, returnSecureToken: true }), signal: AbortSignal.timeout(20000) });
       const tokens = await tokenResponse.json();
@@ -155,6 +282,7 @@ async function testRules() {
     } finally {
       if (created) {
         await db.doc(`memberEntitlements/${email}`).delete();
+        if (managedPermission) await db.doc(`memberAccess/${email}`).delete();
         await auth.deleteUser(uid);
       }
     }
