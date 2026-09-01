@@ -223,7 +223,30 @@ function emailIsValid(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-function eventSlug(value = "") {
+const JINMU_MANAGED_EVENT_IDS = [
+  "2026-jinmu-am",
+  "2026-jinmu-pm",
+  "2026-jinmu-build-patron",
+  "2026-jinmu-build-supporter"
+];
+
+function canonicalJinmuEventId(name = "", suppliedId = "") {
+  const normalizedId = String(suppliedId || "").trim().toLowerCase();
+  if (JINMU_MANAGED_EVENT_IDS.includes(normalizedId)) return normalizedId;
+
+  const label = `${name} ${suppliedId}`;
+  if (/總功德主/.test(label)) return "2026-jinmu-build-patron";
+  if (/建院.*(?:護持|助建)|(?:護持|助建).*建院/.test(label)) return "2026-jinmu-build-supporter";
+  if (!/(金母|瑤池|yaochi|jinmu)/i.test(label)) return "";
+  if (/文選[①1]|上午(?:場)?/.test(label)) return "2026-jinmu-am";
+  if (/文選[②2]|下午(?:場)?/.test(label)) return "2026-jinmu-pm";
+  return "";
+}
+
+function eventSlug(value = "", name = "") {
+  const canonicalId = canonicalJinmuEventId(name || value, value);
+  if (canonicalId) return canonicalId;
+
   const normalized = String(value).trim().toLowerCase()
     .replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-")
     .replace(/^-+|-+$/g, "");
@@ -787,7 +810,7 @@ async function createActivity() {
   const idInput = document.getElementById("activity-id");
   const submitButton = document.getElementById("activity-submit");
   const name = nameInput.value.trim();
-  const id = eventSlug(idInput.value || name);
+  const id = eventSlug(idInput.value || name, name);
 
   if (!name) {
     const message = "請先輸入活動名稱。";
