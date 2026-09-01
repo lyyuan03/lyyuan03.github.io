@@ -36,6 +36,10 @@ const userLabel = document.getElementById("admin-user");
 const listEl = document.getElementById("article-list");
 const metricsEl = document.getElementById("article-metrics");
 const form = document.getElementById("article-form");
+const formFields = Object.fromEntries(
+  ["title", "slug", "category", "status", "excerpt", "coverImage", "bookTitle", "bookAuthor", "bookPublisher", "bookPurchaseUrl", "bookCoverImage", "accessType", "content"]
+    .map((name) => [name, form.elements.namedItem(name)])
+);
 const preview = document.getElementById("preview");
 const saveStatus = document.getElementById("save-status");
 const saveStatusInline = document.getElementById("save-status-inline");
@@ -550,22 +554,22 @@ async function syncRevisedStaticArticleImages(snapshot) {
 
 function setFormData(article = {}) {
   const isStaticArticle = article.source === "github-static";
-  form.title.value = article.title || "";
-  form.slug.value = article.slug || "";
-  form.category.value = article.category || "spiritual";
-  form.status.value = article.status || "draft";
-  form.excerpt.value = article.excerpt || "";
-  form.coverImage.value = article.coverImage || "";
-  form.bookTitle.value = article.bookTitle || "";
-  form.bookAuthor.value = article.bookAuthor || "";
-  form.bookPublisher.value = article.bookPublisher || "";
-  form.bookPurchaseUrl.value = article.bookPurchaseUrl || "";
-  form.bookCoverImage.value = article.bookCoverImage || "";
-  form.accessType.value = normalizeAdminAccessType(article);
+  formFields.title.value = article.title || "";
+  formFields.slug.value = article.slug || "";
+  formFields.category.value = article.category || "spiritual";
+  formFields.status.value = article.status || "draft";
+  formFields.excerpt.value = article.excerpt || "";
+  formFields.coverImage.value = article.coverImage || "";
+  formFields.bookTitle.value = article.bookTitle || "";
+  formFields.bookAuthor.value = article.bookAuthor || "";
+  formFields.bookPublisher.value = article.bookPublisher || "";
+  formFields.bookPurchaseUrl.value = article.bookPurchaseUrl || "";
+  formFields.bookCoverImage.value = article.bookCoverImage || "";
+  formFields.accessType.value = normalizeAdminAccessType(article);
   renderEventOptions(article.eventId || "");
   toggleEventAccess();
-  form.content.value = article.content || "";
-  preview.innerHTML = renderContent(form.content.value);
+  formFields.content.value = article.content || "";
+  preview.innerHTML = renderContent(formFields.content.value);
   importButton?.classList.toggle("hidden", !isStaticArticle);
   saveButton.classList.toggle("hidden", isStaticArticle);
   saveButton.disabled = isStaticArticle;
@@ -615,7 +619,7 @@ async function importStaticArticle(articleId) {
 
 function renderArticleRows(items) {
   return items.map((article) => `
-    <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${article.id}">
+    <button class="article-item${article.id === currentId ? " is-active" : ""}" type="button" data-id="${escapeHtml(String(article.id || ""))}">
       <div class="article-item-title">${escapeHtml(article.title || "未命名文章")}</div>
       <div class="article-item-meta">${categoryLabels[article.category] || "未分類"}｜${article.status === "published" ? "已發布" : "草稿"}｜${article.source === "github-static" ? "網站文章" : "後台文章"}</div>
     </button>
@@ -639,15 +643,33 @@ function renderList() {
       ${published.length ? renderArticleRows(published) : '<div class="article-list-empty">目前沒有已發布文章</div>'}
     </div>
   `;
-  listEl.querySelectorAll("[data-id]").forEach((button) => {
-    button.addEventListener("click", () => {
-      currentId = button.dataset.id;
-      const article = articles.find((item) => item.id === currentId);
-      setFormData(article);
-      renderList();
-      setSaveStatus(article?.source === "github-static" ? "網站文章｜請在右側按「匯入後台編輯」" : "尚未修改");
+}
+
+function selectArticle(articleId) {
+  const selectedId = String(articleId || "");
+  const article = articles.find((item) => String(item.id) === selectedId);
+  if (!article) {
+    setSaveStatus("找不到文章資料，請重新整理頁面", "error");
+    showAdminToast("找不到這篇文章，請重新整理後再試。", "error");
+    return;
+  }
+
+  try {
+    currentId = article.id;
+    setFormData(article);
+    listEl.querySelectorAll(".article-item[data-id]").forEach((item) => {
+      item.classList.toggle("is-active", item.dataset.id === selectedId);
     });
-  });
+    setSaveStatus(article.source === "github-static" ? "網站文章｜請按「匯入後台編輯」" : `已載入：${article.title || "未命名文章"}`, "success");
+    requestAnimationFrame(() => {
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+      formFields.title.focus({ preventScroll: true });
+    });
+  } catch (error) {
+    console.error("文章編輯表單載入失敗：", error);
+    setSaveStatus("文章載入失敗，請重新整理頁面", "error");
+    showAdminToast("文章載入失敗，請重新整理後再試。", "error");
+  }
 }
 
 function renderMetricsDashboard() {
@@ -985,10 +1007,10 @@ async function uploadImages(files) {
   }
 
   const addition = `\n\n${inserted.join("\n\n")}\n\n`;
-  const start = form.content.selectionStart || form.content.value.length;
-  const end = form.content.selectionEnd || form.content.value.length;
-  form.content.value = form.content.value.slice(0, start) + addition + form.content.value.slice(end);
-  preview.innerHTML = renderContent(form.content.value);
+  const start = formFields.content.selectionStart || formFields.content.value.length;
+  const end = formFields.content.selectionEnd || formFields.content.value.length;
+  formFields.content.value = formFields.content.value.slice(0, start) + addition + formFields.content.value.slice(end);
+  preview.innerHTML = renderContent(formFields.content.value);
   uploadStatus.textContent = `已插入 ${inserted.length} 張圖片`;
   uploadButton.disabled = false;
   imageInput.value = "";
@@ -1261,13 +1283,18 @@ function isThumbnailControlTarget(target) {
 form.addEventListener("submit", saveArticle);
 form.addEventListener("input", (event) => {
   if (isThumbnailControlTarget(event.target)) return;
-  if (event.target === form.content) preview.innerHTML = renderContent(form.content.value);
+  if (event.target === formFields.content) preview.innerHTML = renderContent(formFields.content.value);
   markDirty();
 });
 form.addEventListener("change", (event) => {
   if (!isThumbnailControlTarget(event.target)) markDirty();
 });
 accessTypeInput?.addEventListener("change", toggleEventAccess);
+listEl.addEventListener("click", (event) => {
+  const button = event.target.closest(".article-item[data-id]");
+  if (!button || !listEl.contains(button)) return;
+  selectArticle(button.dataset.id);
+});
 newButton.addEventListener("click", newArticle);
 importButton?.addEventListener("click", async () => {
   if (!currentId) return;
