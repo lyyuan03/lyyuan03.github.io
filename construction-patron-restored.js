@@ -33,9 +33,6 @@ function installBuildingPatronArticleEnhancements() {
         line-height:1.75;
         letter-spacing:.02em;
       }
-      .building-patron-article-mode .article-view[data-article-id="${TARGET_ID}"] .article-body h2{
-        scroll-margin-top:100px;
-      }
       @media(max-width:760px){
         .building-patron-article-mode .article-view[data-article-id="${TARGET_ID}"] .building-story-figure{
           margin:28px 0 34px;
@@ -55,7 +52,18 @@ function installBuildingPatronArticleEnhancements() {
     );
   }
 
-  function addFigure(body, { id, anchor, src, caption, alt, base64Url = "" }) {
+  async function loadBase64(urls) {
+    const values = await Promise.all(urls.map(async (url) => {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}: ${url}`);
+      return (await response.text()).replace(/\s+/g, "");
+    }));
+    const base64 = values.join("");
+    if (!base64.startsWith("UklGR")) throw new Error("Invalid WebP payload");
+    return `data:image/webp;base64,${base64}`;
+  }
+
+  function addFigure(body, { id, anchor, base64Urls, caption, alt }) {
     if (body.querySelector(`[data-building-photo="${id}"]`)) return;
     const paragraph = findParagraph(body, anchor);
     if (!paragraph) return;
@@ -63,33 +71,24 @@ function installBuildingPatronArticleEnhancements() {
     const figure = document.createElement("figure");
     figure.className = "building-story-figure";
     figure.dataset.buildingPhoto = id;
+
     const img = document.createElement("img");
     img.alt = alt || "";
     img.loading = "lazy";
     img.decoding = "async";
+
     const note = document.createElement("figcaption");
     note.textContent = caption;
+
     figure.append(img, note);
     paragraph.after(figure);
 
-    if (base64Url) {
-      fetch(base64Url, { cache: "no-store" })
-        .then((response) => {
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          return response.text();
-        })
-        .then((value) => {
-          const base64 = value.replace(/\s+/g, "");
-          if (!base64.startsWith("UklGR")) throw new Error("Invalid WebP payload");
-          img.src = `data:image/webp;base64,${base64}`;
-        })
-        .catch((error) => {
-          console.warn("建院照片載入失敗：", id, error);
-          figure.remove();
-        });
-    } else {
-      img.src = src;
-    }
+    loadBase64(base64Urls)
+      .then((src) => { img.src = src; })
+      .catch((error) => {
+        console.warn("建院照片載入失敗：", id, error);
+        figure.remove();
+      });
   }
 
   function decorate() {
@@ -98,51 +97,62 @@ function installBuildingPatronArticleEnhancements() {
     if (!article || !body) return false;
 
     addFigure(body, {
-      id: "paused-site",
+      id: "old-structure",
       anchor: "閉園兩年半，這個問題一直都在",
-      src: "images/dizhi-build-pause.jpg?v=20260901-story-1",
-      alt: "靈元院停工期間的工程現場",
-      caption: "停工期間留下的工程現場。工程停下來，時間卻沒有停止，原有設施與半成品仍持續承受風吹、日曬與雨淋。"
+      base64Urls: ["assets/construction/2026-building-patron/photo-05-old-structure.webp.b64?v=20260901-exact-1"],
+      alt: "停工期間尚未整理的舊結構空間",
+      caption: "停工期間的原有結構。兩年半沒有持續施工，空間、材料與設備都承受時間與環境的消耗。"
     });
 
     addFigure(body, {
-      id: "site-environment",
+      id: "site-vision",
       anchor: "院裡原有的樹木、環境、建築規劃",
-      src: "assets/construction/lingyuan-site-aerial-overview-20260822.webp?v=20260901-story-1",
-      alt: "靈元院院區與周邊環境",
-      caption: "院區與周邊環境。閉園期間，找地、看地與既有院區的建築、樹木、環境規劃並沒有中斷。"
+      base64Urls: ["assets/construction/2026-building-patron/photo-02-site-vision.webp.b64?v=20260901-exact-1"],
+      alt: "靈元院整體空間設計示意",
+      caption: "早期整體空間設計示意。靈元院從一開始就希望讓建築、庭園與自然環境彼此相連。"
     });
 
     addFigure(body, {
-      id: "current-progress",
+      id: "current-exterior",
       anchor: "現在大家在照片裡看到的外部結構，已經先做了起來",
-      base64Url: "assets/lingyuan-progress-202608.webp.b64?v=20260901-story-2",
-      alt: "靈元院目前建院進度與外部結構",
-      caption: "2026 年目前建院進度。外部結構已先行完成，這只是能讓後續工程重新往前的一個殼，並不是靈元院最後的樣子。"
+      base64Urls: ["assets/construction/2026-building-patron/photo-06-current-exterior.webp.b64?v=20260901-exact-1"],
+      alt: "靈元院目前完成的外部建築結構",
+      caption: "目前完成的外部建築結構。這只是後續工程能夠重新往前的基礎，還不是最後完成的樣子。"
     });
 
     addFigure(body, {
       id: "building-dimensions",
       anchor: "這一座鐵構，前後寬約十四點四二公尺",
-      src: "images/dizhi-blueprint.jpg?v=20260901-story-1",
-      alt: "靈元院建築尺度與工程配置參考",
-      caption: "建築尺度與配置參考。現有結構前後寬約 14.42 公尺、左右深度約 14.36 公尺，最高處約 6.17 公尺。"
+      base64Urls: ["assets/construction/2026-building-patron/photo-03-building-dimensions-v2.webp.b64?v=20260901-exact-1"],
+      alt: "靈元院建築尺寸與外觀配置圖",
+      caption: "建築尺寸與外觀配置。前後寬約 14.42 公尺、左右深度約 14.36 公尺，最高處約 6.17 公尺。"
     });
 
     addFigure(body, {
-      id: "interior-direction",
+      id: "steel-interior",
       anchor: "下一步，是在現有結構裡繼續往內興建",
-      src: "images/dizhi-space.jpg?v=20260901-story-1",
-      alt: "靈元院內部空間與後續施工方向",
-      caption: "外部結構完成之後，真正繁複的是往內施工。主殿、水電、泥作、木構、廁所與其他空間，都必須依序重新銜接。"
+      base64Urls: ["assets/construction/2026-building-patron/photo-04-steel-interior-v2.webp.b64?v=20260901-exact-1"],
+      alt: "鐵構建築目前內部空間",
+      caption: "目前鐵構內部。外殼完成後，主殿、水電、泥作、木構、廁所與其他空間才會逐步往內施作。"
     });
 
     addFigure(body, {
-      id: "future-garden",
+      id: "design-courtyard",
       anchor: "所以當年規劃靈元院時，我一直很在意庭園、樹木、廊道、光線",
-      src: "images/dizhi-render-garden.jpg?v=20260901-story-1",
-      alt: "靈元院未來庭園與修行空間設計意象",
-      caption: "未來空間設計意象。希望建築、庭園、樹木、廊道與光線能一起構成一個讓人真正慢下來的修行場所。"
+      base64Urls: ["assets/construction/2026-building-patron/photo-01-design-courtyard.webp.b64?v=20260901-exact-1"],
+      alt: "靈元院庭園與建築設計示意",
+      caption: "庭園與建築設計示意。希望未來走進靈元院時，建築本身不會壓過自然，而是讓人能慢下來。"
+    });
+
+    addFigure(body, {
+      id: "site-trees",
+      anchor: "庭園、樹木、廊道、光線",
+      base64Urls: [
+        "assets/construction/2026-building-patron/site-trees-20260901.part1.b64?v=20260901-exact-1",
+        "assets/construction/2026-building-patron/site-trees-20260901.webp.b64?v=20260901-exact-1"
+      ],
+      alt: "靈元院建築旁保留的樹木與草地",
+      caption: "建築旁保留的樹木與草地。未來的空間規劃會繼續把樹木、庭園與建築之間的關係放在重要位置。"
     });
 
     return true;
