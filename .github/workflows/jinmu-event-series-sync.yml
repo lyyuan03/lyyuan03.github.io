@@ -53,3 +53,20 @@ jobs:
         run: node functions/jinmu-series-sync.mjs migrate
       - name: Verify six permission cases against live Firestore
         run: node functions/jinmu-series-sync.mjs test
+      - name: Record building patron rewrite deployment
+        run: |
+          mkdir -p .github/deploy-triggers
+          cat > .github/deploy-triggers/building-patron-rewrite-success.txt <<'EOF'
+          article=2026-building-patron-record
+          rewriteVersion=1
+          contentHash=0b0757279e222f117143ccfe84bed5b26d74a270b9d80cc2a2b9ab0339175be9
+          status=deployed-and-tested
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/deploy-triggers/building-patron-rewrite-success.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "Record building patron rewrite deployment"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
