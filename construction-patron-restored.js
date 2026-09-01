@@ -63,7 +63,7 @@ function installBuildingPatronArticleEnhancements() {
     return `data:image/webp;base64,${base64}`;
   }
 
-  function addFigure(body, { id, anchor, base64Urls, caption, alt }) {
+  function addFigure(body, { id, anchor, base64Urls = [], src = "", caption, alt }) {
     if (body.querySelector(`[data-building-photo="${id}"]`)) return;
     const paragraph = findParagraph(body, anchor);
     if (!paragraph) return;
@@ -83,12 +83,20 @@ function installBuildingPatronArticleEnhancements() {
     figure.append(img, note);
     paragraph.after(figure);
 
-    loadBase64(base64Urls)
-      .then((src) => { img.src = src; })
-      .catch((error) => {
-        console.warn("建院照片載入失敗：", id, error);
+    if (src) {
+      img.src = src;
+      img.onerror = () => {
+        console.warn("建院照片載入失敗：", id, src);
         figure.remove();
-      });
+      };
+    } else {
+      loadBase64(base64Urls)
+        .then((loadedSrc) => { img.src = loadedSrc; })
+        .catch((error) => {
+          console.warn("建院照片載入失敗：", id, error);
+          figure.remove();
+        });
+    }
   }
 
   function decorate() {
@@ -99,7 +107,7 @@ function installBuildingPatronArticleEnhancements() {
     addFigure(body, {
       id: "old-structure",
       anchor: "閉園兩年半，這個問題一直都在",
-      base64Urls: ["assets/construction/2026-building-patron/photo-05-old-structure.webp.b64?v=20260901-exact-1"],
+      src: "assets/construction/2026-building-patron/photo-05-old-structure.webp?v=20260901-working-1",
       alt: "停工期間尚未整理的舊結構空間",
       caption: "停工期間的原有結構。兩年半沒有持續施工，空間、材料與設備都承受時間與環境的消耗。"
     });
@@ -115,7 +123,7 @@ function installBuildingPatronArticleEnhancements() {
     addFigure(body, {
       id: "current-exterior",
       anchor: "現在大家在照片裡看到的外部結構，已經先做了起來",
-      base64Urls: ["assets/construction/2026-building-patron/photo-06-current-exterior.webp.b64?v=20260901-exact-1"],
+      src: "assets/construction/2026-building-patron/photo-06-current-exterior.webp?v=20260901-working-1",
       alt: "靈元院目前完成的外部建築結構",
       caption: "目前完成的外部建築結構。這只是後續工程能夠重新往前的基礎，還不是最後完成的樣子。"
     });
@@ -147,10 +155,7 @@ function installBuildingPatronArticleEnhancements() {
     addFigure(body, {
       id: "site-trees",
       anchor: "庭園、樹木、廊道、光線",
-      base64Urls: [
-        "assets/construction/2026-building-patron/site-trees-20260901.part1.b64?v=20260901-exact-1",
-        "assets/construction/2026-building-patron/site-trees-20260901.webp.b64?v=20260901-exact-1"
-      ],
+      src: "assets/construction/2026-building-patron/photo-07-site-trees.webp?v=20260901-working-1",
       alt: "靈元院建築旁保留的樹木與草地",
       caption: "建築旁保留的樹木與草地。未來的空間規劃會繼續把樹木、庭園與建築之間的關係放在重要位置。"
     });
