@@ -523,3 +523,5 @@ else if (action === "test") {
   }
 }
 else throw new Error("Expected action: rules | migrate | test");
+
+// lineage-lamp-building-import-retry: 2026-09-01T10:58Z
