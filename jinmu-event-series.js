@@ -27,7 +27,7 @@ export const jinmuEventArticles = [
     requiredPermission: "2026-jinmu-build-patron",
     accessBadge: "建院總功德主專屬",
     accessDeniedMessage: "此篇為丙午建院總功德主專屬內容。",
-    excerpt: "一念護持，共同成院。為建院總功德主記錄靈元院建院進度、空間設計與施工近況。",
+    excerpt: "靈元院停工兩年半後重新往前。這不是一篇工程報告，而是一段關於承接、取捨、信眾等待與道場重新起步的建院紀錄。",
     coverImage: "images/dizhi-render-exterior.jpg",
     thumbnailImage: "images/dizhi-render-garden.jpg"
   },
