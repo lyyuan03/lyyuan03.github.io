@@ -72,7 +72,12 @@ service cloud.firestore {
     function hasEventPermission(permission) {
       let email = request.auth.token.email.lower();
       return verifiedEmail()
-        && email.matches('^[^@]+@gmail[.]com
+        && email.matches('^[^@]+@gmail[.]com')
+        && (
+          hasCanonicalEventPermission(email, permission)
+          || hasManagedEventPermission(email, permission)
+        );
+    }
 
     function safePublicEventArticle() {
       return !request.resource.data.keys().hasAny(["requiredPermission"])
