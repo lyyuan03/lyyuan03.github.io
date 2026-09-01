@@ -234,8 +234,8 @@ function publishEventsToArticleAdmin() {
 }
 
 async function saveEvents(nextEvents) {
+  await setDoc(settingsRef, { events: nextEvents, updatedAt: serverTimestamp() }, { merge: true });
   events = nextEvents;
-  await setDoc(settingsRef, { events, updatedAt: serverTimestamp() }, { merge: true });
   renderEvents();
   publishEventsToArticleAdmin();
   installArticleEventSearch();
@@ -608,19 +608,51 @@ eventForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const nameInput = document.getElementById("activity-name");
   const idInput = document.getElementById("activity-id");
+  const submitButton = eventForm.querySelector('button[type="submit"]');
   const name = nameInput.value.trim();
   const id = eventSlug(idInput.value || name);
-  if (!name) return;
-  if (events.some((item) => item.id === id)) {
-    setStatus("活動代稱已存在，請更換後再儲存。", "error");
+
+  if (!name) {
+    setStatus("請先輸入活動名稱。", "error");
+    nameInput.focus();
     return;
   }
-  await saveEvents([...events, { id, name, status: "active", createdAt: new Date().toISOString() }]);
-  eventSelect.value = id;
-  nameInput.value = "";
-  idInput.value = "";
-  setStatus(`已建立活動「${name}」。`, "success");
-  await refresh();
+  if (events.some((item) => item.id === id)) {
+    setStatus("活動代稱已存在，請更換後再儲存。", "error");
+    idInput.focus();
+    return;
+  }
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "建立中…";
+  }
+  setStatus(`正在建立活動「${name}」…`, "saving");
+
+  try {
+    await saveEvents([...events, { id, name, status: "active", createdAt: new Date().toISOString() }]);
+    eventSelect.value = id;
+    nameInput.value = "";
+    idInput.value = "";
+    renderParticipants();
+    setStatus(`已建立活動「${name}」。`, "success");
+  } catch (error) {
+    console.error("活動建立失敗：", error);
+    const code = String(error?.code || "");
+    const detail = code.includes("permission-denied")
+      ? "目前登入帳號沒有活動寫入權限，請登出後改用靈元院管理員 Gmail 登入。"
+      : code.includes("unavailable")
+        ? "目前無法連線到活動資料庫，請確認網路後再試一次。"
+        : code.includes("resource-exhausted")
+          ? "活動資料已達儲存上限，請先停用或整理舊活動。"
+          : "活動建立失敗，請重新整理頁面後再試一次。";
+    setStatus(detail, "error");
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "新增活動";
+    }
+  }
 });
 
 async function importParticipants() {
