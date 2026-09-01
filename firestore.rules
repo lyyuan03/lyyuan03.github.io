@@ -43,39 +43,31 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/memberEntitlements/$(request.auth.token.email));
     }
 
-    function hasCanonicalEventPermission(email, permission) {
-      let path = /databases/$(database)/documents/memberEntitlements/$(email);
-      return exists(path)
-        && get(path).data.email == email
-        && get(path).data.keys().hasAny(["permissions"])
-        && get(path).data.permissions is list
-        && get(path).data.permissions.hasAny([permission])
-        && (!get(path).data.keys().hasAny(["disabled"]) || get(path).data.disabled != true)
-        && (!get(path).data.keys().hasAny(["suspended"]) || get(path).data.suspended != true)
-        && (!get(path).data.keys().hasAny(["status"]) || get(path).data.status != "disabled");
-    }
-
-    function hasManagedEventPermission(email, permission) {
-      let path = /databases/$(database)/documents/memberAccess/$(email);
-      return exists(path)
-        && (!get(path).data.keys().hasAny(["email"]) || get(path).data.email == email)
-        && get(path).data.keys().hasAny(["eventAccess"])
-        && get(path).data.eventAccess is map
-        && get(path).data.eventAccess.keys().hasAny([permission])
-        && get(path).data.eventAccess[permission] is map
-        && get(path).data.eventAccess[permission].status == "active"
-        && (!get(path).data.keys().hasAny(["disabled"]) || get(path).data.disabled != true)
-        && (!get(path).data.keys().hasAny(["suspended"]) || get(path).data.suspended != true)
-        && (!get(path).data.keys().hasAny(["status"]) || get(path).data.status != "disabled");
-    }
-
     function hasEventPermission(permission) {
       let email = request.auth.token.email.lower();
+      let canonicalPath = /databases/$(database)/documents/memberEntitlements/$(email);
+      let managedPath = /databases/$(database)/documents/memberAccess/$(email);
       return verifiedEmail()
-        && email.matches('^[^@]+@gmail[.]com')
+        && email.matches('^[^@]+@gmail[.]com$')
         && (
-          hasCanonicalEventPermission(email, permission)
-          || hasManagedEventPermission(email, permission)
+          (
+            exists(canonicalPath)
+            && get(canonicalPath).data.email == email
+            && get(canonicalPath).data.keys().hasAny(["permissions"])
+            && get(canonicalPath).data.permissions is list
+            && get(canonicalPath).data.permissions.hasAny([permission])
+            && (!get(canonicalPath).data.keys().hasAny(["disabled"]) || get(canonicalPath).data.disabled != true)
+            && (!get(canonicalPath).data.keys().hasAny(["suspended"]) || get(canonicalPath).data.suspended != true)
+            && (!get(canonicalPath).data.keys().hasAny(["status"]) || get(canonicalPath).data.status != "disabled")
+          )
+          ||
+          (
+            exists(managedPath)
+            && get(managedPath).data.eventAccess[permission].status == "active"
+            && (!get(managedPath).data.keys().hasAny(["disabled"]) || get(managedPath).data.disabled != true)
+            && (!get(managedPath).data.keys().hasAny(["suspended"]) || get(managedPath).data.suspended != true)
+            && (!get(managedPath).data.keys().hasAny(["status"]) || get(managedPath).data.status != "disabled")
+          )
         );
     }
 
