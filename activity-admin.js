@@ -236,7 +236,7 @@ function canonicalJinmuEventId(name = "", suppliedId = "") {
 
   const label = `${name} ${suppliedId}`;
   if (/總功德主/.test(label)) return "2026-jinmu-build-patron";
-  if (/建院.*(?:護持|助建)|(?:護持|助建).*建院/.test(label)) return "2026-jinmu-build-supporter";
+  if (/建院.*(?:護持|助建)|(?:護持|助建).*建院|點燈(?:護持|參與者)/.test(label)) return "2026-jinmu-build-supporter";
   if (!/(金母|瑤池|yaochi|jinmu)/i.test(label)) return "";
   if (/文選[①1]|上午(?:場)?/.test(label)) return "2026-jinmu-am";
   if (/文選[②2]|下午(?:場)?/.test(label)) return "2026-jinmu-pm";
@@ -763,10 +763,15 @@ async function addParticipants(emails) {
         const entitlementSnapshot = entitlementMap.get(email);
         const existing = entitlementSnapshot?.exists() ? entitlementSnapshot.data() : {};
         const previousPermissions = Array.isArray(existing.permissions) ? existing.permissions : [];
+        const previousManagedPermissions = Array.isArray(existing.activityManagedPermissions)
+          ? existing.activityManagedPermissions
+          : [];
+        const activityManagedPermissions = [...new Set([...previousManagedPermissions, event.id])];
         const permissions = [...new Set([...previousPermissions, event.id])];
         batch.set(doc(db, "memberEntitlements", email), {
           email,
           permissions,
+          activityManagedPermissions,
           schemaVersion: existing.schemaVersion || 1,
           ...(!entitlementSnapshot?.exists()
             ? { status: "active", eventPermissionsSource: "activity-management" }
@@ -813,8 +818,13 @@ async function removeParticipant(email) {
     const existing = entitlementSnapshot.data();
     const permissions = (Array.isArray(existing.permissions) ? existing.permissions : [])
       .filter((permission) => permission !== event.id);
+    const activityManagedPermissions = (Array.isArray(existing.activityManagedPermissions)
+      ? existing.activityManagedPermissions
+      : [])
+      .filter((permission) => permission !== event.id);
     batch.set(entitlementRef, {
       permissions,
+      activityManagedPermissions,
       activityManagementSyncedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }, { merge: true });
