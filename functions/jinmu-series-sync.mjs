@@ -224,64 +224,6 @@ async function migrateManagedJinmuActivities() {
   };
 }
 
-const ONE_TIME_EMAIL_PERMISSION_GRANTS = new Map([
-  ["0a3443f895df11f731f403281cc1ba81e12f9828833e1c2b9f310196b0f435fd", ["2026-jinmu-build-supporter"]]
-]);
-
-async function applyOneTimeEmailPermissionGrants() {
-  const [memberSnapshot, entitlementSnapshot] = await Promise.all([
-    db.collection("memberAccess").get(),
-    db.collection("memberEntitlements").get()
-  ]);
-  const candidateEmails = new Set();
-  for (const snapshot of [...memberSnapshot.docs, ...entitlementSnapshot.docs]) {
-    for (const value of [snapshot.id, snapshot.data()?.email]) {
-      const email = String(value || "").trim().toLowerCase();
-      if (/^[^\s@]+@gmail\.com$/.test(email)) candidateEmails.add(email);
-    }
-  }
-
-  const matches = [...candidateEmails].flatMap((email) => {
-    const digest = createHash("sha256").update(email).digest("hex");
-    const permissions = ONE_TIME_EMAIL_PERMISSION_GRANTS.get(digest);
-    return permissions ? [{ email, permissions }] : [];
-  });
-  if (matches.length !== ONE_TIME_EMAIL_PERMISSION_GRANTS.size) {
-    throw new Error(`Explicit email grant target mismatch: expected ${ONE_TIME_EMAIL_PERMISSION_GRANTS.size}, found ${matches.length}`);
-  }
-
-  for (const { email, permissions: grantedPermissions } of matches) {
-    const ref = db.doc(`memberEntitlements/${email}`);
-    const snapshot = await ref.get();
-    const existing = snapshot.data() || {};
-    const permissions = [...new Set([
-      ...(Array.isArray(existing.permissions) ? existing.permissions : []),
-      ...grantedPermissions
-    ])];
-    await ref.set({
-      email,
-      permissions,
-      schemaVersion: existing.schemaVersion || 1,
-      status: "active",
-      disabled: false,
-      suspended: false,
-      explicitEmailGrantAppliedAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp()
-    }, { merge: true });
-
-    const verified = (await ref.get()).data();
-    if (!grantedPermissions.every((permission) => verified?.permissions?.includes(permission))) {
-      throw new Error("Explicit email permission write verification failed");
-    }
-  }
-
-  return {
-    matchedAccounts: matches.length,
-    grantedPermissions: [...new Set(matches.flatMap((match) => match.permissions))],
-    verified: true
-  };
-}
-
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -322,13 +264,11 @@ async function migrate() {
     return prepared.map(({ meta, content }) => ({ id: meta.id, requiredPermission: meta.requiredPermission, bodyCharacters: content.length, imagesReplaced: meta.id === "reconciliation-absolution-heart" ? 5 : 0 }));
   });
   const managedActivities = await migrateManagedJinmuActivities();
-  const explicitEmailGrants = await applyOneTimeEmailPermissionGrants();
   console.log(JSON.stringify({
     stage: "migration",
     status: "verified-in-transaction",
     articles: summaries,
-    managedActivities,
-    explicitEmailGrants
+    managedActivities
   }));
 }
 
