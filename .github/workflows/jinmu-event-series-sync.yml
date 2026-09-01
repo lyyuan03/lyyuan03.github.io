@@ -8,7 +8,7 @@ on:
       - functions/jinmu-series-sync.mjs
       - .github/workflows/jinmu-event-series-sync.yml
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: jinmu-event-series-sync
   cancel-in-progress: false
@@ -28,6 +28,24 @@ jobs:
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Export service-account public key for sealed article imports
+        run: |
+          node --input-type=module <<'NODE'
+          import { createPublicKey } from "node:crypto";
+          import { mkdir, writeFile } from "node:fs/promises";
+          const service = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || "{}");
+          if (!service.private_key) throw new Error("FIREBASE_SERVICE_ACCOUNT private_key missing");
+          const publicKey = createPublicKey(service.private_key).export({ type: "spki", format: "pem" });
+          await mkdir("secure-imports", { recursive: true });
+          await writeFile("secure-imports/jinmu-service-public-key.pem", publicKey, "utf8");
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add secure-imports/jinmu-service-public-key.pem
+          if ! git diff --cached --quiet; then
+            git commit -m "Export Jinmu service public key"
+            git push origin HEAD:main
+          fi
       - run: npm --prefix functions ci
       - name: Deploy Firestore security rules
         run: node functions/jinmu-series-sync.mjs rules
