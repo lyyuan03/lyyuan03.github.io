@@ -59,16 +59,7 @@ function updateImages(content) {
 
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
-  let legacyGallery = [];
-  if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2 && !witnessBefore.data()?.content?.includes("assets/construction/2026-lineage-lamp/entrance-path.webp")) {
-    // Recover only the three existing image specifications before retiring their public injector.
-    // Body text remains authoritative in Firestore; no old preview HTML is restored.
-    const response = await fetch("https://raw.githubusercontent.com/lyyuan03/lyyuan03.github.io/113e589ab16e70462138be7483fd98bb6bc2f18b/construction-record-extra-images.js", { signal: AbortSignal.timeout(20000) });
-    if (!response.ok) throw new Error("Legacy construction gallery unavailable");
-    const source = await response.text();
-    legacyGallery = [...source.matchAll(/src: "([^"]+)",\s+alt: "([^"]+)",\s+caption: "([^"]+)"/g)].map((m) => ({ src: m[1], alt: m[2], caption: m[3] }));
-    if (legacyGallery.length !== 3) throw new Error("Expected three existing construction gallery images");
-  }
+  if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
   const summaries = await db.runTransaction(async (transaction) => {
     const publicRefs = jinmuEventArticles.map((article) => db.doc(`articles/${article.id}`));
     const bodyRefs = jinmuEventArticles.map((article) => db.doc(`eventArticleBodies/${article.id}`));
@@ -83,14 +74,6 @@ async function migrate() {
       if (!content || content.length < 200) throw new Error(`Complete body unavailable: ${meta.id}`);
       // One-time conversion only: subsequent runs must preserve intentional admin body/image edits.
       if (meta.id === "reconciliation-absolution-heart" && privateBody?.jinmuSeriesMigrationVersion !== 2) content = updateImages(content);
-      if (meta.id === "2026-lineage-lamp-building-record" && privateBody?.jinmuSeriesMigrationVersion !== 2 && !content.includes("assets/construction/2026-lineage-lamp/entrance-path.webp")) {
-        const markdown = (spec) => `\n\n![${spec.alt}](${spec.src})\n\n${spec.caption}`;
-        const exterior = /!\[[^\]]*\]\([^)]*images\/dizhi-render-exterior\.jpg[^)]*\)/;
-        const garden = /!\[[^\]]*\]\([^)]*images\/dizhi-render-garden\.jpg[^)]*\)/;
-        if (!exterior.test(content) || !garden.test(content)) throw new Error("Construction gallery anchors unavailable");
-        content = content.replace(exterior, (m) => m + markdown(legacyGallery[0]));
-        content = content.replace(garden, (m) => m + markdown(legacyGallery[1]) + markdown(legacyGallery[2]));
-      }
       // 明確公開欄位白名單；不將舊 content／備份／ciphertext 留在 public document。
       const preserved = {};
       for (const key of ["bookTitle", "bookAuthor", "bookPublisher", "bookPurchaseUrl", "bookCoverImage", "createdAt", "publishedAt", "readingLevel", "topics", "thumbnailSettings", "thumbnailPosition"]) {
