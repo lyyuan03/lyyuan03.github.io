@@ -28,6 +28,7 @@ const eventForm = document.getElementById("activity-form");
 let events = [];
 let members = [];
 let magicLinks = {};
+let activityCreateInFlight = false;
 
 const ARTICLE_EVENT_PICKER_LIMIT = 30;
 let articleEventSearchInput = null;
@@ -154,6 +155,13 @@ function setLinkStatus(message, state = "") {
   if (!linkStatusEl) return;
   linkStatusEl.textContent = message;
   linkStatusEl.dataset.state = state;
+}
+
+function setCreateStatus(message, state = "") {
+  const element = document.getElementById("activity-create-status");
+  if (!element) return;
+  element.textContent = message;
+  element.dataset.state = state;
 }
 
 function bytesToBase64(bytes) {
@@ -604,55 +612,75 @@ eventSelect?.addEventListener("change", renderParticipants);
 linkGenerateAllButton?.addEventListener("click", generateMissingLinks);
 linkExportButton?.addEventListener("click", exportPersonalLinks);
 
-eventForm?.addEventListener("submit", async (event) => {
-  event.preventDefault();
+async function createActivity() {
+  if (activityCreateInFlight) return;
+
   const nameInput = document.getElementById("activity-name");
   const idInput = document.getElementById("activity-id");
-  const submitButton = eventForm.querySelector('button[type="submit"]');
+  const submitButton = document.getElementById("activity-submit");
   const name = nameInput.value.trim();
   const id = eventSlug(idInput.value || name);
 
   if (!name) {
-    setStatus("請先輸入活動名稱。", "error");
+    const message = "請先輸入活動名稱。";
+    setStatus(message, "error");
+    setCreateStatus(message, "error");
     nameInput.focus();
     return;
   }
-  if (events.some((item) => item.id === id)) {
-    setStatus("活動代稱已存在，請更換後再儲存。", "error");
-    idInput.focus();
+
+  const existingEvent = events.find((item) => item.id === id);
+  if (existingEvent) {
+    eventSelect.value = existingEvent.id;
+    eventSelect.dispatchEvent(new Event("change"));
+    const message = `活動「${existingEvent.name}」已存在，已在右側選取。`;
+    setStatus(message, "success");
+    setCreateStatus(message, "success");
     return;
   }
 
+  activityCreateInFlight = true;
   if (submitButton) {
     submitButton.disabled = true;
     submitButton.textContent = "建立中…";
   }
   setStatus(`正在建立活動「${name}」…`, "saving");
+  setCreateStatus("正在寫入活動資料，請稍候…", "saving");
 
   try {
     await saveEvents([...events, { id, name, status: "active", createdAt: new Date().toISOString() }]);
     eventSelect.value = id;
+    eventSelect.dispatchEvent(new Event("change"));
     nameInput.value = "";
     idInput.value = "";
-    renderParticipants();
-    setStatus(`已建立活動「${name}」。`, "success");
+    const message = `已建立活動「${name}」，右側已自動選取。`;
+    setStatus(message, "success");
+    setCreateStatus(message, "success");
   } catch (error) {
     console.error("活動建立失敗：", error);
     const code = String(error?.code || "");
     const detail = code.includes("permission-denied")
-      ? "目前登入帳號沒有活動寫入權限，請登出後改用靈元院管理員 Gmail 登入。"
+      ? "建立失敗：目前登入帳號沒有活動寫入權限，請登出後改用靈元院管理員 Gmail 登入。"
       : code.includes("unavailable")
-        ? "目前無法連線到活動資料庫，請確認網路後再試一次。"
+        ? "建立失敗：目前無法連線到活動資料庫，請確認網路後再試一次。"
         : code.includes("resource-exhausted")
-          ? "活動資料已達儲存上限，請先停用或整理舊活動。"
-          : "活動建立失敗，請重新整理頁面後再試一次。";
+          ? "建立失敗：活動資料已達儲存上限，請先停用或整理舊活動。"
+          : `建立失敗：${error?.message || "請重新整理頁面後再試一次。"}`;
     setStatus(detail, "error");
+    setCreateStatus(detail, "error");
   } finally {
+    activityCreateInFlight = false;
     if (submitButton) {
       submitButton.disabled = false;
       submitButton.textContent = "新增活動";
     }
   }
+}
+
+document.getElementById("activity-submit")?.addEventListener("click", createActivity);
+eventForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  createActivity();
 });
 
 async function importParticipants() {
