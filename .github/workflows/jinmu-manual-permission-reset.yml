@@ -1,0 +1,31 @@
+name: Reset Jinmu Permissions to Manual Only
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/jinmu-manual-permission-reset.yml
+permissions:
+  contents: read
+concurrency:
+  group: jinmu-manual-permission-reset
+  cancel-in-progress: false
+jobs:
+  revoke-automatic-grants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm --prefix functions ci
+      - run: npm --prefix functions test
+      - name: Remove all four event permissions and verify zero remain
+        run: node functions/jinmu-manual-permission-reset.mjs
+      - name: Verify the four article gates still deny users without manual permissions
+        run: node functions/jinmu-series-sync.mjs test

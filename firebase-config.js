@@ -26,8 +26,8 @@ if (isAdminPage) {
   import("./article-admin-paid-security.js?v=20260823-private-paid-save-1").catch((error) => {
     console.error("付費文章私有正文保護模組載入失敗：", error);
   });
-  import("./jinmu-permission-admin.js?v=20260831-permissions-1").catch((error) => {
-    console.error("丙午活動權限匯入模組載入失敗：", error);
+  import("./jinmu-permission-admin.js?v=20260901-manual-only-1").catch((error) => {
+    console.error("丙午活動人工權限模組載入失敗：", error);
   });
 }
 

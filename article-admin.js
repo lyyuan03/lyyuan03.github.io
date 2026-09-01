@@ -1,7 +1,7 @@
 import "./article-admin-core.js?v=20260831-permissions-1";
 import "./article-admin-paid-security.js?v=20260829-no-auto-overwrite-1";
 import "./article-admin-secure-import.js?v=20260828-yuanqin-secure-import-1";
-import { db } from "./firebase-config.js";
+import { db } from "./firebase-config.js?v=20260901-manual-only-1";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const OFFICIAL_SENDER_EMAIL = "lyyuan03@gmail.com";
