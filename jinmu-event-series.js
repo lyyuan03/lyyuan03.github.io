@@ -38,8 +38,8 @@ export const jinmuEventArticles = [
     accessBadge: "建院護持信眾專屬",
     accessDeniedMessage: "此篇為本次建院／點燈護持信眾專屬內容。",
     excerpt: "讓每一份建院與點燈護持，共同見證靈元院目前的建院方向、階段性進度與空間設計。",
-    coverImage: "images/dizhi-render-garden.jpg",
-    thumbnailImage: "images/dizhi-render-exterior.jpg"
+    coverImage: "assets/construction/2026-lineage-lamp/cover-20260901.webp",
+    thumbnailImage: "assets/construction/2026-lineage-lamp/cover-20260901.webp"
   }
 ].map((article) => ({
   ...article,

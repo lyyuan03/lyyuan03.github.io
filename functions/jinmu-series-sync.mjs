@@ -299,6 +299,81 @@ async function applyBuildingPatronRewrite() {
   }));
 }
 
+
+const LINEAGE_LAMP_BUILDING_REWRITE_ID = "2026-lineage-lamp-building-record";
+const LINEAGE_LAMP_BUILDING_REWRITE_PARTS = Array.from(
+  { length: 4 },
+  (_, index) => new URL(`../secure-imports/lineage-lamp-building-rewrite-20260901.part${String(index).padStart(2, "0")}`, import.meta.url)
+);
+
+async function applyLineageLampBuildingRewrite() {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || "{}");
+  if (!serviceAccount.private_key) throw new Error("Firebase service account private key missing");
+
+  const pieces = await Promise.all(
+    LINEAGE_LAMP_BUILDING_REWRITE_PARTS.map((url) => readFile(url, "utf8"))
+  );
+  const envelope = JSON.parse(pieces.join(""));
+  const plan = openPlan(envelope, serviceAccount.private_key, envelope.keyId);
+
+  if (
+    plan.articleId !== LINEAGE_LAMP_BUILDING_REWRITE_ID
+    || Number(plan.rewriteVersion) !== 1
+    || !String(plan.content || "").trim()
+  ) {
+    throw new Error("Invalid lineage lamp building rewrite payload");
+  }
+
+  const bodyRef = db.doc(`eventArticleBodies/${plan.articleId}`);
+  const articleRef = db.doc(`articles/${plan.articleId}`);
+  const [bodySnapshot, articleSnapshot] = await Promise.all([bodyRef.get(), articleRef.get()]);
+  if (!articleSnapshot.exists) throw new Error("Lineage lamp building public article metadata missing");
+
+  const previous = bodySnapshot.data() || {};
+  const content = String(plan.content).trim();
+  const contentHash = createHash("sha256").update(content).digest("hex");
+
+  if (Number(previous.lineageLampBuildingRewriteVersion || 0) >= Number(plan.rewriteVersion)) {
+    console.log(JSON.stringify({
+      stage: "lineage-lamp-building-rewrite",
+      status: "already-applied",
+      currentContentHash: previous.contentHash || "",
+      sealedContentHash: contentHash
+    }));
+    return;
+  }
+
+  const batch = db.batch();
+  batch.set(bodyRef, {
+    articleId: plan.articleId,
+    title: plan.title || articleSnapshot.data().title,
+    requiredPermission: "2026-jinmu-build-supporter",
+    status: "published",
+    active: true,
+    content,
+    contentHash,
+    previousContentBackup: previous.content || "",
+    lineageLampBuildingRewriteVersion: Number(plan.rewriteVersion),
+    lineageLampBuildingRewriteSource: "sealed-github-import-20260901",
+    source: "jinmu-series-migration-v1",
+    jinmuSeriesMigrationVersion: 2,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(articleRef, {
+    title: plan.title || articleSnapshot.data().title,
+    excerpt: plan.excerpt || articleSnapshot.data().excerpt,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+
+  console.log(JSON.stringify({
+    stage: "lineage-lamp-building-rewrite",
+    status: "applied",
+    characters: content.length,
+    contentHash
+  }));
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -339,6 +414,7 @@ async function migrate() {
     return prepared.map(({ meta, content }) => ({ id: meta.id, requiredPermission: meta.requiredPermission, bodyCharacters: content.length, imagesReplaced: meta.id === "reconciliation-absolution-heart" ? 5 : 0 }));
   });
   await applyBuildingPatronRewrite();
+  await applyLineageLampBuildingRewrite();
   const managedActivities = await migrateManagedJinmuActivities();
   console.log(JSON.stringify({
     stage: "migration",
