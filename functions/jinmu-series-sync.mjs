@@ -21,7 +21,7 @@ async function deployRules() {
   const request = async (url, method, payload) => {
     const response = await fetch(url, { method, headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: AbortSignal.timeout(30000) });
     const result = await response.json();
-    if (!response.ok) throw new Error(`Rules API ${response.status}: ${result.error?.message || "failed"}`);
+    if (!response.ok) throw new Error(`Rules API ${response.status}: ${result.error?.message || "failed"} | ${JSON.stringify(result.error?.details || result.error || result)}`);
     return result;
   };
   const rules = await readFile(new URL("../firestore.rules", import.meta.url), "utf8");
