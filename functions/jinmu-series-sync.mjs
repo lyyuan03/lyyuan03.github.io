@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { createDecipheriv, randomUUID, createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { jinmuEventArticles } from "../jinmu-event-series.js";
+import { openPlan } from "./jinmu-import-envelope.mjs";
 const require = createRequire(import.meta.url);
 const { initializeApp, applicationDefault, cert } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
@@ -224,6 +225,83 @@ async function migrateManagedJinmuActivities() {
   };
 }
 
+const BUILDING_PATRON_REWRITE_ID = "2026-building-patron-record";
+const BUILDING_PATRON_REWRITE_PARTS = Array.from(
+  { length: 9 },
+  (_, index) => new URL(`../secure-imports/building-patron-rewrite-20260901.part${String(index).padStart(2, "0")}`, import.meta.url)
+);
+
+async function applyBuildingPatronRewrite() {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || "{}");
+  if (!serviceAccount.private_key) throw new Error("Firebase service account private key missing");
+
+  const pieces = await Promise.all(
+    BUILDING_PATRON_REWRITE_PARTS.map((url) => readFile(url, "utf8"))
+  );
+  const envelope = JSON.parse(pieces.join(""));
+  const plan = openPlan(envelope, serviceAccount.private_key, envelope.keyId);
+
+  if (
+    plan.articleId !== BUILDING_PATRON_REWRITE_ID
+    || Number(plan.rewriteVersion) !== 1
+    || !String(plan.content || "").trim()
+  ) {
+    throw new Error("Invalid building patron rewrite payload");
+  }
+
+  const bodyRef = db.doc(`eventArticleBodies/${plan.articleId}`);
+  const articleRef = db.doc(`articles/${plan.articleId}`);
+  const [bodySnapshot, articleSnapshot] = await Promise.all([bodyRef.get(), articleRef.get()]);
+  if (!articleSnapshot.exists) throw new Error("Building patron public article metadata missing");
+
+  const previous = bodySnapshot.data() || {};
+  const content = String(plan.content).trim();
+  const contentHash = createHash("sha256").update(content).digest("hex");
+
+  if (
+    Number(previous.buildingPatronRewriteVersion || 0) === Number(plan.rewriteVersion)
+    && previous.contentHash === contentHash
+  ) {
+    console.log(JSON.stringify({
+      stage: "building-patron-rewrite",
+      status: "already-current",
+      characters: content.length,
+      contentHash
+    }));
+    return;
+  }
+
+  const batch = db.batch();
+  batch.set(bodyRef, {
+    articleId: plan.articleId,
+    title: plan.title || articleSnapshot.data().title,
+    requiredPermission: "2026-jinmu-build-patron",
+    status: "published",
+    active: true,
+    content,
+    contentHash,
+    previousContentBackup: previous.content || "",
+    buildingPatronRewriteVersion: Number(plan.rewriteVersion),
+    buildingPatronRewriteSource: "sealed-github-import-20260901",
+    source: "jinmu-series-migration-v1",
+    jinmuSeriesMigrationVersion: 2,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(articleRef, {
+    title: plan.title || articleSnapshot.data().title,
+    excerpt: plan.excerpt || articleSnapshot.data().excerpt,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+
+  console.log(JSON.stringify({
+    stage: "building-patron-rewrite",
+    status: "applied",
+    characters: content.length,
+    contentHash
+  }));
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -263,6 +341,7 @@ async function migrate() {
     transaction.set(db.doc("articleMetrics/__article-publication-status"), { statuses, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
     return prepared.map(({ meta, content }) => ({ id: meta.id, requiredPermission: meta.requiredPermission, bodyCharacters: content.length, imagesReplaced: meta.id === "reconciliation-absolution-heart" ? 5 : 0 }));
   });
+  await applyBuildingPatronRewrite();
   const managedActivities = await migrateManagedJinmuActivities();
   console.log(JSON.stringify({
     stage: "migration",
