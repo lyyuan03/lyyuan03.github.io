@@ -1,0 +1,45 @@
+name: Export Jinmu Service Public Key
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/export-jinmu-service-public-key.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export-public-key:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Derive public key from Firebase service account
+        run: |
+          node --input-type=module <<'NODE'
+          import { createPublicKey } from "node:crypto";
+          import { mkdir, writeFile } from "node:fs/promises";
+          const service = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || "{}");
+          if (!service.private_key) throw new Error("FIREBASE_SERVICE_ACCOUNT private_key missing");
+          const publicKey = createPublicKey(service.private_key).export({ type: "spki", format: "pem" });
+          await mkdir("secure-imports", { recursive: true });
+          await writeFile("secure-imports/jinmu-service-public-key.pem", publicKey, "utf8");
+          NODE
+      - name: Commit public key
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add secure-imports/jinmu-service-public-key.pem
+          if git diff --cached --quiet; then
+            echo "Public key unchanged."
+            exit 0
+          fi
+          git commit -m "Export Jinmu service public key"
+          git push origin HEAD:main
