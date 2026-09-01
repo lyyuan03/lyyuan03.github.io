@@ -24,11 +24,15 @@ const linkGenerateAllButton = document.getElementById("activity-link-generate-al
 const linkExportButton = document.getElementById("activity-link-export");
 const linkStatusEl = document.getElementById("activity-link-status");
 const eventForm = document.getElementById("activity-form");
+const activityListSelectAll = document.getElementById("activity-list-select-all");
+const activityListSelectedCount = document.getElementById("activity-list-selected-count");
+const activityListDeleteButton = document.getElementById("activity-list-delete");
 
 let events = [];
 let members = [];
 let magicLinks = {};
 let activityCreateInFlight = false;
+const selectedEventIds = new Set();
 
 const ARTICLE_EVENT_PICKER_LIMIT = 30;
 let articleEventSearchInput = null;
@@ -262,6 +266,151 @@ async function loadMembers() {
   members = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
 }
 
+function setActivityListStatus(message, state = "") {
+  const element = document.getElementById("activity-list-selection-status");
+  if (!element) return;
+  element.textContent = message;
+  element.dataset.state = state;
+}
+
+function updateActivitySelectionToolbar() {
+  const visibleIds = events.map((event) => event.id);
+  const visibleSet = new Set(visibleIds);
+  [...selectedEventIds].forEach((id) => {
+    if (!visibleSet.has(id)) selectedEventIds.delete(id);
+  });
+
+  const selectedCount = visibleIds.filter((id) => selectedEventIds.has(id)).length;
+  const allSelected = visibleIds.length > 0 && selectedCount === visibleIds.length;
+
+  if (activityListSelectAll) {
+    activityListSelectAll.checked = allSelected;
+    activityListSelectAll.indeterminate = selectedCount > 0 && !allSelected;
+    activityListSelectAll.disabled = visibleIds.length === 0;
+  }
+  if (activityListSelectedCount) {
+    activityListSelectedCount.textContent = `已勾選 ${selectedCount}／${visibleIds.length} 筆`;
+  }
+  if (activityListDeleteButton) activityListDeleteButton.disabled = selectedCount === 0;
+
+  eventList?.querySelectorAll("[data-event-select]").forEach((checkbox) => {
+    const checked = selectedEventIds.has(checkbox.dataset.eventSelect);
+    checkbox.checked = checked;
+    checkbox.closest(".activity-list-row")?.classList.toggle("is-selected", checked);
+  });
+}
+
+async function deleteSelectedActivities() {
+  const ids = [...selectedEventIds].filter((id) => events.some((event) => event.id === id));
+  if (!ids.length) return;
+
+  const remainingEvents = events.filter((event) => !ids.includes(event.id));
+  if (!remainingEvents.length) {
+    const message = "活動清單至少要保留一筆，請取消勾選其中一個活動。";
+    setStatus(message, "error");
+    setActivityListStatus(message, "error");
+    return;
+  }
+
+  const selectedEvents = events.filter((event) => ids.includes(event.id));
+  const originalText = activityListDeleteButton?.textContent || "刪除已勾選活動";
+  if (activityListDeleteButton) {
+    activityListDeleteButton.disabled = true;
+    activityListDeleteButton.textContent = "檢查中…";
+  }
+  setActivityListStatus("正在檢查這些活動是否仍有文章使用…", "saving");
+
+  try {
+    const articleSnapshot = await getDocs(collection(db, "articles"));
+    const referencedArticles = articleSnapshot.docs.filter((item) => {
+      const article = item.data();
+      return article.accessType === "event" && ids.includes(article.eventId);
+    });
+
+    if (referencedArticles.length) {
+      const titles = referencedArticles
+        .slice(0, 5)
+        .map((item) => item.data().title || item.id)
+        .join("、");
+      const more = referencedArticles.length > 5 ? `等 ${referencedArticles.length} 篇` : "";
+      const message = `無法刪除：仍有文章指定這些活動（${titles}${more}）。請先到文章內容取消活動指定。`;
+      setStatus(message, "error");
+      setActivityListStatus(message, "error");
+      return;
+    }
+
+    const names = selectedEvents.map((event) => event.name);
+    const preview = names.slice(0, 8).join("、") + (names.length > 8 ? `等 ${names.length} 筆` : "");
+    const confirmed = window.confirm(
+      `確定刪除以下活動嗎？\n\n${preview}\n\n活動清單、參加者活動資格與專屬連結會一併移除；此操作無法復原。`
+    );
+    if (!confirmed) {
+      setActivityListStatus("已取消刪除，活動資料沒有變更。");
+      return;
+    }
+
+    if (activityListDeleteButton) activityListDeleteButton.textContent = "刪除中…";
+    setStatus(`正在刪除 ${ids.length} 筆活動…`, "saving");
+    setActivityListStatus(`正在刪除 ${ids.length} 筆活動，請勿關閉頁面…`, "saving");
+
+    const nextMagicLinks = { ...magicLinks };
+    ids.forEach((id) => delete nextMagicLinks[id]);
+
+    const memberUpdates = members.flatMap((member) => {
+      const nextAccess = { ...(member.eventAccess || {}) };
+      let changed = false;
+      ids.forEach((id) => {
+        if (!Object.prototype.hasOwnProperty.call(nextAccess, id)) return;
+        delete nextAccess[id];
+        changed = true;
+      });
+      return changed ? [{ member, nextAccess }] : [];
+    });
+
+    if (memberUpdates.length + 2 > 450) {
+      throw new Error("一次刪除涉及的參加者資料過多，請分批刪除活動。");
+    }
+
+    const batch = writeBatch(db);
+    batch.set(settingsRef, { events: remainingEvents, updatedAt: serverTimestamp() }, { merge: true });
+    batch.set(magicSecretRef, { links: nextMagicLinks, updatedAt: serverTimestamp() }, { merge: true });
+    memberUpdates.forEach(({ member, nextAccess }) => {
+      batch.set(doc(db, "memberAccess", member.id), {
+        eventAccess: nextAccess,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    });
+    await batch.commit();
+
+    events = remainingEvents;
+    magicLinks = nextMagicLinks;
+    members = members.map((member) => {
+      const nextAccess = { ...(member.eventAccess || {}) };
+      ids.forEach((id) => delete nextAccess[id]);
+      return { ...member, eventAccess: nextAccess };
+    });
+    selectedEventIds.clear();
+    renderEvents();
+    publishEventsToArticleAdmin();
+    installArticleEventSearch();
+    renderArticleEventSearchOptions();
+
+    const message = `已刪除 ${ids.length} 筆活動，並清理相關參加者資格與專屬連結。`;
+    setStatus(message, "success");
+    setActivityListStatus(message, "success");
+  } catch (error) {
+    console.error("刪除活動失敗：", error);
+    const message = `刪除失敗：${error?.message || "請稍後再試。"}`;
+    setStatus(message, "error");
+    setActivityListStatus(message, "error");
+  } finally {
+    if (activityListDeleteButton) {
+      activityListDeleteButton.textContent = originalText;
+      updateActivitySelectionToolbar();
+    }
+  }
+}
+
 function renderEvents() {
   if (!eventSelect || !eventList) return;
   const previous = eventSelect.value;
@@ -272,11 +421,23 @@ function renderEvents() {
 
   eventList.innerHTML = events.map((event) => {
     const count = members.filter((member) => member.eventAccess?.[event.id]?.status === "active").length;
-    return `<div class="member-row">
+    return `<div class="member-row activity-list-row">
+      <label class="activity-list-check-cell" title="勾選 ${escapeHtml(event.name)}">
+        <input class="activity-list-checkbox" type="checkbox" data-event-select="${escapeHtml(event.id)}" aria-label="勾選 ${escapeHtml(event.name)}">
+      </label>
       <div><strong>${escapeHtml(event.name)}</strong><small>${escapeHtml(event.id)}｜${event.status === "active" ? "啟用" : "停用"}｜${count} 位參加者</small></div>
       <div class="member-row-actions"><button class="btn" type="button" data-event-toggle="${escapeHtml(event.id)}">${event.status === "active" ? "停用" : "啟用"}</button></div>
     </div>`;
   }).join("");
+
+  eventList.querySelectorAll("[data-event-select]").forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      const id = checkbox.dataset.eventSelect;
+      if (checkbox.checked) selectedEventIds.add(id);
+      else selectedEventIds.delete(id);
+      updateActivitySelectionToolbar();
+    });
+  });
 
   eventList.querySelectorAll("[data-event-toggle]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -287,6 +448,7 @@ function renderEvents() {
       await refresh();
     });
   });
+  updateActivitySelectionToolbar();
   renderParticipants();
 }
 
@@ -609,6 +771,12 @@ async function refresh() {
 }
 
 eventSelect?.addEventListener("change", renderParticipants);
+activityListSelectAll?.addEventListener("change", () => {
+  if (activityListSelectAll.checked) events.forEach((event) => selectedEventIds.add(event.id));
+  else selectedEventIds.clear();
+  updateActivitySelectionToolbar();
+});
+activityListDeleteButton?.addEventListener("click", deleteSelectedActivities);
 linkGenerateAllButton?.addEventListener("click", generateMissingLinks);
 linkExportButton?.addEventListener("click", exportPersonalLinks);
 
