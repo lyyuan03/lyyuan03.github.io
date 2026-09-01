@@ -61,7 +61,7 @@ const MANAGED_JINMU_EVENTS = [
   { id: "2026-jinmu-am", pattern: /文選[①1]|上午(?:場)?/ },
   { id: "2026-jinmu-pm", pattern: /文選[②2]|下午(?:場)?/ },
   { id: "2026-jinmu-build-patron", pattern: /總功德主/ },
-  { id: "2026-jinmu-build-supporter", pattern: /建院.*(?:護持|助建)|(?:護持|助建).*建院/ }
+  { id: "2026-jinmu-build-supporter", pattern: /建院.*(?:護持|助建)|(?:護持|助建).*建院|點燈(?:護持|參與者)/ }
 ];
 
 function canonicalManagedJinmuPermission(name = "", suppliedId = "") {
@@ -155,19 +155,30 @@ async function migrateManagedJinmuActivities() {
     const activePermissions = MANAGED_JINMU_EVENTS
       .map((event) => event.id)
       .filter((permission) => nextAccess[permission]?.status === "active");
-    if (!activePermissions.length) continue;
 
     const email = String(snapshot.data()?.email || snapshot.id).trim().toLowerCase();
     if (!/^[^\s@]+@gmail\.com$/.test(email)) continue;
     const existingSnapshot = entitlementByEmail.get(email);
     const existing = existingSnapshot?.data() || {};
     const previousPermissions = Array.isArray(existing.permissions) ? existing.permissions : [];
-    const permissions = [...new Set([...previousPermissions, ...activePermissions])];
-    if (existingSnapshot && permissions.length === previousPermissions.length) continue;
+    const previousManagedPermissions = Array.isArray(existing.activityManagedPermissions)
+      ? existing.activityManagedPermissions
+      : [];
+    if (!activePermissions.length && !previousManagedPermissions.length) continue;
+
+    const retainedPermissions = previousPermissions
+      .filter((permission) => !previousManagedPermissions.includes(permission));
+    const permissions = [...new Set([...retainedPermissions, ...activePermissions])];
+    const samePermissions = permissions.length === previousPermissions.length
+      && permissions.every((permission) => previousPermissions.includes(permission));
+    const sameManagedPermissions = activePermissions.length === previousManagedPermissions.length
+      && activePermissions.every((permission) => previousManagedPermissions.includes(permission));
+    if (existingSnapshot && samePermissions && sameManagedPermissions) continue;
 
     const payload = {
       email,
       permissions,
+      activityManagedPermissions: activePermissions,
       schemaVersion: existing.schemaVersion || 1,
       activityManagementSyncedAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp()
@@ -213,6 +224,64 @@ async function migrateManagedJinmuActivities() {
   };
 }
 
+const ONE_TIME_EMAIL_PERMISSION_GRANTS = new Map([
+  ["0a3443f895df11f731f403281cc1ba81e12f9828833e1c2b9f310196b0f435fd", ["2026-jinmu-build-supporter"]]
+]);
+
+async function applyOneTimeEmailPermissionGrants() {
+  const [memberSnapshot, entitlementSnapshot] = await Promise.all([
+    db.collection("memberAccess").get(),
+    db.collection("memberEntitlements").get()
+  ]);
+  const candidateEmails = new Set();
+  for (const snapshot of [...memberSnapshot.docs, ...entitlementSnapshot.docs]) {
+    for (const value of [snapshot.id, snapshot.data()?.email]) {
+      const email = String(value || "").trim().toLowerCase();
+      if (/^[^\s@]+@gmail\.com$/.test(email)) candidateEmails.add(email);
+    }
+  }
+
+  const matches = [...candidateEmails].flatMap((email) => {
+    const digest = createHash("sha256").update(email).digest("hex");
+    const permissions = ONE_TIME_EMAIL_PERMISSION_GRANTS.get(digest);
+    return permissions ? [{ email, permissions }] : [];
+  });
+  if (matches.length !== ONE_TIME_EMAIL_PERMISSION_GRANTS.size) {
+    throw new Error(`Explicit email grant target mismatch: expected ${ONE_TIME_EMAIL_PERMISSION_GRANTS.size}, found ${matches.length}`);
+  }
+
+  for (const { email, permissions: grantedPermissions } of matches) {
+    const ref = db.doc(`memberEntitlements/${email}`);
+    const snapshot = await ref.get();
+    const existing = snapshot.data() || {};
+    const permissions = [...new Set([
+      ...(Array.isArray(existing.permissions) ? existing.permissions : []),
+      ...grantedPermissions
+    ])];
+    await ref.set({
+      email,
+      permissions,
+      schemaVersion: existing.schemaVersion || 1,
+      status: "active",
+      disabled: false,
+      suspended: false,
+      explicitEmailGrantAppliedAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    const verified = (await ref.get()).data();
+    if (!grantedPermissions.every((permission) => verified?.permissions?.includes(permission))) {
+      throw new Error("Explicit email permission write verification failed");
+    }
+  }
+
+  return {
+    matchedAccounts: matches.length,
+    grantedPermissions: [...new Set(matches.flatMap((match) => match.permissions))],
+    verified: true
+  };
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -253,11 +322,13 @@ async function migrate() {
     return prepared.map(({ meta, content }) => ({ id: meta.id, requiredPermission: meta.requiredPermission, bodyCharacters: content.length, imagesReplaced: meta.id === "reconciliation-absolution-heart" ? 5 : 0 }));
   });
   const managedActivities = await migrateManagedJinmuActivities();
+  const explicitEmailGrants = await applyOneTimeEmailPermissionGrants();
   console.log(JSON.stringify({
     stage: "migration",
     status: "verified-in-transaction",
     articles: summaries,
-    managedActivities
+    managedActivities,
+    explicitEmailGrants
   }));
 }
 
@@ -274,7 +345,8 @@ async function testRules() {
     ["C", ["2026-jinmu-am", "2026-jinmu-pm"], [true, true, false, false]],
     ["D", ["2026-jinmu-build-patron", "2026-jinmu-build-supporter"], [false, false, true, true]],
     ["E", ["2026-jinmu-build-supporter"], [false, false, false, true]],
-    ["F", [], [false, false, false, false]]
+    ["F", [], [false, false, false, false]],
+    ["G", ["2026-jinmu-build-patron"], [false, false, true, false]]
   ];
   for (const meta of jinmuEventArticles) {
     const publicResponse = await requestDocument("articles", meta.id);
