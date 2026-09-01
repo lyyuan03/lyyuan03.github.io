@@ -16,7 +16,7 @@
 .save-status-inline[data-state="saving"],.save-status-inline[data-state="dirty"]{color:#D8BD91}.save-status-inline[data-state="success"]{color:#BFD39C}.save-status-inline[data-state="error"]{color:#F1AAA2}
 .admin-toast{position:fixed;right:24px;bottom:24px;z-index:100;max-width:min(420px,calc(100vw - 32px));padding:14px 18px;border:1px solid rgba(165,130,84,.55);background:rgba(16,24,13,.97);color:#F5F0E8;box-shadow:0 16px 44px rgba(0,0,0,.42);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s,transform .2s}.admin-toast.is-visible{opacity:1;transform:none}.admin-toast.is-success{border-color:rgba(151,181,112,.72)}.admin-toast.is-error{border-color:rgba(218,117,106,.8)}
 @media(max-width:860px){.save-actions{bottom:8px}.save-status-inline{order:3;width:100%}.admin-toast{right:16px;bottom:16px;left:16px;max-width:none}}
-.activity-panel{grid-column:1/-1;scroll-margin-top:96px}.activity-layout{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(380px,1.2fr);gap:20px;padding:22px}.activity-stack{display:grid;gap:20px}.activity-status[data-state="success"]{color:#BFD39C}.activity-status[data-state="error"]{color:#F1AAA2}.activity-status[data-state="saving"]{color:#D8BD91}.event-access-fields{padding:14px;border:1px solid rgba(165,130,84,.22);background:rgba(165,130,84,.05)}@media(max-width:860px){.activity-layout{grid-template-columns:1fr;padding:16px}}
+.activity-panel{grid-column:1/-1;scroll-margin-top:96px}.activity-layout{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(380px,1.2fr);gap:20px;padding:22px}.activity-stack{display:grid;gap:20px}.activity-list-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:12px 13px;border:1px solid rgba(165,130,84,.25);background:rgba(165,130,84,.065)}.activity-list-select-all{display:inline-flex;align-items:center;gap:8px;color:rgba(245,240,232,.78);font-size:13px;cursor:pointer}.activity-list-select-all input,.activity-list-checkbox{width:18px;height:18px;margin:0;accent-color:#A58254;cursor:pointer}.activity-list-selected-count{margin-right:auto;color:#CBAA77;font-size:12px;letter-spacing:.05em}.activity-list-row{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}.activity-list-row.is-selected{border-color:rgba(203,170,119,.55);background:rgba(165,130,84,.12)}.activity-list-check-cell{display:flex;align-items:center;justify-content:center;min-width:24px}.activity-status[data-state="success"]{color:#BFD39C}.activity-status[data-state="error"]{color:#F1AAA2}.activity-status[data-state="saving"]{color:#D8BD91}.event-access-fields{padding:14px;border:1px solid rgba(165,130,84,.22);background:rgba(165,130,84,.05)}@media(max-width:860px){.activity-layout{grid-template-columns:1fr;padding:16px}}
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -207,6 +207,15 @@
           </div>
           <div class="membership-card">
             <h3>活動清單</h3>
+            <div id="activity-list-toolbar" class="activity-list-toolbar">
+              <label class="activity-list-select-all">
+                <input id="activity-list-select-all" type="checkbox">
+                <span>全選目前活動</span>
+              </label>
+              <span id="activity-list-selected-count" class="activity-list-selected-count">已勾選 0／0 筆</span>
+              <button id="activity-list-delete" class="btn danger" type="button" disabled>刪除已勾選活動</button>
+            </div>
+            <p id="activity-list-selection-status" class="status activity-status" role="status" aria-live="polite">勾選活動後可批次刪除；已有文章指定的活動需先取消文章指定。</p>
             <div id="activity-list" class="membership-list"><div class="empty">載入中…</div></div>
           </div>
         </div>
@@ -405,7 +414,7 @@
 
 <div id="admin-toast" class="admin-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-<script type="module" src="activity-admin.js?v=20260901-activity-create-fix-2"></script>
+<script type="module" src="activity-admin.js?v=20260901-activity-list-delete-1"></script>
 <script type="module" src="article-admin.js?v=20260901-manual-only-1"></script>
 <script type="module" src="article-thumbnail-admin.js?v=20260828-yuanqin-final-article-images-6"></script>
 <script type="module" src="article-inline-image-admin.js?v=20260816-six-inline-images-1"></script>
