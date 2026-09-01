@@ -209,9 +209,15 @@ async function hydratePaidBody() {
   if (!view) return;
 
   const metadata = await paidMetadata() || {};
-  const viewLooksPaid = view.dataset.articleAccess === "paid"
-    || Boolean(view.querySelector(".article-paid-gate, [data-paid-gate-restored], .paid-lock-zone"));
-  const stillPaid = metadata.accessType === "paid" || metadata.privatePaidContent === true || viewLooksPaid;
+  const viewLooksEvent = metadata.accessType === "event"
+    || view.dataset.articleAccess === "event"
+    || Boolean(view.querySelector("[data-event-gate]"));
+  const viewLooksPaid = !viewLooksEvent && (
+    view.dataset.articleAccess === "paid"
+    || Boolean(view.querySelector("[data-paid-gate-restored], .paid-lock-zone"))
+  );
+  const stillPaid = !viewLooksEvent
+    && (metadata.accessType === "paid" || metadata.privatePaidContent === true || viewLooksPaid);
 
   if (!stillPaid) {
     if (paidBodyUnsubscribe) {
