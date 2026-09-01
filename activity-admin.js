@@ -730,27 +730,55 @@ async function generateMissingLinks() {
 
 async function addParticipants(emails) {
   const event = selectedEvent();
+  const synchronizesSecurePermission = JINMU_MANAGED_EVENT_IDS.includes(event.id);
   setImportStatus("正在準備活動文章權限…", "saving");
   const keys = await eventArticleKeys(event.id);
   const memberMap = new Map(members.map((member) => [normalizeEmail(member.email || member.id), member]));
-  const batch = writeBatch(db);
+  const entitlementMap = new Map();
 
-  emails.forEach((email) => {
-    const ref = doc(db, "memberAccess", email);
-    const current = memberMap.get(email) || {};
-    batch.set(ref, {
-      email,
-      eventAccess: {
-        ...(current.eventAccess || {}),
-        [event.id]: { status: "active", eventName: event.name, addedAt: new Date().toISOString() }
-      },
-      eventArticleKeys: { ...(current.eventArticleKeys || {}), ...keys },
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  });
+  if (synchronizesSecurePermission) {
+    const snapshots = await Promise.all(
+      emails.map((email) => getDoc(doc(db, "memberEntitlements", email)))
+    );
+    snapshots.forEach((snapshot, index) => entitlementMap.set(emails[index], snapshot));
+  }
 
   setImportStatus(`正在寫入 ${emails.length} 位參加者，請勿關閉頁面…`, "saving");
-  await batch.commit();
+  for (let offset = 0; offset < emails.length; offset += 200) {
+    const batch = writeBatch(db);
+    for (const email of emails.slice(offset, offset + 200)) {
+      const ref = doc(db, "memberAccess", email);
+      const current = memberMap.get(email) || {};
+      batch.set(ref, {
+        email,
+        eventAccess: {
+          ...(current.eventAccess || {}),
+          [event.id]: { status: "active", eventName: event.name, addedAt: new Date().toISOString() }
+        },
+        eventArticleKeys: { ...(current.eventArticleKeys || {}), ...keys },
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+
+      if (synchronizesSecurePermission) {
+        const entitlementSnapshot = entitlementMap.get(email);
+        const existing = entitlementSnapshot?.exists() ? entitlementSnapshot.data() : {};
+        const previousPermissions = Array.isArray(existing.permissions) ? existing.permissions : [];
+        const permissions = [...new Set([...previousPermissions, event.id])];
+        batch.set(doc(db, "memberEntitlements", email), {
+          email,
+          permissions,
+          schemaVersion: existing.schemaVersion || 1,
+          ...(!entitlementSnapshot?.exists()
+            ? { status: "active", eventPermissionsSource: "activity-management" }
+            : {}),
+          activityManagementSyncedAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      }
+    }
+    await batch.commit();
+  }
+
   setStatus(`已匯入 ${emails.length} 位活動參加者。`, "success");
   setImportStatus(`匯入完成：共 ${emails.length} 位參加者。`, "success");
   return emails.length;
@@ -760,19 +788,39 @@ async function removeParticipant(email) {
   const event = selectedEvent();
   if (!confirm(`確定要從「${event.name}」移除 ${email} 嗎？`)) return;
   const ref = doc(db, "memberAccess", email);
-  const snapshot = await getDoc(ref);
+  const entitlementRef = doc(db, "memberEntitlements", email);
+  const synchronizesSecurePermission = JINMU_MANAGED_EVENT_IDS.includes(event.id);
+  const [snapshot, entitlementSnapshot, eventKeys] = await Promise.all([
+    getDoc(ref),
+    synchronizesSecurePermission ? getDoc(entitlementRef) : Promise.resolve(null),
+    eventArticleKeys(event.id)
+  ]);
   if (!snapshot.exists()) return;
+
   const current = snapshot.data();
   const nextAccess = { ...(current.eventAccess || {}) };
   delete nextAccess[event.id];
   const nextKeys = { ...(current.eventArticleKeys || {}) };
-  const eventKeys = await eventArticleKeys(event.id);
   Object.keys(eventKeys).forEach((articleId) => delete nextKeys[articleId]);
-  await setDoc(ref, {
+
+  const batch = writeBatch(db);
+  batch.set(ref, {
     eventAccess: nextAccess,
     eventArticleKeys: nextKeys,
     updatedAt: serverTimestamp()
   }, { merge: true });
+  if (entitlementSnapshot?.exists()) {
+    const existing = entitlementSnapshot.data();
+    const permissions = (Array.isArray(existing.permissions) ? existing.permissions : [])
+      .filter((permission) => permission !== event.id);
+    batch.set(entitlementRef, {
+      permissions,
+      activityManagementSyncedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+  await batch.commit();
+
   const personalRecord = linkRecord(event.id, email);
   if (personalRecord) {
     personalRecord.status = "inactive";
