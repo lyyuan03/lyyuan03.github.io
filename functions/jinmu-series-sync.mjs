@@ -90,16 +90,25 @@ function mergedManagedAccess(existing, incoming) {
 async function migrateManagedJinmuActivities() {
   const settingsRef = db.doc("membershipSettings/eventManagement");
   const magicLinksRef = db.doc("membershipSettings/eventMagicLinkSecrets");
-  const [settingsSnapshot, magicLinksSnapshot, memberSnapshot] = await Promise.all([
+  const [settingsSnapshot, magicLinksSnapshot, memberSnapshot, entitlementSnapshot] = await Promise.all([
     settingsRef.get(),
     magicLinksRef.get(),
-    db.collection("memberAccess").get()
+    db.collection("memberAccess").get(),
+    db.collection("memberEntitlements").get()
   ]);
   const currentEvents = settingsSnapshot.data()?.events;
   if (!Array.isArray(currentEvents) || !currentEvents.length) {
-    return { eventsChanged: 0, memberRecordsChanged: 0, linksChanged: false };
+    return {
+      eventsChanged: 0,
+      memberRecordsChanged: 0,
+      entitlementsSynchronized: 0,
+      linksChanged: false
+    };
   }
 
+  const entitlementByEmail = new Map(
+    entitlementSnapshot.docs.map((snapshot) => [snapshot.id.toLowerCase(), snapshot])
+  );
   const idMap = new Map();
   const eventsById = new Map();
   for (const event of currentEvents) {
@@ -113,31 +122,62 @@ async function migrateManagedJinmuActivities() {
       ? {
           ...existing,
           ...nextEvent,
-          status: existing.status === "active" || nextEvent.status === "active" ? "active" : (nextEvent.status || existing.status)
+          status: existing.status === "active" || nextEvent.status === "active"
+            ? "active"
+            : (nextEvent.status || existing.status)
         }
       : nextEvent);
   }
 
-  if (!idMap.size) {
-    return { eventsChanged: 0, memberRecordsChanged: 0, linksChanged: false };
-  }
-
   const writer = db.bulkWriter();
   let memberRecordsChanged = 0;
+  let entitlementsSynchronized = 0;
   for (const snapshot of memberSnapshot.docs) {
     const currentAccess = snapshot.data()?.eventAccess;
     if (!currentAccess || typeof currentAccess !== "object") continue;
+
     const nextAccess = { ...currentAccess };
-    let changed = false;
+    let accessChanged = false;
     for (const [oldId, canonicalId] of idMap) {
       if (!Object.prototype.hasOwnProperty.call(nextAccess, oldId)) continue;
       nextAccess[canonicalId] = mergedManagedAccess(nextAccess[canonicalId], nextAccess[oldId]);
       delete nextAccess[oldId];
-      changed = true;
+      accessChanged = true;
     }
-    if (!changed) continue;
-    writer.update(snapshot.ref, { eventAccess: nextAccess, updatedAt: FieldValue.serverTimestamp() });
-    memberRecordsChanged += 1;
+    if (accessChanged) {
+      writer.update(snapshot.ref, {
+        eventAccess: nextAccess,
+        updatedAt: FieldValue.serverTimestamp()
+      });
+      memberRecordsChanged += 1;
+    }
+
+    const activePermissions = MANAGED_JINMU_EVENTS
+      .map((event) => event.id)
+      .filter((permission) => nextAccess[permission]?.status === "active");
+    if (!activePermissions.length) continue;
+
+    const email = String(snapshot.data()?.email || snapshot.id).trim().toLowerCase();
+    if (!/^[^\s@]+@gmail\.com$/.test(email)) continue;
+    const existingSnapshot = entitlementByEmail.get(email);
+    const existing = existingSnapshot?.data() || {};
+    const previousPermissions = Array.isArray(existing.permissions) ? existing.permissions : [];
+    const permissions = [...new Set([...previousPermissions, ...activePermissions])];
+    if (existingSnapshot && permissions.length === previousPermissions.length) continue;
+
+    const payload = {
+      email,
+      permissions,
+      schemaVersion: existing.schemaVersion || 1,
+      activityManagementSyncedAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp()
+    };
+    if (!existingSnapshot) {
+      payload.status = "active";
+      payload.eventPermissionsSource = "activity-management";
+    }
+    writer.set(db.doc(`memberEntitlements/${email}`), payload, { merge: true });
+    entitlementsSynchronized += 1;
   }
   await writer.close();
 
@@ -151,10 +191,12 @@ async function migrateManagedJinmuActivities() {
     linksChanged = true;
   }
 
-  await settingsRef.set({
-    events: [...eventsById.values()],
-    updatedAt: FieldValue.serverTimestamp()
-  }, { mergeFields: ["events", "updatedAt"] });
+  if (idMap.size) {
+    await settingsRef.set({
+      events: [...eventsById.values()],
+      updatedAt: FieldValue.serverTimestamp()
+    }, { mergeFields: ["events", "updatedAt"] });
+  }
   if (magicLinksSnapshot.exists && linksChanged) {
     await magicLinksRef.set({
       links: nextLinks,
@@ -165,6 +207,7 @@ async function migrateManagedJinmuActivities() {
   return {
     eventsChanged: idMap.size,
     memberRecordsChanged,
+    entitlementsSynchronized,
     linksChanged,
     idMap: Object.fromEntries(idMap)
   };
@@ -231,8 +274,7 @@ async function testRules() {
     ["C", ["2026-jinmu-am", "2026-jinmu-pm"], [true, true, false, false]],
     ["D", ["2026-jinmu-build-patron", "2026-jinmu-build-supporter"], [false, false, true, true]],
     ["E", ["2026-jinmu-build-supporter"], [false, false, false, true]],
-    ["F", [], [false, false, false, false]],
-    ["G", [], [true, false, false, false], "2026-jinmu-am"]
+    ["F", [], [false, false, false, false]]
   ];
   for (const meta of jinmuEventArticles) {
     const publicResponse = await requestDocument("articles", meta.id);
@@ -244,7 +286,7 @@ async function testRules() {
     if (privateResponse.status !== 403) throw new Error(`Anonymous body must be denied: ${meta.id} (${privateResponse.status})`);
   }
   const results = [];
-  for (const [label, permissions, expected, managedPermission] of cases) {
+  for (const [label, permissions, expected] of cases) {
     const uid = `jinmu-test-${randomUUID()}`;
     const email = `${uid}@gmail.com`;
     let created = false;
@@ -256,13 +298,6 @@ async function testRules() {
         // F 是一般贊助會員但無活動 permission；仍必須拒絕四篇。
         sponsorArticleAccess: label === "F", sponsorExpiresAt: new Date("2099-01-01")
       });
-      if (managedPermission) {
-        await db.doc(`memberAccess/${email}`).set({
-          email,
-          eventAccess: { [managedPermission]: { status: "active" } },
-          status: "active"
-        });
-      }
       const customToken = await auth.createCustomToken(uid);
       const tokenResponse = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${apiKey}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: customToken, returnSecureToken: true }), signal: AbortSignal.timeout(20000) });
       const tokens = await tokenResponse.json();
@@ -282,7 +317,6 @@ async function testRules() {
     } finally {
       if (created) {
         await db.doc(`memberEntitlements/${email}`).delete();
-        if (managedPermission) await db.doc(`memberAccess/${email}`).delete();
         await auth.deleteUser(uid);
       }
     }
