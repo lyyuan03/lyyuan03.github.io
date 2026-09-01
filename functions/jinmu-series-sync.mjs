@@ -258,15 +258,12 @@ async function applyBuildingPatronRewrite() {
   const content = String(plan.content).trim();
   const contentHash = createHash("sha256").update(content).digest("hex");
 
-  if (
-    Number(previous.buildingPatronRewriteVersion || 0) === Number(plan.rewriteVersion)
-    && previous.contentHash === contentHash
-  ) {
+  if (Number(previous.buildingPatronRewriteVersion || 0) >= Number(plan.rewriteVersion)) {
     console.log(JSON.stringify({
       stage: "building-patron-rewrite",
-      status: "already-current",
-      characters: content.length,
-      contentHash
+      status: "already-applied",
+      currentContentHash: previous.contentHash || "",
+      sealedContentHash: contentHash
     }));
     return;
   }
