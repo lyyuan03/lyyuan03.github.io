@@ -1,0 +1,4 @@
+article=2026-building-patron-record
+rewriteVersion=1
+contentHash=0b0757279e222f117143ccfe84bed5b26d74a270b9d80cc2a2b9ab0339175be9
+status=deployed-and-tested
