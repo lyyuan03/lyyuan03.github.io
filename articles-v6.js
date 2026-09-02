@@ -1,6 +1,12 @@
 // Sponsor article access deployment marker: 20260828-admin-draft-preview-5
 const articleRoot = document.getElementById("article-root");
 
+// 文章核心若因 Firebase、Firestore 或遠端模組暫時失敗，仍由 GitHub
+// 靜態文章立即接手，避免內頁永久停在「文章載入中…」。
+void import("./article-list-rescue.js?v=20260902-detail-reading-rescue-1").catch((error) => {
+  console.error("文選靜態備援載入失敗。", error);
+});
+
 const CONSTRUCTION_TITLE_OVERRIDES = new Map([
   // 建院系列標題由 Firestore 後台提供，不再以舊標題覆蓋。
 ]);
