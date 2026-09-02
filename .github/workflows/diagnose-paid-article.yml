@@ -154,6 +154,7 @@ jobs:
               "articleMatches":summaries,
               "matchCount":len(summaries),
               "paidArticleBodies":paid_bodies,
+              "firestorePublicContent":firestore_content,
               "staticComparison":{
                   "staticContentChars":len(static_content),
                   "firestoreContentChars":len(firestore_content),
