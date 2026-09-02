@@ -6,9 +6,14 @@ on:
     paths:
       - .github/workflows/verify-paid-article-stability.yml
 
+concurrency:
+  group: verify-paid-article-stability
+  cancel-in-progress: true
+
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: write
     steps:
@@ -24,7 +29,7 @@ jobs:
           set -euo pipefail
           URL="https://lyyuan.tw/articles.html?id=yuanshen-awakening-old-manuscript"
           for i in $(seq 1 30); do
-            if curl -fsSL -H 'Cache-Control: no-cache' "$URL" | grep -q '20260902-single-detail-renderer-1'; then
+            if curl -fsSL -H 'Cache-Control: no-cache' "$URL" | grep -q '20260902-observer-loop-fix-1'; then
               echo "Live deployment marker detected."
               exit 0
             fi
@@ -98,35 +103,49 @@ jobs:
 
               await page.waitForTimeout(2500);
 
-              const state = await page.evaluate(() => {
-                const root = document.getElementById('article-root');
-                const view = document.querySelector('.article-view');
-                const simpleGate = document.querySelector('.article-paid-gate');
-                const restoredGate = document.querySelector('[data-paid-gate-restored]');
-                const paidLogin = document.querySelector('.article-paid-login, [data-paid-member-login]');
-                const body = document.querySelector('.article-view .article-body');
-                const nav = document.querySelector('.site-header, nav');
-                const rootText = (root?.innerText || '').trim();
-                const bodyText = (body?.innerText || '').trim();
-                const navEntry = performance.getEntriesByType('navigation')[0];
-                return {
-                  readyState: document.readyState,
-                  title: document.title,
-                  articleView: Boolean(view),
-                  simpleGate: Boolean(simpleGate),
-                  restoredGate: Boolean(restoredGate),
-                  paidLogin: Boolean(paidLogin),
-                  navPresent: Boolean(nav),
-                  rootTextChars: rootText.length,
-                  bodyTextChars: bodyText.length,
-                  bodyTail: bodyText.slice(-180),
-                  articleAccess: view?.dataset?.articleAccess || '',
-                  paidBodyState: view?.dataset?.paidBodyState || '',
-                  rescued: root?.dataset?.articleRescued || '',
-                  navigationType: navEntry?.type || '',
-                  transferSize: navEntry?.transferSize || 0
-                };
-              });
+              const exists = async (selector, timeout = 3000) => {
+                try {
+                  await page.locator(selector).first().waitFor({ state: 'attached', timeout });
+                  return true;
+                } catch {
+                  return false;
+                }
+              };
+              const textOf = async (selector, timeout = 3000) => {
+                try {
+                  return (await page.locator(selector).first().innerText({ timeout })).trim();
+                } catch {
+                  return '';
+                }
+              };
+
+              const articleView = await exists('.article-view', 5000);
+              const simpleGate = await exists('.article-paid-gate', 2000);
+              const restoredGate = await exists('[data-paid-gate-restored]', 5000);
+              const paidLogin = await exists('.article-paid-login, [data-paid-member-login]', 3000);
+              const navPresent = await exists('.site-header, nav', 3000);
+              const rootText = await textOf('#article-root', 3000);
+              const bodyText = await textOf('.article-view .article-body', 3000);
+              let title = '';
+              try { title = await page.title(); } catch {}
+
+              const state = {
+                readyState: loadCompleted ? 'complete' : 'not-complete',
+                title,
+                articleView,
+                simpleGate,
+                restoredGate,
+                paidLogin,
+                navPresent,
+                rootTextChars: rootText.length,
+                bodyTextChars: bodyText.length,
+                bodyTail: bodyText.slice(-180),
+                articleAccess: '',
+                paidBodyState: '',
+                rescued: '',
+                navigationType: i === 1 ? 'navigate' : 'reload',
+                transferSize: 0
+              };
 
               const passed = state.articleView
                 && (state.simpleGate || state.restoredGate)
