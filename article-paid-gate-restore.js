@@ -11,12 +11,12 @@ function installStyles() {
   const style = document.createElement("style");
   style.id = "paid-gate-restore-styles";
   style.textContent = `
-    [data-paid-gate-restored]{position:relative;margin:28px 0 18px;padding:26px 0 30px;overflow:visible}
+    [data-paid-gate-restored]{position:relative;z-index:20;isolation:isolate;margin:28px 0 18px;padding:26px 0 30px;overflow:visible}
     [data-paid-gate-restored] .paid-lock-preview{position:absolute;inset:0;overflow:hidden;opacity:.16;filter:blur(3px);pointer-events:none}
     [data-paid-gate-restored] .paid-lock-preview span{display:block;width:88%;height:12px;margin:0 auto 18px;border-radius:999px;background:rgba(89,79,71,.22)}
     [data-paid-gate-restored] .paid-lock-preview span:nth-child(2n){width:74%}
     [data-paid-gate-restored] .paid-lock-preview span:nth-child(3n){width:82%}
-    [data-paid-gate-restored] .paid-lock-card{position:relative;z-index:2;width:min(570px,94%);margin:0 auto;padding:28px 26px 24px;text-align:center;background:rgba(248,244,236,.985);border:1px solid rgba(165,130,84,.38);box-shadow:0 16px 38px rgba(42,34,26,.12);color:#3F3024}
+    [data-paid-gate-restored] .paid-lock-card{position:relative!important;z-index:22!important;display:block!important;visibility:visible!important;opacity:1!important;filter:none!important;width:min(570px,94%);margin:0 auto;padding:28px 26px 24px;text-align:center;background:rgba(248,244,236,.985);border:1px solid rgba(165,130,84,.38);box-shadow:0 16px 38px rgba(42,34,26,.12);color:#3F3024}
     [data-paid-gate-restored] .member-lock-icon{margin-bottom:7px;color:#8B683F;font-size:18px;line-height:1}
     [data-paid-gate-restored] h3{margin:0 0 9px;color:#493724;font-family:'Noto Serif TC',serif;font-size:24px;font-weight:700;letter-spacing:.05em}
     [data-paid-gate-restored] .paid-lock-card>p{margin:0 auto 15px;max-width:470px;color:#665747;font-size:13px;line-height:1.9}
@@ -111,6 +111,32 @@ function upgradeSimpleGates(root = document) {
   return gates.length;
 }
 
+function repairRestoredGates(root = document) {
+  const gates = [];
+  if (root instanceof Element && root.matches?.(RESTORED_GATE_SELECTOR)) gates.push(root);
+  root.querySelectorAll?.(RESTORED_GATE_SELECTOR).forEach((gate) => gates.push(gate));
+
+  let repaired = 0;
+  gates.forEach((gate) => {
+    if (!gate.isConnected) return;
+    const card = gate.querySelector(".paid-lock-card");
+    if (card) {
+      card.hidden = false;
+      card.removeAttribute("aria-hidden");
+      return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = restoredGateMarkup().trim();
+    const replacement = wrapper.firstElementChild;
+    if (replacement) {
+      gate.replaceWith(replacement);
+      repaired += 1;
+    }
+  });
+  return repaired;
+}
+
 async function handleMemberLogin(button) {
   const checkout = window.LingYuanSponsorCheckout;
   const state = checkout?.getState?.();
@@ -140,16 +166,22 @@ async function handleMemberLogin(button) {
 
 installStyles();
 upgradeSimpleGates();
+repairRestoredGates();
 
 const articleRoot = document.getElementById("article-root") || document.documentElement;
 const observer = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     for (const node of mutation.addedNodes) {
       if (!(node instanceof Element)) continue;
-      if (upgradeSimpleGates(node)) return;
+      if (upgradeSimpleGates(node)) {
+        repairRestoredGates(articleRoot);
+        return;
+      }
+      repairRestoredGates(node);
     }
   }
   upgradeSimpleGates();
+  repairRestoredGates(articleRoot);
 });
 observer.observe(articleRoot, { childList: true, subtree: true });
 
@@ -160,7 +192,13 @@ document.addEventListener("click", (event) => {
   handleMemberLogin(button);
 }, true);
 
-window.addEventListener("pageshow", () => upgradeSimpleGates());
+window.addEventListener("pageshow", () => {
+  upgradeSimpleGates();
+  repairRestoredGates(articleRoot);
+});
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") upgradeSimpleGates();
+  if (document.visibilityState === "visible") {
+    upgradeSimpleGates();
+    repairRestoredGates(articleRoot);
+  }
 });
