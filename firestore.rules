@@ -43,19 +43,342 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/memberEntitlements/$(request.auth.token.email));
     }
 
+    function hasManagedEventAccess(email, eventId) {
+      let path = /databases/$(database)/documents/memberAccess/$(email);
+      return exists(path)
+        && (!get(path).data.keys().hasAny(["email"]) || get(path).data.email == email)
+        && get(path).data.keys().hasAny(["eventAccess"])
+        && get(path).data.eventAccess is map
+        && get(path).data.eventAccess.keys().hasAny([eventId])
+        && get(path).data.eventAccess[eventId] is map
+        && get(path).data.eventAccess[eventId].status == "active"
+        && (!get(path).data.keys().hasAny(["disabled"]) || get(path).data.disabled != true)
+        && (!get(path).data.keys().hasAny(["suspended"]) || get(path).data.suspended != true)
+        && (!get(path).data.keys().hasAny(["status"]) || get(path).data.status != "disabled");
+    }
+
+    function hasSelection4LegacyAccess(email, permission) {
+      return permission == "2026-jinmu-build-supporter"
+        && (
+          hasManagedEventAccess(email, "2026-jinmu-build-supporter")
+          || hasManagedEventAccess(email, "丙午無極瑤池金母聖誕-專屬文選4-建院所有燈別")
+        );
+    }
+
     function hasEventPermission(permission) {
       let email = request.auth.token.email.lower();
       let path = /databases/$(database)/documents/memberEntitlements/$(email);
       return verifiedEmail()
-        && email.matches('^[^@]+@gmail[.]com$')
-        && exists(path)
-        && get(path).data.email == email
-        && get(path).data.keys().hasAny(["permissions"])
-        && get(path).data.permissions is list
-        && get(path).data.permissions.hasAny([permission])
-        && (!get(path).data.keys().hasAny(["disabled"]) || get(path).data.disabled != true)
-        && (!get(path).data.keys().hasAny(["suspended"]) || get(path).data.suspended != true)
-        && (!get(path).data.keys().hasAny(["status"]) || get(path).data.status != "disabled");
+        && email.matches('^[^@]+@gmail[.]com
+    function safePublicEventArticle() {
+      return !request.resource.data.keys().hasAny(["requiredPermission"])
+        || (request.resource.data.accessType == "event"
+          && request.resource.data.content == ""
+          && (!request.resource.data.keys().hasAny(["previousContentBackup"])
+            || request.resource.data.previousContentBackup == "")
+          && (!request.resource.data.keys().hasAny(["encryptedContent"])
+            || request.resource.data.encryptedContent == "")
+          && (!request.resource.data.keys().hasAny(["magicLinkAccess"])
+            || request.resource.data.magicLinkAccess.size() == 0));
+    }
+
+    function hasValidWellnessExpiry() {
+      return wellnessMember().data.keys().hasAny(["expiresAt"])
+        && (
+          wellnessMember().data.expiresAt is string
+          || (wellnessMember().data.expiresAt is timestamp
+            && wellnessMember().data.expiresAt > request.time)
+        );
+    }
+
+    function isActiveWellnessMember() {
+      return hasWellnessMemberRecord()
+        && wellnessMember().data.status == "active"
+        && wellnessMember().data.paymentStatus == "paid"
+        && hasValidWellnessExpiry()
+        && wellnessMember().data.memberType == "wellness-channel"
+        && wellnessMember().data.wellnessAccess == true
+        && wellnessMember().data.memberLevel in ["wellness", "lingji"]
+        && (!wellnessMember().data.keys().hasAny(["disabled"])
+          || wellnessMember().data.disabled != true)
+        && (!wellnessMember().data.keys().hasAny(["suspended"])
+          || wellnessMember().data.suspended != true)
+        && (!wellnessMember().data.keys().hasAny(["revokedAt"])
+          || wellnessMember().data.revokedAt == null);
+    }
+
+    function isLingjiMember() {
+      return isActiveWellnessMember()
+        && wellnessMember().data.memberLevel == "lingji";
+    }
+
+    function hasDirectSponsorArticleAccess() {
+      return hasSponsorMemberRecord()
+        && sponsorMember().data.email == request.auth.token.email
+        && sponsorMember().data.memberType == "sponsor-member"
+        && sponsorMember().data.status == "active"
+        && sponsorMember().data.paymentStatus == "paid"
+        && sponsorMember().data.articleAccess == true
+        && sponsorMember().data.accessScope == "sponsor-paid-articles"
+        && sponsorMember().data.accessVersion is int
+        && sponsorMember().data.accessVersion >= 1
+        && sponsorMember().data.keys().hasAny(["expiresAt"])
+        && (
+          sponsorMember().data.expiresAt is string
+          || (sponsorMember().data.expiresAt is timestamp
+            && sponsorMember().data.expiresAt > request.time)
+        )
+        && (!sponsorMember().data.keys().hasAny(["startsAt"])
+          || !(sponsorMember().data.startsAt is timestamp)
+          || sponsorMember().data.startsAt <= request.time)
+        && (!sponsorMember().data.keys().hasAny(["disabled"])
+          || sponsorMember().data.disabled != true)
+        && (!sponsorMember().data.keys().hasAny(["suspended"])
+          || sponsorMember().data.suspended != true)
+        && (!sponsorMember().data.keys().hasAny(["revokedAt"])
+          || sponsorMember().data.revokedAt == null);
+    }
+
+    function hasWellnessPaidArticleAccess() {
+      return isActiveWellnessMember()
+        && (
+          wellnessMember().data.memberLevel == "lingji"
+          || (wellnessMember().data.keys().hasAny(["articleAccess"])
+            && wellnessMember().data.articleAccess == true)
+        );
+    }
+
+    function hasCanonicalPaidArticleAccess() {
+      return hasMemberEntitlementRecord()
+        && memberEntitlement().data.email == request.auth.token.email
+        && memberEntitlement().data.schemaVersion is int
+        && memberEntitlement().data.schemaVersion >= 1
+        && memberEntitlement().data.status != "disabled"
+        && (
+          (
+            memberEntitlement().data.keys().hasAny(["sponsorArticleAccess", "sponsorExpiresAt"])
+            && memberEntitlement().data.sponsorArticleAccess == true
+            && memberEntitlement().data.sponsorExpiresAt is timestamp
+            && memberEntitlement().data.sponsorExpiresAt > request.time
+          )
+          || (
+            memberEntitlement().data.keys().hasAny(["wellnessArticleAccess", "wellnessExpiresAt"])
+            && memberEntitlement().data.wellnessArticleAccess == true
+            && memberEntitlement().data.wellnessExpiresAt is timestamp
+            && memberEntitlement().data.wellnessExpiresAt > request.time
+          )
+        );
+    }
+
+    function sponsorSourceNewerThanEntitlement() {
+      return hasSponsorMemberRecord()
+        && sponsorMember().data.keys().hasAny(["updatedAt"])
+        && sponsorMember().data.updatedAt is timestamp
+        && (
+          !hasMemberEntitlementRecord()
+          || !memberEntitlement().data.keys().hasAny(["computedAt"])
+          || !(memberEntitlement().data.computedAt is timestamp)
+          || sponsorMember().data.updatedAt > memberEntitlement().data.computedAt
+        );
+    }
+
+    function wellnessSourceNewerThanEntitlement() {
+      return hasWellnessMemberRecord()
+        && wellnessMember().data.keys().hasAny(["updatedAt"])
+        && wellnessMember().data.updatedAt is timestamp
+        && (
+          !hasMemberEntitlementRecord()
+          || !memberEntitlement().data.keys().hasAny(["computedAt"])
+          || !(memberEntitlement().data.computedAt is timestamp)
+          || wellnessMember().data.updatedAt > memberEntitlement().data.computedAt
+        );
+    }
+
+    function shouldUseLegacyAccessFallback() {
+      return !hasMemberEntitlementRecord()
+        || sponsorSourceNewerThanEntitlement()
+        || wellnessSourceNewerThanEntitlement();
+    }
+
+    function canReadPaidArticles() {
+      return isAdmin()
+        || hasCanonicalPaidArticleAccess()
+        || (shouldUseLegacyAccessFallback()
+          && (hasDirectSponsorArticleAccess() || hasWellnessPaidArticleAccess()));
+    }
+
+    function hasCanonicalWellnessVideoAccess() {
+      return hasMemberEntitlementRecord()
+        && memberEntitlement().data.email == request.auth.token.email
+        && memberEntitlement().data.schemaVersion is int
+        && memberEntitlement().data.schemaVersion >= 1
+        && memberEntitlement().data.keys().hasAny(["wellnessVideoAccess", "wellnessExpiresAt"])
+        && memberEntitlement().data.wellnessVideoAccess == true
+        && memberEntitlement().data.wellnessExpiresAt is timestamp
+        && memberEntitlement().data.wellnessExpiresAt > request.time;
+    }
+
+    function hasCanonicalLingjiAccess() {
+      return hasCanonicalWellnessVideoAccess()
+        && memberEntitlement().data.keys().hasAny(["lingjiAccess"])
+        && memberEntitlement().data.lingjiAccess == true;
+    }
+
+    function canReadMemberVideo(accessLevel) {
+      return isAdmin()
+        || (
+          hasCanonicalWellnessVideoAccess()
+          && (accessLevel == "wellness"
+            || (accessLevel == "lingji" && hasCanonicalLingjiAccess()))
+        )
+        || (
+          shouldUseLegacyAccessFallback()
+          && isActiveWellnessMember()
+          && (accessLevel == "wellness"
+            || (accessLevel == "lingji" && isLingjiMember()))
+        );
+    }
+
+    match /articles/{articleId} {
+      allow read: if resource.data.status == "published" || isAdmin();
+      allow create: if isAdmin() && safePublicEventArticle();
+      allow update: if isAdmin() && safePublicEventArticle()
+        && (!resource.data.keys().hasAny(["requiredPermission"])
+          || request.resource.data.requiredPermission == resource.data.requiredPermission);
+      allow delete: if isAdmin();
+    }
+
+    match /eventArticleBodies/{articleId} {
+      allow get: if isAdmin()
+        || (resource.data.status == "published"
+          && resource.data.active == true
+          && get(/databases/$(database)/documents/articles/$(articleId)).data.status == "published"
+          && resource.data.requiredPermission is string
+          && hasEventPermission(resource.data.requiredPermission));
+      allow list, create, update, delete: if isAdmin();
+    }
+
+    match /paidArticleBodies/{articleId} {
+      allow read: if canReadPaidArticles()
+        && (isAdmin() || resource.data.status == "published")
+        && resource.data.active != false;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /articleMetrics/{articleId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly([
+          "articleId", "views", "shares", "copies", "updatedAt"
+        ])
+        && request.resource.data.articleId == articleId
+        && request.resource.data.views is int
+        && request.resource.data.shares is int
+        && request.resource.data.copies is int
+        && request.resource.data.views >= 0
+        && request.resource.data.shares >= 0
+        && request.resource.data.copies >= 0
+        && request.resource.data.views
+          + request.resource.data.shares
+          + request.resource.data.copies == 1
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isAdmin() || (
+        request.resource.data.keys().hasOnly([
+          "articleId", "views", "shares", "copies", "updatedAt"
+        ])
+        && request.resource.data.articleId == articleId
+        && request.resource.data.articleId == resource.data.articleId
+        && request.resource.data.views is int
+        && request.resource.data.shares is int
+        && request.resource.data.copies is int
+        && request.resource.data.views >= resource.data.views
+        && request.resource.data.shares >= resource.data.shares
+        && request.resource.data.copies >= resource.data.copies
+        && request.resource.data.views - resource.data.views <= 1
+        && request.resource.data.shares - resource.data.shares <= 1
+        && request.resource.data.copies - resource.data.copies <= 1
+        && request.resource.data.views - resource.data.views
+          + request.resource.data.shares - resource.data.shares
+          + request.resource.data.copies - resource.data.copies == 1
+        && request.resource.data.updatedAt == request.time
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    match /articleNotifications/{articleId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    match /membershipSettings/{settingId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /memberAccess/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /sponsorMemberAccess/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /memberEntitlements/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /membershipHistory/{memberEmail} {
+      allow read: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == memberEmail);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /memberVideos/{videoId} {
+      allow read: if isAdmin()
+        || (resource.data.status == "published"
+          && canReadMemberVideo(resource.data.accessLevel));
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /membershipOrders/{orderId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+)
+        && (
+          (
+            exists(path)
+            && get(path).data.email == email
+            && get(path).data.keys().hasAny(["permissions"])
+            && get(path).data.permissions is list
+            && get(path).data.permissions.hasAny([permission])
+            && (!get(path).data.keys().hasAny(["disabled"]) || get(path).data.disabled != true)
+            && (!get(path).data.keys().hasAny(["suspended"]) || get(path).data.suspended != true)
+            && (!get(path).data.keys().hasAny(["status"]) || get(path).data.status != "disabled")
+          )
+          || hasSelection4LegacyAccess(email, permission)
+        );
     }
 
     function safePublicEventArticle() {
