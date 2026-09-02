@@ -626,6 +626,15 @@ function renderArticleRows(items) {
   `).join("");
 }
 
+function bindArticleListButtons() {
+  listEl.querySelectorAll(".article-item[data-id]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      selectArticle(button.dataset.id);
+    });
+  });
+}
+
 function renderList() {
   if (!articles.length) {
     listEl.innerHTML = '<div class="empty">目前尚無文章</div>';
@@ -643,6 +652,7 @@ function renderList() {
       ${published.length ? renderArticleRows(published) : '<div class="article-list-empty">目前沒有已發布文章</div>'}
     </div>
   `;
+  bindArticleListButtons();
 }
 
 function selectArticle(articleId) {
@@ -662,7 +672,8 @@ function selectArticle(articleId) {
     });
     setSaveStatus(article.source === "github-static" ? "網站文章｜請按「匯入後台編輯」" : `已載入：${article.title || "未命名文章"}`, "success");
     requestAnimationFrame(() => {
-      form.scrollIntoView({ behavior: "smooth", block: "start" });
+      const editorPanel = form.closest(".panel");
+      (editorPanel || form).scrollIntoView({ behavior: "smooth", block: "start" });
       formFields.title.focus({ preventScroll: true });
     });
   } catch (error) {
@@ -1290,11 +1301,6 @@ form.addEventListener("change", (event) => {
   if (!isThumbnailControlTarget(event.target)) markDirty();
 });
 accessTypeInput?.addEventListener("change", toggleEventAccess);
-listEl.addEventListener("click", (event) => {
-  const button = event.target.closest(".article-item[data-id]");
-  if (!button || !listEl.contains(button)) return;
-  selectArticle(button.dataset.id);
-});
 newButton.addEventListener("click", newArticle);
 importButton?.addEventListener("click", async () => {
   if (!currentId) return;
