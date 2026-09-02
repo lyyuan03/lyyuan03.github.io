@@ -203,7 +203,7 @@ function renderRestoredGateState() {
       status.dataset.checkoutError = "true";
       status.classList.add("is-error");
       status.setAttribute("role", "alert");
-      status.textContent = state.error;
+      if (status.textContent !== state.error) status.textContent = state.error;
     } else if (existing?.dataset.checkoutError === "true") {
       existing.remove();
     }
@@ -232,7 +232,7 @@ function displayGateStatus(message, isError = false) {
     status.dataset.checkoutError = isError ? "true" : "false";
     status.classList.toggle("is-error", isError);
     status.setAttribute("role", isError ? "alert" : "status");
-    status.textContent = message;
+    if (status.textContent !== message) status.textContent = message;
   });
   restoredGates().forEach((gate) => {
     const host = gate.querySelector(".paid-lock-card") || gate;
@@ -240,7 +240,7 @@ function displayGateStatus(message, isError = false) {
     status.dataset.checkoutError = isError ? "true" : "false";
     status.classList.toggle("is-error", isError);
     status.setAttribute("role", isError ? "alert" : "status");
-    status.textContent = message;
+    if (status.textContent !== message) status.textContent = message;
   });
 }
 
@@ -364,7 +364,18 @@ if (!paymentReturnRedirect()) {
   });
 
   const sponsorGateRoot = document.getElementById("article-root") || document.body;
-  const sponsorGateObserver = new MutationObserver(() => renderRestoredGateState());
+  // 只在新的 restored paid gate 被插入時同步 checkout 狀態。
+  // 不監聽自己建立的 status 文字／節點，避免：
+  // observer -> statusElement/textContent -> childList mutation -> observer 的自我觸發循環。
+  const sponsorGateObserver = new MutationObserver((mutations) => {
+    const hasNewGate = mutations.some((mutation) =>
+      [...mutation.addedNodes].some((node) =>
+        node instanceof Element
+        && (node.matches("[data-paid-gate-restored]") || Boolean(node.querySelector("[data-paid-gate-restored]")))
+      )
+    );
+    if (hasNewGate) renderRestoredGateState();
+  });
   sponsorGateObserver.observe(sponsorGateRoot, { childList: true, subtree: true });
 
   refresh();
