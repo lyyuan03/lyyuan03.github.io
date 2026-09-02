@@ -1,0 +1,29 @@
+name: Remove Yaochi Morning Check-in Mention
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - functions/remove-yaochi-checkin.mjs
+      - .github/workflows/remove-yaochi-checkin.yml
+
+permissions:
+  contents: read
+
+jobs:
+  update-article:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm --prefix functions ci
+      - name: Remove only the check-in sentence from the Yaochi morning article
+        run: node functions/remove-yaochi-checkin.mjs
