@@ -1,4 +1,4 @@
-import { staticArticles } from "./static-articles.js?v=20260824-article-system-repair-1";
+import { staticArticles } from "./static-articles.js?v=20260902-detail-reading-rescue-2";
 
 const root = document.getElementById("article-root");
 const params = new URLSearchParams(location.search);
