@@ -1,0 +1,29 @@
+name: Repair Jinmu Selection 4 Access
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - functions/repair-jinmu-selection4-access.mjs
+      - .github/workflows/repair-jinmu-selection4-access.yml
+
+permissions:
+  contents: read
+
+jobs:
+  repair-selection4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm --prefix functions ci
+      - name: Repair Selection 4 canonical article permissions
+        run: node functions/repair-jinmu-selection4-access.mjs
