@@ -1,0 +1,27 @@
+name: Audit Yaochi Morning Article Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - functions/audit-yaochi-morning-images.mjs
+      - .github/workflows/audit-yaochi-morning-images.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm --prefix functions ci
+      - run: node functions/audit-yaochi-morning-images.mjs
