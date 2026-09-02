@@ -63,6 +63,12 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
+      - name: Normalize sponsor paid-article members
+        run: bash .github/scripts/normalize-sponsor-member-access.sh
+
+      - name: Rebuild canonical member entitlements
+        run: python3 .github/scripts/rebuild-member-entitlements.py
+
       - name: Deploy Firestore rules directly through Firebase Rules API
         run: |
           set -euo pipefail
@@ -109,14 +115,6 @@ jobs:
           fi
 
           echo "Firestore rules deployed successfully."
-
-      - name: Normalize sponsor paid-article members
-        continue-on-error: true
-        run: bash .github/scripts/normalize-sponsor-member-access.sh
-
-      - name: Rebuild canonical member entitlements
-        continue-on-error: true
-        run: python3 .github/scripts/rebuild-member-entitlements.py
 
       - name: Record successful Firestore rules deployment
         continue-on-error: true
