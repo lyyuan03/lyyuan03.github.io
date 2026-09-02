@@ -32,6 +32,17 @@ main{max-width:1120px;margin:auto;padding:0 24px 80px}.article-admin-preview-sum
 @media(max-width:900px){.article-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.site-nav{min-height:58px;padding:0 14px;gap:16px;overflow:auto;justify-content:flex-start}.hero{padding:44px 18px 24px}.filters{padding:0 18px}.article-grid{grid-template-columns:1fr}.article-view{padding:30px 22px 45px}.article-body{font-size:17px;line-height:1.95}.article-view>h2{font-size:29px}.article-share{align-items:flex-start;flex-direction:column}.article-result-summary{padding:0 2px}body.site-auth-enabled .site-header{top:var(--site-auth-height,52px)}}
 .article-series{font-size:12px;line-height:1.7;color:#725532;margin:12px 0 5px;font-weight:600}.article-card-heading{flex-wrap:wrap}.article-card-badges{max-width:100%}.article-view .article-series{margin:0 0 10px}
+
+/* 文選卡片統一規格：固定欄位順序、摘要高度與統計列位置 */
+.article-card{display:flex;flex-direction:column;height:100%}
+.article-card-media{flex:0 0 auto}
+.article-card-content{display:flex;flex:1;flex-direction:column;padding:20px}
+.article-card-heading{min-height:34px;align-content:flex-start}
+.article-list-title{display:-webkit-box;min-height:4.5em;max-height:4.5em;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3}
+.article-guide{min-height:25px}
+.article-hook{display:-webkit-box;min-height:5.25em;max-height:5.25em;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3}
+.article-metrics{margin-top:auto;padding-top:16px}
+@media(max-width:760px){.article-list-title{min-height:0;max-height:none;-webkit-line-clamp:unset}.article-hook{min-height:0;max-height:none;-webkit-line-clamp:unset}}
 </style>
   <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-3">
 </head>
@@ -95,7 +106,7 @@ main{max-width:1120px;margin:auto;padding:0 24px 80px}.article-admin-preview-sum
 <section class="hero"><div class="hero-kicker">LYYUAN JOURNAL</div><h1>文選</h1><p>從修行到俗世，從靈界辨識到閱讀筆記。把複雜的經驗整理成能落實於生活的思考。</p></section>
 <nav class="filters" id="category-tabs"></nav>
 <main id="article-root"><div class="empty">文章載入中…</div></main>
-<script type="module" src="articles-v6.js?v=20260901-event-access-bridge-1"></script>
+<script type="module" src="articles-v6.js?v=20260902-card-consistency-1"></script>
 <script type="module" src="/article-admin-draft-preview.js?v=20260829-yuanshen-title-preview-1"></script>
 <script type="module" src="/article-publication-index-repair.js?v=20260823-1"></script>
 <script src="article-destination-links.js?v=20260813-share-restore-1" defer></script>
