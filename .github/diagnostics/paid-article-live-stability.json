@@ -1,180 +1,160 @@
 {
   "url": "https://lyyuan.tw/articles.html?id=yuanshen-awakening-old-manuscript",
-  "checkedAt": "2026-09-02T10:49:16.960Z",
-  "allFiveStable": false,
+  "checkedAt": "2026-09-02T10:57:25.442Z",
+  "allFiveStable": true,
   "runs": [
     {
       "run": 1,
-      "elapsedMs": 17807,
+      "elapsedMs": 5086,
       "loadCompleted": true,
       "navigationError": "",
-      "passed": false,
+      "passed": true,
       "readyState": "complete",
-      "title": "靈元院文選",
-      "articleView": false,
+      "title": "《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄｜靈元院文選",
+      "articleView": true,
       "simpleGate": false,
-      "restoredGate": false,
-      "paidLogin": false,
+      "restoredGate": true,
+      "paidLogin": true,
       "navPresent": true,
-      "rootTextChars": 33,
-      "bodyTextChars": 0,
-      "bodyTail": "",
+      "rootTextChars": 2256,
+      "bodyTextChars": 1158,
+      "bodyTail": "？\n\n他後來跟我說一句話，我一直記到現在。「有沒有可能，是你的觀念擋到別人的財路了？」我那時候聽完，還是覺得很奇怪。\n\n一個完全不認識我的人，要看我的元神\n\n結果沒多久，真的就有人來找我了。那一位攻擊我的學生說，他的老師想要看我的元神。我當時的反應很直接。我不認識你，我也不認識你的老師。那為什麼我要跟你們互動？結果對方後來直接告訴我，他的老師已經「看過」了。",
       "articleAccess": "",
       "paidBodyState": "",
       "rescued": "",
       "navigationType": "navigate",
-      "transferSize": 5653
+      "transferSize": 0
     },
     {
       "run": 2,
-      "elapsedMs": 17672,
+      "elapsedMs": 4686,
       "loadCompleted": true,
       "navigationError": "",
-      "passed": false,
+      "passed": true,
       "readyState": "complete",
-      "title": "靈元院文選",
-      "articleView": false,
+      "title": "《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄｜靈元院文選",
+      "articleView": true,
       "simpleGate": false,
-      "restoredGate": false,
-      "paidLogin": false,
+      "restoredGate": true,
+      "paidLogin": true,
       "navPresent": true,
-      "rootTextChars": 33,
-      "bodyTextChars": 0,
-      "bodyTail": "",
+      "rootTextChars": 2256,
+      "bodyTextChars": 1158,
+      "bodyTail": "？\n\n他後來跟我說一句話，我一直記到現在。「有沒有可能，是你的觀念擋到別人的財路了？」我那時候聽完，還是覺得很奇怪。\n\n一個完全不認識我的人，要看我的元神\n\n結果沒多久，真的就有人來找我了。那一位攻擊我的學生說，他的老師想要看我的元神。我當時的反應很直接。我不認識你，我也不認識你的老師。那為什麼我要跟你們互動？結果對方後來直接告訴我，他的老師已經「看過」了。",
       "articleAccess": "",
       "paidBodyState": "",
       "rescued": "",
       "navigationType": "reload",
-      "transferSize": 5653
+      "transferSize": 0
     },
     {
       "run": 3,
-      "elapsedMs": 17629,
+      "elapsedMs": 4675,
       "loadCompleted": true,
       "navigationError": "",
-      "passed": false,
+      "passed": true,
       "readyState": "complete",
-      "title": "靈元院文選",
-      "articleView": false,
+      "title": "《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄｜靈元院文選",
+      "articleView": true,
       "simpleGate": false,
-      "restoredGate": false,
-      "paidLogin": false,
+      "restoredGate": true,
+      "paidLogin": true,
       "navPresent": true,
-      "rootTextChars": 33,
-      "bodyTextChars": 0,
-      "bodyTail": "",
+      "rootTextChars": 2256,
+      "bodyTextChars": 1158,
+      "bodyTail": "？\n\n他後來跟我說一句話，我一直記到現在。「有沒有可能，是你的觀念擋到別人的財路了？」我那時候聽完，還是覺得很奇怪。\n\n一個完全不認識我的人，要看我的元神\n\n結果沒多久，真的就有人來找我了。那一位攻擊我的學生說，他的老師想要看我的元神。我當時的反應很直接。我不認識你，我也不認識你的老師。那為什麼我要跟你們互動？結果對方後來直接告訴我，他的老師已經「看過」了。",
       "articleAccess": "",
       "paidBodyState": "",
       "rescued": "",
       "navigationType": "reload",
-      "transferSize": 5653
+      "transferSize": 0
     },
     {
       "run": 4,
-      "elapsedMs": 17743,
+      "elapsedMs": 4669,
       "loadCompleted": true,
       "navigationError": "",
-      "passed": false,
+      "passed": true,
       "readyState": "complete",
-      "title": "靈元院文選",
-      "articleView": false,
+      "title": "《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄｜靈元院文選",
+      "articleView": true,
       "simpleGate": false,
-      "restoredGate": false,
-      "paidLogin": false,
+      "restoredGate": true,
+      "paidLogin": true,
       "navPresent": true,
-      "rootTextChars": 33,
-      "bodyTextChars": 0,
-      "bodyTail": "",
+      "rootTextChars": 2256,
+      "bodyTextChars": 1158,
+      "bodyTail": "？\n\n他後來跟我說一句話，我一直記到現在。「有沒有可能，是你的觀念擋到別人的財路了？」我那時候聽完，還是覺得很奇怪。\n\n一個完全不認識我的人，要看我的元神\n\n結果沒多久，真的就有人來找我了。那一位攻擊我的學生說，他的老師想要看我的元神。我當時的反應很直接。我不認識你，我也不認識你的老師。那為什麼我要跟你們互動？結果對方後來直接告訴我，他的老師已經「看過」了。",
       "articleAccess": "",
       "paidBodyState": "",
       "rescued": "",
       "navigationType": "reload",
-      "transferSize": 5653
+      "transferSize": 0
     },
     {
       "run": 5,
-      "elapsedMs": 17715,
+      "elapsedMs": 4681,
       "loadCompleted": true,
       "navigationError": "",
-      "passed": false,
+      "passed": true,
       "readyState": "complete",
-      "title": "靈元院文選",
-      "articleView": false,
+      "title": "《我在人間的元神覺醒》書外手記之一｜出版社當年刪掉的故事：我的元神來自地獄｜靈元院文選",
+      "articleView": true,
       "simpleGate": false,
-      "restoredGate": false,
-      "paidLogin": false,
+      "restoredGate": true,
+      "paidLogin": true,
       "navPresent": true,
-      "rootTextChars": 33,
-      "bodyTextChars": 0,
-      "bodyTail": "",
+      "rootTextChars": 2256,
+      "bodyTextChars": 1158,
+      "bodyTail": "？\n\n他後來跟我說一句話，我一直記到現在。「有沒有可能，是你的觀念擋到別人的財路了？」我那時候聽完，還是覺得很奇怪。\n\n一個完全不認識我的人，要看我的元神\n\n結果沒多久，真的就有人來找我了。那一位攻擊我的學生說，他的老師想要看我的元神。我當時的反應很直接。我不認識你，我也不認識你的老師。那為什麼我要跟你們互動？結果對方後來直接告訴我，他的老師已經「看過」了。",
       "articleAccess": "",
       "paidBodyState": "",
       "rescued": "",
       "navigationType": "reload",
-      "transferSize": 5653
+      "transferSize": 0
     }
   ],
   "consoleErrors": [
     "Failed to load resource: the server responded with a status of 404 ()",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346622022' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346622025' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346622022' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
     "Failed to load resource: the server responded with a status of 404 ()",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1",
     "Failed to load resource: the server responded with a status of 404 ()",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346626827' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346626875' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346626825' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1",
     "Failed to load resource: the server responded with a status of 404 ()",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
-    "Failed to load resource: net::ERR_FAILED",
-    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1",
     "Failed to load resource: the server responded with a status of 404 ()",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346631514' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346631515' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346631514' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346636173' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346636175' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
     "Failed to load resource: net::ERR_FAILED",
-    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1"
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346636228' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346640845' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346640847' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to fetch at 'https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346640906' from origin 'https://lyyuan.tw' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+    "Failed to load resource: net::ERR_FAILED"
   ],
   "pageErrors": [],
   "requestFailures": [
@@ -183,119 +163,139 @@
       "error": "net::ERR_ABORTED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-SemiBold.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=W74NMfGa0oJc7tCeNRnyvQipgcq91WaZLUVutFkL3vMGNxKieZhrZQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=IVqf-6yGUkD-OQ-wg-ACNQ&AID=0&CI=0&TYPE=xmlhttp&zx=waknmp8m3egn&t=1",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=W74NMfGa0oJc7tCeNRnyvQipgcq91WaZLUVutFkL3vMGNxKieZhrZQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=IVqf-6yGUkD-OQ-wg-ACNQ&AID=0&CI=1&TYPE=xmlhttp&zx=i1j033ybnicr&t=1",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=W74NMfGa0oJc7tCeNRnyvQipgcq91WaZLUVutFkL3vMGNxKieZhrZQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=IVqf-6yGUkD-OQ-wg-ACNQ&AID=11&CI=1&TYPE=xmlhttp&zx=llogsxy5d5g8&t=1",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346622022",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=W74NMfGa0oJc7tCeNRnyvQipgcq91WaZLUVutFkL3vMGNxKieZhrZQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=IVqf-6yGUkD-OQ-wg-ACNQ&AID=47&CI=1&TYPE=xmlhttp&zx=k87byjkbzni7&t=1",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=W74NMfGa0oJc7tCeNRnyvQipgcq91WaZLUVutFkL3vMGNxKieZhrZQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=IVqf-6yGUkD-OQ-wg-ACNQ&AID=52&CI=1&TYPE=xmlhttp&zx=8u4u1xgo8y5s&t=1",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=W74NMfGa0oJc7tCeNRnyvQipgcq91WaZLUVutFkL3vMGNxKieZhrZQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=IVqf-6yGUkD-OQ-wg-ACNQ&AID=92&CI=1&TYPE=xmlhttp&zx=38tbwzur3l46&t=1",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346622025",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346622022",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
-      "error": "net::ERR_FAILED"
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=W74NMfGa0oJc7tCeNRnyvQipgcq91WaZLUVutFkL3vMGNxKieZhrZQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=IVqf-6yGUkD-OQ-wg-ACNQ&AID=94&CI=1&TYPE=xmlhttp&zx=dgjphbap2yho&t=1",
+      "error": "net::ERR_ABORTED"
     },
     {
       "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
       "error": "net::ERR_ABORTED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-SemiBold.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346626827",
       "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346626875",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346626825",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=4RMN_cVBCZdzWfv-psLkkZCQCEwH8f2WfqJWH01WeEnHNmDLsSW3Uw&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=rtG40NpPDHnLbd-eQkPD_Q&AID=0&CI=0&TYPE=xmlhttp&zx=cv45i29498yt&t=1",
+      "error": "net::ERR_ABORTED"
     },
     {
       "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
       "error": "net::ERR_ABORTED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-SemiBold.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346631514",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346631515",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346631514",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
-      "error": "net::ERR_FAILED"
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=CPKQ04qHpCzHJd0SZ8pSQkU7RYk3NjFHRR9QBtJxey_aUqDe6SfWUQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=3HC67bnnZQ-Xz0QVwBNYNg&AID=0&CI=0&TYPE=xmlhttp&zx=j578j8ctx08s&t=1",
+      "error": "net::ERR_ABORTED"
     },
     {
       "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
       "error": "net::ERR_ABORTED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-SemiBold.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346636173",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346636175",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346636228",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
-      "error": "net::ERR_FAILED"
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=rdtdVcBzpK7JL7htKKEqP4Pcd7ZT9Qb1N0yLqdWE81jJzn4wZ94JEQ&VER=8&database=projects%2Flyyuan03-membership%2Fdatabases%2F(default)&RID=rpc&SID=nvJaQlAhZ1188NOxor_5jA&AID=0&CI=0&TYPE=xmlhttp&zx=msghosagyego&t=1",
+      "error": "net::ERR_ABORTED"
     },
     {
       "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
       "error": "net::ERR_ABORTED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-SemiBold.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346640845",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346640847",
       "error": "net::ERR_FAILED"
     },
     {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
-      "error": "net::ERR_FAILED"
-    },
-    {
-      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
+      "url": "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus?t=1788346640906",
       "error": "net::ERR_FAILED"
     }
   ]
