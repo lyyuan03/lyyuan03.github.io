@@ -1,0 +1,31 @@
+{
+  "articleId": "yuanshen-awakening-old-manuscript",
+  "articleMatches": [
+    {
+      "documentName": "projects/lyyuan03-membership/databases/(default)/documents/articles/yuanshen-awakening-old-manuscript",
+      "documentId": "yuanshen-awakening-old-manuscript",
+      "slug": "yuanshen-awakening-old-manuscript",
+      "status": "published",
+      "accessType": "paid",
+      "privatePaidContent": true,
+      "contentChars": 1553,
+      "contentSha256": "9ff37975425307ab46534ec19c55388adde5779c932770a54b980b0f5493963f",
+      "hasPaidMarker": true,
+      "paidMarkerIndex": 1533,
+      "updatedAt": "2026-08-30T17:55:47Z",
+      "paidContentVersion": 13
+    }
+  ],
+  "matchCount": 1,
+  "paidArticleBodies": [
+    {
+      "documentId": "yuanshen-awakening-old-manuscript",
+      "exists": true,
+      "contentChars": 4979,
+      "contentSha256": "285fd2f6b08dfa0db1a0f5bfee66ebff8a6fbd3d3fbe25a4683b6f69559d7341",
+      "contentVersion": 13,
+      "contentHashField": "285fd2f6b08dfa0db1a0f5bfee66ebff8a6fbd3d3fbe25a4683b6f69559d7341",
+      "updatedAt": "2026-08-30T17:55:48Z"
+    }
+  ]
+}
