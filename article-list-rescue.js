@@ -110,11 +110,14 @@ function pageNeedsRescue() {
 }
 
 function rescueNow() {
+  // 詳細文章頁由 articles-core 單一負責渲染。
+  // 這個備援只服務文章列表，避免靜態備援與 Firestore 核心同時改寫同一個 #article-root。
+  if (activeId) return false;
   if (!pageNeedsRescue()) return false;
-  return activeId ? renderDetailFallback() : renderListFallback();
+  return renderListFallback();
 }
 
-if (root) {
+if (root && !activeId) {
   rescueNow();
   [120, 350, 800, 1500, 3000, 6000].forEach((delay) => window.setTimeout(rescueNow, delay));
   const observer = new MutationObserver(() => {
