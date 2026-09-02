@@ -1,0 +1,28 @@
+name: Repair Yaochi Morning Broken Image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - functions/repair-yaochi-morning-image.mjs
+      - .github/workflows/repair-yaochi-morning-image.yml
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm --prefix functions ci
+      - name: Replace only the broken image reference
+        run: node functions/repair-yaochi-morning-image.mjs
