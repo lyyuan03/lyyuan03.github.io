@@ -174,32 +174,72 @@ function installStyles() {
     .sponsor-access-active{padding:14px;border:1px solid rgba(96,99,48,.32);background:rgba(96,99,48,.08);text-align:center}
     .sponsor-access-active strong,.sponsor-access-active span{display:block}.sponsor-access-active strong{color:#4F5228}.sponsor-access-active span{margin-top:4px;color:#665747;font-size:11px}
     .sponsor-payment-status{margin:12px 0;padding:11px 13px;border:1px solid rgba(165,130,84,.3);background:rgba(165,130,84,.08);color:#5A4127;font-size:11px;line-height:1.7;text-align:center}
+    .sponsor-payment-status.is-error{border-color:rgba(122,52,45,.35);background:rgba(122,52,45,.08);color:#6E312B}
     @media(max-width:480px){.sponsor-plan-grid{grid-template-columns:1fr}.sponsor-plan{min-height:104px}}
   `;
   document.head.appendChild(style);
+}
+
+function restoredGates() {
+  return document.querySelectorAll("[data-paid-gate-restored]");
+}
+
+function statusElement(host) {
+  let status = host.querySelector(":scope > .sponsor-payment-status");
+  if (!status) {
+    status = document.createElement("div");
+    status.className = "sponsor-payment-status";
+    host.appendChild(status);
+  }
+  return status;
+}
+
+function renderRestoredGateState() {
+  restoredGates().forEach((gate) => {
+    const host = gate.querySelector(".paid-lock-card") || gate;
+    const existing = host.querySelector(":scope > .sponsor-payment-status");
+    if (state.error) {
+      const status = statusElement(host);
+      status.dataset.checkoutError = "true";
+      status.classList.add("is-error");
+      status.setAttribute("role", "alert");
+      status.textContent = state.error;
+    } else if (existing?.dataset.checkoutError === "true") {
+      existing.remove();
+    }
+  });
+  document.querySelectorAll("[data-sponsor-plan]").forEach((button) => {
+    button.disabled = state.loading || Boolean(state.error);
+    button.setAttribute("aria-busy", state.loading ? "true" : "false");
+  });
 }
 
 function render() {
   document.querySelectorAll("[data-sponsor-smart-slot]").forEach((slot) => {
     slot.innerHTML = offerMarkup();
   });
+  renderRestoredGateState();
 }
 
 function setBusy(busy) {
   state.loading = busy;
-  document.querySelectorAll("[data-sponsor-plan]").forEach((button) => {
-    button.disabled = busy;
-  });
+  renderRestoredGateState();
 }
 
-function displayGateStatus(message) {
+function displayGateStatus(message, isError = false) {
   document.querySelectorAll("[data-sponsor-smart-slot]").forEach((slot) => {
-    let status = slot.querySelector(".sponsor-payment-status");
-    if (!status) {
-      status = document.createElement("div");
-      status.className = "sponsor-payment-status";
-      slot.appendChild(status);
-    }
+    const status = statusElement(slot);
+    status.dataset.checkoutError = isError ? "true" : "false";
+    status.classList.toggle("is-error", isError);
+    status.setAttribute("role", isError ? "alert" : "status");
+    status.textContent = message;
+  });
+  restoredGates().forEach((gate) => {
+    const host = gate.querySelector(".paid-lock-card") || gate;
+    const status = statusElement(host);
+    status.dataset.checkoutError = isError ? "true" : "false";
+    status.classList.toggle("is-error", isError);
+    status.setAttribute("role", isError ? "alert" : "status");
     status.textContent = message;
   });
 }
@@ -218,6 +258,7 @@ function triggerSiteLogin() {
 async function startCheckout(planMonths) {
   if (![1, 3].includes(Number(planMonths))) return;
   state.error = "";
+  renderRestoredGateState();
   storeReturnUrl();
 
   if (!auth.currentUser?.email) {
@@ -238,8 +279,12 @@ async function startCheckout(planMonths) {
     location.assign(data.paymentUrl);
   } catch (error) {
     console.error("建立贊助閱讀付款失敗。", error);
-    state.error = error?.message?.replace(/^FirebaseError:\s*/i, "") || "付款連結建立失敗，請稍後再試。";
+    const detail = error?.message?.replace(/^FirebaseError:\s*/i, "").trim();
+    state.error = detail && !/failed to fetch|internal|not found/i.test(detail)
+      ? detail
+      : "目前無法建立綠界付款連結，請稍後再試或聯繫行政團隊。";
     render();
+    displayGateStatus(state.error, true);
   } finally {
     setBusy(false);
   }
@@ -252,7 +297,7 @@ async function refresh() {
     await Promise.all([fetchOffer(), fetchMember()]);
   } catch (error) {
     console.warn("贊助閱讀方案載入失敗。", error);
-    state.error = error?.message || "目前無法讀取方案，請稍後再試。";
+    state.error = "付款服務目前無法連線，請稍後再試或聯繫行政團隊。";
   } finally {
     state.loading = false;
     render();
@@ -317,6 +362,10 @@ if (!paymentReturnRedirect()) {
     }
     confirmPaymentReturn();
   });
+
+  const sponsorGateRoot = document.getElementById("article-root") || document.body;
+  const sponsorGateObserver = new MutationObserver(() => renderRestoredGateState());
+  sponsorGateObserver.observe(sponsorGateRoot, { childList: true, subtree: true });
 
   refresh();
 }
