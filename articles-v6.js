@@ -1,5 +1,119 @@
 // Sponsor article access deployment marker: 20260828-admin-draft-preview-5
 const articleRoot = document.getElementById("article-root");
+const activeArticleId = new URLSearchParams(location.search).get("id") || "";
+let staticFallbackRendered = false;
+
+function fallbackEscapeHtml(value = "") {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
+function fallbackRenderInline(value = "") {
+  return fallbackEscapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, alt, src) => {
+    if (/^data:image/i.test(src)) return "";
+    return '<img src="' + fallbackEscapeHtml(src) + '" alt="' + fallbackEscapeHtml(alt) + '">';
+  });
+}
+
+function fallbackRenderMarkdown(value = "") {
+  return String(value || "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .split(/\n{2,}/)
+    .map((block) => {
+      const trimmed = block.trim();
+      if (!trimmed) return "";
+      if (trimmed.startsWith("### ")) return `<h3>${fallbackRenderInline(trimmed.slice(4))}</h3>`;
+      if (trimmed.startsWith("## ")) return `<h2>${fallbackRenderInline(trimmed.slice(3))}</h2>`;
+      if (trimmed.startsWith("# ")) return `<h1>${fallbackRenderInline(trimmed.slice(2))}</h1>`;
+      if (/^!\[[^\]]*\]\([^)]+\)$/.test(trimmed)) return `<figure>${fallbackRenderInline(trimmed)}</figure>`;
+      return `<p>${fallbackRenderInline(trimmed).replace(/\n/g, "<br>")}</p>`;
+    })
+    .join("");
+}
+
+async function renderStaticArticleFallback() {
+  if (!articleRoot || !activeArticleId || staticFallbackRendered) return false;
+  const currentText = String(articleRoot.textContent || "").trim();
+  if (!currentText.includes("文章載入中")) return false;
+
+  try {
+    const module = await import("./static-articles.js?v=20260902-detail-static-fallback-1");
+    const article = (module.staticArticles || []).find((item) =>
+      item?.id === activeArticleId || item?.slug === activeArticleId
+    );
+    if (!article || article.status !== "published") {
+      articleRoot.innerHTML = '<div class="empty">找不到這篇文章，或文章尚未發布。</div>';
+      return false;
+    }
+
+    const isEvent = Boolean(article.requiredPermission) || article.accessType === "event" || Boolean(article.eventId);
+    const rawContent = String(article.content || "");
+    const paidMarker = "<!-- paid-only -->";
+    const memberMarker = "<!-- member-only -->";
+    const isPaid = article.accessType === "paid" || rawContent.includes(paidMarker);
+    const isMember = rawContent.includes(memberMarker);
+
+    let publicContent = rawContent;
+    if (isEvent) {
+      publicContent = "";
+    } else if (isPaid) {
+      publicContent = rawContent.split(paidMarker)[0] || "";
+    } else if (isMember) {
+      publicContent = rawContent.split(memberMarker)[0] || "";
+    }
+
+    const categoryMap = {
+      spiritual: "靈．修行",
+      worldly: "人．俗世",
+      "spirit-world": "異．靈界",
+      reading: "思．讀物"
+    };
+    const gate = isEvent
+      ? `<section class="article-paid-gate"><strong>${fallbackEscapeHtml(article.accessBadge || "活動限定文章")}</strong><p>${fallbackEscapeHtml(article.accessDeniedMessage || "此篇僅提供指定活動參與者閱讀，請使用具有閱讀資格的 Gmail 登入。")}</p></section>`
+      : isPaid
+        ? '<section class="article-paid-gate"><strong>贊助專屬文章</strong><p>此篇為贊助專屬內容，請使用具有閱讀資格的 Gmail 登入。</p><button class="article-paid-login" type="button" data-static-fallback-login>會員登入</button></section>'
+        : isMember
+          ? '<section class="article-paid-gate"><strong>會員專屬內容</strong><p>請登入會員帳號繼續閱讀。</p><button class="article-paid-login" type="button" data-static-fallback-login>會員登入</button></section>'
+          : "";
+
+    articleRoot.innerHTML = `
+      <article class="article-view" data-article-id="${fallbackEscapeHtml(article.id || article.slug || activeArticleId)}" data-static-emergency-fallback="true">
+        <a class="article-back" href="articles.html">← 返回全部文選</a>
+        <div class="article-meta">${fallbackEscapeHtml(categoryMap[article.category] || article.displayCategory || "文選")}</div>
+        <h2>${fallbackEscapeHtml(article.title || "未命名文章")}</h2>
+        ${article.coverImage ? `<img class="article-cover" src="${fallbackEscapeHtml(article.coverImage)}" alt="">` : ""}
+        ${isEvent && article.excerpt ? `<div class="article-body"><p>${fallbackEscapeHtml(article.excerpt)}</p></div>` : `<div class="article-body">${fallbackRenderMarkdown(publicContent)}</div>`}
+        ${gate}
+      </article>`;
+    document.body.classList.add("is-article-detail");
+    document.documentElement.classList.add("is-article-detail");
+    document.title = `${article.title || "靈元院文選"}｜靈元院文選`;
+    articleRoot.querySelector("[data-static-fallback-login]")?.addEventListener("click", () => {
+      document.getElementById("member-login-button")?.click();
+    });
+    staticFallbackRendered = true;
+    console.warn("Firebase 文章核心載入延遲，已啟用 GitHub 靜態文章備援顯示。", activeArticleId);
+    return true;
+  } catch (error) {
+    console.error("GitHub 靜態文章備援載入失敗。", error);
+    if (String(articleRoot.textContent || "").includes("文章載入中")) {
+      articleRoot.innerHTML = '<div class="empty">文章載入失敗，請重新整理頁面後再試。</div>';
+    }
+    return false;
+  }
+}
+
+if (articleRoot && activeArticleId) {
+  window.setTimeout(() => {
+    void renderStaticArticleFallback();
+  }, 1800);
+}
+
 
 const CONSTRUCTION_TITLE_OVERRIDES = new Map([
   // 建院系列標題由 Firestore 後台提供，不再以舊標題覆蓋。
