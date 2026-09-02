@@ -3,7 +3,7 @@ const articleRoot = document.getElementById("article-root");
 
 // 文章核心若因 Firebase、Firestore 或遠端模組暫時失敗，仍由 GitHub
 // 靜態文章立即接手，避免內頁永久停在「文章載入中…」。
-void import("./article-list-rescue.js?v=20260902-detail-reading-rescue-1").catch((error) => {
+void import("./article-list-rescue.js?v=20260902-detail-reading-rescue-2").catch((error) => {
   console.error("文選靜態備援載入失敗。", error);
 });
 
@@ -86,8 +86,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260902-full-reading-restore-2",
-    "./articles-core-20260810-v6.js?v=20260902-full-reading-restore-2&retry=1"
+    "./articles-core-20260810-v6.js?v=20260902-detail-reading-rescue-2",
+    "./articles-core-20260810-v6.js?v=20260902-detail-reading-rescue-2&retry=1"
   ];
   let lastError = null;
 
@@ -114,8 +114,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260902-full-reading-restore-2"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260902-full-reading-restore-2"]
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260902-detail-reading-rescue-2"],
+    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260902-detail-reading-rescue-2"]
   ];
   const importWithRetry = async (path) => {
     try {
