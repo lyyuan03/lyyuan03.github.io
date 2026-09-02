@@ -1,3 +1,3 @@
 // 文選只由此入口啟動一次贊助方案判定，避免重複模組互相覆寫「確認中」狀態。
 // 2026-09-02：付款後端異常時顯示錯誤、停用方案，並支援動態產生的付款卡。
-import "./sponsor-checkout-v3.js?v=20260902-checkout-recovery-1";
+import "./sponsor-checkout-v3.js?v=20260902-observer-loop-fix-1";
