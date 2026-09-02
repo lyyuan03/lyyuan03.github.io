@@ -1,18 +1,16 @@
 import { app, auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
-
-const FUNCTIONS_BASE_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net";
 const RETURN_KEY = "lyyuan:sponsor:return-url";
 const PENDING_PLAN_KEY = "lyyuan:sponsor:pending-plan";
-const functions = getFunctions(app, "asia-east1");
-const createCheckout = httpsCallable(functions, "createPublicSponsorCheckout");
+const PENDING_TIER_KEY = "lyyuan:sponsor:pending-tier";
 
 const state = {
   user: auth.currentUser || null,
   member: null,
+  history: null,
   offer: null,
+  tier: null,
   loading: false,
   error: ""
 };
@@ -48,8 +46,46 @@ function hasActiveArticleAccess(member) {
   );
 }
 
+function validPaidSponsor(record = {}) {
+  return record?.memberType === "sponsor-member"
+    && record?.paymentStatus === "paid"
+    && record?.articleAccess === true
+    && record?.accessScope === "sponsor-paid-articles"
+    && Number(record?.accessVersion || 0) >= 1;
+}
+
+function hasEverPurchased() {
+  const member = state.member || {};
+  const history = state.history || {};
+  const currentPaid = validPaidSponsor(member);
+  const historyPaid = validPaidSponsor(history) && history?.verified === true;
+  return Boolean(
+    currentPaid
+    || historyPaid
+    || Number(member?.purchaseCount || history?.purchaseCount || 0) > 0
+  );
+}
+
+function resolveTier() {
+  if (hasEverPurchased()) return "regular";
+  return state.offer?.promotionAvailable === true ? "promo" : "regular";
+}
+
+function tierPaymentUrl(tier) {
+  const value = tier === "promo"
+    ? String(state.offer?.promoPaymentUrl || "").trim()
+    : String(state.offer?.regularPaymentUrl || "").trim();
+  if (!value.startsWith("https://")) return "";
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
 function money(value) {
-  return `NT$${Number(value || 0).toLocaleString("zh-TW")}`;
+  return `NT${Number(value || 0).toLocaleString("zh-TW")}`;
 }
 
 function currentReturnUrl() {
@@ -93,22 +129,30 @@ function paymentReturnRedirect() {
 }
 
 async function fetchOffer() {
-  const response = await fetch(`${FUNCTIONS_BASE_URL}/sponsorOfferStatus?t=${Date.now()}`, { cache: "no-store" });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok || payload.ready !== true) throw new Error("目前無法取得閱讀方案，請稍後再試。");
+  const snapshot = await getDoc(doc(db, "articles", "sponsor-offer-status"));
+  const payload = snapshot.exists() ? snapshot.data() || {} : {};
+  if (payload.status !== "published" || payload.systemRecord !== true) {
+    throw new Error("目前無法取得閱讀方案，請稍後再試。");
+  }
   state.offer = payload;
   return payload;
 }
 
 async function fetchMember() {
   state.member = null;
+  state.history = null;
   const email = state.user?.email?.trim().toLowerCase();
   if (!email) return null;
   try {
-    const snapshot = await getDoc(doc(db, "sponsorMemberAccess", email));
-    state.member = snapshot.exists() ? { ...snapshot.data(), email } : null;
+    const [memberSnapshot, historySnapshot] = await Promise.all([
+      getDoc(doc(db, "sponsorMemberAccess", email)),
+      getDoc(doc(db, "membershipHistory", email))
+    ]);
+    state.member = memberSnapshot.exists() ? { ...memberSnapshot.data(), email } : null;
+    const historyDoc = historySnapshot.exists() ? historySnapshot.data() || {} : {};
+    state.history = historyDoc?.sponsor ? { ...historyDoc.sponsor, email } : null;
   } catch (error) {
-    if (error?.code !== "permission-denied") console.warn("贊助閱讀資格載入失敗。", error);
+    if (error?.code !== "permission-denied") console.warn("贊助閱讀購買紀錄載入失敗。", error);
   }
   return state.member;
 }
@@ -125,7 +169,7 @@ function offerMarkup() {
   }
 
   const offer = state.offer;
-  const promo = offer.promotionAvailable === true;
+  const promo = state.user ? state.tier === "promo" : offer.promotionAvailable === true;
   const price1 = Number(offer.currentPrice1 || (promo ? offer.promoPrice1 : offer.regularPrice1) || 0);
   const price3 = Number(offer.currentPrice3 || (promo ? offer.promoPrice3 : offer.regularPrice3) || 0);
   const badge = promo
@@ -267,22 +311,32 @@ async function startCheckout(planMonths) {
     return;
   }
 
+  state.user = auth.currentUser;
   setBusy(true);
-  displayGateStatus("正在建立綠界安全付款連結…");
+  displayGateStatus("正在確認 Email 與適用價格…");
   try {
-    const result = await createCheckout({
-      planMonths: Number(planMonths),
-      name: auth.currentUser.displayName || ""
-    });
-    const data = result?.data || {};
-    if (!data.paymentUrl) throw new Error("付款連結建立失敗。");
-    location.assign(data.paymentUrl);
+    await Promise.all([fetchOffer(), fetchMember()]);
+    state.tier = resolveTier();
+    const paymentUrl = tierPaymentUrl(state.tier);
+    if (!paymentUrl) {
+      throw new Error(state.tier === "promo"
+        ? "首次優惠綠界付款連結尚未設定。"
+        : "原價／續期綠界付款連結尚未設定。");
+    }
+
+    try {
+      localStorage.setItem(PENDING_PLAN_KEY, String(planMonths));
+      localStorage.setItem(PENDING_TIER_KEY, state.tier);
+    } catch {}
+
+    render();
+    displayGateStatus(state.tier === "promo"
+      ? "已確認首次優惠資格，正在前往綠界安全付款…"
+      : "已確認適用原價，正在前往綠界安全付款…");
+    location.assign(paymentUrl);
   } catch (error) {
-    console.error("建立贊助閱讀付款失敗。", error);
-    const detail = error?.message?.replace(/^FirebaseError:\s*/i, "").trim();
-    state.error = detail && !/failed to fetch|internal|not found/i.test(detail)
-      ? detail
-      : "目前無法建立綠界付款連結，請稍後再試或聯繫行政團隊。";
+    console.error("開啟贊助閱讀付款失敗。", error);
+    state.error = error?.message?.trim() || "目前無法開啟綠界付款連結，請稍後再試或聯繫行政團隊。";
     render();
     displayGateStatus(state.error, true);
   } finally {
@@ -295,6 +349,7 @@ async function refresh() {
   state.error = "";
   try {
     await Promise.all([fetchOffer(), fetchMember()]);
+    state.tier = resolveTier();
   } catch (error) {
     console.warn("贊助閱讀方案載入失敗。", error);
     state.error = "付款服務目前無法連線，請稍後再試或聯繫行政團隊。";
