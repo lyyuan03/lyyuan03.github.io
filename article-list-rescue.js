@@ -94,7 +94,9 @@ function renderDetailFallback() {
   const marker = access === "paid" ? paidMarker : memberMarker;
   const publicContent = rawContent.includes(marker) ? rawContent.split(marker)[0] : rawContent;
   const gate = access === "paid" ? '<section class="article-paid-gate"><strong>贊助專屬文章</strong><p>此篇為贊助專屬內容，請使用具有閱讀資格的 Gmail 登入。</p><button class="article-paid-login" type="button">會員登入</button></section>' : "";
-  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKey(article))}"><a class="article-back" href="articles.html">← 返回全部文選</a><div class="article-meta">${escapeHtml(categoryLabels[article.category] || "文選")}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}<div class="article-body">${renderContent(publicContent)}</div>${gate}</article>`;
+  const eventGate = access === "event" ? '<section class="article-paid-gate"><strong>活動限定文章</strong><p>請使用具有這篇文章閱讀資格的 Email 登入。</p><button class="article-paid-login" type="button">會員登入</button></section>' : "";
+  const safeContent = access === "event" ? String(article.excerpt || "") : publicContent;
+  root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKey(article))}"><a class="article-back" href="articles.html">← 返回全部文選</a><div class="article-meta">${escapeHtml(categoryLabels[article.category] || "文選")}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt="">` : ""}<div class="article-body">${renderContent(safeContent)}</div>${gate}${eventGate}</article>`;
   root.querySelector(".article-paid-login")?.addEventListener("click", () => document.getElementById("member-login-button")?.click());
   document.title = `${article.title}｜靈元院文選`;
   root.dataset.articleRescued = "true";
@@ -102,13 +104,14 @@ function renderDetailFallback() {
 }
 
 function pageNeedsRescue() {
-  if (!root || activeId) return false;
+  if (!root) return false;
+  if (activeId) return !root.querySelector(".article-view");
   return !root.querySelector(".article-card");
 }
 
 function rescueNow() {
   if (!pageNeedsRescue()) return false;
-  return renderListFallback();
+  return activeId ? renderDetailFallback() : renderListFallback();
 }
 
 if (root) {
