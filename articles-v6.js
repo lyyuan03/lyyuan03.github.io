@@ -5,7 +5,7 @@ const articleRoot = document.getElementById("article-root");
 // 避免備援 renderer 與 Firebase/Firestore 核心同時改寫 #article-root。
 const activeArticleId = new URLSearchParams(location.search).get("id") || "";
 if (!activeArticleId) {
-  void import("./article-list-rescue.js?v=20260902-single-detail-renderer-1").catch((error) => {
+  void import("./article-list-rescue.js?v=20260902-single-detail-renderer-2").catch((error) => {
     console.error("文選靜態備援載入失敗。", error);
   });
 }
@@ -89,8 +89,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1",
-    "./articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1"
+    "./articles-core-20260810-v6.js?v=20260902-single-detail-renderer-2",
+    "./articles-core-20260810-v6.js?v=20260902-single-detail-renderer-2&retry=1"
   ];
   let lastError = null;
 
@@ -117,8 +117,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260902-single-detail-renderer-1"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260902-single-detail-renderer-1"]
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260902-single-detail-renderer-2"],
+    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260902-single-detail-renderer-2"]
   ];
   const importWithRetry = async (path) => {
     try {
