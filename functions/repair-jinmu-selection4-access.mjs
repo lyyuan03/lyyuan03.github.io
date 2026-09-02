@@ -54,10 +54,33 @@ for (let offset = 0; offset < emails.length; offset += 200) {
   written += Math.min(200, emails.length - offset);
 }
 
+const entitlementRefs = emails.map((email) => db.doc(`memberEntitlements/${email}`));
+const verifiedSnapshots = await db.getAll(...entitlementRefs);
+let verifiedCount = 0;
+let blockedCount = 0;
+
+for (const snapshot of verifiedSnapshots) {
+  const data = snapshot.data() || {};
+  const permissions = Array.isArray(data.permissions) ? data.permissions : [];
+  if (permissions.includes(CANONICAL_PERMISSION)) verifiedCount += 1;
+  if (data.disabled === true || data.suspended === true || data.status === "disabled") {
+    blockedCount += 1;
+  }
+}
+
+if (verifiedCount !== emails.length) {
+  throw new Error(`Selection 4 permission verification failed: ${verifiedCount}/${emails.length}`);
+}
+if (blockedCount > 0) {
+  throw new Error(`Selection 4 permissions exist, but ${blockedCount} participant entitlement records are disabled or suspended`);
+}
+
 console.log(JSON.stringify({
-  status: "repaired",
+  status: "repaired-and-verified",
   permission: CANONICAL_PERMISSION,
   participantCount: emails.length,
   entitlementWrites: written,
+  verifiedCount,
+  blockedCount,
   emailsLogged: false
 }));
