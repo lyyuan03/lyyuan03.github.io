@@ -52,11 +52,7 @@ jobs:
             const url = 'https://lyyuan.tw/articles.html?id=yuanshen-awakening-old-manuscript';
             const browser = await chromium.launch({ headless: true });
             const context = await browser.newContext({
-              ignoreHTTPSErrors: true,
-              extraHTTPHeaders: {
-                'Cache-Control': 'no-cache, no-store, max-age=0',
-                'Pragma': 'no-cache'
-              }
+              ignoreHTTPSErrors: true
             });
             const page = await context.newPage();
             const cdp = await context.newCDPSession(page);
