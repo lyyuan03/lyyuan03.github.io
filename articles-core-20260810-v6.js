@@ -260,20 +260,7 @@ function getArticleThumbnail(article) {
 }
 
 function getArticleHook(article) {
-  const explicitHook = String(article?.excerpt || articleHooks[articleKey(article)] || "").trim();
-  if (explicitHook) return explicitHook;
-
-  const plainText = String(article?.content || "")
-    .replace(/<!--[\s\S]*?-->/g, " ")
-    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/^#{1,6}\s+/gm, " ")
-    .replace(/[*_`>|~]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  if (!plainText) return "閱讀本文，了解完整內容與修行觀點。";
-  const limit = 92;
-  return plainText.length > limit ? `${plainText.slice(0, limit)}…` : plainText;
+  return article?.excerpt || articleHooks[articleKey(article)] || "";
 }
 
 function getArticleGuide(article) {
