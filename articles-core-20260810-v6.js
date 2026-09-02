@@ -1100,21 +1100,44 @@ document.addEventListener("visibilitychange", async () => {
   }
 });
 
-onAuthStateChanged(auth, async (user) => {
-  currentUser = user;
-  await loadMemberAccess(user);
-  if (isAdminEmail(user?.email)) {
-    try {
-      await syncPublicationStatusIndexForAdmin();
-    } catch (error) {
-      console.warn("文章狀態索引同步失敗。", error);
+let initialArticleBootstrapCompleted = false;
+
+async function bootstrapArticles(user, source = "auth-state") {
+  currentUser = user || null;
+  try {
+    await loadMemberAccess(currentUser);
+    if (isAdminEmail(currentUser?.email)) {
+      try {
+        await syncPublicationStatusIndexForAdmin();
+      } catch (error) {
+        console.warn("文章狀態索引同步失敗。", error);
+      }
+    }
+    // 登入、登出或切換帳號時都重新載入文章。
+    // 這可確保管理者登出後，先前載入的草稿立即從前台記憶體移除。
+    await loadArticles();
+    initialArticleBootstrapCompleted = true;
+    renderCurrentView();
+  } catch (error) {
+    console.error(`文選載入失敗（${source}）。`, error);
+    if (!articlesLoadCompleted && root) {
+      articlesLoadCompleted = true;
+      root.innerHTML = '<div class="empty">文章載入失敗，請重新整理頁面後再試。</div>';
     }
   }
-  // 登入、登出或切換帳號時都重新載入文章。
-  // 這可確保管理者登出後，先前載入的草稿立即從前台記憶體移除。
-  await loadArticles();
-  renderCurrentView();
+}
+
+onAuthStateChanged(auth, (user) => {
+  void bootstrapArticles(user, "auth-state");
 });
+
+// Edge／Safari 等瀏覽器直接進入文章網址時，Firebase Auth 的首次狀態回呼偶爾會延後。
+// 若短時間內仍未完成首次載入，就以 auth.currentUser 當下狀態先啟動文章讀取；
+// Auth 稍後恢復時，onAuthStateChanged 仍會再次刷新正確的會員／管理者內容。
+window.setTimeout(() => {
+  if (initialArticleBootstrapCompleted || articlesLoadCompleted) return;
+  void bootstrapArticles(auth.currentUser, "auth-fallback");
+}, 1200);
 
 // 某些瀏覽器會先完成 Firebase 登入還原，再晚一拍通知此模組。
 // 額外以 auth.currentUser 監看管理者狀態，避免導覽列已辨識管理者但文章核心仍停在公開模式。
