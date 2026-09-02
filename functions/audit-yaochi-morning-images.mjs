@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
@@ -44,6 +44,9 @@ while ((match = re.exec(content))) {
     existsInRepo: /^(?:https?:|data:|blob:)/i.test(rawSrc) && !/^https?:\/\/lyyuan\.tw\//i.test(rawSrc)
       ? "external"
       : existsSync(localPath),
+    repoFirstBytesHex: existsSync(localPath)
+      ? [...readFileSync(localPath).subarray(0, 12)].map((b) => b.toString(16).padStart(2, "0")).join("")
+      : "",
     publicUrl,
     http
   });
