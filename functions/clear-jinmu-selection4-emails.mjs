@@ -33,7 +33,7 @@ async function writeInBatches(writes, size = 400) {
   for (let offset = 0; offset < writes.length; offset += size) {
     const batch = db.batch();
     for (const write of writes.slice(offset, offset + size)) {
-      batch.set(write.ref, write.data, { merge: true });
+      batch.update(write.ref, write.data);
     }
     await batch.commit();
     committed += Math.min(size, writes.length - offset);
@@ -166,10 +166,10 @@ await writeInBatches(entitlementWrites);
 await writeInBatches(articleWrites);
 
 if (magicSnapshot.exists) {
-  await magicSnapshot.ref.set({
+  await magicSnapshot.ref.update({
     links: nextLinks,
     updatedAt: FieldValue.serverTimestamp()
-  }, { merge: true });
+  });
 }
 
 const [verifyMembers, verifyEntitlements, verifyArticles, verifyMagic] = await Promise.all([
