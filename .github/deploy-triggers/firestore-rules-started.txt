@@ -1,4 +1,4 @@
 firestore rules: started
-run id: 33601227264
-source commit: e3db808e696490fd8ea0a9aba5468fbcfd75d8d3
-started at: 2026-09-02T06:57:43Z
+run id: 33624097843
+source commit: 7f2e43817e48b1094b9ae9716367f591ee001712
+started at: 2026-09-02T11:20:51Z
