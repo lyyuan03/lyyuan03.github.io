@@ -1,0 +1,302 @@
+{
+  "url": "https://lyyuan.tw/articles.html?id=yuanshen-awakening-old-manuscript",
+  "checkedAt": "2026-09-02T10:49:16.960Z",
+  "allFiveStable": false,
+  "runs": [
+    {
+      "run": 1,
+      "elapsedMs": 17807,
+      "loadCompleted": true,
+      "navigationError": "",
+      "passed": false,
+      "readyState": "complete",
+      "title": "靈元院文選",
+      "articleView": false,
+      "simpleGate": false,
+      "restoredGate": false,
+      "paidLogin": false,
+      "navPresent": true,
+      "rootTextChars": 33,
+      "bodyTextChars": 0,
+      "bodyTail": "",
+      "articleAccess": "",
+      "paidBodyState": "",
+      "rescued": "",
+      "navigationType": "navigate",
+      "transferSize": 5653
+    },
+    {
+      "run": 2,
+      "elapsedMs": 17672,
+      "loadCompleted": true,
+      "navigationError": "",
+      "passed": false,
+      "readyState": "complete",
+      "title": "靈元院文選",
+      "articleView": false,
+      "simpleGate": false,
+      "restoredGate": false,
+      "paidLogin": false,
+      "navPresent": true,
+      "rootTextChars": 33,
+      "bodyTextChars": 0,
+      "bodyTail": "",
+      "articleAccess": "",
+      "paidBodyState": "",
+      "rescued": "",
+      "navigationType": "reload",
+      "transferSize": 5653
+    },
+    {
+      "run": 3,
+      "elapsedMs": 17629,
+      "loadCompleted": true,
+      "navigationError": "",
+      "passed": false,
+      "readyState": "complete",
+      "title": "靈元院文選",
+      "articleView": false,
+      "simpleGate": false,
+      "restoredGate": false,
+      "paidLogin": false,
+      "navPresent": true,
+      "rootTextChars": 33,
+      "bodyTextChars": 0,
+      "bodyTail": "",
+      "articleAccess": "",
+      "paidBodyState": "",
+      "rescued": "",
+      "navigationType": "reload",
+      "transferSize": 5653
+    },
+    {
+      "run": 4,
+      "elapsedMs": 17743,
+      "loadCompleted": true,
+      "navigationError": "",
+      "passed": false,
+      "readyState": "complete",
+      "title": "靈元院文選",
+      "articleView": false,
+      "simpleGate": false,
+      "restoredGate": false,
+      "paidLogin": false,
+      "navPresent": true,
+      "rootTextChars": 33,
+      "bodyTextChars": 0,
+      "bodyTail": "",
+      "articleAccess": "",
+      "paidBodyState": "",
+      "rescued": "",
+      "navigationType": "reload",
+      "transferSize": 5653
+    },
+    {
+      "run": 5,
+      "elapsedMs": 17715,
+      "loadCompleted": true,
+      "navigationError": "",
+      "passed": false,
+      "readyState": "complete",
+      "title": "靈元院文選",
+      "articleView": false,
+      "simpleGate": false,
+      "restoredGate": false,
+      "paidLogin": false,
+      "navPresent": true,
+      "rootTextChars": 33,
+      "bodyTextChars": 0,
+      "bodyTail": "",
+      "articleAccess": "",
+      "paidBodyState": "",
+      "rescued": "",
+      "navigationType": "reload",
+      "transferSize": 5653
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to script at 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js' from origin 'https://lyyuan.tw' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.",
+    "Failed to load resource: net::ERR_FAILED",
+    "文選核心載入失敗，重試後仍未成功。 TypeError: Failed to fetch dynamically imported module: https://lyyuan.tw/articles-core-20260810-v6.js?v=20260902-single-detail-renderer-1&retry=1"
+  ],
+  "pageErrors": [],
+  "requestFailures": [
+    {
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://lyyuan.tw/fonts/SourceHanSerifTC-Regular.woff2",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "url": "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js",
+      "error": "net::ERR_FAILED"
+    }
+  ]
+}
