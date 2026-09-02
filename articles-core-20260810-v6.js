@@ -260,7 +260,20 @@ function getArticleThumbnail(article) {
 }
 
 function getArticleHook(article) {
-  return article?.excerpt || articleHooks[articleKey(article)] || "";
+  const explicitHook = String(article?.excerpt || articleHooks[articleKey(article)] || "").trim();
+  if (explicitHook) return explicitHook;
+
+  const plainText = String(article?.content || "")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^#{1,6}\s+/gm, " ")
+    .replace(/[*_`>|~]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!plainText) return "閱讀本文，了解完整內容與修行觀點。";
+  const limit = 92;
+  return plainText.length > limit ? `${plainText.slice(0, limit)}…` : plainText;
 }
 
 function getArticleGuide(article) {
@@ -322,12 +335,29 @@ function refreshLimitedReadingDeadlines(articles = []) {
   });
 }
 
+const JINMU_FEATURED_ORDER = new Map([
+  ["2026-yaochi-birthday-morning", 1],
+  ["reconciliation-absolution-heart", 2],
+  ["2026-building-patron-record", 3],
+  ["2026-lineage-lamp-building-record", 4]
+]);
+
 function sortPublished(a, b) {
   if (adminPreviewEnabled()) {
     const aDraft = a?.status === "draft";
     const bDraft = b?.status === "draft";
     if (aDraft !== bDraft) return aDraft ? -1 : 1;
   }
+
+  const aFeaturedOrder = JINMU_FEATURED_ORDER.get(articleKey(a));
+  const bFeaturedOrder = JINMU_FEATURED_ORDER.get(articleKey(b));
+  const aIsFeatured = Number.isFinite(aFeaturedOrder);
+  const bIsFeatured = Number.isFinite(bFeaturedOrder);
+  if (aIsFeatured || bIsFeatured) {
+    if (aIsFeatured && bIsFeatured) return aFeaturedOrder - bFeaturedOrder;
+    return aIsFeatured ? -1 : 1;
+  }
+
   const timeDiff = articlePublishedTime(b) - articlePublishedTime(a);
   if (timeDiff !== 0) return timeDiff;
   return String(articleKey(a)).localeCompare(String(articleKey(b)), "zh-Hant");
@@ -507,7 +537,6 @@ function renderList(articles) {
                 <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
                 <span class="article-card-badges">${isDraftPreview ? '<span class="article-access-badge is-draft">草稿預覽</span>' : ""}<span class="article-access-badge is-${access}">${accessLabel}</span></span>
               </div>
-              ${article.requiredPermission && article.series ? `<div class="article-series">${escapeHtml(article.series)}</div>` : ""}
               <h2 class="article-list-title">${escapeHtml(article.title || "未命名文章")}</h2>
               ${renderArticleGuide(article, true)}
               ${renderLimitedReadingCountdown(key, articleIsPaid(article))}
