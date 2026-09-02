@@ -16,6 +16,24 @@ const snapshot = await db.doc(`eventArticleBodies/${ARTICLE_ID}`).get();
 if (!snapshot.exists) throw new Error("Target article body not found");
 
 const content = String(snapshot.data()?.content || "");
+const targetBytes = readFileSync("assets/articles/yaochi-birthday-morning/03-lotus-offerings.jpeg");
+function findSignature(bytes, pattern) {
+  for (let i = 0; i <= bytes.length - pattern.length; i += 1) {
+    let ok = true;
+    for (let j = 0; j < pattern.length; j += 1) {
+      if (bytes[i + j] !== pattern[j]) { ok = false; break; }
+    }
+    if (ok) return i;
+  }
+  return -1;
+}
+console.log("TARGET_SIGNATURES", JSON.stringify({
+  jpegSOI: findSignature(targetBytes, [0xff,0xd8,0xff]),
+  jpegEOI: findSignature(targetBytes, [0xff,0xd9]),
+  png: findSignature(targetBytes, [0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]),
+  riff: findSignature(targetBytes, [0x52,0x49,0x46,0x46]),
+  ftyp: findSignature(targetBytes, [0x66,0x74,0x79,0x70])
+}));
 const re = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
 const images = [];
 let match;
