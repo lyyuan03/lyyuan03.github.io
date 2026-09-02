@@ -2,3 +2,4 @@ firebase membership backend deployment requested
 requested at: 2026-09-02T06:39:29Z
 reason: deploy all sponsor checkout functions after API preflight and endpoint verification repair
 retry after removing redundant API-enable gate: 2026-09-02T11:18:00Z
+payment-scoped verification retry: 2026-09-02T11:20:00Z
