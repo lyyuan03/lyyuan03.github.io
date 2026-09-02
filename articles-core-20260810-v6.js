@@ -891,7 +891,14 @@ function renderArticle(article) {
     return;
   }
   const articleContent = addGuanyinVowLampImages(article.content || "", articleKeyValue);
-  const { publicContent, lockedContent, accessType } = splitMemberContent(articleContent, articleKeyValue);
+  const splitContent = splitMemberContent(articleContent, articleKeyValue);
+  const publicContent = splitContent.publicContent;
+  const lockedContent = splitContent.lockedContent;
+  // Firestore accessType 是權威欄位。即使某個舊快取版本的公開 content 暫時缺少 paid marker，
+  // 已宣告為 paid 的文章仍必須顯示 gate，不能退化成「內文突然中斷、沒有登入按鈕」。
+  const accessType = articleIsPaid(article) && !articleIsLimitedOpen(article) && splitContent.accessType === "open"
+    ? "paid"
+    : splitContent.accessType;
   root.innerHTML = `<article class="article-view" data-article-id="${escapeHtml(articleKeyValue)}" data-article-access="${escapeHtml(accessType)}"${accessType === "paid" ? ' data-paid-body-state="locked"' : ""}><a class="article-back" href="articles.html">← 返回全部文選</a>${draftNotice}${article.requiredPermission ? `<div class="article-series">${escapeHtml(article.series || "")}</div><span class="article-access-badge is-event">${escapeHtml(article.accessBadge || "活動限定")}</span>` : ""}<div class="article-meta">${categoryLabels[article.category] || "文選"}</div><h2>${escapeHtml(article.title || "未命名文章")}</h2>${renderArticleGuide(article)}${renderLimitedReadingCountdown(article.id || article.slug || activeId, articleContent.includes(paidMarker))}${article.coverImage ? `<img class="article-cover" src="${escapeHtml(article.coverImage)}" alt=""${["wealth-discipline-investing-and-self-mastery", "reading-you-can-not-fear-death"].includes(articleKeyValue) ? ' style="max-height:none;height:auto;object-fit:contain;object-position:center"' : ""}>` : ""}<div class="article-body">${renderContent(publicContent)}</div>${accessType === "member" ? renderSupportGate(lockedContent) : ""}${accessType === "paid" ? renderPaidGate(article) : ""}${accessType === "member" ? `<div class="article-body" id="article-remaining-content" hidden>${renderContent(lockedContent)}</div>` : ""}${renderNextReading(article)}${renderRecommendedBook(article)}${renderArticleShare(article)}</article>`;
   bindLimitedReadingCountdowns();
   if (accessType === "member") bindArticleContinue();
@@ -1117,7 +1124,6 @@ async function bootstrapArticles(user, source = "auth-state") {
     // 這可確保管理者登出後，先前載入的草稿立即從前台記憶體移除。
     await loadArticles();
     initialArticleBootstrapCompleted = true;
-    renderCurrentView();
   } catch (error) {
     console.error(`文選載入失敗（${source}）。`, error);
     if (!articlesLoadCompleted && root) {
@@ -1131,13 +1137,9 @@ onAuthStateChanged(auth, (user) => {
   void bootstrapArticles(user, "auth-state");
 });
 
-// Edge／Safari 等瀏覽器直接進入文章網址時，Firebase Auth 的首次狀態回呼偶爾會延後。
-// 若短時間內仍未完成首次載入，就以 auth.currentUser 當下狀態先啟動文章讀取；
-// Auth 稍後恢復時，onAuthStateChanged 仍會再次刷新正確的會員／管理者內容。
-window.setTimeout(() => {
-  if (initialArticleBootstrapCompleted || articlesLoadCompleted) return;
-  void bootstrapArticles(auth.currentUser, "auth-fallback");
-}, 1200);
+// 詳細頁已先用靜態已發布資料完成首屏，因此不再另開 1.2 秒 Auth fallback。
+// 初始 Firestore 載入只由 onAuthStateChanged 啟動，避免 fallback 與 Auth 回呼同時
+// 執行 loadMemberAccess()/loadArticles() 而產生兩條互相覆蓋的渲染流程。
 
 // 某些瀏覽器會先完成 Firebase 登入還原，再晚一拍通知此模組。
 // 額外以 auth.currentUser 監看管理者狀態，避免導覽列已辨識管理者但文章核心仍停在公開模式。
