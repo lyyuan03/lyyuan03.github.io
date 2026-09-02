@@ -133,11 +133,35 @@ jobs:
               except Exception as e:
                   paid_bodies.append({"documentId":docid,"exists":False,"error":str(e)[:160]})
 
+          static_src=open("article-yuanshen-awakening-old-manuscript.js",encoding="utf-8").read()
+          static_start=static_src.find("content: \`")
+          static_body_start=static_start+len("content: \`") if static_start >= 0 else -1
+          static_end=static_src.rfind("\`\\n};")
+          static_content=static_src[static_body_start:static_end] if static_body_start >= 0 and static_end > static_body_start else ""
+          firestore_content=""
+          if docs:
+              firestore_content=sval(docs[0].get("fields",{}),"content")
+          first_diff=-1
+          for i,(a,b) in enumerate(zip(static_content,firestore_content)):
+              if a != b:
+                  first_diff=i
+                  break
+          if first_diff < 0 and len(static_content) != len(firestore_content):
+              first_diff=min(len(static_content),len(firestore_content))
+
           out={
               "articleId":article_id,
               "articleMatches":summaries,
               "matchCount":len(summaries),
-              "paidArticleBodies":paid_bodies
+              "paidArticleBodies":paid_bodies,
+              "staticComparison":{
+                  "staticContentChars":len(static_content),
+                  "firestoreContentChars":len(firestore_content),
+                  "sameContent":static_content == firestore_content,
+                  "firstDifferenceIndex":first_diff,
+                  "staticTail":static_content[-320:],
+                  "firestoreTail":firestore_content[-320:]
+              }
           }
           with open(".github/diagnostics/yuanshen-awakening-old-manuscript-firestore.json","w") as f:
               json.dump(out,f,ensure_ascii=False,indent=2)
