@@ -106,7 +106,68 @@ main{max-width:1120px;margin:auto;padding:0 24px 80px}.article-admin-preview-sum
 <section class="hero"><div class="hero-kicker">LYYUAN JOURNAL</div><h1>文選</h1><p>從修行到俗世，從靈界辨識到閱讀筆記。把複雜的經驗整理成能落實於生活的思考。</p></section>
 <nav class="filters" id="category-tabs"></nav>
 <main id="article-root"><div class="empty">文章載入中…</div></main>
-<script type="module" src="articles-v6.js?v=20260902-detail-static-fallback-1"></script>
+<script type="module">
+/* 文章詳細頁獨立備援：不等待 Firebase Auth／Firestore，避免永久停在「文章載入中」。 */
+const detailRoot = document.getElementById("article-root");
+const detailId = new URLSearchParams(location.search).get("id") || "";
+const escapeDetailHtml = (value = "") => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+}[char]));
+const renderDetailInline = (value = "") => escapeDetailHtml(value)
+  .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, alt, src) =>
+    /^data:image/i.test(src) ? "" : `<img src="${escapeDetailHtml(src)}" alt="${escapeDetailHtml(alt)}">`);
+const renderDetailMarkdown = (value = "") => String(value || "")
+  .replace(/<!--[\s\S]*?-->/g, "")
+  .split(/\n{2,}/)
+  .map((block) => {
+    const text = block.trim();
+    if (!text) return "";
+    if (text.startsWith("### ")) return `<h3>${renderDetailInline(text.slice(4))}</h3>`;
+    if (text.startsWith("## ")) return `<h2>${renderDetailInline(text.slice(3))}</h2>`;
+    if (text.startsWith("# ")) return `<h1>${renderDetailInline(text.slice(2))}</h1>`;
+    if (/^!\[[^\]]*\]\([^)]+\)$/.test(text)) return `<figure>${renderDetailInline(text)}</figure>`;
+    return `<p>${renderDetailInline(text).replace(/\n/g, "<br>")}</p>`;
+  }).join("");
+
+async function renderIndependentDetailFallback() {
+  if (!detailRoot || !detailId || !String(detailRoot.textContent || "").includes("文章載入中")) return;
+  try {
+    const { staticArticles = [] } = await import("/static-articles.js?v=20260902-independent-detail-fallback-2");
+    if (!String(detailRoot.textContent || "").includes("文章載入中")) return;
+    const article = staticArticles.find((item) => item?.id === detailId || item?.slug === detailId);
+    if (!article || article.status !== "published") {
+      detailRoot.innerHTML = '<div class="empty">找不到這篇文章，或文章尚未發布。</div>';
+      return;
+    }
+    const raw = String(article.content || "");
+    const isEvent = Boolean(article.requiredPermission) || article.accessType === "event" || Boolean(article.eventId);
+    const isPaid = article.accessType === "paid" || raw.includes("<!-- paid-only -->");
+    const isMember = raw.includes("<!-- member-only -->");
+    const visible = isEvent ? "" : isPaid ? raw.split("<!-- paid-only -->")[0] : isMember ? raw.split("<!-- member-only -->")[0] : raw;
+    const gateTitle = isEvent ? (article.accessBadge || "活動限定文章") : isPaid ? "贊助專屬文章" : isMember ? "會員專屬內容" : "";
+    const gateText = isEvent ? (article.accessDeniedMessage || "請使用具有閱讀資格的 Gmail 登入。") : "請使用具有閱讀資格的 Gmail 登入後繼續閱讀。";
+    const gate = gateTitle ? `<section class="article-paid-gate"><strong>${escapeDetailHtml(gateTitle)}</strong><p>${escapeDetailHtml(gateText)}</p></section>` : "";
+    detailRoot.innerHTML = `<article class="article-view" data-article-id="${escapeDetailHtml(article.id || detailId)}" data-independent-detail-fallback="true">
+      <a class="article-back" href="articles.html">← 返回全部文選</a>
+      <div class="article-meta">${escapeDetailHtml(article.displayCategory || "文選")}</div>
+      <h2>${escapeDetailHtml(article.title || "未命名文章")}</h2>
+      ${article.coverImage ? `<img class="article-cover" src="${escapeDetailHtml(article.coverImage)}" alt="">` : ""}
+      ${isEvent && article.excerpt ? `<div class="article-body"><p>${escapeDetailHtml(article.excerpt)}</p></div>` : `<div class="article-body">${renderDetailMarkdown(visible)}</div>`}
+      ${gate}
+    </article>`;
+    document.documentElement.classList.add("is-article-detail");
+    document.body.classList.add("is-article-detail");
+    document.title = `${article.title || "靈元院文選"}｜靈元院文選`;
+  } catch (error) {
+    console.error("文章獨立備援載入失敗。", error);
+    if (String(detailRoot.textContent || "").includes("文章載入中")) {
+      detailRoot.innerHTML = '<div class="empty">文章載入失敗，請重新整理頁面後再試。</div>';
+    }
+  }
+}
+if (detailId) window.setTimeout(() => void renderIndependentDetailFallback(), 900);
+</script>
+<script type="module" src="articles-v6.js?v=20260902-independent-detail-fallback-2"></script>
 <script type="module" src="/article-admin-draft-preview.js?v=20260829-yuanshen-title-preview-1"></script>
 <script type="module" src="/article-publication-index-repair.js?v=20260823-1"></script>
 <script src="article-destination-links.js?v=20260813-share-restore-1" defer></script>
