@@ -730,7 +730,8 @@ async function generateMissingLinks() {
 
 async function addParticipants(emails) {
   const event = selectedEvent();
-  const synchronizesSecurePermission = JINMU_MANAGED_EVENT_IDS.includes(event.id);
+  const securePermissionId = canonicalJinmuEventId(event.name, event.id);
+  const synchronizesSecurePermission = JINMU_MANAGED_EVENT_IDS.includes(securePermissionId);
   setImportStatus("正在準備活動文章權限…", "saving");
   const keys = await eventArticleKeys(event.id);
   const memberMap = new Map(members.map((member) => [normalizeEmail(member.email || member.id), member]));
@@ -766,8 +767,8 @@ async function addParticipants(emails) {
         const previousManagedPermissions = Array.isArray(existing.activityManagedPermissions)
           ? existing.activityManagedPermissions
           : [];
-        const activityManagedPermissions = [...new Set([...previousManagedPermissions, event.id])];
-        const permissions = [...new Set([...previousPermissions, event.id])];
+        const activityManagedPermissions = [...new Set([...previousManagedPermissions, securePermissionId])];
+        const permissions = [...new Set([...previousPermissions, securePermissionId])];
         batch.set(doc(db, "memberEntitlements", email), {
           email,
           permissions,
@@ -794,7 +795,8 @@ async function removeParticipant(email) {
   if (!confirm(`確定要從「${event.name}」移除 ${email} 嗎？`)) return;
   const ref = doc(db, "memberAccess", email);
   const entitlementRef = doc(db, "memberEntitlements", email);
-  const synchronizesSecurePermission = JINMU_MANAGED_EVENT_IDS.includes(event.id);
+  const securePermissionId = canonicalJinmuEventId(event.name, event.id);
+  const synchronizesSecurePermission = JINMU_MANAGED_EVENT_IDS.includes(securePermissionId);
   const [snapshot, entitlementSnapshot, eventKeys] = await Promise.all([
     getDoc(ref),
     synchronizesSecurePermission ? getDoc(entitlementRef) : Promise.resolve(null),
@@ -817,11 +819,11 @@ async function removeParticipant(email) {
   if (entitlementSnapshot?.exists()) {
     const existing = entitlementSnapshot.data();
     const permissions = (Array.isArray(existing.permissions) ? existing.permissions : [])
-      .filter((permission) => permission !== event.id);
+      .filter((permission) => permission !== securePermissionId);
     const activityManagedPermissions = (Array.isArray(existing.activityManagedPermissions)
       ? existing.activityManagedPermissions
       : [])
-      .filter((permission) => permission !== event.id);
+      .filter((permission) => permission !== securePermissionId);
     batch.set(entitlementRef, {
       permissions,
       activityManagedPermissions,
