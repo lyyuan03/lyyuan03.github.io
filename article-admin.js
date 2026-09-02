@@ -1,4 +1,4 @@
-import "./article-admin-core.js?v=20260901-article-list-click-1";
+import "./article-admin-core.js?v=20260902-article-selection-direct-1";
 import "./article-admin-paid-security.js?v=20260829-no-auto-overwrite-1";
 import "./article-admin-secure-import.js?v=20260828-yuanqin-secure-import-1";
 import { db } from "./firebase-config.js?v=20260901-manual-only-1";
