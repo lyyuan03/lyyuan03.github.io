@@ -166,29 +166,13 @@ async function hydratePaidDraft(article) {
 
 async function loadDrafts() {
   const snapshot = await getDocs(collection(db, "articles"));
-  const targetStaticDraft = staticArticles.find((article) => article.id === "yuanshen-awakening-old-manuscript") || null;
+  // Firestore 的 status 是唯一權威來源。不可把特定已發布文章在前台預覽模組中
+  // 強制改成 draft，否則管理者登入時會與 articles-core 競爭渲染同一篇文章。
   const firestoreArticles = snapshot.docs.map((item) => {
     const data = item.data() || {};
-    const isTarget = item.id === "yuanshen-awakening-old-manuscript" || data.slug === "yuanshen-awakening-old-manuscript";
     return {
       id: item.id,
       ...data,
-      ...(isTarget && targetStaticDraft ? {
-        title: targetStaticDraft.title || data.title || "",
-        category: targetStaticDraft.category || data.category || "spiritual",
-        displayCategory: targetStaticDraft.displayCategory || data.displayCategory || "",
-        series: targetStaticDraft.series || data.series || "",
-        excerpt: targetStaticDraft.excerpt || data.excerpt || "",
-        coverImage: targetStaticDraft.coverImage || data.coverImage || "",
-        bookTitle: targetStaticDraft.bookTitle || data.bookTitle || "",
-        bookAuthor: targetStaticDraft.bookAuthor || data.bookAuthor || "",
-        bookPublisher: targetStaticDraft.bookPublisher || data.bookPublisher || "",
-        bookPurchaseUrl: targetStaticDraft.bookPurchaseUrl || data.bookPurchaseUrl || "",
-        bookCoverImage: targetStaticDraft.bookCoverImage || data.bookCoverImage || "",
-        accessType: "paid",
-        status: "draft",
-        topics: Array.isArray(targetStaticDraft.topics) ? targetStaticDraft.topics : (Array.isArray(data.topics) ? data.topics : [])
-      } : {}),
       __firestoreId: item.id,
       __source: "firestore"
     };
