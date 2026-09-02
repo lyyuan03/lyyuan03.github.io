@@ -47,6 +47,23 @@ jobs:
         with:
           project_id: lyyuan03-membership
 
+      - name: Enable required Google Cloud APIs
+        run: |
+          gcloud services enable \
+            cloudfunctions.googleapis.com \
+            cloudbuild.googleapis.com \
+            artifactregistry.googleapis.com \
+            run.googleapis.com \
+            eventarc.googleapis.com \
+            pubsub.googleapis.com \
+            cloudscheduler.googleapis.com \
+            secretmanager.googleapis.com \
+            --project=lyyuan03-membership \
+            --quiet || {
+              echo "::error::無法啟用 Firebase Functions 必要 API。請由專案擁有者啟用 API，或授予部署服務帳號 Service Usage Admin 權限。"
+              exit 1
+            }
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -60,25 +77,41 @@ jobs:
       - name: Verify backend
         run: npm --prefix functions ci && npm --prefix functions test && npm --prefix functions run lint
 
-      - name: Deploy membership functions
-        id: firebase_deploy
-        continue-on-error: true
+      - name: Deploy all membership functions
         run: firebase deploy --only functions --project lyyuan03-membership --non-interactive
 
-      - name: Deploy renewal checkout directly when Firebase API precheck is blocked
-        if: steps.firebase_deploy.outcome == 'failure'
+      - name: Verify sponsor checkout endpoints
         run: |
-          gcloud functions deploy createSponsorRenewalCheckout \
-            --gen2 \
-            --project=lyyuan03-membership \
-            --region=asia-east1 \
-            --runtime=nodejs22 \
-            --source=functions \
-            --entry-point=createSponsorRenewalCheckout \
-            --trigger-http \
-            --allow-unauthenticated \
-            --set-secrets=ECPAY_CONFIG=ECPAY_CONFIG:latest \
-            --quiet
+          offer_url="https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus"
+          checkout_url="https://asia-east1-lyyuan03-membership.cloudfunctions.net/createPublicSponsorCheckout"
+
+          offer_status=""
+          for attempt in $(seq 1 12); do
+            offer_status=$(curl --silent --show-error --output /tmp/sponsor-offer.json --write-out "%{http_code}" \
+              --header "Origin: https://lyyuan.tw" \
+              "$offer_url?t=$GITHUB_RUN_ID")
+            if [ "$offer_status" = "200" ]; then
+              break
+            fi
+            sleep 5
+          done
+          if [ "$offer_status" != "200" ] || ! grep -q '"ready":true' /tmp/sponsor-offer.json; then
+            echo "::error::sponsorOfferStatus 驗證失敗（HTTP $offer_status）。"
+            cat /tmp/sponsor-offer.json || true
+            exit 1
+          fi
+
+          checkout_status=$(curl --silent --show-error --output /tmp/sponsor-checkout.json --write-out "%{http_code}" \
+            --request POST \
+            --header "Content-Type: application/json" \
+            --header "Origin: https://lyyuan.tw" \
+            --data '{"data":{"planMonths":1}}' \
+            "$checkout_url")
+          if [ "$checkout_status" = "404" ] || [ "$checkout_status" -ge 500 ]; then
+            echo "::error::createPublicSponsorCheckout 不存在或無法回應（HTTP $checkout_status）。"
+            cat /tmp/sponsor-checkout.json || true
+            exit 1
+          fi
 
       - name: Record successful backend deployment
         continue-on-error: true
