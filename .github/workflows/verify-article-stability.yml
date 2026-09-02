@@ -1,0 +1,177 @@
+name: Verify article detail stability
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/verify-article-stability.yml
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Wait for the fixed Pages build
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED='articles-v6.js?v=20260902-single-detail-renderer-2'
+          for attempt in $(seq 1 36); do
+            html="$(curl -fsSL --max-time 20 -H 'Cache-Control: no-cache' "https://lyyuan.tw/articles.html?verify-build=$attempt-$(date +%s)" || true)"
+            if printf '%s' "$html" | grep -Fq "$EXPECTED"; then
+              echo "Expected article runtime is live."
+              exit 0
+            fi
+            echo "Waiting for Pages deployment... attempt $attempt/36"
+            sleep 5
+          done
+          echo "Expected runtime token did not appear on the live site."
+          exit 1
+
+      - name: Install Playwright Chromium
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Load the same paid article five times
+        shell: bash
+        run: |
+          cat > /tmp/verify.mjs <<'NODE'
+          import { chromium } from "playwright";
+          import crypto from "node:crypto";
+
+          const url = "https://lyyuan.tw/articles.html?id=yuanshen-awakening-old-manuscript";
+          const browser = await chromium.launch({ headless: true });
+          const results = [];
+
+          for (let i = 1; i <= 5; i += 1) {
+            const context = await browser.newContext({
+              serviceWorkers: "block",
+              locale: "zh-TW",
+              viewport: { width: 1440, height: 1000 }
+            });
+            const page = await context.newPage();
+            const consoleErrors = [];
+            const pageErrors = [];
+
+            page.on("console", msg => {
+              if (msg.type() === "error") consoleErrors.push(msg.text().slice(0, 500));
+            });
+            page.on("pageerror", err => pageErrors.push(String(err).slice(0, 500)));
+
+            let navigationStatus = 0;
+            let domContentLoaded = false;
+            let loadEvent = false;
+            let navigationError = "";
+
+            try {
+              const response = await page.goto(url, {
+                waitUntil: "domcontentloaded",
+                timeout: 30000
+              });
+              domContentLoaded = true;
+              navigationStatus = response?.status() || 0;
+            } catch (error) {
+              navigationError = String(error);
+            }
+
+            if (domContentLoaded) {
+              try {
+                await page.waitForSelector('.article-view[data-article-id="yuanshen-awakening-old-manuscript"]', { timeout: 15000 });
+              } catch {}
+              try {
+                await page.waitForSelector('[data-paid-gate-restored], .article-paid-gate', { timeout: 8000 });
+              } catch {}
+              try {
+                await page.waitForLoadState("load", { timeout: 12000 });
+                loadEvent = true;
+              } catch {}
+              await page.waitForTimeout(2200);
+            }
+
+            const state = domContentLoaded ? await page.evaluate(() => {
+              const root = document.getElementById("article-root");
+              const view = document.querySelector('.article-view[data-article-id="yuanshen-awakening-old-manuscript"]');
+              const body = view?.querySelector(":scope > .article-body");
+              const text = (body?.innerText || "").replace(/\s+/g, " ").trim();
+              return {
+                readyState: document.readyState,
+                hasView: Boolean(view),
+                articleAccess: view?.dataset.articleAccess || "",
+                simpleGateCount: view?.querySelectorAll(".article-paid-gate").length || 0,
+                restoredGateCount: view?.querySelectorAll("[data-paid-gate-restored]").length || 0,
+                privateBodyCount: view?.querySelectorAll("[data-paid-private-body]").length || 0,
+                publicBodyText: text,
+                publicBodyChars: text.length,
+                rootHtmlChars: root?.innerHTML.length || 0,
+                rootTextTail: (root?.innerText || "").replace(/\s+/g, " ").trim().slice(-180)
+              };
+            }) : {
+              readyState: "",
+              hasView: false,
+              articleAccess: "",
+              simpleGateCount: 0,
+              restoredGateCount: 0,
+              privateBodyCount: 0,
+              publicBodyText: "",
+              publicBodyChars: 0,
+              rootHtmlChars: 0,
+              rootTextTail: ""
+            };
+
+            const bodyHash = crypto.createHash("sha256").update(state.publicBodyText).digest("hex");
+            const result = {
+              run: i,
+              navigationStatus,
+              domContentLoaded,
+              loadEvent,
+              navigationError,
+              ...state,
+              bodyHash,
+              consoleErrors,
+              pageErrors
+            };
+            results.push(result);
+            console.log("RESULT", JSON.stringify(result));
+            await context.close();
+          }
+
+          await browser.close();
+
+          const hashes = new Set(results.map(r => r.bodyHash));
+          const allHaveView = results.every(r => r.hasView);
+          const allHaveGate = results.every(r => (r.simpleGateCount + r.restoredGateCount) > 0);
+          const noneExposePrivateBody = results.every(r => r.privateBodyCount === 0);
+          const allDOMContentLoaded = results.every(r => r.domContentLoaded);
+          const allHTTP200 = results.every(r => r.navigationStatus === 200);
+          const allPreviewEndsCorrectly = results.every(r => r.publicBodyText.includes('他的老師已經「看過」了。'));
+          const stableBody = hashes.size === 1;
+
+          const summary = {
+            allHTTP200,
+            allDOMContentLoaded,
+            allHaveView,
+            allHaveGate,
+            noneExposePrivateBody,
+            allPreviewEndsCorrectly,
+            stableBody,
+            uniqueBodyHashes: [...hashes],
+            loadEventsCompleted: results.filter(r => r.loadEvent).length,
+            totalRuns: results.length
+          };
+          console.log("SUMMARY", JSON.stringify(summary));
+
+          if (!allHTTP200 || !allDOMContentLoaded || !allHaveView || !allHaveGate ||
+              !noneExposePrivateBody || !allPreviewEndsCorrectly || !stableBody) {
+            process.exit(1);
+          }
+          NODE
+
+          node /tmp/verify.mjs
