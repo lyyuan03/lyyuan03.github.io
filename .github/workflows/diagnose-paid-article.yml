@@ -171,8 +171,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin main
-          git rebase origin/main
           git add .github/diagnostics/yuanshen-awakening-old-manuscript-firestore.json
           git commit -m "Record paid article Firestore diagnostic" || exit 0
+          git pull --rebase origin main
           git push origin HEAD:main
