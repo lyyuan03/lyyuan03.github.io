@@ -1,4 +1,3 @@
-import { createRequire } from "node:module";
 import { existsSync } from "node:fs";
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
@@ -23,13 +22,30 @@ let match;
 while ((match = re.exec(content))) {
   const rawSrc = match[2];
   const localPath = rawSrc.replace(/^https?:\/\/lyyuan\.tw\//i, "").split("?")[0].replace(/^\//, "");
+  const publicUrl = /^(?:https?:)/i.test(rawSrc) ? rawSrc : `https://lyyuan.tw/${rawSrc.replace(/^\//, "")}`;
+  let http = null;
+  try {
+    const response = await fetch(publicUrl, { redirect: "follow", signal: AbortSignal.timeout(15000) });
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    http = {
+      status: response.status,
+      ok: response.ok,
+      contentType: response.headers.get("content-type") || "",
+      length: bytes.length,
+      firstBytesHex: [...bytes.slice(0, 12)].map((b) => b.toString(16).padStart(2, "0")).join("")
+    };
+  } catch (error) {
+    http = { error: error.message };
+  }
   images.push({
     alt: match[1],
     src: rawSrc,
     localPath,
-    exists: /^(?:https?:|data:|blob:)/i.test(rawSrc) && !/^https?:\/\/lyyuan\.tw\//i.test(rawSrc)
+    existsInRepo: /^(?:https?:|data:|blob:)/i.test(rawSrc) && !/^https?:\/\/lyyuan\.tw\//i.test(rawSrc)
       ? "external"
-      : existsSync(localPath)
+      : existsSync(localPath),
+    publicUrl,
+    http
   });
 }
 console.log("IMAGE_AUDIT_START");
