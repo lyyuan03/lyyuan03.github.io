@@ -43,7 +43,7 @@ jobs:
       - name: Load the same paid article five times
         shell: bash
         run: |
-          cat > /tmp/verify.mjs <<'NODE'
+          cat > verify-article-stability.mjs <<'NODE'
           import { chromium } from "playwright";
           import crypto from "node:crypto";
 
@@ -174,4 +174,4 @@ jobs:
           }
           NODE
 
-          node /tmp/verify.mjs
+          node verify-article-stability.mjs
