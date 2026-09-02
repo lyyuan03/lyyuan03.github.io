@@ -110,7 +110,10 @@ const articleHooks = {
   "market-crash-money-self-control": "當你把「這次一定要翻身」放進市場，押上的就不只是一檔股票，也包括焦慮、不甘心，以及對未來的恐懼。"
 };
 
-let loadedArticles = [];
+// 靜態文章先行：Firebase Auth 或 Firestore 尚未回應時，公開文章仍可立即閱讀。
+let loadedArticles = staticArticles
+  .filter((article) => article?.status === "published" && article?.hidden !== true && article?.systemRecord !== true)
+  .map((article) => ({ ...article, __articleSource: "static" }));
 let articlesLoadCompleted = false;
 let articlesLoadSerial = 0;
 let articleMetrics = new Map();
@@ -997,9 +1000,13 @@ async function loadArticles() {
   if (articlesResult.status === "rejected") {
     if (loadSerial !== articlesLoadSerial) return;
     articlesLoadCompleted = true;
-    loadedArticles = [];
+    loadedArticles = staticArticles
+      .filter((article) => article?.status === "published" && article?.hidden !== true && article?.systemRecord !== true)
+      .map((article) => ({ ...article, __articleSource: "static" }))
+      .sort(sortPublished);
     console.warn(adminDraftPreview ? "Firebase 管理者文章暫時無法載入。" : "Firebase 已發布文章暫時無法載入。", articlesResult.reason);
-    root.innerHTML = '<div class="empty">後台文章暫時無法載入，請稍後再試。</div>';
+    renderTabs();
+    renderCurrentView();
     return;
   }
   if (loadSerial !== articlesLoadSerial) return;
@@ -1088,6 +1095,12 @@ document.addEventListener("visibilitychange", async () => {
 });
 
 let initialArticleBootstrapCompleted = false;
+
+// 不等待 Auth 回呼，先用版本庫內的已發布文章完成首屏與文章內頁。
+// Auth/Firestore 回應後，bootstrapArticles 會再以最新後台資料覆蓋。
+loadedArticles.sort(sortPublished);
+renderTabs();
+renderCurrentView();
 
 async function bootstrapArticles(user, source = "auth-state") {
   currentUser = user || null;
