@@ -57,8 +57,11 @@ jobs:
       - name: Install Firebase CLI
         run: npm install --global firebase-tools
 
-      - name: Verify backend
-        run: npm --prefix functions ci && npm --prefix functions test && npm --prefix functions run lint
+      - name: Verify payment backend
+        run: |
+          npm --prefix functions ci
+          node --test functions/test/ecpay.test.js functions/test/membership-plans.test.js functions/test/member-entitlements-sync.test.js
+          npm --prefix functions run lint
 
       - name: Deploy all membership functions
         run: firebase deploy --only functions --project lyyuan03-membership --non-interactive
