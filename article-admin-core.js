@@ -673,8 +673,11 @@ function selectArticle(articleId) {
     setSaveStatus(article.source === "github-static" ? "網站文章｜請按「匯入後台編輯」" : `已載入：${article.title || "未命名文章"}`, "success");
     requestAnimationFrame(() => {
       const editorPanel = form.closest(".panel");
-      (editorPanel || form).scrollIntoView({ behavior: "smooth", block: "start" });
-      formFields.title.focus({ preventScroll: true });
+      const target = editorPanel || form;
+      const headerHeight = document.querySelector(".admin-top")?.getBoundingClientRect().height || 0;
+      const targetTop = window.scrollY + target.getBoundingClientRect().top - headerHeight - 16;
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+      window.setTimeout(() => formFields.title.focus({ preventScroll: true }), 250);
     });
   } catch (error) {
     console.error("文章編輯表單載入失敗：", error);
