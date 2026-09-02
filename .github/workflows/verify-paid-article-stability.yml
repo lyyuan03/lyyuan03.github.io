@@ -169,7 +169,7 @@ jobs:
             if (!report.allFiveStable) process.exitCode = 2;
           })();
           NODE
-          node /tmp/verify-paid.js
+          NODE_PATH="$PWD/node_modules" node /tmp/verify-paid.js
 
       - name: Commit browser verification report
         if: always()
