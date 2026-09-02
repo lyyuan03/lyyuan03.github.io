@@ -236,7 +236,7 @@ function canonicalJinmuEventId(name = "", suppliedId = "") {
 
   const label = `${name} ${suppliedId}`;
   if (/總功德主/.test(label)) return "2026-jinmu-build-patron";
-  if (/建院.*(?:護持|助建)|(?:護持|助建).*建院|點燈(?:護持|參與者)/.test(label)) return "2026-jinmu-build-supporter";
+  if (/建院.*(?:護持|助建|所有燈別)|(?:護持|助建|所有燈別).*建院|點燈(?:護持|參與者)|專屬文選\s*[④4４].*建院|建院.*專屬文選\s*[④4４]/.test(label)) return "2026-jinmu-build-supporter";
   if (!/(金母|瑤池|yaochi|jinmu)/i.test(label)) return "";
   if (/文選[①1]|上午(?:場)?/.test(label)) return "2026-jinmu-am";
   if (/文選[②2]|下午(?:場)?/.test(label)) return "2026-jinmu-pm";
