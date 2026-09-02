@@ -80,8 +80,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260902-card-consistency-1",
-    "./articles-core-20260810-v6.js?v=20260902-card-consistency-1&retry=1"
+    "./articles-core-20260810-v6.js?v=20260902-detail-loading-fix-1",
+    "./articles-core-20260810-v6.js?v=20260902-detail-loading-fix-1&retry=1"
   ];
   let lastError = null;
 
