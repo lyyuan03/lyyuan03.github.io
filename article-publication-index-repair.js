@@ -43,6 +43,9 @@ async function repairIndex() {
   window.setTimeout(() => location.reload(), 120);
 }
 
-onAuthStateChanged(auth, () => {
-  repairIndex().catch((error) => console.warn("文章發布狀態索引自動修復失敗。", error));
-});
+const hasActiveArticleDetail = Boolean(new URLSearchParams(location.search).get("id"));
+if (!hasActiveArticleDetail) {
+  onAuthStateChanged(auth, () => {
+    repairIndex().catch((error) => console.warn("文章發布狀態索引自動修復失敗。", error));
+  });
+}
