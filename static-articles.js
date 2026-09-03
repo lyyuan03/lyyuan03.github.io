@@ -17,7 +17,7 @@ import { yuanqinDebtHeartArticle } from "./article-yuanqin-debt-heart.js?v=20260
 import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awakening-old-manuscript.js?v=20260902-single-detail-renderer-2";
 import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-morning.js?v=20260831-permissions-1";
 import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260831-permissions-1";
-import { spiritualGoodDeathArticle } from "./article-spiritual-good-death.js?v=20260903-reading-1";
+import { spiritualGoodDeathArticle } from "./article-spiritual-good-death.js?v=20260903-reading-2";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissions-1";
 
 const featuredWealthDisciplineArticle = {
