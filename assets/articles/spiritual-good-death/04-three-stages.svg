@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff9ed"/><stop offset="1" stop-color="#e6f4f3"/></linearGradient><linearGradient id="path" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#e5b77b"/><stop offset=".5" stop-color="#a7cdbd"/><stop offset="1" stop-color="#9ebcd3"/></linearGradient></defs>
+<rect width="1200" height="675" rx="28" fill="url(#bg)"/>
+<text x="90" y="92" font-family="Noto Sans TC, sans-serif" font-size="34" font-weight="700" fill="#405b52">《靈性善終》的三個轉化階段</text>
+<path d="M170 405 C365 275 470 455 610 340 C750 225 870 360 1040 220" fill="none" stroke="url(#path)" stroke-width="18" stroke-linecap="round"/>
+<g font-family="Noto Sans TC, sans-serif">
+<circle cx="260" cy="350" r="70" fill="#fff" stroke="#d9a56b" stroke-width="5"/><text x="260" y="344" text-anchor="middle" font-size="27" font-weight="700" fill="#7a5a3a">混亂</text><text x="260" y="380" text-anchor="middle" font-size="18" fill="#786a5b">熟悉秩序鬆動</text>
+<circle cx="610" cy="340" r="70" fill="#fff" stroke="#8db9a8" stroke-width="5"/><text x="610" y="334" text-anchor="middle" font-size="27" font-weight="700" fill="#456b5c">臣服</text><text x="610" y="370" text-anchor="middle" font-size="18" fill="#62756e">停止抵抗實相</text>
+<circle cx="955" cy="270" r="70" fill="#fff" stroke="#89acc5" stroke-width="5"/><text x="955" y="264" text-anchor="middle" font-size="27" font-weight="700" fill="#476a82">超越</text><text x="955" y="300" text-anchor="middle" font-size="18" fill="#607483">自我邊界鬆開</text>
+<text x="600" y="560" text-anchor="middle" font-size="21" fill="#5a6f67">從心智自我的解構，走向比個人生命故事更深的「存有本源」</text>
+</g></svg>
