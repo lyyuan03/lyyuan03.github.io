@@ -21,6 +21,110 @@ const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 const PAID_MARKER = "<!-- paid-only -->";
 const PAID_BODY_COLLECTION = "paidArticleBodies";
 const EVENT_BODY_COLLECTION = "eventArticleBodies";
+const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
+const SPIRITUAL_GOOD_DEATH_THUMBNAIL = "assets/articles/spiritual-good-death/book-cover-thumb.jpg?v=20260903-admin-media-sync-1";
+const SPIRITUAL_GOOD_DEATH_MEDIA_REVISION = "20260903-final-png-admin-sync-1";
+const SPIRITUAL_GOOD_DEATH_IMAGE_PATHS = new Map([
+  ["01-last-call.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
+  ["02-greater-self.svg", "assets/articles/spiritual-good-death/02-greater-self-final.png?v=20260903-final"],
+  ["03-withdrawal-retreat.svg", "assets/articles/spiritual-good-death/03-withdrawal-retreat-final.png?v=20260903-final"],
+  ["04-three-stages.svg", "assets/articles/spiritual-good-death/04-three-stages-final.png?v=20260903-final"],
+  ["01-last-call-coverstyle-v4.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
+  ["02-greater-self-coverstyle-v4.svg", "assets/articles/spiritual-good-death/02-greater-self-final.png?v=20260903-final"],
+  ["03-withdrawal-retreat-coverstyle-v4.svg", "assets/articles/spiritual-good-death/03-withdrawal-retreat-final.png?v=20260903-final"],
+  ["04-three-stages-coverstyle-v4.svg", "assets/articles/spiritual-good-death/04-three-stages-final.png?v=20260903-final"]
+]);
+
+function normalizeSpiritualGoodDeathImageSrc(value = "") {
+  const src = String(value || "").trim();
+  if (!src) return src;
+  for (const [legacyName, replacement] of SPIRITUAL_GOOD_DEATH_IMAGE_PATHS) {
+    if (src.includes(legacyName)) return replacement;
+  }
+  return src;
+}
+
+function normalizeSpiritualGoodDeathContent(value = "") {
+  return String(value || "").replace(
+    /(?:https?:\/\/[^)\s]+\/)?assets\/articles\/spiritual-good-death\/([^)?\s]+)(?:\?[^)\s]*)?/g,
+    (full, filename) => {
+      const replacement = normalizeSpiritualGoodDeathImageSrc(filename);
+      return replacement === filename ? full : replacement;
+    }
+  );
+}
+
+async function migrateSpiritualGoodDeathAdminMedia(snapshot) {
+  const articleDoc = snapshot.docs.find((item) => item.id === SPIRITUAL_GOOD_DEATH_ARTICLE_ID);
+  const settingsDoc = snapshot.docs.find((item) => item.id === "__article-thumbnail-settings");
+  let changed = false;
+
+  if (articleDoc) {
+    const current = articleDoc.data() || {};
+    const currentContent = String(current.content || "");
+    const nextContent = normalizeSpiritualGoodDeathContent(currentContent);
+    const payload = {};
+
+    if (nextContent !== currentContent) {
+      payload.previousContentBackup = currentContent;
+      payload.previousContentBackupAt = serverTimestamp();
+      payload.content = nextContent;
+    }
+    if (String(current.thumbnailImage || "") !== SPIRITUAL_GOOD_DEATH_THUMBNAIL) {
+      payload.thumbnailImage = SPIRITUAL_GOOD_DEATH_THUMBNAIL;
+    }
+    if (String(current.adminMediaSyncRevision || "") !== SPIRITUAL_GOOD_DEATH_MEDIA_REVISION) {
+      payload.adminMediaSyncRevision = SPIRITUAL_GOOD_DEATH_MEDIA_REVISION;
+    }
+
+    if (Object.keys(payload).length) {
+      payload.updatedAt = serverTimestamp();
+      await setDoc(doc(db, "articles", SPIRITUAL_GOOD_DEATH_ARTICLE_ID), payload, { merge: true });
+      changed = true;
+    }
+  }
+
+  if (settingsDoc) {
+    const settingsData = settingsDoc.data() || {};
+    const currentInline = settingsData.inlineImageSettings?.[SPIRITUAL_GOOD_DEATH_ARTICLE_ID];
+    const currentThumb = settingsData.settings?.[SPIRITUAL_GOOD_DEATH_ARTICLE_ID];
+    const settingsPayload = {};
+
+    if (currentInline?.images?.length) {
+      const nextImages = currentInline.images.map((item) => ({
+        ...item,
+        src: normalizeSpiritualGoodDeathImageSrc(item?.src || "")
+      }));
+      const inlineChanged = nextImages.some((item, index) => item.src !== String(currentInline.images[index]?.src || ""));
+      if (inlineChanged) {
+        settingsPayload.inlineImageSettings = {
+          [SPIRITUAL_GOOD_DEATH_ARTICLE_ID]: {
+            ...currentInline,
+            images: nextImages
+          }
+        };
+      }
+    }
+
+    if (String(currentThumb?.thumbnailImage || "") !== SPIRITUAL_GOOD_DEATH_THUMBNAIL) {
+      settingsPayload.settings = {
+        [SPIRITUAL_GOOD_DEATH_ARTICLE_ID]: {
+          ...(currentThumb || {}),
+          thumbnailImage: SPIRITUAL_GOOD_DEATH_THUMBNAIL
+        }
+      };
+    }
+
+    if (Object.keys(settingsPayload).length) {
+      settingsPayload.updatedAt = serverTimestamp();
+      await setDoc(doc(db, "articles", "__article-thumbnail-settings"), settingsPayload, { merge: true });
+      changed = true;
+    }
+  }
+
+  return changed;
+}
+
 
 
 let articles = [];
@@ -738,6 +842,11 @@ async function loadArticles() {
     if (didDraftImport) {
       snapshot = await getDocs(collection(db, "articles"));
       showAdminToast("新的網站草稿已自動加入後台，可直接編修。", "success");
+    }
+    const didMediaSync = await migrateSpiritualGoodDeathAdminMedia(snapshot);
+    if (didMediaSync) {
+      snapshot = await getDocs(collection(db, "articles"));
+      showAdminToast("《靈性善終》後台圖片已與前台同步。", "success");
     }
     await syncPublicationStatusIndex(snapshot);
     try {
