@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="靈性善終的三個轉化階段">
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7F1E7"/><stop offset="1" stop-color="#EFE8DE"/></linearGradient>
+  <linearGradient id="flow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D0A15E"/><stop offset=".5" stop-color="#85A89A"/><stop offset="1" stop-color="#7F9FAE"/></linearGradient>
+  <linearGradient id="sea1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D8ECE8"/><stop offset="1" stop-color="#A7C8C0"/></linearGradient>
+  <linearGradient id="sea2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#BCDAD3"/><stop offset="1" stop-color="#789A91"/></linearGradient>
+</defs>
+<rect width="1200" height="675" rx="26" fill="url(#paper)"/>
+<circle cx="1030" cy="104" r="56" fill="#D9B66C" opacity=".68"/>
+<g opacity=".66" fill="none" stroke="#B8A47B" stroke-width="1.6">
+  <path d="M110 180c34-49 51-95 48-142m-48 142c-25 37-44 75-52 114m76-169-33-25m43 59 37-31m-59 74-37 15"/>
+</g>
+<text x="84" y="96" fill="#5F4A31" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="38" font-weight="700">《靈性善終》的三個轉化階段</text>
+<path d="M205 340c150-84 253 87 390-6 132-89 244 58 400-12" fill="none" stroke="url(#flow)" stroke-width="18" stroke-linecap="round" opacity=".72"/>
+<circle cx="275" cy="332" r="97" fill="#FBF8F2" stroke="#D0A15E" stroke-width="4"/>
+<circle cx="600" cy="332" r="97" fill="#FBF8F2" stroke="#85A89A" stroke-width="4"/>
+<circle cx="925" cy="332" r="97" fill="#FBF8F2" stroke="#7F9FAE" stroke-width="4"/>
+<text x="275" y="322" text-anchor="middle" fill="#99692E" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="37" font-weight="700">混亂</text>
+<text x="275" y="365" text-anchor="middle" fill="#70685F" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="19">熟悉秩序鬆動</text>
+<text x="600" y="322" text-anchor="middle" fill="#4F7167" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="37" font-weight="700">臣服</text>
+<text x="600" y="365" text-anchor="middle" fill="#70685F" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="19">停止抵抗實相</text>
+<text x="925" y="322" text-anchor="middle" fill="#567788" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="37" font-weight="700">超越</text>
+<text x="925" y="365" text-anchor="middle" fill="#70685F" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="19">自我邊界鬆開</text>
+<text x="600" y="490" text-anchor="middle" fill="#665F56" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="21">從心智自我的解構，走向比個人生命故事更深的「存有本源」</text>
+<path d="M0 548C160 500 300 566 455 526c160-41 285 55 445 7 115-35 196-30 300-59V675H0Z" fill="url(#sea1)"/>
+<path d="M0 603c180-39 322 20 480-7 172-29 292 38 455 3 104-22 178-18 265-40v116H0Z" fill="url(#sea2)" opacity=".8"/>
+<path d="M0 640c183-26 345 16 510-5 174-23 292 25 460 5 84-10 151-8 230-19v54H0Z" fill="#4F756E" opacity=".38"/>
+<g fill="#C7A565" opacity=".78"><circle cx="92" cy="563" r="3"/><circle cx="149" cy="591" r="2.5"/><circle cx="1044" cy="548" r="3.2"/><circle cx="1100" cy="576" r="2.6"/></g>
+</svg>

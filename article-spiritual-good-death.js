@@ -7,7 +7,7 @@ export const spiritualGoodDeathArticle = {
   series: "宇色書房",
   status: "published",
   publishedAt: "2026-09-03T08:30:00.000Z",
-  updatedAt: "2026-09-03T09:13:00.000Z",
+  updatedAt: "2026-09-03T09:31:00.000Z",
   coverImage: "https://www.books.com.tw/img/001/105/74/0011057470.jpg",
   thumbnailImage: "https://www.books.com.tw/img/001/105/74/0011057470.jpg",
   excerpt: "一位多年未聯絡的朋友，在生命最後打來電話，告訴我他已開始斷食，準備離開。我最後沒有去見他，而《靈性善終》讓這個看似殘忍的選擇，有了一套可以被說清楚的靈性脈絡。",
@@ -40,7 +40,7 @@ export const spiritualGoodDeathArticle = {
 
 然後我們掛了電話，那是我跟這一位朋友，生前最後一通電話。
 
-![一通臨終前的電話，讓「最後一面」成為真正需要思考的問題](assets/articles/spiritual-good-death/01-last-call.svg?v=20260903-2)
+![一通臨終前的電話，讓「最後一面」成為真正需要思考的問題](assets/articles/spiritual-good-death/01-last-call-coverstyle-v4.svg)
 
 ## 我後來做了一件很多人可能會覺得很殘忍的事
 
@@ -70,7 +70,7 @@ export const spiritualGoodDeathArticle = {
 
 所以我把這件事情放進那個空無的狀態裡。
 
-![大我不是另一個更強的想法，而是讓情緒、理性與世俗慣性先退開](assets/articles/spiritual-good-death/02-greater-self.svg?v=20260903-2)
+![大我不是另一個更強的想法，而是讓情緒、理性與世俗慣性先退開](assets/articles/spiritual-good-death/02-greater-self-coverstyle-v4.svg)
 
 那天晚上，一個畫面很清楚地出現在我的意識中。是心靈工坊前陣子出版的《靈性善終》。
 
@@ -88,7 +88,7 @@ export const spiritualGoodDeathArticle = {
 
 當生命開始走向終點，這些結構逐漸改變。身體能力下降之後，工作與社會角色淡出，熟悉的生活範圍縮小，很多過去覺得非常重要的事情，也失去原來的重量。人的意識於是被帶回一個更內在的位置。
 
-![臨終時的撤退與退隱：注意力從外在世界逐步收回生命內部](assets/articles/spiritual-good-death/03-withdrawal-retreat.svg?v=20260903-2)
+![臨終時的撤退與退隱：注意力從外在世界逐步收回生命內部](assets/articles/spiritual-good-death/03-withdrawal-retreat-coverstyle-v4.svg)
 
 放回我朋友身上看，那通電話本身已經很接近一種生命整理。他跟我談起我們失去聯絡之後發生的事情，也回頭整理多年以前留在心裡的一段關係。他告訴我，那些提醒後來如何在自己的生命裡被印證，也把一直留在心裡的感謝親口說了出來。從一般人的角度看，那是一場告別；從「撤退與退隱」的角度看，也可以把它理解成一段關係在生命最後的收束。
 
@@ -140,7 +140,7 @@ export const spiritualGoodDeathArticle = {
 
 凱思林．辛在書中以「存有本源」（Ground of Being）來描述這個比個人身分、角色與生命故事更深的存在層次。
 
-![《靈性善終》的三個轉化階段：混亂、臣服、超越](assets/articles/spiritual-good-death/04-three-stages.svg?v=20260903-2)
+![《靈性善終》的三個轉化階段：混亂、臣服、超越](assets/articles/spiritual-good-death/04-three-stages-coverstyle-v4.svg)
 
 這裡也是我認為，一個人是否真正體悟死亡與靈性之間的關係，會直接影響他怎麼理解我當時那個選擇的地方。
 

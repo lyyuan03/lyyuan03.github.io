@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="大我">
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7F1E7"/><stop offset="1" stop-color="#EFE8DE"/></linearGradient>
+  <linearGradient id="sea1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D8ECE8"/><stop offset="1" stop-color="#A9C9C1"/></linearGradient>
+  <linearGradient id="sea2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9D7D1"/><stop offset="1" stop-color="#789A91"/></linearGradient>
+</defs>
+<rect width="1200" height="675" rx="26" fill="url(#paper)"/>
+<circle cx="1033" cy="110" r="58" fill="#D9B66C" opacity=".68"/>
+<g opacity=".68" fill="none" stroke="#B8A47B" stroke-width="1.6">
+  <path d="M936 112c-42 42-61 90-55 144m55-144c21 45 50 80 90 103m-112-60-38-30m53 65 43-30m-72 69-38 19"/>
+</g>
+<text x="84" y="96" fill="#5F4A31" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="36" font-weight="700">「大我」：不是多一個答案，而是讓干擾先退開</text>
+<rect x="74" y="210" width="280" height="238" rx="30" fill="#FBF8F2" stroke="#CCB98F" stroke-width="2.5"/>
+<text x="214" y="265" text-anchor="middle" fill="#674F36" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="28" font-weight="700">個人層</text>
+<text x="214" y="322" text-anchor="middle" fill="#756B5E" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="22">情緒</text>
+<text x="214" y="360" text-anchor="middle" fill="#756B5E" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="22">理性分析</text>
+<text x="214" y="398" text-anchor="middle" fill="#756B5E" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="22">世俗慣性</text>
+<path d="M377 330h105" stroke="#C7A565" stroke-width="6" stroke-linecap="round"/><path d="M482 330l-25-16v32z" fill="#C7A565"/>
+<circle cx="606" cy="330" r="132" fill="#FBF8F2" stroke="#84A79C" stroke-width="3.5"/>
+<text x="606" y="300" text-anchor="middle" fill="#4E7066" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="34" font-weight="700">空無／大我</text>
+<text x="606" y="346" text-anchor="middle" fill="#68756F" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="20">暫時不由大腦、情感</text>
+<text x="606" y="378" text-anchor="middle" fill="#68756F" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="20">理性與邏輯主導</text>
+<path d="M757 330h100" stroke="#84A79C" stroke-width="6" stroke-linecap="round"/><path d="M857 330l-25-16v32z" fill="#84A79C"/>
+<rect x="881" y="234" width="240" height="192" rx="30" fill="#FBF8F2" stroke="#84A79C" stroke-width="2.5"/>
+<text x="1001" y="314" text-anchor="middle" fill="#4F7066" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="29" font-weight="700">更深層</text>
+<text x="1001" y="355" text-anchor="middle" fill="#4F7066" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="29" font-weight="700">的判斷</text>
+<text x="600" y="510" text-anchor="middle" fill="#665F56" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="21">個人意志退開後，才有空間看見事情本身</text>
+<path d="M0 548C160 500 300 566 455 526c160-41 285 55 445 7 115-35 196-30 300-59V675H0Z" fill="url(#sea1)"/>
+<path d="M0 603c180-39 322 20 480-7 172-29 292 38 455 3 104-22 178-18 265-40v116H0Z" fill="url(#sea2)" opacity=".8"/>
+<path d="M0 640c183-26 345 16 510-5 174-23 292 25 460 5 84-10 151-8 230-19v54H0Z" fill="#4F756E" opacity=".38"/>
+</svg>

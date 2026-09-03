@@ -1,5 +1,5 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260831-permissions-1";
-import { staticArticles } from "./static-articles.js?v=20260903-spiritual-good-death-3";
+import { staticArticles } from "./static-articles.js?v=20260903-spiritual-good-death-images-v4";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissions-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
