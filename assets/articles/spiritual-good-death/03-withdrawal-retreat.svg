@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
-<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff9e9"/><stop offset="1" stop-color="#e3f3ed"/></linearGradient></defs>
-<rect width="1200" height="675" rx="28" fill="url(#bg)"/>
-<text x="90" y="92" font-family="Noto Sans TC, sans-serif" font-size="34" font-weight="700" fill="#405b52">撤退與退隱｜Withdrawal &amp; Retreat</text>
-<text x="90" y="132" font-family="Noto Sans TC, sans-serif" font-size="21" fill="#657871">生命走向終點時，注意力會逐步從外在世界收回</text>
-<circle cx="600" cy="365" r="245" fill="#dceee6" opacity=".75"/>
-<circle cx="600" cy="365" r="180" fill="#edf6f2"/>
-<circle cx="600" cy="365" r="112" fill="#fffdf7"/>
-<circle cx="600" cy="365" r="48" fill="#d9b874"/>
-<g font-family="Noto Sans TC, sans-serif" text-anchor="middle">
-<text x="600" y="180" font-size="22" fill="#5a7168">外在世界・社交・角色</text>
-<text x="600" y="255" font-size="22" fill="#5a7168">關係逐漸簡化</text>
-<text x="600" y="322" font-size="22" fill="#5a7168">注意力往內收</text>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#FBF7F0"/><stop offset="1" stop-color="#F2EBDD"/></linearGradient></defs>
+<rect width="1200" height="675" rx="28" fill="url(#bg)"/><path d="M0 595C175 540 330 620 505 578C700 530 845 625 1025 575C1115 550 1160 545 1200 535V675H0Z" fill="#DDEAE6" opacity=".55"/><path d="M0 640C210 600 385 655 575 620C785 582 955 653 1200 615V675H0Z" fill="#9CB7AE" opacity=".24"/>
+<text x="90" y="92" font-family="Source Han Serif TC, Noto Serif TC, serif" font-size="34" font-weight="700" fill="#725733">撤退與退隱｜Withdrawal &amp; Retreat</text>
+<text x="90" y="132" font-family="Source Han Serif TC, Noto Serif TC, serif" font-size="21" fill="#61736B">生命走向終點時，注意力會逐步從外在世界收回</text>
+<circle cx="600" cy="365" r="245" fill="#D7E5E0" opacity=".75"/>
+<circle cx="600" cy="365" r="180" fill="#E7F0ED"/>
+<circle cx="600" cy="365" r="112" fill="#FFFDF9"/>
+<circle cx="600" cy="365" r="48" fill="#D8B269"/>
+<g font-family="Source Han Serif TC, Noto Serif TC, serif" text-anchor="middle">
+<text x="600" y="180" font-size="22" fill="#56766C">外在世界・社交・角色</text>
+<text x="600" y="255" font-size="22" fill="#56766C">關係逐漸簡化</text>
+<text x="600" y="322" font-size="22" fill="#56766C">注意力往內收</text>
 <text x="600" y="373" font-size="20" font-weight="700" fill="#fff">核心</text>
 </g>
-<path d="M270 365h125" stroke="#b99b60" stroke-width="5" stroke-linecap="round"/><path d="M385 349l30 16-30 16z" fill="#b99b60"/>
-<path d="M930 365H805" stroke="#b99b60" stroke-width="5" stroke-linecap="round"/><path d="M815 349l-30 16 30 16z" fill="#b99b60"/>
-<text x="600" y="620" text-anchor="middle" font-family="Noto Sans TC, sans-serif" font-size="20" fill="#536960">退隱不是疏離，而是生命方向正在改變</text>
+<path d="M270 365h125" stroke="#C9A96D" stroke-width="5" stroke-linecap="round"/><path d="M385 349l30 16-30 16z" fill="#C9A96D"/>
+<path d="M930 365H805" stroke="#C9A96D" stroke-width="5" stroke-linecap="round"/><path d="M815 349l-30 16 30 16z" fill="#C9A96D"/>
+<text x="600" y="620" text-anchor="middle" font-family="Source Han Serif TC, Noto Serif TC, serif" font-size="20" fill="#5F6F68">退隱不是疏離，而是生命方向正在改變</text>
 </svg>
