@@ -26,7 +26,7 @@ const THUMBNAIL_SETTING_KEYS = [
 
 const FORCED_THUMBNAIL_IMAGES = {
   "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6",
-  "spiritual-good-death-last-visit": "assets/articles/spiritual-good-death/book-cover-thumb.jpg?v=20260903-admin-cover-1"
+  "spiritual-good-death-last-visit": "https://lyyuan.tw/assets/articles/spiritual-good-death/book-cover-thumb.jpg?v=20260903-admin-media-sync-1"
 };
 
 const RECOVERY_SETTINGS = {
