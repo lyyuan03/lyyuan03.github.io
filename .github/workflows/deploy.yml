@@ -38,7 +38,7 @@ jobs:
         run: node scripts/audit-production-stability.mjs
 
   candidate-smoke:
-    needs: candidate-smoke
+    needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -71,7 +71,7 @@ jobs:
 
   deploy:
     if: github.event_name != 'pull_request'
-    needs: validate
+    needs: candidate-smoke
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
