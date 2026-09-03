@@ -1,5 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260903-thumbnail-url-normalize-1";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const SCALE_MIN = 100;
@@ -61,7 +62,7 @@ function normalizeSettings(source = {}, articleId = "") {
     thumbnailPositionY: numberValue(source.thumbnailPositionY, defaults.thumbnailPositionY, 0, 100),
     thumbnailScale: numberValue(source.thumbnailScale, defaults.thumbnailScale, SCALE_MIN, SCALE_MAX),
     thumbnailTitleAlign: source.thumbnailTitleAlign === "center" ? "center" : defaults.thumbnailTitleAlign,
-    thumbnailImage: String(source.thumbnailImage || defaults.thumbnailImage || "").trim()
+    thumbnailImage: resolveThumbnailUrl(source.thumbnailImage || defaults.thumbnailImage || "")
   };
 }
 
@@ -222,8 +223,9 @@ function initialize() {
     xValue.value = `${settings.thumbnailPositionX}%`;
     yValue.value = `${settings.thumbnailPositionY}%`;
     scaleValue.value = `${settings.thumbnailScale}%`;
-    previewImage.src = thumbnailImageInput.value.trim() || "";
-    previewImage.hidden = !previewImage.src;
+    const resolvedThumbnailImage = resolveThumbnailUrl(thumbnailImageInput.value);
+    previewImage.src = resolvedThumbnailImage;
+    previewImage.hidden = !resolvedThumbnailImage;
     previewImage.style.objectFit = settings.thumbnailFit;
     previewImage.style.objectPosition = position;
     previewImage.style.transform = `scale(${settings.thumbnailScale / 100})`;
@@ -358,6 +360,9 @@ function initialize() {
   window.articleThumbnailAdmin = {
     saveForArticle(articleId, options = {}) {
       return persistSettings(articleId, options);
+    },
+    getResolvedThumbnailImage(articleId = loadedId || activeArticleId()) {
+      return currentSettings(articleId).thumbnailImage;
     },
     hasUnsavedChanges() {
       return thumbnailDirty;
