@@ -16,7 +16,8 @@ const BRAND_FALLBACKS = {
 // 某些舊文章的正文圖片由顯示修正模組動態補入，原始 Markdown 內沒有圖片路徑。
 // 這裡記錄「真正的第一張內文故事圖」，避免誤退回統一 CI 圖。
 const FORCED_THUMBNAIL_IMAGES = {
-  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-clean-text-2"
+  "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-clean-text-2",
+  "spiritual-good-death-last-visit": "assets/articles/spiritual-good-death/book-cover-thumb.jpg?v=20260903-admin-cover-1"
 };
 
 const FIRST_IMAGE_OVERRIDES = {
