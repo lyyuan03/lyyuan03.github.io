@@ -9,7 +9,7 @@ export const spiritualGoodDeathArticle = {
   publishedAt: "2026-09-03T08:30:00.000Z",
   updatedAt: "2026-09-03T09:40:00.000Z",
   coverImage: "https://www.books.com.tw/img/001/105/74/0011057470.jpg",
-  thumbnailImage: "assets/articles/spiritual-good-death/book-cover-thumb.jpg?v=20260903-admin-cover-1",
+  thumbnailImage: "/assets/articles/spiritual-good-death/book-cover-thumb.jpg",
   excerpt: "一位多年未聯絡的朋友，在生命最後打來電話，告訴我他已開始斷食，準備離開。我最後沒有去見他，而《靈性善終》讓這個看似殘忍的選擇，有了一套可以被說清楚的靈性脈絡。",
   accessType: "free",
   topics: ["靈性善終", "臨終陪伴", "生死與修行"],
