@@ -4,6 +4,7 @@ import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissio
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260903-thumbnail-url-normalize-1";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -22,7 +23,7 @@ const PAID_MARKER = "<!-- paid-only -->";
 const PAID_BODY_COLLECTION = "paidArticleBodies";
 const EVENT_BODY_COLLECTION = "eventArticleBodies";
 const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
-const SPIRITUAL_GOOD_DEATH_THUMBNAIL = "/assets/articles/spiritual-good-death/book-cover-thumb.jpg";
+const SPIRITUAL_GOOD_DEATH_THUMBNAIL = resolveThumbnailUrl("/assets/articles/spiritual-good-death/book-cover-thumb.jpg");
 const SPIRITUAL_GOOD_DEATH_MEDIA_REVISION = "20260903-direct-book-cover-2";
 const SPIRITUAL_GOOD_DEATH_IMAGE_PATHS = new Map([
   ["01-last-call.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
@@ -525,6 +526,7 @@ function staticArticlePayload(article, revision) {
     status: article.status || "published",
     excerpt: article.excerpt || "",
     coverImage: article.coverImage || "",
+    thumbnailImage: resolveThumbnailUrl(article.thumbnailImage || ""),
     bookTitle: article.bookTitle || "",
     bookAuthor: article.bookAuthor || "",
     bookPublisher: article.bookPublisher || "",
@@ -637,7 +639,7 @@ async function syncRevisedStaticArticleImages(snapshot) {
     const article = staticArticles.find((item) => item.id === articleId);
     if (!current || !article) continue;
     const desiredCoverImage = article.coverImage || "";
-    const desiredThumbnailImage = article.thumbnailImage || "";
+    const desiredThumbnailImage = resolveThumbnailUrl(article.thumbnailImage || "");
     if (
       current.staticImageSyncRevision === revision
       && (current.coverImage || "") === desiredCoverImage
@@ -698,6 +700,7 @@ async function importStaticArticle(articleId) {
     status: article.status || "published",
     excerpt: article.excerpt || "",
     coverImage: article.coverImage || "",
+    thumbnailImage: resolveThumbnailUrl(article.thumbnailImage || ""),
     bookTitle: article.bookTitle || "",
     bookAuthor: article.bookAuthor || "",
     bookPublisher: article.bookPublisher || "",
@@ -936,8 +939,13 @@ async function saveArticle(event) {
     const existingSnapshot = existingId ? await getDoc(articleRef) : null;
     const existingData = existingSnapshot?.exists() ? existingSnapshot.data() : null;
     const currentArticleRecord = articles.find((article) => article.id === currentId);
+    const thumbnailInput = typeof window.articleThumbnailAdmin?.getResolvedThumbnailImage === "function"
+      ? window.articleThumbnailAdmin.getResolvedThumbnailImage(currentId)
+      : existingData?.thumbnailImage || "";
+    const normalizedThumbnailImage = resolveThumbnailUrl(thumbnailInput);
     const payload = {
       ...data,
+      thumbnailImage: normalizedThumbnailImage,
       previousContentBackup: String(existingData?.content || ""),
       previousContentBackupAt: existingData?.content ? serverTimestamp() : null,
       updatedAt: serverTimestamp()
