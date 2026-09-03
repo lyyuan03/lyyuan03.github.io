@@ -22,7 +22,7 @@ const PAID_MARKER = "<!-- paid-only -->";
 const PAID_BODY_COLLECTION = "paidArticleBodies";
 const EVENT_BODY_COLLECTION = "eventArticleBodies";
 const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
-const SPIRITUAL_GOOD_DEATH_THUMBNAIL = "assets/articles/spiritual-good-death/book-cover-thumb.jpg?v=20260903-admin-media-sync-1";
+const SPIRITUAL_GOOD_DEATH_THUMBNAIL = "https://lyyuan.tw/assets/articles/spiritual-good-death/book-cover-thumb.jpg?v=20260903-admin-media-sync-1";
 const SPIRITUAL_GOOD_DEATH_MEDIA_REVISION = "20260903-final-png-admin-sync-1";
 const SPIRITUAL_GOOD_DEATH_IMAGE_PATHS = new Map([
   ["01-last-call.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
