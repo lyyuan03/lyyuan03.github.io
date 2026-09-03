@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="一通臨終前的電話">
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F7F1E7"/>
+    <stop offset="1" stop-color="#EFE8DE"/>
+  </linearGradient>
+  <linearGradient id="sea1" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#D8ECE8"/>
+    <stop offset="1" stop-color="#9FC6BE"/>
+  </linearGradient>
+  <linearGradient id="sea2" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#B9D7D1"/>
+    <stop offset="1" stop-color="#6F978F"/>
+  </linearGradient>
+</defs>
+<rect width="1200" height="675" rx="26" fill="url(#paper)"/>
+<g opacity=".75" fill="none" stroke="#B8A47B" stroke-width="1.7">
+  <path d="M768 123c63 23 93 66 96 126m-96-126c-16 50-8 92 12 135m19-102 45-42m-56 76-42-31m69 74 45-28"/>
+  <path d="M882 130c31 37 44 77 36 124m-5-79 39-26m-42 68-34-18"/>
+</g>
+<circle cx="1012" cy="125" r="62" fill="#D9B66C" opacity=".72"/>
+<text x="86" y="100" fill="#5F4A31" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="39" font-weight="700">一通臨終前的電話</text>
+<text x="86" y="140" fill="#766D61" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="21">最後一面，真的只有一種答案嗎？</text>
+<rect x="86" y="204" width="384" height="252" rx="28" fill="#FBF8F2" stroke="#CCB98F" stroke-width="2.5"/>
+<g transform="translate(205 248)">
+  <rect x="0" y="0" width="120" height="162" rx="26" fill="#7FA298"/>
+  <rect x="24" y="24" width="72" height="72" rx="10" fill="#F6F2E9"/>
+  <circle cx="31" cy="122" r="6" fill="#F6F2E9"/>
+  <circle cx="60" cy="122" r="6" fill="#F6F2E9"/>
+  <circle cx="89" cy="122" r="6" fill="#F6F2E9"/>
+  <path d="M116 46q33 9 45 34M118 22q51 12 70 51" fill="none" stroke="#C8A564" stroke-width="6" stroke-linecap="round"/>
+</g>
+<path d="M470 336c102-5 124 62 208 47 77-13 110-15 166 20" fill="none" stroke="#C8A564" stroke-width="4" stroke-dasharray="2 13" stroke-linecap="round"/>
+<g transform="translate(820 247)">
+  <path d="M0 160V70c0-78 100-78 100 0v90" fill="none" stroke="#D7D1C4" stroke-width="28"/>
+  <circle cx="50" cy="52" r="13" fill="#D2B36D"/>
+  <rect x="39" y="72" width="22" height="72" rx="10" fill="#D2B36D"/>
+</g>
+<text x="710" y="492" fill="#665F56" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="21">先聽見對方的狀態，再決定如何靠近</text>
+<path d="M0 510C170 460 295 532 450 492c170-44 290 59 450 8 110-35 191-27 300-62V675H0Z" fill="url(#sea1)"/>
+<path d="M0 570c175-45 328 25 490-8 163-33 275 42 435 4 104-25 180-21 275-46v155H0Z" fill="url(#sea2)" opacity=".82"/>
+<path d="M0 627c189-33 337 21 509-5 175-26 287 30 455 4 89-14 157-11 236-26v75H0Z" fill="#4F756E" opacity=".42"/>
+<g fill="#C7A565" opacity=".8">
+  <circle cx="103" cy="553" r="3"/><circle cx="145" cy="582" r="2.6"/><circle cx="202" cy="547" r="3.4"/>
+  <circle cx="1008" cy="535" r="3"/><circle cx="1051" cy="570" r="2.6"/><circle cx="1108" cy="544" r="3.4"/>
+</g>
+</svg>
