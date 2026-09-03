@@ -12,6 +12,10 @@ let currentUser = auth.currentUser;
 let runSerial = 0;
 let applying = false;
 let scheduled = false;
+// null = 尚未確認；true = 目前詳細頁確實是草稿；false = 已確認不是草稿。
+// 已發布文章一旦確認為 false，MutationObserver 不得再因其他附加模組改 DOM
+// 而反覆重讀整個 Firestore 草稿清單。
+let activeDetailIsDraft = null;
 
 function normalizeEmail(value = "") {
   return String(value || "").trim().toLowerCase();
@@ -323,6 +327,7 @@ async function applyPreview() {
     if (serial !== runSerial || !isPreviewAdmin()) return;
     if (activeId) {
       const draft = await findActiveDraft(drafts);
+      activeDetailIsDraft = Boolean(draft);
       if (draft) renderDraftDetail(draft);
       return;
     }
@@ -353,7 +358,7 @@ if (root) {
   new MutationObserver(() => {
     if (!isPreviewAdmin() || applying) return;
     if (activeId) {
-      if (!root.querySelector('[data-admin-draft-preview-detail="true"]')) schedulePreview();
+      if (activeDetailIsDraft === true && !root.querySelector('[data-admin-draft-preview-detail="true"]')) schedulePreview();
       return;
     }
     const banner = document.getElementById("article-admin-draft-preview-banner");
