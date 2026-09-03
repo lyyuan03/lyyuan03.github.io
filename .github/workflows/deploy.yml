@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - ".github/deploy-triggers/**"
+      - ".github/diagnostics/**"
   pull_request:
   workflow_dispatch:
 
@@ -31,6 +34,40 @@ jobs:
         run: node scripts/lock-paid-article-access-policy.mjs
       - name: Audit paid article runtime
         run: node scripts/audit-paid-article-runtime.mjs
+      - name: Audit production stability contract
+        run: node scripts/audit-production-stability.mjs
+
+  candidate-smoke:
+    needs: candidate-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Chromium smoke-test runtime
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Start candidate site
+        run: |
+          nohup python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/lyyuan-smoke-server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/articles.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/lyyuan-smoke-server.log || true
+          exit 1
+      - name: Five-load paid article candidate smoke test
+        env:
+          SMOKE_BASE_URL: http://127.0.0.1:4173
+        run: node scripts/smoke-article-candidate.mjs
 
   deploy:
     if: github.event_name != 'pull_request'
