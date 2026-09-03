@@ -96,6 +96,13 @@ export const recommendedBookCatalog = Object.freeze({
     purchaseUrl: "https://www.books.com.tw/products/0011056002",
     coverImage: "assets/articles/you-can-not-fear-death/book-cover.webp"
   }),
+  spiritualGoodDeath: Object.freeze({
+    title: "靈性善終：臨終時刻的心靈轉化與陪伴指南",
+    author: "凱思林．辛（Kathleen Dowling Singh）",
+    publisher: "心靈工坊",
+    purchaseUrl: "https://reurl.cc/1lKXqm",
+    coverImage: booksCover("001/105/74/0011057470")
+  }),
   wealthDiscipline: Object.freeze({
     title: "致富的定力",
     author: "陳韋峰",
@@ -125,6 +132,7 @@ export const recommendedBookByArticle = Object.freeze({
   "fantasy-intuition-or-yuanshen": "lingxiuKeyReport",
   "celebrity-death-dream-spirit-five-checks": "ghosts",
   "wealth-discipline-investing-and-self-mastery": "wealthDiscipline",
+  "spiritual-good-death-last-visit": "spiritualGoodDeath",
   "japan-temple-faith-and-decline": "faith",
   "spiritual-practice-cannot-be-outsourced-to-gods": "awakening",
   "jitong-leader-discernment": "lingxiuMaze",
@@ -164,6 +172,7 @@ const titleAliases = Object.freeze([
   ["請問覺醒", "awakening"],
   ["你可以不怕死", "fearOfDeath"],
   ["致富的定力", "wealthDiscipline"],
+  ["靈性善終", "spiritualGoodDeath"],
   ["量子力學式", "quantumPractice"]
 ]);
 
