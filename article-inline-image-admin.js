@@ -7,6 +7,27 @@ const MAX_IMAGES = 6;
 const SCALE_MIN = 100;
 const SCALE_MAX = 250;
 const DEFAULTS = { positionX: 50, positionY: 50, scale: 100 };
+const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
+const SPIRITUAL_GOOD_DEATH_IMAGE_PATHS = new Map([
+  ["01-last-call.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
+  ["02-greater-self.svg", "assets/articles/spiritual-good-death/02-greater-self-final.png?v=20260903-final"],
+  ["03-withdrawal-retreat.svg", "assets/articles/spiritual-good-death/03-withdrawal-retreat-final.png?v=20260903-final"],
+  ["04-three-stages.svg", "assets/articles/spiritual-good-death/04-three-stages-final.png?v=20260903-final"],
+  ["01-last-call-coverstyle-v4.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
+  ["02-greater-self-coverstyle-v4.svg", "assets/articles/spiritual-good-death/02-greater-self-final.png?v=20260903-final"],
+  ["03-withdrawal-retreat-coverstyle-v4.svg", "assets/articles/spiritual-good-death/03-withdrawal-retreat-final.png?v=20260903-final"],
+  ["04-three-stages-coverstyle-v4.svg", "assets/articles/spiritual-good-death/04-three-stages-final.png?v=20260903-final"]
+]);
+
+function normalizedArticleImageSrc(value = "", id = activeId || articleId()) {
+  const src = String(value || "").trim();
+  if (!src || id !== SPIRITUAL_GOOD_DEATH_ARTICLE_ID) return src;
+  for (const [legacyName, replacement] of SPIRITUAL_GOOD_DEATH_IMAGE_PATHS) {
+    if (src.includes(legacyName)) return replacement;
+  }
+  return src;
+}
+
 let settingsByArticle = new Map();
 let currentImages = [];
 let activeId = "";
@@ -56,9 +77,19 @@ function parseImages(content = "") {
 }
 
 function syncImages(content, id = activeId || articleId()) {
-  const saved = new Map((settingsByArticle.get(id)?.images || []).map(x => [x.src, normalize(x)]));
-  const prior = new Map(currentImages.map(x => [x.src, x]));
-  currentImages = parseImages(content).map(x => normalize({ ...x, ...(saved.get(x.src) || prior.get(x.src) || {}) }));
+  const saved = new Map((settingsByArticle.get(id)?.images || []).map((item) => {
+    const normalized = normalize(item);
+    normalized.src = normalizedArticleImageSrc(normalized.src, id);
+    return [normalized.src, normalized];
+  }));
+  const prior = new Map(currentImages.map((item) => {
+    const normalized = { ...item, src: normalizedArticleImageSrc(item.src, id) };
+    return [normalized.src, normalized];
+  }));
+  currentImages = parseImages(content).map((item) => {
+    const src = normalizedArticleImageSrc(item.src, id);
+    return normalize({ ...item, src, ...(saved.get(src) || prior.get(src) || {}) });
+  });
   return currentImages;
 }
 
