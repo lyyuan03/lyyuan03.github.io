@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
-<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff8e8"/><stop offset="1" stop-color="#dff3ee"/></linearGradient><linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffd99b"/><stop offset="1" stop-color="#fff3d6"/></linearGradient></defs>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FBF7F0"/><stop offset="1" stop-color="#F2EBDD"/></linearGradient><linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#F2CF8D"/><stop offset="1" stop-color="#F8E7C4"/></linearGradient></defs>
 <rect width="1200" height="675" rx="28" fill="url(#bg)"/>
 <circle cx="930" cy="120" r="88" fill="url(#sun)" opacity=".9"/>
-<path d="M0 540 C220 465 390 520 570 470 C760 418 910 455 1200 390 V675 H0Z" fill="#cfe7da"/>
-<path d="M0 575 C260 505 430 575 660 520 C860 474 1010 490 1200 450 V675 H0Z" fill="#b7d7c7" opacity=".8"/>
-<rect x="135" y="165" width="405" height="275" rx="26" fill="#fffdf7" stroke="#cdbb94" stroke-width="3"/>
-<rect x="190" y="225" width="270" height="155" rx="18" fill="#f6eee1"/>
-<circle cx="325" cy="302" r="48" fill="#8faea1"/>
-<path d="M305 279q20-20 40 0v48q-20 20-40 0z" fill="#fffaf1"/>
-<path d="M350 312q25 0 35 22" stroke="#6f8f83" stroke-width="8" stroke-linecap="round"/>
-<circle cx="775" cy="300" r="92" fill="#fffdf7" stroke="#cdbb94" stroke-width="3"/>
-<path d="M740 255q35-25 70 0v90q-35 25-70 0z" fill="#7e9e92"/>
-<path d="M760 275h30v52h-30z" fill="#fffdf7"/>
-<path d="M540 310 C625 265 655 265 690 285" fill="none" stroke="#c7a86d" stroke-width="6" stroke-linecap="round" stroke-dasharray="9 12"/>
-<text x="135" y="95" font-family="Noto Sans TC, sans-serif" font-size="34" font-weight="700" fill="#405b52">一通臨終前的電話</text>
-<text x="135" y="135" font-family="Noto Sans TC, sans-serif" font-size="22" fill="#6d7e77">最後一面，真的只有一種答案嗎？</text>
-<text x="690" y="455" font-family="Noto Sans TC, sans-serif" font-size="20" fill="#566b63">先聽見對方的狀態，再決定如何靠近</text>
+<path d="M0 540 C220 465 390 520 570 470 C760 418 910 455 1200 390 V675 H0Z" fill="#DDEAE6"/>
+<path d="M0 575 C260 505 430 575 660 520 C860 474 1010 490 1200 450 V675 H0Z" fill="#9CB7AE" opacity=".8"/>
+<rect x="135" y="165" width="405" height="275" rx="26" fill="#FFFDF9" stroke="#D9C29A" stroke-width="3"/>
+<rect x="190" y="225" width="270" height="155" rx="18" fill="#F2E8D8"/>
+<circle cx="325" cy="302" r="48" fill="#89A396"/>
+<path d="M305 279q20-20 40 0v48q-20 20-40 0z" fill="#F7F4EC"/>
+<path d="M350 312q25 0 35 22" stroke="#6F8F83" stroke-width="8" stroke-linecap="round"/>
+<circle cx="775" cy="300" r="92" fill="#FFFDF9" stroke="#D9C29A" stroke-width="3"/>
+<path d="M740 255q35-25 70 0v90q-35 25-70 0z" fill="#78998D"/>
+<path d="M760 275h30v52h-30z" fill="#FFFDF9"/>
+<path d="M540 310 C625 265 655 265 690 285" fill="none" stroke="#C9A96D" stroke-width="6" stroke-linecap="round" stroke-dasharray="9 12"/>
+<text x="135" y="95" font-family="Source Han Serif TC, Noto Serif TC, serif" font-size="40" font-weight="700" fill="#725733">一通臨終前的電話</text>
+<text x="135" y="135" font-family="Source Han Serif TC, Noto Serif TC, serif" font-size="24" fill="#6F665A">最後一面，真的只有一種答案嗎？</text>
+<text x="690" y="455" font-family="Source Han Serif TC, Noto Serif TC, serif" font-size="22" fill="#6C6257">先聽見對方的狀態，再決定如何靠近</text>
 </svg>
