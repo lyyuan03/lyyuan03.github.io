@@ -1,18 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
-<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fffaf0"/><stop offset=".55" stop-color="#edf7f2"/><stop offset="1" stop-color="#e9f2fb"/></linearGradient></defs>
-<rect width="1200" height="675" rx="28" fill="url(#bg)"/>
-<text x="90" y="92" font-family="Noto Sans TC, sans-serif" font-size="34" font-weight="700" fill="#405b52">「大我」：不是多一個答案，而是讓干擾先退開</text>
-<g font-family="Noto Sans TC, sans-serif">
-<rect x="95" y="195" width="250" height="230" rx="28" fill="#fff" stroke="#e0cba7" stroke-width="3"/>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#FBF7F0"/><stop offset=".55" stop-color="#F3EEE5"/><stop offset="1" stop-color="#E6EEE9"/></linearGradient></defs>
+<rect width="1200" height="675" rx="28" fill="url(#bg)"/><path d="M0 575C170 525 320 600 500 555C690 508 830 610 1010 555C1090 530 1150 520 1200 510V675H0Z" fill="#DDEAE6" opacity=".72"/><path d="M0 625C210 585 360 640 555 605C760 568 920 642 1200 590V675H0Z" fill="#9CB7AE" opacity=".35"/>
+<text x="90" y="92" font-family="Source Han Serif TC, Noto Serif TC, serif" font-size="34" font-weight="700" fill="#725733">「大我」：不是多一個答案，而是讓干擾先退開</text>
+<g font-family="Source Han Serif TC, Noto Serif TC, serif">
+<rect x="95" y="195" width="250" height="230" rx="28" fill="#fff" stroke="#D9C29A" stroke-width="3"/>
 <text x="220" y="245" text-anchor="middle" font-size="25" font-weight="700" fill="#6a5d49">個人層</text>
 <text x="220" y="300" text-anchor="middle" font-size="21" fill="#756b5c">情緒</text><text x="220" y="340" text-anchor="middle" font-size="21" fill="#756b5c">理性分析</text><text x="220" y="380" text-anchor="middle" font-size="21" fill="#756b5c">世俗慣性</text>
 <path d="M370 310h130" stroke="#c5a86b" stroke-width="6" stroke-linecap="round"/><path d="M490 294l30 16-30 16z" fill="#c5a86b"/>
-<rect x="520" y="195" width="250" height="230" rx="115" fill="#fffdf8" stroke="#9dbfb0" stroke-width="4"/>
-<text x="645" y="282" text-anchor="middle" font-size="29" font-weight="700" fill="#46665a">空無／大我</text>
-<text x="645" y="326" text-anchor="middle" font-size="20" fill="#688078">暫時不由大腦、情感</text><text x="645" y="360" text-anchor="middle" font-size="20" fill="#688078">理性與邏輯主導</text>
-<path d="M795 310h120" stroke="#8bac9e" stroke-width="6" stroke-linecap="round"/><path d="M905 294l30 16-30 16z" fill="#8bac9e"/>
-<rect x="935" y="220" width="180" height="180" rx="28" fill="#ffffff" stroke="#8fb3c8" stroke-width="3"/>
-<text x="1025" y="285" text-anchor="middle" font-size="24" font-weight="700" fill="#49697a">更深層</text>
-<text x="1025" y="323" text-anchor="middle" font-size="24" font-weight="700" fill="#49697a">的判斷</text>
-<text x="600" y="535" text-anchor="middle" font-size="21" fill="#5a6f67">個人意志退開後，才有空間看見事情本身</text>
+<rect x="520" y="195" width="250" height="230" rx="115" fill="#FFFDF9" stroke="#8EAB9D" stroke-width="4"/>
+<text x="645" y="282" text-anchor="middle" font-size="29" font-weight="700" fill="#537568">空無／大我</text>
+<text x="645" y="326" text-anchor="middle" font-size="20" fill="#6D716B">暫時不由大腦、情感</text><text x="645" y="360" text-anchor="middle" font-size="20" fill="#6D716B">理性與邏輯主導</text>
+<path d="M795 310h120" stroke="#86A99A" stroke-width="6" stroke-linecap="round"/><path d="M905 294l30 16-30 16z" fill="#86A99A"/>
+<rect x="935" y="220" width="180" height="180" rx="28" fill="#ffffff" stroke="#86A99A" stroke-width="3"/>
+<text x="1025" y="285" text-anchor="middle" font-size="24" font-weight="700" fill="#4F7165">更深層</text>
+<text x="1025" y="323" text-anchor="middle" font-size="24" font-weight="700" fill="#4F7165">的判斷</text>
+<text x="600" y="535" text-anchor="middle" font-size="21" fill="#6C6257">個人意志退開後，才有空間看見事情本身</text>
 </g></svg>
