@@ -89,8 +89,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260902-single-detail-renderer-2",
-    "./articles-core-20260810-v6.js?v=20260902-single-detail-renderer-2&retry=1"
+    "./articles-core-20260810-v6.js?v=20260903-spiritual-good-death-3",
+    "./articles-core-20260810-v6.js?v=20260903-spiritual-good-death-3&retry=1"
   ];
   let lastError = null;
 
