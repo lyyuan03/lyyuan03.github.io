@@ -303,7 +303,7 @@ function initialize() {
       if (serial !== loadSerial) return;
       const saved = settingsSnapshot.exists() ? settingsSnapshot.data().settings?.[articleId] : null;
       const fallback = articleSnapshot.exists() ? articleSnapshot.data() : {};
-      const forcedThumbnailImage = FORCED_THUMBNAIL_IMAGES[articleId] || "";
+      const forcedThumbnailImage = resolveThumbnailUrl(FORCED_THUMBNAIL_IMAGES[articleId] || "");
       const forced = forcedThumbnailImage && String(saved?.thumbnailImage || "") !== forcedThumbnailImage
         ? normalizeSettings({
             ...(saved || fallback || {}),
