@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="撤退與退隱">
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7F1E7"/><stop offset="1" stop-color="#EFE8DE"/></linearGradient>
+  <linearGradient id="sea1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D8ECE8"/><stop offset="1" stop-color="#A7C8C0"/></linearGradient>
+  <linearGradient id="sea2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#BCDAD3"/><stop offset="1" stop-color="#789A91"/></linearGradient>
+</defs>
+<rect width="1200" height="675" rx="26" fill="url(#paper)"/>
+<circle cx="1015" cy="110" r="58" fill="#D9B66C" opacity=".68"/>
+<g opacity=".67" fill="none" stroke="#B8A47B" stroke-width="1.6">
+  <path d="M124 180c39-43 61-88 60-139m-60 139c-28 31-50 69-62 111m83-175-35-24m44 61 41-31m-66 78-41 12"/>
+</g>
+<text x="84" y="92" fill="#5F4A31" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="37" font-weight="700">撤退與退隱｜Withdrawal &amp; Retreat</text>
+<text x="84" y="132" fill="#6E756F" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="21">生命走向終點時，注意力會逐步從外在世界收回</text>
+<circle cx="600" cy="352" r="220" fill="#D7E5E0" opacity=".82"/>
+<circle cx="600" cy="352" r="160" fill="#E9F0EC"/>
+<circle cx="600" cy="352" r="103" fill="#FBF8F2"/>
+<circle cx="600" cy="352" r="44" fill="#D5B36F"/>
+<text x="600" y="198" text-anchor="middle" fill="#4F7167" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="22" font-weight="700">外在世界・社交・角色</text>
+<text x="600" y="270" text-anchor="middle" fill="#58796F" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="22">關係逐漸簡化</text>
+<text x="600" y="327" text-anchor="middle" fill="#58796F" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="22">注意力往內收</text>
+<text x="600" y="359" text-anchor="middle" fill="#FFFDF8" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="19" font-weight="700">核心</text>
+<path d="M260 352h120" stroke="#C7A565" stroke-width="6" stroke-linecap="round"/><path d="M380 352l-26-16v32z" fill="#C7A565"/>
+<path d="M940 352H820" stroke="#C7A565" stroke-width="6" stroke-linecap="round"/><path d="M820 352l26-16v32z" fill="#C7A565"/>
+<text x="600" y="514" text-anchor="middle" fill="#665F56" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="21">退隱不是疏離，而是生命方向正在改變</text>
+<path d="M0 548C160 500 300 566 455 526c160-41 285 55 445 7 115-35 196-30 300-59V675H0Z" fill="url(#sea1)"/>
+<path d="M0 603c180-39 322 20 480-7 172-29 292 38 455 3 104-22 178-18 265-40v116H0Z" fill="url(#sea2)" opacity=".8"/>
+<path d="M0 640c183-26 345 16 510-5 174-23 292 25 460 5 84-10 151-8 230-19v54H0Z" fill="#4F756E" opacity=".38"/>
+<g fill="#C7A565" opacity=".78"><circle cx="100" cy="563" r="3"/><circle cx="157" cy="592" r="2.5"/><circle cx="1046" cy="545" r="3.2"/><circle cx="1100" cy="574" r="2.6"/></g>
+</svg>
