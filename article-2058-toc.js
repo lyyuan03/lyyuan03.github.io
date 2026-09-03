@@ -1,4 +1,6 @@
 const ARTICLE_ID = "2058-future-person-prophecy";
+const activeArticleId = new URLSearchParams(location.search).get("id") || "";
+const isTargetArticle = activeArticleId === ARTICLE_ID;
 
 const sections = [
   { id: "section-1", title: "七則預言，為什麼讓人開始相信？", startsWith: "一個人，同時說中了奧運金牌數" },
@@ -119,18 +121,20 @@ function applyToc() {
   });
 }
 
-const root = document.getElementById("article-root") || document.body;
-new MutationObserver(applyToc).observe(root, { childList: true, subtree: true });
-document.addEventListener("DOMContentLoaded", applyToc, { once: true });
-document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") applyToc(); });
-window.addEventListener("pageshow", applyToc);
+if (isTargetArticle) {
+  const root = document.getElementById("article-root") || document.body;
+  new MutationObserver(applyToc).observe(root, { childList: true, subtree: true });
+  document.addEventListener("DOMContentLoaded", applyToc, { once: true });
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") applyToc(); });
+  window.addEventListener("pageshow", applyToc);
 
-let attempts = 0;
-const retry = window.setInterval(() => {
+  let attempts = 0;
+  const retry = window.setInterval(() => {
+    applyToc();
+    attempts += 1;
+    if (attempts >= 30 && getView()?.querySelector("#article-2058-toc")) window.clearInterval(retry);
+    else if (attempts >= 60) window.clearInterval(retry);
+  }, 500);
+
   applyToc();
-  attempts += 1;
-  if (attempts >= 30 && getView()?.querySelector("#article-2058-toc")) window.clearInterval(retry);
-  else if (attempts >= 60) window.clearInterval(retry);
-}, 500);
-
-applyToc();
+}
