@@ -19,10 +19,14 @@ const DRAGON_CHANT_TITLE = "元神所吟唱的靈音——它喚醒了一個人�
 const DRAGON_CHANT_PRIMARY_IMAGE = "assets/articles/dragon-chant-youtube-awakening/dragon-chant-recording.png?v=20260822-3";
 const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
 const SPIRITUAL_GOOD_DEATH_IMAGE_OVERRIDES = new Map([
-  ["01-last-call.svg", "assets/articles/spiritual-good-death/01-last-call-coverstyle-v4.svg"],
-  ["02-greater-self.svg", "assets/articles/spiritual-good-death/02-greater-self-coverstyle-v4.svg"],
-  ["03-withdrawal-retreat.svg", "assets/articles/spiritual-good-death/03-withdrawal-retreat-coverstyle-v4.svg"],
-  ["04-three-stages.svg", "assets/articles/spiritual-good-death/04-three-stages-coverstyle-v4.svg"]
+  ["01-last-call.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
+  ["02-greater-self.svg", "assets/articles/spiritual-good-death/02-greater-self-final.png?v=20260903-final"],
+  ["03-withdrawal-retreat.svg", "assets/articles/spiritual-good-death/03-withdrawal-retreat-final.png?v=20260903-final"],
+  ["04-three-stages.svg", "assets/articles/spiritual-good-death/04-three-stages-final.png?v=20260903-final"],
+  ["01-last-call-coverstyle-v4.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
+  ["02-greater-self-coverstyle-v4.svg", "assets/articles/spiritual-good-death/02-greater-self-final.png?v=20260903-final"],
+  ["03-withdrawal-retreat-coverstyle-v4.svg", "assets/articles/spiritual-good-death/03-withdrawal-retreat-final.png?v=20260903-final"],
+  ["04-three-stages-coverstyle-v4.svg", "assets/articles/spiritual-good-death/04-three-stages-final.png?v=20260903-final"]
 ]);
 
 function applySpiritualGoodDeathImageOverrides() {
@@ -114,8 +118,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260903-spiritual-good-death-images-v4",
-    "./articles-core-20260810-v6.js?v=20260903-spiritual-good-death-images-v4&retry=1"
+    "./articles-core-20260810-v6.js?v=20260903-final-png",
+    "./articles-core-20260810-v6.js?v=20260903-final-png&retry=1"
   ];
   let lastError = null;
 
@@ -142,8 +146,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20260822-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260903-spiritual-good-death-images-v4"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260903-spiritual-good-death-images-v4"]
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20260903-final-png"],
+    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20260903-final-png"]
   ];
   const importWithRetry = async (path) => {
     try {

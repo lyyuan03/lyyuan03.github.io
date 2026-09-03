@@ -1,6 +1,6 @@
 import { db } from "./firebase-config.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { staticArticles } from "./static-articles.js?v=20260903-spiritual-good-death-3";
+import { staticArticles } from "./static-articles.js?v=20260903-final-png";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";
