@@ -1,0 +1,73 @@
+name: Sync Channeling Draft Inline Images
+
+on:
+  push:
+    branches:
+      - media/channeling-inline-images-20260905
+    paths:
+      - .github/deploy-triggers/channeling-inline-images-20260905.txt
+
+permissions:
+  contents: write
+
+jobs:
+  generate-upload-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PROJECT_ID: lyyuan03-membership
+      BUCKET_NAME: lyyuan03-membership.firebasestorage.app
+      ARTICLE_ID: channeling-ability-secrets-draft
+    steps:
+      - name: Checkout isolated media branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install image and Firebase dependencies
+        run: python -m pip install --disable-pip-version-check pillow numpy google-cloud-storage google-cloud-firestore requests
+
+      - name: Generate six ChatGPT-authored 16:9 images
+        run: python scripts/generate-channeling-inline-images.py
+
+      - name: Validate generated files before upload
+        run: |
+          set -euo pipefail
+          test "$(find assets/articles/channeling-ability-secrets-draft -maxdepth 1 -type f -name '*.jpg' | wc -l)" -eq 6
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          files=sorted(Path('assets/articles/channeling-ability-secrets-draft').glob('*.jpg'))
+          assert len(files)==6
+          for p in files:
+              with Image.open(p) as im:
+                  assert im.size==(1600,900), (p, im.size)
+                  assert im.format=='JPEG', (p, im.format)
+              print('validated', p)
+          PY
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Upload six images and sync Firestore article settings
+        run: python scripts/sync-channeling-inline-images.py
+
+      - name: Commit generated source images to isolated branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/articles/channeling-ability-secrets-draft/*.jpg
+          if git diff --cached --quiet; then
+            echo "Generated image files already match branch copy."
+            exit 0
+          fi
+          git commit -m "Add six generated channeling article images"
+          git push origin HEAD:media/channeling-inline-images-20260905
