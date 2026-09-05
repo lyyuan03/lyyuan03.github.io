@@ -1,0 +1,1 @@
+Production image assets are deployed. Verify all six live URLs, write 1 public + 5 private image markdown entries, update inlineImageSettings to 6/6, preserve paid draft security, and verify final Firestore state.
