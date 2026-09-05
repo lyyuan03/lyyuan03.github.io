@@ -1,8 +1,10 @@
 import hashlib
+import io
 import re
 from copy import deepcopy
 
 import requests
+from PIL import Image
 from google.cloud import firestore
 
 PROJECT_ID = "lyyuan03-membership"
@@ -10,9 +12,10 @@ ARTICLE_ID = "channeling-ability-secrets-draft"
 SETTINGS_ID = "__article-thumbnail-settings"
 PAID_MARKER = "<!-- paid-only -->"
 BASE = "https://lyyuan.tw/assets/articles/channeling-ability-secrets-draft"
-REVISION = "chatgpt-teaching-infographics-20260905-v2"
+REVISION = "chatgpt-photo-first-shift-images-20260905-v3"
 
 FILES = [
+    ("00-photo-first.jpg", "通靈、樂透與股票之間的寫實主題照片"),
     ("01-secret-amplify.svg", "第一個秘密：通靈只會放大既有能力"),
     ("02-secret-ability-heart-cultivation.svg", "第二個秘密：能力、心性與修行是不同層次"),
     ("03-secret-spirit-levels.svg", "第三個秘密：所通之靈的層次決定它關心什麼"),
@@ -21,8 +24,9 @@ FILES = [
     ("06-secret-return-heart.svg", "第六個秘密：高層次的靈性把人帶回自己的心"),
 ]
 URLS = [f"{BASE}/{name}" for name, _ in FILES]
-THUMBNAIL_URL = f"{BASE}/00-thumbnail-teaching.svg"
-POSITIONS = [(50,50,100)] * 6
+THUMBNAIL_URL = URLS[0]
+POSITIONS = [(50, 50, 100)] * len(FILES)
+PUBLIC_COUNT = 2
 PRIVATE_ANCHORS = [
     "## 第二個秘密｜能力、心性、修行，本來就是三個不同層次",
     "## 第三個秘密｜通靈與「所通的靈」是綁在一起的",
@@ -32,10 +36,16 @@ PRIVATE_ANCHORS = [
 ]
 
 
-def verify_svg(url):
+def verify_asset(url):
     response = requests.get(url, timeout=30, headers={"Cache-Control": "no-cache"})
     if response.status_code != 200:
         raise RuntimeError(f"image URL not live: {url} HTTP {response.status_code}")
+    if url.lower().endswith(".jpg") or url.lower().endswith(".jpeg"):
+        with Image.open(io.BytesIO(response.content)) as image:
+            if image.size != (1600, 900) or image.format != "JPEG":
+                raise RuntimeError(f"invalid live JPEG: {url} {image.format} {image.size}")
+        print(f"live image verified: {url} 1600x900 JPEG")
+        return
     text = response.text
     if "<svg" not in text or 'width="1600"' not in text or 'height="900"' not in text:
         raise RuntimeError(f"invalid 1600x900 SVG: {url}")
@@ -43,9 +53,8 @@ def verify_svg(url):
 
 
 def verify_urls():
-    verify_svg(THUMBNAIL_URL)
     for url in URLS:
-        verify_svg(url)
+        verify_asset(url)
 
 
 def managed_url(url):
@@ -56,7 +65,7 @@ def managed_url(url):
 def strip_managed_images(text):
     source = str(text or "")
     pattern = re.compile(r"\n*!\[[^\]]*\]\(([^)]+)\)\n*")
-    source = pattern.sub(lambda m: "\n\n" if managed_url(m.group(1)) else m.group(0), source)
+    source = pattern.sub(lambda match: "\n\n" if managed_url(match.group(1)) else match.group(0), source)
     return re.sub(r"\n{3,}", "\n\n", source).strip()
 
 
@@ -106,9 +115,12 @@ def sync_firestore():
 
         public_clean = strip_managed_images(public_before)
         private_clean = strip_managed_images(private_body)
-        next_public = f"{public_clean}\n\n{md(0)}\n\n{PAID_MARKER}".strip()
+
+        public_images = "\n\n".join(md(index) for index in range(PUBLIC_COUNT))
+        next_public = f"{public_clean}\n\n{public_images}\n\n{PAID_MARKER}".strip()
+
         next_private = private_clean
-        for index, anchor in enumerate(PRIVATE_ANCHORS, start=1):
+        for index, anchor in enumerate(PRIVATE_ANCHORS, start=PUBLIC_COUNT):
             if anchor not in next_private:
                 raise RuntimeError(f"private insertion anchor missing: {anchor}")
             next_private = next_private.replace(anchor, f"{anchor}\n\n{md(index)}", 1)
@@ -121,10 +133,10 @@ def sync_firestore():
 
         inline_map = deepcopy(settings.get("inlineImageSettings") or {})
         inline_map[ARTICLE_ID] = {
-            "version": 2,
+            "version": 3,
             "ratio": "16:9",
             "fit": "cover",
-            "maxImages": 6,
+            "maxImages": len(FILES),
             "images": [
                 {"src": url, "alt": alt, "positionX": x, "positionY": y, "scale": scale}
                 for (_, alt), url, (x, y, scale) in zip(FILES, URLS, POSITIONS)
@@ -193,15 +205,20 @@ def sync_firestore():
     if article.get("status") != "draft" or article.get("accessType") != "paid" or article.get("privatePaidContent") is not True:
         raise RuntimeError("final access flags verification failed")
     safe_public = str(article.get("content") or "")
+    if PAID_MARKER not in safe_public:
+        raise RuntimeError("final marker missing")
     before, after = safe_public.split(PAID_MARKER, 1)
     if after.strip():
         raise RuntimeError("final public doc leaks private body")
     private_body = str(paid.get("content") or "")
-    public_managed = [u for u in image_urls(before) if managed_url(u)]
-    private_managed = [u for u in image_urls(private_body) if managed_url(u)]
-    if public_managed != URLS[:1] or private_managed != URLS[1:]:
-        raise RuntimeError("final article image placement verification failed")
-    if [item.get("src") for item in images] != URLS or len(images) != 6:
+    if PAID_MARKER in private_body:
+        raise RuntimeError("final private body contains marker")
+
+    public_managed = [url for url in image_urls(before) if managed_url(url)]
+    private_managed = [url for url in image_urls(private_body) if managed_url(url)]
+    if public_managed != URLS[:PUBLIC_COUNT] or private_managed != URLS[PUBLIC_COUNT:]:
+        raise RuntimeError(f"final article image placement verification failed: public={public_managed} private={private_managed}")
+    if [item.get("src") for item in images] != URLS or len(images) != len(FILES):
         raise RuntimeError("inlineImageSettings verification failed")
     if str(article.get("thumbnailImage") or "") != THUMBNAIL_URL or str(thumb.get("thumbnailImage") or "") != THUMBNAIL_URL:
         raise RuntimeError("thumbnail verification failed")
@@ -210,7 +227,11 @@ def sync_firestore():
     if str(paid.get("contentHash") or "") != digest or int(paid.get("contentVersion") or 0) != version:
         raise RuntimeError("private hash/version mismatch")
 
-    print(f"FIRESTORE_SYNC_OK article={ARTICLE_ID} status=draft access=paid images=6/6 thumbnail=ok public=1 private=5 version={version} hash={digest}")
+    print(
+        f"FIRESTORE_SYNC_OK article={ARTICLE_ID} status=draft access=paid "
+        f"images={len(FILES)}/{len(FILES)} thumbnail=photo public={PUBLIC_COUNT} "
+        f"private={len(FILES)-PUBLIC_COUNT} version={version} hash={digest}"
+    )
 
 
 if __name__ == "__main__":
