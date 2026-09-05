@@ -1,0 +1,1 @@
+Run the one-shot Firestore repair for channeling-ability-secrets-draft first image after verified GitHub Pages deployment. Cache-bust revision: 20260905-first-image-fix-1.
