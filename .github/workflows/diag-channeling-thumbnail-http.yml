@@ -1,0 +1,30 @@
+name: Diagnose Channeling Thumbnail HTTP
+
+on:
+  push:
+    branches:
+      - diag/channeling-thumbnail-http-20260905
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect production image response
+        shell: bash
+        run: |
+          set -u
+          URL='https://lyyuan.tw/assets/articles/channeling-ability-secrets-draft/00-photo-first-v2.jpg?v=20260905-1821'
+          curl -L -sS -D /tmp/headers.txt -o /tmp/body.bin "$URL" || true
+          echo '--- HEADERS ---'
+          cat /tmp/headers.txt || true
+          echo '--- SIZE ---'
+          wc -c /tmp/body.bin || true
+          echo '--- FILE ---'
+          file /tmp/body.bin || true
+          echo '--- FIRST 64 BYTES ---'
+          xxd -l 64 /tmp/body.bin || true
+          echo '--- FIRST 300 TEXT BYTES ---'
+          head -c 300 /tmp/body.bin | strings || true
