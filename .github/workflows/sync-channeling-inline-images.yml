@@ -57,7 +57,7 @@ jobs:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Upload six images and sync Firestore article settings
-        run: python scripts/sync-channeling-inline-images.py
+        run: python scripts/sync-channeling-inline-images-v2.py
 
       - name: Commit generated source images to isolated branch
         run: |
