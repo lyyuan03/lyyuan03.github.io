@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="通靈拿來猜樂透、預測股票？">
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FAF5EA"/><stop offset="1" stop-color="#F2EBDD"/></linearGradient>
+  <linearGradient id="sea1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#DCEBE5"/><stop offset="1" stop-color="#AFCBC2"/></linearGradient>
+  <linearGradient id="sea2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#BED7D0"/><stop offset="1" stop-color="#7E9F95"/></linearGradient>
+</defs>
+<rect width="1600" height="900" fill="url(#paper)"/>
+<circle cx="1465" cy="92" r="62" fill="#D9B66C" opacity=".68"/>
+<g fill="none" stroke="#B8A47B" stroke-width="2" opacity=".55"><path d="M80 135c42-66 74-83 112-92M104 180c54-56 84-72 142-80M1455 165c-26 42-52 70-92 98m92-98c18 54 48 87 86 112"/></g>
+<text x="800" y="115" text-anchor="middle" fill="#5F4A31" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="66" font-weight="700">通靈拿來猜樂透、預測股票？</text>
+<text x="800" y="172" text-anchor="middle" fill="#6F5B42" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="31">會這樣反駁，已經透露你怎麼理解「能力」</text>
+<rect x="85" y="245" width="520" height="360" rx="28" fill="#FBF8F2" stroke="#CCB98F" stroke-width="2.5"/>
+<text x="345" y="302" text-anchor="middle" fill="#674F36" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="34" font-weight="700">多數人想像的通靈</text>
+<text x="345" y="344" text-anchor="middle" fill="#766B5D" font-family="Noto Sans TC,sans-serif" font-size="22">快速得到答案，換取更好的結果</text>
+<g font-family="Noto Sans TC,sans-serif" text-anchor="middle">
+  <circle cx="190" cy="438" r="72" fill="#F2E8D5"/><text x="190" y="426" fill="#5D776F" font-size="28" font-weight="700">樂透</text><text x="190" y="466" fill="#8B7657" font-size="20">提前知道號碼</text>
+  <circle cx="345" cy="438" r="72" fill="#EEF2E8"/><path d="M304 470l36-36 28 18 42-66" fill="none" stroke="#739087" stroke-width="9" stroke-linecap="round"/><text x="345" y="535" fill="#6B6359" font-size="20">預測漲跌</text>
+  <circle cx="500" cy="438" r="72" fill="#F3EBDD"/><rect x="465" y="390" width="70" height="92" rx="7" fill="none" stroke="#B39A6D" stroke-width="5"/><text x="500" y="430" fill="#8B7657" font-size="26">100</text><text x="500" y="535" fill="#6B6359" font-size="20">知道考題</text>
+</g>
+<path d="M630 430h105" stroke="#C7A565" stroke-width="7" stroke-linecap="round"/><path d="M735 430l-25-17v34z" fill="#C7A565"/>
+<circle cx="800" cy="430" r="135" fill="#F8F3E9" stroke="#C7B895" stroke-width="2.5"/>
+<text x="800" y="394" text-anchor="middle" fill="#765B35" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="31">這其實是</text>
+<text x="800" y="445" text-anchor="middle" fill="#5C4931" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="42" font-weight="700">對能力的誤解</text>
+<text x="800" y="490" text-anchor="middle" fill="#756B5E" font-family="Noto Sans TC,sans-serif" font-size="20">把靈性能力當成</text>
+<text x="800" y="522" text-anchor="middle" fill="#756B5E" font-family="Noto Sans TC,sans-serif" font-size="20">滿足欲望與取得優勢的工具</text>
+<path d="M940 430h75" stroke="#84A79C" stroke-width="7" stroke-linecap="round"/><path d="M1015 430l-25-17v34z" fill="#84A79C"/>
+<rect x="1040" y="245" width="475" height="360" rx="28" fill="#FBF8F2" stroke="#AFC6BD" stroke-width="2.5"/>
+<text x="1278" y="302" text-anchor="middle" fill="#4F7066" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="34" font-weight="700">真正的靈性修行</text>
+<text x="1278" y="344" text-anchor="middle" fill="#68756F" font-family="Noto Sans TC,sans-serif" font-size="22">理解內在的自己，而非控制外在結果</text>
+<g font-family="Noto Sans TC,sans-serif" text-anchor="middle">
+  <circle cx="1145" cy="438" r="70" fill="#E7EFEA"/><text x="1145" y="430" fill="#5E7D72" font-size="28" font-weight="700">看見</text><text x="1145" y="466" fill="#6D786F" font-size="20">自己的心</text>
+  <circle cx="1280" cy="438" r="70" fill="#F3E6C7"/><text x="1280" y="430" fill="#A88448" font-size="28" font-weight="700">理解</text><text x="1280" y="466" fill="#7A6B55" font-size="20">欲望來源</text>
+  <circle cx="1415" cy="438" r="70" fill="#E7EFEA"/><text x="1415" y="430" fill="#5E7D72" font-size="28" font-weight="700">回到</text><text x="1415" y="466" fill="#6D786F" font-size="20">清明穩定</text>
+</g>
+<line x1="320" y1="668" x2="1280" y2="668" stroke="#C7B48B" stroke-width="2"/><circle cx="800" cy="668" r="6" fill="#B5965B"/>
+<text x="800" y="724" text-anchor="middle" fill="#65533C" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="28">你以為在驗證通靈，其實也在暴露自己如何理解能力</text>
+<path d="M0 730C210 680 390 760 585 714c192-45 348 58 548 2 174-49 300-30 467-72V900H0Z" fill="url(#sea1)" opacity=".78"/>
+<path d="M0 792c226-42 407 28 609-5 195-31 363 44 553 2 163-36 281-20 438-52v163H0Z" fill="url(#sea2)" opacity=".68"/>
+<path d="M0 850c245-30 430 18 650-7 208-24 365 31 568 6 139-17 246-10 382-26v77H0Z" fill="#4F756E" opacity=".30"/>
+</svg>
