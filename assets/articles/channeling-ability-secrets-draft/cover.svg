@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="通靈能力與修行層次的抽象封面">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f3528"/>
+      <stop offset="0.55" stop-color="#606330"/>
+      <stop offset="1" stop-color="#594F47"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="46%" r="42%">
+      <stop offset="0" stop-color="#d7c5a2" stop-opacity="0.78"/>
+      <stop offset="0.45" stop-color="#A58254" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#A58254" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="800" cy="410" r="300" fill="url(#halo)"/>
+  <g fill="none" stroke="#c7b28a" stroke-opacity="0.45">
+    <circle cx="800" cy="410" r="230" stroke-width="2"/>
+    <circle cx="800" cy="410" r="165" stroke-width="1.5"/>
+    <circle cx="800" cy="410" r="96" stroke-width="1"/>
+  </g>
+  <path d="M260 720 C470 580 600 620 800 490 C980 370 1110 380 1340 210" fill="none" stroke="#d2c19d" stroke-width="6" stroke-linecap="round" stroke-opacity="0.62"/>
+  <path d="M245 736 C470 600 610 650 810 520 C1010 390 1130 400 1360 230" fill="none" stroke="#87764d" stroke-width="22" stroke-linecap="round" stroke-opacity="0.16" filter="url(#blur)"/>
+  <g fill="#d8c59a" fill-opacity="0.68">
+    <circle cx="486" cy="624" r="7"/><circle cx="610" cy="596" r="5"/><circle cx="720" cy="545" r="4"/><circle cx="907" cy="454" r="6"/><circle cx="1042" cy="387" r="4"/><circle cx="1174" cy="330" r="5"/>
+  </g>
+  <path d="M790 248 C755 328 757 415 800 514 C844 416 845 328 810 248 Z" fill="#c6b382" fill-opacity="0.24"/>
+  <rect y="780" width="1600" height="120" fill="#171a15" fill-opacity="0.18"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600" role="img" aria-label="通靈能力與修行主題直式縮圖">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#31362a"/><stop offset="0.56" stop-color="#606330"/><stop offset="1" stop-color="#594F47"/></linearGradient>
+    <radialGradient id="halo" cx="50%" cy="38%" r="36%"><stop offset="0" stop-color="#dfd2b9" stop-opacity="0.72"/><stop offset="0.42" stop-color="#A58254" stop-opacity="0.25"/><stop offset="1" stop-color="#A58254" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="900" height="1600" fill="url(#bg)"/>
+  <circle cx="450" cy="600" r="310" fill="url(#halo)"/>
+  <g fill="none" stroke="#d8c7a6" stroke-opacity="0.36">
+    <circle cx="450" cy="600" r="220" stroke-width="2"/><circle cx="450" cy="600" r="150"/><circle cx="450" cy="600" r="82"/>
+  </g>
+  <path d="M190 1240 C290 1040 340 930 450 810 C555 695 625 545 720 310" fill="none" stroke="#d9c8a7" stroke-width="5" stroke-linecap="round" stroke-opacity="0.56"/>
+  <g fill="#d8c6a2" fill-opacity="0.64"><circle cx="288" cy="1035" r="7"/><circle cx="376" cy="910" r="5"/><circle cx="484" cy="780" r="6"/><circle cx="580" cy="620" r="5"/><circle cx="656" cy="458" r="4"/></g>
+</svg>
