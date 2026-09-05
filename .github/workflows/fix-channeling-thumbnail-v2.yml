@@ -24,6 +24,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install image verification dependency
+        run: python -m pip install --disable-pip-version-check pillow
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -128,6 +136,7 @@ jobs:
               im.load()
               assert im.format == 'JPEG', im.format
               assert im.size == (480, 270), im.size
+              assert im.mode == 'RGB', im.mode
               print('PUBLIC_IMAGE_VERIFY_OK', im.format, im.size, im.mode)
           PY
               exit 0
