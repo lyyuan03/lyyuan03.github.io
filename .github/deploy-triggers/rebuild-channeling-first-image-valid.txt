@@ -1,0 +1,1 @@
+Rebuild channeling first image from verified 800x450 JPEG chunks. Expected SHA-256: 069663c7aa46525edf679047c27af19c2cdab7ad69f920b6f6dce6fe481dc8ef.
