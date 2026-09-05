@@ -1,4 +1,4 @@
-name: Reencode Channeling First Image
+name: Rebuild Channeling First Image
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  reencode:
+  rebuild:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -26,20 +26,37 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        run: python -m pip install --disable-pip-version-check pillow requests
+      - name: Install Pillow
+        run: python -m pip install --disable-pip-version-check pillow
 
-      - name: Re-encode first image as baseline JPEG
-        run: python scripts/reencode-channeling-first-image.py
-
-      - name: Commit repaired image
+      - name: Rebuild verified WebP from staged chunks
+        shell: bash
         run: |
+          set -euo pipefail
+          mkdir -p assets/articles/channeling-ability-secrets-draft
+          cat .tmp/channeling-first-image/chunk*.txt | tr -d '\r\n' | base64 -d > assets/articles/channeling-ability-secrets-draft/00-photo-first.webp
+          echo "43e37518a5f65383baa286a3bb0df3db0f5186429dcadce44b098deb8c16550d  assets/articles/channeling-ability-secrets-draft/00-photo-first.webp" | sha256sum -c -
+          python - <<'PY'
+          from PIL import Image
+          p = 'assets/articles/channeling-ability-secrets-draft/00-photo-first.webp'
+          with Image.open(p) as im:
+              im.load()
+              assert im.format == 'WEBP', im.format
+              assert im.size == (960, 540), im.size
+              assert im.mode in ('RGB', 'RGBA'), im.mode
+              print(f'IMAGE_VERIFY_OK format={im.format} size={im.size} mode={im.mode}')
+          PY
+
+      - name: Commit repaired image asset
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/articles/channeling-ability-secrets-draft/00-photo-first.jpg
+          git add assets/articles/channeling-ability-secrets-draft/00-photo-first.webp
           if git diff --cached --quiet; then
             echo "No image byte changes detected"
           else
-            git commit -m "重新編碼通靈文選首圖"
+            git commit -m "修復通靈文選首圖檔案"
             git push origin HEAD:fix/channeling-first-image-render-20260905
           fi
