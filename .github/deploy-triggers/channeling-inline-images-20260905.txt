@@ -1,0 +1,1 @@
+Generate six 16:9 ChatGPT-authored images for channeling-ability-secrets-draft, upload to Firebase Storage, insert them into the paid draft, and verify Firestore inlineImageSettings.
