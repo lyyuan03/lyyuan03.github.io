@@ -11,13 +11,9 @@ permissions:
   contents: write
 
 jobs:
-  generate-upload-sync:
+  generate-images:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
-    env:
-      PROJECT_ID: lyyuan03-membership
-      BUCKET_NAME: lyyuan03-membership.firebasestorage.app
-      ARTICLE_ID: channeling-ability-secrets-draft
+    timeout-minutes: 8
     steps:
       - name: Checkout isolated media branch
         uses: actions/checkout@v4
@@ -29,13 +25,13 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install image and Firebase dependencies
-        run: python -m pip install --disable-pip-version-check pillow numpy google-cloud-storage google-cloud-firestore requests
+      - name: Install image dependencies
+        run: python -m pip install --disable-pip-version-check pillow numpy
 
       - name: Generate six ChatGPT-authored 16:9 images
         run: python scripts/generate-channeling-inline-images.py
 
-      - name: Validate generated files before upload
+      - name: Validate generated files
         run: |
           set -euo pipefail
           test "$(find assets/articles/channeling-ability-secrets-draft -maxdepth 1 -type f -name '*.jpg' | wc -l)" -eq 6
@@ -51,15 +47,7 @@ jobs:
               print('validated', p)
           PY
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
-      - name: Upload six images and sync Firestore article settings
-        run: python scripts/sync-channeling-inline-images-v2.py
-
-      - name: Commit generated source images to isolated branch
+      - name: Commit six generated source images to isolated branch
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
