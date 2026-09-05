@@ -1,1 +1,1 @@
-Rebuild the known-good 960x540 WebP first image from verified base64 chunks. Expected SHA-256: 43e37518a5f65383baa286a3bb0df3db0f5186429dcadce44b098deb8c16550d. Trigger 2.
+Rebuild the known-good 960x540 WebP first image from all 8 verified base64 chunks. Expected SHA-256: 43e37518a5f65383baa286a3bb0df3db0f5186429dcadce44b098deb8c16550d. Trigger 3.
