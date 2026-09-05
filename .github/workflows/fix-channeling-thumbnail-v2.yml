@@ -1,0 +1,138 @@
+name: Fix Channeling Thumbnail V2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/deploy-triggers/fix-channeling-thumbnail-v2.txt'
+      - 'assets/articles/channeling-ability-secrets-draft/00-photo-first-v2.jpg'
+      - '.github/workflows/fix-channeling-thumbnail-v2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sync-firestore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      PROJECT_ID: lyyuan03-membership
+      ARTICLE_ID: channeling-ability-secrets-draft
+      IMAGE_URL: https://lyyuan.tw/assets/articles/channeling-ability-secrets-draft/00-photo-first-v2.jpg?v=20260905-1821
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Update article thumbnail and first inline image
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import urllib.request
+
+          project = os.environ['PROJECT_ID']
+          article_id = os.environ['ARTICLE_ID']
+          image_url = os.environ['IMAGE_URL']
+          token = subprocess.check_output(['gcloud', 'auth', 'print-access-token'], text=True).strip()
+          root = f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents'
+          article_url = f'{root}/articles/{article_id}'
+          settings_url = f'{root}/articles/__article-thumbnail-settings'
+
+          def request_json(url, method='GET', payload=None):
+              data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode('utf-8')
+              req = urllib.request.Request(url, data=data, method=method)
+              req.add_header('Authorization', f'Bearer {token}')
+              if data is not None:
+                  req.add_header('Content-Type', 'application/json; charset=utf-8')
+              with urllib.request.urlopen(req) as resp:
+                  return json.loads(resp.read().decode('utf-8'))
+
+          article = request_json(article_url)
+          fields = article.setdefault('fields', {})
+          content = fields.get('content', {}).get('stringValue', '')
+          pattern = re.compile(r'(?:https://lyyuan\.tw)?/?assets/articles/channeling-ability-secrets-draft/00-photo-first(?:-v\d+)?\.(?:jpg|jpeg|webp)(?:\?[^)\s\"\']*)?')
+          content = pattern.sub(image_url, content)
+
+          article_payload = {
+              'fields': {
+                  'thumbnailImage': {'stringValue': image_url},
+                  'content': {'stringValue': content},
+              }
+          }
+          article_patch = article_url + '?updateMask.fieldPaths=thumbnailImage&updateMask.fieldPaths=content'
+          request_json(article_patch, 'PATCH', article_payload)
+
+          settings = request_json(settings_url)
+          sfields = settings.setdefault('fields', {})
+          settings_map = sfields.setdefault('settings', {'mapValue': {'fields': {}}})
+          settings_entries = settings_map.setdefault('mapValue', {}).setdefault('fields', {})
+          article_settings = settings_entries.setdefault(article_id, {'mapValue': {'fields': {}}})
+          article_settings_fields = article_settings.setdefault('mapValue', {}).setdefault('fields', {})
+          article_settings_fields['thumbnailImage'] = {'stringValue': image_url}
+
+          inline_map = sfields.setdefault('inlineImageSettings', {'mapValue': {'fields': {}}})
+          inline_entries = inline_map.setdefault('mapValue', {}).setdefault('fields', {})
+          inline_article = inline_entries.setdefault(article_id, {'mapValue': {'fields': {}}})
+          inline_fields = inline_article.setdefault('mapValue', {}).setdefault('fields', {})
+          images_field = inline_fields.setdefault('images', {'arrayValue': {'values': []}})
+          images = images_field.setdefault('arrayValue', {}).setdefault('values', [])
+          if not images:
+              images.append({'mapValue': {'fields': {}}})
+          first_fields = images[0].setdefault('mapValue', {}).setdefault('fields', {})
+          first_fields['src'] = {'stringValue': image_url}
+
+          settings_payload = {
+              'fields': {
+                  'settings': sfields['settings'],
+                  'inlineImageSettings': sfields['inlineImageSettings'],
+              }
+          }
+          settings_patch = settings_url + '?updateMask.fieldPaths=settings&updateMask.fieldPaths=inlineImageSettings'
+          request_json(settings_patch, 'PATCH', settings_payload)
+
+          verify_article = request_json(article_url)
+          verify_settings = request_json(settings_url)
+          actual_thumb = verify_article['fields']['thumbnailImage']['stringValue']
+          actual_settings_thumb = verify_settings['fields']['settings']['mapValue']['fields'][article_id]['mapValue']['fields']['thumbnailImage']['stringValue']
+          actual_inline = verify_settings['fields']['inlineImageSettings']['mapValue']['fields'][article_id]['mapValue']['fields']['images']['arrayValue']['values'][0]['mapValue']['fields']['src']['stringValue']
+          assert actual_thumb == image_url, (actual_thumb, image_url)
+          assert actual_settings_thumb == image_url, (actual_settings_thumb, image_url)
+          assert actual_inline == image_url, (actual_inline, image_url)
+          print('FIRESTORE_VERIFY_OK thumbnail=ok settings=ok inline_first=ok')
+          PY
+
+      - name: Verify deployed image bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4 5; do
+            code="$(curl -L --silent --show-error --output /tmp/channeling-first-v2.jpg --write-out '%{http_code}' "$IMAGE_URL")"
+            if [[ "$code" == "200" ]]; then
+              python3 - <<'PY'
+          from PIL import Image
+          p='/tmp/channeling-first-v2.jpg'
+          with Image.open(p) as im:
+              im.load()
+              assert im.format == 'JPEG', im.format
+              assert im.size == (480, 270), im.size
+              print('PUBLIC_IMAGE_VERIFY_OK', im.format, im.size, im.mode)
+          PY
+              exit 0
+            fi
+            sleep 20
+          done
+          echo 'Image was not available from production after retries.' >&2
+          exit 1
