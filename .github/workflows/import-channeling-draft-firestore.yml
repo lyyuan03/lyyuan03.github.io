@@ -1,0 +1,146 @@
+name: Import Channeling Draft To Firestore
+
+on:
+  push:
+    branches:
+      - draft/channeling-firestore-import-20260905
+    paths:
+      - '.github/deploy-triggers/channeling-draft-firestore-import.txt'
+      - '.github/workflows/import-channeling-draft-firestore.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import-draft:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_ID: lyyuan03-membership
+      ARTICLE_ID: channeling-ability-secrets-draft
+      ARTICLE_FILE: article-channeling-ability-secrets-draft.js
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare public/private split
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import os
+          import re
+
+          path = Path(os.environ['ARTICLE_FILE'])
+          source = path.read_text(encoding='utf-8')
+          marker = '<!-- paid-only -->'
+          prefix = '  content: `'
+          start = source.find(prefix)
+          end = source.rfind('`\n};')
+          if start < 0 or end < 0 or end <= start:
+              raise SystemExit('Article content template literal not found.')
+          body_start = start + len(prefix)
+          body = source[body_start:end]
+          if marker not in body:
+              raise SystemExit('Paid marker missing.')
+          public, private = body.split(marker, 1)
+          public = public.strip()
+          private = private.strip()
+          if not public:
+              raise SystemExit('Public preview is empty.')
+          if not private:
+              Path('/tmp/already-sanitized').write_text('1', encoding='utf-8')
+              raise SystemExit(0)
+          safe = f'{public}\n\n{marker}'
+          digest = hashlib.sha256(private.encode('utf-8')).hexdigest()
+          Path('/tmp/public-content.txt').write_text(safe, encoding='utf-8')
+          Path('/tmp/private-content.txt').write_text(private, encoding='utf-8')
+          Path('/tmp/content-hash.txt').write_text(digest, encoding='utf-8')
+          Path('/tmp/sanitized-article.js').write_text(source[:body_start] + safe + source[end:], encoding='utf-8')
+          PY
+
+      - name: Authenticate to Google Cloud
+        if: ${{ hashFiles('/tmp/already-sanitized') == '' }}
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        if: ${{ hashFiles('/tmp/already-sanitized') == '' }}
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Write draft to Firestore securely
+        if: ${{ hashFiles('/tmp/already-sanitized') == '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCESS_TOKEN="$(gcloud auth print-access-token)"
+          NOW_ISO="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          HASH="$(cat /tmp/content-hash.txt)"
+          PRIVATE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/paidArticleBodies/$ARTICLE_ID"
+          CURRENT_STATUS="$(curl --silent --show-error --output /tmp/private-current.json --write-out '%{http_code}' --header "Authorization: Bearer $ACCESS_TOKEN" "$PRIVATE_URL")"
+          if [[ "$CURRENT_STATUS" == "200" ]]; then
+            PREVIOUS_HASH="$(jq -r '.fields.contentHash.stringValue // ""' /tmp/private-current.json)"
+            PREVIOUS_VERSION="$(jq -r '.fields.contentVersion.integerValue // "0"' /tmp/private-current.json)"
+            if [[ "$PREVIOUS_HASH" == "$HASH" ]]; then VERSION="$PREVIOUS_VERSION"; else VERSION=$((PREVIOUS_VERSION + 1)); fi
+          elif [[ "$CURRENT_STATUS" == "404" ]]; then
+            VERSION=1
+          else
+            cat /tmp/private-current.json
+            exit 1
+          fi
+
+          jq -n --rawfile content /tmp/private-content.txt \
+            --arg articleId "$ARTICLE_ID" \
+            --arg title "通靈拿來猜樂透、預測股票？會這樣反駁，已經透露你怎麼理解「能力」" \
+            --arg hash "$HASH" --arg version "$VERSION" --arg now "$NOW_ISO" \
+            '{fields:{articleId:{stringValue:$articleId},title:{stringValue:$title},status:{stringValue:"draft"},content:{stringValue:$content},contentHash:{stringValue:$hash},contentVersion:{integerValue:$version},source:{stringValue:"github-actions-secure-draft-import:20260905"},active:{booleanValue:true},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/private-write.json
+          PRIVATE_PATCH_URL="$PRIVATE_URL?updateMask.fieldPaths=articleId&updateMask.fieldPaths=title&updateMask.fieldPaths=status&updateMask.fieldPaths=content&updateMask.fieldPaths=contentHash&updateMask.fieldPaths=contentVersion&updateMask.fieldPaths=source&updateMask.fieldPaths=active&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/private-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/private-write.json "$PRIVATE_PATCH_URL")"
+          [[ "$HTTP_STATUS" -ge 200 && "$HTTP_STATUS" -lt 300 ]] || { cat /tmp/private-response.json; exit 1; }
+
+          jq -n --rawfile content /tmp/public-content.txt \
+            --arg title "通靈拿來猜樂透、預測股票？會這樣反駁，已經透露你怎麼理解「能力」" \
+            --arg slug "$ARTICLE_ID" \
+            --arg excerpt "一談到通靈，有些人先想到樂透、股票、賭博與考試。真正值得看的，不只是通靈能不能做到，而是這些問題本身，已經暴露出人怎麼理解能力、心性、靈的層次與修行。" \
+            --arg hash "$HASH" --arg version "$VERSION" --arg now "$NOW_ISO" \
+            '{fields:{title:{stringValue:$title},slug:{stringValue:$slug},category:{stringValue:"spiritual"},displayCategory:{stringValue:"靈修"},series:{stringValue:"靈修辨證"},status:{stringValue:"draft"},excerpt:{stringValue:$excerpt},accessType:{stringValue:"paid"},content:{stringValue:$content},privatePaidContent:{booleanValue:true},paidContentHash:{stringValue:$hash},paidContentVersion:{integerValue:$version},readingLevel:{stringValue:"深度"},topics:{arrayValue:{values:[{stringValue:"通靈辨識"},{stringValue:"能力與心性"},{stringValue:"靈的層次"},{stringValue:"修行迷思"}]}},updatedAt:{timestampValue:$now}}}' \
+            > /tmp/article-write.json
+          ARTICLE_URL="https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/articles/$ARTICLE_ID"
+          ARTICLE_PATCH_URL="$ARTICLE_URL?updateMask.fieldPaths=title&updateMask.fieldPaths=slug&updateMask.fieldPaths=category&updateMask.fieldPaths=displayCategory&updateMask.fieldPaths=series&updateMask.fieldPaths=status&updateMask.fieldPaths=excerpt&updateMask.fieldPaths=accessType&updateMask.fieldPaths=content&updateMask.fieldPaths=privatePaidContent&updateMask.fieldPaths=paidContentHash&updateMask.fieldPaths=paidContentVersion&updateMask.fieldPaths=readingLevel&updateMask.fieldPaths=topics&updateMask.fieldPaths=updatedAt"
+          HTTP_STATUS="$(curl --silent --show-error --output /tmp/article-response.json --write-out '%{http_code}' --request PATCH --header "Authorization: Bearer $ACCESS_TOKEN" --header 'Content-Type: application/json' --data-binary @/tmp/article-write.json "$ARTICLE_PATCH_URL")"
+          [[ "$HTTP_STATUS" -ge 200 && "$HTTP_STATUS" -lt 300 ]] || { cat /tmp/article-response.json; exit 1; }
+
+          VERIFY_PRIVATE="$(curl --silent --show-error --header "Authorization: Bearer $ACCESS_TOKEN" "$PRIVATE_URL")"
+          VERIFY_ARTICLE="$(curl --silent --show-error --header "Authorization: Bearer $ACCESS_TOKEN" "$ARTICLE_URL")"
+          test "$(printf '%s' "$VERIFY_PRIVATE" | jq -r '.fields.contentHash.stringValue')" = "$HASH"
+          test "$(printf '%s' "$VERIFY_PRIVATE" | jq -r '.fields.status.stringValue')" = "draft"
+          test "$(printf '%s' "$VERIFY_ARTICLE" | jq -r '.fields.status.stringValue')" = "draft"
+          test "$(printf '%s' "$VERIFY_ARTICLE" | jq -r '.fields.accessType.stringValue')" = "paid"
+          test "$(printf '%s' "$VERIFY_ARTICLE" | jq -r '.fields.privatePaidContent.booleanValue')" = "true"
+          echo "Firestore draft verified. paidContentVersion=$VERSION hash=$HASH"
+
+      - name: Sanitize public branch copy after Firestore verification
+        if: ${{ hashFiles('/tmp/already-sanitized') == '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp /tmp/sanitized-article.js "$ARTICLE_FILE"
+          node --check "$ARTICLE_FILE"
+          python3 - <<'PY'
+          from pathlib import Path
+          text = Path('article-channeling-ability-secrets-draft.js').read_text(encoding='utf-8')
+          marker = '<!-- paid-only -->'
+          after = text.split(marker, 1)[1]
+          if after.split('`\n};', 1)[0].strip():
+              raise SystemExit('Private body still exists after paid marker.')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$ARTICLE_FILE"
+          git commit -m "Sanitize channeling paid draft after Firestore import"
+          git push origin HEAD:draft/channeling-firestore-import-20260905
