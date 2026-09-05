@@ -1,0 +1,134 @@
+name: Fix Channeling First Image Firestore
+
+on:
+  push:
+    branches:
+      - fix/channeling-first-image-firestore-20260905
+    paths:
+      - .github/deploy-triggers/fix-channeling-first-image-firestore-20260905.txt
+
+permissions:
+  contents: read
+
+jobs:
+  fix-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout isolated repair branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check pillow requests google-cloud-firestore
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Verify live image and update Firestore references
+        shell: bash
+        run: |
+          python - <<'PY'
+          import io
+          import re
+          import requests
+          from copy import deepcopy
+          from PIL import Image
+          from google.cloud import firestore
+
+          PROJECT_ID = 'lyyuan03-membership'
+          ARTICLE_ID = 'channeling-ability-secrets-draft'
+          SETTINGS_ID = '__article-thumbnail-settings'
+          BASE_URL = 'https://lyyuan.tw/assets/articles/channeling-ability-secrets-draft/00-photo-first.jpg'
+          NEW_URL = BASE_URL + '?v=20260905-first-image-fix-1'
+          REVISION = 'channeling-first-image-fix-20260905-v1'
+
+          def verify_live():
+              r = requests.get(NEW_URL, timeout=30, headers={'Cache-Control':'no-cache, no-store'})
+              r.raise_for_status()
+              with Image.open(io.BytesIO(r.content)) as im:
+                  im.load()
+                  assert im.format == 'JPEG', im.format
+                  assert im.size == (800, 450), im.size
+                  assert im.mode == 'RGB', im.mode
+              print(f'LIVE_IMAGE_OK url={NEW_URL} bytes={len(r.content)} size=800x450 format=JPEG')
+
+          verify_live()
+
+          db = firestore.Client(project=PROJECT_ID)
+          article_ref = db.collection('articles').document(ARTICLE_ID)
+          settings_ref = db.collection('articles').document(SETTINGS_ID)
+
+          article_snap = article_ref.get()
+          settings_snap = settings_ref.get()
+          if not article_snap.exists or not settings_snap.exists:
+              raise RuntimeError('required Firestore document missing')
+
+          article = article_snap.to_dict() or {}
+          settings = settings_snap.to_dict() or {}
+          if article.get('status') != 'draft':
+              raise RuntimeError(f"refusing non-draft article: {article.get('status')}")
+          if article.get('accessType') != 'paid' or article.get('privatePaidContent') is not True:
+              raise RuntimeError('paid/private flags are not intact')
+
+          content = str(article.get('content') or '')
+          pattern = re.compile(re.escape(BASE_URL) + r'(?:\?[^)\s]*)?')
+          next_content, replacements = pattern.subn(NEW_URL, content)
+          if replacements < 1:
+              raise RuntimeError('first image URL was not found in public article content')
+
+          inline_map = deepcopy(settings.get('inlineImageSettings') or {})
+          record = deepcopy(inline_map.get(ARTICLE_ID) or {})
+          images = deepcopy(record.get('images') or [])
+          if not images:
+              raise RuntimeError('inline image settings missing')
+          images[0] = dict(images[0] or {})
+          images[0]['src'] = NEW_URL
+          record['images'] = images
+          record['source'] = REVISION
+          inline_map[ARTICLE_ID] = record
+
+          thumb_map = deepcopy(settings.get('settings') or {})
+          thumb = deepcopy(thumb_map.get(ARTICLE_ID) or {})
+          thumb['thumbnailImage'] = NEW_URL
+          thumb_map[ARTICLE_ID] = thumb
+
+          batch = db.batch()
+          batch.set(article_ref, {
+              'content': next_content,
+              'thumbnailImage': NEW_URL,
+              'thumbnailSyncRevision': REVISION,
+              'inlineImageSyncRevision': REVISION,
+              'updatedAt': firestore.SERVER_TIMESTAMP,
+          }, merge=True)
+          batch.set(settings_ref, {
+              'inlineImageSettings': inline_map,
+              'settings': thumb_map,
+              'inlineImageSettingsUpdatedAt': firestore.SERVER_TIMESTAMP,
+              'settingsUpdatedAt': firestore.SERVER_TIMESTAMP,
+          }, merge=True)
+          batch.commit()
+
+          final_article = article_ref.get().to_dict() or {}
+          final_settings = settings_ref.get().to_dict() or {}
+          final_record = (final_settings.get('inlineImageSettings') or {}).get(ARTICLE_ID) or {}
+          final_images = final_record.get('images') or []
+          final_thumb = (final_settings.get('settings') or {}).get(ARTICLE_ID) or {}
+
+          assert final_article.get('status') == 'draft'
+          assert final_article.get('accessType') == 'paid'
+          assert final_article.get('privatePaidContent') is True
+          assert final_article.get('thumbnailImage') == NEW_URL
+          assert NEW_URL in str(final_article.get('content') or '')
+          assert final_images and final_images[0].get('src') == NEW_URL
+          assert final_thumb.get('thumbnailImage') == NEW_URL
+
+          verify_live()
+          print('FIRESTORE_FIRST_IMAGE_FIX_OK thumbnail=ok inline_first=ok status=draft access=paid')
+          PY
