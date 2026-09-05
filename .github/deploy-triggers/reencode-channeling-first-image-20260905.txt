@@ -1,0 +1,1 @@
+Re-encode the deployed 00-photo-first.jpg into a standard baseline RGB JPEG at 1600x900 and commit the repaired bytes to this branch.
