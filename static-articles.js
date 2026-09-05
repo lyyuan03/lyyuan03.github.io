@@ -19,6 +19,7 @@ import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-mor
 import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260831-permissions-1";
 import { spiritualGoodDeathArticle } from "./article-spiritual-good-death.js?v=20260903-cover-thumb-1";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissions-1";
+import { channelingAbilitySecretsDraftArticle } from "./article-channeling-ability-secrets-draft.js?v=20260905-draft-1";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -101,6 +102,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
+  channelingAbilitySecretsDraftArticle,
   ...jinmuEventArticles.slice(2),
   reconciliationAbsolutionHeartArticle,
   spiritualGoodDeathArticle,
