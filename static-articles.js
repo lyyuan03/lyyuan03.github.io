@@ -19,7 +19,7 @@ import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-mor
 import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260831-permissions-1";
 import { spiritualGoodDeathArticle } from "./article-spiritual-good-death.js?v=20260903-cover-thumb-1";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissions-1";
-import { channelingAbilitySecretsDraftArticle } from "./article-channeling-ability-secrets-draft.js?v=20260905-draft-1";
+import { channelingAbilitySecretsDraftArticle } from "./article-channeling-ability-secrets-draft.js?v=20260905-draft-2";
 
 const featuredWealthDisciplineArticle = {
   ...wealthDisciplineArticle,
@@ -67,6 +67,39 @@ const ghostGateAlwaysOpenEnhancedArticle = (() => {
   };
 })();
 
+const channelingAbilitySecretsEnhancedDraftArticle = (() => {
+  let content = String(channelingAbilitySecretsDraftArticle.content || "");
+  const abilityImage = "![通靈放大已有能力，卻不能取代學習](assets/articles/channeling-ability-secrets-draft/body-ability.svg?v=20260905-1)";
+  const levelsImage = "![能力、心性與靈性層次需要分開辨識](assets/articles/channeling-ability-secrets-draft/body-levels.svg?v=20260905-1)";
+  const desireImage = "![樂透、股票與賭博最容易照出人對利益的欲望](assets/articles/channeling-ability-secrets-draft/body-desire.svg?v=20260905-1)";
+  const innerImage = "![高層次的修行最後仍會把人帶回自己的心](assets/articles/channeling-ability-secrets-draft/body-inner.svg?v=20260905-1)";
+
+  if (!content.includes("body-ability.svg")) {
+    content = content.replace("<!-- paid-only -->", `<!-- paid-only -->\n\n${abilityImage}`);
+  }
+  if (!content.includes("body-levels.svg")) {
+    content = content.replace("## 第三個秘密｜通靈與「所通的靈」是綁在一起的", `${levelsImage}\n\n## 第三個秘密｜通靈與「所通的靈」是綁在一起的`);
+  }
+  if (!content.includes("body-desire.svg")) {
+    content = content.replace("## 第四個秘密｜樂透、股票、賭博，最容易照出人的欲望", `${desireImage}\n\n## 第四個秘密｜樂透、股票、賭博，最容易照出人的欲望`);
+  }
+  if (!content.includes("body-inner.svg")) {
+    content = content.replace("## 第七個秘密｜神通再大，也不能拿來代替覺悟", `${innerImage}\n\n## 第七個秘密｜神通再大，也不能拿來代替覺悟`);
+  }
+
+  return {
+    ...channelingAbilitySecretsDraftArticle,
+    updatedAt: "2026-09-05T10:48:00+08:00",
+    coverImage: "assets/articles/channeling-ability-secrets-draft/cover.svg?v=20260905-1",
+    thumbnailImage: "assets/articles/channeling-ability-secrets-draft/thumbnail.svg?v=20260905-1",
+    bookTitle: "我在人間的元神覺醒",
+    bookAuthor: "宇色 Osel",
+    bookPublisher: "柿子文化",
+    bookPurchaseUrl: "https://www.books.com.tw/products/0011060075?sloc=main",
+    content
+  };
+})();
+
 const categoryNames = {
   spiritual: "靈修",
   worldly: "人生",
@@ -102,7 +135,7 @@ function normalizeArticle(article) {
 }
 
 export const staticArticles = [
-  channelingAbilitySecretsDraftArticle,
+  channelingAbilitySecretsEnhancedDraftArticle,
   ...jinmuEventArticles.slice(2),
   reconciliationAbsolutionHeartArticle,
   spiritualGoodDeathArticle,
