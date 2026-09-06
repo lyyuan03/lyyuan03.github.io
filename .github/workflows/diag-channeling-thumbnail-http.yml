@@ -12,19 +12,27 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect production image response
+      - name: Verify production thumbnail fix
         shell: bash
         run: |
-          set -u
-          URL='https://lyyuan.tw/assets/articles/channeling-ability-secrets-draft/00-photo-first-v2.jpg?v=20260905-1821'
-          curl -L -sS -D /tmp/headers.txt -o /tmp/body.bin "$URL" || true
-          echo '--- HEADERS ---'
-          cat /tmp/headers.txt || true
-          echo '--- SIZE ---'
-          wc -c /tmp/body.bin || true
-          echo '--- FILE ---'
-          file /tmp/body.bin || true
-          echo '--- FIRST 64 BYTES ---'
-          xxd -l 64 /tmp/body.bin || true
-          echo '--- FIRST 300 TEXT BYTES ---'
-          head -c 300 /tmp/body.bin | strings || true
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6; do
+            curl -fsSL 'https://lyyuan.tw/admin.html' -o /tmp/admin.html
+            curl -fsSL 'https://lyyuan.tw/articles.html' -o /tmp/articles.html
+            curl -fsSL 'https://lyyuan.tw/article-thumbnail-admin.js?v=20260906-channeling-v3-browserfix-1' -o /tmp/admin-thumb.js
+            curl -fsSL 'https://lyyuan.tw/article-thumbnail-display-v2.js?v=20260906-channeling-v3-browserfix-1' -o /tmp/display-thumb.js
+            curl -fsSL 'https://lyyuan.tw/assets/articles/channeling-ability-secrets-draft/00-photo-first-v3.jpg?v=20260906-v3-browserfix-1' -o /tmp/v3.jpg
+
+            if grep -Fq 'article-thumbnail-admin.js?v=20260906-channeling-v3-browserfix-1' /tmp/admin.html \
+              && grep -Fq '/article-thumbnail-display-v2.js?v=20260906-channeling-v3-browserfix-1' /tmp/articles.html \
+              && grep -Fq 'channeling-ability-secrets-draft/00-photo-first-v3.jpg?v=20260906-v3-browserfix-1' /tmp/admin-thumb.js \
+              && grep -Fq 'channeling-ability-secrets-draft/00-photo-first-v3.jpg?v=20260906-v3-browserfix-1' /tmp/display-thumb.js \
+              && file /tmp/v3.jpg | grep -Fq 'JPEG image data'; then
+              echo 'PRODUCTION_THUMBNAIL_FIX_OK admin_html=ok articles_html=ok admin_js=ok display_js=ok image=jpeg'
+              exit 0
+            fi
+            echo "Production edge not updated yet (attempt $attempt/6)"
+            sleep 15
+          done
+          echo 'Production thumbnail fix verification failed.' >&2
+          exit 1
