@@ -26,6 +26,7 @@ const THUMBNAIL_SETTING_KEYS = [
 ];
 
 const FORCED_THUMBNAIL_IMAGES = {
+  "channeling-ability-secrets-draft": "/assets/articles/channeling-ability-secrets-draft/00-photo-first-v3.jpg?v=20260906-v3-browserfix-1",
   "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-6",
   "spiritual-good-death-last-visit": "/assets/articles/spiritual-good-death/book-cover-thumb.jpg"
 };
