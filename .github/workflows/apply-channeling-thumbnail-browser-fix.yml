@@ -1,0 +1,89 @@
+name: Apply Channeling Thumbnail Browser Fix
+
+on:
+  push:
+    branches:
+      - fix/channeling-thumbnail-v3-20260906
+    paths:
+      - '.github/workflows/apply-channeling-thumbnail-browser-fix.yml'
+      - '.github/deploy-triggers/channeling-thumbnail-browser-fix.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/channeling-thumbnail-v3-20260906
+          fetch-depth: 0
+
+      - name: Force the verified v3 photo in admin and article list
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          article_id = 'channeling-ability-secrets-draft'
+          image_url = '/assets/articles/channeling-ability-secrets-draft/00-photo-first-v3.jpg?v=20260906-v3-browserfix-1'
+
+          for filename in ['article-thumbnail-admin.js', 'article-thumbnail-display-v2.js']:
+              path = Path(filename)
+              text = path.read_text(encoding='utf-8')
+              marker = 'const FORCED_THUMBNAIL_IMAGES = {\n'
+              entry = f'  "{article_id}": "{image_url}",\n'
+              if entry not in text:
+                  if marker not in text:
+                      raise SystemExit(f'FORCED_THUMBNAIL_IMAGES marker missing in {filename}')
+                  text = text.replace(marker, marker + entry, 1)
+              path.write_text(text, encoding='utf-8')
+
+          admin = Path('admin.html')
+          text = admin.read_text(encoding='utf-8')
+          old = 'article-thumbnail-admin.js?v=20260903-thumbnail-url-normalize-1'
+          new = 'article-thumbnail-admin.js?v=20260906-channeling-v3-browserfix-1'
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit('admin thumbnail script token not found')
+          admin.write_text(text, encoding='utf-8')
+
+          articles = Path('articles.html')
+          text = articles.read_text(encoding='utf-8')
+          old = '/article-thumbnail-display-v2.js?v=20260903-spiritual-good-death-cover-1'
+          new = '/article-thumbnail-display-v2.js?v=20260906-channeling-v3-browserfix-1'
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit('article list thumbnail script token not found')
+          articles.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Verify targeted changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F 'channeling-ability-secrets-draft/00-photo-first-v3.jpg?v=20260906-v3-browserfix-1' article-thumbnail-admin.js
+          grep -F 'channeling-ability-secrets-draft/00-photo-first-v3.jpg?v=20260906-v3-browserfix-1' article-thumbnail-display-v2.js
+          grep -F 'article-thumbnail-admin.js?v=20260906-channeling-v3-browserfix-1' admin.html
+          grep -F '/article-thumbnail-display-v2.js?v=20260906-channeling-v3-browserfix-1' articles.html
+          node --check article-thumbnail-admin.js
+          node --check article-thumbnail-display-v2.js
+
+      - name: Commit patch to fix branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add article-thumbnail-admin.js article-thumbnail-display-v2.js admin.html articles.html
+          git commit -m '強制通靈文選使用 v3 首圖並更新快取版本'
+          git push origin HEAD:fix/channeling-thumbnail-v3-20260906
