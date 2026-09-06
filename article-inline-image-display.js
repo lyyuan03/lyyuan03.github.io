@@ -5,6 +5,8 @@ const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MAX_IMAGES = 6;
 const SCALE_MIN = 100;
 const SCALE_MAX = 250;
+const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
+const SPIRITUAL_GOOD_DEATH_COVER_FALLBACK = "/assets/articles/spiritual-good-death/book-cover-thumb.jpg";
 let settingsByArticle = new Map();
 
 function clamp(value, fallback, min, max) {
@@ -71,12 +73,50 @@ function resetManaged() {
   document.querySelectorAll(".article-inline-image-frame").forEach(frame => frame.classList.remove("article-inline-image-frame"));
 }
 
+function ensureSpiritualGoodDeathCover(article, id) {
+  if (id !== SPIRITUAL_GOOD_DEATH_ARTICLE_ID) return;
+
+  const fallbackUrl = absoluteUrl(SPIRITUAL_GOOD_DEATH_COVER_FALLBACK);
+  const body = article.querySelector(".article-body");
+  let cover = article.querySelector(".article-cover");
+
+  if (!cover && body) {
+    cover = document.createElement("img");
+    cover.className = "article-cover";
+    cover.src = SPIRITUAL_GOOD_DEATH_COVER_FALLBACK;
+    cover.alt = "《靈性善終》書封";
+    body.before(cover);
+    return;
+  }
+
+  if (!cover) return;
+  cover.alt = cover.alt || "《靈性善終》書封";
+  const useFallback = () => {
+    if (absoluteUrl(cover.getAttribute("src") || cover.src || "") !== fallbackUrl) {
+      cover.setAttribute("src", SPIRITUAL_GOOD_DEATH_COVER_FALLBACK);
+    }
+  };
+
+  cover.onerror = useFallback;
+  if (cover.complete && cover.naturalWidth === 0) useFallback();
+
+  article.querySelectorAll(".recommended-book-cover img").forEach(image => {
+    image.onerror = () => {
+      if (absoluteUrl(image.getAttribute("src") || image.src || "") !== fallbackUrl) {
+        image.setAttribute("src", SPIRITUAL_GOOD_DEATH_COVER_FALLBACK);
+      }
+    };
+    if (image.complete && image.naturalWidth === 0) image.onerror();
+  });
+}
+
 function apply() {
   installStyles();
   resetManaged();
   const article = document.querySelector(".article-view[data-article-id]");
   if (!article) return;
   const id = article.dataset.articleId || "";
+  ensureSpiritualGoodDeathCover(article, id);
   const saved = settingsByArticle.get(id);
   const images = Array.isArray(saved?.images) ? saved.images.slice(0, MAX_IMAGES).map(normalize) : [];
   if (!images.length) return;
