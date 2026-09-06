@@ -1,1 +1,1 @@
-Fix channeling article thumbnail and first inline image to 00-photo-first-v3.png. Version 20260906-v3.
+Fix truncated PNG by syncing complete JPEG channeling thumbnail and first inline image. Version 20260906-v3-jpeg.
