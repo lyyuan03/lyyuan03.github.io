@@ -10,6 +10,16 @@
 
   const currentPath = normalizedPath(window.location.pathname);
 
+  const pruneUnfinishedServiceItems = (services) => {
+    if (!services) return;
+    services.querySelectorAll("a").forEach((link) => {
+      const href = link.getAttribute("href") || "";
+      if (href.includes("#deity-birthday") || href.includes("#chanting-blessing")) {
+        link.closest("li")?.remove();
+      }
+    });
+  };
+
   navs.forEach((nav) => {
     if (!nav.querySelector("#global-nav-services")) {
       const articleTrigger = nav.querySelector('[aria-controls="global-nav-articles"]');
@@ -21,14 +31,13 @@
         <ul class="global-nav-dropdown" id="global-nav-services">
           <li><a href="/services/">服務總覽</a></li>
           <li><a href="/services/naming.html">靈乩神示命名</a></li>
-          <li><a href="/services/#deity-birthday">神尊祝壽</a></li>
-          <li><a href="/services/#chanting-blessing">誦經祈福</a></li>
         </ul>`;
       if (articleItem) articleItem.before(item);
       else nav.querySelector(".global-nav-links")?.appendChild(item);
     }
 
     const services = nav.querySelector("#global-nav-services");
+    pruneUnfinishedServiceItems(services);
     if (services && currentPath.startsWith("/services")) {
       services.closest(".global-nav-item")?.querySelector(":scope > .global-nav-trigger")?.classList.add("is-active");
       services.querySelectorAll("a").forEach((link) => {
