@@ -1,4 +1,4 @@
-name: Fix Channeling Thumbnail V2
+name: Fix Channeling Thumbnail V3
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - '.github/deploy-triggers/fix-channeling-thumbnail-v2.txt'
-      - 'assets/articles/channeling-ability-secrets-draft/00-photo-first-v2.jpg'
+      - 'assets/articles/channeling-ability-secrets-draft/00-photo-first-v3.png'
       - '.github/workflows/fix-channeling-thumbnail-v2.yml'
 
 permissions:
@@ -19,7 +19,7 @@ jobs:
     env:
       PROJECT_ID: lyyuan03-membership
       ARTICLE_ID: channeling-ability-secrets-draft
-      IMAGE_URL: https://lyyuan.tw/assets/articles/channeling-ability-secrets-draft/00-photo-first-v2.jpg?v=20260905-1821
+      IMAGE_URL: https://lyyuan.tw/assets/articles/channeling-ability-secrets-draft/00-photo-first-v3.png?v=20260906-v3
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,7 +71,7 @@ jobs:
           article = request_json(article_url)
           fields = article.setdefault('fields', {})
           content = fields.get('content', {}).get('stringValue', '')
-          pattern = re.compile(r'(?:https://lyyuan\.tw)?/?assets/articles/channeling-ability-secrets-draft/00-photo-first(?:-v\d+)?\.(?:jpg|jpeg|webp)(?:\?[^)\s\"\']*)?')
+          pattern = re.compile(r'(?:https://lyyuan\.tw)?/?assets/articles/channeling-ability-secrets-draft/00-photo-first(?:-v\d+)?\.(?:jpg|jpeg|png|webp)(?:\?[^)\s\"\']*)?')
           content = pattern.sub(image_url, content)
 
           article_payload = {
@@ -134,8 +134,8 @@ jobs:
           p='/tmp/channeling-first-v2.jpg'
           with Image.open(p) as im:
               im.load()
-              assert im.format == 'JPEG', im.format
-              assert im.size == (480, 270), im.size
+              assert im.format == 'PNG', im.format
+              assert im.size == (1672, 941), im.size
               assert im.mode == 'RGB', im.mode
               print('PUBLIC_IMAGE_VERIFY_OK', im.format, im.size, im.mode)
           PY
