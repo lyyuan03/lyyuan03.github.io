@@ -26,11 +26,43 @@
 .people-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}.person-card{position:relative;min-height:330px;border-radius:12px 28px 12px 28px;overflow:hidden;background:#1a2017;box-shadow:0 18px 48px rgba(0,0,0,.21);opacity:0;transform:translateY(20px);transition:opacity .75s ease,transform .75s cubic-bezier(.2,.8,.2,1),box-shadow .3s}.person-card.is-visible{opacity:1;transform:none}.person-card:hover{box-shadow:0 24px 58px rgba(0,0,0,.28)}.person-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.78) contrast(.96) brightness(.82);transform:scale(1.04);animation:kenBurns 13s ease-in-out infinite alternate}.person-photo.family-photo{object-position:center 45%}.person-photo.man-photo{object-position:center 34%}.person-card:nth-child(2) .person-photo{animation-duration:15s}.person-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,16,10,.03) 12%,rgba(11,16,10,.18) 48%,rgba(11,16,10,.9) 100%)}.person-content{position:absolute;left:0;right:0;bottom:0;padding:22px 22px 20px;z-index:2}.person-card h3{margin:0 0 5px;font-family:var(--serif);font-size:26px;font-weight:500;color:#fff}.person-card p{margin:0;color:#eee7dd;font-size:16px;line-height:1.72}.person-source{margin-top:8px;font-size:10px;color:rgba(245,240,232,.68)}.person-source a{text-decoration:underline;text-underline-offset:2px}
 .record-cases{background:linear-gradient(180deg,#f5f0e8,#e8ddcc)}.record-grid{display:grid;grid-template-columns:255px 1fr;gap:44px;align-items:center}.book-visual{min-height:320px;display:grid;place-items:center;position:relative;perspective:900px}.book-visual:before{content:"";position:absolute;width:220px;height:220px;border-radius:45% 55% 37% 63%/50% 36% 64% 50%;background:rgba(96,99,48,.1);animation:floatBlob 11s ease-in-out infinite reverse}.book-sheet{position:relative;width:224px;aspect-ratio:.71;padding:25px 24px;color:#e9d5aa;background:linear-gradient(100deg,#3e3732 0 8%,#594F47 9% 52%,#51473f 100%);border:1px solid rgba(197,162,111,.55);box-shadow:8px 8px 0 #d9cfbe,10px 10px 0 #b9ad9e,0 28px 55px rgba(55,43,32,.28);transform:rotateY(-7deg) rotateZ(-1.4deg);transform-origin:left center;animation:bookFloat 7s ease-in-out infinite;overflow:hidden}.book-sheet:before{content:"";position:absolute;inset:11px;border:1px solid rgba(197,162,111,.42);pointer-events:none}.book-sheet:after{content:"";position:absolute;left:14px;right:14px;top:14px;height:1px;background:linear-gradient(90deg,transparent,rgba(197,162,111,.7),transparent)}.book-logo{display:block;width:58px;height:44px;object-fit:contain;margin:4px auto 2px;filter:brightness(0) invert(84%) sepia(31%) saturate(602%) hue-rotate(355deg) brightness(91%) contrast(87%);opacity:.92}.book-brand{text-align:center;font-family:var(--serif);font-size:11px;letter-spacing:.28em;color:#e1c38f;margin-top:2px}.book-title{margin-top:29px;text-align:center;font-family:var(--serif);font-size:28px;color:#f1dfbd;letter-spacing:.1em;line-height:1.55;text-shadow:0 1px 0 rgba(0,0,0,.25)}.book-title span{display:block}.book-line{width:48px;height:1px;background:var(--gold);margin:15px auto}.book-small{text-align:center;font-family:var(--latin);letter-spacing:.14em;font-size:9px;line-height:1.6;color:#d9bf90}.book-caption{position:absolute;left:22px;right:22px;bottom:25px;text-align:center;font-family:var(--serif);font-size:10px;letter-spacing:.14em;color:#d8bc8a}.record-content h2{margin-bottom:12px}.case-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.case-item{position:relative;border-radius:14px;padding:17px 15px;overflow:hidden;box-shadow:0 10px 24px rgba(70,54,41,.08);transition:transform .3s ease,box-shadow .3s ease}.case-item:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(70,54,41,.14)}.case-item:nth-child(1){background:var(--olive);color:#fff}.case-item:nth-child(2){background:var(--tan);color:#fff}.case-item:nth-child(3){background:var(--brown);color:#fff}.case-item:after{content:"";position:absolute;width:72px;height:72px;border-radius:50%;right:-24px;bottom:-26px;background:rgba(255,255,255,.1)}.case-item b{display:block;font-family:var(--serif);font-size:19px;color:inherit;font-weight:500;margin-bottom:6px}.case-item p{margin:0;font-size:14px;line-height:1.68;color:rgba(255,255,255,.9)}
 .final-zone{background:linear-gradient(180deg,#eee6d9,#e4dacb);color:var(--ink)}.final-grid{display:grid;grid-template-columns:.94fr 1.06fr;gap:18px;align-items:stretch}.final-card{position:relative;padding:26px 27px;border-radius:20px 8px 20px 8px;overflow:hidden;box-shadow:0 14px 36px rgba(62,48,35,.08)}.faith-card{background:#f7f1e7;border:1px solid rgba(96,99,48,.26);border-left:7px solid var(--olive)}.faith-card:after{content:"緣";position:absolute;right:-12px;bottom:-52px;font-family:var(--serif);font-size:160px;line-height:1;color:rgba(96,99,48,.06)}.faith-card .eyebrow{color:var(--olive)}.faith-card h2{color:var(--brown);font-size:clamp(27px,3vw,35px);margin-bottom:13px}.faith-card p{margin:0 0 12px;color:#594f47;font-size:16px;line-height:1.8}.final-quote{position:relative;margin-top:14px;padding:15px 16px;background:rgba(96,99,48,.08);border-left:3px solid var(--olive);font-family:var(--serif);font-size:17px;line-height:1.75;color:#51483f;z-index:1}.application-card{background:linear-gradient(145deg,#594F47,#443c35);border:1px solid rgba(197,162,111,.34);color:#f3eadc}.application-card:before{content:"";position:absolute;width:180px;height:180px;right:-75px;top:-80px;border-radius:50%;border:1px solid rgba(197,162,111,.16)}.application-card .eyebrow{color:#d8b779}.application-card h2{color:#f6eddf;font-size:clamp(27px,3vw,35px);margin-bottom:13px}.application-card p{margin:0 0 12px;color:#e0d7cb;font-size:16px;line-height:1.8}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0 18px}.step{position:relative;border-radius:12px;padding:12px 10px;overflow:hidden}.step:nth-child(1){background:var(--olive)}.step:nth-child(2){background:var(--tan)}.step:nth-child(3){background:var(--gold);color:#332a22}.step b{display:block;font-family:var(--latin);font-size:10px;color:inherit;font-weight:500;letter-spacing:.14em;margin-bottom:3px;opacity:.82}.step span{font-family:var(--serif);color:inherit;font-size:15px}.cta{display:inline-flex;align-items:center;gap:10px;border-radius:999px;background:#f1e7d7;color:#443a31;padding:10px 16px;font-size:13px;letter-spacing:.05em;transition:transform .2s ease}.cta:hover{transform:translateY(-2px)}
+
+/* 實際命名案例 */
+.real-cases{background:linear-gradient(180deg,#f7f2e9,#eee4d6);border-top:1px solid rgba(89,79,71,.08)}
+.real-cases-head{display:grid;grid-template-columns:260px 1fr;gap:44px;align-items:start;margin-bottom:28px}
+.real-cases-intro{font-size:16px;line-height:1.82;color:#5d554d;max-width:700px}
+.real-cases-intro p{margin:0}
+.case-group+.case-group{margin-top:30px}
+.case-group-heading{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.case-group-heading:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,rgba(165,130,84,.45),rgba(165,130,84,0))}
+.case-group-heading h3{margin:0;font-family:var(--serif);font-size:24px;font-weight:500;color:var(--brown);letter-spacing:.04em}
+.case-group-heading span{font-family:var(--latin);font-size:11px;letter-spacing:.16em;color:var(--tan)}
+.case-example-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.case-example{background:rgba(255,255,255,.58);border:1px solid rgba(89,79,71,.12);border-radius:17px 7px 17px 7px;overflow:hidden;box-shadow:0 10px 26px rgba(65,51,38,.06);transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease}
+.case-example:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(65,51,38,.1);border-color:rgba(165,130,84,.3)}
+.case-example[open]{background:#fbf7ef;border-color:rgba(165,130,84,.3)}
+.case-example summary{list-style:none;cursor:pointer;padding:18px 20px 17px;position:relative}
+.case-example summary::-webkit-details-marker{display:none}
+.case-example summary:after{content:"＋";position:absolute;right:18px;top:18px;width:28px;height:28px;border:1px solid rgba(89,79,71,.18);border-radius:50%;display:grid;place-items:center;font-size:17px;color:var(--tan);transition:transform .28s ease,background .28s ease}
+.case-example[open] summary:after{transform:rotate(45deg);background:rgba(165,130,84,.08)}
+.case-example.company{border-left:5px solid var(--tan)}
+.case-example.personal{border-left:5px solid var(--olive)}
+.case-meta{font-family:var(--latin);font-size:11px;letter-spacing:.15em;color:var(--tan);text-transform:uppercase;margin-bottom:5px;padding-right:40px}
+.case-example.personal .case-meta{color:var(--olive)}
+.case-title{font-family:var(--serif);font-size:21px;color:var(--brown);font-weight:500;line-height:1.45;padding-right:42px}
+.case-focus{margin-top:7px;color:#6d645b;font-size:14px;line-height:1.65;padding-right:38px}
+.case-detail{padding:0 20px 20px;border-top:1px solid rgba(89,79,71,.09)}
+.case-detail p{margin:14px 0 0;font-size:15px;line-height:1.78;color:#514a43}
+.case-detail strong{font-family:var(--serif);font-weight:600;color:var(--brown)}
+.name-options{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.name-chip{display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;background:rgba(165,130,84,.11);border:1px solid rgba(165,130,84,.22);font-family:var(--serif);font-size:15px;color:#6b5538}
+.personal .name-chip{background:rgba(96,99,48,.09);border-color:rgba(96,99,48,.2);color:#555b35}
+.case-source-note{margin-top:24px;padding-top:15px;border-top:1px solid rgba(89,79,71,.12);font-size:12px;line-height:1.7;color:#81786f}
 .site-footer{background:#0b1209;color:#bfb7aa;padding:36px 24px;border-top:1px solid rgba(200,166,111,.12)}.footer-inner{width:min(1040px,90vw);margin:auto;display:flex;justify-content:space-between;gap:24px;align-items:flex-end}.footer-brand{font-family:var(--serif);font-size:18px;letter-spacing:.16em;color:#eee4d2}.footer-links{display:flex;gap:14px;flex-wrap:wrap;font-size:11px}.footer-note{font-size:11px;max-width:520px;text-align:right;line-height:1.7;color:#8f877a}
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}.reveal.visible{opacity:1;transform:none}.delay-1{transition-delay:.1s}.delay-2{transition-delay:.18s}
 @keyframes floatBlob{0%,100%{transform:translate3d(0,0,0) rotate(0)}50%{transform:translate3d(-14px,12px,0) rotate(3deg)}}@keyframes orbBreath{0%,100%{transform:scale(.94);opacity:.45}50%{transform:scale(1.06);opacity:.76}}@keyframes orbitSoft{to{transform:rotate(360deg)}}@keyframes kenBurns{0%{transform:scale(1.03) translate3d(0,0,0)}100%{transform:scale(1.09) translate3d(-1.2%,-.8%,0)}}@keyframes bookFloat{0%,100%{transform:rotateY(-7deg) rotateZ(-1.4deg) translateY(0)}50%{transform:rotateY(-5deg) rotateZ(-.7deg) translateY(-5px)}}
-@media(max-width:900px){.hero{min-height:auto;padding-top:118px}.hero-inner,.section-grid,.record-grid,.final-grid{grid-template-columns:1fr;gap:28px}.ritual-flow{grid-template-columns:1fr 1fr}.guidance-intro{padding-top:0}.guidance-wrap,.people-grid,.case-list{grid-template-columns:1fr}.section{padding:44px 20px}.book-visual{min-height:300px}.record-grid{justify-items:start}.final-card{padding:22px}.footer-inner{display:block}.footer-note{text-align:left;margin-top:14px}}
-@media(max-width:560px){body{font-size:16px}.hero h1{font-size:40px}.hero-sub{font-size:18px}.hero-card p,.prose{font-size:16px}.ritual-flow{grid-template-columns:1fr}.ritual-step{min-height:auto}.guidance-card{min-height:auto}.person-card{min-height:300px}.person-content{padding:18px}.person-card h3{font-size:24px}.steps{grid-template-columns:1fr}.book-sheet{width:205px}.book-visual{min-height:285px}}
+@media(max-width:900px){.hero{min-height:auto;padding-top:118px}.hero-inner,.section-grid,.record-grid,.final-grid,.real-cases-head{grid-template-columns:1fr;gap:28px}.ritual-flow{grid-template-columns:1fr 1fr}.guidance-intro{padding-top:0}.guidance-wrap,.people-grid,.case-list,.case-example-grid{grid-template-columns:1fr}.section{padding:44px 20px}.book-visual{min-height:300px}.record-grid{justify-items:start}.final-card{padding:22px}.footer-inner{display:block}.footer-note{text-align:left;margin-top:14px}}
+@media(max-width:560px){body{font-size:16px}.hero h1{font-size:40px}.hero-sub{font-size:18px}.hero-card p,.prose{font-size:16px}.ritual-flow{grid-template-columns:1fr}.ritual-step{min-height:auto}.guidance-card{min-height:auto}.person-card{min-height:300px}.person-content{padding:18px}.person-card h3{font-size:24px}.steps{grid-template-columns:1fr}.book-sheet{width:205px}.book-visual{min-height:285px}.real-cases-head{margin-bottom:22px}.case-group-heading h3{font-size:22px}.case-example summary{padding:16px 17px}.case-detail{padding:0 17px 18px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal,.ritual-step,.guidance-card,.person-card{opacity:1!important;transform:none!important}}
 </style>
 </head>
@@ -46,12 +78,14 @@
     <li class="global-nav-item"><button class="global-nav-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="global-nav-media">影音・社群</button><ul class="global-nav-dropdown" id="global-nav-media"><li class="global-nav-group">靈元院官方</li><li><a href="https://www.youtube.com/@lyyuan03" target="_blank" rel="noopener noreferrer">YT｜靈元院</a></li><li><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">FB｜靈元院</a></li><li><a href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer">IG｜靈元院</a></li><li class="global-nav-group">宇色老師</li><li><a href="https://www.youtube.com/KINKIOSEL" target="_blank" rel="noopener noreferrer">YT｜宇色心養生</a></li><li><a href="https://open.spotify.com/show/1DFFziubhLI9VqnpoPfidf" target="_blank" rel="noopener noreferrer">Podcast｜宇色人間書影</a></li><li><a href="https://www.facebook.com/authorosel/" target="_blank" rel="noopener noreferrer">FB｜我在人間－宇色</a></li><li><a href="https://www.instagram.com/kinkiosel_writer/" target="_blank" rel="noopener noreferrer">IG｜我在人間－宇色</a></li></ul></li>
   </ul></div>
 </nav>
+
 <header class="hero">
   <div class="hero-inner">
     <div class="reveal visible"><div class="kicker">NAMING · LING YUAN YUAN</div><h1>靈乩神示命名</h1><div class="hero-sub">擇日開壇，恭請靈元院堂上神尊降示姓名</div></div>
     <div class="hero-card reveal visible delay-1"><p>靈元院的命名以正式請示神尊為核心。由靈乩擇日開壇，稟明請名因緣，再恭請堂上神尊依命名者本身因緣降示姓名。</p><div class="mini-rule"></div><p>真正重要的，是理解神尊為什麼將這個名字賜給這一個人，以及名字背後所承載的提醒與方向。</p></div>
   </div>
 </header>
+
 <main>
 <section class="section paper">
   <div class="section-inner section-grid">
@@ -68,6 +102,7 @@
     </div>
   </div>
 </section>
+
 <section class="section paper-soft">
   <div class="section-inner">
     <div class="section-grid">
@@ -85,20 +120,155 @@
     </div>
   </div>
 </section>
+
 <section class="section record-cases">
   <div class="section-inner record-grid">
     <div class="book-visual reveal"><div class="book-sheet"><img class="book-logo" src="/logo.png" alt="靈元院標誌"><div class="book-brand">靈元院</div><div class="book-title"><span>靈乩神示</span><span>命名書</span></div><div class="book-line"></div><div class="book-small">NAMING RECORD · LING YUAN YUAN</div><div class="book-caption">命名者專屬紀錄</div></div></div>
     <div class="record-content reveal delay-1"><div class="eyebrow">THE NAMING BOOK</div><h2>一份專屬的命名書</h2><div class="prose"><p>完成開壇請示後，靈元院會整理神尊所降示的姓名、名字意義，以及當次另外給予的重要提醒。多年之後重新閱讀，也能理解當初神尊為什麼賜下這個名字。</p></div><div class="case-list"><div class="case-item"><b>新生兒</b><p>可能包含孩子心性、親子因緣與教養方向。</p></div><div class="case-item"><b>改名</b><p>依目前人生狀態與改名因緣，慎重進行請示。</p></div><div class="case-item"><b>公司行號</b><p>可稟明產業與經營者因緣，恭請神尊降示名稱。</p></div></div></div>
   </div>
 </section>
+
 <section class="section final-zone">
   <div class="section-inner final-grid">
     <article class="final-card faith-card reveal"><div class="eyebrow">FAITH & AFFINITY</div><h2>請名，是一份信仰的因緣</h2><p>靈元院是一座以靈修與信仰為本的道場。這項服務主要以敬信靈元院，或對無極瑤池金母及堂上諸佛菩薩具有信仰與因緣的信眾為主。</p><div class="final-quote">我們希望前來請名的人，是帶著真誠與虔敬而來，願意理解神尊所賜姓名其中的意義。</div></article>
     <article class="final-card application-card reveal delay-1"><div class="eyebrow">APPLICATION</div><h2>如何洽詢靈乩神示命名</h2><p>若因新生兒出生、人生階段轉變或其他因緣，希望恭請堂上神尊賜名，可先與靈元院行政團隊聯繫，簡單說明請名緣由與信仰因緣。</p><div class="steps"><div class="step"><b>STEP 01</b><span>聯繫行政團隊</span></div><div class="step"><b>STEP 02</b><span>說明請名因緣</span></div><div class="step"><b>STEP 03</b><span>安排後續請示</span></div></div><a class="cta" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">聯絡靈元院行政團隊 <span>→</span></a></article>
   </div>
 </section>
+
+<section class="section real-cases" id="naming-cases">
+  <div class="section-inner">
+    <div class="real-cases-head">
+      <div class="reveal">
+        <div class="eyebrow">NAMING STORIES · DIVINE GUIDANCE</div>
+        <h2>神尊賜名實例</h2>
+        <div class="side-note">整理自靈元院過往公開之命名紀錄。</div>
+      </div>
+      <div class="real-cases-intro reveal delay-1">
+        <p>以下擷取過往公開案例的重點，呈現不同命名因緣中，神尊所給予的方向與賜名。為了讓頁面維持簡潔，每則案例先顯示摘要，點開後可閱讀較完整的神示重點與當時所賜姓名。</p>
+      </div>
+    </div>
+
+    <div class="case-group">
+      <div class="case-group-heading"><h3>公司行號命名</h3><span>BUSINESS NAMING</span></div>
+      <div class="case-example-grid">
+        <details class="case-example company reveal">
+          <summary>
+            <div class="case-meta">實例 01 · 新北市 · 貿易業</div>
+            <div class="case-title">開創事業，需要勇氣，也需要更長遠的格局</div>
+            <div class="case-focus">神示重點：思考與執行的協調、開創力、長遠視野。</div>
+          </summary>
+          <div class="case-detail">
+            <p>神尊提醒，主事者在創業初期要保有勇氣與細膩感受，也要避免因過度思前想後而錯失良機。除了物質條件之外，更重要的是建立長遠視野，不只侷限於眼前市場，才能逐步開展更大的事業格局。</p>
+            <p><strong>當時賜名：</strong></p>
+            <div class="name-options"><span class="name-chip">翔瀚</span><span class="name-chip">翔宇</span><span class="name-chip">雄宇</span></div>
+          </div>
+        </details>
+
+        <details class="case-example company reveal delay-1">
+          <summary>
+            <div class="case-meta">實例 02 · 台北市北投區 · 診所</div>
+            <div class="case-title">以中道與穩定為原則，建立真正適合自己的事業</div>
+            <div class="case-focus">神示重點：中道、自信、果斷與舒適自在的經營環境。</div>
+          </summary>
+          <div class="case-detail">
+            <p>神尊提醒，主事者不必強求，也不要逼迫自己，宜以謹慎而穩定的態度參與社會事務。診所的空間與經營風格，應以主事者真正感到舒適、自在為主，才能在看診與服務時保持餘裕。</p>
+            <p><strong>當時賜名：</strong></p>
+            <div class="name-options"><span class="name-chip">慧捷</span><span class="name-chip">慧傑</span></div>
+          </div>
+        </details>
+
+        <details class="case-example company reveal">
+          <summary>
+            <div class="case-meta">實例 03 · 香港 · 科技業</div>
+            <div class="case-title">匯聚不同人才，為國際發展建立更穩固的基礎</div>
+            <div class="case-focus">神示重點：人才整合、合作制度、國際格局與穩健成長。</div>
+          </summary>
+          <div class="case-detail">
+            <p>神尊指出，公司未來若要跨足不同國家與領域，需要廣納不同背景與專長的人才。前期宜先穩健經營，建立合夥制度、員工流程與合作規範，再逐步擴大事業版圖，以降低日後合作爭議。</p>
+            <p><strong>當時賜名：</strong></p>
+            <div class="name-options"><span class="name-chip">薈聚</span><span class="name-chip">英聚</span><span class="name-chip">華眾</span></div>
+          </div>
+        </details>
+
+        <details class="case-example company reveal delay-1">
+          <summary>
+            <div class="case-meta">實例 04 · 台中市豐原區 · 電機業</div>
+            <div class="case-title">從守成走向開拓，重新建立企業對外的動力</div>
+            <div class="case-focus">神示重點：拓展市場、人脈經營、親和與貴人因緣。</div>
+          </summary>
+          <div class="case-detail">
+            <p>神尊提醒，公司成立後不宜只依賴既有客戶與熟悉模式，而應主動向外參與事務、拜訪客戶、建立新的人脈與市場連結。透過更積極的外部經營，才能逐步形成新的企業格局。</p>
+            <p><strong>當時賜名：</strong></p>
+            <div class="name-options"><span class="name-chip">仁眾</span><span class="name-chip">聚仁</span></div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="case-group">
+      <div class="case-group-heading"><h3>新生兒命名與改名</h3><span>PERSONAL NAMING</span></div>
+      <div class="case-example-grid">
+        <details class="case-example personal reveal">
+          <summary>
+            <div class="case-meta">實例 01 · 新生兒 · 男</div>
+            <div class="case-title">活潑敏捷的孩子，更需要寬廣的視野與多元學習</div>
+            <div class="case-focus">神示重點：好奇心、外緣、學習力與未來教育方向。</div>
+          </summary>
+          <div class="case-detail">
+            <p>神尊指出，孩子天性活潑、思考與說話敏捷，外緣佳，對事物充滿好奇。父母宜多帶他接觸自然、閱讀與多元知識，並避免過度依賴手機與網路，讓他的想像力與思考力有更大的發展空間。</p>
+            <p><strong>當時賜名：</strong></p>
+            <div class="name-options"><span class="name-chip">瀚宇</span><span class="name-chip">星宇</span><span class="name-chip">思宇</span></div>
+          </div>
+        </details>
+
+        <details class="case-example personal reveal delay-1">
+          <summary>
+            <div class="case-meta">實例 02 · 新生兒 · 男</div>
+            <div class="case-title">有主見與領導特質，也要從小建立禮節與責任感</div>
+            <div class="case-focus">神示重點：領導性、祖德承接、父子因緣與家庭教養。</div>
+          </summary>
+          <div class="case-detail">
+            <p>神尊提醒，孩子主見較強，成人後具有領導風格，從小不宜過度溺愛或給予過多物質。教養應以講理、約束言行與禮節為主，同時重視與父親、祖先及家族責任之間的連結。</p>
+            <p><strong>當時賜名：</strong></p>
+            <div class="name-options"><span class="name-chip">祖祐</span><span class="name-chip">懷祖</span></div>
+          </div>
+        </details>
+
+        <details class="case-example personal reveal">
+          <summary>
+            <div class="case-meta">實例 03 · 新生兒 · 女</div>
+            <div class="case-title">純善而細膩的心性，需要從小培養慈悲與同理</div>
+            <div class="case-focus">神示重點：純真、同理心、手足關係與信仰因緣。</div>
+          </summary>
+          <div class="case-detail">
+            <p>神尊指出，孩子心性良善、性好，也有自己的選擇與判斷。父母應平等對待手足，並從生活中的點滴培養她的慈悲與同理心。此案亦顯示與正信宗教具有一定因緣，可在成長過程中自然接觸。</p>
+            <p><strong>當時賜名：</strong></p>
+            <div class="name-options"><span class="name-chip">薇婷</span><span class="name-chip">潔亭</span><span class="name-chip">庭潔</span></div>
+          </div>
+        </details>
+
+        <details class="case-example personal reveal delay-1">
+          <summary>
+            <div class="case-meta">實例 04 · 改名 · 男</div>
+            <div class="case-title">調整過早的壓力，把注意力重新放回個人的長處</div>
+            <div class="case-focus">神示重點：專注力、學習壓力、文藝涵養與身心平衡。</div>
+          </summary>
+          <div class="case-detail">
+            <p>神尊指出，當事人心思較不集中，本性善良、單純，也容易受到外界影響。教養上不宜過度施加課業壓力，而應重視品格、藝術、生活經驗與身體照顧，讓他逐步建立自己的學習節奏與方向。</p>
+            <p><strong>當時賜名：</strong></p>
+            <div class="name-options"><span class="name-chip">采華</span><span class="name-chip">文松</span><span class="name-chip">文采</span></div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="case-source-note">以上案例依靈元院過往於痞客邦公開之命名紀錄重新整理，為兼顧網頁閱讀與當事人隱私，保留命名方向、神示重點及公開賜名內容，並將原文較長的敘述適度濃縮。</div>
+  </div>
+</section>
 </main>
+
 <footer class="site-footer"><div class="footer-inner"><div class="footer-brand">靈元院</div><div class="footer-links"><a href="/services/">信眾服務</a><a href="/">返回首頁</a></div><div class="footer-note">靈乩神示命名以信仰因緣與實際請示內容為準。</div></div></footer>
+
 <script>
 (() => {
   const revealTargets = document.querySelectorAll('.reveal');
