@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="不同靈性層次的抽象意象">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="1" x2="0" y2="0"><stop stop-color="#4a4039"/><stop offset="0.55" stop-color="#606330"/><stop offset="1" stop-color="#899067"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0"><stop stop-color="#A58254" stop-opacity="0.08"/><stop offset="1" stop-color="#e3d5b8" stop-opacity="0.72"/></linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g fill="none" stroke="#d8c9aa" stroke-opacity="0.32">
+    <path d="M280 760 H1320" stroke-width="2"/><path d="M360 620 H1240"/><path d="M450 475 H1150"/><path d="M560 330 H1040"/><path d="M690 190 H910"/>
+  </g>
+  <path d="M800 770 C710 650 700 520 744 410 C776 331 792 255 800 120 C808 255 824 331 856 410 C900 520 890 650 800 770 Z" fill="url(#beam)"/>
+  <g fill="#d9c8a2">
+    <circle cx="800" cy="704" r="15" fill-opacity="0.30"/><circle cx="800" cy="566" r="12" fill-opacity="0.42"/><circle cx="800" cy="430" r="10" fill-opacity="0.52"/><circle cx="800" cy="292" r="8" fill-opacity="0.68"/><circle cx="800" cy="162" r="6" fill-opacity="0.9"/>
+  </g>
+</svg>
