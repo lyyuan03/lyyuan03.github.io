@@ -10,11 +10,12 @@
 
   const currentPath = normalizedPath(window.location.pathname);
 
-  const installNamingPageShell = () => {
-    if (currentPath !== "/services/naming.html") return;
+  const installServicePageShell = () => {
+    const serviceShellPaths = ["/services/naming.html", "/services/", "/services"];
+    if (!serviceShellPaths.includes(currentPath)) return;
 
     import("/site-auth-nav.js?v=20260804-strict-wellness-1").catch((error) => {
-      console.warn("命名頁會員登入列載入失敗", error);
+      console.warn("信眾服務會員登入列載入失敗", error);
     });
 
     const footer = document.querySelector("footer");
@@ -56,7 +57,7 @@
     }
   };
 
-  installNamingPageShell();
+  installServicePageShell();
 
   const pruneUnfinishedServiceItems = (services) => {
     if (!services) return;
