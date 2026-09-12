@@ -7,6 +7,7 @@ access: sponsor-member
 cover: /assets/articles/need-a-teacher/cover.svg
 thumbnail: /assets/articles/need-a-teacher/thumbnail.svg
 recommendedBook: "我在人間的元神覺醒"
+visualCount: 7
 ---
 
 # 走靈修，到底需不需要老師？
