@@ -181,6 +181,39 @@ function selectedMonths() {
   return value === "3" || value.endsWith("-3") ? 3 : 1;
 }
 
+function correctionMember() {
+  if (memberForm?.dataset.mode !== "correction") return null;
+  const originalEmail = normalizeEmail(document.getElementById("member-original-email")?.value || "");
+  return members.find((item) => item.email === originalEmail) || null;
+}
+
+function correctedExpiry(member = {}, months = selectedMonths()) {
+  const oldMonths = Number(member.planMonths) === 3 ? 3 : 1;
+  const currentExpiry = dateValue(member.expiresAt);
+  if (currentExpiry) return addMonths(currentExpiry, Number(months) - oldMonths);
+  const start = dateValue(member.startsAt || member.paidAt || member.firstJoinedAt) || new Date();
+  return addMonths(start, Number(months));
+}
+
+function setCorrectionMode(enabled) {
+  if (!memberForm) return;
+  const correctionButton = document.getElementById("member-correct-plan");
+  const emailEl = document.getElementById("member-email");
+  if (enabled) {
+    memberForm.dataset.mode = "correction";
+    if (emailEl) emailEl.readOnly = true;
+    correctionButton?.classList.remove("hidden");
+    sendPaymentButton?.classList.add("hidden");
+    activateButton?.classList.add("hidden");
+  } else {
+    delete memberForm.dataset.mode;
+    if (emailEl) emailEl.readOnly = false;
+    correctionButton?.classList.add("hidden");
+    sendPaymentButton?.classList.remove("hidden");
+    activateButton?.classList.remove("hidden");
+  }
+}
+
 function promotionAvailable() {
   return offerStatus ? offerStatus.promotionAvailable === true : true;
 }
@@ -226,6 +259,8 @@ function planAmountForTier(months, tier = currentTier()) {
 }
 
 function selectedPlanTier(email = selectedEmail()) {
+  const correcting = correctionMember();
+  if (correcting) return correcting.priceTier === "promo" ? "promo" : "regular";
   const requestedTier = String(monthsEl.value || "").startsWith("regular-") ? "regular" : "promo";
   if (requestedTier === "regular") return "regular";
   return currentTier(email);
@@ -321,18 +356,30 @@ function installOfferAdminUi() {
       <button id="sync-sponsor-public-offer" class="btn" type="button">立即同步前台名額與付款連結</button>
     </div>
   `);
+
+  if (activateButton && !document.getElementById("member-correct-plan")) {
+    const correctionButton = document.createElement("button");
+    correctionButton.id = "member-correct-plan";
+    correctionButton.className = "btn primary hidden";
+    correctionButton.type = "button";
+    correctionButton.textContent = "儲存方案更正";
+    activateButton.insertAdjacentElement("beforebegin", correctionButton);
+    correctionButton.addEventListener("click", () => saveMemberCorrection().catch(showError));
+  }
 }
 
 function updatePlanOptions() {
   if (!monthsEl) return;
   const previousValue = String(monthsEl.value || "");
   const previousMonths = previousValue === "3" || previousValue.endsWith("-3") ? 3 : 1;
-  const promoEligible = currentTier() === "promo";
+  const correcting = correctionMember();
+  const correctionTier = correcting?.priceTier === "promo" ? "promo" : "regular";
+  const promoEligible = correcting ? correctionTier === "promo" : currentTier() === "promo";
   const options = [
-    { value: "promo-1", label: `一個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice1).toLocaleString("zh-TW")}`, disabled: !promoEligible },
-    { value: "promo-3", label: `三個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice3).toLocaleString("zh-TW")}`, disabled: !promoEligible },
-    { value: "regular-1", label: `一個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice1).toLocaleString("zh-TW")}`, disabled: false },
-    { value: "regular-3", label: `三個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice3).toLocaleString("zh-TW")}`, disabled: false }
+    { value: "promo-1", label: `一個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice1).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "promo" : !promoEligible },
+    { value: "promo-3", label: `三個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice3).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "promo" : !promoEligible },
+    { value: "regular-1", label: `一個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice1).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "regular" : false },
+    { value: "regular-3", label: `三個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice3).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "regular" : false }
   ];
   monthsEl.replaceChildren(...options.map((item) => {
     const option = document.createElement("option");
@@ -344,7 +391,7 @@ function updatePlanOptions() {
   const requested = options.find((item) => item.value === previousValue && !item.disabled);
   monthsEl.value = requested
     ? requested.value
-    : `${promoEligible ? "promo" : "regular"}-${previousMonths}`;
+    : `${correcting ? correctionTier : (promoEligible ? "promo" : "regular")}-${previousMonths}`;
 }
 
 function renderOfferStatus() {
@@ -379,8 +426,18 @@ function updatePlanPreview(forceAmount = false) {
   const email = selectedEmail();
   const originalEmail = normalizeEmail(document.getElementById("member-original-email").value);
   const existing = members.find((item) => item.email === (email || originalEmail));
+  const correcting = correctionMember();
   const tier = selectedPlanTier(email || originalEmail);
   if (forceAmount || !amountEl.value) amountEl.value = String(planAmountForTier(selectedMonths(), tier) || "");
+
+  if (correcting) {
+    const oldMonths = Number(correcting.planMonths) === 3 ? 3 : 1;
+    const expiry = correctedExpiry(correcting, selectedMonths());
+    const priceText = tier === "promo" ? "首次購買優惠" : "原價／續期價";
+    summaryEl.textContent = `方案更正模式｜原 ${oldMonths} 個月 → ${selectedMonths()} 個月｜${priceText} NT$${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜更正後到期日 ${formatDate(expiry)}｜此操作只修正原紀錄，不會新增續期月份`;
+    return;
+  }
+
   const used = discountRecordForEmail(email || originalEmail).discountUsed;
   const tierText = tier === "promo"
     ? `首次購買優惠｜尚餘 ${offerStatus?.remaining ?? "—"} 名`
@@ -391,6 +448,7 @@ function updatePlanPreview(forceAmount = false) {
 function resetMemberForm() {
   memberForm.reset();
   document.getElementById("member-original-email").value = "";
+  setCorrectionMode(false);
   monthsEl.value = "promo-1";
   updatePlanOptions();
   updatePlanPreview(true);
@@ -461,6 +519,55 @@ async function loadOfferStatus() {
   } catch (error) {
     console.warn("公開優惠名額狀態暫時無法更新。", error);
     renderOfferStatus();
+  }
+}
+
+async function saveMemberCorrection() {
+  if (!memberForm.reportValidity()) return;
+  const member = correctionMember();
+  if (!member) {
+    statusEl.textContent = "請先從會員名單按「更正方案」再進行修改。";
+    return;
+  }
+
+  const email = selectedEmail();
+  if (email !== member.email) {
+    statusEl.textContent = "方案更正不會變更登入 Gmail；如需更換 Email，請另行處理會員資料。";
+    return;
+  }
+
+  const months = selectedMonths();
+  const tier = member.priceTier === "promo" ? "promo" : "regular";
+  const amount = planAmountForTier(months, tier);
+  const expiresAt = correctedExpiry(member, months);
+  const name = document.getElementById("member-name").value.trim();
+  const note = document.getElementById("member-note").value.trim();
+  const payload = {
+    name,
+    planMonths: months,
+    amount,
+    priceTier: tier,
+    expiresAt: expiresAt.toISOString(),
+    note,
+    correctedBy: auth.currentUser?.email || "",
+    correctedAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  };
+  if (tier === "promo") {
+    payload.discountPlan = `${months}months`;
+    payload.discountAmount = amount;
+  }
+
+  const correctionButton = document.getElementById("member-correct-plan");
+  if (correctionButton) correctionButton.disabled = true;
+  try {
+    await setDoc(doc(db, "sponsorMemberAccess", email), payload, { merge: true });
+    await writeSponsorHistory(email, { ...member, ...payload, correctedAt: new Date().toISOString() }, "verified");
+    await loadMembers();
+    statusEl.textContent = `會員方案已更正為 ${months} 個月｜金額 NT$${Number(amount).toLocaleString("zh-TW")}｜到期日 ${formatDate(expiresAt)}；未新增續期月份`;
+    resetMemberForm();
+  } finally {
+    if (correctionButton) correctionButton.disabled = false;
   }
 }
 
@@ -643,6 +750,7 @@ function renderMembers() {
           </div>
           <div class="member-row-actions">
             <button class="btn" type="button" data-notify="${escapeHtml(member.email)}">寄發開通通知</button>
+            <button class="btn" type="button" data-correct="${escapeHtml(member.email)}">更正方案</button>
             <button class="btn" type="button" data-edit="${escapeHtml(member.email)}">編輯／續期</button>
             <button class="btn danger" type="button" data-delete="${escapeHtml(member.email)}">刪除</button>
           </div>
@@ -653,13 +761,31 @@ function renderMembers() {
     const member = members.find((item) => item.email === button.dataset.notify);
     if (member) openActivationEmail(member);
   }));
+  listEl.querySelectorAll("[data-correct]").forEach((button) => button.addEventListener("click", () => correctMember(button.dataset.correct)));
   listEl.querySelectorAll("[data-edit]").forEach((button) => button.addEventListener("click", () => editMember(button.dataset.edit)));
   listEl.querySelectorAll("[data-delete]").forEach((button) => button.addEventListener("click", () => removeMember(button.dataset.delete)));
+}
+
+function correctMember(email) {
+  const member = members.find((item) => item.email === email);
+  if (!member) return;
+  document.getElementById("member-original-email").value = member.email;
+  document.getElementById("member-name").value = member.name || "";
+  document.getElementById("member-email").value = member.email || "";
+  setCorrectionMode(true);
+  monthsEl.value = `${member.priceTier === "promo" ? "promo" : "regular"}-${Number(member.planMonths) === 3 ? "3" : "1"}`;
+  amountEl.value = String(member.amount || "");
+  document.getElementById("member-note").value = member.note || "";
+  updatePlanOptions();
+  updatePlanPreview(true);
+  statusEl.textContent = "目前為方案更正模式：可修正一個月／三個月，儲存時不會再新增一次續期。";
+  memberForm.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function editMember(email) {
   const member = members.find((item) => item.email === email);
   if (!member) return;
+  setCorrectionMode(false);
   document.getElementById("member-original-email").value = member.email;
   document.getElementById("member-name").value = member.name || "";
   document.getElementById("member-email").value = member.email || "";
