@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FBF7F0"/><stop offset=".58" stop-color="#F1EEE6"/><stop offset="1" stop-color="#E4ECE7"/></linearGradient></defs>
+<rect width="1200" height="675" rx="28" fill="url(#bg)"/>
+<text x="80" y="88" font-family="Source Han Serif TC, Noto Serif TC, serif" font-size="34" font-weight="700" fill="#6F5738">經驗是真的，不代表解釋一定正確</text>
+<g font-family="Source Han Serif TC, Noto Serif TC, serif">
+<rect x="80" y="175" width="285" height="290" rx="28" fill="#FFFFFF" stroke="#D7C297" stroke-width="3"/>
+<text x="222" y="228" text-anchor="middle" font-size="26" font-weight="700" fill="#6B5A42">第一層｜現象</text>
+<text x="222" y="287" text-anchor="middle" font-size="21" fill="#746B60">我夢見神明</text><text x="222" y="328" text-anchor="middle" font-size="21" fill="#746B60">我感到發熱／震動</text><text x="222" y="369" text-anchor="middle" font-size="21" fill="#746B60">一則訊息後來成真</text>
+<path d="M390 320h95" stroke="#C3A366" stroke-width="6" stroke-linecap="round"/><path d="M475 304l28 16-28 16z" fill="#C3A366"/>
+<rect x="505" y="175" width="285" height="290" rx="28" fill="#FFFDF9" stroke="#9CB3A5" stroke-width="3"/>
+<text x="648" y="228" text-anchor="middle" font-size="26" font-weight="700" fill="#557567">第二層｜詮釋</text>
+<text x="648" y="287" text-anchor="middle" font-size="21" fill="#68716C">祂是不是來找我？</text><text x="648" y="328" text-anchor="middle" font-size="21" fill="#68716C">這是不是元神覺醒？</text><text x="648" y="369" text-anchor="middle" font-size="21" fill="#68716C">來源一定很高嗎？</text>
+<path d="M815 320h95" stroke="#7E9F8F" stroke-width="6" stroke-linecap="round"/><path d="M900 304l28 16-28 16z" fill="#7E9F8F"/>
+<rect x="930" y="175" width="190" height="290" rx="28" fill="#FFFFFF" stroke="#9CB3A5" stroke-width="3"/>
+<text x="1025" y="228" text-anchor="middle" font-size="26" font-weight="700" fill="#557567">第三層</text>
+<text x="1025" y="268" text-anchor="middle" font-size="26" font-weight="700" fill="#557567">暫時結論</text>
+<text x="1025" y="333" text-anchor="middle" font-size="20" fill="#68716C">保留其他可能</text><text x="1025" y="372" text-anchor="middle" font-size="20" fill="#68716C">等待時間驗證</text>
+<text x="600" y="545" text-anchor="middle" font-size="23" font-weight="700" fill="#6C6257">先把「發生了什麼」和「我怎麼理解它」分開，才有校正的空間。</text>
+</g></svg>
