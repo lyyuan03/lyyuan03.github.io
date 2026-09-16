@@ -1,4 +1,5 @@
 import { staticArticles } from "./static-articles.js?v=20260902-detail-reading-rescue-2";
+import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260916-clean-flow-3";
 
 const root = document.getElementById("article-root");
 const params = new URLSearchParams(location.search);
@@ -41,7 +42,7 @@ function currentArticles() {
   });
 }
 
-function firstImage(article) { return article?.thumbnailImage || article?.coverImage || ""; }
+function firstImage(article) { return resolveArticleThumbnailUrl(article, article?.thumbnailImage || article?.coverImage || ""); }
 
 function renderListFallback() {
   if (!root || activeId) return false;

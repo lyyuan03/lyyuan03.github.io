@@ -4,7 +4,7 @@ import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissio
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260903-thumbnail-url-normalize-1";
+import { resolveArticleThumbnailUrl, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260916-clean-flow-3";
 
 const categoryLabels = {
   spiritual: "靈．修行",
@@ -526,7 +526,7 @@ function staticArticlePayload(article, revision) {
     status: article.status || "published",
     excerpt: article.excerpt || "",
     coverImage: article.coverImage || "",
-    thumbnailImage: resolveThumbnailUrl(article.thumbnailImage || ""),
+    thumbnailImage: resolveArticleThumbnailUrl(article, article.thumbnailImage || ""),
     bookTitle: article.bookTitle || "",
     bookAuthor: article.bookAuthor || "",
     bookPublisher: article.bookPublisher || "",
@@ -639,7 +639,7 @@ async function syncRevisedStaticArticleImages(snapshot) {
     const article = staticArticles.find((item) => item.id === articleId);
     if (!current || !article) continue;
     const desiredCoverImage = article.coverImage || "";
-    const desiredThumbnailImage = resolveThumbnailUrl(article.thumbnailImage || "");
+    const desiredThumbnailImage = resolveArticleThumbnailUrl(article, article.thumbnailImage || "");
     if (
       current.staticImageSyncRevision === revision
       && (current.coverImage || "") === desiredCoverImage
@@ -700,7 +700,7 @@ async function importStaticArticle(articleId) {
     status: article.status || "published",
     excerpt: article.excerpt || "",
     coverImage: article.coverImage || "",
-    thumbnailImage: resolveThumbnailUrl(article.thumbnailImage || ""),
+    thumbnailImage: resolveArticleThumbnailUrl(article, article.thumbnailImage || ""),
     bookTitle: article.bookTitle || "",
     bookAuthor: article.bookAuthor || "",
     bookPublisher: article.bookPublisher || "",
@@ -942,7 +942,7 @@ async function saveArticle(event) {
     const thumbnailInput = typeof window.articleThumbnailAdmin?.getResolvedThumbnailImage === "function"
       ? window.articleThumbnailAdmin.getResolvedThumbnailImage(currentId)
       : existingData?.thumbnailImage || "";
-    const normalizedThumbnailImage = resolveThumbnailUrl(thumbnailInput);
+    const normalizedThumbnailImage = resolveArticleThumbnailUrl({ ...data, id: currentId }, thumbnailInput);
     const payload = {
       ...data,
       thumbnailImage: normalizedThumbnailImage,

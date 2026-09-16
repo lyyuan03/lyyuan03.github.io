@@ -1,4 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
+import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260916-clean-flow-3";
 import { staticArticles } from "./static-articles.js?v=20260829-yuanshen-title-preview-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -76,7 +77,7 @@ function firstInlineImage(content = "") {
 }
 
 function draftImage(article = {}) {
-  return article.thumbnailImage || article.coverImage || firstInlineImage(article.content) || "";
+  return resolveArticleThumbnailUrl(article, article.thumbnailImage || article.coverImage || firstInlineImage(article.content) || "");
 }
 
 const categoryLabels = {
