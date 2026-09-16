@@ -1,4 +1,6 @@
 const SITE_ORIGIN = "https://lyyuan.tw";
+const NEED_A_TEACHER_THUMBNAIL_PATH = "/assets/articles/need-a-teacher/thumbnail.svg";
+const NEED_A_TEACHER_THUMBNAIL_VERSION = "20260916-clean-1";
 
 function cleanThumbnailUrl(value = "") {
   return String(value || "").trim().replace(/^<|>$/g, "");
@@ -23,6 +25,9 @@ export function resolveThumbnailUrl(value = "") {
       : new URL(raw, `${SITE_ORIGIN}/`);
 
     if (isLyyuanHost(url.hostname)) {
+      if (url.pathname === NEED_A_TEACHER_THUMBNAIL_PATH) {
+        url.searchParams.set("v", NEED_A_TEACHER_THUMBNAIL_VERSION);
+      }
       return `${SITE_ORIGIN}${url.pathname}${url.search}${url.hash}`;
     }
     return url.href;
