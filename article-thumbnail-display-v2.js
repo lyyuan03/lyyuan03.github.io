@@ -1,4 +1,5 @@
 import { db } from "./firebase-config.js";
+import { isNeedATeacherArticle, NEED_A_TEACHER_THUMBNAIL_URL, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260916-clean-flow-3";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { staticArticles } from "./static-articles.js?v=20260903-final-png";
 
@@ -207,6 +208,8 @@ function applyCard(card) {
 
   const fullTitle = (card.querySelector(".article-list-title")?.textContent || "靈元院文選").trim();
   const article = articlesById.get(articleId) || null;
+  const articleIdentity = { ...(article || {}), id: articleId, title: fullTitle };
+  const textFreeThumbnail = isNeedATeacherArticle(articleIdentity);
   const categoryKey = categoryKeyForCard(card, article);
   const image = ensureImage(media, fullTitle);
 
@@ -218,19 +221,23 @@ function applyCard(card) {
 
   const configured = thumbnailSettings.get(articleId) || null;
   const configuredImage = normalizeImageUrl(configured?.thumbnailImage || "");
-  const forcedImage = articleId === "spiritual-good-death-last-visit" ? String(article?.thumbnailImage || article?.coverImage || "") : (FORCED_THUMBNAIL_IMAGES[articleId] || "");
+  const forcedImage = textFreeThumbnail
+    ? NEED_A_TEACHER_THUMBNAIL_URL
+    : articleId === "spiritual-good-death-last-visit"
+      ? String(article?.thumbnailImage || article?.coverImage || "")
+      : (FORCED_THUMBNAIL_IMAGES[articleId] || "");
   const overrideImage = FIRST_IMAGE_OVERRIDES[articleId] || "";
   const preservedOriginal = media.dataset.originalArticleImage || "";
   const failedSources = new Set((media.dataset.failedThumbnailSources || "").split("\\n").filter(Boolean));
   const sourceCandidates = [forcedImage, configuredImage, preservedOriginal, overrideImage, article?.coverImage || "", firstInlineImage(article), BRAND_FALLBACKS[categoryKey], BRAND_FALLBACKS.spiritual]
-    .map(normalizeImageUrl).filter((value, index, values) => value && values.indexOf(value) === index);
+    .map((value) => resolveThumbnailUrl(normalizeImageUrl(value))).filter((value, index, values) => value && values.indexOf(value) === index);
   const source = sourceCandidates.find((value) => !failedSources.has(value)) || BRAND_FALLBACKS[categoryKey] || BRAND_FALLBACKS.spiritual;
   const shortTitle = compactTitle(article, fullTitle);
   const cleanCrop = CLEAN_CROP_OVERRIDES[articleId] || null;
-  const fit = cleanCrop ? "cover" : configured?.thumbnailFit === "contain" ? "contain" : "cover";
-  const x = Number.isFinite(Number(configured?.thumbnailPositionX)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionX))) : 50;
-  const y = Number.isFinite(Number(configured?.thumbnailPositionY)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionY))) : 50;
-  const scale = cleanCrop?.scale || (Number.isFinite(Number(configured?.thumbnailScale)) ? Math.min(300, Math.max(100, Number(configured.thumbnailScale))) / 100 : 1);
+  const fit = textFreeThumbnail ? "cover" : cleanCrop ? "cover" : configured?.thumbnailFit === "contain" ? "contain" : "cover";
+  const x = textFreeThumbnail ? 50 : Number.isFinite(Number(configured?.thumbnailPositionX)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionX))) : 50;
+  const y = textFreeThumbnail ? 50 : Number.isFinite(Number(configured?.thumbnailPositionY)) ? Math.min(100, Math.max(0, Number(configured.thumbnailPositionY))) : 50;
+  const scale = textFreeThumbnail ? 1 : cleanCrop?.scale || (Number.isFinite(Number(configured?.thumbnailScale)) ? Math.min(300, Math.max(100, Number(configured.thumbnailScale))) / 100 : 1);
   media.style.setProperty("--article-thumbnail-fit", fit);
   media.style.setProperty("--article-thumbnail-position", `${x}% ${y}%`);
   media.style.setProperty("--article-thumbnail-scale", String(scale));
@@ -250,12 +257,17 @@ function applyCard(card) {
   delete media.dataset.brandThumbnail;
   delete media.dataset.brandSpecial;
 
-  delete media.dataset.textFreeThumbnail;
-  ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
-  const titleNode = media.querySelector(".article-photo-thumb-title");
-  if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
+  if (textFreeThumbnail) {
+    media.dataset.textFreeThumbnail = "true";
+    media.querySelectorAll(".article-photo-thumb-overlay, .article-brand-thumb-overlay, .article-card-media-gradient").forEach((node) => node.remove());
+  } else {
+    delete media.dataset.textFreeThumbnail;
+    ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
+    const titleNode = media.querySelector(".article-photo-thumb-title");
+    if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
+  }
 
-  card.dataset.thumbnailConfigured = cleanCrop ? "clean-crop-standard-template" : configuredImage ? "saved-setting" : preservedOriginal ? "original-photo" : overrideImage ? "inline-image-override" : "brand-fallback";
+  card.dataset.thumbnailConfigured = textFreeThumbnail ? "forced-text-free-thumbnail" : cleanCrop ? "clean-crop-standard-template" : configuredImage ? "saved-setting" : preservedOriginal ? "original-photo" : overrideImage ? "inline-image-override" : "brand-fallback";
 }
 
 function applyAllCards() {
