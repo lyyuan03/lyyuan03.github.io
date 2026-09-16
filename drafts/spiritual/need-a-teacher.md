@@ -1,20 +1,24 @@
 ---
 title: "走靈修，到底需不需要老師？"
 subtitle: "從被帶領、求證、信仰，到最後學會自己走"
-category: spiritual
-status: draft
-access: sponsor-member
-cover: /assets/articles/need-a-teacher/cover.svg
-thumbnail: /assets/articles/need-a-teacher/thumbnail.svg
-recommendedBook: "我在人間的元神覺醒"
+slug: "need-a-teacher"
+category: "spiritual"
+status: "draft"
+accessType: "paid"
+eventId: ""
+excerpt: "靈修初期為什麼需要老師？從無極老母的教導、人間前輩的校正，到求證、信仰與生活驗證，談一個修行者如何從被帶領，走到有能力辨識、反省並為自己的修行負責。"
+coverImage: "/assets/articles/need-a-teacher/cover.svg"
+thumbnailImage: "/assets/articles/need-a-teacher/thumbnail.svg"
+bookTitle: "我在人間的元神覺醒"
+bookAuthor: "宇色 Osel"
+bookPublisher: "柿子文化"
+bookPurchaseUrl: "https://www.books.com.tw/products/0011060075?sloc=main"
+bookCoverImage: "https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg"
 visualCount: 7
+memberGate: "<!-- member-only -->"
 ---
 
-# 走靈修，到底需不需要老師？
-
 ## 從被帶領、求證、信仰，到最後學會自己走
-
-![走靈修，到底需不需要老師？](/assets/articles/need-a-teacher/cover.svg)
 
 有讀者問過我一個很直接的問題。
 
@@ -134,7 +138,7 @@ visualCount: 7
 
 網路會給你方法，很少會擋你的自我。書會給你語言，很少會在你膨脹的那一刻把你叫停。自己摸一套體系，最容易把「我已經整理完了」誤認成「我已經看清楚了」。整理完只表示材料在手。看清楚，是有人能指出你材料裡那一塊其實是慾望。沒有這一層摩擦，初期的獨立常常只是沒人管。
 
-![靈修的成長路徑](/assets/articles/need-a-teacher/figure-1-path.svg)
+![從未知到自主：修行不是有沒有老師的二選一](/assets/articles/need-a-teacher/figure-1-path.svg)
 
 若有人問：「那要跟老師多久？」
 
@@ -196,7 +200,7 @@ visualCount: 7
 
 什麼都沒改，那個信就還供在外面。你在用祂，還沒讓祂進到日子裡。
 
-![利用神明與真正的信仰](/assets/articles/need-a-teacher/figure-4-faith.svg)
+![利用神明與信仰：依賴，或轉化](/assets/articles/need-a-teacher/figure-4-faith.svg)
 
 我後來花很長時間想，「信仰」到底在做什麼。
 
