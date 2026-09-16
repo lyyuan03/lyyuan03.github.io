@@ -4,7 +4,12 @@ import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/fi
 
 const IMPORT_ID = "yuanqin-debt-heart";
 const PAYLOAD_URL = "./secure-imports/yuanqin-debt-heart-20260828.enc.json?v=20260828-1";
+const NEED_TEACHER_ID = "need-a-teacher";
+const NEED_TEACHER_SOURCE_URL = "./drafts/spiritual/need-a-teacher.md?v=20260916-backend-draft-1";
+const NEED_TEACHER_PAID_MARKER = "<!-- paid-only -->";
+const NEED_TEACHER_LEGACY_MARKER = "<!-- member-only -->";
 let started = false;
+let needTeacherSeedStarted = false;
 
 function base64UrlToBytes(value = "") {
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
@@ -105,6 +110,94 @@ async function importPaidDraft(keyText) {
   window.setTimeout(() => location.reload(), 1200);
 }
 
+function stripFrontMatter(markdown = "") {
+  return String(markdown || "").replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, "").trim();
+}
+
+function splitNeedTeacherContent(markdown = "") {
+  const normalized = stripFrontMatter(markdown)
+    .replace(NEED_TEACHER_LEGACY_MARKER, NEED_TEACHER_PAID_MARKER)
+    .trim();
+  const markerIndex = normalized.indexOf(NEED_TEACHER_PAID_MARKER);
+  if (markerIndex < 0) throw new Error("NEED_TEACHER_PAID_MARKER_MISSING");
+  const publicContent = normalized.slice(0, markerIndex).trim();
+  const privateContent = normalized.slice(markerIndex + NEED_TEACHER_PAID_MARKER.length).trim();
+  if (!publicContent || !privateContent) throw new Error("NEED_TEACHER_CONTENT_INCOMPLETE");
+  return {
+    publicContent,
+    privateContent,
+    safeContent: `${publicContent}\n\n${NEED_TEACHER_PAID_MARKER}`.trim()
+  };
+}
+
+async function seedNeedTeacherDraft() {
+  const articleRef = doc(db, "articles", NEED_TEACHER_ID);
+  const existing = await getDoc(articleRef);
+  if (existing.exists()) return false;
+
+  const response = await fetch(NEED_TEACHER_SOURCE_URL, { cache: "no-store" });
+  if (!response.ok) throw new Error("NEED_TEACHER_SOURCE_NOT_FOUND");
+  const split = splitNeedTeacherContent(await response.text());
+  const contentHash = bytesToHex(await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(split.privateContent)
+  ));
+  const contentVersion = 1;
+
+  await setDoc(doc(db, "paidArticleBodies", NEED_TEACHER_ID), {
+    articleId: NEED_TEACHER_ID,
+    title: "走靈修，到底需不需要老師？",
+    status: "draft",
+    content: split.privateContent,
+    contentHash,
+    contentVersion,
+    source: "secure-admin-draft-seed:20260916-need-a-teacher",
+    active: true,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  await setDoc(articleRef, {
+    title: "走靈修，到底需不需要老師？",
+    slug: "need-a-teacher",
+    category: "spiritual",
+    displayCategory: "靈修",
+    series: "靈修辨證",
+    status: "draft",
+    excerpt: "靈修初期為什麼需要老師？從無極老母的教導、人間前輩的校正，到求證、信仰與生活驗證，談一個修行者如何從被帶領，走到有能力辨識、反省並為自己的修行負責。",
+    coverImage: "/assets/articles/need-a-teacher/cover.svg",
+    thumbnailImage: "/assets/articles/need-a-teacher/thumbnail.svg",
+    bookTitle: "我在人間的元神覺醒",
+    bookAuthor: "宇色 Osel",
+    bookPublisher: "柿子文化",
+    bookPurchaseUrl: "https://www.books.com.tw/products/0011060075?sloc=main",
+    bookCoverImage: "https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg",
+    accessType: "paid",
+    eventId: "",
+    content: split.safeContent,
+    privatePaidContent: true,
+    paidContentHash: contentHash,
+    paidContentVersion: contentVersion,
+    draftSeedRevision: "20260916-backend-draft-1",
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  const [verifyArticle, verifyPrivate] = await Promise.all([
+    getDoc(articleRef),
+    getDoc(doc(db, "paidArticleBodies", NEED_TEACHER_ID))
+  ]);
+  if (!verifyArticle.exists()
+      || !verifyPrivate.exists()
+      || String(verifyArticle.data()?.status || "") !== "draft"
+      || String(verifyPrivate.data()?.content || "") !== split.privateContent) {
+    throw new Error("NEED_TEACHER_DRAFT_VERIFY_FAILED");
+  }
+
+  localStorage.setItem("lyyuan:need-a-teacher-draft-seeded", "20260916-backend-draft-1");
+  return true;
+}
+
 const params = new URLSearchParams(location.hash.replace(/^#/, ""));
 const importId = params.get("paidImport") || "";
 const importKey = params.get("key") || "";
@@ -124,3 +217,18 @@ if (importId === IMPORT_ID && importKey) {
     });
   });
 }
+
+onAuthStateChanged(auth, (user) => {
+  if (needTeacherSeedStarted || !user || !isAdminEmail(user.email)) return;
+  needTeacherSeedStarted = true;
+  void seedNeedTeacherDraft()
+    .then((created) => {
+      if (!created) return;
+      showImportStatus("《走靈修，到底需不需要老師？》已寫入後台草稿區，正在重新載入…", "success");
+      window.setTimeout(() => location.reload(), 900);
+    })
+    .catch((error) => {
+      console.error("《走靈修，到底需不需要老師？》後台草稿建立失敗：", error);
+      showImportStatus("這篇文章的後台草稿尚未建立成功，請重新整理後台再試一次。", "error");
+    });
+});
