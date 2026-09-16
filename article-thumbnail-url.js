@@ -1,6 +1,6 @@
 const SITE_ORIGIN = "https://lyyuan.tw";
 const NEED_A_TEACHER_THUMBNAIL_PATH = "/assets/articles/need-a-teacher/thumbnail.svg";
-const NEED_A_TEACHER_THUMBNAIL_VERSION = "20260916-clean-3";
+const NEED_A_TEACHER_THUMBNAIL_VERSION = "20260916-clean-4";
 
 function cleanThumbnailUrl(value = "") {
   return String(value || "").trim().replace(/^<|>$/g, "");
