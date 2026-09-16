@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { isNeedATeacherArticle, NEED_A_TEACHER_THUMBNAIL_URL, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260916-clean-flow-4";
+import { isNeedATeacherArticle, NEED_A_TEACHER_THUMBNAIL_URL, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260916-clean-flow-5";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const SCALE_MIN = 100;
