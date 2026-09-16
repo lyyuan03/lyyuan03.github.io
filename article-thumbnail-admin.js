@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260903-thumbnail-url-normalize-1";
+import { isNeedATeacherArticle, NEED_A_TEACHER_THUMBNAIL_URL, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260916-clean-flow-3";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const SCALE_MIN = 100;
@@ -304,7 +304,9 @@ function initialize() {
       if (serial !== loadSerial) return;
       const saved = settingsSnapshot.exists() ? settingsSnapshot.data().settings?.[articleId] : null;
       const fallback = articleSnapshot.exists() ? articleSnapshot.data() : {};
-      const forcedThumbnailImage = resolveThumbnailUrl(FORCED_THUMBNAIL_IMAGES[articleId] || "");
+      const forcedThumbnailImage = isNeedATeacherArticle({ ...fallback, id: articleId })
+        ? NEED_A_TEACHER_THUMBNAIL_URL
+        : resolveThumbnailUrl(FORCED_THUMBNAIL_IMAGES[articleId] || "");
       const forced = forcedThumbnailImage && String(saved?.thumbnailImage || "") !== forcedThumbnailImage
         ? normalizeSettings({
             ...(saved || fallback || {}),
