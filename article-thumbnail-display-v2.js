@@ -259,15 +259,15 @@ function applyCard(card) {
 
   if (textFreeThumbnail) {
     media.dataset.textFreeThumbnail = "true";
-    media.querySelectorAll(".article-photo-thumb-overlay, .article-brand-thumb-overlay, .article-card-media-gradient").forEach((node) => node.remove());
+    media.querySelectorAll(".article-brand-thumb-overlay, .article-card-media-gradient").forEach((node) => node.remove());
   } else {
     delete media.dataset.textFreeThumbnail;
-    ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
-    const titleNode = media.querySelector(".article-photo-thumb-title");
-    if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
   }
+  ensureOverlay(media, shortTitle, CATEGORY_LABELS[categoryKey] || "文選");
+  const titleNode = media.querySelector(".article-photo-thumb-title");
+  if (titleNode) titleNode.style.textAlign = configured?.thumbnailTitleAlign === "center" ? "center" : "left";
 
-  card.dataset.thumbnailConfigured = textFreeThumbnail ? "forced-text-free-thumbnail" : cleanCrop ? "clean-crop-standard-template" : configuredImage ? "saved-setting" : preservedOriginal ? "original-photo" : overrideImage ? "inline-image-override" : "brand-fallback";
+  card.dataset.thumbnailConfigured = textFreeThumbnail ? "forced-text-free-thumbnail-with-standard-overlay" : cleanCrop ? "clean-crop-standard-template" : configuredImage ? "saved-setting" : preservedOriginal ? "original-photo" : overrideImage ? "inline-image-override" : "brand-fallback";
 }
 
 function applyAllCards() {
