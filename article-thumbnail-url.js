@@ -15,6 +15,18 @@ function isLyyuanHost(hostname = "") {
   return host === "lyyuan.tw" || host === "www.lyyuan.tw";
 }
 
+export const NEED_A_TEACHER_THUMBNAIL_URL = `${SITE_ORIGIN}${NEED_A_TEACHER_THUMBNAIL_PATH}?v=${NEED_A_TEACHER_THUMBNAIL_VERSION}`;
+
+function normalizedArticleTitle(value = "") {
+  return String(value || "").replace(/[〈〉《》\s，,。！？?!：:]/g, "");
+}
+
+export function isNeedATeacherArticle(article = {}) {
+  const id = String(article?.id || article?.slug || article?.__firestoreId || "").toLowerCase();
+  const title = normalizedArticleTitle(article?.title || "");
+  return id.includes("need-a-teacher") || title.includes("走靈修到底需不需要老師");
+}
+
 export function resolveThumbnailUrl(value = "") {
   const raw = cleanThumbnailUrl(value);
   if (!raw || isDataOrBlobUrl(raw)) return raw;
@@ -34,6 +46,11 @@ export function resolveThumbnailUrl(value = "") {
   } catch {
     return raw;
   }
+}
+
+export function resolveArticleThumbnailUrl(article = {}, value = "") {
+  if (isNeedATeacherArticle(article)) return NEED_A_TEACHER_THUMBNAIL_URL;
+  return resolveThumbnailUrl(value);
 }
 
 export function classifyThumbnailUrl(value = "") {
