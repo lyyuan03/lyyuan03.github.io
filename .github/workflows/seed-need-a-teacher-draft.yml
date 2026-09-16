@@ -1,0 +1,202 @@
+name: Seed Need A Teacher Draft
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/seed-need-a-teacher-draft.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  seed-firestore-draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      PROJECT_ID: lyyuan03-membership
+      ARTICLE_ID: need-a-teacher
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Load draft source from draft branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin draft/need-a-teacher --depth=1
+          git show FETCH_HEAD:drafts/spiritual/need-a-teacher.md > /tmp/need-a-teacher.md
+          test -s /tmp/need-a-teacher.md
+
+      - name: Write draft directly to Firestore backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import datetime as dt
+          import hashlib
+          import json
+          import os
+          import subprocess
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          project = os.environ['PROJECT_ID']
+          article_id = os.environ['ARTICLE_ID']
+          token = subprocess.check_output(['gcloud', 'auth', 'print-access-token'], text=True).strip()
+          root = f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents'
+          article_url = f'{root}/articles/{article_id}'
+          private_url = f'{root}/paidArticleBodies/{article_id}'
+
+          with open('/tmp/need-a-teacher.md', 'r', encoding='utf-8') as fh:
+              raw = fh.read()
+
+          if not raw.startswith('---\n'):
+              raise SystemExit('FRONT_MATTER_NOT_FOUND')
+          _, fm_text, body = raw.split('---', 2)
+          meta = {}
+          for line in fm_text.splitlines():
+              line = line.strip()
+              if not line or ':' not in line:
+                  continue
+              key, value = line.split(':', 1)
+              value = value.strip()
+              if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+                  value = value[1:-1]
+              meta[key.strip()] = value
+
+          source_marker = '<!-- member-only -->'
+          if source_marker not in body:
+              raise SystemExit('MEMBER_GATE_NOT_FOUND')
+          public_content, private_content = body.split(source_marker, 1)
+          public_content = public_content.strip()
+          private_content = private_content.strip()
+          if not public_content or not private_content:
+              raise SystemExit('PAID_CONTENT_SPLIT_EMPTY')
+          paid_marker = '<!-- paid-only -->'
+          safe_content = f'{public_content}\n\n{paid_marker}'.strip()
+          content_hash = hashlib.sha256(private_content.encode('utf-8')).hexdigest()
+          now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z')
+
+          def request_json(url, method='GET', payload=None, allow_404=False):
+              data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode('utf-8')
+              req = urllib.request.Request(url, data=data, method=method)
+              req.add_header('Authorization', f'Bearer {token}')
+              if data is not None:
+                  req.add_header('Content-Type', 'application/json; charset=utf-8')
+              try:
+                  with urllib.request.urlopen(req) as resp:
+                      return json.loads(resp.read().decode('utf-8'))
+              except urllib.error.HTTPError as exc:
+                  if allow_404 and exc.code == 404:
+                      return None
+                  detail = exc.read().decode('utf-8', errors='replace')
+                  raise RuntimeError(f'HTTP {exc.code} {url}: {detail}') from exc
+
+          def f_string(value):
+              return {'stringValue': str(value)}
+          def f_bool(value):
+              return {'booleanValue': bool(value)}
+          def f_int(value):
+              return {'integerValue': str(int(value))}
+          def f_time(value):
+              return {'timestampValue': value}
+          def f_map(fields=None):
+              return {'mapValue': {'fields': fields or {}}}
+          def get_field(doc, name, kind, default=None):
+              if not doc:
+                  return default
+              field = (doc.get('fields') or {}).get(name) or {}
+              return field.get(kind, default)
+
+          existing_article = request_json(article_url, allow_404=True)
+          existing_private = request_json(private_url, allow_404=True)
+          previous_hash = get_field(existing_private, 'contentHash', 'stringValue', '') or ''
+          previous_content = get_field(existing_private, 'content', 'stringValue', '') or ''
+          try:
+              previous_version = int(get_field(existing_private, 'contentVersion', 'integerValue', 0) or 0)
+          except (TypeError, ValueError):
+              previous_version = 0
+          changed = previous_hash != content_hash or previous_content != private_content
+          content_version = previous_version + 1 if changed else max(1, previous_version)
+
+          article_fields = {
+              'title': f_string(meta.get('title', '走靈修，到底需不需要老師？')),
+              'slug': f_string(meta.get('slug', article_id)),
+              'category': f_string(meta.get('category', 'spiritual')),
+              'status': f_string('draft'),
+              'excerpt': f_string(meta.get('excerpt', '')),
+              'coverImage': f_string(meta.get('coverImage', '')),
+              'thumbnailImage': f_string(meta.get('thumbnailImage', '')),
+              'bookTitle': f_string(meta.get('bookTitle', '我在人間的元神覺醒')),
+              'bookAuthor': f_string(meta.get('bookAuthor', '宇色 Osel')),
+              'bookPublisher': f_string(meta.get('bookPublisher', '柿子文化')),
+              'bookPurchaseUrl': f_string(meta.get('bookPurchaseUrl', '')),
+              'bookCoverImage': f_string(meta.get('bookCoverImage', '')),
+              'accessType': f_string('paid'),
+              'eventId': f_string(''),
+              'eventName': f_string(''),
+              'content': f_string(safe_content),
+              'privatePaidContent': f_bool(True),
+              'paidContentHash': f_string(content_hash),
+              'paidContentVersion': f_int(content_version),
+              'encryptedContent': f_string(''),
+              'eventIv': f_string(''),
+              'encryption': f_string(''),
+              'magicLinkAccess': f_map(),
+              'updatedAt': f_time(now),
+          }
+          if not existing_article:
+              article_fields['createdAt'] = f_time(now)
+
+          private_fields = {
+              'articleId': f_string(article_id),
+              'title': f_string(meta.get('title', '走靈修，到底需不需要老師？')),
+              'status': f_string('draft'),
+              'content': f_string(private_content),
+              'contentHash': f_string(content_hash),
+              'contentVersion': f_int(content_version),
+              'source': f_string('chatgpt-direct-backend-import'),
+              'active': f_bool(True),
+              'updatedAt': f_time(now),
+          }
+          if not existing_private:
+              private_fields['createdAt'] = f_time(now)
+          elif changed:
+              private_fields['previousContentBackup'] = f_string(previous_content)
+              private_fields['previousContentHashBackup'] = f_string(previous_hash)
+              private_fields['previousContentVersionBackup'] = f_int(previous_version)
+              private_fields['previousBackupAt'] = f_time(now)
+
+          def patch_doc(url, fields):
+              query = urllib.parse.urlencode([('updateMask.fieldPaths', name) for name in fields.keys()])
+              return request_json(f'{url}?{query}', 'PATCH', {'fields': fields})
+
+          patch_doc(private_url, private_fields)
+          patch_doc(article_url, article_fields)
+
+          verify_article = request_json(article_url)
+          verify_private = request_json(private_url)
+          af = verify_article.get('fields') or {}
+          pf = verify_private.get('fields') or {}
+          assert af['status']['stringValue'] == 'draft'
+          assert af['accessType']['stringValue'] == 'paid'
+          assert af['content']['stringValue'].endswith(paid_marker)
+          assert af['paidContentHash']['stringValue'] == content_hash
+          assert int(af['paidContentVersion']['integerValue']) == content_version
+          assert pf['status']['stringValue'] == 'draft'
+          assert pf['content']['stringValue'] == private_content
+          assert pf['contentHash']['stringValue'] == content_hash
+          assert int(pf['contentVersion']['integerValue']) == content_version
+          print(f'BACKEND_DRAFT_VERIFY_OK id={article_id} status=draft accessType=paid version={content_version}')
+          PY
