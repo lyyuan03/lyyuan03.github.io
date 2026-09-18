@@ -2,6 +2,11 @@
   "name": "lyyuan-firestore-security-tests",
   "private": true,
   "type": "module",
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "firebase": "12.19.0",
+    "firebase-tools": "15.30.2"
+  },
   "scripts": {
     "test": "firebase emulators:exec --only firestore --project demo-membership-expiry --config firebase.json 'node --test expiry.test.mjs'"
   }
