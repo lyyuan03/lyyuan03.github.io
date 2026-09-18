@@ -7,6 +7,8 @@ const SCALE_MIN = 100;
 const SCALE_MAX = 250;
 const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
 const SPIRITUAL_GOOD_DEATH_COVER_FALLBACK = "/assets/articles/spiritual-good-death/book-cover-thumb.jpg";
+const NEED_A_TEACHER_ARTICLE_ID = "need-a-teacher";
+const NEED_A_TEACHER_COVER_PHOTO = "/assets/articles/need-a-teacher/thumbnail-20260918-800.webp?v=20260918-cover-photo-1";
 let settingsByArticle = new Map();
 
 function clamp(value, fallback, min, max) {
@@ -110,6 +112,25 @@ function ensureSpiritualGoodDeathCover(article, id) {
   });
 }
 
+function ensureNeedATeacherCover(article, id) {
+  if (id !== NEED_A_TEACHER_ARTICLE_ID) return;
+  const body = article.querySelector(".article-body");
+  let cover = article.querySelector(".article-cover");
+
+  if (!cover && body) {
+    cover = document.createElement("img");
+    cover.className = "article-cover";
+    cover.alt = "靜坐修行者與台北城市暮色";
+    body.before(cover);
+  }
+  if (!cover) return;
+
+  cover.alt = "靜坐修行者與台北城市暮色";
+  const desired = absoluteUrl(NEED_A_TEACHER_COVER_PHOTO);
+  const current = absoluteUrl(cover.getAttribute("src") || cover.src || "");
+  if (current !== desired) cover.setAttribute("src", NEED_A_TEACHER_COVER_PHOTO);
+}
+
 function apply() {
   installStyles();
   resetManaged();
@@ -117,6 +138,7 @@ function apply() {
   if (!article) return;
   const id = article.dataset.articleId || "";
   ensureSpiritualGoodDeathCover(article, id);
+  ensureNeedATeacherCover(article, id);
   const saved = settingsByArticle.get(id);
   const images = Array.isArray(saved?.images) ? saved.images.slice(0, MAX_IMAGES).map(normalize) : [];
   if (!images.length) return;
