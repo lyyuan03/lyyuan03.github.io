@@ -1,7 +1,13 @@
-name: Preview production membership expiry migration
+name: Production membership expiry migration
 
 on:
   workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        description: Preview only, or back up and apply expiry conversions
+        default: dry-run
+        options: [dry-run, apply]
   push:
     branches: [fix/legacy-membership-expiry]
     paths: [.github/workflows/member-expiry-preflight.yml]
@@ -15,10 +21,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  preview:
+  migration:
     if: github.repository == 'lyyuan03/lyyuan03.github.io' && github.ref == 'refs/heads/fix/legacy-membership-expiry'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      APPLY_EXPIRY: ${{ (github.event_name == 'workflow_dispatch' && inputs.operation == 'apply') || (github.event_name == 'push' && contains(github.event.head_commit.message, '[apply-expiry-migration]')) }}
     steps:
       - uses: actions/checkout@v4
       - name: Require successful PR checks for this exact commit
@@ -53,6 +61,31 @@ jobs:
           python3 -B scripts/normalize-member-expiry.py
           --project lyyuan03-membership
           --report "$RUNNER_TEMP/member-expiry-preview.json"
+      - name: Back up original dates privately and apply conversions
+        if: env.APPLY_EXPIRY == 'true'
+        run: >-
+          python3 -B scripts/normalize-member-expiry.py
+          --project lyyuan03-membership
+          --report "$RUNNER_TEMP/member-expiry-applied.json"
+          --backup-id "expiry-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          --apply
+      - name: Verify no convertible or invalid dates remain
+        if: env.APPLY_EXPIRY == 'true'
+        shell: bash
+        run: |
+          python3 -B scripts/normalize-member-expiry.py \
+            --project lyyuan03-membership --report "$RUNNER_TEMP/member-expiry-verified.json"
+          jq -e '(.changes | length) == 0 and (.invalid | length) == 0' \
+            "$RUNNER_TEMP/member-expiry-verified.json" >/dev/null
+      - name: Rebuild canonical member entitlements after verified migration
+        if: env.APPLY_EXPIRY == 'true'
+        shell: bash
+        run: |
+          if ! python3 -B .github/scripts/rebuild-member-entitlements.py > "$RUNNER_TEMP/expiry-entitlements.log" 2>&1; then
+            echo "Entitlement rebuild failed; detailed private log retained on this runner."
+            exit 1
+          fi
+          grep '^Member entitlement rebuild complete:' "$RUNNER_TEMP/expiry-entitlements.log"
       - name: Publish counts only
         if: always()
         shell: bash
@@ -61,5 +94,9 @@ jobs:
             jq '{project, scanned, convertible: (.changes | length), invalid: (.invalid | length)}' \
               "$RUNNER_TEMP/member-expiry-preview.json" >> "$GITHUB_STEP_SUMMARY"
           fi
-          # Full reports contain member identifiers: keep them private to this runner.
-          # This workflow never applies changes, rebuilds entitlements or deploys rules.
+          if [ -f "$RUNNER_TEMP/member-expiry-verified.json" ]; then
+            jq '{phase: "after apply", project, scanned, convertible: (.changes | length), invalid: (.invalid | length)}' \
+              "$RUNNER_TEMP/member-expiry-verified.json" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          # Full reports contain member identifiers: never publish them as Actions artifacts.
+          # Apply requires an explicit dispatch choice or commit marker, and never deploys rules.

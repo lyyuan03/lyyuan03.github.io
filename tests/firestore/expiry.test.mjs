@@ -105,3 +105,10 @@ test('verified admin still reads the published private body', async () => {
   const admin = env.authenticatedContext('admin', { email: 'lyyuan03@gmail.com', email_verified: true });
   await assertSucceeds(getDoc(doc(admin.firestore(), 'paidArticleBodies/article')));
 });
+
+test('migration backups are inaccessible to all website clients', async () => {
+  await env.withSecurityRulesDisabled(ctx => setDoc(doc(ctx.firestore(), 'securityMigrationBackups/expiry-test/changes/00000000'), { payload: 'private' }));
+  for (const ctx of [env.unauthenticatedContext(), env.authenticatedContext('member', { email, email_verified: true }), env.authenticatedContext('admin', { email: 'lyyuan03@gmail.com', email_verified: true })]) {
+    await assertFails(getDoc(doc(ctx.firestore(), 'securityMigrationBackups/expiry-test/changes/00000000')));
+  }
+});

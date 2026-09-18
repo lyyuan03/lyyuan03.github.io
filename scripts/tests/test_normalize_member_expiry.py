@@ -87,6 +87,32 @@ class MigrationTests(unittest.TestCase):
         self.assertIn('/sponsorMemberAccess?', api.call_args_list[2].args[0])
         self.assertTrue(all(len(call.args) == 2 for call in api.call_args_list))
 
+    def test_private_backup_is_create_only_and_completes_after_all_chunks(self):
+        change = migration.plan_document(document({'stringValue': '2020-01-01T00:00:00Z'}))
+        report = {'project': 'demo-test', 'scanned': 401, 'changes': [change] * 401, 'invalid': []}
+        with patch.object(migration, 'api') as api:
+            migration.backup_report('demo-test', 'unused', 'expiry-test-1', report)
+        calls = api.call_args_list
+        self.assertEqual([len(call.args[2]['writes']) for call in calls], [400, 1, 1])
+        for call in calls:
+            self.assertEqual(call.kwargs['method'], 'POST')
+            for write in call.args[2]['writes']:
+                self.assertIn('/securityMigrationBackups/expiry-test-1', write['update']['name'])
+                self.assertEqual(write['currentDocument'], {'exists': False})
+        manifest = calls[-1].args[2]['writes'][0]['update']['fields']
+        self.assertEqual(manifest['complete'], {'booleanValue': True})
+        stored = calls[0].args[2]['writes'][0]['update']['fields']['payload']['stringValue']
+        self.assertEqual(json.loads(stored), change)
+
+    def test_backup_failure_prevents_membership_writes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            report = {'scanned': 1, 'changes': [migration.plan_document(document({'stringValue': '2020-01-01T00:00:00Z'}))], 'invalid': []}
+            argv = ['migration', '--project', 'demo-test', '--report', str(Path(directory) / 'report.json'), '--apply', '--backup-id', 'expiry-test-1']
+            with patch('sys.argv', argv), patch.object(migration.subprocess, 'check_output', return_value='unused'), patch.object(migration, 'scan', return_value=report), patch.object(migration, 'backup_report', side_effect=RuntimeError('backup failed')), patch.object(migration, 'api') as api:
+                with self.assertRaisesRegex(SystemExit, 'Stopped after 0 writes'):
+                    migration.main()
+                api.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

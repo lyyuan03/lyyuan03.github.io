@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Normalize only membership expiresAt fields. Dry-run unless --apply is supplied."""
 import argparse
+import hashlib
 from datetime import datetime, timezone
 import json
 import os
@@ -47,9 +48,9 @@ def patch_request(change):
             {'fields': {'expiresAt': change['after']}})
 
 
-def api(url, token, data=None):
+def api(url, token, data=None, method=None):
     request = Request(url, data=None if data is None else json.dumps(data).encode(),
-                      method='GET' if data is None else 'PATCH', headers={
+                      method=method or ('GET' if data is None else 'PATCH'), headers={
                           'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'
                       })
     with urlopen(request, timeout=60) as response:
@@ -87,14 +88,48 @@ def write_private_report(path, report):
         os.fsync(handle.fileno())
 
 
+def backup_report(project, token, backup_id, report):
+    """Create an immutable backup in the same database's client-denied namespace."""
+    if not re.fullmatch(r'expiry-[a-zA-Z0-9-]{1,80}', backup_id):
+        raise ValueError('Invalid backup ID')
+    database = f'projects/{project}/databases/(default)'
+    root = f'{database}/documents/securityMigrationBackups/{backup_id}'
+    changes = report['changes']
+    for start in range(0, len(changes), 400):
+        writes = [{
+            'update': {
+                'name': f'{root}/changes/{index:08d}',
+                'fields': {'payload': {'stringValue': json.dumps(change, sort_keys=True)}}
+            },
+            'currentDocument': {'exists': False}
+        } for index, change in enumerate(changes[start:start + 400], start)]
+        api(f'https://firestore.googleapis.com/v1/{database}/documents:commit',
+            token, {'writes': writes}, method='POST')
+    # Publish the completion marker only after every backup chunk succeeds.
+    manifest = {
+        'project': {'stringValue': project},
+        'complete': {'booleanValue': True},
+        'totalChanges': {'integerValue': str(len(changes))},
+        'sourceCommit': {'stringValue': os.environ.get('GITHUB_SHA', 'local')},
+        'reportSha256': {'stringValue': hashlib.sha256(json.dumps(report, sort_keys=True).encode()).hexdigest()},
+        'createdAt': {'timestampValue': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')}
+    }
+    api(f'https://firestore.googleapis.com/v1/{database}/documents:commit', token, {
+        'writes': [{'update': {'name': root, 'fields': manifest}, 'currentDocument': {'exists': False}}]
+    }, method='POST')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project', required=True)
     parser.add_argument('--report', type=Path, required=True, help='New private report/backup file outside the repository')
     parser.add_argument('--apply', action='store_true')
+    parser.add_argument('--backup-id', help='With --apply: create an additional private Firestore backup before conversion')
     args = parser.parse_args()
     if not re.fullmatch(r'[a-z][a-z0-9-]{4,61}[a-z0-9]', args.project):
         parser.error('Invalid project ID')
+    if args.backup_id and (not args.apply or not re.fullmatch(r'expiry-[a-zA-Z0-9-]{1,80}', args.backup_id)):
+        parser.error('--backup-id requires --apply and a valid expiry-prefixed ID')
     token = subprocess.check_output(['gcloud', 'auth', 'print-access-token'], text=True).strip()
     report = scan(args.project, token)
     write_private_report(args.report, report)
@@ -106,6 +141,9 @@ def main():
         return
     applied = 0
     try:
+        if args.backup_id:
+            backup_report(args.project, token, args.backup_id, report)
+            print(f'Private backup stored: securityMigrationBackups/{args.backup_id}')
         for change in report['changes']:
             url, body = patch_request(change)
             api(url, token, body)

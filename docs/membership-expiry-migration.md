@@ -71,6 +71,23 @@ members and an expired test member with direct Firestore reads; inspect both pai
 articles and member videos. Do not mark the incident resolved until production
 migration, deployed rules, and access verification are complete.
 
+The branch-only `Production membership expiry migration` workflow supports this
+pre-merge sequence using the existing Firebase service account. It first requires
+both PR workflows to pass for its exact source commit, then runs a preview. Apply
+is opt-in through the manual `operation: apply` input or a workflow-file commit
+containing `[apply-expiry-migration]`; all other runs remain read-only. Apply reruns
+the scan, backs up original values, converts dates, requires zero remaining
+conversions/invalid dates, and only then runs the existing entitlement rebuild.
+It never merges or deploys rules.
+
+Runner-based apply supplies `--backup-id expiry-RUN-ATTEMPT`. Before changing any
+member record, the tool stores create-only backup chunks and a completion marker
+in `securityMigrationBackups/{backupId}` in the same Firestore database. The
+existing catch-all rules deny all client access to this namespace, including
+admin website clients; only authorized backend/IAM access can retrieve it. Backup
+failure stops conversion. Public logs contain counts and the backup ID only, and
+no unencrypted member report is uploaded to GitHub artifacts.
+
 If valid access breaks, inspect the source expiry and entitlement sync. Do not
 restore the string-accepting rules. Fix affected data with concurrency guards;
 restoring the former fallback reopens the vulnerability.
