@@ -18,6 +18,7 @@ import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awaken
 import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-morning.js?v=20260831-permissions-1";
 import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260831-permissions-1";
 import { spiritualGoodDeathArticle } from "./article-spiritual-good-death.js?v=20260903-cover-thumb-1";
+import { selfGuidedSpiritualCalibrationArticle } from "./article-self-guided-spiritual-calibration.js?v=20260907-draft-1";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissions-1";
 
 const featuredWealthDisciplineArticle = {
@@ -87,6 +88,7 @@ const seriesById = {
   "quantum-frequency-work-wish": "宇色書房",
   "wealth-discipline-investing-and-self-mastery": "宇色書房",
   "spiritual-good-death-last-visit": "宇色書房",
+  "self-guided-spiritual-calibration": "靈修辨證",
   "wealth-as-water": "財富與生命",
   "market-crash-money-self-control": "財富與生命",
   "good-fortune-believe-in-yourself-choices": "生命選擇"
@@ -104,6 +106,7 @@ export const staticArticles = [
   ...jinmuEventArticles.slice(2),
   reconciliationAbsolutionHeartArticle,
   spiritualGoodDeathArticle,
+  selfGuidedSpiritualCalibrationArticle,
   dragonCanonConsciousnessFieldArticle,
   ghostGateAlwaysOpenEnhancedArticle,
   futurePerson2058ProphecyArticle,
