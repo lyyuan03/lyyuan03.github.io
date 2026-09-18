@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, serverTimestamp, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const OFFICIAL_SENDER_EMAIL = "lyyuan03@gmail.com";
 
@@ -547,7 +547,7 @@ async function saveMemberCorrection() {
     planMonths: months,
     amount,
     priceTier: tier,
-    expiresAt: expiresAt.toISOString(),
+    expiresAt: Timestamp.fromDate(expiresAt),
     note,
     correctedBy: auth.currentUser?.email || "",
     correctedAt: serverTimestamp(),
@@ -619,7 +619,7 @@ async function activateMember() {
       revokedAt: deleteField(),
       firstJoinedAt: existing.firstJoinedAt || now.toISOString(),
       startsAt: now.toISOString(),
-      expiresAt: expiresAt.toISOString(),
+      expiresAt: Timestamp.fromDate(expiresAt),
       paidAt: now.toISOString(),
       lastOrderNo: orderNo,
       pendingOrderNo: deleteField(),

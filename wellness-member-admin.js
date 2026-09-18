@@ -1,6 +1,6 @@
 import { app, auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 import { LINGJI_THRESHOLD, annualCycle } from "./member-dashboard-logic.js";
 
@@ -45,6 +45,11 @@ function dateInputToIso(value, endOfDay = false) {
   const time = endOfDay ? "23:59:59" : "00:00:00";
   const date = new Date(`${value}T${time}+08:00`);
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function expiryTimestamp(value) {
+  const iso = dateInputToIso(value, true);
+  return iso ? Timestamp.fromDate(new Date(iso)) : null;
 }
 
 function toDateInput(value) {
@@ -245,7 +250,7 @@ function payload() {
     paymentStatus: status === "active" ? "paid" : "pending",
     firstJoinedAt: dateInputToIso(document.getElementById("wellness-member-first-joined-at").value),
     startsAt: dateInputToIso(document.getElementById("wellness-member-starts-at").value),
-    expiresAt: dateInputToIso(document.getElementById("wellness-member-expires-at").value, true),
+    expiresAt: expiryTimestamp(document.getElementById("wellness-member-expires-at").value),
     annualSpend,
     cashbackBalance: Math.max(0, Number(document.getElementById("wellness-member-cashback").value) || 0),
     purchasedCourses: parseCourses(document.getElementById("wellness-member-courses").value),
