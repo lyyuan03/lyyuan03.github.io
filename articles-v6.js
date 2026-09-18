@@ -5,7 +5,7 @@ const articleRoot = document.getElementById("article-root");
 // 避免備援 renderer 與 Firebase/Firestore 核心同時改寫 #article-root。
 const activeArticleId = new URLSearchParams(location.search).get("id") || "";
 if (!activeArticleId) {
-  void import("./article-list-rescue.js?v=20260902-single-detail-renderer-2").catch((error) => {
+  void import("./article-list-rescue.js?v=20260918-photo-1").catch((error) => {
     console.error("文選靜態備援載入失敗。", error);
   });
 }
@@ -118,7 +118,7 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260916-clean-flow-5",
+    "./articles-core-20260810-v6.js?v=20260918-photo-1",
     "./articles-core-20260810-v6.js?v=20260916-clean-flow-5&retry=1"
   ];
   let lastError = null;
