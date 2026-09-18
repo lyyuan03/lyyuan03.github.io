@@ -10,6 +10,10 @@ permissions:
   contents: read
   actions: read
 
+concurrency:
+  group: expiry-preview-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   preview:
     if: github.repository == 'lyyuan03/lyyuan03.github.io' && github.ref == 'refs/heads/fix/legacy-membership-expiry'
