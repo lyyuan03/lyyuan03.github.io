@@ -1,5 +1,5 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js?v=20260831-permissions-1";
-import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-2";
+import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-3";
 import { staticArticles } from "./static-articles.js?v=20260903-final-png";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260829-admin-authoritative-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
