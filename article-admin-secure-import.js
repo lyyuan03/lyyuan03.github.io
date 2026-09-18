@@ -5,7 +5,7 @@ import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/fi
 const IMPORT_ID = "yuanqin-debt-heart";
 const PAYLOAD_URL = "./secure-imports/yuanqin-debt-heart-20260828.enc.json?v=20260828-1";
 const NEED_TEACHER_ID = "need-a-teacher";
-const NEED_TEACHER_PAYLOAD_URL = "./secure-imports/need-a-teacher-20260916.enc.json?v=20260916-1";
+const NEED_TEACHER_PAYLOAD_URL = "./secure-imports/need-a-teacher-20260918.enc.json?v=20260918-1";
 const PAID_MARKER = "<!-- paid-only -->";
 let started = false;
 
@@ -126,15 +126,15 @@ function splitPaidContent(value = "") {
 }
 
 async function importNeedTeacherDraft(keyText) {
-  const existing = await getDoc(doc(db, "articles", NEED_TEACHER_ID));
-  if (existing.exists()) {
-    showImportStatus("《走靈修，到底需不需要老師？》後台草稿已存在，未覆寫目前內容。", "success");
-    history.replaceState(null, "", location.pathname + location.search);
-    return;
-  }
+  const articleRef = doc(db, "articles", NEED_TEACHER_ID);
+  const privateRef = doc(db, "paidArticleBodies", NEED_TEACHER_ID);
+  const [existingArticleSnap, existingPrivateSnap] = await Promise.all([
+    getDoc(articleRef),
+    getDoc(privateRef)
+  ]);
 
   const payload = await decryptPayload(NEED_TEACHER_PAYLOAD_URL, keyText);
-  if (payload.articleId !== NEED_TEACHER_ID || payload.status !== "draft" || payload.accessType !== "paid") {
+  if (payload.articleId !== NEED_TEACHER_ID || payload.accessType !== "paid") {
     throw new Error("INVALID_NEED_TEACHER_DRAFT");
   }
 
@@ -143,28 +143,44 @@ async function importNeedTeacherDraft(keyText) {
     "SHA-256",
     new TextEncoder().encode(split.privateContent)
   ));
-  const contentVersion = 1;
 
-  await setDoc(doc(db, "paidArticleBodies", NEED_TEACHER_ID), {
+  const existingArticle = existingArticleSnap.exists() ? (existingArticleSnap.data() || {}) : {};
+  const existingPrivate = existingPrivateSnap.exists() ? (existingPrivateSnap.data() || {}) : {};
+  const currentStatus = String(existingArticle.status || payload.status || "draft");
+  const previousContent = String(existingPrivate.content || "");
+  const previousHash = String(existingPrivate.contentHash || "");
+  const previousVersion = Math.max(0, Number(existingPrivate.contentVersion || 0));
+  const changed = previousHash !== contentHash || previousContent !== split.privateContent;
+  const contentVersion = changed ? previousVersion + 1 : Math.max(1, previousVersion);
+
+  const privateData = {
     articleId: NEED_TEACHER_ID,
     title: payload.title,
-    status: "draft",
+    status: currentStatus,
     content: split.privateContent,
     contentHash,
     contentVersion,
-    source: "secure-one-time-import:20260916-need-a-teacher",
+    source: "secure-refresh:20260918-need-a-teacher",
     active: true,
-    createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
-  }, { merge: true });
+  };
+  if (!existingPrivateSnap.exists()) privateData.createdAt = serverTimestamp();
+  if (existingPrivateSnap.exists() && changed) {
+    privateData.previousContentBackup = previousContent;
+    privateData.previousContentHashBackup = previousHash;
+    privateData.previousContentVersionBackup = previousVersion;
+    privateData.previousBackupAt = serverTimestamp();
+  }
 
-  await setDoc(doc(db, "articles", NEED_TEACHER_ID), {
-    title: payload.title || "走靈修，到底需不需要老師？",
+  await setDoc(privateRef, privateData, { merge: true });
+
+  const articleData = {
+    title: payload.title,
     slug: payload.slug || NEED_TEACHER_ID,
     category: payload.category || "spiritual",
     displayCategory: "靈修",
     series: "靈修辨證",
-    status: "draft",
+    status: currentStatus,
     excerpt: payload.excerpt || "",
     coverImage: payload.coverImage || "",
     thumbnailImage: payload.thumbnailImage || "",
@@ -179,25 +195,29 @@ async function importNeedTeacherDraft(keyText) {
     privatePaidContent: true,
     paidContentHash: contentHash,
     paidContentVersion: contentVersion,
-    draftSeedRevision: "20260916-secure-import-1",
-    createdAt: serverTimestamp(),
+    draftSeedRevision: "20260918-visible-invisible-teacher-refresh-1",
     updatedAt: serverTimestamp()
-  }, { merge: true });
+  };
+  if (!existingArticleSnap.exists()) articleData.createdAt = serverTimestamp();
+
+  await setDoc(articleRef, articleData, { merge: true });
 
   const [verifyPublic, verifyPrivate] = await Promise.all([
-    getDoc(doc(db, "articles", NEED_TEACHER_ID)),
-    getDoc(doc(db, "paidArticleBodies", NEED_TEACHER_ID))
+    getDoc(articleRef),
+    getDoc(privateRef)
   ]);
   if (!verifyPublic.exists()
       || !verifyPrivate.exists()
-      || String(verifyPublic.data()?.status || "") !== "draft"
-      || String(verifyPrivate.data()?.content || "") !== split.privateContent) {
+      || String(verifyPublic.data()?.title || "") !== String(payload.title || "")
+      || String(verifyPublic.data()?.content || "") !== split.safeContent
+      || String(verifyPrivate.data()?.content || "") !== split.privateContent
+      || String(verifyPrivate.data()?.contentHash || "") !== contentHash) {
     throw new Error("NEED_TEACHER_VERIFY_FAILED");
   }
 
   history.replaceState(null, "", location.pathname + location.search);
   localStorage.setItem("lyyuan:need-a-teacher-import-version", String(contentVersion));
-  showImportStatus("《走靈修，到底需不需要老師？》已安全寫入後台草稿區，正在重新載入…", "success");
+  showImportStatus(`《${payload.title}》已完整更新｜版本 ${contentVersion}，正在重新載入…`, "success");
   window.setTimeout(() => location.reload(), 1000);
 }
 

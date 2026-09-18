@@ -1,1 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d2730"/><stop offset="1" stop-color="#07151a"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4d88b"/><stop offset="1" stop-color="#b78532"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#bg)"/><path d="M0 720 L220 430 L360 610 L560 320 L760 590 L980 360 L1200 560 L1390 390 L1600 680 L1600 900 L0 900 Z" fill="#173b43" opacity=".8"/><path d="M0 810 L320 560 L500 700 L760 510 L1040 720 L1320 540 L1600 760 L1600 900 L0 900 Z" fill="#0e2a31"/><circle cx="1260" cy="180" r="62" fill="#f4d88b" opacity=".9"/><text x="90" y="155" font-size="86" fill="#f4f1e8" font-family="serif" font-weight="700">走靈修，到底需不需要老師？</text><text x="95" y="240" font-size="40" fill="#d9c48b" font-family="serif">從被帶領、求證、信仰，到最後學會自己走</text><path d="M170 735 C420 650, 700 680, 940 540 C1120 430, 1270 350, 1450 250" fill="none" stroke="#d6aa52" stroke-width="10" stroke-linecap="round"/><circle cx="170" cy="735" r="15" fill="#f1d28b"/><circle cx="1450" cy="250" r="15" fill="#f1d28b"/><text x="95" y="820" font-size="34" fill="#f2efe7" font-family="serif">初期有人帶路，後來回到內在。</text><text x="1390" y="850" text-anchor="end" font-size="28" fill="#d9c48b" font-family="serif">宇色 Osel</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#20271f"/><stop offset="1" stop-color="#101410"/></linearGradient><radialGradient id="halo"><stop stop-color="#d8b673" stop-opacity=".62"/><stop offset="1" stop-color="#d8b673" stop-opacity="0"/></radialGradient></defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<circle cx="1230" cy="250" r="250" fill="url(#halo)"/>
+<path d="M0 745L230 520l165 150 245-310 225 285 260-350 210 245 265-275v635H0Z" fill="#354235"/>
+<path d="M0 800L300 610l210 155 255-170 230 145 300-220 305 235v145H0Z" fill="#252f27"/>
+<path d="M320 680c35-120 110-205 205-255" fill="none" stroke="#a58254" stroke-width="12" stroke-linecap="round"/>
+<circle cx="300" cy="700" r="50" fill="#594f47"/><circle cx="555" cy="405" r="36" fill="#d7bd84" opacity=".9"/>
+<path d="M1180 590c0-95 55-170 135-210 80 40 135 115 135 210-74-33-196-33-270 0Z" fill="#d8b673" opacity=".18"/>
+<text x="90" y="145" fill="#f3eee3" font-family="serif" font-size="72" font-weight="700">無形師，真的能取代有形老師嗎？</text>
+<text x="92" y="235" fill="#d8b673" font-family="serif" font-size="52" font-weight="700">走靈修，只靠有形師，夠嗎？</text>
+<text x="95" y="315" fill="#d9d2c3" font-family="serif" font-size="30">在看得見的陪伴與看不見的引導之間，修行如何不走偏</text>
+<line x1="95" y1="355" x2="780" y2="355" stroke="#a58254" stroke-width="3"/>
+<text x="95" y="810" fill="#d8b673" font-family="serif" font-size="28">靈元院文選｜宇色 Osel</text>
+</svg>
