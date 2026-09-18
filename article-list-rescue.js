@@ -1,5 +1,5 @@
 import { staticArticles } from "./static-articles.js?v=20260902-detail-reading-rescue-2";
-import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-1";
+import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-2";
 
 const root = document.getElementById("article-root");
 const params = new URLSearchParams(location.search);
