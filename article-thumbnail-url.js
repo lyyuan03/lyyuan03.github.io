@@ -1,6 +1,6 @@
 const SITE_ORIGIN = "https://lyyuan.tw";
-const NEED_A_TEACHER_THUMBNAIL_PATH = "/assets/articles/need-a-teacher/thumbnail-20260918.webp";
-const NEED_A_TEACHER_THUMBNAIL_VERSION = "20260918-photo-1";
+const NEED_A_TEACHER_THUMBNAIL_PATH = "/assets/articles/need-a-teacher/thumbnail-20260918-800.webp";
+const NEED_A_TEACHER_THUMBNAIL_VERSION = "20260918-photo-3";
 
 function cleanThumbnailUrl(value = "") {
   return String(value || "").trim().replace(/^<|>$/g, "");
