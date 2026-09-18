@@ -1,0 +1,50 @@
+name: Test membership expiry security
+on:
+  pull_request:
+    paths:
+      - 'firestore.rules'
+      - 'tests/firestore/**'
+      - 'scripts/normalize-member-expiry.py'
+      - 'scripts/tests/test_normalize_member_expiry.py'
+      - 'membership-admin.js'
+      - 'wellness-member-admin.js'
+      - '.github/workflows/test-membership-expiry.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  expiry-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tests/firestore/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --prefix tests/firestore
+      - run: npm test --prefix tests/firestore
+      - run: python3 -B -m unittest discover -s scripts/tests -p 'test_normalize_member_expiry.py'
+      - run: node scripts/lock-paid-article-access-policy.mjs
+      - run: node scripts/audit-production-stability.mjs
+      - run: node --check membership-admin.js && node --check wellness-member-admin.js
+      - name: Install Chromium smoke runtime
+        run: |
+          npm install --prefix "$RUNNER_TEMP/expiry-smoke" --no-save playwright@1.55.0
+          ln -s "$RUNNER_TEMP/expiry-smoke/node_modules" node_modules
+          node "$RUNNER_TEMP/expiry-smoke/node_modules/playwright/cli.js" install --with-deps chromium
+      - name: Five-load Chromium candidate smoke test
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/expiry-smoke-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID"' EXIT
+          for attempt in {1..20}; do
+            if curl --silent --fail http://127.0.0.1:4173/articles.html >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/smoke-article-candidate.mjs

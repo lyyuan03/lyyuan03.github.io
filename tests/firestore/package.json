@@ -1,0 +1,8 @@
+{
+  "name": "lyyuan-firestore-security-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore --project demo-membership-expiry --config firebase.json 'node --test expiry.test.mjs'"
+  }
+}

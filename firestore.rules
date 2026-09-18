@@ -72,11 +72,8 @@ service cloud.firestore {
 
     function hasValidWellnessExpiry() {
       return wellnessMember().data.keys().hasAny(["expiresAt"])
-        && (
-          wellnessMember().data.expiresAt is string
-          || (wellnessMember().data.expiresAt is timestamp
-            && wellnessMember().data.expiresAt > request.time)
-        );
+        && wellnessMember().data.expiresAt is timestamp
+        && wellnessMember().data.expiresAt > request.time;
     }
 
     function isActiveWellnessMember() {
@@ -111,11 +108,8 @@ service cloud.firestore {
         && sponsorMember().data.accessVersion is int
         && sponsorMember().data.accessVersion >= 1
         && sponsorMember().data.keys().hasAny(["expiresAt"])
-        && (
-          sponsorMember().data.expiresAt is string
-          || (sponsorMember().data.expiresAt is timestamp
-            && sponsorMember().data.expiresAt > request.time)
-        )
+        && sponsorMember().data.expiresAt is timestamp
+        && sponsorMember().data.expiresAt > request.time
         && (!sponsorMember().data.keys().hasAny(["startsAt"])
           || !(sponsorMember().data.startsAt is timestamp)
           || sponsorMember().data.startsAt <= request.time)
