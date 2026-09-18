@@ -1,0 +1,61 @@
+name: Preview production membership expiry migration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [fix/legacy-membership-expiry]
+    paths: [.github/workflows/member-expiry-preflight.yml]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  preview:
+    if: github.repository == 'lyyuan03/lyyuan03.github.io' && github.ref == 'refs/heads/fix/legacy-membership-expiry'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require successful PR checks for this exact commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in {1..60}; do
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&event=pull_request&per_page=100" \
+              --jq '[.workflow_runs[] | select(.name == "Test membership expiry security" or .name == "Deploy to GitHub Pages")] | group_by(.name) | map(max_by(.id))' \
+              > "$RUNNER_TEMP/expiry-checks.json"
+            if jq -e 'length == 2 and all(.[]; .status == "completed" and .conclusion == "success")' "$RUNNER_TEMP/expiry-checks.json" >/dev/null; then
+              echo "Both PR workflows passed at $GITHUB_SHA."
+              exit 0
+            fi
+            if jq -e 'any(.[]; .status == "completed" and .conclusion != "success")' "$RUNNER_TEMP/expiry-checks.json" >/dev/null; then
+              echo "A required check failed. Production preview was not started."
+              exit 1
+            fi
+            sleep 15
+          done
+          echo "Timed out waiting for successful PR checks."
+          exit 1
+      - name: Authenticate using the existing Firebase deployment identity
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Read-only expiry preview
+        run: >-
+          python3 -B scripts/normalize-member-expiry.py
+          --project lyyuan03-membership
+          --report "$RUNNER_TEMP/member-expiry-preview.json"
+      - name: Publish counts only
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/member-expiry-preview.json" ]; then
+            jq '{project, scanned, convertible: (.changes | length), invalid: (.invalid | length)}' \
+              "$RUNNER_TEMP/member-expiry-preview.json" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          # Full reports contain member identifiers: keep them private to this runner.
+          # This workflow never applies changes, rebuilds entitlements or deploys rules.
