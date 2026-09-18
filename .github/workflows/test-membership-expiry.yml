@@ -4,6 +4,7 @@ on:
     paths:
       - 'firestore.rules'
       - 'tests/firestore/**'
+      - 'firebase.expiry-tests.json'
       - 'scripts/normalize-member-expiry.py'
       - 'scripts/tests/test_normalize_member_expiry.py'
       - 'membership-admin.js'

@@ -8,6 +8,6 @@
     "firebase-tools": "15.30.2"
   },
   "scripts": {
-    "test": "firebase emulators:exec --only firestore --project demo-membership-expiry --config firebase.json 'node --test expiry.test.mjs'"
+    "test": "cd ../.. && firebase emulators:exec --only firestore --project demo-membership-expiry --config firebase.expiry-tests.json 'node --test tests/firestore/expiry.test.mjs'"
   }
 }
