@@ -4,7 +4,7 @@ import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissio
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { resolveArticleThumbnailUrl, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260916-clean-flow-5";
+import { resolveArticleThumbnailUrl, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-1";
 
 const categoryLabels = {
   spiritual: "靈．修行",
