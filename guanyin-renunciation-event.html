@@ -439,9 +439,21 @@
   padding:17px 16px;
 }
 .support-item h3{
+  display:flex;
+  align-items:center;
+  gap:9px;
   margin-bottom:5px;
   font-size:16px;
   font-weight:700;
+}
+.support-item h3::before{
+  content:"";
+  flex:0 0 auto;
+  width:8px;
+  height:8px;
+  border:1px solid rgba(197,162,111,.92);
+  transform:rotate(45deg);
+  box-shadow:inset 0 0 0 2px rgba(197,162,111,.12);
 }
 .support-item p{
   font-size:12.5px;
