@@ -114,9 +114,9 @@
 .shoin-inscription span,.shoin-inscription strong{writing-mode:vertical-rl;font-family:var(--serif);font-weight:400;letter-spacing:.2em}
 .shoin-inscription span{font-size:14px;color:rgba(89,79,71,.72)}
 .shoin-inscription strong{font-size:20px;color:#594f47}
-.shoin-visual{margin:0;border-radius:0;min-height:100%;overflow:hidden;background:rgba(89,79,71,.08)}
+.shoin-visual{grid-column:2;grid-row:1;margin:0;border-radius:0;min-height:100%;overflow:hidden;background:rgba(89,79,71,.08)}
 .shoin-visual img{width:100%;height:100%;object-fit:cover;object-position:center}
-.shoin-copy{padding:46px 46px 42px;position:relative;z-index:1}
+.shoin-copy{grid-column:3;grid-row:1;padding:46px 46px 42px;position:relative;z-index:1}
 .shoin-copy .form-intro{display:block;text-align:left}
 .shoin-eyebrow{display:block;font-family:var(--en);font-size:10px;letter-spacing:.24em;color:#a58254;margin-bottom:12px}
 .shoin-copy .form-intro h2{font-size:29px;line-height:1.45;letter-spacing:.08em;color:#3d2e1e}
@@ -199,7 +199,8 @@
   .shoin-section{padding-bottom:72px}
   .shoin-frame{grid-template-columns:1fr}
   .shoin-inscription{display:none}
-  .shoin-visual{aspect-ratio:4/5;min-height:0}
+  .shoin-visual,.shoin-copy{grid-column:1;grid-row:auto}
+  .shoin-visual{height:auto;aspect-ratio:4/5;min-height:0}
   .shoin-copy{padding:30px 22px 28px}
   .shoin-copy .form-intro h2{font-size:24px}
   .shoin-detail{padding-top:20px}
