@@ -572,6 +572,241 @@
   }
 }
 </style>
+
+<style id="hero-stacked-refine-20260919">
+/* 首屏改為上下式：上方完整橫幅，下方資訊板 */
+.renunciation-hero{
+  width:min(1120px,calc(100% - 44px));
+  margin:0 auto;
+  padding:38px 0 64px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+  align-items:start;
+}
+.hero-image-wrap{
+  width:100%;
+  min-height:0;
+  height:auto;
+  padding:0;
+  overflow:hidden;
+  background:rgba(10,15,8,.28);
+  box-shadow:0 20px 56px rgba(0,0,0,.22);
+}
+.hero-image-wrap:before{
+  inset:14px;
+  border-color:rgba(250,247,242,.16);
+}
+.hero-image-wrap .cover-image{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:none;
+  object-fit:contain;
+  object-position:center;
+  opacity:.98;
+}
+
+/* 下方資訊板：保留原文案，改成橫向書院告示 */
+.event-heading.hero-copy{
+  width:100%;
+  margin:0;
+  padding:34px 40px 32px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 96px;
+  grid-template-areas:
+    "eyebrow date"
+    "title date"
+    "rite date"
+    "lead date"
+    "actions date";
+  column-gap:34px;
+  row-gap:0;
+  text-align:left;
+  align-self:auto;
+  background:
+    linear-gradient(135deg,rgba(89,79,71,.94),rgba(50,49,35,.91)),
+    linear-gradient(90deg,rgba(197,162,111,.04),transparent);
+  border:1px solid rgba(197,162,111,.30);
+  border-radius:6px;
+  box-shadow:0 18px 44px rgba(0,0,0,.20);
+}
+.event-heading.hero-copy:before,
+.event-heading.hero-copy:after{
+  width:26px;
+  height:26px;
+  opacity:.8;
+}
+.event-heading.hero-copy:before{left:14px;top:14px}
+.event-heading.hero-copy:after{right:14px;bottom:14px}
+
+.hero-copy .eyebrow{
+  grid-area:eyebrow;
+  max-width:none;
+  margin:0 0 10px;
+  font-size:9.5px;
+  line-height:1.5;
+  letter-spacing:.24em;
+}
+.hero-copy h1{
+  grid-area:title;
+  margin:0;
+  padding:0;
+  font-size:44px;
+  line-height:1.2;
+  letter-spacing:.035em;
+  text-shadow:none;
+}
+.hero-copy h1 .hero-title-main{
+  display:block;
+  margin:0;
+  font-size:1em;
+  line-height:1.2;
+  letter-spacing:.035em;
+  white-space:normal;
+}
+.hero-rite{
+  grid-area:rite;
+  display:block;
+  margin-top:12px;
+  font-size:16.5px;
+  line-height:1.55;
+  letter-spacing:.075em;
+  color:rgba(250,247,242,.88);
+}
+.hero-copy .hero-lead{
+  grid-area:lead;
+  max-width:760px;
+  margin:14px 0 0;
+  font-size:15px;
+  line-height:1.8;
+  color:rgba(250,247,242,.72);
+}
+.hero-copy .hero-actions{
+  grid-area:actions;
+  justify-content:flex-start;
+  margin-top:18px;
+}
+.hero-copy .btn{
+  min-width:132px;
+  min-height:44px;
+  padding:0 24px;
+}
+
+/* 日期獨立成右側題籤，不再壓住主標 */
+.hero-date-vertical{
+  grid-area:date;
+  position:static;
+  align-self:stretch;
+  justify-self:stretch;
+  writing-mode:vertical-rl;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  min-height:180px;
+  padding:18px 12px;
+  border-left:1px solid rgba(197,162,111,.24);
+  color:rgba(250,247,242,.70);
+}
+.hero-date-vertical span{
+  font-size:10px;
+  letter-spacing:.16em;
+}
+.hero-date-vertical strong{
+  font-size:14px;
+  font-weight:400;
+  letter-spacing:.18em;
+}
+
+/* 平板 */
+@media(max-width:960px){
+  .renunciation-hero{
+    width:min(100% - 28px,1120px);
+    padding:28px 0 54px;
+    gap:14px;
+  }
+  .event-heading.hero-copy{
+    width:100%;
+    margin:0;
+    padding:30px 30px 28px;
+    grid-template-columns:minmax(0,1fr) 82px;
+    column-gap:24px;
+  }
+  .hero-copy h1{font-size:38px}
+  .hero-date-vertical{min-height:160px}
+}
+
+/* 手機：資訊板改單欄，日期變橫式小題籤 */
+@media(max-width:700px){
+  .renunciation-hero{
+    width:min(100% - 18px,1120px);
+    padding:12px 0 44px;
+    gap:10px;
+  }
+  .hero-image-wrap:before{inset:8px}
+  .event-heading.hero-copy{
+    width:100%;
+    margin:0;
+    padding:26px 20px 24px;
+    display:grid;
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "date"
+      "eyebrow"
+      "title"
+      "rite"
+      "lead"
+      "actions";
+    row-gap:0;
+    border-radius:4px;
+  }
+  .hero-date-vertical{
+    writing-mode:horizontal-tb;
+    min-height:0;
+    padding:0 0 12px;
+    margin:0 0 12px;
+    border-left:0;
+    border-bottom:1px solid rgba(197,162,111,.22);
+    justify-content:flex-start;
+    flex-direction:row;
+    gap:8px;
+  }
+  .hero-date-vertical span,
+  .hero-date-vertical strong{
+    font-size:11px;
+    letter-spacing:.12em;
+  }
+  .hero-copy .eyebrow{
+    margin-bottom:8px;
+    font-size:9px;
+  }
+  .hero-copy h1{
+    font-size:30px;
+    line-height:1.28;
+  }
+  .hero-rite{
+    margin-top:9px;
+    font-size:14.5px;
+    line-height:1.55;
+  }
+  .hero-copy .hero-lead{
+    margin-top:11px;
+    font-size:14px;
+    line-height:1.72;
+  }
+  .hero-copy .hero-actions{
+    margin-top:15px;
+    gap:9px;
+  }
+  .hero-copy .btn{
+    flex:1 1 0;
+    width:auto;
+    min-width:0;
+    padding:0 12px;
+  }
+}
+</style>
 </head>
 <body>
 <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
