@@ -9,7 +9,7 @@ export const jinmuEventArticles = [
     accessDeniedMessage: "此篇為丙午無極瑤池金母聖誕上午場登記者專屬內容。",
     excerpt: "無極瑤池金母聖誕上午場紀錄：從召請、元神點化，到無極瑤池金母所示「人心難渡、安住本心」的修行方向。",
     coverImage: "assets/articles/yaochi-birthday-morning/01-long-life-lamps.jpeg?v=20260829-2",
-    publishedAt: "2026-08-29T00:00:00.000Z"
+    publishedAt: "2026-08-29T04:03:00.000Z"
   },
   {
     id: "reconciliation-absolution-heart",
@@ -19,7 +19,7 @@ export const jinmuEventArticles = [
     accessDeniedMessage: "此篇為下午解冤赦業登記者專屬內容。",
     excerpt: "解冤赦業不是消滅誰、趕走誰，而是讓元神、因緣與人心重新獲得整理，使生命不再被恩怨牽著走。",
     coverImage: "assets/articles/reconciliation-absolution-heart/01-flower-candle.jpg?v=20260829-2",
-    publishedAt: "2026-08-29T14:30:00.000Z"
+    publishedAt: "2026-08-29T04:02:00.000Z"
   },
   {
     id: "2026-building-patron-record",
@@ -29,7 +29,8 @@ export const jinmuEventArticles = [
     accessDeniedMessage: "此篇為丙午建院總功德主專屬內容。",
     excerpt: "靈元院停工兩年半後重新往前。這不是一篇工程報告，而是一段關於承接、取捨、信眾等待與道場重新起步的建院紀錄。",
     coverImage: "images/dizhi-render-exterior.jpg",
-    thumbnailImage: "images/dizhi-render-garden.jpg"
+    thumbnailImage: "images/dizhi-render-garden.jpg",
+    publishedAt: "2026-08-29T04:01:00.000Z"
   },
   {
     id: "2026-lineage-lamp-building-record",
@@ -39,7 +40,8 @@ export const jinmuEventArticles = [
     accessDeniedMessage: "此篇為本次建院／點燈護持信眾專屬內容。",
     excerpt: "讓每一份建院與點燈護持，共同見證靈元院目前的建院方向、階段性進度與空間設計。",
     coverImage: "assets/construction/2026-lineage-lamp/cover-20260901.webp",
-    thumbnailImage: "assets/construction/2026-lineage-lamp/cover-20260901.webp"
+    thumbnailImage: "assets/construction/2026-lineage-lamp/cover-20260901.webp",
+    publishedAt: "2026-08-29T04:00:00.000Z"
   }
 ].map((article) => ({
   ...article,
