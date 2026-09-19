@@ -45,7 +45,6 @@ function applySpiritualGoodDeathImageOverrides() {
   });
 }
 
-
 function applyConstructionTitleOverrides() {
   const activeId = new URLSearchParams(location.search).get("id") || "";
   const activeTitle = CONSTRUCTION_TITLE_OVERRIDES.get(activeId);
@@ -116,6 +115,72 @@ function applyArticleDisplayOverrides() {
   applySpiritualGoodDeathImageOverrides();
 }
 
+const JINMU_SERIES_SORT_SOURCE = `
+const JINMU_SERIES_ORDER = new Map([
+  ["2026-yaochi-birthday-morning", 1],
+  ["reconciliation-absolution-heart", 2],
+  ["2026-building-patron-record", 3],
+  ["2026-lineage-lamp-building-record", 4]
+]);
+
+const JINMU_SERIES_SORT_TIME = Date.parse("2026-08-29T04:03:00.000Z");
+
+function jinmuSeriesOrder(article) {
+  const order = JINMU_SERIES_ORDER.get(articleKey(article));
+  return Number.isFinite(order) ? order : 0;
+}
+
+function articleSortTime(article = {}) {
+  if (jinmuSeriesOrder(article)) return JINMU_SERIES_SORT_TIME;
+  return articlePublishedTime(article);
+}
+
+function sortPublished(a, b) {
+  if (adminPreviewEnabled()) {
+    const aDraft = a?.status === "draft";
+    const bDraft = b?.status === "draft";
+    if (aDraft !== bDraft) return aDraft ? -1 : 1;
+  }
+
+  const timeDiff = articleSortTime(b) - articleSortTime(a);
+  if (timeDiff !== 0) return timeDiff;
+
+  const aSeries = jinmuSeriesOrder(a);
+  const bSeries = jinmuSeriesOrder(b);
+  if (aSeries || bSeries) {
+    if (aSeries && bSeries) return aSeries - bSeries;
+    return aSeries ? -1 : 1;
+  }
+
+  return String(articleKey(a)).localeCompare(String(articleKey(b)), "zh-Hant");
+}
+`;
+
+function patchJinmuSeriesSortSource(source) {
+  if (source.includes("JINMU_SERIES_SORT_TIME")) return source;
+  const patched = source.replace(
+    /const JINMU_FEATURED_ORDER = new Map\([\s\S]*?\nfunction sortPublished\(a, b\) \{[\s\S]*?\n\}/,
+    JINMU_SERIES_SORT_SOURCE.trim()
+  );
+  if (patched === source) throw new Error("jinmu sort patch target missing");
+  return patched;
+}
+
+function rewriteCoreRelativeImports(source, sourceUrl) {
+  return source.replace(/(from\s+["'])\.\/([^"']+)/g, (_, prefix, path) => `${prefix}${new URL(`./${path}`, sourceUrl).href}`);
+}
+
+async function importPatchedArticleCore(moduleUrl) {
+  const sourceUrl = new URL(moduleUrl, location.href);
+  const source = await fetch(sourceUrl, { cache: "no-cache" }).then((response) => {
+    if (!response.ok) throw new Error(`core ${response.status}`);
+    return response.text();
+  });
+  const patched = rewriteCoreRelativeImports(patchJinmuSeriesSortSource(source), sourceUrl);
+  const blobUrl = URL.createObjectURL(new Blob([patched], { type: "text/javascript" }));
+  await import(blobUrl);
+}
+
 async function loadArticleCore() {
   const coreModuleUrls = [
     "./articles-core-20260810-v6.js?v=20260919-jinmu-series-sort-1",
@@ -125,7 +190,7 @@ async function loadArticleCore() {
 
   for (const [index, moduleUrl] of coreModuleUrls.entries()) {
     try {
-      await import(moduleUrl);
+      await importPatchedArticleCore(moduleUrl);
       return true;
     } catch (error) {
       lastError = error;
