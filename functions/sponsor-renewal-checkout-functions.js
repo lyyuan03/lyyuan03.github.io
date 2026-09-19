@@ -10,6 +10,10 @@ const {
   normalizeSponsorOfferSettings,
   sponsorPlanAmount
 } = require("./membership-plans");
+const {
+  requireVerifiedCaller,
+  assertCheckoutRateLimit
+} = require("./checkout-guards");
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -65,20 +69,19 @@ exports.createSponsorRenewalCheckout = onCall(
     enforceAppCheck: false
   },
   async (request) => {
-    const email = normalizeEmail(request.auth?.token?.email);
-    const uid = cleanText(request.auth?.uid, 128);
+    const { email, uid } = requireVerifiedCaller(
+      request,
+      "請先使用會員 Gmail 登入後再續期。",
+      "請先完成 Email 驗證後再建立續期付款。"
+    );
     const name = cleanText(request.data?.name || request.auth?.token?.name || "", 60);
     const planMonths = Number(request.data?.planMonths);
 
-    if (!request.auth || !email || !email.includes("@")) {
-      throw new HttpsError("unauthenticated", "請先使用會員 Gmail 登入後再續期。");
-    }
-    if (request.auth.token.email_verified === false) {
-      throw new HttpsError("failed-precondition", "請先完成 Email 驗證後再建立續期付款。");
-    }
     if (![1, 3].includes(planMonths)) {
       throw new HttpsError("invalid-argument", "續期目前僅提供一個月或三個月方案。");
     }
+
+    await assertCheckoutRateLimit(uid, email);
 
     const settingsRef = db.doc("membershipSettings/default");
     const memberRef = db.doc(`sponsorMemberAccess/${email}`);
