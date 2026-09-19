@@ -807,6 +807,243 @@
   }
 }
 </style>
+
+<style id="guanyin-sacred-motion-refine-20260919">
+/* 靜中有動：以金線、微光與細緻 hover 增加層次，不改 CIS */
+:root{--sacred-ease:cubic-bezier(.22,.61,.36,1)}
+
+/* Hero 資訊板：慢速金色微光掠過 */
+.event-heading.hero-copy{
+  background:
+    linear-gradient(112deg,
+      transparent 0%,
+      transparent 38%,
+      rgba(197,162,111,.035) 45%,
+      rgba(235,213,169,.105) 50%,
+      rgba(197,162,111,.035) 55%,
+      transparent 62%,
+      transparent 100%),
+    linear-gradient(135deg,rgba(89,79,71,.95),rgba(48,48,34,.92));
+  background-size:240% 100%,100% 100%;
+  background-position:130% 0,0 0;
+}
+@media(prefers-reduced-motion:no-preference){
+  .event-heading.hero-copy.is-visible{
+    animation:heroSacredSheen 10s ease-in-out 1.1s infinite;
+  }
+  @keyframes heroSacredSheen{
+    0%,72%,100%{background-position:130% 0,0 0}
+    86%{background-position:-50% 0,0 0}
+  }
+  .event-heading.hero-copy.is-visible:before{
+    animation:cornerDrawA .95s var(--sacred-ease) both;
+  }
+  .event-heading.hero-copy.is-visible:after{
+    animation:cornerDrawB .95s .18s var(--sacred-ease) both;
+  }
+  @keyframes cornerDrawA{
+    from{opacity:0;transform:translate(7px,7px) scale(.72)}
+    to{opacity:.8;transform:none}
+  }
+  @keyframes cornerDrawB{
+    from{opacity:0;transform:translate(-7px,-7px) scale(.72)}
+    to{opacity:.8;transform:none}
+  }
+}
+
+/* 觀音出家紀念：上下金線在進場時展開 */
+.observance-grid{
+  border-top:0;
+  border-bottom:0;
+  background-image:
+    linear-gradient(90deg,rgba(197,162,111,.42),rgba(197,162,111,.16)),
+    linear-gradient(90deg,rgba(197,162,111,.16),rgba(197,162,111,.34));
+  background-repeat:no-repeat;
+  background-position:left top,right bottom;
+  background-size:0 1px,0 1px;
+}
+.motion-capable .observance-section.is-visible .observance-grid{
+  background-size:100% 1px,100% 1px;
+  transition:background-size 1.15s .12s var(--sacred-ease);
+}
+
+/* 三十三應化身：和紙微光與圖像明暗呼吸 */
+.shoin-frame{overflow:hidden}
+.shoin-frame:after{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 18% 22%,rgba(255,246,216,.17),transparent 27%),
+    radial-gradient(circle at 78% 68%,rgba(197,162,111,.10),transparent 32%);
+  opacity:.45;
+  transform:translate3d(-2%,0,0);
+}
+.shoin-inscription,.shoin-visual,.shoin-copy{position:relative;z-index:1}
+@media(prefers-reduced-motion:no-preference){
+  .shoin-frame.is-visible:after{
+    animation:paperLightDrift 11s ease-in-out infinite alternate;
+  }
+  @keyframes paperLightDrift{
+    from{opacity:.34;transform:translate3d(-2%,0,0)}
+    to{opacity:.55;transform:translate3d(3%,1%,0)}
+  }
+  .shoin-visual.is-visible img{
+    animation:guanyinImageBreath 8s ease-in-out infinite;
+  }
+  @keyframes guanyinImageBreath{
+    0%,100%{filter:brightness(.985) contrast(1)}
+    50%{filter:brightness(1.035) contrast(1.015)}
+  }
+  .shoin-frame.is-visible .shoin-inscription{
+    animation:inscriptionRise .9s .18s var(--sacred-ease) both;
+  }
+  @keyframes inscriptionRise{
+    from{opacity:.35;transform:translateY(10px)}
+    to{opacity:1;transform:none}
+  }
+}
+
+/* 五盞祈願燈：收斂浮動，強化題名與編號互動 */
+.lamp{
+  transition:
+    transform .28s var(--sacred-ease),
+    box-shadow .28s var(--sacred-ease),
+    border-color .28s var(--sacred-ease),
+    background-color .28s var(--sacred-ease);
+}
+.lamp:before{
+  transition:color .28s var(--sacred-ease),text-shadow .28s var(--sacred-ease),opacity .28s;
+}
+.lamp h3{
+  transition:
+    background-color .28s var(--sacred-ease),
+    border-color .28s var(--sacred-ease),
+    color .28s var(--sacred-ease),
+    box-shadow .28s var(--sacred-ease);
+}
+.lamp:hover,.lamp:focus-within{
+  transform:translateY(-2px);
+  border-color:rgba(165,130,84,.36);
+  box-shadow:0 13px 28px rgba(0,0,0,.12);
+  background-color:rgba(250,247,242,.96);
+}
+.lamp:hover:before,.lamp:focus-within:before{
+  color:rgba(165,130,84,.94);
+  text-shadow:0 0 12px rgba(197,162,111,.18);
+}
+.lamp:hover h3,.lamp:focus-within h3{
+  background:rgba(165,130,84,.23);
+  border-color:rgba(165,130,84,.54);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);
+}
+
+/* 建院護持：六格細微金光回應 */
+.support-item{
+  position:relative;
+  transition:
+    background .3s var(--sacred-ease),
+    box-shadow .3s var(--sacred-ease);
+}
+.support-item h3{
+  transition:transform .3s var(--sacred-ease),color .3s var(--sacred-ease);
+}
+.support-item h3::before{
+  transition:
+    border-color .3s var(--sacred-ease),
+    background-color .3s var(--sacred-ease),
+    box-shadow .3s var(--sacred-ease),
+    transform .3s var(--sacred-ease);
+}
+.support-item:hover,.support-item:focus-within{
+  background:
+    linear-gradient(135deg,rgba(197,162,111,.10),rgba(197,162,111,.025) 48%,transparent 72%);
+  box-shadow:inset 0 0 0 1px rgba(197,162,111,.08);
+}
+.support-item:hover h3,.support-item:focus-within h3{
+  transform:translateX(3px);
+  color:#fff9ef;
+}
+.support-item:hover h3::before,.support-item:focus-within h3::before{
+  border-color:rgba(235,213,169,.98);
+  background-color:rgba(197,162,111,.18);
+  box-shadow:0 0 11px rgba(197,162,111,.20),inset 0 0 0 2px rgba(197,162,111,.12);
+  transform:rotate(45deg) scale(1.06);
+}
+
+/* 建院圖：像和紙揭開般進場 */
+.motion-capable .support-figure[data-reveal]{
+  clip-path:inset(0 100% 0 0);
+}
+.motion-capable .support-figure[data-reveal].is-visible{
+  clip-path:inset(0 0 0 0);
+  transition:
+    clip-path 1.05s .08s var(--sacred-ease),
+    opacity .7s var(--sacred-ease),
+    transform .7s var(--sacred-ease);
+}
+
+/* 報名按鈕：只在互動時掠過一條微光 */
+.hero-copy .btn{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.hero-copy .btn:after{
+  content:"";
+  position:absolute;
+  top:-30%;
+  bottom:-30%;
+  left:-34%;
+  width:24%;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent);
+  transform:skewX(-20deg);
+  opacity:0;
+}
+@media(prefers-reduced-motion:no-preference){
+  .hero-copy .btn:hover:after,
+  .hero-copy .btn:focus-visible:after{
+    opacity:1;
+    animation:buttonSheen .72s var(--sacred-ease) both;
+  }
+  @keyframes buttonSheen{
+    from{left:-34%}
+    to{left:118%}
+  }
+}
+
+/* 手機維持安定：保留互動，但降低持續動畫存在感 */
+@media(max-width:700px){
+  .lamp:hover,.lamp:focus-within{transform:none}
+  .support-item:hover h3,.support-item:focus-within h3{transform:translateX(2px)}
+}
+
+/* 動態減量設定 */
+@media(prefers-reduced-motion:reduce){
+  .event-heading.hero-copy,
+  .shoin-frame:after,
+  .shoin-visual img,
+  .shoin-inscription,
+  .support-figure,
+  .hero-copy .btn:after{
+    animation:none!important;
+    transition:none!important;
+  }
+  .motion-capable .support-figure[data-reveal]{
+    clip-path:none!important;
+  }
+  .observance-grid{
+    background-size:100% 1px,100% 1px!important;
+  }
+  .lamp:hover,.lamp:focus-within,
+  .support-item:hover h3,.support-item:focus-within h3{
+    transform:none!important;
+  }
+}
+</style>
 </head>
 <body>
 <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
