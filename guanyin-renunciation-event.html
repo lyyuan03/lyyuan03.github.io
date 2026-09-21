@@ -305,26 +305,26 @@
 .shoin-section{padding:0 0 76px}
 .shoin-frame{
   grid-template-columns:76px minmax(300px,.9fr) minmax(0,1.1fr);
-  align-items:start;
+  align-items:stretch;
 }
 .shoin-inscription{padding:28px 16px;gap:18px}
 .shoin-visual{
   min-height:0;
-  height:auto;
-  padding:18px;
-  overflow:visible;
+  height:100%;
+  padding:0;
+  overflow:hidden;
   display:flex;
-  align-items:flex-start;
+  align-items:stretch;
   justify-content:center;
   background:rgba(89,79,71,.045);
 }
 .shoin-visual img{
   display:block;
   width:100%;
-  height:auto;
+  height:100%;
   max-height:none;
-  object-fit:contain;
-  object-position:center;
+  object-fit:cover;
+  object-position:center center;
 }
 .shoin-visual:after{display:none}
 .shoin-copy{padding:32px 32px 28px}
@@ -530,6 +530,10 @@
     height:auto;
     aspect-ratio:auto;
     padding:10px;
+  }
+  .shoin-visual img{
+    height:auto;
+    object-fit:contain;
   }
   .shoin-copy{padding:24px 18px 22px}
   .shoin-copy .form-intro h2{font-size:22px}
@@ -1165,7 +1169,6 @@
     <img class="cover-image" src="/assets/guanyin-renunciation-banner-20261028.webp?v=20260918-5" alt="觀世音菩薩出家日大悲懺消災降福祈願法儀封面">
   </div>
   <div class="event-heading hero-copy">
-    <div class="hero-date-vertical" data-hero-step="1"><span>農曆</span><strong>九月十九日</strong></div>
     <div class="eyebrow" data-hero-step="1">KANNON RENUNCIATION CEREMONY · LING YUAN YUAN</div>
     <h1 data-hero-step="2"><span class="hero-title-main">觀世音菩薩出家日</span></h1>
     <div class="hero-rite" data-hero-step="2">大悲懺・消災降福祈願法儀</div>
@@ -1177,11 +1180,10 @@
   <div class="observance-kicker">觀音出家紀念</div>
   <div class="observance-grid">
     <div class="observance-heading">
-      <span>九月十九</span>
-      <h2>從出離煩惱<br>走向慈悲願行</h2>
+      <h2>從出離煩惱<br>走向圓滿自性大願</h2>
     </div>
     <div class="observance-copy">
-      <p>漢傳佛教依傳統，以農曆二月十九為觀世音菩薩聖誕、六月十九為成道日、九月十九為出家紀念日。佛教所說的「出家」，也帶有出離煩惱、發菩提心的修行意義；民間流傳的妙善公主捨俗修行故事，則成為華人觀音信仰中熟悉的文化敘事。</p>
+      <p>台灣佛教依傳統，以農曆二月十九為觀世音菩薩聖誕、六月十九為成道日、九月十九為出家紀念日。佛教所說的「出家」，也帶有出離煩惱、發菩提心的修行意義；民間流傳的妙善公主捨俗修行故事，則成為華人觀音信仰中熟悉的文化敘事。</p>
       <p>對靈元院而言，這一天亦承接靈山派與觀世音菩薩的深厚因緣。藉大悲懺與祈願法儀，禮敬菩薩慈悲願行，也將願心安放於修持、發願與自心安定之中。</p>
     </div>
   </div>
