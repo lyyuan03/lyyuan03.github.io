@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="當靈修碰到鬼神、牽亡、前世與神通，我們究竟知道到哪裡">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#050706"/><stop offset=".52" stop-color="#0C1710"/><stop offset="1" stop-color="#201711"/></linearGradient>
+  <radialGradient id="glow" cx=".72" cy=".36" r=".55"><stop offset="0" stop-color="#CDAE70" stop-opacity=".55"/><stop offset=".32" stop-color="#7D6845" stop-opacity=".16"/><stop offset="1" stop-color="#071207" stop-opacity="0"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E5CF9B"/><stop offset="1" stop-color="#A58254"/></linearGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="2" seed="9"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .08"/></feComponentTransfer></filter>
+</defs>
+<rect width="1200" height="675" fill="url(#bg)"/>
+<rect width="1200" height="675" fill="url(#glow)"/>
+<!-- 海報式畫面：多個「可能的答案」重疊，但中央仍留黑 -->
+<g opacity=".33">
+  <path d="M747 118h282v424H747z" fill="#0B0E0B" stroke="#5F5343" stroke-width="2"/>
+  <path d="M802 151h171v337H802z" fill="#D7BF81" opacity=".12"/>
+  <ellipse cx="886" cy="267" rx="95" ry="130" fill="#D8C58F" opacity=".12" filter="url(#blur)"/>
+</g>
+<g opacity=".52">
+  <path d="M985 430c-2-54 19-90 55-90 35 0 56 36 55 90l13 153H972z" fill="#101311"/>
+  <circle cx="1040" cy="317" r="34" fill="#171712"/>
+  <path d="M843 448c3-62 30-96 69-96 38 0 64 33 67 96l8 134H835z" fill="#151815"/>
+  <circle cx="911" cy="326" r="31" fill="#171712"/>
+</g>
+<g opacity=".28" fill="none" stroke="#91A99B">
+  <ellipse cx="880" cy="282" rx="247" ry="78" stroke-width="1.5"/>
+  <ellipse cx="880" cy="282" rx="197" ry="54" stroke-width="1"/>
+  <path d="M667 282c61 42 132 59 213 59 79 0 151-17 214-59"/>
+</g>
+<!-- 男性背影 -->
+<g>
+  <circle cx="701" cy="405" r="48" fill="#090A09"/>
+  <path d="M647 452c-27 39-42 86-47 141l-7 82h216l-8-82c-5-55-20-102-47-141-28 20-79 20-107 0z" fill="#080908"/>
+  <path d="M647 469c18 16 36 24 54 24 19 0 37-8 55-24" fill="none" stroke="#786447" stroke-width="2" opacity=".5"/>
+</g>
+<!-- 左側文字 -->
+<text x="76" y="79" fill="#B7A783" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="15" letter-spacing="5">靈元院文選 · 靈修辨證</text>
+<text x="76" y="176" fill="#F1E9DD" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="46" font-weight="700">鬼神、牽亡、前世與神通</text>
+<text x="76" y="236" fill="url(#gold)" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="44" font-weight="700">我們究竟知道到哪裡？</text>
+<text x="78" y="293" fill="#B9B0A3" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="18" letter-spacing="2">經驗　｜　詮釋　｜　信念　｜　未知</text>
+<line x1="77" y1="327" x2="515" y2="327" stroke="#A58254" stroke-opacity=".48"/>
+<text x="78" y="373" fill="#D8D0C4" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="24">「我聽過」說久了，</text>
+<text x="78" y="409" fill="#D8D0C4" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="24">很容易變成「我知道」。</text>
+<text x="78" y="478" fill="#8FA096" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="16">彭榮邦教授談光、牽亡與未知</text>
+<text x="78" y="509" fill="#8FA096" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="16">宇色整理靈修現場最容易混在一起的幾條界線</text>
+<rect width="1200" height="675" filter="url(#grain)" opacity=".65"/>
+</svg>
