@@ -133,6 +133,7 @@ export const recommendedBookByArticle = Object.freeze({
   "celebrity-death-dream-spirit-five-checks": "ghosts",
   "wealth-discipline-investing-and-self-mastery": "wealthDiscipline",
   "spiritual-good-death-last-visit": "spiritualGoodDeath",
+  "lingxiu-ghosts-past-lives-supernatural-knowing": "spiritualGoodDeath",
   "japan-temple-faith-and-decline": "faith",
   "spiritual-practice-cannot-be-outsourced-to-gods": "awakening",
   "jitong-leader-discernment": "lingxiuMaze",
