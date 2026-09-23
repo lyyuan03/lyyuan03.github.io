@@ -778,9 +778,10 @@ function renderRecommendedBook(article) {
 }
 
 function firstArticleImage(article) {
-  if (article?.coverImage) return article.coverImage;
+  const configuredThumbnail = getArticleThumbnail(article);
+  if (configuredThumbnail) return configuredThumbnail;
   const markdownImage = String(article?.content || "").match(/!\[[^\]]*\]\(([^)\s]+)\)/)?.[1];
-  return markdownImage || getArticleThumbnail(article) || "";
+  return markdownImage || "";
 }
 
 function relatedArticleFor(article) {
