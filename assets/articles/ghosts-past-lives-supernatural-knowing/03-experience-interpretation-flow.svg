@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="經驗、詮釋、世界觀與事實判定的四層界線">
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7F1E7"/><stop offset="1" stop-color="#EDE5DA"/></linearGradient>
+  <linearGradient id="line" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A58254"/><stop offset=".55" stop-color="#788D78"/><stop offset="1" stop-color="#566D63"/></linearGradient>
+  <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="11" flood-color="#4A3B2E" flood-opacity=".12"/></filter>
+</defs>
+<rect width="1200" height="675" rx="28" fill="url(#paper)"/>
+<circle cx="1061" cy="87" r="54" fill="#D9B66C" opacity=".46"/>
+<text x="70" y="82" fill="#5F4A31" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="36" font-weight="700">一個靈性經驗，從發生到「我知道」中間有四層</text>
+<text x="71" y="119" fill="#7A746B" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="17">把四層混在一起，最容易讓判斷失真。</text>
+<path d="M170 331H1020" stroke="url(#line)" stroke-width="9" stroke-linecap="round" opacity=".72"/>
+<g filter="url(#shadow)">
+  <rect x="68" y="202" width="238" height="258" rx="22" fill="#FBF8F2" stroke="#C7A565" stroke-width="2"/>
+  <rect x="334" y="202" width="238" height="258" rx="22" fill="#FBF8F2" stroke="#9A9E76" stroke-width="2"/>
+  <rect x="600" y="202" width="238" height="258" rx="22" fill="#FBF8F2" stroke="#7D9687" stroke-width="2"/>
+  <rect x="866" y="202" width="266" height="258" rx="22" fill="#FBF8F2" stroke="#5D766B" stroke-width="2"/>
+</g>
+<g font-family="Source Han Serif TC,Noto Serif TC,serif" font-weight="700">
+  <text x="187" y="253" text-anchor="middle" fill="#855F32" font-size="28">① 經驗發生</text>
+  <text x="453" y="253" text-anchor="middle" fill="#687047" font-size="28">② 開始詮釋</text>
+  <text x="719" y="253" text-anchor="middle" fill="#527063" font-size="28">③ 套入世界觀</text>
+  <text x="999" y="253" text-anchor="middle" fill="#405F55" font-size="28">④ 形成事實判定</text>
+</g>
+<g font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" fill="#635B52" font-size="18">
+  <text x="187" y="302" text-anchor="middle">身體晃動</text><text x="187" y="336" text-anchor="middle">夢見亡者</text><text x="187" y="370" text-anchor="middle">看見光／聽到聲音</text><text x="187" y="404" text-anchor="middle">情緒、雞皮疙瘩</text>
+  <text x="453" y="302" text-anchor="middle">靈動？</text><text x="453" y="336" text-anchor="middle">氣脈？</text><text x="453" y="370" text-anchor="middle">神明介入？</text><text x="453" y="404" text-anchor="middle">心理／神經反應？</text>
+  <text x="719" y="302" text-anchor="middle">師承</text><text x="719" y="336" text-anchor="middle">民間信仰</text><text x="719" y="370" text-anchor="middle">宗教語言</text><text x="719" y="404" text-anchor="middle">個人既有經驗</text>
+  <text x="999" y="302" text-anchor="middle">「我知道是誰來了」</text><text x="999" y="336" text-anchor="middle">「這就是前世」</text><text x="999" y="370" text-anchor="middle">「神明就是這個意思」</text><text x="999" y="404" text-anchor="middle">這一步最需要驗證</text>
+</g>
+<g fill="#A58254">
+  <path d="M306 331l20-13v26z"/><path d="M572 331l20-13v26z"/><path d="M838 331l20-13v26z"/>
+</g>
+<rect x="165" y="515" width="870" height="92" rx="20" fill="#122019"/>
+<text x="600" y="553" text-anchor="middle" fill="#E8E1D3" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="27" font-weight="700">反應很真　≠　已經知道來源</text>
+<text x="600" y="584" text-anchor="middle" fill="#A8B6AD" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="16">保留一點空間，讓後來的新經驗可以修正原本的判斷。</text>
+</svg>
