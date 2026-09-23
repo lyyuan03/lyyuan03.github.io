@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="前世、天命與特殊身分如何成為人生困境的解釋迴路">
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5EFE5"/><stop offset="1" stop-color="#E8E2D9"/></linearGradient>
+  <linearGradient id="split" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6F8A76"/><stop offset="1" stop-color="#A58254"/></linearGradient>
+  <filter id="shadow"><feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#4A3B2E" flood-opacity=".12"/></filter>
+</defs>
+<rect width="1200" height="675" rx="28" fill="url(#paper)"/>
+<text x="69" y="78" fill="#5F4A31" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="36" font-weight="700">知道前世之後，你更能面對今生了嗎？</text>
+<text x="70" y="116" fill="#7A746B" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="17">前世、主神、天命可以是一種理解；也可能在痛苦時成為一套太快完成的答案。</text>
+<!-- 主流程 -->
+<g filter="url(#shadow)">
+  <rect x="68" y="205" width="220" height="140" rx="22" fill="#FBF8F2" stroke="#B39B76" stroke-width="2"/>
+  <rect x="347" y="205" width="220" height="140" rx="22" fill="#FBF8F2" stroke="#A58254" stroke-width="2"/>
+  <rect x="626" y="205" width="220" height="140" rx="22" fill="#FBF8F2" stroke="#8D9170" stroke-width="2"/>
+  <rect x="905" y="205" width="227" height="140" rx="22" fill="#FBF8F2" stroke="#687B6B" stroke-width="2"/>
+</g>
+<g font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="25" font-weight="700">
+  <text x="178" y="254" text-anchor="middle" fill="#6C5945">人生出了問題</text>
+  <text x="457" y="254" text-anchor="middle" fill="#7D5E37">很需要一個答案</text>
+  <text x="736" y="254" text-anchor="middle" fill="#646A47">前世／主神／天命</text>
+  <text x="1018" y="254" text-anchor="middle" fill="#4F6658">得到新的身分位置</text>
+</g>
+<g font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="17" fill="#655D54">
+  <text x="178" y="296" text-anchor="middle">關係、工作、失落</text><text x="178" y="322" text-anchor="middle">疾病、價值感、方向</text>
+  <text x="457" y="296" text-anchor="middle">事情突然被說通</text><text x="457" y="322" text-anchor="middle">混亂獲得完整感</text>
+  <text x="736" y="296" text-anchor="middle">「原來我是誰」</text><text x="736" y="322" text-anchor="middle">「原來我為何如此」</text>
+  <text x="1018" y="296" text-anchor="middle">特殊、被需要</text><text x="1018" y="322" text-anchor="middle">人生重新有意義</text>
+</g>
+<path d="M288 275h48" stroke="#A58254" stroke-width="6" stroke-linecap="round"/><path d="M336 275l-17-11v22z" fill="#A58254"/>
+<path d="M567 275h48" stroke="#A58254" stroke-width="6" stroke-linecap="round"/><path d="M615 275l-17-11v22z" fill="#A58254"/>
+<path d="M846 275h48" stroke="#A58254" stroke-width="6" stroke-linecap="round"/><path d="M894 275l-17-11v22z" fill="#A58254"/>
+<!-- 分流 -->
+<path d="M1018 346v66" stroke="url(#split)" stroke-width="5"/>
+<path d="M1018 412H735v58" stroke="#6F8A76" stroke-width="5" fill="none"/>
+<path d="M1018 412H1018v58" stroke="#9F7650" stroke-width="5" fill="none"/>
+<g filter="url(#shadow)">
+  <rect x="600" y="470" width="270" height="132" rx="22" fill="#EAF0EA" stroke="#6F8A76" stroke-width="2"/>
+  <rect x="892" y="470" width="240" height="132" rx="22" fill="#F1E5DA" stroke="#A58254" stroke-width="2"/>
+</g>
+<text x="735" y="513" text-anchor="middle" fill="#456252" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="24" font-weight="700">回到今生</text>
+<text x="735" y="548" text-anchor="middle" fill="#5D675F" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="17">答案讓你更能處理生活</text>
+<text x="735" y="577" text-anchor="middle" fill="#5D675F" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="17">關係、責任與現在的困境</text>
+<text x="1012" y="513" text-anchor="middle" fill="#7E5738" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="24" font-weight="700">把今生丟給答案</text>
+<text x="1012" y="548" text-anchor="middle" fill="#6F6257" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="17">所有問題都推到前世</text>
+<text x="1012" y="577" text-anchor="middle" fill="#6F6257" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="17">特殊身分取代現實處理</text>
+<circle cx="89" cy="523" r="48" fill="#D8C28A" opacity=".28"/>
+<text x="70" y="631" fill="#6A5C4D" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="20">檢查點：這個答案，在你的生命裡做了什麼？</text>
+</svg>

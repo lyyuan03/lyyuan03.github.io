@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="我不知道，是靈修裡最難留下的位置">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#040605"/><stop offset=".55" stop-color="#0A1510"/><stop offset="1" stop-color="#1E1712"/></linearGradient>
+  <radialGradient id="light" cx=".65" cy=".38" r=".45"><stop offset="0" stop-color="#D7BA7B" stop-opacity=".52"/><stop offset=".27" stop-color="#8A744E" stop-opacity=".16"/><stop offset="1" stop-color="#071207" stop-opacity="0"/></radialGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".76" numOctaves="2" seed="23"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .085"/></feComponentTransfer></filter>
+</defs>
+<rect width="1200" height="675" fill="url(#bg)"/>
+<rect width="1200" height="675" fill="url(#light)"/>
+<!-- 空間感：走到一道光前但沒有踏過去 -->
+<path d="M760 70h270v520H760z" fill="#080A08" stroke="#574C3F" stroke-width="2" opacity=".85"/>
+<path d="M820 112h150v415H820z" fill="#DCC789" opacity=".09"/>
+<path d="M891 112h8v414h-8z" fill="#E8D69C" opacity=".44" filter="url(#blur)"/>
+<ellipse cx="895" cy="294" rx="160" ry="210" fill="#C6B076" opacity=".1" filter="url(#blur)"/>
+<!-- 人 -->
+<circle cx="702" cy="365" r="45" fill="#090A09"/>
+<path d="M650 408c-24 36-38 83-43 141l-8 126h207l-8-126c-5-58-19-105-44-141-29 19-75 19-104 0z" fill="#080908"/>
+<!-- 左側標題 -->
+<text x="72" y="91" fill="#B6A47F" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="15" letter-spacing="5">未知，不必立刻被填滿</text>
+<text x="72" y="202" fill="#F1E9DE" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="80" font-weight="700">我不知道</text>
+<text x="75" y="254" fill="#A58254" font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="31" font-weight="700">是靈修裡最難留下的位置</text>
+<line x1="74" y1="287" x2="535" y2="287" stroke="#A58254" stroke-opacity=".45"/>
+<g font-family="Source Han Serif TC,Noto Serif TC,serif" font-size="25">
+  <text x="76" y="351" fill="#D5CEC3">看見　<tspan fill="#9F8A63">≠</tspan>　知道來源</text>
+  <text x="76" y="400" fill="#D5CEC3">感應　<tspan fill="#9F8A63">≠</tspan>　理解全貌</text>
+  <text x="76" y="449" fill="#D5CEC3">有效　<tspan fill="#9F8A63">≠</tspan>　完成證明</text>
+  <text x="76" y="498" fill="#D5CEC3">信念　<tspan fill="#9F8A63">≠</tspan>　已驗證事實</text>
+</g>
+<text x="76" y="584" fill="#8FA096" font-family="Noto Sans TC,Microsoft JhengHei,sans-serif" font-size="17">知道自己的話應該說到哪裡，也是一種分寸。</text>
+<rect width="1200" height="675" filter="url(#grain)" opacity=".65"/>
+</svg>

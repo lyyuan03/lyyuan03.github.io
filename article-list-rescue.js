@@ -1,4 +1,4 @@
-import { staticArticles } from "./static-articles.js?v=20260902-detail-reading-rescue-2";
+import { staticArticles } from "./static-articles.js?v=20260923-ghosts-supernatural-1";
 import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-3";
 
 const root = document.getElementById("article-root");

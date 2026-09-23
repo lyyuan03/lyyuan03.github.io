@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1600" viewBox="0 0 900 1600" role="img" aria-label="修行者面對鬼神、牽亡、前世與神通等未知經驗的電影感畫面">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#050806"/><stop offset=".45" stop-color="#0B160F"/><stop offset="1" stop-color="#1C1713"/>
+  </linearGradient>
+  <radialGradient id="halo" cx=".5" cy=".32" r=".48">
+    <stop offset="0" stop-color="#D8B778" stop-opacity=".88"/><stop offset=".38" stop-color="#8C7549" stop-opacity=".25"/><stop offset="1" stop-color="#0B120D" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="door" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#E7D39D" stop-opacity=".66"/><stop offset=".7" stop-color="#A58254" stop-opacity=".1"/><stop offset="1" stop-color="#071207" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="mist" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#AABCB5" stop-opacity="0"/><stop offset=".5" stop-color="#C9D7D1" stop-opacity=".22"/><stop offset="1" stop-color="#AABCB5" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="blur20"><feGaussianBlur stdDeviation="20"/></filter>
+  <filter id="blur8"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="17" result="noise"/>
+    <feColorMatrix in="noise" type="saturate" values="0"/>
+    <feComponentTransfer><feFuncA type="table" tableValues="0 .09"/></feComponentTransfer>
+  </filter>
+</defs>
+<rect width="900" height="1600" fill="url(#bg)"/>
+<rect width="900" height="1600" fill="url(#halo)"/>
+<!-- 遠方門與未知光源 -->
+<path d="M285 178h330v815H285z" fill="#0C0E0C" stroke="#594F47" stroke-width="3"/>
+<path d="M335 230h230v690H335z" fill="url(#door)" opacity=".85"/>
+<ellipse cx="450" cy="338" rx="170" ry="215" fill="#D9C28A" opacity=".14" filter="url(#blur20)"/>
+<!-- 左側：廟宇與無形輪廓 -->
+<g opacity=".58">
+  <path d="M35 560h270l-42-42 22 2-63-58-65 57 22-2-44 43z" fill="#111713" stroke="#4E5E50" stroke-width="2"/>
+  <path d="M90 560h160v210H90z" fill="#101512"/>
+  <path d="M167 636c-44 0-79 43-79 103 0 58 31 101 79 101s79-43 79-101c0-60-35-103-79-103z" fill="#9EB5AA" opacity=".16" filter="url(#blur8)"/>
+  <path d="M165 606c-32 22-42 70-30 103 11 32 2 69-18 95 31 17 77 17 106-2-21-27-31-63-18-95 13-35 0-78-40-101z" fill="#B8C9C0" opacity=".26"/>
+</g>
+<!-- 右側：牽亡儀式與家屬的剪影 -->
+<g opacity=".62">
+  <circle cx="727" cy="616" r="38" fill="#B69A66" opacity=".2"/>
+  <path d="M680 664c6-54 29-81 62-81 32 0 54 26 59 81l14 196H666z" fill="#24201B"/>
+  <path d="M608 790c10-64 39-95 76-95 36 0 63 31 72 95l9 134H599z" fill="#151A16"/>
+  <path d="M753 788c9-56 34-84 66-84 31 0 54 27 62 84l8 136H744z" fill="#151A16"/>
+  <path d="M610 688h260" stroke="#A58254" stroke-opacity=".38" stroke-width="2"/>
+  <circle cx="742" cy="575" r="58" fill="#C7AF78" opacity=".1" filter="url(#blur20)"/>
+</g>
+<!-- 疊層：像記憶、前世、神通一樣難以定位的碎片 -->
+<g opacity=".34" fill="none" stroke="#91A99B">
+  <ellipse cx="450" cy="455" rx="270" ry="92" stroke-width="2"/>
+  <ellipse cx="450" cy="455" rx="215" ry="62" stroke-width="1.5"/>
+  <path d="M198 454c77 54 160 73 252 73 91 0 176-20 252-73" stroke-width="1.6"/>
+  <path d="M450 305c24 44 54 81 90 111-37 29-66 68-90 113-24-45-54-84-90-113 36-30 66-67 90-111z" fill="#A58254" fill-opacity=".08" stroke="#A58254"/>
+</g>
+<g opacity=".25" fill="#D8C38E">
+  <circle cx="162" cy="333" r="3"/><circle cx="215" cy="277" r="2"/><circle cx="696" cy="314" r="3"/><circle cx="750" cy="382" r="2"/>
+  <circle cx="113" cy="945" r="2.5"/><circle cx="806" cy="995" r="2.5"/><circle cx="101" cy="1170" r="2"/><circle cx="785" cy="1180" r="3"/>
+</g>
+<!-- 主體：男性修行者背影 -->
+<g>
+  <ellipse cx="450" cy="1360" rx="260" ry="80" fill="#000" opacity=".44" filter="url(#blur20)"/>
+  <circle cx="450" cy="1015" r="78" fill="#11100E"/>
+  <path d="M391 1080c-41 54-63 127-69 218l-20 201h296l-20-201c-7-91-29-164-69-218-32 25-86 25-118 0z" fill="#0B0C0B"/>
+  <path d="M390 1110c19 24 39 39 60 39 22 0 43-15 61-39" fill="none" stroke="#6B5A42" stroke-width="2" opacity=".5"/>
+  <path d="M337 1275c40-25 76-39 113-39 38 0 75 14 114 39" fill="none" stroke="#A58254" stroke-width="2" opacity=".24"/>
+</g>
+<!-- 中央霧與門縫 -->
+<path d="M0 1020c165-84 308-46 453-11 141 34 285 74 447-15v182c-184 84-344 49-495 15-132-30-267-61-405 12z" fill="url(#mist)" filter="url(#blur8)"/>
+<path d="M447 230h7v720h-7z" fill="#F3E0A3" opacity=".47" filter="url(#blur8)"/>
+<rect width="900" height="1600" filter="url(#grain)" opacity=".7"/>
+<rect x="18" y="18" width="864" height="1564" fill="none" stroke="#A58254" stroke-opacity=".18" stroke-width="2"/>
+</svg>
