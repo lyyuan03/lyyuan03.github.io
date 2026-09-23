@@ -1049,41 +1049,57 @@
 }
 </style>
 
+
 <style id="beclass-full-form-fix-20260919">
-/* BeClass 報名表單完整呈現：取消舊版固定裁切高度 */
+/* BeClass 報名表單：固定視窗高度，內容於 iframe 內捲動，避免整頁被拉長 */
 .beclass-wrap{
   width:100%;
   max-width:860px;
-  height:auto!important;
-  min-height:0;
+  height:1200px!important;
+  min-height:1200px!important;
+  max-height:1200px!important;
   margin:18px auto 0;
-  overflow:visible!important;
+  overflow:hidden!important;
   background:#fff;
+  border:1px solid rgba(165,130,84,.18);
 }
-.beclass-wrap iframe{
-  display:block;
+.beclass-wrap > div{
+  width:100%;
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+}
+.beclass-wrap iframe,
+#beclassmainframe{
+  display:block!important;
   width:100%!important;
-  min-width:0!important;
-  height:7600px!important;
-  border:0;
+  min-width:100%!important;
+  height:1200px!important;
+  min-height:1200px!important;
+  max-height:1200px!important;
+  border:0!important;
   transform:none!important;
-  transform-origin:top left;
+  overflow:auto!important;
   background:#fff;
 }
-
-/* 手機版由 JS 依實際容器寬度縮放，外層高度同步計算，避免被裁切 */
 @media(max-width:640px){
   .beclass-wrap{
-    max-width:none;
-    margin:18px 0 0;
+    height:900px!important;
+    min-height:900px!important;
+    max-height:900px!important;
+    margin:14px 0 0;
     border-left:0;
     border-right:0;
-    overflow:hidden!important;
   }
-  .beclass-wrap iframe{
-    width:440px!important;
-    min-width:440px!important;
-    height:7600px!important;
+  .beclass-wrap iframe,
+  #beclassmainframe{
+    width:100%!important;
+    min-width:100%!important;
+    height:900px!important;
+    min-height:900px!important;
+    max-height:900px!important;
+    transform:none!important;
   }
 }
 </style>
@@ -1106,6 +1122,7 @@
   visibility:visible!important;
 }
 </style>
+
 </head>
 <body>
 <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
@@ -1224,7 +1241,7 @@
     <span>PRAYER LAMPS</span>
     <h2>五盞祈願燈</h2>
     <p>依個人與家庭所願，於觀世音菩薩出家日虔誠啟燈，祈請慈悲護念。</p>
-  </div><div class="lamps"><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-radiance.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">全方位福運燈</h3><p>身、心、財、緣、事業，全面交付菩薩護持。</p><p>人生的困境，往往不是只有一個地方出了問題，而是身心、家庭、人際、財務與事業彼此牽動，形成整體失衡。當諸事膠著、方向迷惘、運勢停滯、努力卻始終無法突破時，誠心供奉全方位福運燈，祈請觀世音菩薩以慈悲願力護持，為生命重新梳理因緣、調和福報、開啟善緣，使身安、心定、事順、福聚，令人生重新步入光明與圓滿。</p><p><strong>適合祈請：</strong><br>人生卡關、運勢低迷、事事不順、希望整體提升福報與運勢者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-candle.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">平安消災燈</h3><p>願菩薩慈光遍照，消災解厄，護佑平安。</p><p>人生無常，災厄往往來自看不見的因緣。若流年不利、諸事多阻、身體反覆不適、出入不安、睡眠不寧、惡夢頻仍，皆可虔誠點燃平安消災燈，祈請觀世音菩薩以大悲願力照破黑暗、化解障礙，令災厄遠離、身心安穩、行車出入平安，增長吉祥福德，使生命少一分驚恐，多一分安定。</p><p><strong>適合祈請：</strong><br>流年犯煞、健康反覆、經常出差旅行、家人平安、希望消災解厄者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-wheel.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">福慧健康燈</h3><p>身體安康，智慧增長，福慧雙修。</p><p>身體，是修行的道場，也是承載生命使命的重要器皿；智慧，則是照見人生方向的明燈。點燃福慧健康燈，不僅祈願身體康健、疾病遠離，更祈請觀世音菩薩加持福德增長、智慧開顯，使身心安定、念念清明，在修行、學業、工作與人生道路上，都能以健康之身承載福報，以智慧之心面對人生。</p><p><strong>適合祈請：</strong><br>自己或家人健康、長輩、慢性疾病調養、修行者、考生及需要增長智慧者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-baozhu.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">財運轉順燈</h3><p>財流順行，福德相隨，善緣廣聚。</p><p>財富，不只是金錢，更是福報流動的顯現。當財路受阻、收入停滯、事業不順、投資受挫、努力難有回報時，可虔誠供奉財運轉順燈，祈請觀世音菩薩以慈悲願力調和因緣、廣開善門，引導正財穩定、偏財有度、事業順遂、人脈聚合，使福德轉化為財富，財富再成為利益眾生的力量。</p><p><strong>適合祈請：</strong><br>創業者、自營業、業務工作、投資理財、求職轉職、希望改善財運者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-lotus.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">家運守護燈</h3><p>一家平安，同沐慈光，共享福德。</p><p>一個家庭，是眾多因緣與業力共同交會之處。當家中容易爭執、親子失和、夫妻衝突、長輩健康不安、家運起伏不定時，可為全家供奉家運守護燈，祈請觀世音菩薩慈光護佑一家大小，化解口舌紛爭、安定家宅磁場、增進彼此和合，使家庭充滿理解、平安與福氣，共同走向和樂圓滿。</p><p><strong>適合祈請：</strong><br>全家祈福、夫妻和合、親子關係、長輩平安、家宅安寧、提升家運者。</p></article></div></section><section class="construction-support" id="construction-support"><div class="support-panel" data-reveal><div class="section-title" data-reveal><div><span>FOUNDING SUPPORT</span><h2>建院護持項目</h2></div></div><p class="support-intro">除本次觀世音菩薩出家日法儀燈別外，亦可依個人願心護持靈元院建院工程與長期道務。以下項目統一列於建院護持專區，與法儀燈別分開呈現。</p><figure class="support-figure"><img src="/assets/construction/2026-building-patron/01-design-courtyard-hq.webp" alt="靈元院建院設計示意圖" loading="eager" decoding="async"></figure><div class="support-list"><div class="support-item"><h3>建院護法燈</h3><p>護持靈元院建院工程與壇場長久運作，願建院因緣順利具足，道場安定圓成。</p></div><div class="support-item"><h3>建院圓滿燈</h3><p>祈願建院各項工程順利推進、人員平安、資源具足，使整體建設依序完成。</p></div><div class="support-item"><h3>靈山派護持燈</h3><p>護持靈山派法脈、道務與法儀延續，作為長期弘傳與壇務運作之助力。</p></div><div class="support-item"><h3>景觀園藝贊助</h3><p>用於院區植栽、景觀整理、戶外環境與園藝空間建置，營造安定清淨的整體場域。</p></div><div class="support-item"><h3>神像供具贊助</h3><p>用於神像安奉、供桌、供具、法器及相關莊嚴配置，完善壇場與禮敬空間。</p></div><div class="support-item"><h3>硬體設備贊助</h3><p>用於院區水電、照明、通風、消防、影音及其他建院所需之必要硬體設備。</p></div></div></div></section><section class="section narrow beclass-section" id="beclass-form"><div class="section-title" data-reveal><div><span>BECLASS FORM</span><h2>報名法儀表單</h2></div></div><div class="beclass-wrap"><div style="text-align:center;"><iframe src="https://www.beclass.com/m/showregist.php?regist_id=MzA1MjgyYjZhOWUyMDk0MmYwZmY6U2hvd0Zvcm0=" frameborder="0" height="7600" width="440" marginwidth="0" marginheight="0" align="center" name="beclassmainframe" id="beclassmainframe" scrolling="auto"></iframe></div></div></section><div class="contact-section"><div class="contact-inner"><div class="contact-box"><h2>第一手掌握法會訊息</h2><span class="contact-sub">STAY CONNECTED</span><p class="contact-note">如欲第一手收到靈元院最新課程與未公開活動訊息，敬請加入官方頻道。<br>法務、課程、合作諮詢，敬請通過聯繫帳號洽詢。</p><div class="tg-links"><a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a><a href="https://t.me/lyyuan" target="_blank" class="tg-btn">Telegram 聯繫帳號</a></div></div></div></div><footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer></main></div></div>
+  </div><div class="lamps"><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-radiance.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">全方位福運燈</h3><p>身、心、財、緣、事業，全面交付菩薩護持。</p><p>人生的困境，往往不是只有一個地方出了問題，而是身心、家庭、人際、財務與事業彼此牽動，形成整體失衡。當諸事膠著、方向迷惘、運勢停滯、努力卻始終無法突破時，誠心供奉全方位福運燈，祈請觀世音菩薩以慈悲願力護持，為生命重新梳理因緣、調和福報、開啟善緣，使身安、心定、事順、福聚，令人生重新步入光明與圓滿。</p><p><strong>適合祈請：</strong><br>人生卡關、運勢低迷、事事不順、希望整體提升福報與運勢者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-candle.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">平安消災燈</h3><p>願菩薩慈光遍照，消災解厄，護佑平安。</p><p>人生無常，災厄往往來自看不見的因緣。若流年不利、諸事多阻、身體反覆不適、出入不安、睡眠不寧、惡夢頻仍，皆可虔誠點燃平安消災燈，祈請觀世音菩薩以大悲願力照破黑暗、化解障礙，令災厄遠離、身心安穩、行車出入平安，增長吉祥福德，使生命少一分驚恐，多一分安定。</p><p><strong>適合祈請：</strong><br>流年犯煞、健康反覆、經常出差旅行、家人平安、希望消災解厄者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-wheel.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">福慧健康燈</h3><p>身體安康，智慧增長，福慧雙修。</p><p>身體，是修行的道場，也是承載生命使命的重要器皿；智慧，則是照見人生方向的明燈。點燃福慧健康燈，不僅祈願身體康健、疾病遠離，更祈請觀世音菩薩加持福德增長、智慧開顯，使身心安定、念念清明，在修行、學業、工作與人生道路上，都能以健康之身承載福報，以智慧之心面對人生。</p><p><strong>適合祈請：</strong><br>自己或家人健康、長輩、慢性疾病調養、修行者、考生及需要增長智慧者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-baozhu.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">財運轉順燈</h3><p>財流順行，福德相隨，善緣廣聚。</p><p>財富，不只是金錢，更是福報流動的顯現。當財路受阻、收入停滯、事業不順、投資受挫、努力難有回報時，可虔誠供奉財運轉順燈，祈請觀世音菩薩以慈悲願力調和因緣、廣開善門，引導正財穩定、偏財有度、事業順遂、人脈聚合，使福德轉化為財富，財富再成為利益眾生的力量。</p><p><strong>適合祈請：</strong><br>創業者、自營業、業務工作、投資理財、求職轉職、希望改善財運者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-lotus.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">家運守護燈</h3><p>一家平安，同沐慈光，共享福德。</p><p>一個家庭，是眾多因緣與業力共同交會之處。當家中容易爭執、親子失和、夫妻衝突、長輩健康不安、家運起伏不定時，可為全家供奉家運守護燈，祈請觀世音菩薩慈光護佑一家大小，化解口舌紛爭、安定家宅磁場、增進彼此和合，使家庭充滿理解、平安與福氣，共同走向和樂圓滿。</p><p><strong>適合祈請：</strong><br>全家祈福、夫妻和合、親子關係、長輩平安、家宅安寧、提升家運者。</p></article></div></section><section class="construction-support" id="construction-support"><div class="support-panel" data-reveal><div class="section-title" data-reveal><div><span>FOUNDING SUPPORT</span><h2>建院護持項目</h2></div></div><p class="support-intro">除本次觀世音菩薩出家日法儀燈別外，亦可依個人願心護持靈元院建院工程與長期道務。以下項目統一列於建院護持專區，與法儀燈別分開呈現。</p><figure class="support-figure"><img src="/assets/construction/2026-building-patron/01-design-courtyard-hq.webp" alt="靈元院建院設計示意圖" loading="eager" decoding="async"></figure><div class="support-list"><div class="support-item"><h3>建院護法燈</h3><p>護持靈元院建院工程與壇場長久運作，願建院因緣順利具足，道場安定圓成。</p></div><div class="support-item"><h3>建院圓滿燈</h3><p>祈願建院各項工程順利推進、人員平安、資源具足，使整體建設依序完成。</p></div><div class="support-item"><h3>靈山派護持燈</h3><p>護持靈山派法脈、道務與法儀延續，作為長期弘傳與壇務運作之助力。</p></div><div class="support-item"><h3>景觀園藝贊助</h3><p>用於院區植栽、景觀整理、戶外環境與園藝空間建置，營造安定清淨的整體場域。</p></div><div class="support-item"><h3>神像供具贊助</h3><p>用於神像安奉、供桌、供具、法器及相關莊嚴配置，完善壇場與禮敬空間。</p></div><div class="support-item"><h3>硬體設備贊助</h3><p>用於院區水電、照明、通風、消防、影音及其他建院所需之必要硬體設備。</p></div></div></div></section><section class="section narrow beclass-section" id="beclass-form"><div class="section-title" data-reveal><div><span>BECLASS FORM</span><h2>報名法儀表單</h2></div></div><div class="beclass-wrap"><div style="text-align:center;"><iframe src="https://www.beclass.com/m/showregist.php?regist_id=MzA1MjgyYjZhOWUyMDk0MmYwZmY6U2hvd0Zvcm0=" frameborder="0" width="100%" height="1200" marginwidth="0" marginheight="0" align="center" name="beclassmainframe" id="beclassmainframe" scrolling="yes"></iframe></div></div><div class="beclass-fallback"><a href="https://www.beclass.com/rid=305282b6a9e20942f0ff" target="_blank" rel="noopener noreferrer">若表單未完整顯示，請開啟完整報名表單</a></div></section><div class="contact-section"><div class="contact-inner"><div class="contact-box"><h2>第一手掌握法會訊息</h2><span class="contact-sub">STAY CONNECTED</span><p class="contact-note">如欲第一手收到靈元院最新課程與未公開活動訊息，敬請加入官方頻道。<br>法務、課程、合作諮詢，敬請通過聯繫帳號洽詢。</p><div class="tg-links"><a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a><a href="https://t.me/lyyuan" target="_blank" class="tg-btn">Telegram 聯繫帳號</a></div></div></div></div><footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer></main></div></div>
 <script>
 (()=>{const nav=document.querySelector('nav');if(!nav)return;const close=except=>nav.querySelectorAll('.nav-links>li.open').forEach(li=>{if(li!==except)li.classList.remove('open')});nav.querySelectorAll('.has-dropdown').forEach(trigger=>{const li=trigger.closest('li');const menu=li&&li.querySelector('.dropdown');if(!li||!menu)return;trigger.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();const willOpen=!li.classList.contains('open');close(li);li.classList.toggle('open',willOpen)});});document.addEventListener('click',event=>{if(!nav.contains(event.target))close(null)});})();
 </script>
@@ -1265,36 +1282,5 @@
 <script type="module" src="/site-auth-nav.js?v=20260804-strict-wellness-1"></script>
   <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
 
-<script id="beclass-responsive-height-fix-20260919">
-(()=>{
-  const BASE_WIDTH=440;
-  const BASE_HEIGHT=7600;
-  const wrap=document.querySelector('.beclass-wrap');
-  const frame=document.getElementById('beclassmainframe');
-  if(!wrap||!frame)return;
-
-  const resizeBeclass=()=>{
-    if(window.innerWidth<=640){
-      const available=Math.max(280,wrap.clientWidth);
-      const scale=Math.min(1,available/BASE_WIDTH);
-      frame.style.width=BASE_WIDTH+'px';
-      frame.style.minWidth=BASE_WIDTH+'px';
-      frame.style.height=BASE_HEIGHT+'px';
-      frame.style.transform='scale('+scale+')';
-      frame.style.transformOrigin='top left';
-      wrap.style.height=Math.ceil(BASE_HEIGHT*scale)+'px';
-    }else{
-      frame.style.width='100%';
-      frame.style.minWidth='0';
-      frame.style.height=BASE_HEIGHT+'px';
-      frame.style.transform='none';
-      wrap.style.height='auto';
-    }
-  };
-
-  resizeBeclass();
-  window.addEventListener('resize',resizeBeclass,{passive:true});
-})();
-</script>
 </body>
 </html>
