@@ -18,6 +18,7 @@ import { yuanshenAwakeningOldManuscriptArticle } from "./article-yuanshen-awaken
 import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-morning.js?v=20260831-permissions-1";
 import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260831-permissions-1";
 import { spiritualGoodDeathArticle } from "./article-spiritual-good-death.js?v=20260903-cover-thumb-1";
+import { ghostsPastLivesSupernaturalKnowingArticle } from "./article-ghosts-past-lives-supernatural-knowing.js?v=20260923-1";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260919-jinmu-series-sort-1";
 
 const featuredWealthDisciplineArticle = {
@@ -103,6 +104,7 @@ function normalizeArticle(article) {
 export const staticArticles = [
   ...jinmuEventArticles.slice(2),
   reconciliationAbsolutionHeartArticle,
+  ghostsPastLivesSupernaturalKnowingArticle,
   spiritualGoodDeathArticle,
   dragonCanonConsciousnessFieldArticle,
   ghostGateAlwaysOpenEnhancedArticle,
