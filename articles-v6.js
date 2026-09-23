@@ -3,7 +3,7 @@ const articleRoot = document.getElementById("article-root");
 
 const activeArticleId = new URLSearchParams(location.search).get("id") || "";
 if (!activeArticleId) {
-  void import("./article-list-rescue.js?v=20260919-jinmu-series-sort-1").catch((error) => {
+  void import("./article-list-rescue.js?v=20260923-ghosts-supernatural-1").catch((error) => {
     console.error("文選靜態備援載入失敗。", error);
   });
 }
@@ -153,8 +153,8 @@ async function importPatchedArticleCore(moduleUrl) {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260919-jinmu-series-sort-1",
-    "./articles-core-20260810-v6.js?v=20260919-jinmu-series-sort-1&retry=1"
+    "./articles-core-20260810-v6.js?v=20260923-ghosts-supernatural-1",
+    "./articles-core-20260810-v6.js?v=20260923-ghosts-supernatural-1&retry=1"
   ];
   let lastError = null;
   for (const [index, moduleUrl] of coreModuleUrls.entries()) {
