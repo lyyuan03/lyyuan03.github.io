@@ -1106,6 +1106,188 @@
   visibility:visible!important;
 }
 </style>
+
+<style id="renunciation-cis-japanese-20260925">
+:root{
+  --cis-deep:#594F47;
+  --cis-light:#A58254;
+  --cis-moss:#606330;
+  --cis-gold:#C5A26F;
+  --cis-silver:#B9B8B2;
+  --cis-rice:#F6F1E8;
+  --cis-paper:#FBF8F2;
+  --cis-ink:#3E332C;
+  --cis-shadow:rgba(43,34,27,.18);
+}
+.sacred-intro,.fourfold-section,.featured-lamp-section,.prayer-lamps-section,.construction-cis{
+  position:relative;
+  overflow:hidden;
+}
+.sacred-intro:before,.prayer-lamps-section:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.34;
+  background:
+    linear-gradient(90deg,rgba(89,79,71,.045) 1px,transparent 1px) 0 0/48px 48px,
+    linear-gradient(rgba(89,79,71,.035) 1px,transparent 1px) 0 0/48px 48px;
+}
+.cis-inner{width:min(1120px,calc(100% - 40px));margin:0 auto;position:relative;z-index:2}
+.cis-kicker{font-family:var(--en);font-size:12px;letter-spacing:.28em;text-transform:uppercase}
+.cis-heading{font-family:var(--serif);font-size:clamp(31px,4vw,48px);line-height:1.35;letter-spacing:.08em}
+.cis-rule{width:72px;height:1px;margin:18px 0 26px;background:linear-gradient(90deg,var(--cis-gold),transparent)}
+.cis-section-copy{font-family:var(--serif);font-size:16px;line-height:2.05}
+.sacred-intro{padding:104px 0 110px;background:linear-gradient(145deg,#fbf8f2,#f1eadf);color:var(--cis-ink)}
+.sacred-intro .cis-kicker{color:var(--cis-light)}
+.sacred-intro-grid{display:grid;grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr);gap:70px;align-items:start}
+.renunciation-glyph{
+  position:sticky;top:118px;
+  padding:38px 30px 34px;
+  border:1px solid rgba(165,130,84,.3);
+  background:rgba(255,255,255,.42);
+  box-shadow:0 24px 70px rgba(89,79,71,.1);
+}
+.renunciation-glyph:before,.renunciation-glyph:after{
+  content:"";position:absolute;width:34px;height:34px;border-color:var(--cis-gold);opacity:.65
+}
+.renunciation-glyph:before{top:12px;left:12px;border-top:1px solid;border-left:1px solid}
+.renunciation-glyph:after{right:12px;bottom:12px;border-right:1px solid;border-bottom:1px solid}
+.glyph-row{display:grid;grid-template-columns:78px 1fr;gap:18px;align-items:center;padding:20px 0;border-bottom:1px solid rgba(89,79,71,.12)}
+.glyph-row:last-of-type{border-bottom:0}
+.glyph-char{font-family:var(--serif);font-size:62px;line-height:1;color:var(--cis-deep);text-align:center}
+.glyph-text strong{display:block;font-family:var(--serif);font-size:19px;letter-spacing:.12em;color:var(--cis-deep)}
+.glyph-text span{display:block;margin-top:5px;font-size:13px;color:#77695f}
+.renunciation-mantra{margin-top:28px;padding-top:22px;border-top:1px solid rgba(165,130,84,.22);font-family:var(--serif);font-size:16px;line-height:1.9;color:var(--cis-moss);text-align:center;letter-spacing:.08em}
+.sacred-copy p{margin:0 0 18px}
+.sacred-copy .key-line{margin:30px 0;padding:24px 28px;border-left:3px solid var(--cis-gold);background:rgba(165,130,84,.08);font-family:var(--serif);font-size:19px;line-height:1.95;color:var(--cis-deep)}
+.sacred-copy .incense-lines{margin:34px 0;padding:26px;text-align:center;border-top:1px solid rgba(165,130,84,.25);border-bottom:1px solid rgba(165,130,84,.25);font-family:var(--serif);font-size:19px;line-height:2.1;letter-spacing:.12em;color:var(--cis-moss)}
+.sacred-copy .closing-line{font-family:var(--serif);font-size:18px;color:var(--cis-deep);font-weight:500}
+
+.fourfold-section{padding:110px 0 116px;background:linear-gradient(145deg,#4d5030,#606330 52%,#4a473a);color:#f7f2e8}
+.fourfold-section:before{
+  content:"";position:absolute;inset:0;opacity:.13;
+  background:radial-gradient(circle at 50% 50%,transparent 0 30%,rgba(255,255,255,.14) 30.4% 30.7%,transparent 31.1%),
+             repeating-radial-gradient(circle at 50% 50%,transparent 0 46px,rgba(197,162,111,.24) 47px,transparent 48px);
+}
+.fourfold-head{text-align:center;max-width:760px;margin:0 auto 54px}
+.fourfold-head .cis-kicker{color:#d9c09a}
+.fourfold-head .cis-rule{margin-left:auto;margin-right:auto;background:linear-gradient(90deg,transparent,var(--cis-gold),transparent)}
+.fourfold-layout{display:grid;grid-template-columns:430px minmax(0,1fr);gap:58px;align-items:center}
+.fourfold-wheel{
+  width:430px;aspect-ratio:1;border-radius:50%;position:relative;margin:auto;
+  background:conic-gradient(
+    #A58254 0 25%,
+    #594F47 25% 50%,
+    #8E8B72 50% 75%,
+    #C5A26F 75% 100%
+  );
+  box-shadow:0 28px 70px rgba(0,0,0,.26),inset 0 0 0 1px rgba(255,255,255,.24);
+}
+.fourfold-wheel:before{
+  content:"";position:absolute;inset:70px;border-radius:50%;
+  background:linear-gradient(145deg,#f8f2e8,#ece2d2);
+  box-shadow:inset 0 0 0 1px rgba(89,79,71,.16),0 0 0 10px rgba(255,255,255,.08);
+}
+.wheel-center{position:absolute;inset:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:2;color:var(--cis-deep)}
+.wheel-center strong{font-family:var(--serif);font-size:27px;letter-spacing:.18em}
+.wheel-center span{font-size:12px;letter-spacing:.16em;margin-top:8px;color:var(--cis-light)}
+.wheel-label{position:absolute;z-index:3;font-family:var(--serif);font-size:17px;letter-spacing:.12em;color:#fffaf2;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.wheel-label.one{top:56px;right:63px}.wheel-label.two{right:50px;bottom:65px}.wheel-label.three{left:44px;bottom:68px}.wheel-label.four{left:48px;top:61px}
+.fourfold-details{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fourfold-card{padding:24px 22px 22px;border:1px solid rgba(247,242,232,.16);background:rgba(20,23,13,.16);backdrop-filter:blur(5px)}
+.fourfold-card .num{display:block;font-family:var(--en);font-size:12px;letter-spacing:.2em;color:#d7bd93}
+.fourfold-card h3{margin:5px 0 12px;font-size:21px;color:#fff7ea;letter-spacing:.1em}
+.fourfold-card p{margin:0;font-size:14px;line-height:1.88;color:rgba(255,250,242,.78)}
+.fourfold-card p+p{margin-top:10px}
+.fourfold-card .short{font-family:var(--serif);color:#f2dfbd}
+
+.featured-lamp-section{padding:108px 0;background:linear-gradient(135deg,#4c413a,#594f47 48%,#403a33);color:#f7f1e7}
+.featured-lamp-section:after{
+  content:"";position:absolute;width:520px;height:520px;right:-130px;top:-160px;border-radius:50%;
+  border:1px solid rgba(197,162,111,.18);box-shadow:0 0 0 45px rgba(197,162,111,.035),0 0 0 90px rgba(197,162,111,.02)
+}
+.featured-lamp-wrap{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);gap:0;align-items:stretch}
+.featured-lamp-visual{position:relative;min-height:610px;overflow:hidden;background:#27231e}
+.featured-lamp-visual img{width:100%;height:100%;object-fit:cover;opacity:.72;filter:saturate(.72) contrast(1.05)}
+.featured-lamp-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(42,32,26,.78))}
+.featured-seal{position:absolute;left:30px;bottom:30px;z-index:2;width:114px;height:114px;border-radius:50%;border:1px solid rgba(197,162,111,.66);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--serif);line-height:1.45;letter-spacing:.12em;color:#f0d9af;background:rgba(44,35,29,.62);backdrop-filter:blur(5px)}
+.featured-lamp-copy{padding:58px 56px 54px;background:rgba(255,255,255,.045);border:1px solid rgba(197,162,111,.22)}
+.featured-lamp-copy .cis-kicker{color:#d8ba8e}.featured-lamp-copy .cis-heading{color:#fff8ed}
+.featured-lamp-copy p{font-family:var(--serif);font-size:16px;line-height:2;margin:0 0 16px;color:rgba(255,248,237,.82)}
+.featured-lamp-copy .lamp-vow{margin:28px 0 0;padding:21px 24px;border-top:1px solid rgba(197,162,111,.28);border-bottom:1px solid rgba(197,162,111,.28);text-align:center;font-size:18px;letter-spacing:.1em;color:#f1d7aa}
+.featured-lamp-emblem{display:flex;align-items:center;gap:20px;margin-bottom:25px}
+.featured-lamp-emblem svg{width:78px;height:78px;color:var(--cis-gold);filter:drop-shadow(0 4px 16px rgba(197,162,111,.22))}
+.featured-lamp-emblem span{font-family:var(--serif);font-size:13px;letter-spacing:.18em;color:rgba(255,248,237,.58)}
+
+.prayer-lamps-section{padding:108px 0 118px;background:linear-gradient(180deg,#fbf8f2,#eee7db);color:var(--cis-ink)}
+.prayer-lamps-head{text-align:center;max-width:720px;margin:0 auto 52px}
+.prayer-lamps-head .cis-kicker{color:var(--cis-light)}
+.prayer-lamps-head .cis-rule{margin-left:auto;margin-right:auto;background:linear-gradient(90deg,transparent,var(--cis-gold),transparent)}
+.prayer-lamp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:22px}
+.prayer-lamp-card{
+  grid-column:span 2;position:relative;padding:0 24px 28px;
+  background:rgba(255,255,255,.68);border:1px solid rgba(89,79,71,.16);
+  box-shadow:0 18px 50px rgba(89,79,71,.08);text-align:center;
+}
+.prayer-lamp-card:nth-child(4){grid-column:2/span 2}.prayer-lamp-card:nth-child(5){grid-column:4/span 2}
+.prayer-lamp-card:before{content:"";position:absolute;left:22px;right:22px;top:0;height:3px;background:var(--lamp-tone)}
+.lamp-illustration{height:178px;display:flex;align-items:center;justify-content:center;margin-top:12px;position:relative}
+.lamp-illustration:before{content:"";position:absolute;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,var(--lamp-glow),transparent 70%);filter:blur(4px);opacity:.55}
+.lamp-illustration svg{position:relative;width:112px;height:112px;color:var(--lamp-tone);filter:drop-shadow(0 8px 18px rgba(89,79,71,.18))}
+.prayer-lamp-card h3{font-size:23px;letter-spacing:.12em;color:var(--cis-deep);margin:0 0 8px}
+.prayer-lamp-card .wish{display:block;margin:0 auto 18px;font-size:12.5px;letter-spacing:.08em;color:var(--cis-light)}
+.prayer-lamp-card p{margin:0;text-align:left;font-size:14px;line-height:1.9;color:#62564e}
+.prayer-lamp-card p+p{margin-top:8px}
+.tone-round{--lamp-tone:#A58254;--lamp-glow:rgba(165,130,84,.34)}
+.tone-home{--lamp-tone:#594F47;--lamp-glow:rgba(89,79,71,.30)}
+.tone-wealth{--lamp-tone:#B6925A;--lamp-glow:rgba(182,146,90,.34)}
+.tone-wisdom{--lamp-tone:#606330;--lamp-glow:rgba(96,99,48,.28)}
+.tone-fearless{--lamp-tone:#9E9C93;--lamp-glow:rgba(185,184,178,.38)}
+
+.construction-cis{padding:108px 0 112px;background:linear-gradient(145deg,#4d4f31,#54523f 48%,#3f3c34);color:#f8f1e7}
+.construction-cis .cis-kicker{color:#d8bd93}
+.construction-cis .cis-heading{color:#fff8ef}
+.support-top{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:end;margin-bottom:44px}
+.support-top p{margin:0;font-family:var(--serif);font-size:16px;line-height:2;color:rgba(255,248,239,.78)}
+.support-scene{margin:0 0 42px;height:280px;overflow:hidden;border:1px solid rgba(197,162,111,.22);position:relative}
+.support-scene img{width:100%;height:100%;object-fit:cover;filter:saturate(.72) contrast(1.03);opacity:.82}
+.support-scene:after{content:"建院願心 · 共成道場";position:absolute;left:0;right:0;bottom:0;padding:18px 26px;background:linear-gradient(transparent,rgba(42,39,29,.86));font-family:var(--serif);font-size:17px;letter-spacing:.16em}
+.support-lamp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:56px}
+.support-lamp-card{padding:28px 24px;text-align:center;border:1px solid rgba(197,162,111,.25);background:rgba(255,255,255,.055)}
+.support-lamp-card svg{width:74px;height:74px;color:#d5b47e;margin-bottom:12px}
+.support-lamp-card h3{font-size:21px;color:#fff8ef;letter-spacing:.1em;margin:0 0 10px}
+.support-lamp-card p{margin:0;font-size:14px;line-height:1.85;color:rgba(255,248,239,.72);text-align:left}
+.merit-title{display:flex;align-items:center;gap:18px;margin:0 0 22px}
+.merit-title:before,.merit-title:after{content:"";height:1px;flex:1;background:rgba(197,162,111,.24)}
+.merit-title span{font-family:var(--serif);font-size:18px;letter-spacing:.16em;color:#f2d9b2}
+.merit-card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.merit-card{min-height:240px;padding:30px 26px;border:1px solid rgba(255,255,255,.12);background:rgba(26,26,18,.16);position:relative;overflow:hidden}
+.merit-card:after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;right:-46px;top:-46px;border:1px solid rgba(197,162,111,.16)}
+.merit-icon{width:62px;height:62px;color:#d0b27f;margin-bottom:20px}
+.merit-card h3{font-size:20px;letter-spacing:.1em;color:#fff8ef;margin:0 0 11px}
+.merit-card p{margin:0;font-size:14px;line-height:1.88;color:rgba(255,248,239,.7)}
+
+.lotus-lamp-svg .flame{fill:currentColor;opacity:.9}.lotus-lamp-svg .line{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.lotus-lamp-svg .soft{fill:currentColor;opacity:.15}
+@media(max-width:980px){
+  .sacred-intro-grid{grid-template-columns:1fr;gap:34px}.renunciation-glyph{position:relative;top:auto;display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.renunciation-mantra{grid-column:1/-1}
+  .fourfold-layout{grid-template-columns:1fr;gap:44px}.fourfold-details{max-width:760px;margin:auto}
+  .featured-lamp-wrap{grid-template-columns:1fr}.featured-lamp-visual{min-height:420px}.featured-lamp-copy{padding:46px 42px}
+  .prayer-lamp-card,.prayer-lamp-card:nth-child(4),.prayer-lamp-card:nth-child(5){grid-column:span 3}
+  .support-top{grid-template-columns:1fr;gap:20px}
+}
+@media(max-width:680px){
+  .cis-inner{width:min(100% - 24px,1120px)}.sacred-intro,.fourfold-section,.featured-lamp-section,.prayer-lamps-section,.construction-cis{padding:72px 0}
+  .sacred-intro-grid{gap:28px}.renunciation-glyph{grid-template-columns:1fr;padding:28px 22px}.renunciation-mantra{grid-column:auto}.glyph-row{grid-template-columns:64px 1fr}.glyph-char{font-size:50px}
+  .sacred-copy .key-line{padding:20px;font-size:17px}.sacred-copy .incense-lines{font-size:17px}
+  .fourfold-wheel{width:min(330px,92vw)}.fourfold-wheel:before{inset:54px}.wheel-center{inset:88px}.wheel-center strong{font-size:22px}.wheel-label{font-size:14px}.wheel-label.one{top:40px;right:42px}.wheel-label.two{right:35px;bottom:48px}.wheel-label.three{left:30px;bottom:50px}.wheel-label.four{left:32px;top:44px}
+  .fourfold-details{grid-template-columns:1fr}.fourfold-card{padding:22px 20px}
+  .featured-lamp-visual{min-height:330px}.featured-lamp-copy{padding:34px 24px}.featured-lamp-emblem svg{width:64px;height:64px}
+  .prayer-lamp-grid{grid-template-columns:1fr}.prayer-lamp-card,.prayer-lamp-card:nth-child(4),.prayer-lamp-card:nth-child(5){grid-column:auto}.prayer-lamp-card{padding:0 22px 26px}.lamp-illustration{height:154px}
+  .support-lamp-grid,.merit-card-grid{grid-template-columns:1fr}.support-scene{height:220px}.support-lamp-card,.merit-card{text-align:left}
+}
+</style>
+
 </head>
 <body>
 <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
@@ -1171,60 +1353,220 @@
   <div class="event-heading hero-copy">
     <div class="eyebrow" data-hero-step="1">KANNON RENUNCIATION CEREMONY · LING YUAN YUAN</div>
     <h1 data-hero-step="2"><span class="hero-title-main">觀世音菩薩出家日</span></h1>
-    <div class="hero-rite" data-hero-step="2">大悲懺・消災降福祈願法儀</div>
-    <p class="hero-lead" data-hero-step="3">九月十九日觀音菩薩出家殊勝吉日，虔修大悲懺，祈請觀世音菩薩慈悲願力，為修行、身心、家宅與諸事消災降福、祈願轉順。</p>
+    <div class="hero-rite" data-hero-step="2">大悲懺消災降福祈願法儀</div>
+    <p class="hero-lead" data-hero-step="3">斷除煩惱心，歸返無極界。<br>祈請觀音靈光，照見自我的元神心性。</p>
     <div class="hero-actions" data-hero-step="4"><a class="btn primary" href="https://www.beclass.com/rid=305282b6a9e20942f0ff" target="_blank" rel="noopener noreferrer">前往報名</a><a class="btn" href="#lamps">查看燈種</a></div>
   </div>
 </section>
-<section class="observance-section" data-reveal>
-  <div class="observance-kicker">觀音出家紀念</div>
-  <div class="observance-grid">
-    <div class="observance-heading">
-      <h2>從出離煩惱<br>走向圓滿自性大願</h2>
-    </div>
-    <div class="observance-copy">
-      <p>在台灣的宗教信仰傳統上，以農曆二月十九為觀世音菩薩聖誕、六月十九為成道日、九月十九為出家紀念日。佛教所說的「出家」，也帶有出離煩惱、發菩提心的修行意義；民間流傳的妙善公主捨俗修行故事，則成為華人觀音信仰中熟悉的文化敘事。</p>
-      <p>對靈元院而言，觀世音菩薩出家紀念日，是一年之中極具法緣與靈應的殊勝時日。<br>觀世音菩薩為靈山派五母之一，也是靈元院主祀神尊。對靈修人而言，這一天更是與菩薩靈氣相接、靈應法脈、調和氣脈的重要時刻。<br>藉由修持法儀與點燈，使身心靈沉靜於菩薩靈氣之中，接受菩薩慈悲願力的引領與調教。<br>在這一天與菩薩結下更深法緣，也將菩薩的大悲願心結合到自己的修持之中，使靈性有所依歸，修行有所承接，讓往後的靈修之路得到菩薩護佑與引領。</p>
-    </div>
-  </div>
-</section><section class="section shoin-section" id="form">
-  <div class="shoin-frame" data-reveal>
-    <aside class="shoin-inscription" aria-label="觀音三十三應化身 啟願燈燈首">
-      <span>觀音三十三應化身</span>
-      <strong>啟願燈燈首</strong>
-    </aside>
-    <div class="form-visual shoin-visual" data-reveal>
-      <img id="form-art" src="guanyin-33-manifestations.jpg?v=1024-20260706" alt="觀世音菩薩法會插圖" loading="eager" decoding="async">
-    </div>
-    <div class="shoin-copy">
-      <div class="form-intro" data-reveal>
-        <span class="shoin-eyebrow">THIRTY-THREE MANIFESTATIONS</span>
-        <h2>觀音三十三應化身・啟願燈燈首</h2>
-        <p>仰承觀世音菩薩三十三應化身慈悲願力，照見眾生心中迷霧，令紛亂歸於安定，令障礙轉為因緣。願每一念善心皆有所感，每一分願力皆有所應；於慈悲中增長智慧，於智慧中圓滿福德，讓生命一步步回到光明與自在。</p>
+
+<section class="sacred-intro" id="meaning">
+  <div class="cis-inner">
+    <div class="sacred-intro-grid">
+      <aside class="renunciation-glyph" data-reveal>
+        <div class="cis-kicker">THE MEANING OF RENUNCIATION</div>
+        <div class="glyph-row"><div class="glyph-char">出</div><div class="glyph-text"><strong>走出纏縛</strong><span>看見長久牽動心性的執著</span></div></div>
+        <div class="glyph-row"><div class="glyph-char">離</div><div class="glyph-text"><strong>斷離煩惱</strong><span>鬆開習氣、恐懼與心性關卡</span></div></div>
+        <div class="renunciation-mantra">斷除煩惱心<br>歸返無極界</div>
+      </aside>
+      <div class="sacred-copy cis-section-copy" data-reveal>
+        <div class="cis-kicker">觀音出家紀念 · 靈元院修持法義</div>
+        <h2 class="cis-heading">祈請觀音靈光<br>照見自我的元神心性</h2>
+        <div class="cis-rule"></div>
+        <p>農曆九月十九日，在漢傳佛教與台灣民間信仰傳統中，奉為觀世音菩薩出家紀念日。</p>
+        <p>對靈元院而言，這一天所紀念的菩薩「出家」，更有一層屬於靈修人的深意。</p>
+        <p>一個人走入靈修之後，可能經歷感應、靈動，也可能在修持之中得到神佛的提醒與引領。然而一路走到深處，仍然要回到自己的心性，回到元神，回到那條通往無極法界的路。</p>
+        <p>放不下的執念、跨不過的恐懼、化不開的慾望，以及一次次讓自己停留在原地的心性關卡，都會在修行之中重新浮現。</p>
+        <p>它們沒有真正鬆開，再多的感應，也無法代替內在元神轉化。</p>
+        <div class="key-line">觀世音菩薩出家日所要告訴靈修人的是：從煩惱中走出來，從執念中斷捨離；在恐懼面前生起無畏心，在苦難之前發起大悲願。</div>
+        <p>出離之後見清淨，清淨深處生願心；願心堅定，才有行持；行持深處，方顯大悲無畏。</p>
+        <p>這一道從「出離」到「發願」的修持歷程，也正是靈修人重新觀照自身元神的一面明鏡。</p>
+        <p>因此，農曆九月十九日，也成為靈元院一年之中極具法緣與靈應意義的殊勝修持之日。</p>
+        <p>這一天，由蘇監院於靈元院觀世音菩薩座前，依靈山派修持法脈，恭請觀世音菩薩大悲靈光降臨壇場，靈氣相接，願力相應，並虔誠代為所有點燈信眾禮拜《大悲懺》、點燈祈福。</p>
+        <div class="incense-lines">一盞燈，一道願。<br>一紙疏文，一念心香。</div>
+        <p>所有祈願、供燈與疏文，於菩薩座前虔誠啟稟、迴向，祈求過往業障漸化、身心漸安，也祈請觀音靈光照入每位信眾元神深處，讓那些被煩惱遮蔽、被習氣困住的心性，重新得到觀照。</p>
+        <p>對靈山派的靈修人而言，觀世音菩薩與行者之間的因緣，除了慈悲護佑，更有一層「接引與靈應」。</p>
+        <p class="closing-line">心念清淨，靈氣方能相接；願心堅定，元神方能印心。</p>
+        <p>於觀音靈光之下，重新辨認自己的心，也重新辨認自己這一世所要走的修行之路。這正是靈元院舉行觀世音菩薩出家日法儀的重要意義。</p>
       </div>
-      <div class="form-block shoin-detail" tabindex="0" data-reveal>
-        <h3>此燈的特殊性</h3>
-        <p>此非單為求順，而是以觀音隨類化現的慈悲願力，為眾生在困局中開一道光。凡心緒紛亂、運勢受阻、修行卡關、家宅不寧者，皆可藉此燈，將願心安放於菩薩之前。</p>
-        <p>疏文所啟，請如實寫下自己修行上遇到的困難與瓶頸，例如：被靈擾纏身、心性不定、修行受阻，或其他各種困擾。</p>
-        <p>要誠心誠意地寫出來，祈請觀音菩薩慈悲垂鑒、護念加持，指引你走出迷津，早日突破關卡，逐步進入圓滿的境界。</p>
-        <p class="block-note">＊疏文僅代為宣讀啟秉，祈願菩薩指引，無提供實體疑惑回覆。</p>
-      </div>
-      <div class="form-highlights shoin-meta" data-reveal>
-        <div class="form-highlight" tabindex="0"><span class="label">適合對象</span><span class="value">修行卡關、心神不寧、家運起伏、諸事未順者</span></div>
-        <div class="form-highlight" tabindex="0"><span class="label">核心功德</span><span class="value">消災、降福、護持、轉化、成願</span></div>
-        <div class="form-highlight" tabindex="0"><span class="label">祈願方向</span><span class="value">安住身心、照破障礙、轉逆為順、福慧雙增</span></div>
-      </div>
-      <p class="form-note shoin-note" data-reveal>願菩薩光明遍照，令一切障緣化散，善願漸成，福慧圓滿。</p>
-      <div class="form-actions shoin-actions" data-reveal><a class="btn" href="https://www.beclass.com/rid=305282b6a9e20942f0ff" target="_blank" rel="noopener noreferrer">前往報名</a><span class="form-seal">護持成願</span></div>
     </div>
   </div>
 </section>
-<section class="section lamp-section" id="lamps">
-  <div class="ritual-section-head" data-reveal>
-    <span>PRAYER LAMPS</span>
-    <h2>五盞祈願燈</h2>
-    <p>依個人與家庭所願，於觀世音菩薩出家日虔誠啟燈，祈請慈悲護念。</p>
-  </div><div class="lamps"><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-radiance.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">全方位福運燈</h3><p>身、心、財、緣、事業，全面交付菩薩護持。</p><p>人生的困境，往往不是只有一個地方出了問題，而是身心、家庭、人際、財務與事業彼此牽動，形成整體失衡。當諸事膠著、方向迷惘、運勢停滯、努力卻始終無法突破時，誠心供奉全方位福運燈，祈請觀世音菩薩以慈悲願力護持，為生命重新梳理因緣、調和福報、開啟善緣，使身安、心定、事順、福聚，令人生重新步入光明與圓滿。</p><p><strong>適合祈請：</strong><br>人生卡關、運勢低迷、事事不順、希望整體提升福報與運勢者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-candle.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">平安消災燈</h3><p>願菩薩慈光遍照，消災解厄，護佑平安。</p><p>人生無常，災厄往往來自看不見的因緣。若流年不利、諸事多阻、身體反覆不適、出入不安、睡眠不寧、惡夢頻仍，皆可虔誠點燃平安消災燈，祈請觀世音菩薩以大悲願力照破黑暗、化解障礙，令災厄遠離、身心安穩、行車出入平安，增長吉祥福德，使生命少一分驚恐，多一分安定。</p><p><strong>適合祈請：</strong><br>流年犯煞、健康反覆、經常出差旅行、家人平安、希望消災解厄者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-wheel.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">福慧健康燈</h3><p>身體安康，智慧增長，福慧雙修。</p><p>身體，是修行的道場，也是承載生命使命的重要器皿；智慧，則是照見人生方向的明燈。點燃福慧健康燈，不僅祈願身體康健、疾病遠離，更祈請觀世音菩薩加持福德增長、智慧開顯，使身心安定、念念清明，在修行、學業、工作與人生道路上，都能以健康之身承載福報，以智慧之心面對人生。</p><p><strong>適合祈請：</strong><br>自己或家人健康、長輩、慢性疾病調養、修行者、考生及需要增長智慧者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-baozhu.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">財運轉順燈</h3><p>財流順行，福德相隨，善緣廣聚。</p><p>財富，不只是金錢，更是福報流動的顯現。當財路受阻、收入停滯、事業不順、投資受挫、努力難有回報時，可虔誠供奉財運轉順燈，祈請觀世音菩薩以慈悲願力調和因緣、廣開善門，引導正財穩定、偏財有度、事業順遂、人脈聚合，使福德轉化為財富，財富再成為利益眾生的力量。</p><p><strong>適合祈請：</strong><br>創業者、自營業、業務工作、投資理財、求職轉職、希望改善財運者。</p></article><article class="lamp" data-reveal><h3><img src="assets/lamp-icons/user-lotus.svg" alt="" aria-hidden="true" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;object-fit:contain;">家運守護燈</h3><p>一家平安，同沐慈光，共享福德。</p><p>一個家庭，是眾多因緣與業力共同交會之處。當家中容易爭執、親子失和、夫妻衝突、長輩健康不安、家運起伏不定時，可為全家供奉家運守護燈，祈請觀世音菩薩慈光護佑一家大小，化解口舌紛爭、安定家宅磁場、增進彼此和合，使家庭充滿理解、平安與福氣，共同走向和樂圓滿。</p><p><strong>適合祈請：</strong><br>全家祈福、夫妻和合、親子關係、長輩平安、家宅安寧、提升家運者。</p></article></div></section><section class="construction-support" id="construction-support"><div class="support-panel" data-reveal><div class="section-title" data-reveal><div><span>FOUNDING SUPPORT</span><h2>建院護持項目</h2></div></div><p class="support-intro">除本次觀世音菩薩出家日法儀燈別外，亦可依個人願心護持靈元院建院工程與長期道務。以下項目統一列於建院護持專區，與法儀燈別分開呈現。</p><figure class="support-figure"><img src="/assets/construction/2026-building-patron/01-design-courtyard-hq.webp" alt="靈元院建院設計示意圖" loading="eager" decoding="async"></figure><div class="support-list"><div class="support-item"><h3>建院護法燈</h3><p>護持靈元院建院工程與壇場長久運作，願建院因緣順利具足，道場安定圓成。</p></div><div class="support-item"><h3>建院圓滿燈</h3><p>祈願建院各項工程順利推進、人員平安、資源具足，使整體建設依序完成。</p></div><div class="support-item"><h3>靈山派護持燈</h3><p>護持靈山派法脈、道務與法儀延續，作為長期弘傳與壇務運作之助力。</p></div><div class="support-item"><h3>景觀園藝贊助</h3><p>用於院區植栽、景觀整理、戶外環境與園藝空間建置，營造安定清淨的整體場域。</p></div><div class="support-item"><h3>神像供具贊助</h3><p>用於神像安奉、供桌、供具、法器及相關莊嚴配置，完善壇場與禮敬空間。</p></div><div class="support-item"><h3>硬體設備贊助</h3><p>用於院區水電、照明、通風、消防、影音及其他建院所需之必要硬體設備。</p></div></div></div></section><section class="section narrow beclass-section" id="beclass-form"><div class="section-title" data-reveal><div><span>BECLASS FORM</span><h2>報名法儀表單</h2></div></div><div class="beclass-wrap"><div style="text-align:center;"><iframe src="https://www.beclass.com/m/showregist.php?regist_id=MzA1MjgyYjZhOWUyMDk0MmYwZmY6U2hvd0Zvcm0=" frameborder="0" height="7600" width="440" marginwidth="0" marginheight="0" align="center" name="beclassmainframe" id="beclassmainframe" scrolling="auto"></iframe></div></div></section><div class="contact-section"><div class="contact-inner"><div class="contact-box"><h2>第一手掌握法會訊息</h2><span class="contact-sub">STAY CONNECTED</span><p class="contact-note">如欲第一手收到靈元院最新課程與未公開活動訊息，敬請加入官方頻道。<br>法務、課程、合作諮詢，敬請通過聯繫帳號洽詢。</p><div class="tg-links"><a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a><a href="https://t.me/lyyuan" target="_blank" class="tg-btn">Telegram 聯繫帳號</a></div></div></div></div><footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer></main></div></div>
+
+<section class="fourfold-section" id="fourfold">
+  <div class="cis-inner">
+    <header class="fourfold-head" data-reveal>
+      <div class="cis-kicker">FOURFOLD CULTIVATION</div>
+      <h2 class="cis-heading">四重修持意義</h2>
+      <div class="cis-rule"></div>
+      <p>四門彼此相扣，缺一則修持難以完整；由出離、立願、接引，最後回到元神印心。</p>
+    </header>
+    <div class="fourfold-layout">
+      <div class="fourfold-wheel" data-reveal aria-label="四重修持：斷離煩惱、無畏大願、靈氣接引、元神印心">
+        <div class="wheel-center"><strong>四重修持</strong><span>四門相扣 · 歸於元神</span></div>
+        <span class="wheel-label one">斷離煩惱</span>
+        <span class="wheel-label two">無畏大願</span>
+        <span class="wheel-label three">靈氣接引</span>
+        <span class="wheel-label four">元神印心</span>
+      </div>
+      <div class="fourfold-details">
+        <article class="fourfold-card" data-reveal><span class="num">01 · RELEASE</span><h3>斷離煩惱</h3><p>修行的第一道門，是看見仍然纏繞自己的東西。心中還抓住什麼？仍然害怕什麼？又有哪些執念與習氣，讓自己一次次回到原點？</p><p class="short">「出離」是在世間牽纏之中，辨認並鬆開那些遮蔽元神的執著。能看見，才有可能鬆開。</p></article>
+        <article class="fourfold-card" data-reveal><span class="num">02 · VOW</span><h3>無畏大願</h3><p>觀世音菩薩以大悲願行聞聲救苦，以無畏之心入世度眾。對靈修人而言，「願」也是修行極深的一道力量。</p><p class="short">我究竟為何而修？這一生，準備以什麼願心走下去？願心立起，道路才找得到方向。</p></article>
+        <article class="fourfold-card" data-reveal><span class="num">03 · RESONANCE</span><h3>靈氣接引</h3><p>禮懺、持誦、供燈與靜心，都在使紛亂的氣息重新沉澱。心念漸靜，氣脈漸和，才更容易感受修持之中的細微變化。</p><p class="short">祈請菩薩大悲靈光垂照，使行者與觀音願力相接，讓躁動的心念安住，混亂的靈氣重新調和。</p></article>
+        <article class="fourfold-card" data-reveal><span class="num">04 · IMPRINT</span><h3>元神印心</h3><p>靈修走得愈深，愈要回到元神。外在的感應終究只是緣起，真正需要被照見的，是自己的心。</p><p class="short">一念澄明之時，元神與願力相照，重新辨認自己，也辨認所要承接的修行方向。</p></article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="featured-lamp-section" id="vow-lamp">
+  <div class="cis-inner">
+    <div class="featured-lamp-wrap" data-reveal>
+      <div class="featured-lamp-visual">
+        <img src="guanyin-33-manifestations.jpg?v=1024-20260706" alt="觀世音菩薩三十三應化身與元神印心燈首意象">
+        <div class="featured-seal">三十三<br>應化身<br>燈首</div>
+      </div>
+      <div class="featured-lamp-copy">
+        <div class="featured-lamp-emblem">
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="大悲無畏元神印心燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg><span>THIRTY-THREE MANIFESTATIONS · VOW LAMP</span></div>
+        <div class="cis-kicker">三十三應化身燈首</div>
+        <h2 class="cis-heading">大悲無畏．元神印心燈首</h2>
+        <div class="cis-rule"></div>
+        <p>「大悲無畏」，是觀世音菩薩大悲願行與施無畏之精神。</p>
+        <p>「元神印心」，是靈元院靈山派的修持脈絡——藉由神尊願力與靈光接引，使靈修人重新觀照元神，辨明心性，在自身的修行關卡之中尋得突破。</p>
+        <p>此燈所祈求，不只在於世間願望，更以每一位靈修人自身的心性、願力、業力障礙與生命課題為祈願核心。</p>
+        <p>法儀之中，祈請觀世音菩薩大悲靈光垂照，願元神光彩、心念漸明、障礙漸解，使所發之願與所行之路，逐漸相應。</p>
+        <p class="lamp-vow">一燈一願，一願一印。<br>願大悲靈光照入元神，無畏而行。</p>
+        <div class="hero-actions"><a class="btn primary" href="https://www.beclass.com/rid=305282b6a9e20942f0ff" target="_blank" rel="noopener noreferrer">登記燈首</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="prayer-lamps-section" id="lamps">
+  <div class="cis-inner">
+    <header class="prayer-lamps-head" data-reveal>
+      <div class="cis-kicker">FIVE PRAYER LAMPS</div>
+      <h2 class="cis-heading">五盞觀音祈願燈</h2>
+      <div class="cis-rule"></div>
+      <p>依不同願心啟一盞燈，以觀音慈悲願力照見人生所求；五盞燈色皆取自靈元院 CIS 色系。</p>
+    </header>
+    <div class="prayer-lamp-grid">
+      <article class="prayer-lamp-card tone-round" data-reveal>
+        <div class="lamp-illustration">
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="諸事圓滿燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg></div><h3>諸事圓滿燈</h3><span class="wish">所求｜各方面福運・願望圓滿</span>
+        <p>祈請觀世音菩薩悲心護念，使善緣聚合、阻礙漸解，人生所求於因緣成熟之時，得以順遂成就、諸願漸圓。</p>
+      </article>
+      <article class="prayer-lamp-card tone-home" data-reveal>
+        <div class="lamp-illustration">
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="慈航護家燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg></div><h3>慈航護家燈</h3><span class="wish">所求｜家庭・家運・眷屬平安</span>
+        <p>取觀音慈航普渡之意。一家人的因緣，如同共乘一舟。祈請觀世音菩薩慈悲護持，使家宅安定、眷屬和合，化解紛擾與不安，使一家人平穩渡過人生風浪。</p>
+      </article>
+      <article class="prayer-lamp-card tone-wealth" data-reveal>
+        <div class="lamp-illustration">
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="財祿增益燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg></div><h3>財祿增益燈</h3><span class="wish">所求｜事業・財運・工作機緣</span>
+        <p>祈請觀音護念善緣增長，使事業道路漸開、財祿順行、貴人善緣得以相逢。</p><p>願所行之事得遇正緣與助力，使努力有所承接，財祿有所增益。</p>
+      </article>
+      <article class="prayer-lamp-card tone-wisdom" data-reveal>
+        <div class="lamp-illustration">
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="甘露福慧燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg></div><h3>甘露福慧燈</h3><span class="wish">所求｜健康・福慧・身心調和</span>
+        <p>甘露，是觀音慈悲的重要象徵。祈請菩薩甘露法雨普潤身心，使身心漸安、氣脈調和、福慧俱增。</p><p>願身有所安，心有所定，元神有所養，使生活與修行皆能安住。</p>
+      </article>
+      <article class="prayer-lamp-card tone-fearless" data-reveal>
+        <div class="lamp-illustration">
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="無畏化災燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg></div><h3>無畏化災燈</h3><span class="wish">所求｜平安・化災・遠離障礙</span>
+        <p>取觀世音菩薩「施無畏」之願。當人生遭逢災障、恐懼與未知，祈請觀音大悲靈光護念，化解不安與阻礙，使災厄漸遠、怖畏漸息。</p><p>願行者於變動之中得安定，於困境之中生起無畏，出入平安，身心清明。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="construction-cis" id="construction-support">
+  <div class="cis-inner">
+    <div class="support-top" data-reveal>
+      <div><div class="cis-kicker">FOUNDING SUPPORT</div><h2 class="cis-heading">建院護持項目</h2><div class="cis-rule"></div></div>
+      <p>除本次觀世音菩薩出家日法儀燈別外，亦可依個人願心護持靈元院建院工程與長期道務。</p>
+    </div>
+    <figure class="support-scene" data-reveal><img src="/assets/construction/2026-building-patron/01-design-courtyard-hq.webp" alt="靈元院建院設計示意圖"></figure>
+    <div class="support-lamp-grid">
+      <article class="support-lamp-card" data-reveal>
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="建院護法燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg><h3>建院護法燈</h3><p>護持靈元院建院工程與壇場長久運作，願建院因緣順利具足，道場安定圓成。</p></article>
+      <article class="support-lamp-card" data-reveal>
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="建院圓滿燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg><h3>建院圓滿燈</h3><p>祈願建院各項工程順利推進、人員平安、資源具足，使整體建設依序完成。</p></article>
+      <article class="support-lamp-card" data-reveal>
+<svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="靈山派護持燈">
+  <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
+  <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
+  <path class="line" d="M31 65c9 1 18 5 29 15 11-10 20-14 29-15-3 15-13 25-29 28-16-3-26-13-29-28Z"/>
+  <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
+  <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
+  <path class="line" d="M48 104h24M52 108h16"/>
+</svg><h3>靈山派護持燈</h3><p>護持靈山派法脈、道務與法儀延續，作為長期弘傳與壇務運作之助力。</p></article>
+    </div>
+    <div class="merit-title"><span>三項隨喜功德</span></div>
+    <div class="merit-card-grid">
+      <article class="merit-card" data-reveal><svg class="merit-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8c-8 7-12 13-12 20 0 7 5 12 12 12s12-5 12-12c0-7-4-13-12-20Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M32 21v34M18 56h28M22 46c4-6 8-9 10-10M42 43c-4-5-7-7-10-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h3>景觀園藝贊助</h3><p>用於院區植栽、景觀整理、戶外環境與園藝空間建置，營造安定清淨的整體場域。</p></article>
+      <article class="merit-card" data-reveal><svg class="merit-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 53c2-17 5-27 12-27s10 10 12 27M15 55h34M24 35c-5 3-8 7-10 13M40 35c5 3 8 7 10 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h3>神像供具贊助</h3><p>用於神像安奉、供桌、供具、法器及相關莊嚴配置，完善壇場與禮敬空間。</p></article>
+      <article class="merit-card" data-reveal><svg class="merit-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 49h38V25L32 12 13 25v24Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M23 49V35h18v14M32 12v13M8 54h48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h3>硬體設備贊助</h3><p>用於院區水電、照明、通風、消防、影音及其他建院所需之必要硬體設備。</p></article>
+    </div>
+  </div>
+</section>
+<section class="section narrow beclass-section" id="beclass-form"><div class="section-title" data-reveal><div><span>BECLASS FORM</span><h2>報名法儀表單</h2></div></div><div class="beclass-wrap"><div style="text-align:center;"><iframe src="https://www.beclass.com/m/showregist.php?regist_id=MzA1MjgyYjZhOWUyMDk0MmYwZmY6U2hvd0Zvcm0=" frameborder="0" height="7600" width="440" marginwidth="0" marginheight="0" align="center" name="beclassmainframe" id="beclassmainframe" scrolling="auto"></iframe></div></div></section><div class="contact-section"><div class="contact-inner"><div class="contact-box"><h2>第一手掌握法會訊息</h2><span class="contact-sub">STAY CONNECTED</span><p class="contact-note">如欲第一手收到靈元院最新課程與未公開活動訊息，敬請加入官方頻道。<br>法務、課程、合作諮詢，敬請通過聯繫帳號洽詢。</p><div class="tg-links"><a href="https://t.me/lyyuan_channel" target="_blank" class="tg-btn">Telegram 官方頻道</a><a href="https://t.me/lyyuan" target="_blank" class="tg-btn">Telegram 聯繫帳號</a></div></div></div></div><footer><div class="container"><div class="footer-inner"><img class="footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院"><div class="footer-links"><a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a><a href="https://www.instagram.com/lyyuan03/" target="_blank" aria-label="Instagram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="7" width="14" height="14" rx="4" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="14" r="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="18.2" cy="9.8" r="0.9" fill="currentColor"/></svg></a><a href="https://www.youtube.com/@lyyuan03" target="_blank" aria-label="YouTube"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4.5" y="8" width="19" height="12" rx="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="currentColor"/></svg></a><a href="https://t.me/lyyuan_channel" target="_blank" aria-label="Telegram"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 14l3 2.5 2-4 5-4-4 8-1.5-2L8 14z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><path d="M11 16.5l6.5-6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a><a href="mailto:lyyuan03@gmail.com" aria-label="Email"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="8.5" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5l8 6.5 8-6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M14 7.5 C14 5.5 17 5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></a></div><p class="footer-copy">© 2026 靈元院 Ling Yuan Yuan &nbsp;·&nbsp; 修心在己</p></div></div></footer></main></div></div>
 <script>
 (()=>{const nav=document.querySelector('nav');if(!nav)return;const close=except=>nav.querySelectorAll('.nav-links>li.open').forEach(li=>{if(li!==except)li.classList.remove('open')});nav.querySelectorAll('.has-dropdown').forEach(trigger=>{const li=trigger.closest('li');const menu=li&&li.querySelector('.dropdown');if(!li||!menu)return;trigger.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();const willOpen=!li.classList.contains('open');close(li);li.classList.toggle('open',willOpen)});});document.addEventListener('click',event=>{if(!nav.contains(event.target))close(null)});})();
 </script>
