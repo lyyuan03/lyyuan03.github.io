@@ -32,7 +32,12 @@ function cleanText(value = "", maximum = 100) {
 }
 
 function isAdminRequest(request) {
-  return Boolean(request.auth && ADMIN_EMAILS.has(normalizeEmail(request.auth.token.email)));
+  return Boolean(
+    request.auth
+    && request.auth.token
+    && request.auth.token.email_verified === true
+    && ADMIN_EMAILS.has(normalizeEmail(request.auth.token.email))
+  );
 }
 
 function addMonths(date, months) {

@@ -13,7 +13,8 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return signedIn() && request.auth.token.email in ["lyyuan03@gmail.com"];
+      return verifiedEmail()
+        && request.auth.token.email in ["lyyuan03@gmail.com"];
     }
 
     function wellnessMember() {
@@ -250,7 +251,10 @@ service cloud.firestore {
     match /articleMetrics/{articleId} {
       allow read: if true;
 
-      allow create: if request.resource.data.keys().hasOnly([
+      // Increments require signed-in users (blocks anonymous metric inflation).
+      // Admin may create/update non-metric docs such as the publication status index.
+      allow create: if isAdmin() || (signedIn()
+        && request.resource.data.keys().hasOnly([
           "articleId", "views", "shares", "copies", "updatedAt"
         ])
         && request.resource.data.articleId == articleId
@@ -263,10 +267,10 @@ service cloud.firestore {
         && request.resource.data.views
           + request.resource.data.shares
           + request.resource.data.copies == 1
-        && request.resource.data.updatedAt == request.time;
+        && request.resource.data.updatedAt == request.time);
 
-      allow update: if isAdmin() || (
-        request.resource.data.keys().hasOnly([
+      allow update: if isAdmin() || (signedIn()
+        && request.resource.data.keys().hasOnly([
           "articleId", "views", "shares", "copies", "updatedAt"
         ])
         && request.resource.data.articleId == articleId
@@ -283,8 +287,7 @@ service cloud.firestore {
         && request.resource.data.views - resource.data.views
           + request.resource.data.shares - resource.data.shares
           + request.resource.data.copies - resource.data.copies == 1
-        && request.resource.data.updatedAt == request.time
-      );
+        && request.resource.data.updatedAt == request.time);
 
       allow delete: if isAdmin();
     }
