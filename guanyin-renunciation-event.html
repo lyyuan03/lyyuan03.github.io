@@ -1119,7 +1119,7 @@
   --cis-ink:#3E332C;
   --cis-shadow:rgba(43,34,27,.18);
 }
-.sacred-intro,.fourfold-section,.featured-lamp-section,.prayer-lamps-section,.construction-cis{
+.sacred-intro,.featured-lamp-section,.prayer-lamps-section,.construction-cis{
   position:relative;
   overflow:hidden;
 }
@@ -1163,44 +1163,6 @@
 .sacred-copy .key-line{margin:30px 0;padding:24px 28px;border-left:3px solid var(--cis-gold);background:rgba(165,130,84,.08);font-family:var(--serif);font-size:19px;line-height:1.95;color:var(--cis-deep)}
 .sacred-copy .incense-lines{margin:34px 0;padding:26px;text-align:center;border-top:1px solid rgba(165,130,84,.25);border-bottom:1px solid rgba(165,130,84,.25);font-family:var(--serif);font-size:19px;line-height:2.1;letter-spacing:.12em;color:var(--cis-moss)}
 .sacred-copy .closing-line{font-family:var(--serif);font-size:18px;color:var(--cis-deep);font-weight:500}
-
-.fourfold-section{padding:110px 0 116px;background:linear-gradient(145deg,#4d5030,#606330 52%,#4a473a);color:#f7f2e8}
-.fourfold-section:before{
-  content:"";position:absolute;inset:0;opacity:.13;
-  background:radial-gradient(circle at 50% 50%,transparent 0 30%,rgba(255,255,255,.14) 30.4% 30.7%,transparent 31.1%),
-             repeating-radial-gradient(circle at 50% 50%,transparent 0 46px,rgba(197,162,111,.24) 47px,transparent 48px);
-}
-.fourfold-head{text-align:center;max-width:760px;margin:0 auto 54px}
-.fourfold-head .cis-kicker{color:#d9c09a}
-.fourfold-head .cis-rule{margin-left:auto;margin-right:auto;background:linear-gradient(90deg,transparent,var(--cis-gold),transparent)}
-.fourfold-layout{display:grid;grid-template-columns:430px minmax(0,1fr);gap:58px;align-items:center}
-.fourfold-wheel{
-  width:430px;aspect-ratio:1;border-radius:50%;position:relative;margin:auto;
-  background:conic-gradient(
-    #A58254 0 25%,
-    #594F47 25% 50%,
-    #8E8B72 50% 75%,
-    #C5A26F 75% 100%
-  );
-  box-shadow:0 28px 70px rgba(0,0,0,.26),inset 0 0 0 1px rgba(255,255,255,.24);
-}
-.fourfold-wheel:before{
-  content:"";position:absolute;inset:70px;border-radius:50%;
-  background:linear-gradient(145deg,#f8f2e8,#ece2d2);
-  box-shadow:inset 0 0 0 1px rgba(89,79,71,.16),0 0 0 10px rgba(255,255,255,.08);
-}
-.wheel-center{position:absolute;inset:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:2;color:var(--cis-deep)}
-.wheel-center strong{font-family:var(--serif);font-size:27px;letter-spacing:.18em}
-.wheel-center span{font-size:12px;letter-spacing:.16em;margin-top:8px;color:var(--cis-light)}
-.wheel-label{position:absolute;z-index:3;font-family:var(--serif);font-size:17px;letter-spacing:.12em;color:#fffaf2;text-shadow:0 2px 12px rgba(0,0,0,.35)}
-.wheel-label.one{top:56px;right:63px}.wheel-label.two{right:50px;bottom:65px}.wheel-label.three{left:44px;bottom:68px}.wheel-label.four{left:48px;top:61px}
-.fourfold-details{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.fourfold-card{padding:24px 22px 22px;border:1px solid rgba(247,242,232,.16);background:rgba(20,23,13,.16);backdrop-filter:blur(5px)}
-.fourfold-card .num{display:block;font-family:var(--en);font-size:12px;letter-spacing:.2em;color:#d7bd93}
-.fourfold-card h3{margin:5px 0 12px;font-size:21px;color:#fff7ea;letter-spacing:.1em}
-.fourfold-card p{margin:0;font-size:14px;line-height:1.88;color:rgba(255,250,242,.78)}
-.fourfold-card p+p{margin-top:10px}
-.fourfold-card .short{font-family:var(--serif);color:#f2dfbd}
 
 .featured-lamp-section{padding:108px 0;background:linear-gradient(135deg,#4c413a,#594f47 48%,#403a33);color:#f7f1e7}
 .featured-lamp-section:after{
@@ -1271,17 +1233,14 @@
 .lotus-lamp-svg .flame{fill:currentColor;opacity:.9}.lotus-lamp-svg .line{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.lotus-lamp-svg .soft{fill:currentColor;opacity:.15}
 @media(max-width:980px){
   .sacred-intro-grid{grid-template-columns:1fr;gap:34px}.renunciation-glyph{position:relative;top:auto;display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.renunciation-mantra{grid-column:1/-1}
-  .fourfold-layout{grid-template-columns:1fr;gap:44px}.fourfold-details{max-width:760px;margin:auto}
   .featured-lamp-wrap{grid-template-columns:1fr}.featured-lamp-visual{min-height:420px}.featured-lamp-copy{padding:46px 42px}
   .prayer-lamp-card,.prayer-lamp-card:nth-child(4),.prayer-lamp-card:nth-child(5){grid-column:span 3}
   .support-top{grid-template-columns:1fr;gap:20px}
 }
 @media(max-width:680px){
-  .cis-inner{width:min(100% - 24px,1120px)}.sacred-intro,.fourfold-section,.featured-lamp-section,.prayer-lamps-section,.construction-cis{padding:72px 0}
+  .cis-inner{width:min(100% - 24px,1120px)}.sacred-intro,.featured-lamp-section,.prayer-lamps-section,.construction-cis{padding:72px 0}
   .sacred-intro-grid{gap:28px}.renunciation-glyph{grid-template-columns:1fr;padding:28px 22px}.renunciation-mantra{grid-column:auto}.glyph-row{grid-template-columns:64px 1fr}.glyph-char{font-size:50px}
   .sacred-copy .key-line{padding:20px;font-size:17px}.sacred-copy .incense-lines{font-size:17px}
-  .fourfold-wheel{width:min(330px,92vw)}.fourfold-wheel:before{inset:54px}.wheel-center{inset:88px}.wheel-center strong{font-size:22px}.wheel-label{font-size:14px}.wheel-label.one{top:40px;right:42px}.wheel-label.two{right:35px;bottom:48px}.wheel-label.three{left:30px;bottom:50px}.wheel-label.four{left:32px;top:44px}
-  .fourfold-details{grid-template-columns:1fr}.fourfold-card{padding:22px 20px}
   .featured-lamp-visual{min-height:330px}.featured-lamp-copy{padding:34px 24px}.featured-lamp-emblem svg{width:64px;height:64px}
   .prayer-lamp-grid{grid-template-columns:1fr}.prayer-lamp-card,.prayer-lamp-card:nth-child(4),.prayer-lamp-card:nth-child(5){grid-column:auto}.prayer-lamp-card{padding:0 22px 26px}.lamp-illustration{height:154px}
   .support-lamp-grid,.merit-card-grid{grid-template-columns:1fr}.support-scene{height:220px}.support-lamp-card,.merit-card{text-align:left}
@@ -1380,32 +1339,6 @@
         <p>對靈山派的靈修人而言，觀世音菩薩與行者之間的因緣，除了慈悲護佑，更有一層「接引與靈應」。</p>
         <p class="closing-line">心念清淨，靈氣方能相接；願心堅定，元神方能印心。</p>
         <p>於觀音靈光之下，重新辨認自己的心，也重新辨認自己這一世所要走的修行之路。這正是靈元院舉行觀世音菩薩出家日法儀的重要意義。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="fourfold-section" id="fourfold">
-  <div class="cis-inner">
-    <header class="fourfold-head" data-reveal>
-      <div class="cis-kicker">FOURFOLD CULTIVATION</div>
-      <h2 class="cis-heading">四重修持意義</h2>
-      <div class="cis-rule"></div>
-      <p>四門彼此相扣，缺一則修持難以完整；由出離、立願、接引，最後回到元神印心。</p>
-    </header>
-    <div class="fourfold-layout">
-      <div class="fourfold-wheel" data-reveal aria-label="四重修持：斷離煩惱、無畏大願、靈氣接引、元神印心">
-        <div class="wheel-center"><strong>四重修持</strong><span>四門相扣 · 歸於元神</span></div>
-        <span class="wheel-label one">斷離煩惱</span>
-        <span class="wheel-label two">無畏大願</span>
-        <span class="wheel-label three">靈氣接引</span>
-        <span class="wheel-label four">元神印心</span>
-      </div>
-      <div class="fourfold-details">
-        <article class="fourfold-card" data-reveal><span class="num">01 · RELEASE</span><h3>斷離煩惱</h3><p>修行的第一道門，是看見仍然纏繞自己的東西。心中還抓住什麼？仍然害怕什麼？又有哪些執念與習氣，讓自己一次次回到原點？</p><p class="short">「出離」是在世間牽纏之中，辨認並鬆開那些遮蔽元神的執著。能看見，才有可能鬆開。</p></article>
-        <article class="fourfold-card" data-reveal><span class="num">02 · VOW</span><h3>無畏大願</h3><p>觀世音菩薩以大悲願行聞聲救苦，以無畏之心入世度眾。對靈修人而言，「願」也是修行極深的一道力量。</p><p class="short">我究竟為何而修？這一生，準備以什麼願心走下去？願心立起，道路才找得到方向。</p></article>
-        <article class="fourfold-card" data-reveal><span class="num">03 · RESONANCE</span><h3>靈氣接引</h3><p>禮懺、持誦、供燈與靜心，都在使紛亂的氣息重新沉澱。心念漸靜，氣脈漸和，才更容易感受修持之中的細微變化。</p><p class="short">祈請菩薩大悲靈光垂照，使行者與觀音願力相接，讓躁動的心念安住，混亂的靈氣重新調和。</p></article>
-        <article class="fourfold-card" data-reveal><span class="num">04 · IMPRINT</span><h3>元神印心</h3><p>靈修走得愈深，愈要回到元神。外在的感應終究只是緣起，真正需要被照見的，是自己的心。</p><p class="short">一念澄明之時，元神與願力相照，重新辨認自己，也辨認所要承接的修行方向。</p></article>
       </div>
     </div>
   </div>
