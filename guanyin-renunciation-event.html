@@ -1202,12 +1202,12 @@
   content:"";position:absolute;width:520px;height:520px;right:-130px;top:-160px;border-radius:50%;
   border:1px solid rgba(197,162,111,.18);box-shadow:0 0 0 45px rgba(197,162,111,.035),0 0 0 90px rgba(197,162,111,.02)
 }
-.featured-lamp-wrap{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);gap:0;align-items:stretch}
-.featured-lamp-visual{position:relative;min-height:610px;overflow:hidden;background:#27231e}
-.featured-lamp-visual img{width:100%;height:100%;object-fit:cover;opacity:.72;filter:saturate(.72) contrast(1.05)}
+.featured-lamp-wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);grid-template-areas:"copy visual";gap:0;align-items:stretch}
+.featured-lamp-visual{grid-area:visual;position:relative;min-height:610px;overflow:hidden;background:#27231e}
+.featured-lamp-visual img{width:100%;height:100%;object-fit:cover;object-position:58% center;opacity:.92;filter:saturate(.9) contrast(1.03)}
 .featured-lamp-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(42,32,26,.78))}
 .featured-seal{position:absolute;left:30px;bottom:30px;z-index:2;width:114px;height:114px;border-radius:50%;border:1px solid rgba(197,162,111,.66);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--serif);line-height:1.45;letter-spacing:.12em;color:#f0d9af;background:rgba(44,35,29,.62);backdrop-filter:blur(5px)}
-.featured-lamp-copy{padding:58px 56px 54px;background:rgba(255,255,255,.045);border:1px solid rgba(197,162,111,.22)}
+.featured-lamp-copy{grid-area:copy;padding:58px 56px 54px;background:rgba(255,255,255,.045);border:1px solid rgba(197,162,111,.22)}
 .featured-lamp-copy .cis-kicker{color:#d8ba8e}.featured-lamp-copy .cis-heading{color:#fff8ed}
 .featured-lamp-copy p{font-family:var(--serif);font-size:16px;line-height:2;margin:0 0 16px;color:rgba(255,248,237,.82)}
 .featured-lamp-copy .lamp-vow{margin:28px 0 0;padding:21px 24px;border-top:1px solid rgba(197,162,111,.28);border-bottom:1px solid rgba(197,162,111,.28);text-align:center;font-size:18px;letter-spacing:.1em;color:#f1d7aa}
@@ -1266,7 +1266,7 @@
 .lotus-lamp-svg .flame{fill:currentColor;opacity:.9}.lotus-lamp-svg .line{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.lotus-lamp-svg .soft{fill:currentColor;opacity:.15}
 @media(max-width:980px){
   .sacred-intro-grid{grid-template-columns:1fr;gap:28px}.renunciation-glyph{position:relative;top:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;max-width:none;padding:20px}.renunciation-glyph>.cis-kicker{grid-column:1/-1;margin-bottom:4px}.glyph-row{margin:0}.renunciation-mantra{grid-column:1/-1;margin-top:2px}
-  .featured-lamp-wrap{grid-template-columns:1fr}.featured-lamp-visual{min-height:420px}.featured-lamp-copy{padding:46px 42px}
+  .featured-lamp-wrap{grid-template-columns:1fr;grid-template-areas:"copy" "visual"}.featured-lamp-visual{min-height:420px}.featured-lamp-copy{padding:46px 42px}
   .prayer-lamp-card,.prayer-lamp-card:nth-child(4),.prayer-lamp-card:nth-child(5){grid-column:span 3}
   .support-top{grid-template-columns:1fr;gap:20px}
 }
@@ -1381,7 +1381,7 @@
   <div class="cis-inner">
     <div class="featured-lamp-wrap" data-reveal>
       <div class="featured-lamp-visual">
-        <img src="guanyin-33-manifestations.jpg?v=1024-20260706" alt="觀世音菩薩三十三應化身與元神印心燈首意象">
+        <img src="/assets/guanyin-vow-lamp-white-20260927.webp?v=20260927-1" alt="觀世音菩薩大悲無畏元神印心燈首意象" loading="lazy" decoding="async">
         <div class="featured-seal">三十三<br>應化身<br>燈首</div>
       </div>
       <div class="featured-lamp-copy">
@@ -1393,8 +1393,7 @@
   <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
   <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
   <path class="line" d="M48 104h24M52 108h16"/>
-</svg><span>THIRTY-THREE MANIFESTATIONS · VOW LAMP</span></div>
-        <div class="cis-kicker">三十三應化身燈首</div>
+</svg></div>
         <h2 class="cis-heading">大悲無畏．元神印心燈首</h2>
         <div class="cis-rule"></div>
         <p>「大悲無畏」，是觀世音菩薩大悲願行與施無畏之精神。</p>
