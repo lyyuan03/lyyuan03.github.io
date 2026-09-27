@@ -1215,30 +1215,62 @@
 .featured-lamp-emblem svg{width:78px;height:78px;color:var(--cis-gold);filter:drop-shadow(0 4px 16px rgba(197,162,111,.22))}
 .featured-lamp-emblem span{font-family:var(--serif);font-size:13px;letter-spacing:.18em;color:rgba(255,248,237,.58)}
 
-.prayer-lamps-section{padding:108px 0 118px;background:linear-gradient(180deg,#fbf8f2,#eee7db);color:var(--cis-ink)}
-.prayer-lamps-head{text-align:center;max-width:720px;margin:0 auto 52px}
+.prayer-lamps-section{padding:100px 0 112px;background:linear-gradient(180deg,#fbf8f2,#eee7db);color:var(--cis-ink)}
+.prayer-lamps-head{text-align:center;max-width:720px;margin:0 auto 58px}
 .prayer-lamps-head .cis-kicker{color:var(--cis-light)}
 .prayer-lamps-head .cis-rule{margin-left:auto;margin-right:auto;background:linear-gradient(90deg,transparent,var(--cis-gold),transparent)}
-.prayer-lamp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:22px}
-.prayer-lamp-card{
-  grid-column:span 2;position:relative;padding:0 24px 28px;
-  background:rgba(255,255,255,.68);border:1px solid rgba(89,79,71,.16);
-  box-shadow:0 18px 50px rgba(89,79,71,.08);text-align:center;
+.prayer-lamps-head p{font-family:var(--serif);font-size:17px;line-height:1.9;letter-spacing:.04em}
+.prayer-lamp-grid{position:relative;height:980px;max-width:1120px;margin:0 auto}
+.lamp-pentagon-lines{position:absolute;z-index:0;inset:0 0 auto;width:100%;height:790px;overflow:visible;pointer-events:none}
+.lamp-pentagon-lines polygon{fill:rgba(197,162,111,.035);stroke:rgba(165,130,84,.3);stroke-width:1.25;stroke-dasharray:4 8}
+.lamp-pentagon-lines circle{fill:var(--cis-gold);opacity:.45}
+.prayer-lamp-card{position:absolute;z-index:1;width:280px;text-align:center;--lamp-ink:#fffaf0}
+.prayer-lamp-card:nth-of-type(1){left:50%;top:0;transform:translateX(-50%)}
+.prayer-lamp-card:nth-of-type(2){left:3%;top:215px}
+.prayer-lamp-card:nth-of-type(3){right:3%;top:215px}
+.prayer-lamp-card:nth-of-type(4){left:17%;top:570px}
+.prayer-lamp-card:nth-of-type(5){right:17%;top:570px}
+.lamp-orb{width:210px;height:210px;margin:0 auto 18px;border-radius:50%;position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--lamp-ink);border:1px solid rgba(255,255,255,.62);background:radial-gradient(circle at 46% 28%,rgba(255,255,255,.5),transparent 28%),radial-gradient(circle at 50% 55%,var(--lamp-hi),var(--lamp-tone) 72%);box-shadow:0 0 0 8px rgba(255,255,255,.42),0 18px 44px var(--lamp-glow),inset 0 0 32px rgba(255,255,255,.22);animation:prayerLampPulse 3.4s ease-in-out infinite;transition:filter .35s ease,box-shadow .35s ease}
+.prayer-lamp-card:nth-of-type(2) .lamp-orb{animation-delay:-.7s}
+.prayer-lamp-card:nth-of-type(3) .lamp-orb{animation-delay:-1.4s}
+.prayer-lamp-card:nth-of-type(4) .lamp-orb{animation-delay:-2.1s}
+.prayer-lamp-card:nth-of-type(5) .lamp-orb{animation-delay:-2.8s}
+.lamp-orb:hover{filter:brightness(1.08) saturate(1.08)}
+.lamp-illustration{height:104px;display:flex;align-items:center;justify-content:center;margin:0;position:relative}
+.lamp-illustration:before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.4),transparent 68%);filter:blur(5px);opacity:.9}
+.lamp-illustration svg{position:relative;width:96px;height:96px;color:currentColor;filter:drop-shadow(0 5px 12px rgba(43,34,27,.22))}
+.lamp-illustration .flame{transform-box:fill-box;transform-origin:50% 100%;animation:prayerFlameFlicker 1.45s ease-in-out infinite alternate}
+.lamp-orb h3{margin:3px 0 0;font-family:var(--serif);font-size:19px;line-height:1.35;letter-spacing:.1em;color:currentColor;text-shadow:0 1px 10px rgba(43,34,27,.18)}
+.lamp-note{position:relative;min-height:168px;padding:18px 18px 17px;text-align:left;border:1px solid color-mix(in srgb,var(--lamp-tone) 34%,transparent);border-radius:10px;background:rgba(255,252,247,.9);box-shadow:0 14px 34px rgba(89,79,71,.1)}
+.lamp-note:before{content:"";position:absolute;left:18px;right:18px;top:0;height:3px;background:var(--lamp-tone)}
+.prayer-lamp-card .wish{display:block;margin:0 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(89,79,71,.12);font-size:12.5px;line-height:1.6;letter-spacing:.06em;color:var(--lamp-tone);font-weight:600}
+.prayer-lamp-card p{margin:0;text-align:left;font-size:13.5px;line-height:1.78;color:#62564e}
+.prayer-lamp-card p+p{margin-top:6px}
+.tone-round{--lamp-tone:#A58254;--lamp-hi:#d9bd91;--lamp-glow:rgba(165,130,84,.4)}
+.tone-home{--lamp-tone:#594F47;--lamp-hi:#8b7d70;--lamp-glow:rgba(89,79,71,.38)}
+.tone-wealth{--lamp-tone:#B6925A;--lamp-hi:#e0bd7d;--lamp-glow:rgba(182,146,90,.42);--lamp-ink:#4b3928}
+.tone-wisdom{--lamp-tone:#606330;--lamp-hi:#959861;--lamp-glow:rgba(96,99,48,.38)}
+.tone-fearless{--lamp-tone:#8E8C84;--lamp-hi:#c8c6bd;--lamp-glow:rgba(142,140,132,.42);--lamp-ink:#403a35}
+@keyframes prayerLampPulse{0%,100%{box-shadow:0 0 0 8px rgba(255,255,255,.4),0 16px 36px var(--lamp-glow),inset 0 0 28px rgba(255,255,255,.18)}50%{box-shadow:0 0 0 11px rgba(255,255,255,.22),0 22px 58px var(--lamp-glow),inset 0 0 42px rgba(255,255,255,.32)}}
+@keyframes prayerFlameFlicker{0%{transform:rotate(-2deg) scale(.94,1.03);opacity:.82}50%{transform:rotate(2deg) scale(1.04,.96);opacity:1}100%{transform:rotate(-1deg) scale(.98,1.07);opacity:.9}}
+@media(max-width:980px){
+  .prayer-lamp-grid{height:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:44px 28px}
+  .lamp-pentagon-lines{display:none}
+  .prayer-lamp-card,.prayer-lamp-card:nth-of-type(n){position:static;width:auto;transform:none}
+  .prayer-lamp-card:nth-of-type(5){grid-column:1/-1;width:min(320px,100%);justify-self:center}
+  .lamp-orb{width:196px;height:196px}
+  .lamp-note{max-width:320px;margin:0 auto}
 }
-.prayer-lamp-card:nth-child(4){grid-column:2/span 2}.prayer-lamp-card:nth-child(5){grid-column:4/span 2}
-.prayer-lamp-card:before{content:"";position:absolute;left:22px;right:22px;top:0;height:3px;background:var(--lamp-tone)}
-.lamp-illustration{height:178px;display:flex;align-items:center;justify-content:center;margin-top:12px;position:relative}
-.lamp-illustration:before{content:"";position:absolute;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,var(--lamp-glow),transparent 70%);filter:blur(4px);opacity:.55}
-.lamp-illustration svg{position:relative;width:112px;height:112px;color:var(--lamp-tone);filter:drop-shadow(0 8px 18px rgba(89,79,71,.18))}
-.prayer-lamp-card h3{font-size:23px;letter-spacing:.12em;color:var(--cis-deep);margin:0 0 8px}
-.prayer-lamp-card .wish{display:block;margin:0 auto 18px;font-size:12.5px;letter-spacing:.08em;color:var(--cis-light)}
-.prayer-lamp-card p{margin:0;text-align:left;font-size:14px;line-height:1.9;color:#62564e}
-.prayer-lamp-card p+p{margin-top:8px}
-.tone-round{--lamp-tone:#A58254;--lamp-glow:rgba(165,130,84,.34)}
-.tone-home{--lamp-tone:#594F47;--lamp-glow:rgba(89,79,71,.30)}
-.tone-wealth{--lamp-tone:#B6925A;--lamp-glow:rgba(182,146,90,.34)}
-.tone-wisdom{--lamp-tone:#606330;--lamp-glow:rgba(96,99,48,.28)}
-.tone-fearless{--lamp-tone:#9E9C93;--lamp-glow:rgba(185,184,178,.38)}
+@media(max-width:680px){
+  .prayer-lamps-head{margin-bottom:42px}
+  .prayer-lamps-head p{font-size:16px;line-height:1.75}
+  .prayer-lamp-grid{grid-template-columns:1fr;gap:38px}
+  .prayer-lamp-card:nth-of-type(5){grid-column:auto;width:auto}
+  .lamp-orb{width:188px;height:188px}
+  .lamp-illustration{height:94px}.lamp-illustration svg{width:88px;height:88px}
+  .lamp-note{min-height:auto;max-width:360px;padding:17px 18px}
+}
+@media(prefers-reduced-motion:reduce){.lamp-orb,.lamp-illustration .flame{animation:none}}
 
 .construction-cis{padding:108px 0 112px;background:linear-gradient(145deg,#4d4f31,#54523f 48%,#3f3c34);color:#f8f1e7}
 .construction-cis .cis-kicker{color:#d8bd93}
@@ -1267,7 +1299,6 @@
 @media(max-width:980px){
   .sacred-intro-grid{grid-template-columns:1fr;gap:28px}.renunciation-glyph{position:relative;top:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;max-width:none;padding:20px}.renunciation-glyph>.cis-kicker{grid-column:1/-1;margin-bottom:4px}.glyph-row{margin:0}.renunciation-mantra{grid-column:1/-1;margin-top:2px}
   .featured-lamp-wrap{grid-template-columns:1fr;grid-template-areas:"copy" "visual"}.featured-lamp-visual{min-height:420px}.featured-lamp-copy{padding:46px 42px}
-  .prayer-lamp-card,.prayer-lamp-card:nth-child(4),.prayer-lamp-card:nth-child(5){grid-column:span 3}
   .support-top{grid-template-columns:1fr;gap:20px}
 }
 @media(max-width:680px){
@@ -1275,7 +1306,6 @@
   .sacred-intro-grid{gap:22px}.renunciation-glyph{grid-template-columns:1fr;padding:16px;border-radius:22px}.renunciation-mantra{grid-column:1/-1}.glyph-row{grid-template-columns:50px 1fr;padding:12px 13px}.glyph-char{width:46px;height:46px;font-size:37px}.glyph-text strong{font-size:17px}
   .sacred-copy.cis-section-copy{font-size:15px;line-height:1.7}.sacred-copy .key-line{padding:15px 17px;font-size:16.5px;line-height:1.65}.sacred-copy .incense-lines{padding:15px 16px;font-size:16.5px;line-height:1.65}
   .featured-lamp-visual{min-height:330px}.featured-lamp-copy{padding:34px 24px}.featured-lamp-copy .cis-heading{font-size:clamp(27px,9vw,34px);white-space:normal}.featured-lamp-emblem svg{width:64px;height:64px}
-  .prayer-lamp-grid{grid-template-columns:1fr}.prayer-lamp-card,.prayer-lamp-card:nth-child(4),.prayer-lamp-card:nth-child(5){grid-column:auto}.prayer-lamp-card{padding:0 22px 26px}.lamp-illustration{height:154px}
   .support-lamp-grid,.merit-card-grid{grid-template-columns:1fr}.support-scene{height:220px}.support-lamp-card,.merit-card{text-align:left}
 }
 </style>
@@ -1411,13 +1441,19 @@
   <div class="cis-inner">
     <header class="prayer-lamps-head" data-reveal>
       <div class="cis-kicker">FIVE PRAYER LAMPS</div>
-      <h2 class="cis-heading">五盞觀音祈願燈</h2>
+      <h2 class="cis-heading">觀音祈願燈</h2>
       <div class="cis-rule"></div>
-      <p>依不同願心啟一盞燈，以觀音慈悲願力照見人生所求；五盞燈色皆取自靈元院 CIS 色系。</p>
+      <p>依不同願心啟點一盞燈，以觀音慈悲願力照見人生所求。</p>
     </header>
     <div class="prayer-lamp-grid">
+      <svg class="lamp-pentagon-lines" viewBox="0 0 1000 790" preserveAspectRatio="none" aria-hidden="true">
+        <polygon points="500,105 870,320 720,675 280,675 130,320"></polygon>
+        <circle cx="500" cy="105" r="4"></circle><circle cx="870" cy="320" r="4"></circle>
+        <circle cx="720" cy="675" r="4"></circle><circle cx="280" cy="675" r="4"></circle><circle cx="130" cy="320" r="4"></circle>
+      </svg>
       <article class="prayer-lamp-card tone-round" data-reveal>
-        <div class="lamp-illustration">
+        <div class="lamp-orb">
+          <div class="lamp-illustration">
 <svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="諸事圓滿燈">
   <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
   <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
@@ -1425,11 +1461,17 @@
   <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
   <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
   <path class="line" d="M48 104h24M52 108h16"/>
-</svg></div><h3>諸事圓滿燈</h3><span class="wish">所求｜各方面福運・願望圓滿</span>
-        <p>祈請觀世音菩薩悲心護念，使善緣聚合、阻礙漸解，人生所求於因緣成熟之時，得以順遂成就、諸願漸圓。</p>
+</svg></div>
+          <h3>諸事圓滿燈</h3>
+        </div>
+        <div class="lamp-note">
+          <span class="wish">所求｜各方面福運・願望圓滿</span>
+          <p>祈請觀世音菩薩悲心護念，使善緣聚合、阻礙漸解，人生所求於因緣成熟之時，得以順遂成就、諸願漸圓。</p>
+        </div>
       </article>
       <article class="prayer-lamp-card tone-home" data-reveal>
-        <div class="lamp-illustration">
+        <div class="lamp-orb">
+          <div class="lamp-illustration">
 <svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="慈航護家燈">
   <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
   <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
@@ -1437,11 +1479,17 @@
   <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
   <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
   <path class="line" d="M48 104h24M52 108h16"/>
-</svg></div><h3>慈航護家燈</h3><span class="wish">所求｜家庭・家運・眷屬平安</span>
-        <p>取觀音慈航普渡之意。一家人的因緣，如同共乘一舟。祈請觀世音菩薩慈悲護持，使家宅安定、眷屬和合，化解紛擾與不安，使一家人平穩渡過人生風浪。</p>
+</svg></div>
+          <h3>慈航護家燈</h3>
+        </div>
+        <div class="lamp-note">
+          <span class="wish">所求｜家庭・家運・眷屬平安</span>
+          <p>取觀音慈航普渡之意。一家人的因緣，如同共乘一舟。祈請觀世音菩薩慈悲護持，使家宅安定、眷屬和合，化解紛擾與不安，使一家人平穩渡過人生風浪。</p>
+        </div>
       </article>
       <article class="prayer-lamp-card tone-wealth" data-reveal>
-        <div class="lamp-illustration">
+        <div class="lamp-orb">
+          <div class="lamp-illustration">
 <svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="財祿增益燈">
   <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
   <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
@@ -1449,11 +1497,17 @@
   <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
   <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
   <path class="line" d="M48 104h24M52 108h16"/>
-</svg></div><h3>財祿增益燈</h3><span class="wish">所求｜事業・財運・工作機緣</span>
-        <p>祈請觀音護念善緣增長，使事業道路漸開、財祿順行、貴人善緣得以相逢。</p><p>願所行之事得遇正緣與助力，使努力有所承接，財祿有所增益。</p>
+</svg></div>
+          <h3>財祿增益燈</h3>
+        </div>
+        <div class="lamp-note">
+          <span class="wish">所求｜事業・財運・工作機緣</span>
+          <p>祈請觀音護念善緣增長，使事業道路漸開、財祿順行、貴人善緣得以相逢。</p><p>願所行之事得遇正緣與助力，使努力有所承接，財祿有所增益。</p>
+        </div>
       </article>
       <article class="prayer-lamp-card tone-wisdom" data-reveal>
-        <div class="lamp-illustration">
+        <div class="lamp-orb">
+          <div class="lamp-illustration">
 <svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="甘露福慧燈">
   <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
   <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
@@ -1461,11 +1515,17 @@
   <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
   <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
   <path class="line" d="M48 104h24M52 108h16"/>
-</svg></div><h3>甘露福慧燈</h3><span class="wish">所求｜健康・福慧・身心調和</span>
-        <p>甘露，是觀音慈悲的重要象徵。祈請菩薩甘露法雨普潤身心，使身心漸安、氣脈調和、福慧俱增。</p><p>願身有所安，心有所定，元神有所養，使生活與修行皆能安住。</p>
+</svg></div>
+          <h3>甘露福慧燈</h3>
+        </div>
+        <div class="lamp-note">
+          <span class="wish">所求｜健康・福慧・身心調和</span>
+          <p>甘露，是觀音慈悲的重要象徵。祈請菩薩甘露法雨普潤身心，使身心漸安、氣脈調和、福慧俱增。</p><p>願身有所安，心有所定，元神有所養，使生活與修行皆能安住。</p>
+        </div>
       </article>
       <article class="prayer-lamp-card tone-fearless" data-reveal>
-        <div class="lamp-illustration">
+        <div class="lamp-orb">
+          <div class="lamp-illustration">
 <svg class="lotus-lamp-svg" viewBox="0 0 120 120" role="img" aria-label="無畏化災燈">
   <path class="soft" d="M60 16c13 14 16 26 0 38-16-12-13-24 0-38Z"/>
   <path class="flame" d="M60 20c8 10 9 18 0 27-9-9-8-17 0-27Z"/>
@@ -1473,8 +1533,13 @@
   <path class="line" d="M42 59c7 3 12 7 18 17 6-10 11-14 18-17-1 12-7 21-18 27-11-6-17-15-18-27Z"/>
   <path class="line" d="M25 77c11 0 21 5 35 16 14-11 24-16 35-16-7 16-18 24-35 27-17-3-28-11-35-27Z"/>
   <path class="line" d="M48 104h24M52 108h16"/>
-</svg></div><h3>無畏化災燈</h3><span class="wish">所求｜平安・化災・遠離障礙</span>
-        <p>取觀世音菩薩「施無畏」之願。當人生遭逢災障、恐懼與未知，祈請觀音大悲靈光護念，化解不安與阻礙，使災厄漸遠、怖畏漸息。</p><p>願行者於變動之中得安定，於困境之中生起無畏，出入平安，身心清明。</p>
+</svg></div>
+          <h3>無畏化災燈</h3>
+        </div>
+        <div class="lamp-note">
+          <span class="wish">所求｜平安・化災・遠離障礙</span>
+          <p>取觀世音菩薩「施無畏」之願。當人生遭逢災障、恐懼與未知，祈請觀音大悲靈光護念，化解不安與阻礙，使災厄漸遠、怖畏漸息。</p><p>願行者於變動之中得安定，於困境之中生起無畏，出入平安，身心清明。</p>
+        </div>
       </article>
     </div>
   </div>
