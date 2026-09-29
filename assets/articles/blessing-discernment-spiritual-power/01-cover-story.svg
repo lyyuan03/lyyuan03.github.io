@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1f2b25"/><stop offset="55%" stop-color="#344137"/><stop offset="100%" stop-color="#171e1a"/></linearGradient>
+    <radialGradient id="glow" cx="58%" cy="42%" r="48%"><stop offset="0%" stop-color="#c6a66b" stop-opacity=".24"/><stop offset="100%" stop-color="#c6a66b" stop-opacity="0"/></radialGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#glow)"/>
+  <g opacity=".18" stroke="#bda376" stroke-width="2"><path d="M0 770 H1600"/><path d="M0 790 H1600"/><path d="M175 170 H445 V710 H175 Z"/><path d="M215 225 H405 M215 315 H405 M215 405 H405 M215 495 H405 M215 585 H405"/></g>
+  <g opacity=".36"><circle cx="292" cy="270" r="26" fill="#c58c45"/><circle cx="368" cy="365" r="20" fill="#d7bd83"/><circle cx="255" cy="455" r="23" fill="#a58254"/><circle cx="360" cy="565" r="25" fill="#d7bd83"/></g>
+  <g><rect x="540" y="560" width="490" height="112" rx="18" fill="#27342d" stroke="#8b7651" stroke-width="2"/><rect x="595" y="515" width="380" height="54" rx="12" fill="#3b493f" opacity=".88"/><circle cx="780" cy="374" r="94" fill="#d49745"/><path d="M685 458 C710 408 850 402 885 458 L924 620 H640 Z" fill="#b8712d"/><path d="M720 300 C756 262 812 260 848 300 C835 356 817 392 783 392 C748 392 729 355 720 300 Z" fill="#d6ad78" opacity=".45"/><path d="M640 620 H924" stroke="#d1b36f" stroke-width="4" opacity=".72"/></g>
+  <g opacity=".78"><circle cx="1225" cy="412" r="58" fill="#1a211d" stroke="#ae9567" stroke-width="3"/><path d="M1158 716 C1160 570 1178 492 1225 485 C1274 492 1293 570 1294 716 Z" fill="#202a24"/><path d="M1224 470 L1224 716" stroke="#a58b5e" stroke-width="2" opacity=".7"/></g>
+  <g opacity=".42" fill="#d4bd8c"><circle cx="1060" cy="545" r="8"/><circle cx="1086" cy="507" r="5"/><circle cx="1115" cy="566" r="6"/></g>
+  <rect x="0" y="0" width="1600" height="900" fill="#000" opacity=".07"/>
+  <g font-family="Noto Serif TC, PingFang TC, serif" fill="#f4efe5"><text x="112" y="122" font-size="34" letter-spacing="6" fill="#cbb081">靈元院文選｜靈修辨證</text><text x="112" y="212" font-size="64" font-weight="700">祈福與加持，怎麼判斷</text><text x="112" y="292" font-size="64" font-weight="700">一位老師真正有沒有能力？</text><text x="112" y="362" font-size="30" fill="#d7c7a7">先看場，再看人；再看祈福那一刻，他的心在不在。</text></g>
+  <g font-family="Noto Sans TC, PingFang TC, sans-serif"><rect x="112" y="694" width="392" height="72" rx="36" fill="#a58254" opacity=".95"/><text x="308" y="742" text-anchor="middle" font-size="28" fill="#fff" letter-spacing="3">名氣 ≠ 修持</text></g>
+</svg>
