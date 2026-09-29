@@ -25,13 +25,13 @@ export const blessingDiscernmentSpiritualPowerArticle = {
 
 和他一起被捕的，是一名四十七歲的女信眾。警方懷疑她是住持的親密伴侶，也協助轉移、藏匿這些錢。後來住所的監視器畫面流了出來，拍到兩人在寺院裡發生性關係。一件財務案，一下子變成整個泰國佛教界的大醜聞。對出家人來說，這犯的是波羅夷，最根本、最重的戒。他當下就被逐出僧團，還俗了。
 
-![網路影片截圖：泰國寺院祈福與聖物畫面](assets/articles/blessing-discernment-spiritual-power/03-web-screenshot-monk.webp?v=20260929-1)
+![網路影片截圖：泰國寺院祈福與聖物畫面](assets/articles/blessing-discernment-spiritual-power/03-web-screenshot-monk.jpg?v=20260929-1)
 
 *▲ 圖片為網路影片截圖縮圖，人物臉部已馬賽克處理。*
 
 警方目前查扣的相關資產，大約兩億一千五百萬泰銖：十六公斤黃金、珠寶，還有二十八份土地權狀。哪些是他個人的，哪些原本屬於寺廟，還在釐清。一座古寺，一位有名的住持，一尊一尊的佛牌，再加上一群虔誠的信眾。信眾把錢捐出去，心裡想的是替寺廟盡一份心。請一尊佛牌回家，求的也就是一份加持。
 
-![網路影片截圖：警方進入寺院調查畫面](assets/articles/blessing-discernment-spiritual-power/05-web-screenshot-police.webp?v=20260929-1)
+![網路影片截圖：警方進入寺院調查畫面](assets/articles/blessing-discernment-spiritual-power/05-web-screenshot-police.jpg?v=20260929-1)
 
 *▲ 圖片為網路影片截圖縮圖，人物臉部已馬賽克處理。*
 
@@ -39,7 +39,7 @@ export const blessingDiscernmentSpiritualPowerArticle = {
 
 2025年，泰國才爆發過另一場震動佛教界的醜聞。一名叫做 Wilawan Emsawat 的女子，被查出與多名僧侶往來，牽涉的對象還包括住持與高階僧侶。她的銀行帳戶三年內流入大約三億八千五百萬泰銖，部分又牽涉寺院資金，警方一路追查洗錢、侵占與勒索。最後至少九名僧侶還俗或被逐出僧團。再往前，2024年11月，泰國東北部瑪哈沙拉堪府一間寺院的副住持，被揭露與一名女子有親密關係。事情曝光之後，信眾與泰國網友開始要求寺院公開財務帳目。一位僧侶同時握有宗教權威、信眾供養和寺院資源，他個人的生活和寺院的錢，本來就很難完全分開來看。
 
-![網路影片截圖：泰國僧侶與女信眾相關新聞縮圖](assets/articles/blessing-discernment-spiritual-power/04-web-screenshot-monk-woman.webp?v=20260929-1)
+![網路影片截圖：泰國僧侶與女信眾相關新聞縮圖](assets/articles/blessing-discernment-spiritual-power/04-web-screenshot-monk-woman.jpg?v=20260929-1)
 
 *▲ 圖片為網路影片截圖縮圖，人物臉部已馬賽克處理。*
 
