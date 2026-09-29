@@ -6,13 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'article-blessing-discernment-spiritual-power.js'
-      - 'article/blessing-discernment-spiritual-power.html'
-      - 'assets/articles/blessing-discernment-spiritual-power/**'
       - 'secure-imports/blessing-discernment-spiritual-power-20260929.enc.json'
-      - 'functions/import-sealed-paid-article.mjs'
-      - '.github/workflows/publish-blessing-discernment-paid-article.yml'
-      - 'static-articles.js'
 
 permissions:
   contents: read
