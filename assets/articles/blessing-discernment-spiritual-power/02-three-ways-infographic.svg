@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#26332b"/><stop offset="100%" stop-color="#171f1b"/></linearGradient><filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-opacity=".22"/></filter></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <text x="800" y="100" text-anchor="middle" font-family="Noto Serif TC, PingFang TC, serif" font-size="44" fill="#d5bd8c" letter-spacing="3">祈福與加持進入一個人，大致有三種方式</text>
+  <text x="800" y="150" text-anchor="middle" font-family="Noto Sans TC, PingFang TC, sans-serif" font-size="24" fill="#d8d3c9" opacity=".86">從外在形式，到修行者本身的狀態</text>
+  <g filter="url(#shadow)"><rect x="100" y="240" width="420" height="430" rx="28" fill="#f4efe4"/><rect x="590" y="240" width="420" height="430" rx="28" fill="#f4efe4"/><rect x="1080" y="240" width="420" height="430" rx="28" fill="#f4efe4"/></g>
+  <g font-family="Noto Sans TC, PingFang TC, sans-serif">
+    <circle cx="310" cy="340" r="62" fill="#a58254"/><text x="310" y="354" text-anchor="middle" font-size="40" fill="#fff" font-weight="700">01</text><text x="310" y="455" text-anchor="middle" font-size="40" fill="#3b3a36" font-weight="700">身體接觸</text><text x="310" y="515" text-anchor="middle" font-size="26" fill="#655f54">灑淨・按頂・儀式中的接觸</text><text x="310" y="565" text-anchor="middle" font-size="23" fill="#7b7468">身體最容易直接感受到</text>
+    <circle cx="800" cy="340" r="62" fill="#606330"/><text x="800" y="354" text-anchor="middle" font-size="40" fill="#fff" font-weight="700">02</text><text x="800" y="455" text-anchor="middle" font-size="40" fill="#3b3a36" font-weight="700">言語</text><text x="800" y="515" text-anchor="middle" font-size="26" fill="#655f54">一句話，讓糾纏的東西鬆開</text><text x="800" y="565" text-anchor="middle" font-size="23" fill="#7b7468">聽到的那一刻，心靜了</text>
+    <circle cx="1290" cy="340" r="62" fill="#594f47"/><text x="1290" y="354" text-anchor="middle" font-size="40" fill="#fff" font-weight="700">03</text><text x="1290" y="455" text-anchor="middle" font-size="40" fill="#3b3a36" font-weight="700">靜默</text><text x="1290" y="515" text-anchor="middle" font-size="26" fill="#655f54">不碰你，也不必講道理</text><text x="1290" y="565" text-anchor="middle" font-size="23" fill="#7b7468">只是一個眼神，人就安靜下來</text>
+  </g>
+  <path d="M520 455 H590" stroke="#c9ad72" stroke-width="4" stroke-linecap="round"/><path d="M1010 455 H1080" stroke="#c9ad72" stroke-width="4" stroke-linecap="round"/><path d="M573 442 L590 455 L573 468" fill="none" stroke="#c9ad72" stroke-width="4"/><path d="M1063 442 L1080 455 L1063 468" fill="none" stroke="#c9ad72" stroke-width="4"/>
+  <rect x="210" y="742" width="1180" height="92" rx="46" fill="#b09158" opacity=".18" stroke="#c9ad72" stroke-width="2"/>
+  <text x="800" y="800" text-anchor="middle" font-family="Noto Serif TC, PingFang TC, serif" font-size="29" fill="#f1eadc">外在形式愈少，靠的就愈是修行者本身的狀態。</text>
+</svg>
