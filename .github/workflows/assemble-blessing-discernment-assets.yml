@@ -1,0 +1,100 @@
+name: Assemble Blessing Discernment Assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'assets/articles/blessing-discernment-spiritual-power/.parts/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: assemble-blessing-discernment-assets
+  cancel-in-progress: false
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Assemble verified binary assets and sealed payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          import hashlib
+          import shutil
+
+          parts = Path("assets/articles/blessing-discernment-spiritual-power/.parts")
+          if not parts.exists():
+              print("No .parts directory; nothing to assemble.")
+              raise SystemExit(0)
+
+          targets = [
+              (
+                  "03-web-screenshot-monk.webp",
+                  Path("assets/articles/blessing-discernment-spiritual-power/03-web-screenshot-monk.webp"),
+                  56904,
+                  "d948cbe163ad7d6fc3bc6743bd316cda67b9ad3a7e29fc16e3d25bc1dd5f61f0",
+              ),
+              (
+                  "04-web-screenshot-monk-woman.webp",
+                  Path("assets/articles/blessing-discernment-spiritual-power/04-web-screenshot-monk-woman.webp"),
+                  77576,
+                  "a53901f90805853bd9b9356a50089f9c3bcb5c98ce38d2b899bb9c997ee2c835",
+              ),
+              (
+                  "05-web-screenshot-police.webp",
+                  Path("assets/articles/blessing-discernment-spiritual-power/05-web-screenshot-police.webp"),
+                  96246,
+                  "e1f58aa8daa25ae23ba9901262d44fd3f411d6717855f0fb9f8999e1ad06ecc4",
+              ),
+              (
+                  "blessing-discernment-spiritual-power-20260929.enc.json",
+                  Path("secure-imports/blessing-discernment-spiritual-power-20260929.enc.json"),
+                  31179,
+                  "8d0080d46d58ac2acfb7cf2ef88f4f15ac49aef9f84ae370dd27a3f56725bce5",
+              ),
+          ]
+
+          for stem, destination, expected_size, expected_sha in targets:
+              chunks = sorted(parts.glob(f"{stem}.part*.b64"))
+              if not chunks:
+                  raise SystemExit(f"Missing chunks for {stem}")
+              encoded = "".join(chunk.read_text(encoding="ascii").strip() for chunk in chunks)
+              raw = base64.b64decode(encoded, validate=True)
+              digest = hashlib.sha256(raw).hexdigest()
+              if len(raw) != expected_size:
+                  raise SystemExit(f"{stem}: size mismatch {len(raw)} != {expected_size}")
+              if digest != expected_sha:
+                  raise SystemExit(f"{stem}: sha256 mismatch {digest} != {expected_sha}")
+              destination.parent.mkdir(parents=True, exist_ok=True)
+              destination.write_bytes(raw)
+              print(f"ASSEMBLED {destination} {len(raw)} bytes {digest}")
+
+          shutil.rmtree(parts)
+          PY
+
+      - name: Commit assembled assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A assets/articles/blessing-discernment-spiritual-power secure-imports/blessing-discernment-spiritual-power-20260929.enc.json
+          if git diff --cached --quiet; then
+            echo "No assembled changes to commit."
+            exit 0
+          fi
+          git commit -m "組裝祈福文選馬賽克圖片與加密正文"
+          git pull --rebase origin main
+          git push origin HEAD:main
