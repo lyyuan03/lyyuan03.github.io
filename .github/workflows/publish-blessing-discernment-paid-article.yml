@@ -1,0 +1,50 @@
+name: Publish Blessing Discernment Paid Article
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'article-blessing-discernment-spiritual-power.js'
+      - 'article/blessing-discernment-spiritual-power.html'
+      - 'assets/articles/blessing-discernment-spiritual-power/**'
+      - 'secure-imports/blessing-discernment-spiritual-power-20260929.enc.json'
+      - 'functions/import-sealed-paid-article.mjs'
+      - '.github/workflows/publish-blessing-discernment-paid-article.yml'
+      - 'static-articles.js'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-blessing-discernment-paid-article
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      ARTICLE_ID: blessing-discernment-spiritual-power
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install Firebase admin dependencies
+        run: npm --prefix functions ci
+
+      - name: Validate production locks
+        run: |
+          node --check article-blessing-discernment-spiritual-power.js
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-production-stability.mjs
+
+      - name: Publish sealed paid article to Firestore
+        run: node functions/import-sealed-paid-article.mjs secure-imports/blessing-discernment-spiritual-power-20260929.enc.json
