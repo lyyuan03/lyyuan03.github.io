@@ -432,9 +432,9 @@ async function applyBlessingTeacherPaidArticleLayoutV2() {
 
 *圖片備註：此圖為網路影片截取之縮圖，人物臉部均已馬賽克處理，僅作新聞事件脈絡示意，不作人物身分辨識。*
 
-![網路新聞影片截圖，警方調查場景；人物臉部已馬賽克處理](assets/articles/blessing-teacher-discernment/05-online-screenshot-police.jpg?v=20260929-1)
+![網路影片截圖，宗教活動現場；人物臉部已馬賽克處理](assets/articles/blessing-teacher-discernment/05-online-screenshot-police.jpg?v=20260929-1)
 
-*圖片備註：此圖為網路新聞影片截取之縮圖，人物臉部均已馬賽克處理，僅作新聞事件脈絡示意，不作人物身分辨識。*
+*圖片備註：此圖為網路影片截取之縮圖，人物臉部均已馬賽克處理，僅作新聞事件與宗教場景脈絡示意，不作人物身分辨識。*
 
 ${returnAnchor}`);
   }
