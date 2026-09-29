@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#18231d"/><stop offset="1" stop-color="#5b4a32"/></linearGradient><radialGradient id="glow" cx="50%" cy="44%" r="48%"><stop offset="0" stop-color="#d8b77b" stop-opacity=".34"/><stop offset="1" stop-color="#d8b77b" stop-opacity="0"/></radialGradient><filter id="soft"><feGaussianBlur stdDeviation="18"/></filter></defs>
+<rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#glow)"/>
+<g opacity=".28" fill="#8b7654"><rect x="90" y="115" width="92" height="665" rx="18"/><rect x="1418" y="115" width="92" height="665" rx="18"/><rect x="215" y="170" width="46" height="545" rx="14"/><rect x="1339" y="170" width="46" height="545" rx="14"/></g>
+<rect x="505" y="594" width="590" height="70" rx="12" fill="#34291f"/><rect x="570" y="540" width="460" height="62" rx="12" fill="#493a28"/><circle cx="800" cy="474" r="82" fill="#a58254" opacity=".42"/><circle cx="800" cy="474" r="52" fill="#d6b56f" opacity=".32"/>
+<circle cx="606" cy="372" r="54" fill="#2f2d28"/><path d="M530 465 Q605 395 680 465 L735 682 L475 682 Z" fill="#8d6334"/><path d="M548 465 Q605 420 664 465 L645 682 L548 682 Z" fill="#c28b45" opacity=".78"/>
+<circle cx="1010" cy="405" r="48" fill="#242722"/><path d="M945 475 Q1010 430 1075 475 L1128 682 L892 682 Z" fill="#51564c"/>
+<path d="M684 420 C785 370 897 380 961 425" stroke="#d9be87" stroke-width="5" fill="none" opacity=".48"/><circle cx="814" cy="394" r="9" fill="#e1c791" opacity=".85"/>
+<ellipse cx="800" cy="690" rx="520" ry="82" fill="#0d1511" opacity=".42" filter="url(#soft)"/>
+<text x="800" y="116" text-anchor="middle" fill="#e7dcc7" font-family="serif" font-size="54" font-weight="600" letter-spacing="4">祈福之前，先看一個人留下的「場」</text>
+<text x="800" y="176" text-anchor="middle" fill="#c9b89a" font-family="sans-serif" font-size="27" letter-spacing="2">名氣、法器、儀式都可以很大；修持留下的狀態，藏不住。</text></svg>
