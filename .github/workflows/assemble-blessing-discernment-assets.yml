@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Assemble verified binary assets and sealed payload
+      - name: Assemble verified screenshot assets and sealed payload
         shell: bash
         run: |
           set -euo pipefail
@@ -39,47 +39,39 @@ jobs:
               print("No .parts directory; nothing to assemble.")
               raise SystemExit(0)
 
-          targets = [
-              (
-                  "03-web-screenshot-monk.webp",
-                  Path("assets/articles/blessing-discernment-spiritual-power/03-web-screenshot-monk.webp"),
-                  56904,
-                  "d948cbe163ad7d6fc3bc6743bd316cda67b9ad3a7e29fc16e3d25bc1dd5f61f0",
-              ),
-              (
-                  "04-web-screenshot-monk-woman.webp",
-                  Path("assets/articles/blessing-discernment-spiritual-power/04-web-screenshot-monk-woman.webp"),
-                  77576,
-                  "a53901f90805853bd9b9356a50089f9c3bcb5c98ce38d2b899bb9c997ee2c835",
-              ),
-              (
-                  "05-web-screenshot-police.webp",
-                  Path("assets/articles/blessing-discernment-spiritual-power/05-web-screenshot-police.webp"),
-                  96246,
-                  "e1f58aa8daa25ae23ba9901262d44fd3f411d6717855f0fb9f8999e1ad06ecc4",
-              ),
-              (
-                  "blessing-discernment-spiritual-power-20260929.enc.json",
-                  Path("secure-imports/blessing-discernment-spiritual-power-20260929.enc.json"),
-                  31179,
-                  "8d0080d46d58ac2acfb7cf2ef88f4f15ac49aef9f84ae370dd27a3f56725bce5",
-              ),
+          images = [
+              ("03-web-screenshot-monk.jpg", 6204, "558bf910bee7b72c1b91e836057ab4a08466f57a9b8ed42d9ffbe9105d5a7b4a"),
+              ("04-web-screenshot-monk-woman.jpg", 7707, "7dc4f227f963fd897ca2d3e88731e4759c5b875870ca7c95908fdbfb0fdaefab"),
+              ("05-web-screenshot-police.jpg", 10497, "5bc7051a387bde8ba3208ff615c938527dfe9a394b27b6c735ceb7dc3aa00ffc"),
           ]
 
-          for stem, destination, expected_size, expected_sha in targets:
-              chunks = sorted(parts.glob(f"{stem}.part*.b64"))
+          for name, expected_size, expected_sha in images:
+              chunks = sorted(parts.glob(f"{name}.part*.b64"))
               if not chunks:
-                  raise SystemExit(f"Missing chunks for {stem}")
+                  raise SystemExit(f"Missing chunks for {name}")
               encoded = "".join(chunk.read_text(encoding="ascii").strip() for chunk in chunks)
               raw = base64.b64decode(encoded, validate=True)
               digest = hashlib.sha256(raw).hexdigest()
               if len(raw) != expected_size:
-                  raise SystemExit(f"{stem}: size mismatch {len(raw)} != {expected_size}")
+                  raise SystemExit(f"{name}: size mismatch {len(raw)} != {expected_size}")
               if digest != expected_sha:
-                  raise SystemExit(f"{stem}: sha256 mismatch {digest} != {expected_sha}")
-              destination.parent.mkdir(parents=True, exist_ok=True)
+                  raise SystemExit(f"{name}: sha256 mismatch {digest} != {expected_sha}")
+              destination = Path("assets/articles/blessing-discernment-spiritual-power") / name
               destination.write_bytes(raw)
               print(f"ASSEMBLED {destination} {len(raw)} bytes {digest}")
+
+          payload_chunks = sorted(parts.glob("payload.part*.txt"))
+          if not payload_chunks:
+              raise SystemExit("Missing sealed payload chunks")
+          payload = "".join(chunk.read_text(encoding="utf-8") for chunk in payload_chunks).encode("utf-8")
+          payload_sha = hashlib.sha256(payload).hexdigest()
+          if len(payload) != 10865:
+              raise SystemExit(f"payload: size mismatch {len(payload)} != 10865")
+          if payload_sha != "5704c7bd16db3be9eeae468070a86c513b6c9d1ffb969baec3cd240856a8c0a6":
+              raise SystemExit(f"payload: sha256 mismatch {payload_sha}")
+          payload_path = Path("secure-imports/blessing-discernment-spiritual-power-20260929.enc.json")
+          payload_path.write_bytes(payload)
+          print(f"ASSEMBLED {payload_path} {len(payload)} bytes {payload_sha}")
 
           shutil.rmtree(parts)
           PY
