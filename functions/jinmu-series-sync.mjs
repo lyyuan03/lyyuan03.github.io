@@ -374,6 +374,128 @@ async function applyLineageLampBuildingRewrite() {
   }));
 }
 
+
+async function applyBlessingTeacherPaidArticleLayoutV2() {
+  const articleId = "blessing-teacher-discernment";
+  const bodyRef = db.doc(`paidArticleBodies/${articleId}`);
+  const articleRef = db.doc(`articles/${articleId}`);
+  const [bodySnapshot, articleSnapshot] = await Promise.all([bodyRef.get(), articleRef.get()]);
+  if (!bodySnapshot.exists || !articleSnapshot.exists) throw new Error("Blessing teacher article records missing");
+
+  const previous = bodySnapshot.data() || {};
+  const publicArticle = articleSnapshot.data() || {};
+  let privateContent = String(previous.content || "").trim();
+  if (privateContent.length < 5000) throw new Error("Blessing teacher private body is incomplete");
+  if (publicArticle.accessType !== "paid") throw new Error("Blessing teacher article is not paid");
+  if (String(publicArticle.content || "").includes("## 第一個判斷：")) throw new Error("Blessing teacher private body leaked into public article");
+
+  privateContent = privateContent.replace(
+    "場域空間，是第一個觀察。接下來才是看這個人。",
+    "場域空間，是第一個觀察。接下來才是觀察主事者。"
+  );
+
+  const earlyScreenshot = `![網路影片截圖，僅作事件與宗教場景脈絡示意；人物臉部已模糊處理](assets/articles/blessing-teacher-discernment/03-online-screenshot-ritual.jpg?v=20260929-1)
+
+*圖片來源：網路影片截圖。人物臉部已模糊處理，僅作文章事件與宗教場景脈絡示意。*
+
+`;
+  if (privateContent.includes(earlyScreenshot)) privateContent = privateContent.replace(earlyScreenshot, "");
+
+  const threeWaysAnchor = "從接觸，到言語，到靜默，外在形式愈來愈少。形式愈少，靠的就愈是這個人本身的狀態。所以前面才一直說，別急著被外面的東西吸引。神像多，法器多，儀式大，咒語念得響，這些在宗教裡都有它的意義。";
+  const ritualImage = "03-online-screenshot-ritual.jpg";
+  if (!privateContent.includes(ritualImage)) {
+    if (!privateContent.includes(threeWaysAnchor)) throw new Error("Blessing teacher three-ways anchor missing");
+    privateContent = privateContent.replace(threeWaysAnchor, `${threeWaysAnchor}
+
+![網路影片截圖，祈福儀式場景；人物臉部已馬賽克處理](assets/articles/blessing-teacher-discernment/03-online-screenshot-ritual.jpg?v=20260929-1)
+
+*圖片備註：此圖為網路影片截取之縮圖，人物臉部均已馬賽克處理，僅作文章情境與宗教場景脈絡示意。*`);
+  }
+
+  const oldTail = `---
+
+## 事件影像備註
+
+![網路影片截圖，僅作新聞事件脈絡示意；人物臉部已模糊處理](assets/articles/blessing-teacher-discernment/04-online-screenshot-people.jpg?v=20260929-1)
+
+*圖片來源：網路影片截圖。人物臉部已模糊處理，僅作新聞事件脈絡示意，不作人物身分辨識。*
+
+![網路新聞影片截圖，僅作警方調查場景脈絡示意；人物臉部已模糊處理](assets/articles/blessing-teacher-discernment/05-online-screenshot-police.jpg?v=20260929-1)
+
+*圖片來源：網路新聞影片截圖。人物臉部已模糊處理，僅作新聞事件脈絡示意，不作人物身分辨識。*`;
+  if (privateContent.includes(oldTail)) privateContent = privateContent.replace(oldTail, "");
+
+  const returnAnchor = "回頭看文章一開始那些案件。錯，當然在那些利用信仰的人身上。只是這樣的事能一再發生，背後都有一個很普遍的誤解：力量只在別人手上。當越來越多人明白，力量本來就有一份在自己身上，這樣的事就少一分可乘之機。";
+  if (!privateContent.includes("04-online-screenshot-people.jpg") && !privateContent.includes("05-online-screenshot-police.jpg")) {
+    if (!privateContent.includes(returnAnchor)) throw new Error("Blessing teacher return anchor missing");
+    privateContent = privateContent.replace(returnAnchor, `![網路影片截圖，事件相關人物；人物臉部已馬賽克處理](assets/articles/blessing-teacher-discernment/04-online-screenshot-people.jpg?v=20260929-1)
+
+*圖片備註：此圖為網路影片截取之縮圖，人物臉部均已馬賽克處理，僅作新聞事件脈絡示意，不作人物身分辨識。*
+
+![網路新聞影片截圖，警方調查場景；人物臉部已馬賽克處理](assets/articles/blessing-teacher-discernment/05-online-screenshot-police.jpg?v=20260929-1)
+
+*圖片備註：此圖為網路新聞影片截取之縮圖，人物臉部均已馬賽克處理，僅作新聞事件脈絡示意，不作人物身分辨識。*
+
+${returnAnchor}`);
+  }
+
+  const imageNames = [
+    "02-three-ways-infographic.svg",
+    "03-online-screenshot-ritual.jpg",
+    "04-online-screenshot-people.jpg",
+    "05-online-screenshot-police.jpg"
+  ];
+  for (const name of imageNames) {
+    const count = privateContent.split(name).length - 1;
+    if (count !== 1) throw new Error(`Blessing teacher image count invalid: ${name}=${count}`);
+  }
+  const imageOrder = imageNames.map((name) => privateContent.indexOf(name));
+  if (!(imageOrder[0] < imageOrder[1] && imageOrder[1] < imageOrder[2] && imageOrder[2] < imageOrder[3])) {
+    throw new Error(`Blessing teacher image order invalid: ${imageOrder.join(",")}`);
+  }
+  if (!privateContent.includes("場域空間，是第一個觀察。接下來才是觀察主事者。")) throw new Error("Blessing teacher requested wording missing");
+  if (privateContent.includes("## 事件影像備註")) throw new Error("Blessing teacher legacy image appendix still present");
+
+  const contentHash = createHash("sha256").update(privateContent).digest("hex");
+  const previousVersion = Math.max(0, Number(previous.contentVersion || 0));
+  const changed = previous.contentHash !== contentHash || previous.content !== privateContent;
+  const contentVersion = changed ? previousVersion + 1 : Math.max(1, previousVersion);
+  if (!changed) {
+    console.log(JSON.stringify({ stage: "blessing-teacher-paid-layout-v2", status: "already-applied", contentHash, contentVersion, imageOrder }));
+    return;
+  }
+
+  const batch = db.batch();
+  batch.set(bodyRef, {
+    content: privateContent,
+    contentHash,
+    contentVersion,
+    previousContentBackup: previous.content || "",
+    previousContentHashBackup: previous.contentHash || "",
+    previousContentVersionBackup: previousVersion,
+    previousBackupAt: FieldValue.serverTimestamp(),
+    source: "secure-paid-body-update:20260930-blessing-teacher-layout-v2",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(articleRef, {
+    status: "published",
+    hidden: false,
+    privatePaidContent: true,
+    paidContentHash: contentHash,
+    paidContentVersion: contentVersion,
+    secureBodyCollection: "paidArticleBodies",
+    source: "firestore-admin-authoritative",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+
+  const verify = (await bodyRef.get()).data() || {};
+  if (verify.content !== privateContent || verify.contentHash !== contentHash || Number(verify.contentVersion || 0) !== contentVersion) {
+    throw new Error("Blessing teacher paid layout v2 verification failed");
+  }
+  console.log(JSON.stringify({ stage: "blessing-teacher-paid-layout-v2", status: "published-and-verified", contentHash, contentVersion, imageOrder, images: 5 }));
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -415,6 +537,7 @@ async function migrate() {
   });
   await applyBuildingPatronRewrite();
   await applyLineageLampBuildingRewrite();
+  await applyBlessingTeacherPaidArticleLayoutV2();
   const managedActivities = await migrateManagedJinmuActivities();
   console.log(JSON.stringify({
     stage: "migration",
