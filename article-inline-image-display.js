@@ -10,7 +10,7 @@ const SPIRITUAL_GOOD_DEATH_COVER_FALLBACK = "/assets/articles/spiritual-good-dea
 const NEED_A_TEACHER_ARTICLE_ID = "need-a-teacher";
 const NEED_A_TEACHER_COVER_PHOTO = "/assets/articles/need-a-teacher/thumbnail-20260918-800.webp?v=20260918-cover-photo-1";
 const BLESSING_TEACHER_ARTICLE_ID = "blessing-teacher-discernment";
-const BLESSING_TEACHER_RITUAL_IMAGE = "/assets/articles/blessing-teacher-discernment/03-online-screenshot-ritual-embedded.svg?v=20260930-repair-1";
+const BLESSING_TEACHER_RITUAL_IMAGE = "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/716d67fb-9d34-463b-a768-77baa030d8f2.jpg";
 let settingsByArticle = new Map();
 
 function clamp(value, fallback, min, max) {
