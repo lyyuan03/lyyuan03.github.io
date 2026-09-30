@@ -148,10 +148,10 @@
     .level-card li:before{content:"";position:absolute;left:1px;top:19px;width:6px;height:6px;border-radius:50%;background:#d7b680}
     .instructor-feature{position:relative;overflow:hidden;padding:92px 0;background:#0b1712;color:#f7f2e9}
     .instructor-feature:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 14% 48%,rgba(165,130,84,.14),transparent 31%),radial-gradient(circle at 88% 18%,rgba(96,99,48,.13),transparent 34%)}
-    .instructor-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(320px,.82fr) minmax(0,1.18fr);gap:68px;align-items:center}
+    .instructor-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(420px,1fr) minmax(0,1.08fr);gap:58px;align-items:center}
     .instructor-photo{position:relative;margin:0;padding:10px;border:1px solid rgba(200,156,102,.38);background:rgba(255,255,255,.025);box-shadow:0 28px 70px rgba(0,0,0,.28)}
     .instructor-photo:before{content:"";position:absolute;z-index:2;left:0;top:54px;width:42px;height:1px;background:#c89c66}
-    .instructor-photo img{width:100%;height:640px;object-fit:cover;object-position:center 48%;filter:saturate(.82) contrast(1.04)}
+    .instructor-photo img{display:block;width:100%;height:auto;aspect-ratio:1000/563;object-fit:cover;object-position:center;filter:saturate(.92) contrast(1.03)}
     .instructor-kicker{display:inline-flex;align-items:center;gap:16px;color:#d8b27b;font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.28em}
     .instructor-kicker:after{content:"";width:54px;height:1px;background:rgba(216,178,123,.45)}
     .instructor-copy h2{margin:12px 0 0;font-family:var(--serif);font-size:clamp(42px,5vw,61px);font-weight:500;line-height:1.35;letter-spacing:.04em}
@@ -215,7 +215,7 @@
       .module-list{grid-template-columns:1fr}
       .level-grid{grid-template-columns:1fr}
       .instructor-photo{width:min(520px,100%);margin-inline:auto}
-      .instructor-photo img{height:auto;aspect-ratio:2/3}
+      .instructor-photo img{height:auto;aspect-ratio:1000/563}
       .testimonial-card{grid-template-columns:120px minmax(0,1fr);gap:24px}
       .testimonial-person{width:120px}
     }
@@ -512,7 +512,7 @@
   <section class="instructor-feature" id="instructor">
     <div class="container instructor-layout">
       <figure class="instructor-photo">
-        <img src="/assets/course-male-yoga-instructor.webp?v=20260930-hq3" alt="宇色老師進行男性瑜伽平衡體位練習" loading="lazy">
+        <img src="/assets/course-male-yoga-instructor-collage.webp?v=20260930-1" alt="宇色老師進行男性瑜伽平衡體位練習" loading="lazy">
       </figure>
       <div class="instructor-copy">
         <span class="instructor-kicker">INSTRUCTOR</span>
