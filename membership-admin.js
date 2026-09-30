@@ -58,6 +58,11 @@ function formatDate(value) {
   return date ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(date) : "尚未開通";
 }
 
+// 方案一律以天數顯示：1 個月方案 = 30 天、3 個月方案 = 90 天。
+function planDaysLabel(months) {
+  return Number(months) === 3 ? "90 天" : "30 天";
+}
+
 function activationEmailContent(member = {}) {
   const name = String(member.name || "會員").trim() || "會員";
   const email = normalizeEmail(member.email || "");
@@ -69,9 +74,10 @@ function activationEmailContent(member = {}) {
 您的「靈元院贊助專屬文章會員」已完成開通。
 
 登入 Gmail：${email}
-會員方案：${months} 個月
+會員方案：${planDaysLabel(months)}
 開通日期：${formatDate(member.startsAt || member.paidAt)}
 資格到期日：${formatDate(member.expiresAt)}
+閱讀範圍：開通日前 30 天起發表的贊助專屬文章，資格到期後即無法閱讀
 本次方案：${priceLabel}
 實收金額：新台幣 ${Number(member.amount || 0).toLocaleString("zh-TW")} 元
 
@@ -361,13 +367,13 @@ function installOfferAdminUi() {
   const promoPrice3 = document.getElementById("price-3");
   promoPrice1.readOnly = false;
   promoPrice3.readOnly = false;
-  promoPrice1.closest(".field")?.querySelector("label")?.replaceChildren(document.createTextNode("首次優惠價｜一個月"));
-  promoPrice3.closest(".field")?.querySelector("label")?.replaceChildren(document.createTextNode("首次優惠價｜三個月"));
+  promoPrice1.closest(".field")?.querySelector("label")?.replaceChildren(document.createTextNode("首次優惠價｜30 天"));
+  promoPrice3.closest(".field")?.querySelector("label")?.replaceChildren(document.createTextNode("首次優惠價｜90 天"));
 
   const grid = promoPrice1.closest(".grid");
   grid.insertAdjacentHTML("beforeend", `
-    <div class="field"><label for="regular-price-1">原價／續期價｜一個月</label><input id="regular-price-1" type="number" min="1" step="1" value="180"></div>
-    <div class="field"><label for="regular-price-3">原價／續期價｜三個月</label><input id="regular-price-3" type="number" min="1" step="1" value="500"></div>
+    <div class="field"><label for="regular-price-1">原價／續期價｜30 天</label><input id="regular-price-1" type="number" min="1" step="1" value="180"></div>
+    <div class="field"><label for="regular-price-3">原價／續期價｜90 天</label><input id="regular-price-3" type="number" min="1" step="1" value="500"></div>
     <div class="field"><label for="sponsor-promo-limit">首次優惠名額上限</label><input id="sponsor-promo-limit" type="number" min="1" step="1" value="200"></div>
   `);
   grid.insertAdjacentHTML("afterend", `
@@ -399,10 +405,10 @@ function updatePlanOptions() {
   const correctionTier = correcting?.priceTier === "promo" ? "promo" : "regular";
   const promoEligible = correcting ? correctionTier === "promo" : currentTier() === "promo";
   const options = [
-    { value: "promo-1", label: `一個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice1).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "promo" : !promoEligible },
-    { value: "promo-3", label: `三個月｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice3).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "promo" : !promoEligible },
-    { value: "regular-1", label: `一個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice1).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "regular" : false },
-    { value: "regular-3", label: `三個月｜原價／續期價 NT$${Number(settings.sponsorRegularPrice3).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "regular" : false }
+    { value: "promo-1", label: `30 天｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice1).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "promo" : !promoEligible },
+    { value: "promo-3", label: `90 天｜首次購買優惠 NT$${Number(settings.sponsorPromoPrice3).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "promo" : !promoEligible },
+    { value: "regular-1", label: `30 天｜原價／續期價 NT$${Number(settings.sponsorRegularPrice1).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "regular" : false },
+    { value: "regular-3", label: `90 天｜原價／續期價 NT$${Number(settings.sponsorRegularPrice3).toLocaleString("zh-TW")}`, disabled: correcting ? correctionTier !== "regular" : false }
   ];
   monthsEl.replaceChildren(...options.map((item) => {
     const option = document.createElement("option");
@@ -457,7 +463,7 @@ function updatePlanPreview(forceAmount = false) {
     const oldMonths = Number(correcting.planMonths) === 3 ? 3 : 1;
     const expiry = correctedExpiry(correcting, selectedMonths());
     const priceText = tier === "promo" ? "首次購買優惠" : "原價／續期價";
-    summaryEl.textContent = `方案更正模式｜原 ${oldMonths} 個月 → ${selectedMonths()} 個月｜${priceText} NT$${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜更正後到期日 ${formatDate(expiry)}｜此操作只修正原紀錄，不會新增續期月份`;
+    summaryEl.textContent = `方案更正模式｜原 ${planDaysLabel(oldMonths)} → ${planDaysLabel(selectedMonths())}｜${priceText} NT$${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜更正後到期日 ${formatDate(expiry)}｜此操作只修正原紀錄，不會新增續期月份`;
     return;
   }
 
@@ -465,7 +471,7 @@ function updatePlanPreview(forceAmount = false) {
   const tierText = tier === "promo"
     ? `首次購買優惠｜尚餘 ${offerStatus?.remaining ?? "—"} 名`
     : used ? "首次優惠：已使用｜本次套用原價／續期價" : "首次優惠名額已滿｜本次套用原價";
-  summaryEl.textContent = `${tierText}｜本次 ${selectedMonths()} 個月｜應繳 NT${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜付款確認後預計到期日 ${formatDate(previewExpiry(existing?.expiresAt))}`;
+  summaryEl.textContent = `${tierText}｜本次 ${planDaysLabel(selectedMonths())}｜應繳 NT${Number(amountEl.value || 0).toLocaleString("zh-TW")}｜付款確認後預計到期日 ${formatDate(previewExpiry(existing?.expiresAt))}`;
 }
 
 function resetMemberForm() {
@@ -587,7 +593,7 @@ async function saveMemberCorrection() {
     await setDoc(doc(db, "sponsorMemberAccess", email), payload, { merge: true });
     await writeSponsorHistory(email, { ...member, ...payload, correctedAt: new Date().toISOString() }, "verified");
     await loadMembers();
-    statusEl.textContent = `會員方案已更正為 ${months} 個月｜金額 NT$${Number(amount).toLocaleString("zh-TW")}｜到期日 ${formatDate(expiresAt)}；未新增續期月份`;
+    statusEl.textContent = `會員方案已更正為 ${planDaysLabel(months)}｜金額 NT$${Number(amount).toLocaleString("zh-TW")}｜到期日 ${formatDate(expiresAt)}；未新增續期天數`;
     resetMemberForm();
   } finally {
     if (correctionButton) correctionButton.disabled = false;
@@ -706,11 +712,11 @@ function openPaymentEmail() {
   const tierText = tier === "promo"
     ? `首次購買優惠（目前尚餘 ${offerStatus.remaining} 名）`
     : discountRecordForEmail(email).discountUsed ? "原價／續期價格（首次優惠已使用）" : "原價（首次優惠名額已滿）";
-  const subject = `靈元院贊助專屬文章｜${months}個月方案付款連結`;
+  const subject = `靈元院贊助專屬文章｜${planDaysLabel(months)}方案付款連結`;
   const body = `${name}您好：
 
 您本次適用：${tierText}
-觀看期間：${months}個月
+觀看期間：${planDaysLabel(months)}（付款確認開通日起算）
 應繳金額：新台幣 ${amount} 元
 
 請由以下綠界連結完成付款：
@@ -771,7 +777,7 @@ function renderMembers() {
         return `<div class="member-row">
           <div>
             <strong>${escapeHtml(member.name || "未填姓名")}｜${label}</strong>
-            <small>${escapeHtml(member.email)}｜${Number(member.planMonths || 0)}個月｜NT$${Number(member.amount || 0).toLocaleString("zh-TW")}｜${tier}｜到期 ${escapeHtml(formatDate(member.expiresAt))}</small>
+            <small>${escapeHtml(member.email)}｜${planDaysLabel(member.planMonths)}｜NT$${Number(member.amount || 0).toLocaleString("zh-TW")}｜${tier}｜到期 ${escapeHtml(formatDate(member.expiresAt))}</small>
           </div>
           <div class="member-row-actions">
             <button class="btn" type="button" data-notify="${escapeHtml(member.email)}">寄發開通通知</button>
@@ -803,7 +809,7 @@ function correctMember(email) {
   document.getElementById("member-note").value = member.note || "";
   updatePlanOptions();
   updatePlanPreview(true);
-  statusEl.textContent = "目前為方案更正模式：可修正一個月／三個月，儲存時不會再新增一次續期。";
+  statusEl.textContent = "目前為方案更正模式：可修正 30 天／90 天方案，儲存時不會再新增一次續期。";
   memberForm.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
