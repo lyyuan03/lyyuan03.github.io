@@ -1,0 +1,118 @@
+name: Enhance male yoga course images
+
+on:
+  push:
+    branches:
+      - "feature/male-yoga-hq-images-20260930"
+
+permissions:
+  contents: write
+
+jobs:
+  enhance:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Pillow
+        run: python -m pip install --upgrade pillow
+
+      - name: Enhance and localize course photography
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageFilter
+          from urllib.request import Request, urlopen
+          import io, re
+
+          root = Path(".")
+          assets = root / "assets"
+          html_path = root / "courses" / "male-yoga-energy.html"
+
+          def enhance_file(path, target_long=2400, quality=90, stronger=False):
+              im = Image.open(path).convert("RGB")
+              w, h = im.size
+              long_side = max(w, h)
+              if long_side < target_long:
+                  scale = target_long / long_side
+                  im = im.resize((round(w*scale), round(h*scale)), Image.Resampling.LANCZOS)
+              im = im.filter(ImageFilter.UnsharpMask(
+                  radius=0.9 if stronger else 0.7,
+                  percent=105 if stronger else 70,
+                  threshold=3
+              ))
+              im.save(path, "WEBP", quality=quality, method=6)
+              return im.size
+
+          def download_image(url, destination):
+              req = Request(url, headers={
+                  "User-Agent":"Mozilla/5.0",
+                  "Referer":"https://kinkiosel.pixnet.net/"
+              })
+              with urlopen(req, timeout=45) as res:
+                  data = res.read()
+              im = Image.open(io.BytesIO(data)).convert("RGB")
+              w, h = im.size
+              long_side = max(w, h)
+              target_long = 2200
+              if long_side < target_long:
+                  scale = target_long / long_side
+                  im = im.resize((round(w*scale), round(h*scale)), Image.Resampling.LANCZOS)
+              im = im.filter(ImageFilter.UnsharpMask(radius=0.8, percent=85, threshold=3))
+              im.save(destination, "WEBP", quality=90, method=6)
+              return im.size
+
+          # The hero and seated files are already replaced by high-resolution originals.
+          # Re-encode gently at high quality only when needed; never reduce their dimensions.
+          for p in [
+              assets / "course-male-yoga-backbend.webp",
+              assets / "course-male-yoga-seated.webp",
+          ]:
+              im = Image.open(p)
+              print(f"{p}: {im.size[0]}x{im.size[1]}")
+
+          # Instructor image: enlarge on the server with Lanczos and mild sharpening so
+          # the browser never has to stretch a tiny raster asset.
+          instructor = assets / "course-male-yoga-instructor.webp"
+          print("instructor enhanced:", enhance_file(instructor, target_long=2400, quality=90, stronger=True))
+
+          # Old classroom photography was hot-linked from Pixnet. Keep local HQ copies
+          # so display quality is stable and independent of third-party resizing.
+          classroom_url = "https://pimg.1px.tw/kinkiosel/1527583780-3589111223.jpg?v=1527583782"
+          rest_url = "https://pimg.1px.tw/kinkiosel/1527583912-560556329.jpg?v=1527583917"
+          classroom_file = assets / "course-male-yoga-classroom-hq.webp"
+          rest_file = assets / "course-male-yoga-rest-hq.webp"
+          print("classroom localized:", download_image(classroom_url, classroom_file))
+          print("rest localized:", download_image(rest_url, rest_file))
+
+          html = html_path.read_text(encoding="utf-8")
+          html = html.replace(
+              "https://pimg.1px.tw/kinkiosel/1527583780-3589111223.jpg?v=1527583782",
+              "/assets/course-male-yoga-classroom-hq.webp?v=20260930-hq2"
+          )
+          html = html.replace(
+              "https://pimg.1px.tw/kinkiosel/1527583912-560556329.jpg?v=1527583917",
+              "/assets/course-male-yoga-rest-hq.webp?v=20260930-hq2"
+          )
+          html = html.replace("course-male-yoga-backbend.webp?v=20260930-1", "course-male-yoga-backbend.webp?v=20260930-hq2")
+          html = html.replace("course-male-yoga-seated.webp?v=20260930-1", "course-male-yoga-seated.webp?v=20260930-hq2")
+          html = html.replace("course-male-yoga-instructor.webp?v=20260930-1", "course-male-yoga-instructor.webp?v=20260930-hq2")
+          html_path.write_text(html, encoding="utf-8")
+          PY
+
+      - name: Commit enhanced images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/course-male-yoga-backbend.webp \
+                  assets/course-male-yoga-seated.webp \
+                  assets/course-male-yoga-instructor.webp \
+                  assets/course-male-yoga-classroom-hq.webp \
+                  assets/course-male-yoga-rest-hq.webp \
+                  courses/male-yoga-energy.html
+          git commit -m "media: enhance all male yoga course photos" || exit 0
+          git push origin HEAD
