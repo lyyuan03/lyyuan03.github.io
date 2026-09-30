@@ -69,7 +69,8 @@ function adminPreviewSrc(value = "") {
   if (!src) return "";
   if (/^(?:https?:|data:|blob:)/i.test(src) || src.startsWith("//")) return src;
   const cleaned = src.replace(/^(?:(?:\.\.\/)|(?:\.\/))+/, "").replace(/^\/+/, "");
-  return `https://lyyuan.tw/${cleaned}`;
+  const origin = typeof window !== "undefined" && window.location?.origin ? window.location.origin : "https://lyyuan.tw";
+  return `${origin}/${cleaned}`;
 }
 
 function parseImages(content = "") {
