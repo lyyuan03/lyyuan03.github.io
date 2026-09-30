@@ -15,6 +15,7 @@ const {
   verifyCheckMacValue
 } = require("./ecpay");
 const { sponsorPlanAmount } = require("./membership-plans");
+const { addDays, nextArticleWindowAnchor, sponsorPlanDays } = require("./article-window");
 
 initializeApp();
 const db = getFirestore();
@@ -532,7 +533,10 @@ exports.ecpayMembershipCallback = onRequest(
         const existingExpiry = member.expiresAt?.toDate?.()
           || (member.expiresAt ? new Date(member.expiresAt) : null);
         const startAt = existingExpiry && existingExpiry > now ? existingExpiry : now;
-        const expiresAt = addMonths(startAt, Number(order.planMonths));
+        // 贊助付費文章方案以天數計算：1 個月 = 30 天、3 個月 = 90 天；養生頻道方案維持原本月份計算。
+        const sponsorDays = order.memberType === "sponsor-member" ? sponsorPlanDays(order.planMonths) : null;
+        const expiresAt = sponsorDays ? addDays(startAt, sponsorDays) : addMonths(startAt, Number(order.planMonths));
+        const articleWindowStartsAt = nextArticleWindowAnchor(member, now);
         const nowTimestamp = Timestamp.fromDate(now);
         const expiryTimestamp = Timestamp.fromDate(expiresAt);
 
@@ -549,6 +553,7 @@ exports.ecpayMembershipCallback = onRequest(
           revokedAt: FieldValue.delete(),
           firstJoinedAt: member.firstJoinedAt || nowTimestamp,
           startsAt: nowTimestamp,
+          articleWindowStartsAt: Timestamp.fromDate(articleWindowStartsAt),
           expiresAt: expiryTimestamp,
           paidAt: nowTimestamp,
           lastOrderNo: tradeNo,

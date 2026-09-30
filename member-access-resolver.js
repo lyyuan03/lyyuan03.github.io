@@ -69,6 +69,51 @@ export function activeEntitlement(entitlement = {}, email = "", now = new Date()
   return sponsor || wellness;
 }
 
+// 付費文章閱讀範圍（與 functions/article-window.js、firestore.rules 同一規則）：
+// 只能閱讀「本期連續會員開通日前 30 天起」發表的付費文章。
+// 規則生效（2026-10-01）前已在期間內的舊會員，本期不受限制。
+const ARTICLE_WINDOW_LOOKBACK_MS = 30 * 24 * 60 * 60 * 1000;
+const ARTICLE_WINDOW_EFFECTIVE_AT = new Date("2026-09-30T16:00:00.000Z");
+
+function memberRecordWindowStart(record = {}) {
+  let anchor = accessDate(record.articleWindowStartsAt);
+  if (!anchor) {
+    const startsAt = accessDate(record.startsAt);
+    if (startsAt && startsAt >= ARTICLE_WINDOW_EFFECTIVE_AT) anchor = startsAt;
+  }
+  return anchor ? new Date(anchor.getTime() - ARTICLE_WINDOW_LOOKBACK_MS) : new Date(0);
+}
+
+// 回傳此會員可閱讀的最早發表時間；null 代表不受限制（管理員），undefined 代表尚無法判斷（交由伺服器規則決定）。
+export function paidArticleWindowStart(access = {}, now = new Date()) {
+  if (!access?.allowed) return undefined;
+  if (access.source === "admin") return null;
+  const starts = [];
+  if (access.source === "entitlement") {
+    const entitlement = access.entitlement || {};
+    if (entitlement.sponsorArticleAccess === true && isFuture(entitlement.sponsorExpiresAt, now)) {
+      starts.push(accessDate(entitlement.sponsorArticleWindowStartsAt));
+    }
+    if (entitlement.wellnessArticleAccess === true && isFuture(entitlement.wellnessExpiresAt, now)) {
+      starts.push(accessDate(entitlement.wellnessArticleWindowStartsAt));
+    }
+  } else if (access.source === "sponsor-fallback") {
+    starts.push(memberRecordWindowStart(access.sponsor));
+  } else if (access.source === "wellness-fallback") {
+    starts.push(memberRecordWindowStart(access.wellness));
+  }
+  if (!starts.length || starts.some((value) => !value)) return undefined;
+  return new Date(Math.min(...starts.map((value) => value.getTime())));
+}
+
+export function paidArticleWithinWindow(access = {}, publishedAt, now = new Date()) {
+  const windowStart = paidArticleWindowStart(access, now);
+  if (windowStart === null || windowStart === undefined) return true;
+  if (windowStart.getTime() <= 0) return true;
+  const published = accessDate(publishedAt);
+  return Boolean(published && published >= windowStart);
+}
+
 async function safeRead(collectionName, email) {
   try {
     const snapshot = await getDoc(doc(db, collectionName, email));

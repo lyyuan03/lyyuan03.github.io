@@ -182,11 +182,71 @@ service cloud.firestore {
         || wellnessSourceNewerThanEntitlement();
     }
 
-    function canReadPaidArticles() {
+    // 付費文章閱讀範圍（2026-10-01 起）：會員只能閱讀「本期連續會員開通日前 30 天起」發表的付費文章；
+    // 資格到期或取消後一律不能閱讀。規則生效前已在期間內的舊會員本期不受限制（起算時間 1970-01-01）。
+    function articleWindowEffectiveAt() {
+      return timestamp.date(2026, 9, 30) + duration.value(16, 'h');
+    }
+
+    function articleWindowLookback() {
+      return duration.value(30, 'd');
+    }
+
+    function paidArticlePublishedOnOrAfter(articleId, windowStart) {
+      let articlePath = /databases/$(database)/documents/articles/$(articleId);
+      return windowStart is timestamp
+        && exists(articlePath)
+        && get(articlePath).data.keys().hasAny(["publishedAt"])
+        && get(articlePath).data.publishedAt is timestamp
+        && get(articlePath).data.publishedAt >= windowStart;
+    }
+
+    function entitlementWindowAllows(articleId, windowField) {
+      return !memberEntitlement().data.keys().hasAny(["articleWindowPolicy"])
+        || (memberEntitlement().data.keys().hasAny([windowField])
+          && memberEntitlement().data[windowField] is timestamp
+          && (memberEntitlement().data[windowField].toMillis() == 0
+            || paidArticlePublishedOnOrAfter(articleId, memberEntitlement().data[windowField])));
+    }
+
+    function hasCanonicalPaidArticleAccessInWindow(articleId) {
+      return hasCanonicalPaidArticleAccess()
+        && (
+          (
+            memberEntitlement().data.keys().hasAny(["sponsorArticleAccess", "sponsorExpiresAt"])
+            && memberEntitlement().data.sponsorArticleAccess == true
+            && memberEntitlement().data.sponsorExpiresAt is timestamp
+            && memberEntitlement().data.sponsorExpiresAt > request.time
+            && entitlementWindowAllows(articleId, "sponsorArticleWindowStartsAt")
+          )
+          || (
+            memberEntitlement().data.keys().hasAny(["wellnessArticleAccess", "wellnessExpiresAt"])
+            && memberEntitlement().data.wellnessArticleAccess == true
+            && memberEntitlement().data.wellnessExpiresAt is timestamp
+            && memberEntitlement().data.wellnessExpiresAt > request.time
+            && entitlementWindowAllows(articleId, "wellnessArticleWindowStartsAt")
+          )
+        );
+    }
+
+    function memberRecordWindowAllows(record, articleId) {
+      return (record.keys().hasAny(["articleWindowStartsAt"]) && record.articleWindowStartsAt is timestamp)
+        ? paidArticlePublishedOnOrAfter(articleId, record.articleWindowStartsAt - articleWindowLookback())
+        : ((record.keys().hasAny(["startsAt"])
+            && record.startsAt is timestamp
+            && record.startsAt >= articleWindowEffectiveAt())
+          ? paidArticlePublishedOnOrAfter(articleId, record.startsAt - articleWindowLookback())
+          : true);
+    }
+
+    function canReadPaidArticles(articleId) {
       return isAdmin()
-        || hasCanonicalPaidArticleAccess()
+        || hasCanonicalPaidArticleAccessInWindow(articleId)
         || (shouldUseLegacyAccessFallback()
-          && (hasDirectSponsorArticleAccess() || hasWellnessPaidArticleAccess()));
+          && (
+            (hasDirectSponsorArticleAccess() && memberRecordWindowAllows(sponsorMember().data, articleId))
+            || (hasWellnessPaidArticleAccess() && memberRecordWindowAllows(wellnessMember().data, articleId))
+          ));
     }
 
     function hasCanonicalWellnessVideoAccess() {
@@ -241,7 +301,7 @@ service cloud.firestore {
     }
 
     match /paidArticleBodies/{articleId} {
-      allow read: if canReadPaidArticles()
+      allow read: if canReadPaidArticles(articleId)
         && (isAdmin() || resource.data.status == "published")
         && resource.data.active != false;
       allow create, update, delete: if isAdmin();

@@ -67,21 +67,21 @@ function restoredGateMarkup() {
       <div class="member-lock-card paid-lock-card sponsor-join-card">
         <div class="member-lock-icon" aria-hidden="true">◇</div>
         <h3>解鎖全文</h3>
-        <p>本篇前段開放試閱。加入贊助專屬文章閱讀方案後，在有效期間內可閱讀所有贊助專屬文章。</p>
+        <p>本篇前段開放試閱。加入贊助專屬文章閱讀方案後，可閱讀開通日前 30 天起發表的贊助專屬文章，直到方案到期為止。</p>
         <div class="paid-promo-note">前 200 名優惠方案</div>
         <div class="paid-plan-grid" role="group" aria-label="選擇閱讀方案">
           <button type="button" class="paid-plan" data-sponsor-plan="1">
-            <span class="paid-plan-term">1 個月</span>
+            <span class="paid-plan-term">1 個月（30 天）</span>
             <strong class="paid-plan-price">${money(month1.promo)}</strong>
             <del>原價 ${money(month1.regular)}</del>
-            <small>閱讀所有贊助專屬文章</small>
+            <small>含開通日前 30 天起的文章</small>
           </button>
           <button type="button" class="paid-plan is-featured" data-sponsor-plan="3">
             <span class="paid-plan-badge">推薦</span>
-            <span class="paid-plan-term">3 個月</span>
+            <span class="paid-plan-term">3 個月（90 天）</span>
             <strong class="paid-plan-price">${money(month3.promo)}</strong>
             <del>原價 ${money(month3.regular)}</del>
-            <small>閱讀所有贊助專屬文章</small>
+            <small>含開通日前 30 天起的文章</small>
           </button>
         </div>
         <div class="paid-value-note">點選方案後登入 Gmail，系統會帶你前往綠界安全付款；付款成功後自動開通閱讀資格。</div>

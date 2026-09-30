@@ -4,14 +4,30 @@
 
 ## 固定規則
 
-1. 靈極會員：可閱讀全部付費文章。
-2. 養生頻道一般會員，且 `articleAccess === true`：可閱讀全部付費文章。
+1. 靈極會員：可閱讀付費文章（依下方「付費文章閱讀範圍」）。
+2. 養生頻道一般會員，且 `articleAccess === true`：可閱讀付費文章（依下方「付費文章閱讀範圍」）。
 3. 養生頻道一般會員，且 `articleAccess !== true`：不可閱讀付費文章。
-4. 有效的「贊助付費文章會員」：可閱讀全部贊助專屬文章。
+4. 有效的「贊助付費文章會員」：可閱讀贊助專屬文章（依下方「付費文章閱讀範圍」）。
 5. 贊助付費文章會員的資格必須獨立判斷，不得要求同時具有零級會員、一般會員、養生會員或任何 `memberAccess` 資格。
 6. 其他狀態：預設拒絕。
 
-## 唯一前台權限來源
+## 付費文章閱讀範圍（2026-10-01 起生效）
+
+以上各類會員（靈極會員、已開通文章權限的養生頻道會員、贊助付費文章會員）一律套用同一個閱讀範圍：
+
+1. 只能閱讀「本期連續會員開通日前 30 天起」發表的付費文章，一直到資格到期為止。文章以第一次正式發布時間 `articles/{id}.publishedAt` 判斷。
+2. 資格到期、停權或取消後，新舊付費文章一律不能閱讀。
+3. 仍在有效期間內續約，不會重設起算日；資格中斷後重新加入，起算日改為重新開通當天。
+4. 規則生效前（2026-10-01 00:00 臺北時間）已在期間內的舊會員，本期到期前維持可閱讀全部付費文章；續約或重新加入後套用新規則。
+5. 贊助付費文章方案以天數計算：1 個月 = 30 天、3 個月 = 90 天。養生頻道方案維持原本月份計算。
+
+資料欄位：
+
+- 會員來源資料 `sponsorMemberAccess/{email}`、`memberAccess/{email}`：`articleWindowStartsAt` 為本期連續會員的起算日（付款或後台開通時寫入）。沒有此欄位時，`startsAt` 晚於生效日即以 `startsAt` 起算，否則視為生效前的舊會員。
+- `memberEntitlements/{email}`：`sponsorArticleWindowStartsAt`、`wellnessArticleWindowStartsAt` 為可閱讀的最早發表時間（起算日減 30 天；`1970-01-01` 代表舊會員本期不受限制），並以 `articleWindowPolicy = "join-minus-30d-v1"` 標示。
+- 同一規則實作於 `functions/article-window.js`、`functions/member-entitlements-sync.js`、`.github/scripts/rebuild-member-entitlements.py`、`member-access-resolver.js` 與 `firestore.rules`，任何一處修改都必須同步其他各處。
+
+
 
 前台不得再由各頁面分別自行判斷會員種類。登入後一律先讀取：
 
@@ -26,6 +42,9 @@
 - `lingjiAccess`
 - `sponsorExpiresAt`
 - `wellnessExpiresAt`
+- `sponsorArticleWindowStartsAt`
+- `wellnessArticleWindowStartsAt`
+- `articleWindowPolicy`
 - `schemaVersion`
 - `computedAt`
 

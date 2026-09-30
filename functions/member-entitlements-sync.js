@@ -2,6 +2,7 @@
 
 const { FieldValue, Timestamp, getFirestore } = require("firebase-admin/firestore");
 const { onDocumentWritten } = require("firebase-functions/v2/firestore");
+const { ARTICLE_WINDOW_POLICY, articleWindowStart } = require("./article-window");
 
 const REGION = "asia-east1";
 const SCHEMA_VERSION = 1;
@@ -38,7 +39,8 @@ function sponsorState(member = {}, email = "", now = new Date()) {
   return {
     active,
     articleAccess: active,
-    expiresAt: dateFromValue(member.expiresAt)
+    expiresAt: dateFromValue(member.expiresAt),
+    articleWindowStartsAt: active ? articleWindowStart(member) : null
   };
 }
 
@@ -62,7 +64,8 @@ function wellnessState(member = {}, email = "", now = new Date()) {
     lingji,
     articleAccess: active && (lingji || member.articleAccess === true),
     videoAccess: active,
-    expiresAt: dateFromValue(member.expiresAt)
+    expiresAt: dateFromValue(member.expiresAt),
+    articleWindowStartsAt: active ? articleWindowStart(member) : null
   };
 }
 
@@ -99,6 +102,7 @@ async function rebuildEntitlement(emailParam) {
     wellnessArticleAccess: wellnessAccess.articleAccess,
     wellnessVideoAccess: wellnessAccess.videoAccess,
     lingjiAccess: wellnessAccess.lingji,
+    articleWindowPolicy: ARTICLE_WINDOW_POLICY,
     sourceCollections: {
       sponsorMemberAccess: sponsorSnapshot.exists,
       memberAccess: wellnessSnapshot.exists
@@ -111,6 +115,13 @@ async function rebuildEntitlement(emailParam) {
 
   if (wellnessAccess.expiresAt) payload.wellnessExpiresAt = Timestamp.fromDate(wellnessAccess.expiresAt);
   else payload.wellnessExpiresAt = FieldValue.delete();
+
+  // 付費文章閱讀範圍：只能閱讀此時間之後發表的付費文章（1970-01-01 代表規則生效前的舊會員本期不受限制）。
+  if (sponsorAccess.articleWindowStartsAt) payload.sponsorArticleWindowStartsAt = Timestamp.fromDate(sponsorAccess.articleWindowStartsAt);
+  else payload.sponsorArticleWindowStartsAt = FieldValue.delete();
+
+  if (wellnessAccess.articleWindowStartsAt) payload.wellnessArticleWindowStartsAt = Timestamp.fromDate(wellnessAccess.articleWindowStartsAt);
+  else payload.wellnessArticleWindowStartsAt = FieldValue.delete();
 
   await db.doc(`memberEntitlements/${email}`).set(payload, { merge: true });
 }

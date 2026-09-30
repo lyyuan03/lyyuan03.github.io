@@ -112,3 +112,114 @@ test('migration backups are inaccessible to all website clients', async () => {
     await assertFails(getDoc(doc(ctx.firestore(), 'securityMigrationBackups/expiry-test/changes/00000000')));
   }
 });
+
+// ── 付費文章閱讀範圍（開通日前 30 天起）──────────────────────────────
+const DAY = 86400000;
+const ago = (days) => Timestamp.fromMillis(Date.now() - days * DAY);
+const EPOCH = Timestamp.fromMillis(0);
+const WINDOW_EFFECTIVE_MS = Date.UTC(2026, 8, 30, 16);
+
+async function seedWindowArticle(publishedAt) {
+  await env.withSecurityRulesDisabled(async ctx => {
+    const db = ctx.firestore();
+    const article = { status: 'published', accessType: 'paid' };
+    if (publishedAt !== undefined) article.publishedAt = publishedAt;
+    await setDoc(doc(db, 'articles/article'), article);
+    await setDoc(doc(db, 'paidArticleBodies/article'), { status: 'published', active: true });
+  });
+}
+
+async function seedWindowEntitlement(fields) {
+  await env.withSecurityRulesDisabled(ctx => setDoc(doc(ctx.firestore(), 'memberEntitlements', email), {
+    email, schemaVersion: 1, status: 'active', articleWindowPolicy: 'join-minus-30d-v1',
+    sponsorArticleAccess: false, wellnessArticleAccess: false, wellnessVideoAccess: false,
+    sponsorExpiresAt: past, wellnessExpiresAt: past, computedAt: Timestamp.fromMillis(Date.now() + DAY),
+    ...fields
+  }));
+}
+
+for (const [label, publishedDaysAgo, windowDaysAgo, allowed] of [
+  ['article inside window (published after join-30d)', 20, 40, true],
+  ['article published exactly on window start', 40, 40, true],
+  ['article published before window start', 60, 40, false]
+]) {
+  test(`canonical sponsor window: ${label}`, async () => {
+    await seed('sponsor', future, 'absent');
+    const base = Date.now();
+    await seedWindowArticle(Timestamp.fromMillis(base - publishedDaysAgo * DAY));
+    await seedWindowEntitlement({ sponsorArticleAccess: true, sponsorExpiresAt: future, sponsorArticleWindowStartsAt: Timestamp.fromMillis(base - windowDaysAgo * DAY) });
+    await (allowed ? assertSucceeds : assertFails)(getDoc(doc(client(), 'paidArticleBodies/article')));
+  });
+}
+
+test('canonical window: pre-policy member (epoch window) keeps full access this term', async () => {
+  await seed('sponsor', future, 'absent');
+  await seedWindowArticle(ago(900));
+  await seedWindowEntitlement({ sponsorArticleAccess: true, sponsorExpiresAt: future, sponsorArticleWindowStartsAt: EPOCH });
+  await assertSucceeds(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
+
+test('canonical window: policy present but window missing is denied', async () => {
+  await seed('sponsor', future, 'absent');
+  await seedWindowArticle(ago(1));
+  await seedWindowEntitlement({ sponsorArticleAccess: true, sponsorExpiresAt: future });
+  await assertFails(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
+
+test('canonical window: article without publishedAt is denied for window-limited member', async () => {
+  await seed('sponsor', future, 'absent');
+  await seedWindowArticle(undefined);
+  await seedWindowEntitlement({ sponsorArticleAccess: true, sponsorExpiresAt: future, sponsorArticleWindowStartsAt: ago(40) });
+  await assertFails(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
+
+test('canonical window: expired member cannot read even new articles', async () => {
+  await seed('sponsor', past, 'absent');
+  await seedWindowArticle(ago(1));
+  await seedWindowEntitlement({ sponsorArticleAccess: true, sponsorExpiresAt: past, sponsorArticleWindowStartsAt: ago(40) });
+  await assertFails(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
+
+test('canonical window: lingji/wellness track window applies the same way', async () => {
+  await seed('lingji', future, 'absent');
+  await seedWindowArticle(ago(60));
+  await seedWindowEntitlement({ wellnessArticleAccess: true, wellnessVideoAccess: true, lingjiAccess: true, wellnessExpiresAt: future, wellnessArticleWindowStartsAt: ago(40) });
+  await assertFails(getDoc(doc(client(), 'paidArticleBodies/article')));
+  await seedWindowArticle(ago(10));
+  await assertSucceeds(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
+
+test('canonical window: either active track may unlock the article', async () => {
+  await seed('sponsor', future, 'absent');
+  await seedWindowArticle(ago(60));
+  await seedWindowEntitlement({
+    sponsorArticleAccess: true, sponsorExpiresAt: future, sponsorArticleWindowStartsAt: ago(40),
+    wellnessArticleAccess: true, wellnessExpiresAt: future, wellnessArticleWindowStartsAt: ago(90)
+  });
+  await assertSucceeds(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
+
+for (const kind of ['sponsor', 'lingji']) {
+  for (const [label, publishedDaysAgo, allowed] of [['inside', 35, true], ['outside', 45, false]]) {
+    test(`fallback ${kind} record window (anchor 10 days ago): article ${label}`, async () => {
+      await seed(kind, future, 'absent', { startsAt: ago(10), articleWindowStartsAt: ago(10) });
+      await seedWindowArticle(ago(publishedDaysAgo));
+      await (allowed ? assertSucceeds : assertFails)(getDoc(doc(client(), 'paidArticleBodies/article')));
+    });
+  }
+}
+
+test('fallback legacy member who started before the policy keeps full access this term', async () => {
+  await seed('sponsor', future, 'absent', { startsAt: Timestamp.fromMillis(Date.UTC(2026, 0, 1)) });
+  await seedWindowArticle(ago(900));
+  await assertSucceeds(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
+
+test('fallback member who started after the policy date without anchor is window-limited', {
+  skip: Date.now() < WINDOW_EFFECTIVE_MS + DAY ? 'policy effective date not reached yet' : false
+}, async () => {
+  const startsAt = Timestamp.fromMillis(Math.max(WINDOW_EFFECTIVE_MS, Date.now() - 5 * DAY));
+  await seed('sponsor', future, 'absent', { startsAt });
+  await seedWindowArticle(Timestamp.fromMillis(startsAt.toMillis() - 40 * DAY));
+  await assertFails(getDoc(doc(client(), 'paidArticleBodies/article')));
+});

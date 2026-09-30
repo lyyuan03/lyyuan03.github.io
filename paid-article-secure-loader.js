@@ -1,5 +1,5 @@
 import { auth, db } from "./firebase-config.js";
-import { resolveMemberAccess } from "./member-access-resolver.js";
+import { resolveMemberAccess, paidArticleWindowStart, paidArticleWithinWindow } from "./member-access-resolver.js?v=20261001-article-window-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -88,6 +88,12 @@ async function paidMetadata() {
     console.warn("付費文章公開資訊暫時無法確認。", error);
     return null;
   }
+}
+
+function formatTaipeiDate(value) {
+  const date = value?.toDate?.() || (value ? new Date(value) : null);
+  if (!date || Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
 }
 
 function setSecureStatus(view, message = "") {
@@ -247,6 +253,18 @@ async function hydratePaidBody() {
     view.dataset.paidSecureAccess = "denied";
     view.dataset.paidBodyState = "locked";
     setSecureStatus(view, "已登入，但此帳號目前沒有付費文章閱讀權限。靈極會員、已開通付費文章權限的養生一般會員，以及有效的贊助文章會員可閱讀全文。");
+    return;
+  }
+
+  // 付費文章閱讀範圍：會員只能閱讀開通日前 30 天起發表的付費文章。
+  // 文章公開資訊讀取失敗時不在前台先行判斷，交由 Firestore 規則決定。
+  const metadataKnown = Object.keys(metadata).length > 0;
+  if (metadataKnown && !paidArticleWithinWindow(access, metadata.publishedAt)) {
+    const windowLabel = formatTaipeiDate(paidArticleWindowStart(access));
+    const publishedLabel = formatTaipeiDate(metadata.publishedAt);
+    view.dataset.paidSecureAccess = "out-of-window";
+    view.dataset.paidBodyState = "locked";
+    setSecureStatus(view, `這篇付費文章${publishedLabel ? `發表於 ${publishedLabel}，` : ""}不在您目前的閱讀範圍內。會員可閱讀開通日前 30 天起發表的付費文章${windowLabel ? `（您的範圍：${windowLabel} 之後發表的文章）` : ""}。`);
     return;
   }
 
