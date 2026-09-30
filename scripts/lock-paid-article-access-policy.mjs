@@ -54,8 +54,8 @@ assert.ok(rules.includes("allow read: if canReadPaidArticles(articleId)"), "Paid
 assert.ok(windowBlock.includes("duration.value(30, 'd')"), "LOCK: reading window lookback must stay 30 days.");
 assert.ok(windowBlock.includes("timestamp.date(2026, 9, 30) + duration.value(16, 'h')"), "LOCK: reading window effective date must stay 2026-10-01 Asia/Taipei.");
 assert.ok(windowBlock.includes("get(articlePath).data.publishedAt >= windowStart"), "LOCK: articles must be compared by first publish time.");
-assert.ok(windowBlock.includes('entitlementWindowAllows(articleId, "sponsorArticleWindowStartsAt")'), "LOCK: sponsor reading window must be enforced.");
-assert.ok(windowBlock.includes('entitlementWindowAllows(articleId, "wellnessArticleWindowStartsAt")'), "LOCK: wellness/Lingji reading window must be enforced.");
+assert.ok(windowBlock.includes('entitlementWindowAllows(articleId, "sponsorArticleWindowStartsAt", sponsorMember().data)'), "LOCK: sponsor reading window must be enforced.");
+assert.ok(windowBlock.includes('entitlementWindowAllows(articleId, "wellnessArticleWindowStartsAt", wellnessMember().data)'), "LOCK: wellness/Lingji reading window must be enforced.");
 assert.ok(windowBlock.includes("sponsorExpiresAt > request.time") && windowBlock.includes("wellnessExpiresAt > request.time"), "LOCK: window access must still require an unexpired membership.");
 assert.ok(canReadBlock.includes("memberRecordWindowAllows(sponsorMember().data, articleId)"), "LOCK: sponsor fallback must enforce the reading window.");
 assert.ok(canReadBlock.includes("memberRecordWindowAllows(wellnessMember().data, articleId)"), "LOCK: wellness fallback must enforce the reading window.");

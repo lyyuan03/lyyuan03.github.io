@@ -6,7 +6,8 @@ on:
       - 'tests/firestore/**'
       - 'firebase.expiry-tests.json'
       - 'scripts/normalize-member-expiry.py'
-      - 'scripts/tests/test_normalize_member_expiry.py'
+      - 'scripts/tests/**'
+      - '.github/scripts/rebuild-member-entitlements.py'
       - 'membership-admin.js'
       - 'wellness-member-admin.js'
       - '.github/workflows/test-membership-expiry.yml'
@@ -30,7 +31,7 @@ jobs:
           java-version: '21'
       - run: npm ci --prefix tests/firestore
       - run: npm test --prefix tests/firestore
-      - run: python3 -B -m unittest discover -s scripts/tests -p 'test_normalize_member_expiry.py'
+      - run: python3 -B -m unittest discover -s scripts/tests -p 'test_*.py'
       - run: node scripts/lock-paid-article-access-policy.mjs
       - run: node scripts/audit-production-stability.mjs
       - run: node --check membership-admin.js && node --check wellness-member-admin.js

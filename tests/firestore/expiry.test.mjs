@@ -223,3 +223,15 @@ test('fallback member who started after the policy date without anchor is window
   await seedWindowArticle(Timestamp.fromMillis(startsAt.toMillis() - 40 * DAY));
   await assertFails(getDoc(doc(client(), 'paidArticleBodies/article')));
 });
+
+test('entitlement without reading-window fields falls back to the member record window', async () => {
+  await seed('sponsor', future, 'absent', { startsAt: ago(5), articleWindowStartsAt: ago(10) });
+  await env.withSecurityRulesDisabled(ctx => setDoc(doc(ctx.firestore(), 'memberEntitlements', email), {
+    email, schemaVersion: 1, status: 'active', sponsorArticleAccess: true, sponsorExpiresAt: future,
+    wellnessArticleAccess: false, wellnessExpiresAt: past, computedAt: Timestamp.fromMillis(Date.now() + DAY)
+  }));
+  await seedWindowArticle(ago(45));
+  await assertFails(getDoc(doc(client(), 'paidArticleBodies/article')));
+  await seedWindowArticle(ago(35));
+  await assertSucceeds(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
