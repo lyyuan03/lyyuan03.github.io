@@ -259,13 +259,13 @@
             <h3>方案與付款設定</h3>
             <form id="membership-settings-form" class="membership-form">
               <div class="grid">
-                <div class="field"><label for="price-1">首次優惠價｜一個月</label><input id="price-1" type="number" value="150" readonly></div>
-                <div class="field"><label for="price-3">首次優惠價｜三個月</label><input id="price-3" type="number" value="400" readonly></div>
+                <div class="field"><label for="price-1">首次優惠價｜30 天</label><input id="price-1" type="number" value="150" readonly></div>
+                <div class="field"><label for="price-3">首次優惠價｜90 天</label><input id="price-3" type="number" value="400" readonly></div>
                               </div>
               <div class="field"><label for="ecpay-url">首次購買優惠付款連結</label><input id="ecpay-url" type="url" placeholder="https://p.ecpay.com.tw/..."></div>
               <div class="field"><label for="regular-ecpay-url">原價／續期付款連結</label><input id="regular-ecpay-url" type="url" placeholder="https://p.ecpay.com.tw/..."></div>
               <button class="btn primary" type="submit">儲存方案設定</button>
-              <p class="membership-help">兩個綠界連結內都需可選擇一個月與三個月方案。系統會依 Email 自動判定優惠資格；同一 Email 僅享一次首次優惠，已使用者後續購買或續期一律套用原價。</p>
+              <p class="membership-help">兩個綠界連結內都需可選擇 30 天與 90 天方案。系統會依 Email 自動判定優惠資格；同一 Email 僅享一次首次優惠，已使用者後續購買或續期一律套用原價。</p>
             </form>
           </div>
 
@@ -276,7 +276,7 @@
               <div class="grid">
                 <div class="field"><label for="member-name">會員姓名</label><input id="member-name"></div>
                 <div class="field"><label for="member-email">登入 Gmail</label><input id="member-email" type="email" required></div>
-                <div class="field"><label for="member-months">會員方案</label><select id="member-months"><option value="promo-1">一個月｜首次購買優惠 NT$150</option><option value="promo-3">三個月｜首次購買優惠 NT$400</option><option value="regular-1">一個月｜原價／續期價 NT$180</option><option value="regular-3">三個月｜原價／續期價 NT$500</option></select></div>
+                <div class="field"><label for="member-months">會員方案</label><select id="member-months"><option value="promo-1">30 天｜首次購買優惠 NT$150</option><option value="promo-3">90 天｜首次購買優惠 NT$400</option><option value="regular-1">30 天｜原價／續期價 NT$180</option><option value="regular-3">90 天｜原價／續期價 NT$500</option></select></div>
                 <div class="field"><label for="member-amount">本次實收金額</label><input id="member-amount" type="number" min="0" step="1" required readonly></div>
               </div>
               <div class="field"><label for="member-note">行政備註</label><textarea id="member-note" style="min-height:80px"></textarea></div>
@@ -419,7 +419,7 @@
 <script type="module" src="article-thumbnail-admin.js?v=20260918-photo-3"></script>
 <script type="module" src="article-inline-image-admin.js?v=20260930-exact-upload-1"></script>
 <script type="module" src="article-base64-cleanup-admin.js?v=20260829-base64-auto-save-1"></script>
-<script type="module" src="membership-admin.js?v=20260918-expiry-timestamp-1"></script>
+<script type="module" src="membership-admin.js?v=20260930-plan-days-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20260918-expiry-timestamp-1"></script>
 <script type="module" src="member-video-admin.js?v=20260805-cover-direct-1"></script>
 </body>
