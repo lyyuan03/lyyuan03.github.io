@@ -375,6 +375,132 @@ async function applyLineageLampBuildingRewrite() {
 }
 
 
+
+async function applyBlessingTeacherImageRepair() {
+  const articleId = "blessing-teacher-discernment";
+  const repairVersion = 2;
+  const fixedRitualSrc = "assets/articles/blessing-teacher-discernment/03-online-screenshot-ritual-embedded.svg?v=20260930-repair-1";
+  const bodyRef = db.doc(\`paidArticleBodies/\${articleId}\`);
+  const articleRef = db.doc(\`articles/\${articleId}\`);
+  const settingsRef = db.doc("articles/__article-thumbnail-settings");
+
+  const [bodySnapshot, articleSnapshot, settingsSnapshot] = await Promise.all([
+    bodyRef.get(),
+    articleRef.get(),
+    settingsRef.get()
+  ]);
+  if (!bodySnapshot.exists || !articleSnapshot.exists) {
+    throw new Error("Blessing teacher paid article records missing");
+  }
+
+  const previous = bodySnapshot.data() || {};
+  if (Number(previous.imageRepairVersion || 0) >= repairVersion) {
+    console.log(JSON.stringify({
+      stage: "blessing-teacher-image-repair",
+      status: "already-applied",
+      contentVersion: previous.contentVersion || 0
+    }));
+    return;
+  }
+
+  let content = String(previous.content || "").trim();
+  if (content.length < 5000) throw new Error("Blessing teacher paid body incomplete");
+
+  const beforeContent = content;
+  const legacyRitualPattern = /assets\/articles\/blessing-teacher-discernment\/(?:03-ritual-direct-20260930\.jpg|03-ritual-mosaic-20260930\.jpg|03-online-screenshot-ritual\.jpg|03-online-screenshot-ritual-embedded\.svg)(?:\?[^)\s]*)?/g;
+  content = content.replace(legacyRitualPattern, fixedRitualSrc);
+
+  if (!content.includes(fixedRitualSrc)) {
+    throw new Error("Blessing teacher repaired ritual image is absent from paid body");
+  }
+
+  const contentHash = createHash("sha256").update(content).digest("hex");
+  const previousVersion = Math.max(0, Number(previous.contentVersion || 0));
+  const contentVersion = beforeContent === content && previous.contentHash === contentHash
+    ? Math.max(1, previousVersion)
+    : previousVersion + 1;
+
+  const settingsData = settingsSnapshot.data() || {};
+  const inlineImageSettings = { ...(settingsData.inlineImageSettings || {}) };
+  const currentInline = inlineImageSettings[articleId] || {};
+  const currentImages = Array.isArray(currentInline.images) ? currentInline.images : [];
+  const ritualTest = (src = "") => /03-(?:ritual-direct-20260930|ritual-mosaic-20260930|online-screenshot-ritual(?:-embedded)?)\.(?:jpg|svg)/.test(String(src || ""));
+  const nextImages = currentImages.map((item) => (
+    ritualTest(item?.src)
+      ? { ...item, src: fixedRitualSrc, alt: item?.alt || "泰國祈福儀式影片截圖" }
+      : item
+  ));
+  inlineImageSettings[articleId] = {
+    ...currentInline,
+    images: nextImages
+  };
+
+  const batch = db.batch();
+  batch.set(bodyRef, {
+    content,
+    contentHash,
+    contentVersion,
+    imageRepairVersion: repairVersion,
+    previousContentBackup: previous.content || "",
+    previousContentHashBackup: previous.contentHash || "",
+    previousContentVersionBackup: previousVersion,
+    previousBackupAt: FieldValue.serverTimestamp(),
+    source: "secure-paid-body-update:20260930-image-repair",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(articleRef, {
+    privatePaidContent: true,
+    paidContentHash: contentHash,
+    paidContentVersion: contentVersion,
+    secureBodyCollection: "paidArticleBodies",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(settingsRef, {
+    inlineImageSettings,
+    inlineImageSettingsUpdatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+
+  const [verifyBodySnapshot, verifyArticleSnapshot, verifySettingsSnapshot] = await Promise.all([
+    bodyRef.get(),
+    articleRef.get(),
+    settingsRef.get()
+  ]);
+  const verifyBody = verifyBodySnapshot.data() || {};
+  const verifyArticle = verifyArticleSnapshot.data() || {};
+  const verifyInline = verifySettingsSnapshot.data()?.inlineImageSettings?.[articleId] || {};
+
+  if (
+    verifyBody.content !== content
+    || verifyBody.contentHash !== contentHash
+    || Number(verifyBody.contentVersion || 0) !== contentVersion
+    || Number(verifyBody.imageRepairVersion || 0) !== repairVersion
+  ) {
+    throw new Error("Blessing teacher paid body image repair verification failed");
+  }
+  if (
+    verifyArticle.paidContentHash !== contentHash
+    || Number(verifyArticle.paidContentVersion || 0) !== contentVersion
+  ) {
+    throw new Error("Blessing teacher public metadata image repair verification failed");
+  }
+  if (
+    Array.isArray(verifyInline.images)
+    && verifyInline.images.some((item) => ritualTest(item?.src) && !String(item?.src || "").includes("03-online-screenshot-ritual-embedded.svg"))
+  ) {
+    throw new Error("Blessing teacher inline image settings still contain a broken ritual source");
+  }
+
+  console.log(JSON.stringify({
+    stage: "blessing-teacher-image-repair",
+    status: "published-and-verified",
+    contentVersion,
+    contentHash,
+    ritualSource: fixedRitualSrc,
+    settingsImages: Array.isArray(verifyInline.images) ? verifyInline.images.map((item) => item?.src || "") : []
+  }));
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -416,6 +542,7 @@ async function migrate() {
   });
   await applyBuildingPatronRewrite();
   await applyLineageLampBuildingRewrite();
+  await applyBlessingTeacherImageRepair();
   const managedActivities = await migrateManagedJinmuActivities();
   console.log(JSON.stringify({
     stage: "migration",
