@@ -12,6 +12,7 @@
   <meta property="og:title" content="男力瑜伽・性與能量｜靈元院">
   <meta property="og:description" content="男性專屬一日工作坊：從瑜伽、身體覺察到性與能量，整理身體、慾望與修行之間的關係。">
   <meta property="og:url" content="https://lyyuan.tw/courses/male-yoga-energy.html">
+  <meta property="og:image" content="https://pimg.1px.tw/kinkiosel/1527582808-2700470137.jpg?v=1527582811">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;600&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -52,12 +53,10 @@
     .hero{position:relative;isolation:isolate;min-height:760px;display:flex;align-items:center;overflow:hidden;background:linear-gradient(120deg,#090b09 0%,#141a14 55%,#202219 100%);color:#f6f1e7}
     .hero:before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(circle at 78% 35%,rgba(207,181,129,.12),transparent 28%),radial-gradient(circle at 64% 62%,rgba(91,111,88,.18),transparent 30%)}
     .hero:after{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(7,9,7,.92) 0%,rgba(10,13,10,.72) 43%,rgba(8,10,8,.14) 76%),linear-gradient(0deg,rgba(6,8,6,.66),transparent 38%);pointer-events:none}
-    .hero-art{position:absolute;z-index:1;right:-2%;top:7%;width:min(650px,53vw);height:86%;opacity:.9}
-    .hero-art svg{width:100%;height:100%}
-    .orbit{fill:none;stroke:rgba(209,182,129,.25);stroke-width:1.2}
-    .orbit-bold{fill:none;stroke:rgba(209,182,129,.55);stroke-width:1.4;stroke-dasharray:7 18}
-    .flow{fill:none;stroke:url(#flowGold);stroke-linecap:round;stroke-width:2.1;opacity:.78}
-    .flow-soft{fill:none;stroke:rgba(142,163,133,.35);stroke-width:1.2}
+    .hero-art{position:absolute;z-index:1;right:0;top:0;width:56%;height:100%;margin:0;overflow:hidden;opacity:.88}
+    .hero-art:before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(90deg,#0d100d 0%,rgba(13,16,13,.72) 18%,rgba(13,16,13,.08) 58%),linear-gradient(0deg,rgba(7,9,7,.46),transparent 38%);pointer-events:none}
+    .hero-art img{width:100%;height:100%;object-fit:cover;object-position:center;filter:grayscale(1) sepia(.12) contrast(1.08) brightness(.72)}
+    .hero-art figcaption{position:absolute;z-index:3;right:24px;bottom:22px;padding:7px 10px;background:rgba(7,9,7,.58);border:1px solid rgba(209,182,129,.24);color:rgba(246,241,231,.62);font-size:10px;letter-spacing:.12em;backdrop-filter:blur(8px)}
     .hero-inner{position:relative;z-index:4;padding:132px 0 88px}
     .breadcrumb{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;color:rgba(246,241,231,.5);font-size:12px;letter-spacing:.08em}
     .breadcrumb a{color:var(--gold-light);border-bottom:1px solid rgba(209,182,129,.26)}
@@ -87,6 +86,17 @@
     .opening-quote{padding:34px 36px;border-left:2px solid var(--gold);background:#fff;box-shadow:0 18px 50px rgba(52,48,39,.08);font-family:var(--serif);font-size:clamp(22px,2.6vw,31px);line-height:1.75}
     .opening-copy p{margin:0 0 18px;color:#545a53;font-size:16.5px;line-height:2}
     .opening-copy p:last-child{margin-bottom:0}
+    .photo-story{padding:0;background:var(--paper)}
+    .photo-story-grid{display:grid;grid-template-columns:1.12fr .88fr;min-height:590px}
+    .photo-frame{position:relative;overflow:hidden;background:#111}
+    .photo-frame img{width:100%;height:100%;object-fit:cover;filter:grayscale(.92) contrast(1.05)}
+    .photo-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 58%,rgba(14,16,13,.2)),linear-gradient(0deg,rgba(7,9,7,.2),transparent 35%)}
+    .photo-caption{position:absolute;z-index:2;left:24px;bottom:22px;padding:7px 10px;background:rgba(7,9,7,.64);color:rgba(255,255,255,.72);font-size:10px;letter-spacing:.1em}
+    .photo-copy{display:flex;flex-direction:column;justify-content:center;padding:64px clamp(36px,5vw,78px);background:#171b16;color:#f4efe5}
+    .photo-copy .section-label{color:var(--gold-light)}
+    .photo-copy h2{margin:12px 0 18px;font-family:var(--serif);font-size:clamp(34px,4.3vw,54px);font-weight:500;line-height:1.4}
+    .photo-copy p{margin:0 0 17px;color:rgba(244,239,229,.7);font-size:15.5px;line-height:1.95}
+    .photo-copy strong{display:block;margin-top:8px;color:var(--gold-light);font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.65}
     .focus{background:var(--paper)}
     .focus-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:42px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
     .focus-card{min-height:240px;padding:27px 26px;border-right:1px solid var(--line)}
@@ -113,6 +123,17 @@
     .fit-item b{color:var(--gold);font-family:var(--en);font-size:18px;font-weight:500}
     .fit-item strong{display:block;font-family:var(--serif);font-size:20px;font-weight:600}
     .fit-item p{margin:4px 0 0;color:#66685f;font-size:14.5px;line-height:1.75}
+    .testimonials{background:#20231c;color:#f5f0e7}
+    .testimonials .section-label{color:var(--gold-light)}
+    .testimonials .section-intro{color:rgba(245,240,231,.65)}
+    .testimonial-photo{position:relative;height:430px;margin-top:38px;overflow:hidden;background:#111}
+    .testimonial-photo img{width:100%;height:100%;object-fit:cover;object-position:center 58%;filter:grayscale(.78) contrast(1.04)}
+    .testimonial-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,13,10,.76),transparent 62%)}
+    .testimonial-photo span{position:absolute;z-index:2;left:24px;bottom:20px;color:rgba(255,255,255,.68);font-size:11px;letter-spacing:.1em}
+    .testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+    .testimonial-card{padding:27px 25px;border:1px solid rgba(209,182,129,.16);background:rgba(255,255,255,.03)}
+    .testimonial-card b{display:block;color:var(--gold-light);font-family:var(--en);font-size:14px;font-weight:500;letter-spacing:.14em}
+    .testimonial-card p{margin:12px 0 0;color:rgba(245,240,231,.74);font-family:var(--serif);font-size:17px;line-height:1.85}
     .boundary{background:var(--cream)}
     .boundary-panel{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;padding:44px 46px;background:#141813;color:#f3eee5;border-left:3px solid var(--gold)}
     .boundary-panel h3{margin:8px 0 0;font-family:var(--serif);font-size:34px;font-weight:500;line-height:1.5}
@@ -142,8 +163,11 @@
     .footer-links{display:flex;gap:20px;flex-wrap:wrap;font-size:12px;letter-spacing:.06em}
     .footer-links a:hover{color:var(--gold-light)}
     @media(max-width:900px){
-      .hero-art{right:-18%;width:70vw;opacity:.7}
+      .hero-art{right:-7%;width:68%;opacity:.68}
       .opening-grid,.fit-grid,.boundary-panel{grid-template-columns:1fr;gap:34px}
+      .photo-story-grid{grid-template-columns:1fr}
+      .photo-frame{min-height:460px}
+      .testimonial-grid{grid-template-columns:1fr}
       .focus-grid{grid-template-columns:1fr 1fr}
       .focus-card:nth-child(2){border-right:0}
       .focus-card:nth-child(-n+2){border-bottom:1px solid var(--line)}
@@ -152,7 +176,8 @@
       .container,.narrow{width:calc(100% - 30px)}
       .hero{min-height:720px}
       .hero-inner{padding:110px 0 72px}
-      .hero-art{right:-52%;top:10%;width:118vw;opacity:.44}
+      .hero-art{right:-58%;top:0;width:125%;height:100%;opacity:.42}
+      .hero-art figcaption{right:14px;bottom:14px}
       .hero h1{font-size:48px}
       .hero-text{font-size:15.5px}
       .hero-facts{grid-template-columns:1fr}
@@ -164,6 +189,9 @@
       .course-subnav-cta{display:none}
       .section{padding:64px 0}
       .focus-grid,.level-grid,.history-grid{grid-template-columns:1fr}
+      .photo-frame{min-height:330px}
+      .photo-copy{padding:46px 24px}
+      .testimonial-photo{height:320px}
       .focus-card{min-height:auto;border-right:0;border-bottom:1px solid var(--line)!important}
       .level-card{padding:29px 24px}
       .boundary-panel{padding:30px 24px}
@@ -234,24 +262,10 @@
 </nav>
 
 <header class="hero" id="top">
-  <div class="hero-art" aria-hidden="true">
-    <svg viewBox="0 0 680 760" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <linearGradient id="flowGold" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0" stop-color="#74826f"/>
-          <stop offset=".52" stop-color="#d1b681"/>
-          <stop offset="1" stop-color="#f0dfb7"/>
-        </linearGradient>
-      </defs>
-      <circle class="orbit" cx="390" cy="350" r="246"/>
-      <circle class="orbit-bold" cx="390" cy="350" r="188"/>
-      <path class="flow-soft" d="M385 80c-74 95-107 185-94 271 14 94 75 151 84 242 5 53-7 103-32 151"/>
-      <path class="flow" d="M438 52c-112 128-145 236-103 326 31 68 104 116 104 205 0 56-18 107-54 151"/>
-      <path class="flow" d="M312 145c76 50 133 118 168 203 32 78 37 163 14 254"/>
-      <path class="flow-soft" d="M219 238c95 12 171 53 227 123 61 76 90 165 86 268"/>
-      <path class="orbit-bold" d="M166 495c78-75 172-107 281-96 80 8 149 39 207 94"/>
-    </svg>
-  </div>
+  <figure class="hero-art">
+    <img src="https://pimg.1px.tw/kinkiosel/1527582808-2700470137.jpg?v=1527582811" alt="宇色男力瑜伽原始課程實景，多位男性學員在瑜伽教室練習" fetchpriority="high" referrerpolicy="no-referrer">
+    <figcaption>宇色瑜伽・原始課程實景</figcaption>
+  </figure>
   <div class="container hero-inner">
     <div class="hero-copy">
       <div class="breadcrumb" aria-label="麵包屑"><a href="/">首頁</a><span>／</span><a href="/courses/">課程</a><span>／</span><span aria-current="page">男力瑜伽・性與能量</span></div>
@@ -276,9 +290,11 @@
   <div class="container course-subnav-inner">
     <div class="course-subnav-links">
       <a href="#about">課程定位</a>
+      <a href="#practice">課堂實景</a>
       <a href="#course">學習主軸</a>
       <a href="#levels">初階／中階</a>
       <a href="#fit">適合對象</a>
+      <a href="#voices">學員分享</a>
       <a href="#boundary">課程界線</a>
       <a href="#history">歷年資料</a>
     </div>
@@ -297,6 +313,22 @@
         <div class="opening-quote">身體會誠實反映緊張、壓抑、慾望與習慣。當這些經驗只剩下「控制」或「放縱」兩種選擇，人很容易失去對自己的理解。</div>
         <p>「男力瑜伽・性與能量」原本就是「男力性與塑型瑜伽」中的深度課程，專為男性設計，核心放在性與體位法之間的關聯。新版課程頁把焦點重新整理：讓身體經驗、性議題與修行可以放在同一個脈絡裡討論。</p>
         <p>課程的目的不是替任何人定義「正常」或「應該」，而是透過練習與討論，看見自己的反應、界線與慣性。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="photo-story" id="practice" aria-label="原始男力瑜伽課程實景">
+    <div class="photo-story-grid">
+      <figure class="photo-frame">
+        <img src="https://pimg.1px.tw/kinkiosel/1527583780-3589111223.jpg?v=1527583782" alt="宇色男力瑜伽課程中，多位男性學員練習體位法" loading="lazy" referrerpolicy="no-referrer">
+        <figcaption class="photo-caption">原始課程實景｜男力瑜伽體位法練習</figcaption>
+      </figure>
+      <div class="photo-copy">
+        <span class="section-label">Body · Energy · Practice</span>
+        <h2>男人．瑜伽．性本能</h2>
+        <p>原始課程把「性」放回男性整體生命經驗裡理解。男性在工作、家庭與競爭環境中累積的壓力，常會直接反映在身體、情緒與性上。</p>
+        <p>課程以古印度瑜伽體位法、身體覺察與能量觀念為基礎，討論下三輪、性能量與生命力之間的關係，也把男性私密保健與日常調理納入。</p>
+        <strong>這堂課從身體開始，因為很多問題早已寫在身體裡。</strong>
       </div>
     </div>
   </section>
@@ -359,6 +391,23 @@
         <div class="fit-item"><b>02</b><div><strong>對性與修行的關係有疑問</strong><p>希望有一個可以正面談論慾望、性反應與修行的空間，而不是用羞恥或神祕化處理。</p></div></div>
         <div class="fit-item"><b>03</b><div><strong>已有瑜伽或其他修練經驗</strong><p>想把過去較分散的身體經驗，重新放進一套可以理解與辨識的脈絡。</p></div></div>
         <div class="fit-item"><b>04</b><div><strong>能尊重不同性向與身體界線</strong><p>課程不以性向做私人審查；團體中的差異，需要用成熟、尊重與清楚界線來面對。</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section testimonials" id="voices">
+    <div class="container">
+      <span class="section-label">Student Voices</span>
+      <h2>學員實際上完課，帶走的是什麼？</h2>
+      <p class="section-intro">以下依原始課程頁留下的學員回饋整理，保留他們最直接的學習感受。</p>
+      <figure class="testimonial-photo">
+        <img src="https://pimg.1px.tw/kinkiosel/1527583912-560556329.jpg?v=1527583917" alt="宇色男力瑜伽課程中男性學員俯臥休息與身體覺察" loading="lazy" referrerpolicy="no-referrer">
+        <span>宇色瑜伽・原始課堂紀錄</span>
+      </figure>
+      <div class="testimonial-grid">
+        <article class="testimonial-card"><b>01 · PRACTICE</b><p>有學員提到，過去多半靠資料自己摸索；實際上課後，才有機會修正體位、穴位與練習方法，知道自己原本做對了什麼、又忽略了什麼。</p></article>
+        <article class="testimonial-card"><b>02 · UNDERSTANDING</b><p>也有學員原本對「下三輪、體位法」很陌生，真正吸引他的是男性私密養生與實作，希望學到可以帶回生活持續練習的方法。</p></article>
+        <article class="testimonial-card"><b>03 · EXPERIENCE</b><p>另一位學員形容，一天下來最大的收穫，是把網路上零散甚至互相矛盾的資訊重新整理，對自己的身體與練習方向變得比較清楚。</p></article>
       </div>
     </div>
   </section>
