@@ -380,8 +380,8 @@ async function applyBlessingTeacherImageRepair() {
   const articleId = "blessing-teacher-discernment";
   const repairVersion = 2;
   const fixedRitualSrc = "assets/articles/blessing-teacher-discernment/03-online-screenshot-ritual-embedded.svg?v=20260930-repair-1";
-  const bodyRef = db.doc(\`paidArticleBodies/\${articleId}\`);
-  const articleRef = db.doc(\`articles/\${articleId}\`);
+  const bodyRef = db.doc(`paidArticleBodies/${articleId}`);
+  const articleRef = db.doc(`articles/${articleId}`);
   const settingsRef = db.doc("articles/__article-thumbnail-settings");
 
   const [bodySnapshot, articleSnapshot, settingsSnapshot] = await Promise.all([
