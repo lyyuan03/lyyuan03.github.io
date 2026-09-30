@@ -36,6 +36,7 @@
 <rect width="1600" height="900" fill="url(#warm)"/>
 <rect width="1600" height="900" fill="url(#shade)"/>
 <rect width="1600" height="900" fill="url(#bottom)"/>
+<rect x="0" y="0" width="1020" height="900" fill="#020504" fill-opacity=".24"/>
 
 <!-- subtle poster texture -->
 <g opacity=".10">
@@ -43,26 +44,7 @@
   <path d="M0 130H1600M0 450H1600M0 770H1600" stroke="#fff" stroke-opacity=".05"/>
 </g>
 
-<!-- editorial marker -->
-<rect x="112" y="116" width="8" height="172" rx="4" fill="#c9a05a"/>
-<text x="148" y="142" fill="#d9c5a0" font-size="26" font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif" letter-spacing="5">靈元院文選｜靈修辨證</text>
-
-<!-- title -->
-<text x="146" y="248" fill="#f5f1e8" font-family="'Noto Serif TC','PingFang TC','Microsoft JhengHei',serif" font-size="68" font-weight="700">
-  <tspan x="146" dy="0">怎麼判斷一位老師，</tspan>
-  <tspan x="146" dy="92" fill="#d6b270">真的有祈福與加持</tspan>
-  <tspan x="146" dy="92">的能力？</tspan>
-</text>
-
-<text x="150" y="575" fill="#d9d4c8" font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif" font-size="28" letter-spacing="2">
-  名氣、儀式、神通之外，你還能看什麼？
-</text>
-
-<!-- bottom badge -->
-<g transform="translate(148 682)">
-  <rect width="232" height="52" rx="26" fill="#0b0e0c" fill-opacity=".78" stroke="#b89457" stroke-opacity=".72"/>
-  <text x="116" y="34" text-anchor="middle" fill="#e7d5b3" font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif" font-size="21" letter-spacing="3">祈福與加持</text>
-</g>
+<!-- homepage thumbnail intentionally text-free: title/category are rendered by article-thumbnail-display-v2.js -->
 
 <!-- cinematic edge vignette -->
 <rect x="14" y="14" width="1572" height="872" rx="12" fill="none" stroke="#cab17b" stroke-opacity=".16" stroke-width="2"/>
