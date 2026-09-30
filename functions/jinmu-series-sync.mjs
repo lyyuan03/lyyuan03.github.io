@@ -375,6 +375,202 @@ async function applyLineageLampBuildingRewrite() {
 }
 
 
+
+async function applyBlessingTeacherDirectImagePlacement() {
+  const articleId = "blessing-teacher-discernment";
+  const placementVersion = 1;
+  const ritualSrc = "assets/articles/blessing-teacher-discernment/03-ritual-direct-20260930.jpg?v=20260930-direct-1";
+  const ritualAlt = "泰國祈福儀式影片截圖";
+  const ritualBlock = `![${ritualAlt}](${ritualSrc})`;
+  const anchor = "他的專注，就是加持的源頭。";
+
+  const bodyRef = db.doc(`paidArticleBodies/${articleId}`);
+  const articleRef = db.doc(`articles/${articleId}`);
+  const settingsRef = db.doc("articles/__article-thumbnail-settings");
+  const [bodySnapshot, articleSnapshot, settingsSnapshot] = await Promise.all([
+    bodyRef.get(), articleRef.get(), settingsRef.get()
+  ]);
+  if (!bodySnapshot.exists || !articleSnapshot.exists) throw new Error("Blessing teacher paid article records missing");
+
+  const previous = bodySnapshot.data() || {};
+  if (Number(previous.directScreenshotPlacementVersion || 0) >= placementVersion) {
+    console.log(JSON.stringify({
+      stage: "blessing-teacher-direct-images",
+      status: "already-applied",
+      contentVersion: previous.contentVersion || 0
+    }));
+    return;
+  }
+
+  let content = String(previous.content || "").trim();
+  if (content.length < 5000) throw new Error("Blessing teacher paid body incomplete");
+  if (!content.includes(anchor)) throw new Error("Blessing teacher ritual placement anchor missing");
+
+  const removableNames = [
+    "03-online-screenshot-ritual.jpg",
+    "03-online-screenshot-ritual-embedded.svg",
+    "03-ritual-mosaic-20260930.jpg",
+    "03-ritual-direct-20260930.jpg",
+    "04-online-screenshot-people.jpg",
+    "05-online-screenshot-police.jpg",
+    "02-news-police-direct-20260930.jpg",
+    "04-monk-woman-direct-20260930.jpg"
+  ];
+
+  const lines = content.split("\n");
+  const cleaned = [];
+  let suppressCaption = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const isRemovableImage = /^!\[[^\]]*\]\([^)]+\)$/.test(trimmed)
+      && removableNames.some((name) => trimmed.includes(name));
+    if (isRemovableImage) {
+      suppressCaption = true;
+      continue;
+    }
+    if (suppressCaption && !trimmed) continue;
+    if (suppressCaption && /^\*(?:圖片來源|圖片備註)：[^\n]*\*$/.test(trimmed)) {
+      suppressCaption = false;
+      continue;
+    }
+    suppressCaption = false;
+    cleaned.push(line);
+  }
+  content = cleaned.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+
+  const anchorIndex = content.indexOf(anchor);
+  if (anchorIndex < 0) throw new Error("Blessing teacher ritual anchor vanished after cleanup");
+  const insertAt = anchorIndex + anchor.length;
+  content = `${content.slice(0, insertAt)}
+
+${ritualBlock}
+
+${content.slice(insertAt).replace(/^\s*/, "")}`.replace(/\n{3,}/g, "\n\n").trim();
+
+  const parsedImages = [...content.matchAll(/!\[([^\]]*)\]\(([^)\s]+)\)/g)]
+    .map((match) => ({ alt: match[1] || "", src: match[2] || "" }));
+
+  if (!parsedImages.some((image) => image.src.includes("02-three-ways-infographic.svg"))) {
+    throw new Error("Blessing teacher three-ways infographic missing");
+  }
+  if (parsedImages.filter((image) => image.src.includes("03-ritual-direct-20260930.jpg")).length !== 1) {
+    throw new Error("Blessing teacher direct ritual image count must be exactly one");
+  }
+  if (parsedImages.some((image) => removableNames.slice(0, 3).some((name) => image.src.includes(name)))) {
+    throw new Error("Legacy ritual image remains in paid body");
+  }
+  if (parsedImages.some((image) => image.src.includes("04-online-screenshot-people.jpg") || image.src.includes("05-online-screenshot-police.jpg"))) {
+    throw new Error("Legacy event screenshots remain in paid body");
+  }
+
+  const contentHash = createHash("sha256").update(content).digest("hex");
+  const previousVersion = Math.max(0, Number(previous.contentVersion || 0));
+  const contentVersion = previous.content === content && previous.contentHash === contentHash
+    ? Math.max(1, previousVersion)
+    : previousVersion + 1;
+
+  const settingsData = settingsSnapshot.data() || {};
+  const inlineImageSettings = { ...(settingsData.inlineImageSettings || {}) };
+  const currentInline = inlineImageSettings[articleId] || {};
+  const oldImages = Array.isArray(currentInline.images) ? currentInline.images : [];
+  const oldRitual = oldImages.find((item) => {
+    const src = String(item?.src || "");
+    return src.includes("03-online-screenshot-ritual")
+      || src.includes("03-ritual-mosaic-20260930")
+      || src.includes("03-ritual-direct-20260930");
+  }) || {};
+
+  const clampSetting = (value, fallback, min, max) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
+  };
+
+  const nextImages = parsedImages.slice(0, 6).map((image, index) => {
+    const bySameSrc = oldImages.find((item) => String(item?.src || "") === image.src);
+    const prior = image.src.includes("03-ritual-direct-20260930.jpg")
+      ? oldRitual
+      : (bySameSrc || oldImages[index] || {});
+    return {
+      ...prior,
+      src: image.src,
+      alt: image.alt,
+      positionX: clampSetting(prior.positionX, 50, 0, 100),
+      positionY: clampSetting(prior.positionY, 50, 0, 100),
+      scale: clampSetting(prior.scale, 100, 100, 250)
+    };
+  });
+
+  inlineImageSettings[articleId] = {
+    ...currentInline,
+    version: Number(currentInline.version || 1),
+    ratio: "16:9",
+    fit: "cover",
+    maxImages: Number(currentInline.maxImages || 6),
+    images: nextImages
+  };
+
+  const batch = db.batch();
+  batch.set(bodyRef, {
+    content,
+    contentHash,
+    contentVersion,
+    directScreenshotPlacementVersion: placementVersion,
+    previousContentBackup: previous.content || "",
+    previousContentHashBackup: previous.contentHash || "",
+    previousContentVersionBackup: previousVersion,
+    previousBackupAt: FieldValue.serverTimestamp(),
+    source: "secure-paid-body-update:20260930-direct-screenshots",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(articleRef, {
+    privatePaidContent: true,
+    paidContentHash: contentHash,
+    paidContentVersion: contentVersion,
+    secureBodyCollection: "paidArticleBodies",
+    source: "firestore-admin-authoritative",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(settingsRef, {
+    inlineImageSettings,
+    inlineImageSettingsUpdatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+
+  const [verifyBodySnapshot, verifyArticleSnapshot, verifySettingsSnapshot] = await Promise.all([
+    bodyRef.get(), articleRef.get(), settingsRef.get()
+  ]);
+  const verifyBody = verifyBodySnapshot.data() || {};
+  const verifyArticle = verifyArticleSnapshot.data() || {};
+  const verifyInline = verifySettingsSnapshot.data()?.inlineImageSettings?.[articleId];
+
+  if (
+    verifyBody.content !== content
+    || verifyBody.contentHash !== contentHash
+    || Number(verifyBody.contentVersion || 0) !== contentVersion
+    || Number(verifyBody.directScreenshotPlacementVersion || 0) !== placementVersion
+  ) {
+    throw new Error("Blessing teacher direct image paid body verification failed");
+  }
+  if (
+    verifyArticle.paidContentHash !== contentHash
+    || Number(verifyArticle.paidContentVersion || 0) !== contentVersion
+  ) {
+    throw new Error("Blessing teacher direct image public metadata verification failed");
+  }
+  if (!Array.isArray(verifyInline?.images) || !verifyInline.images.some((item) => String(item?.src || "").includes("03-ritual-direct-20260930.jpg"))) {
+    throw new Error("Blessing teacher direct ritual image setting verification failed");
+  }
+
+  console.log(JSON.stringify({
+    stage: "blessing-teacher-direct-images",
+    status: "published-and-verified",
+    contentHash,
+    contentVersion,
+    paidInlineImages: parsedImages.map((image) => image.src),
+    ritualAnchor: anchor
+  }));
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -416,6 +612,7 @@ async function migrate() {
   });
   await applyBuildingPatronRewrite();
   await applyLineageLampBuildingRewrite();
+  await applyBlessingTeacherDirectImagePlacement();
   const managedActivities = await migrateManagedJinmuActivities();
   console.log(JSON.stringify({
     stage: "migration",
