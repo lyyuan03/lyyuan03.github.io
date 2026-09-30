@@ -9,7 +9,7 @@ const SCALE_MAX = 250;
 const DEFAULTS = { positionX: 50, positionY: 50, scale: 100 };
 const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
 const BLESSING_TEACHER_ARTICLE_ID = "blessing-teacher-discernment";
-const BLESSING_TEACHER_RITUAL_IMAGE = "assets/articles/blessing-teacher-discernment/03-online-screenshot-ritual-embedded.svg?v=20260930-repair-1";
+const BLESSING_TEACHER_RITUAL_IMAGE = "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/716d67fb-9d34-463b-a768-77baa030d8f2.jpg";
 const SPIRITUAL_GOOD_DEATH_IMAGE_PATHS = new Map([
   ["01-last-call.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
   ["02-greater-self.svg", "assets/articles/spiritual-good-death/02-greater-self-final.png?v=20260903-final"],
