@@ -201,9 +201,12 @@ service cloud.firestore {
         && get(articlePath).data.publishedAt >= windowStart;
     }
 
-    function entitlementWindowAllows(articleId, windowField) {
-      return !memberEntitlement().data.keys().hasAny(["articleWindowPolicy"])
-        || (memberEntitlement().data.keys().hasAny([windowField])
+    // entitlement 尚未寫入閱讀範圍時（舊版後端剛建立），改以會員來源資料判斷閱讀範圍。
+    function entitlementWindowAllows(articleId, windowField, sourceRecord) {
+      return (!memberEntitlement().data.keys().hasAny(["articleWindowPolicy"])
+          && memberRecordWindowAllows(sourceRecord, articleId))
+        || (memberEntitlement().data.keys().hasAny(["articleWindowPolicy"])
+          && memberEntitlement().data.keys().hasAny([windowField])
           && memberEntitlement().data[windowField] is timestamp
           && (memberEntitlement().data[windowField].toMillis() == 0
             || paidArticlePublishedOnOrAfter(articleId, memberEntitlement().data[windowField])));
@@ -217,14 +220,14 @@ service cloud.firestore {
             && memberEntitlement().data.sponsorArticleAccess == true
             && memberEntitlement().data.sponsorExpiresAt is timestamp
             && memberEntitlement().data.sponsorExpiresAt > request.time
-            && entitlementWindowAllows(articleId, "sponsorArticleWindowStartsAt")
+            && entitlementWindowAllows(articleId, "sponsorArticleWindowStartsAt", sponsorMember().data)
           )
           || (
             memberEntitlement().data.keys().hasAny(["wellnessArticleAccess", "wellnessExpiresAt"])
             && memberEntitlement().data.wellnessArticleAccess == true
             && memberEntitlement().data.wellnessExpiresAt is timestamp
             && memberEntitlement().data.wellnessExpiresAt > request.time
-            && entitlementWindowAllows(articleId, "wellnessArticleWindowStartsAt")
+            && entitlementWindowAllows(articleId, "wellnessArticleWindowStartsAt", wellnessMember().data)
           )
         );
     }

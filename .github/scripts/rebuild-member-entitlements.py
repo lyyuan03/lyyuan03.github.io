@@ -157,6 +157,45 @@ def article_window_start(record: dict) -> dt.datetime:
     return anchor - ARTICLE_WINDOW_LOOKBACK if anchor is not None else UNRESTRICTED_WINDOW_START
 
 
+def window_anchor_updates(record: dict, active: bool) -> dict:
+    """維護會員來源資料上的閱讀範圍起算日（不依賴 Cloud Functions 版本）。
+
+    - 規則生效後開通、尚未記錄起算日：以 startsAt 作為起算日。
+    - 有效期間內續約（新的 startsAt 早於上次記錄的到期日）：沿用原起算日。
+    - 中斷後重新加入（新的 startsAt 晚於或等於上次記錄的到期日）：以新的 startsAt 重新起算。
+    - 規則生效前已在期間內的舊會員：不寫入起算日，本期維持不受限制。
+    """
+    if not active:
+        return {}
+    starts_at = parse_datetime(record.get("startsAt"))
+    expires_at = parse_datetime(record.get("expiresAt"))
+    anchor = parse_datetime(record.get("articleWindowStartsAt"))
+    seen_expires = parse_datetime(record.get("articleWindowSeenExpiresAt"))
+
+    new_anchor = anchor
+    if anchor is None:
+        if starts_at is not None and starts_at >= ARTICLE_WINDOW_EFFECTIVE_AT:
+            new_anchor = starts_at
+    elif starts_at is not None and seen_expires is not None and starts_at >= seen_expires:
+        new_anchor = starts_at
+
+    updates: dict = {}
+    if new_anchor is not None and new_anchor != anchor:
+        updates["articleWindowStartsAt"] = new_anchor
+    if new_anchor is not None and expires_at is not None and expires_at != seen_expires:
+        updates["articleWindowSeenExpiresAt"] = expires_at
+    return updates
+
+
+def patch_source_window(collection: str, email: str, updates: dict) -> None:
+    if not updates:
+        return
+    doc_id = urllib.parse.quote(email, safe="")
+    fields = {name: timestamp_value(value) for name, value in updates.items()}
+    query = urllib.parse.urlencode([("updateMask.fieldPaths", name) for name in sorted(fields)])
+    request_json("PATCH", f"{BASE_URL}/{collection}/{doc_id}?{query}", {"fields": fields})
+
+
 def sponsor_state(record: dict, email: str, now: dt.datetime) -> dict:
     window, expires_at = active_window(record, now)
     record_email = normalized_email(record.get("email") or email)
@@ -263,6 +302,7 @@ def main() -> int:
 
     updated = 0
     deleted = 0
+    anchors_updated = 0
     for email in emails:
         has_sponsor = email in sponsor_docs
         has_wellness = email in wellness_docs
@@ -274,11 +314,24 @@ def main() -> int:
 
         sponsor = sponsor_docs.get(email, {}).get("fields", {})
         wellness = wellness_docs.get(email, {}).get("fields", {})
+
+        now = dt.datetime.now(dt.timezone.utc)
+        sponsor_anchor = window_anchor_updates(sponsor, has_sponsor and sponsor_state(sponsor, email, now)["article"])
+        if sponsor_anchor:
+            patch_source_window("sponsorMemberAccess", email, sponsor_anchor)
+            sponsor = {**sponsor, **{key: timestamp_value(value)["timestampValue"] for key, value in sponsor_anchor.items()}}
+            anchors_updated += 1
+        wellness_anchor = window_anchor_updates(wellness, has_wellness and wellness_state(wellness, email, now)["video"])
+        if wellness_anchor:
+            patch_source_window("memberAccess", email, wellness_anchor)
+            wellness = {**wellness, **{key: timestamp_value(value)["timestampValue"] for key, value in wellness_anchor.items()}}
+            anchors_updated += 1
+
         fields = entitlement_fields(email, sponsor, wellness, has_sponsor, has_wellness)
         patch_entitlement(email, fields)
         updated += 1
 
-    print(f"Member entitlement rebuild complete: {updated} updated, {deleted} deleted.")
+    print(f"Member entitlement rebuild complete: {updated} updated, {deleted} deleted, {anchors_updated} reading-window anchors updated.")
     return 0
 
 

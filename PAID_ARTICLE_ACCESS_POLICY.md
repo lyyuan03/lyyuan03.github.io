@@ -25,6 +25,8 @@
 
 - 會員來源資料 `sponsorMemberAccess/{email}`、`memberAccess/{email}`：`articleWindowStartsAt` 為本期連續會員的起算日（付款或後台開通時寫入）。沒有此欄位時，`startsAt` 晚於生效日即以 `startsAt` 起算，否則視為生效前的舊會員。
 - `memberEntitlements/{email}`：`sponsorArticleWindowStartsAt`、`wellnessArticleWindowStartsAt` 為可閱讀的最早發表時間（起算日減 30 天；`1970-01-01` 代表舊會員本期不受限制），並以 `articleWindowPolicy = "join-minus-30d-v1"` 標示。
+- 排程重建（`.github/scripts/rebuild-member-entitlements.py`，在 GitHub Actions 執行，不依賴 Cloud Functions 版本）會把起算日寫回會員來源資料的 `articleWindowStartsAt`，並以 `articleWindowSeenExpiresAt` 記錄上次看到的到期日：新的 `startsAt` 早於該到期日視為連續續約、沿用起算日；晚於或等於則視為中斷後重新加入、重新起算。
+- `memberEntitlements` 尚未寫入閱讀範圍時（舊版後端剛建立），Firestore 規則改以會員來源資料的起算日判斷。
 - 同一規則實作於 `functions/article-window.js`、`functions/member-entitlements-sync.js`、`.github/scripts/rebuild-member-entitlements.py`、`member-access-resolver.js` 與 `firestore.rules`，任何一處修改都必須同步其他各處。
 
 
