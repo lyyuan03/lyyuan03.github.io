@@ -58,7 +58,6 @@
     .hero-art{position:absolute;z-index:1;right:0;top:0;width:58%;height:100%;margin:0;overflow:hidden}
     .hero-art:before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(90deg,#4b433c 0%,rgba(75,67,60,.65) 16%,rgba(75,67,60,.04) 56%),linear-gradient(0deg,rgba(44,40,35,.3),transparent 35%);pointer-events:none}
     .hero-art img{width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.72) sepia(.1) contrast(1.04) brightness(.82)}
-    .hero-art figcaption{position:absolute;z-index:3;right:28px;bottom:22px;padding:7px 12px;border-radius:999px;background:rgba(57,51,45,.56);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);font-size:10px;letter-spacing:.1em;backdrop-filter:blur(8px)}
     .hero-inner{position:relative;z-index:4;padding:126px 0 82px}
     .breadcrumb{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;color:rgba(255,255,255,.54);font-size:12px;letter-spacing:.08em}
     .breadcrumb a{color:#ead5b4;border-bottom:1px solid rgba(234,213,180,.34)}
@@ -94,7 +93,6 @@
     .photo-frame{position:relative;overflow:hidden;background:#302b27;margin:0}
     .photo-frame img{width:100%;height:100%;object-fit:cover;filter:saturate(.78) sepia(.07) contrast(1.03)}
     .photo-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(53,47,42,.32),transparent 42%)}
-    .photo-caption{position:absolute;z-index:2;left:22px;bottom:20px;padding:7px 11px;border-radius:999px;background:rgba(50,45,40,.58);color:rgba(255,255,255,.78);font-size:10px;letter-spacing:.09em}
     .photo-copy{display:flex;flex-direction:column;justify-content:center;padding:58px clamp(34px,5vw,70px);background:linear-gradient(145deg,#5d554d,#514b45);color:#fff}
     .photo-copy .section-label{color:#e8c997}
     .photo-copy h2{margin:11px 0 17px;font-family:var(--serif);font-size:clamp(34px,4.1vw,50px);font-weight:500;line-height:1.42}
@@ -167,13 +165,16 @@
     .testimonials:before{content:"";position:absolute;left:-180px;top:-220px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(96,99,48,.08),transparent 68%);pointer-events:none}
     .testimonials .container{position:relative;z-index:1}
     .testimonial-grid{display:grid;grid-template-columns:1fr;gap:22px;margin-top:34px}
-    .testimonial-card{position:relative;overflow:hidden;padding:38px 42px 40px;border-radius:30px;border:1px solid rgba(89,79,71,.13);box-shadow:0 16px 42px rgba(77,67,57,.055)}
+    .testimonial-card{position:relative;overflow:hidden;display:grid;grid-template-columns:150px minmax(0,1fr);gap:30px;align-items:start;padding:34px 38px;border-radius:30px;border:1px solid rgba(89,79,71,.13);box-shadow:0 16px 42px rgba(77,67,57,.055)}
     .testimonial-card:nth-child(1){background:#fbfaf7}
     .testimonial-card:nth-child(2){background:#f4eee5}
     .testimonial-card:nth-child(3){background:#eef0e4}
     .testimonial-card:nth-child(4){background:#f3eadc}
     .testimonial-card:before{content:"";position:absolute;left:0;top:0;width:5px;height:100%;background:linear-gradient(180deg,var(--ci-olive),var(--ci-tan))}
-    .testimonial-card b{display:block;margin-bottom:22px;color:var(--ci-olive);font-family:var(--en);font-size:15px;font-weight:600;letter-spacing:.2em}
+    .testimonial-person{margin:0;width:150px;aspect-ratio:4/5;overflow:hidden;border-radius:20px;background:#2d2d2b;box-shadow:0 10px 28px rgba(49,44,39,.12)}
+    .testimonial-person img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.04) brightness(.92)}
+    .testimonial-body{min-width:0;padding-top:4px}
+    .testimonial-index{display:block;margin-bottom:16px;color:var(--ci-olive);font-size:12px;font-weight:600;letter-spacing:.16em}
     .testimonial-card p{margin:0;color:#625d56;font-family:var(--serif);font-size:18px;line-height:2.02;letter-spacing:.01em}
     .testimonial-note{margin:20px 4px 0;color:#837c72;font-size:12.5px;line-height:1.8}
     .boundary{background:var(--paper-2)}
@@ -215,13 +216,14 @@
       .level-grid{grid-template-columns:1fr}
       .instructor-photo{width:min(520px,100%);margin-inline:auto}
       .instructor-photo img{height:auto;aspect-ratio:2/3}
+      .testimonial-card{grid-template-columns:120px minmax(0,1fr);gap:24px}
+      .testimonial-person{width:120px}
     }
     @media(max-width:680px){
       .container{width:calc(100% - 30px)}
       .hero{min-height:715px}
       .hero-inner{padding:106px 0 70px}
       .hero-art{right:-56%;width:125%;opacity:.47}
-      .hero-art figcaption{right:13px;bottom:13px}
       .hero h1{font-size:47px}
       .hero-text{font-size:15.5px}
       .hero-facts{grid-template-columns:1fr}
@@ -249,9 +251,11 @@
       .instructor-copy h2{font-size:42px}
       .instructor-bio{font-size:15px}
       .instructor-quote{font-size:18px;padding:18px 19px}
-      .testimonial-card{padding:28px 24px 30px;border-radius:22px}
-      .testimonial-card b{margin-bottom:16px;font-size:13px}
-      .testimonial-card p{font-size:16px;line-height:1.95}
+      .testimonial-card{grid-template-columns:82px minmax(0,1fr);gap:16px;padding:24px 20px;border-radius:22px}
+      .testimonial-person{width:82px;border-radius:14px}
+      .testimonial-body{padding-top:0}
+      .testimonial-index{margin-bottom:10px;font-size:11px}
+      .testimonial-card p{font-size:15.5px;line-height:1.9}
       .boundary-panel{padding:27px 22px}
       footer{padding:32px 0 24px}
       .footer-brand-mark{width:112px;max-width:38vw}
@@ -321,7 +325,6 @@
 <header class="hero" id="top">
   <figure class="hero-art">
     <img src="/assets/course-male-yoga-backbend.webp?v=20260930-hq3" alt="男性瑜伽體位練習，跪姿後彎展現脊柱伸展與身體力量" fetchpriority="high">
-    <figcaption>男力瑜伽・體位練習</figcaption>
   </figure>
   <div class="container hero-inner">
     <div class="hero-copy">
@@ -379,7 +382,6 @@
     <div class="photo-story-shell">
       <figure class="photo-frame">
         <img src="/assets/course-male-yoga-classroom-hq.webp?v=20260930-hq3" alt="宇色男力瑜伽課程中，多位男性學員練習體位法" loading="lazy" referrerpolicy="no-referrer">
-        <figcaption class="photo-caption">原始課程實景｜男力瑜伽體位法練習</figcaption>
       </figure>
       <div class="photo-copy">
         <span class="section-label">Body · Energy · Practice</span>
@@ -530,28 +532,47 @@
 
   <section class="section testimonials" id="voices">
     <div class="container">
-      <span class="section-label">Student Voices</span>
       <h2>學員分享</h2>
-      <p class="section-intro">以下為歷年學員課後回饋，保留原本敘述的語氣與學習感受。</p>
+      <p class="section-intro">以下為歷年男性學員課後回饋，保留原本敘述的語氣與學習感受。</p>
       <div class="testimonial-grid">
         <article class="testimonial-card">
-          <b>01 · PRACTICE</b>
-          <p>上完課覺得收穫特別的多，要謝謝老師為我們開這麼一堂課，上課的時候或許大家都比較害羞，我個人覺得這是一件很健康的事情，如果都沒有學到確實的穴位，那真的很可惜，回家要練習的時候真的不知是對是錯，不知有什麼方法可以讓我們精準地了解到按摩及所有穴位的正確位置，個人覺得應該在現場就要學到最正確的方法並練習到位因為我覺得我自己都一直處於非常衝動的狀態，所以我才想說是否可以藉由正確的方式來調整自己，有時候會覺得自己是不是生病，那天上完課聽老師說（脈輪與性之關係）才知道原來可能是某些地方失去平衡，更想深入學習。老師是否可以再針對這樣的課程可以開立進階班的方式讓我們更深入的了解及學習，讓我們想更深入學習的學員可以更進一步地提升自己。</p>
+          <figure class="testimonial-person">
+            <img src="/assets/male-yoga-student-01.webp?v=20260930-1" alt="AI 生成的匿名男性學員意象，約三十歲，背面視角" loading="lazy">
+          </figure>
+          <div class="testimonial-body">
+            <span class="testimonial-index">學員 01</span>
+            <p>上完課覺得收穫特別的多，要謝謝老師為我們開這麼一堂課，上課的時候或許大家都比較害羞，我個人覺得這是一件很健康的事情，如果都沒有學到確實的穴位，那真的很可惜，回家要練習的時候真的不知是對是錯，不知有什麼方法可以讓我們精準地了解到按摩及所有穴位的正確位置，個人覺得應該在現場就要學到最正確的方法並練習到位因為我覺得我自己都一直處於非常衝動的狀態，所以我才想說是否可以藉由正確的方式來調整自己，有時候會覺得自己是不是生病，那天上完課聽老師說（脈輪與性之關係）才知道原來可能是某些地方失去平衡，更想深入學習。老師是否可以再針對這樣的課程可以開立進階班的方式讓我們更深入的了解及學習，讓我們想更深入學習的學員可以更進一步地提升自己。</p>
+          </div>
         </article>
         <article class="testimonial-card">
-          <b>02 · UNDERSTANDING</b>
-          <p>報名說明內容我不懂什麼是下三輪、體位法，但有寫提昇男性能量的古印度瑜珈體位法，就很引起我的好奇心好想學，最吸引我的是男性私密養生之道，我想這是所有男人都會好奇想了解的，另外規定也很吸引我，需要赤膊與著四角褲（雖然會害羞）但心中確深深的覺得老師一定會教的很深入很實用，才會要求如此，而非一般的文字理論上課，而是真正的體驗學習、實做學習，如果是文字理論我看書上網就好了，其實要報名下去心中早就有放開一切害羞的準備，就想學到真實的確實的實做，上課時老師就有提到二日工作坊，我就特別期待，老師別耽心同學害羞．．．．報名就是想學到最正確，最標準的，回去才能練，才不會去想太多，大家都是男生嘛，怎麼樣變更強更健康才是重點！</p>
+          <figure class="testimonial-person">
+            <img src="/assets/male-yoga-student-02.webp?v=20260930-1" alt="AI 生成的匿名男性學員意象，三十多歲，側背視角" loading="lazy">
+          </figure>
+          <div class="testimonial-body">
+            <span class="testimonial-index">學員 02</span>
+            <p>報名說明內容我不懂什麼是下三輪、體位法，但有寫提昇男性能量的古印度瑜珈體位法，就很引起我的好奇心好想學，最吸引我的是男性私密養生之道，我想這是所有男人都會好奇想了解的，另外規定也很吸引我，需要赤膊與著四角褲（雖然會害羞）但心中確深深的覺得老師一定會教的很深入很實用，才會要求如此，而非一般的文字理論上課，而是真正的體驗學習、實做學習，如果是文字理論我看書上網就好了，其實要報名下去心中早就有放開一切害羞的準備，就想學到真實的確實的實做，上課時老師就有提到二日工作坊，我就特別期待，老師別耽心同學害羞．．．．報名就是想學到最正確，最標準的，回去才能練，才不會去想太多，大家都是男生嘛，怎麼樣變更強更健康才是重點！</p>
+          </div>
         </article>
         <article class="testimonial-card">
-          <b>03 · EXPERIENCE</b>
-          <p>今天很感謝宇色老師的教導以及蘇先生的幫助，在高雄這類型的資訊真的太少，更不用說為男性開課的瑜伽了，今天一日讓我受益良多，學習到很多新的知識以及方法，也確立了很多觀念，很開心今天有報名課程，能學習到正確的知識，網路上資訊混雜而錯誤，一天下來 有豁然開朗的感覺，很期待下階段的深入課程，真的很感謝您及宇色老師。</p>
+          <figure class="testimonial-person">
+            <img src="/assets/male-yoga-student-03.webp?v=20260930-1" alt="AI 生成的匿名男性學員意象，約四十歲，背面視角" loading="lazy">
+          </figure>
+          <div class="testimonial-body">
+            <span class="testimonial-index">學員 03</span>
+            <p>今天很感謝宇色老師的教導以及蘇先生的幫助，在高雄這類型的資訊真的太少，更不用說為男性開課的瑜伽了，今天一日讓我受益良多，學習到很多新的知識以及方法，也確立了很多觀念，很開心今天有報名課程，能學習到正確的知識，網路上資訊混雜而錯誤，一天下來 有豁然開朗的感覺，很期待下階段的深入課程，真的很感謝您及宇色老師。</p>
+          </div>
         </article>
         <article class="testimonial-card">
-          <b>04 · INTEGRATION</b>
-          <p>能夠確實感受到會陰穴收縮以及縮肛的感受，即便每天都執行老師所教的手法 ，性慾方面也不會過於旺盛，性功能增強、性慾減少，這點我感到很滿意 ，每晚睡前都會做海狗趴跟拉肝經，肝火降低很多，晚上更好睡 眼睛也不容易乾澀，個性上也比較平和不易發怒，一直以來都只看著資料學習，只做到具其型，不具其意，一日課程對我來說，是能確立與修正所學知識以及實踐與體會，真正達到具其意的一趟旅程。</p>
+          <figure class="testimonial-person">
+            <img src="/assets/male-yoga-student-04.webp?v=20260930-1" alt="AI 生成的匿名男性學員意象，四十歲上下，側背視角" loading="lazy">
+          </figure>
+          <div class="testimonial-body">
+            <span class="testimonial-index">學員 04</span>
+            <p>能夠確實感受到會陰穴收縮以及縮肛的感受，即便每天都執行老師所教的手法 ，性慾方面也不會過於旺盛，性功能增強、性慾減少，這點我感到很滿意 ，每晚睡前都會做海狗趴跟拉肝經，肝火降低很多，晚上更好睡 眼睛也不容易乾澀，個性上也比較平和不易發怒，一直以來都只看著資料學習，只做到具其型，不具其意，一日課程對我來說，是能確立與修正所學知識以及實踐與體會，真正達到具其意的一趟旅程。</p>
+          </div>
         </article>
       </div>
-      <p class="testimonial-note">以上為個別學員的主觀課後經驗與感受，不代表所有人的結果；涉及身體或健康狀況時，仍應依個人情形評估，必要時尋求專業醫療意見。</p>
+      <p class="testimonial-note">人物圖像為 AI 生成的匿名男性意象，用於保護學員隱私，不代表實際學員本人。以上為個別學員的主觀課後經驗與感受，不代表所有人的結果；涉及身體或健康狀況時，仍應依個人情形評估，必要時尋求專業醫療意見。</p>
     </div>
   </section>
 
