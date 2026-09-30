@@ -9,6 +9,8 @@ const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
 const SPIRITUAL_GOOD_DEATH_COVER_FALLBACK = "/assets/articles/spiritual-good-death/book-cover-thumb.jpg";
 const NEED_A_TEACHER_ARTICLE_ID = "need-a-teacher";
 const NEED_A_TEACHER_COVER_PHOTO = "/assets/articles/need-a-teacher/thumbnail-20260918-800.webp?v=20260918-cover-photo-1";
+const BLESSING_TEACHER_ARTICLE_ID = "blessing-teacher-discernment";
+const BLESSING_TEACHER_RITUAL_IMAGE = "/assets/articles/blessing-teacher-discernment/03-online-screenshot-ritual-embedded.svg?v=20260930-fix-2";
 let settingsByArticle = new Map();
 
 function clamp(value, fallback, min, max) {
@@ -131,6 +133,20 @@ function ensureNeedATeacherCover(article, id) {
   if (current !== desired) cover.setAttribute("src", NEED_A_TEACHER_COVER_PHOTO);
 }
 
+function ensureBlessingTeacherRitualImage(article, id) {
+  if (id !== BLESSING_TEACHER_ARTICLE_ID) return;
+  article.querySelectorAll(".article-body img").forEach(image => {
+    const raw = image.getAttribute("src") || "";
+    if (!raw.includes("03-online-screenshot-ritual.jpg") && !raw.includes("03-online-screenshot-ritual-embedded.svg")) return;
+    const desired = absoluteUrl(BLESSING_TEACHER_RITUAL_IMAGE);
+    const current = absoluteUrl(raw || image.src || "");
+    if (current !== desired) image.setAttribute("src", BLESSING_TEACHER_RITUAL_IMAGE);
+    image.onerror = () => {
+      if (absoluteUrl(image.getAttribute("src") || image.src || "") !== desired) image.setAttribute("src", BLESSING_TEACHER_RITUAL_IMAGE);
+    };
+  });
+}
+
 function apply() {
   installStyles();
   resetManaged();
@@ -139,6 +155,7 @@ function apply() {
   const id = article.dataset.articleId || "";
   ensureSpiritualGoodDeathCover(article, id);
   ensureNeedATeacherCover(article, id);
+  ensureBlessingTeacherRitualImage(article, id);
   const saved = settingsByArticle.get(id);
   const images = Array.isArray(saved?.images) ? saved.images.slice(0, MAX_IMAGES).map(normalize) : [];
   if (!images.length) return;
