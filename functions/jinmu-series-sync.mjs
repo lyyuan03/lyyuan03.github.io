@@ -685,6 +685,78 @@ async function applyBlessingTeacherAllThreeUploadedImages() {
   }));
 }
 
+async function applyBlessingTeacherYoutubeCaptions() {
+  const articleId = "blessing-teacher-discernment";
+  const version = 1;
+  const policeSrc = "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/fb798c0e-ab0e-42f2-96ec-8c3acc98ada9.jpg";
+  const ritualSrc = "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/716d67fb-9d34-463b-a768-77baa030d8f2.jpg";
+  const pairSrc = "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/e7f74dc0-3bd5-451a-8823-3ad3c60ae484.jpg";
+  const policeCaption = "*圖片來源：截圖自 YouTube「NEWS NBT2HD」公開影片，僅作新聞事件說明與評論使用；影像著作權歸原權利人所有。*";
+  const ritualCaption = "*圖片來源：截圖自 YouTube「LINGKAR ASWAJA」公開影片，僅作新聞事件說明與評論使用；影像著作權歸原權利人所有。*";
+  const pairCaption = "*圖片來源：截圖自 YouTube 公開影片（原始頻道名稱未顯示於截圖），僅作新聞事件說明與評論使用；影像著作權歸原權利人所有。*";
+  const articleRef = db.doc("articles/" + articleId);
+  const bodyRef = db.doc("paidArticleBodies/" + articleId);
+  const [articleSnapshot, bodySnapshot] = await Promise.all([articleRef.get(), bodyRef.get()]);
+  if (!articleSnapshot.exists || !bodySnapshot.exists) throw new Error("Blessing teacher article/body missing");
+  const articleData = articleSnapshot.data() || {};
+  const bodyData = bodySnapshot.data() || {};
+  if (Number(articleData.youtubeCaptionVersion || 0) >= version && Number(bodyData.youtubeCaptionVersion || 0) >= version) {
+    console.log(JSON.stringify({ stage: "blessing-teacher-youtube-captions", status: "already-applied" }));
+    return;
+  }
+  const addCaption = (content, src, caption) => {
+    const lines = String(content || "").split("\n");
+    const imageIndex = lines.findIndex((line) => line.includes(src) && /^\s*!\[/.test(line));
+    if (imageIndex < 0) throw new Error("Image source missing for caption: " + src);
+    const nextNonEmpty = lines.slice(imageIndex + 1).findIndex((line) => line.trim().length);
+    if (nextNonEmpty >= 0) {
+      const absolute = imageIndex + 1 + nextNonEmpty;
+      if (lines[absolute].trim() === caption) return lines.join("\n");
+    }
+    lines.splice(imageIndex + 1, 0, "", caption);
+    return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  };
+  let publicContent = String(articleData.content || "").trim();
+  let paidContent = String(bodyData.content || "").trim();
+  publicContent = addCaption(publicContent, policeSrc, policeCaption);
+  publicContent = addCaption(publicContent, pairSrc, pairCaption);
+  paidContent = addCaption(paidContent, ritualSrc, ritualCaption);
+  const contentHash = createHash("sha256").update(paidContent).digest("hex");
+  const prevVersion = Math.max(0, Number(bodyData.contentVersion || 0));
+  const contentVersion = bodyData.content === paidContent && bodyData.contentHash === contentHash ? Math.max(1, prevVersion) : prevVersion + 1;
+  const batch = db.batch();
+  batch.set(articleRef, {
+    content: publicContent,
+    youtubeCaptionVersion: version,
+    paidContentHash: contentHash,
+    paidContentVersion: contentVersion,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(bodyRef, {
+    content: paidContent,
+    contentHash,
+    contentVersion,
+    youtubeCaptionVersion: version,
+    source: "secure-paid-body-update:20260930-youtube-captions",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+  const [verifyArticleSnapshot, verifyBodySnapshot] = await Promise.all([articleRef.get(), bodyRef.get()]);
+  const verifyPublic = String(verifyArticleSnapshot.data()?.content || "");
+  const verifyPaid = String(verifyBodySnapshot.data()?.content || "");
+  if (!verifyPublic.includes(policeCaption) || !verifyPublic.includes(pairCaption) || !verifyPaid.includes(ritualCaption)) {
+    throw new Error("Blessing teacher YouTube caption readback verification failed");
+  }
+  console.log(JSON.stringify({
+    stage: "blessing-teacher-youtube-captions",
+    status: "published-and-verified",
+    paidContentVersion: contentVersion,
+    policeCaption: true,
+    ritualCaption: true,
+    pairCaption: true
+  }));
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -728,6 +800,7 @@ async function migrate() {
   await applyLineageLampBuildingRewrite();
   await applyBlessingTeacherExactUploadedImage();
   await applyBlessingTeacherAllThreeUploadedImages();
+  await applyBlessingTeacherYoutubeCaptions();
   const managedActivities = await migrateManagedJinmuActivities();
   console.log(JSON.stringify({
     stage: "migration",
