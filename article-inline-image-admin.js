@@ -8,6 +8,8 @@ const SCALE_MIN = 100;
 const SCALE_MAX = 250;
 const DEFAULTS = { positionX: 50, positionY: 50, scale: 100 };
 const SPIRITUAL_GOOD_DEATH_ARTICLE_ID = "spiritual-good-death-last-visit";
+const BLESSING_TEACHER_ARTICLE_ID = "blessing-teacher-discernment";
+const BLESSING_TEACHER_RITUAL_IMAGE = "assets/articles/blessing-teacher-discernment/03-online-screenshot-ritual-embedded.svg?v=20260930-fix-2";
 const SPIRITUAL_GOOD_DEATH_IMAGE_PATHS = new Map([
   ["01-last-call.svg", "assets/articles/spiritual-good-death/01-last-call-final.png?v=20260903-final"],
   ["02-greater-self.svg", "assets/articles/spiritual-good-death/02-greater-self-final.png?v=20260903-final"],
@@ -21,7 +23,11 @@ const SPIRITUAL_GOOD_DEATH_IMAGE_PATHS = new Map([
 
 function normalizedArticleImageSrc(value = "", id = activeId || articleId()) {
   const src = String(value || "").trim();
-  if (!src || id !== SPIRITUAL_GOOD_DEATH_ARTICLE_ID) return src;
+  if (!src) return src;
+  if (id === BLESSING_TEACHER_ARTICLE_ID && src.includes("03-online-screenshot-ritual.jpg")) {
+    return BLESSING_TEACHER_RITUAL_IMAGE;
+  }
+  if (id !== SPIRITUAL_GOOD_DEATH_ARTICLE_ID) return src;
   for (const [legacyName, replacement] of SPIRITUAL_GOOD_DEATH_IMAGE_PATHS) {
     if (src.includes(legacyName)) return replacement;
   }
