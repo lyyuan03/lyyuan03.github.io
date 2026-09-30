@@ -375,6 +375,104 @@ async function applyLineageLampBuildingRewrite() {
 }
 
 
+async function applyBlessingTeacherVisualRefresh() {
+  const articleId = "blessing-teacher-discernment";
+  const bodyRef = db.doc("paidArticleBodies/" + articleId);
+  const articleRef = db.doc("articles/" + articleId);
+  const [bodySnapshot, articleSnapshot] = await Promise.all([bodyRef.get(), articleRef.get()]);
+  if (!bodySnapshot.exists || !articleSnapshot.exists) throw new Error("Blessing teacher records missing");
+
+  const previous = bodySnapshot.data() || {};
+  const article = articleSnapshot.data() || {};
+  const oldToken = "?v=20260929-1";
+  const newToken = "?v=20260930-refresh-1";
+  const coverImage = "assets/articles/blessing-teacher-discernment/01-cover-field.svg?v=20260930-netflix-1";
+  const thumbnailImage = "assets/articles/blessing-teacher-discernment/thumbnail.svg?v=20260930-netflix-1";
+
+  let content = String(previous.content || "");
+  if (content.length < 5000) throw new Error("Blessing teacher paid body incomplete");
+  content = content.split(oldToken).join(newToken);
+
+  for (const required of [
+    "02-three-ways-infographic.svg?v=20260930-refresh-1",
+    "03-online-screenshot-ritual.jpg?v=20260930-refresh-1",
+    "04-online-screenshot-people.jpg?v=20260930-refresh-1",
+    "05-online-screenshot-police.jpg?v=20260930-refresh-1"
+  ]) {
+    if (!content.includes(required)) throw new Error("Blessing teacher refreshed image missing: " + required);
+  }
+  if (content.includes("blessing-teacher-discernment/03-online-screenshot-ritual.jpg?v=20260929-1")) {
+    throw new Error("Blessing teacher stale image token remains");
+  }
+
+  const contentHash = createHash("sha256").update(content).digest("hex");
+  const previousVersion = Math.max(0, Number(previous.contentVersion || 0));
+  const bodyChanged = content !== String(previous.content || "");
+  const metadataChanged = article.coverImage !== coverImage || article.thumbnailImage !== thumbnailImage;
+  if (!bodyChanged && !metadataChanged) {
+    console.log(JSON.stringify({
+      stage: "blessing-teacher-visual-refresh",
+      status: "already-applied",
+      contentHash,
+      contentVersion: previousVersion,
+      coverImage,
+      thumbnailImage
+    }));
+    return;
+  }
+
+  const contentVersion = bodyChanged ? previousVersion + 1 : Math.max(1, previousVersion);
+  const batch = db.batch();
+  if (bodyChanged) {
+    batch.set(bodyRef, {
+      content,
+      contentHash,
+      contentVersion,
+      previousContentBackup: previous.content || "",
+      previousContentHashBackup: previous.contentHash || "",
+      previousContentVersionBackup: previousVersion,
+      previousBackupAt: FieldValue.serverTimestamp(),
+      source: "secure-paid-body-update:20260930-visual-refresh",
+      updatedAt: FieldValue.serverTimestamp()
+    }, { merge: true });
+  }
+  batch.set(articleRef, {
+    coverImage,
+    thumbnailImage,
+    privatePaidContent: true,
+    paidContentHash: contentHash,
+    paidContentVersion: contentVersion,
+    source: "firestore-admin-authoritative",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+
+  const [verifyBodySnapshot, verifyArticleSnapshot] = await Promise.all([bodyRef.get(), articleRef.get()]);
+  const verifyBody = verifyBodySnapshot.data() || {};
+  const verifyArticle = verifyArticleSnapshot.data() || {};
+  if (
+    verifyBody.content !== content
+    || verifyBody.contentHash !== contentHash
+    || Number(verifyBody.contentVersion || 0) !== contentVersion
+    || verifyArticle.coverImage !== coverImage
+    || verifyArticle.thumbnailImage !== thumbnailImage
+    || verifyArticle.paidContentHash !== contentHash
+    || Number(verifyArticle.paidContentVersion || 0) !== contentVersion
+  ) {
+    throw new Error("Blessing teacher visual refresh verification failed");
+  }
+
+  console.log(JSON.stringify({
+    stage: "blessing-teacher-visual-refresh",
+    status: "published-and-verified",
+    contentHash,
+    contentVersion,
+    coverImage,
+    thumbnailImage
+  }));
+}
+
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -416,6 +514,7 @@ async function migrate() {
   });
   await applyBuildingPatronRewrite();
   await applyLineageLampBuildingRewrite();
+  await applyBlessingTeacherVisualRefresh();
   const managedActivities = await migrateManagedJinmuActivities();
   console.log(JSON.stringify({
     stage: "migration",
