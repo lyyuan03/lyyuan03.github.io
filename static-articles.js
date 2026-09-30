@@ -19,7 +19,7 @@ import { yaochiBirthdayMorningArticle } from "./article-2026-yaochi-birthday-mor
 import { reconciliationAbsolutionHeartArticle } from "./article-reconciliation-absolution-heart.js?v=20260831-permissions-1";
 import { spiritualGoodDeathArticle } from "./article-spiritual-good-death.js?v=20260903-cover-thumb-1";
 import { ghostsPastLivesSupernaturalKnowingArticle } from "./article-ghosts-past-lives-supernatural-knowing.js?v=20260923-1";
-import { blessingTeacherDiscernmentArticle } from "./article-blessing-teacher-discernment.js?v=20260929-1";
+import { blessingTeacherDiscernmentArticle } from "./article-blessing-teacher-discernment.js?v=20260930-netflix-1";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260919-jinmu-series-sort-1";
 
 const featuredWealthDisciplineArticle = {
