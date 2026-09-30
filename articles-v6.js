@@ -153,8 +153,8 @@ async function importPatchedArticleCore(moduleUrl) {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20260923-related-thumb-1",
-    "./articles-core-20260810-v6.js?v=20260923-related-thumb-1&retry=1"
+    "./articles-core-20260810-v6.js?v=20260930-blessing-cover-1",
+    "./articles-core-20260810-v6.js?v=20260930-blessing-cover-1&retry=1"
   ];
   let lastError = null;
   for (const [index, moduleUrl] of coreModuleUrls.entries()) {
