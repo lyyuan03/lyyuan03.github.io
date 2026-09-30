@@ -163,16 +163,19 @@
     .instructor-bio{margin:23px 0 0;color:rgba(247,242,233,.72);font-size:15.5px;line-height:2}
     .instructor-bio+.instructor-bio{margin-top:12px}
     .instructor-quote{margin:28px 0 0;padding:20px 23px;border-left:2px solid #c89c66;background:rgba(255,255,255,.045);color:#f4eadb;font-family:var(--serif);font-size:20px;line-height:1.8}
-    .testimonials{background:var(--paper);color:var(--ink)}
-    .testimonial-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;margin-top:34px;align-items:stretch}
-    .testimonial-photo{position:relative;min-height:500px;margin:0;overflow:hidden;border-radius:24px;background:#554e47}
-    .testimonial-photo img{width:100%;height:100%;object-fit:cover;object-position:center 58%;filter:saturate(.76) sepia(.07)}
-    .testimonial-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(54,48,43,.56),transparent 60%)}
-    .testimonial-photo span{position:absolute;z-index:2;left:20px;bottom:18px;color:rgba(255,255,255,.77);font-size:11px;letter-spacing:.08em}
-    .testimonial-grid{display:grid;grid-template-columns:1fr;gap:10px}
-    .testimonial-card{padding:22px 23px;border-radius:18px;background:#fff;border:1px solid rgba(89,79,71,.13)}
-    .testimonial-card b{display:block;color:var(--ci-olive);font-family:var(--en);font-size:13px;font-weight:600;letter-spacing:.12em}
-    .testimonial-card p{margin:9px 0 0;color:#5f5b55;font-family:var(--serif);font-size:16px;line-height:1.82}
+    .testimonials{position:relative;overflow:hidden;background:#f3eee5;color:var(--ink)}
+    .testimonials:before{content:"";position:absolute;left:-180px;top:-220px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(96,99,48,.08),transparent 68%);pointer-events:none}
+    .testimonials .container{position:relative;z-index:1}
+    .testimonial-grid{display:grid;grid-template-columns:1fr;gap:22px;margin-top:34px}
+    .testimonial-card{position:relative;overflow:hidden;padding:38px 42px 40px;border-radius:30px;border:1px solid rgba(89,79,71,.13);box-shadow:0 16px 42px rgba(77,67,57,.055)}
+    .testimonial-card:nth-child(1){background:#fbfaf7}
+    .testimonial-card:nth-child(2){background:#f4eee5}
+    .testimonial-card:nth-child(3){background:#eef0e4}
+    .testimonial-card:nth-child(4){background:#f3eadc}
+    .testimonial-card:before{content:"";position:absolute;left:0;top:0;width:5px;height:100%;background:linear-gradient(180deg,var(--ci-olive),var(--ci-tan))}
+    .testimonial-card b{display:block;margin-bottom:22px;color:var(--ci-olive);font-family:var(--en);font-size:15px;font-weight:600;letter-spacing:.2em}
+    .testimonial-card p{margin:0;color:#625d56;font-family:var(--serif);font-size:18px;line-height:2.02;letter-spacing:.01em}
+    .testimonial-note{margin:20px 4px 0;color:#837c72;font-size:12.5px;line-height:1.8}
     .boundary{background:var(--paper-2)}
     .boundary-panel{display:grid;grid-template-columns:.82fr 1.18fr;gap:48px;padding:36px 38px;border-radius:26px;background:linear-gradient(135deg,#5a5149,#4f4a43);color:#fff;box-shadow:0 18px 52px rgba(74,64,55,.1)}
     .boundary-panel .section-label{color:#e9cfa3}
@@ -204,7 +207,7 @@
     .footer-copy{margin:0;color:rgba(245,240,232,.2);font-size:11px;line-height:1.7;letter-spacing:.12em;text-align:center}
     @media(max-width:920px){
       .hero-art{right:-8%;width:70%}
-      .opening-grid,.admission-grid,.workshop-head,.workshop-visual,.instructor-layout,.testimonial-layout,.boundary-panel{grid-template-columns:1fr;gap:30px}
+      .opening-grid,.admission-grid,.workshop-head,.workshop-visual,.instructor-layout,.boundary-panel{grid-template-columns:1fr;gap:30px}
       .admission-lead{position:static}
       .photo-story-shell{grid-template-columns:1fr}
       .photo-frame{min-height:450px}
@@ -212,7 +215,6 @@
       .level-grid{grid-template-columns:1fr}
       .instructor-photo{width:min(520px,100%);margin-inline:auto}
       .instructor-photo img{height:auto;aspect-ratio:2/3}
-      .testimonial-photo{min-height:420px}
     }
     @media(max-width:680px){
       .container{width:calc(100% - 30px)}
@@ -247,7 +249,9 @@
       .instructor-copy h2{font-size:42px}
       .instructor-bio{font-size:15px}
       .instructor-quote{font-size:18px;padding:18px 19px}
-      .testimonial-photo{min-height:320px}
+      .testimonial-card{padding:28px 24px 30px;border-radius:22px}
+      .testimonial-card b{margin-bottom:16px;font-size:13px}
+      .testimonial-card p{font-size:16px;line-height:1.95}
       .boundary-panel{padding:27px 22px}
       footer{padding:32px 0 24px}
       .footer-brand-mark{width:112px;max-width:38vw}
@@ -527,19 +531,27 @@
   <section class="section testimonials" id="voices">
     <div class="container">
       <span class="section-label">Student Voices</span>
-      <h2>學員實際上完課，帶走的是什麼？</h2>
-      <p class="section-intro">以下依原始課程頁留下的學員回饋整理，保留他們最直接的學習感受。</p>
-      <div class="testimonial-layout">
-        <figure class="testimonial-photo">
-          <img src="/assets/course-male-yoga-rest-hq.webp?v=20260930-hq3" alt="宇色男力瑜伽課程中男性學員俯臥休息與身體覺察" loading="lazy" referrerpolicy="no-referrer">
-          <span>宇色瑜伽・原始課堂紀錄</span>
-        </figure>
-        <div class="testimonial-grid">
-          <article class="testimonial-card"><b>01 · PRACTICE</b><p>有學員提到，過去多半靠資料自己摸索；實際上課後，才有機會修正體位、穴位與練習方法，知道自己原本做對了什麼、又忽略了什麼。</p></article>
-          <article class="testimonial-card"><b>02 · UNDERSTANDING</b><p>也有學員原本對「下三輪、體位法」很陌生，真正吸引他的是男性私密養生與實作，希望學到可以帶回生活持續練習的方法。</p></article>
-          <article class="testimonial-card"><b>03 · EXPERIENCE</b><p>另一位學員形容，一天下來最大的收穫，是把網路上零散甚至互相矛盾的資訊重新整理，對自己的身體與練習方向變得比較清楚。</p></article>
-        </div>
+      <h2>學員分享</h2>
+      <p class="section-intro">以下為歷年學員課後回饋，保留原本敘述的語氣與學習感受。</p>
+      <div class="testimonial-grid">
+        <article class="testimonial-card">
+          <b>01 · PRACTICE</b>
+          <p>上完課覺得收穫特別的多，要謝謝老師為我們開這麼一堂課，上課的時候或許大家都比較害羞，我個人覺得這是一件很健康的事情，如果都沒有學到確實的穴位，那真的很可惜，回家要練習的時候真的不知是對是錯，不知有什麼方法可以讓我們精準地了解到按摩及所有穴位的正確位置，個人覺得應該在現場就要學到最正確的方法並練習到位因為我覺得我自己都一直處於非常衝動的狀態，所以我才想說是否可以藉由正確的方式來調整自己，有時候會覺得自己是不是生病，那天上完課聽老師說（脈輪與性之關係）才知道原來可能是某些地方失去平衡，更想深入學習。老師是否可以再針對這樣的課程可以開立進階班的方式讓我們更深入的了解及學習，讓我們想更深入學習的學員可以更進一步地提升自己。</p>
+        </article>
+        <article class="testimonial-card">
+          <b>02 · UNDERSTANDING</b>
+          <p>報名說明內容我不懂什麼是下三輪、體位法，但有寫提昇男性能量的古印度瑜珈體位法，就很引起我的好奇心好想學，最吸引我的是男性私密養生之道，我想這是所有男人都會好奇想了解的，另外規定也很吸引我，需要赤膊與著四角褲（雖然會害羞）但心中確深深的覺得老師一定會教的很深入很實用，才會要求如此，而非一般的文字理論上課，而是真正的體驗學習、實做學習，如果是文字理論我看書上網就好了，其實要報名下去心中早就有放開一切害羞的準備，就想學到真實的確實的實做，上課時老師就有提到二日工作坊，我就特別期待，老師別耽心同學害羞．．．．報名就是想學到最正確，最標準的，回去才能練，才不會去想太多，大家都是男生嘛，怎麼樣變更強更健康才是重點！</p>
+        </article>
+        <article class="testimonial-card">
+          <b>03 · EXPERIENCE</b>
+          <p>今天很感謝宇色老師的教導以及蘇先生的幫助，在高雄這類型的資訊真的太少，更不用說為男性開課的瑜伽了，今天一日讓我受益良多，學習到很多新的知識以及方法，也確立了很多觀念，很開心今天有報名課程，能學習到正確的知識，網路上資訊混雜而錯誤，一天下來 有豁然開朗的感覺，很期待下階段的深入課程，真的很感謝您及宇色老師。</p>
+        </article>
+        <article class="testimonial-card">
+          <b>04 · INTEGRATION</b>
+          <p>能夠確實感受到會陰穴收縮以及縮肛的感受，即便每天都執行老師所教的手法 ，性慾方面也不會過於旺盛，性功能增強、性慾減少，這點我感到很滿意 ，每晚睡前都會做海狗趴跟拉肝經，肝火降低很多，晚上更好睡 眼睛也不容易乾澀，個性上也比較平和不易發怒，一直以來都只看著資料學習，只做到具其型，不具其意，一日課程對我來說，是能確立與修正所學知識以及實踐與體會，真正達到具其意的一趟旅程。</p>
+        </article>
       </div>
+      <p class="testimonial-note">以上為個別學員的主觀課後經驗與感受，不代表所有人的結果；涉及身體或健康狀況時，仍應依個人情形評估，必要時尋求專業醫療意見。</p>
     </div>
   </section>
 
