@@ -488,6 +488,203 @@ async function applyBlessingTeacherExactUploadedImage() {
   }));
 }
 
+
+async function applyBlessingTeacherAllThreeUploadedImages() {
+  const articleId = "blessing-teacher-discernment";
+  const placementVersion = 1;
+  const policeSrc = "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/fb798c0e-ab0e-42f2-96ec-8c3acc98ada9.jpg";
+  const ritualSrc = "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/716d67fb-9d34-463b-a768-77baa030d8f2.jpg";
+  const pairSrc = "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/e7f74dc0-3bd5-451a-8823-3ad3c60ae484.jpg";
+
+  const articleRef = db.doc("articles/" + articleId);
+  const bodyRef = db.doc("paidArticleBodies/" + articleId);
+  const settingsRef = db.doc("articles/__article-thumbnail-settings");
+
+  const [articleSnapshot, bodySnapshot, settingsSnapshot] = await Promise.all([
+    articleRef.get(),
+    bodyRef.get(),
+    settingsRef.get()
+  ]);
+  if (!articleSnapshot.exists || !bodySnapshot.exists) {
+    throw new Error("Blessing teacher article/body missing");
+  }
+
+  const articleData = articleSnapshot.data() || {};
+  const bodyData = bodySnapshot.data() || {};
+  if (Number(articleData.allThreeUploadedImagesVersion || 0) >= placementVersion) {
+    console.log(JSON.stringify({
+      stage: "blessing-teacher-all-three-images",
+      status: "already-applied",
+      publicHasPolice: String(articleData.content || "").includes(policeSrc),
+      publicHasPair: String(articleData.content || "").includes(pairSrc),
+      paidHasRitual: String(bodyData.content || "").includes(ritualSrc)
+    }));
+    return;
+  }
+
+  let publicContent = String(articleData.content || "").trim();
+  let paidContent = String(bodyData.content || "").trim();
+  if (publicContent.length < 1000) throw new Error("Blessing teacher public content incomplete");
+  if (paidContent.length < 5000) throw new Error("Blessing teacher paid body incomplete");
+
+  const policeAnchor = "請一尊佛牌回家，求的也就是一份加持。";
+  const pairAnchor = "最後至少九名僧侶還俗或被逐出僧團。";
+  const ritualAnchor = "他的專注，就是加持的源頭。";
+  for (const [label, anchor, content] of [
+    ["police", policeAnchor, publicContent],
+    ["pair", pairAnchor, publicContent],
+    ["ritual", ritualAnchor, paidContent]
+  ]) {
+    if (!content.includes(anchor)) throw new Error("Blessing teacher " + label + " anchor missing");
+  }
+
+  const stripImageBlocks = (content, names) => {
+    return content.split("\n").filter((line) => {
+      const trimmed = line.trim();
+      if (!/^!\[[^\]]*\]\([^)]+\)$/.test(trimmed)) return true;
+      return !names.some((name) => trimmed.includes(name));
+    }).join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  };
+
+  publicContent = stripImageBlocks(publicContent, [
+    "fb798c0e-ab0e-42f2-96ec-8c3acc98ada9.jpg",
+    "e7f74dc0-3bd5-451a-8823-3ad3c60ae484.jpg",
+    "02-news-police-direct-20260930.jpg",
+    "04-monk-woman-direct-20260930.jpg",
+    "05-online-screenshot-police.jpg",
+    "04-online-screenshot-people.jpg"
+  ]);
+
+  paidContent = stripImageBlocks(paidContent, [
+    "716d67fb-9d34-463b-a768-77baa030d8f2.jpg",
+    "03-online-screenshot-ritual-embedded.svg",
+    "03-online-screenshot-ritual.jpg",
+    "03-ritual-direct-20260930.jpg",
+    "03-ritual-mosaic-20260930.jpg"
+  ]);
+
+  publicContent = publicContent.replace(
+    policeAnchor,
+    policeAnchor + "\n\n![泰國寺院警方調查新聞畫面](" + policeSrc + ")"
+  );
+  publicContent = publicContent.replace(
+    pairAnchor,
+    pairAnchor + "\n\n![泰國僧侶與女信眾相關新聞畫面](" + pairSrc + ")"
+  );
+  paidContent = paidContent.replace(
+    ritualAnchor,
+    ritualAnchor + "\n\n![泰國祈福儀式影片截圖](" + ritualSrc + ")"
+  );
+
+  const paidContentHash = createHash("sha256").update(paidContent).digest("hex");
+  const previousPaidVersion = Math.max(0, Number(bodyData.contentVersion || 0));
+  const paidContentVersion = bodyData.content === paidContent && bodyData.contentHash === paidContentHash
+    ? Math.max(1, previousPaidVersion)
+    : previousPaidVersion + 1;
+
+  const settingsData = settingsSnapshot.data() || {};
+  const inlineImageSettings = { ...(settingsData.inlineImageSettings || {}) };
+  const currentInline = inlineImageSettings[articleId] || {};
+  const currentImages = Array.isArray(currentInline.images) ? currentInline.images : [];
+  const desired = [
+    { src: policeSrc, alt: "泰國寺院警方調查新聞畫面" },
+    { src: pairSrc, alt: "泰國僧侶與女信眾相關新聞畫面" },
+    { src: ritualSrc, alt: "泰國祈福儀式影片截圖" }
+  ];
+
+  const legacyMatch = (src = "") => [
+    "02-news-police-direct-20260930.jpg",
+    "04-monk-woman-direct-20260930.jpg",
+    "05-online-screenshot-police.jpg",
+    "04-online-screenshot-people.jpg",
+    "03-online-screenshot-ritual-embedded.svg",
+    "03-online-screenshot-ritual.jpg",
+    "03-ritual-direct-20260930.jpg",
+    "03-ritual-mosaic-20260930.jpg",
+    "fb798c0e-ab0e-42f2-96ec-8c3acc98ada9.jpg",
+    "e7f74dc0-3bd5-451a-8823-3ad3c60ae484.jpg",
+    "716d67fb-9d34-463b-a768-77baa030d8f2.jpg"
+  ].some((name) => String(src || "").includes(name));
+
+  const preserved = currentImages.filter((item) => !legacyMatch(item?.src));
+  desired.forEach((item) => {
+    const old = currentImages.find((candidate) => String(candidate?.src || "") === item.src)
+      || currentImages.find((candidate) => legacyMatch(candidate?.src))
+      || {};
+    preserved.push({
+      ...old,
+      src: item.src,
+      alt: item.alt,
+      positionX: Number.isFinite(Number(old.positionX)) ? Number(old.positionX) : 50,
+      positionY: Number.isFinite(Number(old.positionY)) ? Number(old.positionY) : 50,
+      scale: Number.isFinite(Number(old.scale)) ? Number(old.scale) : 100
+    });
+  });
+  inlineImageSettings[articleId] = {
+    ...currentInline,
+    ratio: "16:9",
+    fit: "cover",
+    maxImages: Math.max(Number(currentInline.maxImages || 6), 6),
+    images: preserved.slice(0, 6)
+  };
+
+  const batch = db.batch();
+  batch.set(articleRef, {
+    content: publicContent,
+    allThreeUploadedImagesVersion: placementVersion,
+    privatePaidContent: true,
+    paidContentHash,
+    paidContentVersion,
+    secureBodyCollection: "paidArticleBodies",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(bodyRef, {
+    content: paidContent,
+    contentHash: paidContentHash,
+    contentVersion: paidContentVersion,
+    allThreeUploadedImagesVersion: placementVersion,
+    source: "secure-paid-body-update:20260930-all-three-uploaded-images",
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  batch.set(settingsRef, {
+    inlineImageSettings,
+    inlineImageSettingsUpdatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  await batch.commit();
+
+  const [verifyArticleSnapshot, verifyBodySnapshot, verifySettingsSnapshot] = await Promise.all([
+    articleRef.get(),
+    bodyRef.get(),
+    settingsRef.get()
+  ]);
+  const verifyArticle = verifyArticleSnapshot.data() || {};
+  const verifyBody = verifyBodySnapshot.data() || {};
+  const verifyInline = verifySettingsSnapshot.data()?.inlineImageSettings?.[articleId] || {};
+  const verifyPublic = String(verifyArticle.content || "");
+  const verifyPaid = String(verifyBody.content || "");
+
+  if (!verifyPublic.includes(policeSrc) || !verifyPublic.includes(pairSrc) || !verifyPaid.includes(ritualSrc)) {
+    throw new Error("Blessing teacher all-three image readback verification failed");
+  }
+  const configuredSources = Array.isArray(verifyInline.images)
+    ? verifyInline.images.map((item) => String(item?.src || ""))
+    : [];
+  for (const src of [policeSrc, pairSrc, ritualSrc]) {
+    if (!configuredSources.includes(src)) throw new Error("Inline settings missing exact uploaded image: " + src);
+  }
+
+  console.log(JSON.stringify({
+    stage: "blessing-teacher-all-three-images",
+    status: "published-and-verified",
+    paidContentVersion,
+    police: policeSrc,
+    pair: pairSrc,
+    ritual: ritualSrc,
+    publicImageCount: [policeSrc, pairSrc].filter((src) => verifyPublic.includes(src)).length,
+    paidImageCount: [ritualSrc].filter((src) => verifyPaid.includes(src)).length
+  }));
+}
+
 async function migrate() {
   const witnessBefore = await db.doc("eventArticleBodies/2026-lineage-lamp-building-record").get();
   if (witnessBefore.data()?.jinmuSeriesMigrationVersion !== 2) throw new Error("Protected construction article migration is incomplete; public-history recovery is permanently retired");
@@ -530,6 +727,7 @@ async function migrate() {
   await applyBuildingPatronRewrite();
   await applyLineageLampBuildingRewrite();
   await applyBlessingTeacherExactUploadedImage();
+  await applyBlessingTeacherAllThreeUploadedImages();
   const managedActivities = await migrateManagedJinmuActivities();
   console.log(JSON.stringify({
     stage: "migration",
