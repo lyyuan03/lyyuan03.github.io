@@ -12,7 +12,7 @@
   <meta property="og:title" content="男力瑜伽・性與能量｜靈元院">
   <meta property="og:description" content="男性專屬一日工作坊：從瑜伽、身體覺察到性與能量，整理身體、慾望與修行之間的關係。">
   <meta property="og:url" content="https://lyyuan.tw/courses/male-yoga-energy.html">
-  <meta property="og:image" content="https://pimg.1px.tw/kinkiosel/1527582808-2700470137.jpg?v=1527582811">
+  <meta property="og:image" content="https://lyyuan.tw/assets/course-male-yoga-backbend.webp?v=20260930-1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;600&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -114,15 +114,14 @@
     .admission-copy p:last-child{margin-bottom:0}
     .adult-note{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding-top:16px;border-top:1px solid rgba(89,79,71,.14);color:#79736a;font-size:12.5px;line-height:1.75}
     .adult-note b{color:var(--ci-olive);font-weight:600}
-    .visual-rhythm{padding:28px 0 10px;background:var(--paper-2)}
-    .visual-grid{display:grid;grid-template-columns:1.15fr .85fr 1fr;gap:12px}
-    .visual-card{position:relative;height:250px;margin:0;overflow:hidden;border-radius:20px;background:#4a433c}
-    .visual-card:nth-child(2){height:300px;margin-top:-25px}
-    .visual-card img{width:100%;height:100%;object-fit:cover;filter:saturate(.78) sepia(.06) contrast(1.03)}
-    .visual-card:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(52,47,42,.75),transparent 60%)}
-    .visual-card figcaption{position:absolute;z-index:2;left:20px;right:20px;bottom:17px;color:#fff}
-    .visual-card figcaption b{display:block;font-family:var(--serif);font-size:22px;font-weight:500}
-    .visual-card figcaption span{display:block;margin-top:3px;color:rgba(255,255,255,.72);font-size:12px;letter-spacing:.04em}
+    .workshop-visual{display:grid;grid-template-columns:minmax(300px,.72fr) minmax(0,1.28fr);margin-top:34px;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,#5b534c,#4c4a31);box-shadow:0 18px 48px rgba(74,65,56,.08)}
+    .workshop-visual-photo{position:relative;min-height:390px;margin:0;overflow:hidden;background:#463f39}
+    .workshop-visual-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 68%,rgba(76,74,49,.2)),linear-gradient(0deg,rgba(40,36,32,.18),transparent 48%)}
+    .workshop-visual-photo img{width:100%;height:100%;object-fit:cover;object-position:center 34%;filter:saturate(.82) sepia(.04) contrast(1.03)}
+    .workshop-visual-copy{display:flex;flex-direction:column;justify-content:center;padding:46px clamp(30px,4.5vw,62px);color:#fff}
+    .workshop-visual-copy small{color:#e5c694;font-family:var(--en);font-size:11px;font-weight:600;letter-spacing:.2em}
+    .workshop-visual-copy strong{display:block;margin-top:11px;font-family:var(--serif);font-size:clamp(24px,2.8vw,34px);font-weight:500;line-height:1.65}
+    .workshop-visual-copy p{margin:14px 0 0;color:rgba(255,255,255,.72);font-size:15px;line-height:1.95}
     .workshop{background:var(--cream)}
     .workshop-head{display:grid;grid-template-columns:1fr .9fr;gap:52px;align-items:end}
     .ratings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -149,6 +148,21 @@
     .level-card ul{margin:17px 0 0;padding:0;list-style:none}
     .level-card li{position:relative;padding:9px 0 9px 20px;border-top:1px solid rgba(255,255,255,.11);color:rgba(255,255,255,.83);font-size:14px}
     .level-card li:before{content:"";position:absolute;left:1px;top:19px;width:6px;height:6px;border-radius:50%;background:#d7b680}
+    .instructor-feature{position:relative;overflow:hidden;padding:92px 0;background:#0b1712;color:#f7f2e9}
+    .instructor-feature:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 14% 48%,rgba(165,130,84,.14),transparent 31%),radial-gradient(circle at 88% 18%,rgba(96,99,48,.13),transparent 34%)}
+    .instructor-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(320px,.82fr) minmax(0,1.18fr);gap:68px;align-items:center}
+    .instructor-photo{position:relative;margin:0;padding:10px;border:1px solid rgba(200,156,102,.38);background:rgba(255,255,255,.025);box-shadow:0 28px 70px rgba(0,0,0,.28)}
+    .instructor-photo:before{content:"";position:absolute;z-index:2;left:0;top:54px;width:42px;height:1px;background:#c89c66}
+    .instructor-photo img{width:100%;height:640px;object-fit:cover;object-position:center 48%;filter:saturate(.82) contrast(1.04)}
+    .instructor-kicker{display:inline-flex;align-items:center;gap:16px;color:#d8b27b;font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.28em}
+    .instructor-kicker:after{content:"";width:54px;height:1px;background:rgba(216,178,123,.45)}
+    .instructor-copy h2{margin:12px 0 0;font-family:var(--serif);font-size:clamp(42px,5vw,61px);font-weight:500;line-height:1.35;letter-spacing:.04em}
+    .instructor-role{margin:7px 0 0;color:rgba(247,242,233,.72);font-family:var(--en);font-size:14px;letter-spacing:.18em}
+    .instructor-credentials{margin:25px 0 0;border-top:1px solid rgba(200,156,102,.22)}
+    .instructor-credentials p{margin:0;padding:10px 0;border-bottom:1px solid rgba(200,156,102,.15);color:rgba(247,242,233,.82);font-size:14.5px;line-height:1.75}
+    .instructor-bio{margin:23px 0 0;color:rgba(247,242,233,.72);font-size:15.5px;line-height:2}
+    .instructor-bio+.instructor-bio{margin-top:12px}
+    .instructor-quote{margin:28px 0 0;padding:20px 23px;border-left:2px solid #c89c66;background:rgba(255,255,255,.045);color:#f4eadb;font-family:var(--serif);font-size:20px;line-height:1.8}
     .testimonials{background:var(--paper);color:var(--ink)}
     .testimonial-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;margin-top:34px;align-items:stretch}
     .testimonial-photo{position:relative;min-height:500px;margin:0;overflow:hidden;border-radius:24px;background:#554e47}
@@ -190,13 +204,14 @@
     .footer-copy{margin:0;color:rgba(245,240,232,.2);font-size:11px;line-height:1.7;letter-spacing:.12em;text-align:center}
     @media(max-width:920px){
       .hero-art{right:-8%;width:70%}
-      .opening-grid,.admission-grid,.workshop-head,.testimonial-layout,.boundary-panel{grid-template-columns:1fr;gap:30px}
+      .opening-grid,.admission-grid,.workshop-head,.workshop-visual,.instructor-layout,.testimonial-layout,.boundary-panel{grid-template-columns:1fr;gap:30px}
       .admission-lead{position:static}
       .photo-story-shell{grid-template-columns:1fr}
       .photo-frame{min-height:450px}
       .module-list{grid-template-columns:1fr}
-      .visual-card:nth-child(2){height:250px;margin-top:0}
       .level-grid{grid-template-columns:1fr}
+      .instructor-photo{width:min(520px,100%);margin-inline:auto}
+      .instructor-photo img{height:auto;aspect-ratio:2/3}
       .testimonial-photo{min-height:420px}
     }
     @media(max-width:680px){
@@ -221,12 +236,17 @@
       .photo-story-shell{width:calc(100% - 20px);border-radius:22px}
       .photo-frame{min-height:320px}
       .photo-copy{padding:40px 23px}
-      .priority-list,.ratings,.visual-grid,.history-grid,.boundary-list{grid-template-columns:1fr}
+      .priority-list,.ratings,.history-grid,.boundary-list{grid-template-columns:1fr}
       .priority-item{min-height:64px}
       .admission-copy{padding:24px 22px}
-      .visual-card,.visual-card:nth-child(2){height:230px;margin:0}
+      .workshop-visual-photo{min-height:330px}
+      .workshop-visual-copy{padding:34px 23px}
       .module{padding-left:48px}
       .level-card{padding:25px 22px}
+      .instructor-feature{padding:64px 0}
+      .instructor-copy h2{font-size:42px}
+      .instructor-bio{font-size:15px}
+      .instructor-quote{font-size:18px;padding:18px 19px}
       .testimonial-photo{min-height:320px}
       .boundary-panel{padding:27px 22px}
       footer{padding:32px 0 24px}
@@ -296,8 +316,8 @@
 
 <header class="hero" id="top">
   <figure class="hero-art">
-    <img src="https://pimg.1px.tw/kinkiosel/1527582808-2700470137.jpg?v=1527582811" alt="宇色男力瑜伽原始課程實景，多位男性學員在瑜伽教室練習" fetchpriority="high" referrerpolicy="no-referrer">
-    <figcaption>宇色瑜伽・原始課程實景</figcaption>
+    <img src="/assets/course-male-yoga-backbend.webp?v=20260930-1" alt="男性瑜伽體位練習，跪姿後彎展現脊柱伸展與身體力量" fetchpriority="high">
+    <figcaption>男力瑜伽・體位練習</figcaption>
   </figure>
   <div class="container hero-inner">
     <div class="hero-copy">
@@ -327,6 +347,7 @@
       <a href="#admission">優先資格</a>
       <a href="#workshop">課程內容</a>
       <a href="#levels">初階／中階</a>
+      <a href="#instructor">師資介紹</a>
       <a href="#voices">學員分享</a>
       <a href="#boundary">課程界線</a>
       <a href="#history">歷年資料</a>
@@ -386,23 +407,6 @@
     </div>
   </section>
 
-  <section class="visual-rhythm" aria-label="男力瑜伽視覺節奏">
-    <div class="container visual-grid">
-      <figure class="visual-card">
-        <img src="https://pimg.1px.tw/kinkiosel/1527582808-2700470137.jpg?v=1527582811" alt="男性瑜伽課程實景" loading="lazy" referrerpolicy="no-referrer">
-        <figcaption><b>力量 × 穩定</b><span>身體是修練的入口。</span></figcaption>
-      </figure>
-      <figure class="visual-card">
-        <img src="https://pimg.1px.tw/kinkiosel/1527583912-560556329.jpg?v=1527583917" alt="男性瑜伽身體覺察課程實景" loading="lazy" referrerpolicy="no-referrer">
-        <figcaption><b>呼吸 × 柔和</b><span>在動與靜之間，讓身體慢下來。</span></figcaption>
-      </figure>
-      <figure class="visual-card">
-        <img src="https://pimg.1px.tw/kinkiosel/1527583780-3589111223.jpg?v=1527583782" alt="男性瑜伽體位法課程實景" loading="lazy" referrerpolicy="no-referrer">
-        <figcaption><b>覺察 × 轉化</b><span>看見能量如何進入日常生命。</span></figcaption>
-      </figure>
-    </div>
-  </section>
-
   <section class="section workshop" id="workshop">
     <div class="container">
       <div class="workshop-head">
@@ -416,6 +420,17 @@
           <div class="rating"><span>柔軟度</span><strong>★★☆☆☆</strong></div>
           <div class="rating"><span>消耗體力</span><strong>★★★☆☆</strong></div>
           <div class="rating"><span>性知識</span><strong>★★★★☆</strong></div>
+        </div>
+      </div>
+
+      <div class="workshop-visual">
+        <figure class="workshop-visual-photo">
+          <img src="/assets/course-male-yoga-seated.webp?v=20260930-1" alt="男性瑜伽坐姿練習，專注於骨盆、脊柱與身體穩定" loading="lazy">
+        </figure>
+        <div class="workshop-visual-copy">
+          <small>BODY AWARENESS</small>
+          <strong>力量留在身體裡，注意力也留在身體裡。</strong>
+          <p>體位的外形只是入口。練習會回到呼吸、肌肉張力、骨盆與脊柱的感受，讓身體的穩定與覺察一起建立。</p>
         </div>
       </div>
 
@@ -484,6 +499,27 @@
             <li>把練習經驗帶回日常與修行</li>
           </ul>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="instructor-feature" id="instructor">
+    <div class="container instructor-layout">
+      <figure class="instructor-photo">
+        <img src="/assets/course-male-yoga-instructor.webp?v=20260930-1" alt="宇色老師進行男性瑜伽平衡體位練習" loading="lazy">
+      </figure>
+      <div class="instructor-copy">
+        <span class="instructor-kicker">INSTRUCTOR</span>
+        <h2>宇色老師</h2>
+        <p class="instructor-role">OSEL · YOGA TEACHER · SPIRITUAL PRACTITIONER</p>
+        <div class="instructor-credentials">
+          <p>南華大學生死教育與諮商研究所碩士。</p>
+          <p>印度希瓦南達瑜伽師資證。</p>
+          <p>台灣中華瑜伽師資證。</p>
+        </div>
+        <p class="instructor-bio">第一次登山便挑戰非洲第一高峰──5895公尺的吉力馬札羅山（世界第七）、深入被喻為「水藍色星球上最後一片淨土」的稻城亞丁，走訪近二十個國家與古文明遺跡──祕魯馬丘比丘、埃及金字塔、摩洛哥、尼泊爾、古羅馬、柬埔寨吳哥窟、泰國……。</p>
+        <p class="instructor-bio">以無極瑤池金母靈修心法與古印度瑜伽精神勇敢走出生活舒適圈，用眼與腳從不同的宗教、文明、國家中重新定義靈修與認識自己。</p>
+        <blockquote class="instructor-quote">用眼與腳，從不同的宗教、文明與國家中重新定義靈修，也重新認識自己。</blockquote>
       </div>
     </div>
   </section>
