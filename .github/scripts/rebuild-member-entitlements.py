@@ -15,6 +15,13 @@ PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "lyyuan03-membership")
 BASE_URL = f"https://firestore.googleapis.com/v1/projects/{PROJECT_ID}/databases/(default)/documents"
 SCHEMA_VERSION = 1
 
+# 付費文章閱讀範圍（與 functions/article-window.js 相同規則）：
+# 只能閱讀「本期連續會員開通日前 30 天起」發表的付費文章；規則生效前的舊會員本期不受限制。
+ARTICLE_WINDOW_POLICY = "join-minus-30d-v1"
+ARTICLE_WINDOW_LOOKBACK = dt.timedelta(days=30)
+ARTICLE_WINDOW_EFFECTIVE_AT = dt.datetime(2026, 9, 30, 16, 0, tzinfo=dt.timezone.utc)  # 2026-10-01 00:00 臺北
+UNRESTRICTED_WINDOW_START = dt.datetime(1970, 1, 1, tzinfo=dt.timezone.utc)
+
 
 def access_token() -> str:
     return subprocess.check_output(["gcloud", "auth", "print-access-token"], text=True).strip()
@@ -141,6 +148,15 @@ def active_window(record: dict, now: dt.datetime) -> tuple[bool, dt.datetime | N
     return (bool((starts_at is None or starts_at <= now) and expires_at and expires_at > now), expires_at)
 
 
+def article_window_start(record: dict) -> dt.datetime:
+    anchor = parse_datetime(record.get("articleWindowStartsAt"))
+    if anchor is None:
+        starts_at = parse_datetime(record.get("startsAt"))
+        if starts_at is not None and starts_at >= ARTICLE_WINDOW_EFFECTIVE_AT:
+            anchor = starts_at
+    return anchor - ARTICLE_WINDOW_LOOKBACK if anchor is not None else UNRESTRICTED_WINDOW_START
+
+
 def sponsor_state(record: dict, email: str, now: dt.datetime) -> dict:
     window, expires_at = active_window(record, now)
     record_email = normalized_email(record.get("email") or email)
@@ -154,7 +170,11 @@ def sponsor_state(record: dict, email: str, now: dt.datetime) -> dict:
         and not record.get("revokedAt")
         and window
     )
-    return {"article": active, "expiresAt": expires_at}
+    return {
+        "article": active,
+        "expiresAt": expires_at,
+        "windowStart": article_window_start(record) if active else None,
+    }
 
 
 def wellness_state(record: dict, email: str, now: dt.datetime) -> dict:
@@ -174,7 +194,13 @@ def wellness_state(record: dict, email: str, now: dt.datetime) -> dict:
     )
     lingji = active and record.get("memberLevel") == "lingji"
     article = active and (lingji or record.get("articleAccess") is True)
-    return {"article": article, "video": active, "lingji": lingji, "expiresAt": expires_at}
+    return {
+        "article": article,
+        "video": active,
+        "lingji": lingji,
+        "expiresAt": expires_at,
+        "windowStart": article_window_start(record) if active else None,
+    }
 
 
 def entitlement_fields(email: str, sponsor: dict, wellness: dict, has_sponsor: bool, has_wellness: bool) -> dict:
@@ -193,6 +219,7 @@ def entitlement_fields(email: str, sponsor: dict, wellness: dict, has_sponsor: b
         "wellnessArticleAccess": encode_value(wellness_access["article"]),
         "wellnessVideoAccess": encode_value(wellness_access["video"]),
         "lingjiAccess": encode_value(wellness_access["lingji"]),
+        "articleWindowPolicy": encode_value(ARTICLE_WINDOW_POLICY),
         "sourceCollections": encode_value({
             "sponsorMemberAccess": has_sponsor,
             "memberAccess": has_wellness,
@@ -203,13 +230,22 @@ def entitlement_fields(email: str, sponsor: dict, wellness: dict, has_sponsor: b
         fields["sponsorExpiresAt"] = timestamp_value(sponsor_access["expiresAt"])
     if wellness_access["expiresAt"]:
         fields["wellnessExpiresAt"] = timestamp_value(wellness_access["expiresAt"])
+    if sponsor_access["windowStart"]:
+        fields["sponsorArticleWindowStartsAt"] = timestamp_value(sponsor_access["windowStart"])
+    if wellness_access["windowStart"]:
+        fields["wellnessArticleWindowStartsAt"] = timestamp_value(wellness_access["windowStart"])
     return fields
 
 
 def patch_entitlement(email: str, fields: dict) -> None:
     doc_id = urllib.parse.quote(email, safe="")
     # 僅更新本流程負責的付費／養生欄位，保留活動 permissions 與其他既有欄位。
-    mask_fields = set(fields) | {"sponsorExpiresAt", "wellnessExpiresAt"}
+    mask_fields = set(fields) | {
+        "sponsorExpiresAt",
+        "wellnessExpiresAt",
+        "sponsorArticleWindowStartsAt",
+        "wellnessArticleWindowStartsAt",
+    }
     query = urllib.parse.urlencode([("updateMask.fieldPaths", name) for name in sorted(mask_fields)])
     request_json("PATCH", f"{BASE_URL}/memberEntitlements/{doc_id}?{query}", {"fields": fields})
 

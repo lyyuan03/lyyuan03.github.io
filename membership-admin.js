@@ -176,6 +176,26 @@ function addMonths(date, months) {
   return result;
 }
 
+// 贊助付費文章方案以天數計算：1 個月 = 30 天、3 個月 = 90 天。
+const SPONSOR_PLAN_DAYS = { 1: 30, 3: 90 };
+const ARTICLE_WINDOW_EFFECTIVE_AT = new Date("2026-09-30T16:00:00.000Z"); // 2026-10-01 00:00 臺北時間
+
+function addPlanDays(date, months) {
+  const days = SPONSOR_PLAN_DAYS[Number(months)] ?? Number(months) * 30;
+  return new Date(new Date(date).getTime() + days * 24 * 60 * 60 * 1000);
+}
+
+// 付費文章閱讀範圍起算日：仍在有效期間內續約沿用原起算日；否則（或規則生效前的舊會員續約）以今天重新起算。
+function nextArticleWindowAnchor(member = {}, now = new Date()) {
+  const expiresAt = dateValue(member.expiresAt);
+  const stillActive = member.status === "active" && expiresAt && expiresAt > now;
+  if (!stillActive) return now;
+  const explicit = dateValue(member.articleWindowStartsAt);
+  if (explicit) return explicit;
+  const startsAt = dateValue(member.startsAt);
+  return startsAt && startsAt >= ARTICLE_WINDOW_EFFECTIVE_AT ? startsAt : now;
+}
+
 function selectedMonths() {
   const value = String(monthsEl.value || "");
   return value === "3" || value.endsWith("-3") ? 3 : 1;
@@ -190,9 +210,12 @@ function correctionMember() {
 function correctedExpiry(member = {}, months = selectedMonths()) {
   const oldMonths = Number(member.planMonths) === 3 ? 3 : 1;
   const currentExpiry = dateValue(member.expiresAt);
-  if (currentExpiry) return addMonths(currentExpiry, Number(months) - oldMonths);
+  if (currentExpiry) {
+    const diffDays = (SPONSOR_PLAN_DAYS[Number(months)] || 30) - (SPONSOR_PLAN_DAYS[oldMonths] || 30);
+    return new Date(currentExpiry.getTime() + diffDays * 24 * 60 * 60 * 1000);
+  }
   const start = dateValue(member.startsAt || member.paidAt || member.firstJoinedAt) || new Date();
-  return addMonths(start, Number(months));
+  return addPlanDays(start, Number(months));
 }
 
 function setCorrectionMode(enabled) {
@@ -419,7 +442,7 @@ function previewExpiry(existingExpiry = null) {
   const now = new Date();
   const currentExpiry = dateValue(existingExpiry);
   const base = currentExpiry && currentExpiry > now ? currentExpiry : now;
-  return addMonths(base, selectedMonths());
+  return addPlanDays(base, selectedMonths());
 }
 
 function updatePlanPreview(forceAmount = false) {
@@ -589,7 +612,8 @@ async function activateMember() {
     const now = new Date();
     const currentExpiry = dateValue(existing.expiresAt);
     const base = currentExpiry && currentExpiry > now ? currentExpiry : now;
-    const expiresAt = addMonths(base, months);
+    const expiresAt = addPlanDays(base, months);
+    const articleWindowStartsAt = nextArticleWindowAnchor(existing, now);
     const orderNo = String(existing.lastOrderNo || existing.pendingOrderNo || `MAN${Date.now().toString(36).toUpperCase()}`);
     const alreadyCounted = isCountedSponsorMember(existing);
     const sequence = tier === "promo"
@@ -619,6 +643,7 @@ async function activateMember() {
       revokedAt: deleteField(),
       firstJoinedAt: existing.firstJoinedAt || now.toISOString(),
       startsAt: now.toISOString(),
+      articleWindowStartsAt: Timestamp.fromDate(articleWindowStartsAt),
       expiresAt: Timestamp.fromDate(expiresAt),
       paidAt: now.toISOString(),
       lastOrderNo: orderNo,

@@ -165,7 +165,7 @@ function offerMarkup() {
   if (hasActiveArticleAccess(state.member)) {
     const expiry = memberDate(state.member?.expiresAt || state.member?.wellnessBenefit?.expiresAt);
     const expiryText = expiry ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(expiry) : "有效期間內";
-    return `<div class="sponsor-access-active"><strong>你的閱讀資格已啟用</strong><span>${expiryText}可閱讀所有贊助專屬文章。</span></div>`;
+    return `<div class="sponsor-access-active"><strong>你的閱讀資格已啟用</strong><span>${expiry ? `${expiryText}前，` : "有效期間內，"}可閱讀開通日前 30 天起發表的贊助專屬文章。</span></div>`;
   }
 
   const offer = state.offer;
@@ -180,16 +180,16 @@ function offerMarkup() {
   return `${badge}
     <div class="sponsor-plan-grid" role="group" aria-label="選擇閱讀方案">
       <button type="button" class="sponsor-plan" data-sponsor-plan="1">
-        <span class="sponsor-plan-term">1 個月</span>
+        <span class="sponsor-plan-term">1 個月（30 天）</span>
         <strong>${money(price1)}</strong>
         ${promo && Number(offer.regularPrice1) > price1 ? `<del>${money(offer.regularPrice1)}</del>` : ""}
-        <small>${loginPrefix}解鎖所有贊助文章</small>
+        <small>${loginPrefix}含開通日前 30 天起的文章</small>
       </button>
       <button type="button" class="sponsor-plan is-featured" data-sponsor-plan="3">
-        <span class="sponsor-plan-term">3 個月</span>
+        <span class="sponsor-plan-term">3 個月（90 天）</span>
         <strong>${money(price3)}</strong>
         ${promo && Number(offer.regularPrice3) > price3 ? `<del>${money(offer.regularPrice3)}</del>` : ""}
-        <small>${loginPrefix}解鎖所有贊助文章</small>
+        <small>${loginPrefix}含開通日前 30 天起的文章</small>
       </button>
     </div>
     <div class="sponsor-auto-note">綠界安全付款・付款成功後系統自動開通・並帶你回到本篇文章</div>`;

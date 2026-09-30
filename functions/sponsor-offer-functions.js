@@ -11,6 +11,7 @@ const {
   normalizeSponsorOfferSettings,
   sponsorPlanAmount
 } = require("./membership-plans");
+const { addDays, nextArticleWindowAnchor, sponsorPlanDays } = require("./article-window");
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -403,7 +404,9 @@ exports.activateSponsorMembershipManually = onCall(
       const now = new Date();
       const existingExpiry = dateValue(member.expiresAt);
       const startAt = existingExpiry && existingExpiry > now ? existingExpiry : now;
-      const expiresAt = addMonths(startAt, planMonths);
+      // 贊助付費文章方案以天數計算：1 個月 = 30 天、3 個月 = 90 天。
+      const expiresAt = addDays(startAt, sponsorPlanDays(planMonths) || planMonths * 30);
+      const articleWindowStartsAt = nextArticleWindowAnchor(member, now);
       const nowTimestamp = Timestamp.fromDate(now);
       const expiryTimestamp = Timestamp.fromDate(expiresAt);
 
@@ -455,6 +458,7 @@ exports.activateSponsorMembershipManually = onCall(
         revokedAt: FieldValue.delete(),
         firstJoinedAt: member.firstJoinedAt || nowTimestamp,
         startsAt: nowTimestamp,
+        articleWindowStartsAt: Timestamp.fromDate(articleWindowStartsAt),
         expiresAt: expiryTimestamp,
         paidAt: nowTimestamp,
         lastOrderNo: tradeNo,

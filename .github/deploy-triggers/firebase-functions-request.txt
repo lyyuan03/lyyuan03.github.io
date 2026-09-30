@@ -4,3 +4,4 @@ reason: deploy all sponsor checkout functions after API preflight and endpoint v
 retry after removing redundant API-enable gate: 2026-09-02T11:18:00Z
 payment-scoped verification retry: 2026-09-02T11:20:00Z
 predeploy payment-suite retry: 2026-09-02T11:22:00Z
+reason: paid-article reading window (join-30d) and 30/90-day sponsor plans: 2026-10-01

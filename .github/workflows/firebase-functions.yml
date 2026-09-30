@@ -60,7 +60,7 @@ jobs:
       - name: Verify payment backend
         run: |
           npm --prefix functions ci
-          node --test functions/test/ecpay.test.js functions/test/membership-plans.test.js functions/test/member-entitlements-sync.test.js
+          node --test functions/test/article-window.test.js functions/test/ecpay.test.js functions/test/membership-plans.test.js functions/test/member-entitlements-sync.test.js
           npm --prefix functions run lint
 
       - name: Deploy all membership functions

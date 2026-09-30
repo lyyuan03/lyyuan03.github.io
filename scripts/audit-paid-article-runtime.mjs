@@ -35,7 +35,8 @@ assert.ok(core.includes('data-article-access="${escapeHtml(accessType)}"'), "Ren
 assert.ok(core.includes('data-paid-body-state="locked"'), "Paid articles must begin in a locked state.");
 assert.ok(loader.includes('view.dataset.articleAccess === "paid"'), "Secure loader must recognize paid state without relying only on gate markup.");
 assert.ok(loader.includes('view.dataset.paidBodyState = "unlocked"'), "Secure loader must record successful private-body insertion.");
-assert.ok(loader.includes('import { resolveMemberAccess } from "./member-access-resolver.js"'), "Secure loader must delegate membership authorization to the unified resolver.");
+assert.ok(/import \{ resolveMemberAccess, paidArticleWindowStart, paidArticleWithinWindow \} from "\.\/member-access-resolver\.js\?v=[^"]+"/.test(loader), "Secure loader must delegate membership authorization and the reading window to the unified resolver.");
+assert.ok(loader.includes("paidArticleWithinWindow(access, metadata.publishedAt)"), "Secure loader must explain articles outside the member reading window.");
 assert.ok(loader.includes('const access = await resolveMemberAccess(currentUser);'), "Secure loader must resolve the signed-in member through one access path.");
 assert.ok(!loader.includes('activeSponsorMember(') && !loader.includes('activeWellnessMember('), "Secure loader must not duplicate membership policy.");
 assert.ok(resolver.includes('activeEntitlement(entitlement, email)'), "Unified resolver must prefer canonical member entitlements.");
