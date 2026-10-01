@@ -1,0 +1,45 @@
+name: one-shot-patch-articles-core-metrics-auth
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/security-admin-checkout-metrics
+          fetch-depth: 0
+
+      - name: Patch articles-core incrementArticleMetric
+        run: |
+          python3 << 'PY'
+          from pathlib import Path
+          path = Path("articles-core-20260810-v6.js")
+          text = path.read_text(encoding="utf-8")
+          needle = '  if (!articleId || !["views", "shares", "copies"].includes(metric)) return;\n'
+          insert = needle + '  // Firestore rules now require signed-in users for metric writes.\n  if (!auth.currentUser) return;\n'
+          if "Firestore rules now require signed-in users for metric writes." in text:
+              print("already patched")
+          elif needle not in text:
+              raise SystemExit("needle not found")
+          else:
+              path.write_text(text.replace(needle, insert, 1), encoding="utf-8")
+              print("patched ok")
+          PY
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add articles-core-20260810-v6.js
+          if git diff --cached --quiet; then
+            echo "no changes"
+            exit 0
+          fi
+          git commit -m "fix(security): articles-core — skip metric writes when signed out"
+          git push origin HEAD:fix/security-admin-checkout-metrics
