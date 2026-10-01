@@ -377,6 +377,16 @@
     @media (max-width:760px){.takeaway{padding:32px 20px 24px;border-radius:24px}.takeaway-grid{grid-template-columns:1fr}.day-flow li{min-height:0}}
     @media (max-width:520px){.day-flow{grid-template-columns:1fr;gap:12px}.day-flow li{display:grid;grid-template-columns:54px 1fr;column-gap:14px;align-items:center;text-align:left;padding:18px 16px}.day-flow .flow-index{position:static;grid-column:2}.day-flow .flow-icon{grid-row:1/4;margin:0}.day-flow li:last-child{grid-column:auto}}
     .story-photo{margin:40px 0 8px}
+    .cta-levels{max-width:880px;margin:34px auto 0;text-align:left}
+    .cta-levels-lead{max-width:none!important;margin:0 0 14px!important;text-align:center;color:rgba(255,255,255,.88)!important;font-family:var(--serif);font-size:18px!important}
+    .cta-levels-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .cta-levels-grid article{padding:24px 24px 22px;border-radius:22px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);backdrop-filter:blur(4px)}
+    .cta-levels-grid article.is-preview{background:rgba(255,255,255,.04);border-style:dashed;border-color:rgba(233,207,163,.5)}
+    .cta-levels-grid small{display:flex;align-items:center;gap:10px;color:#e9cfa3;font-family:var(--serif);font-size:15px;letter-spacing:.14em}
+    .cta-levels-grid small em{padding:2px 9px;border-radius:99px;border:1px solid rgba(233,207,163,.6);font-size:11px;font-style:normal;letter-spacing:.12em}
+    .cta-levels-grid h3{margin:10px 0 8px;color:#fff;font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.5}
+    .cta-levels-grid p{max-width:none!important;margin:0!important;color:rgba(255,255,255,.78)!important;font-size:14.5px!important;line-height:1.9!important}
+    @media (max-width:700px){.cta-levels{margin-top:26px}.cta-levels-grid{grid-template-columns:1fr}.cta-levels-grid article{padding:20px 20px 18px}}
   </style>
 </head>
 <body>
@@ -466,10 +476,10 @@
     <div class="course-subnav-links">
       <a href="#about">課程定位</a>
       <a href="#workshop">課程內容</a>
-      <a href="#levels">初階／中階</a>
       <a href="#admission">報名須知</a>
       <a href="#instructor">師資介紹</a>
       <a href="#voices">學員回饋</a>
+      <a href="#inquiry">初階／中階</a>
     </div>
     <a class="course-subnav-cta" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">洽詢開課 →</a>
   </div>
@@ -559,26 +569,6 @@
         <blockquote>「最吸引我的是男性私密養生之道，我想這是所有男人都會好奇想了解的」</blockquote>
         <blockquote>「需要赤膊與著四角褲（雖然會害羞）但心中確深深的覺得老師一定會教的很深入很實用」</blockquote>
         <blockquote>「如果是文字理論我看書上網就好了」</blockquote>
-      </div>
-    </div>
-  </section>
-
-  <section class="section levels" id="levels">
-    <div class="container">
-      <span class="section-label">從談話，走進身體</span>
-      <h2>初階先把性弄懂，中階再往更深處走。</h2>
-      <p class="section-intro">初階與中階分開報名。中階須完成初階，並經過面談才能參加。</p>
-      <div class="level-grid">
-        <article class="level-card">
-          <div class="level-no">01</div>
-          <h3>初階｜把性弄懂，把話說出口</h3>
-          <p>就是上面介紹的這一天。以觀念講解與影片教學為主，體位簡單，身體接觸很少，後段有一小段赤膊或裸身練習。適合第一次接觸這個主題的男性。</p>
-        </article>
-        <article class="level-card">
-          <div class="level-no">02</div>
-          <h3>中階｜在初階之後，往更深處走</h3>
-          <p>完成初階並通過面談後才能報名。練習全程裸身進行，有更深入的分享與雙人互動，細節會在面談時說明。</p>
-        </article>
       </div>
     </div>
   </section>
@@ -696,11 +686,26 @@
     </div>
   </section>
 
-  <section class="section cta">
+  <section class="section cta" id="inquiry">
     <div class="container">
       <span class="section-label">Course Inquiry</span>
       <h2>如果你讀到這裡，已經知道自己對這堂課有興趣，可以先來問下一次什麼時候開。</h2>
       <p class="cta-note">這堂課會談到許多私密的個人經驗，為了保護每一位學員，所有報名都會先經過嚴格的審查，確認適合後才會安排上課。</p>
+      <div class="cta-levels" aria-label="初階與中階">
+        <p class="cta-levels-lead">課程分成初階與中階，分開報名。</p>
+        <div class="cta-levels-grid">
+          <article>
+            <small>初階</small>
+            <h3>把性弄懂，把話說出口</h3>
+            <p>就是這一頁介紹的這一天。以觀念講解與影片教學為主，體位簡單，身體接觸很少，後段有一小段赤膊或裸身練習，適合第一次接觸這個主題的男性。</p>
+          </article>
+          <article class="is-preview">
+            <small>中階<em>預告</em></small>
+            <h3>在初階之後，往更深處走</h3>
+            <p>之後另行公告開課。須完成初階並通過面談才能報名，練習全程裸身進行，有更深入的分享與雙人互動，細節會在面談時說明。</p>
+          </article>
+        </div>
+      </div>
       <div class="cta-actions">
         <a class="btn btn-primary" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">洽詢下一次開課</a>
       </div>
