@@ -265,37 +265,13 @@
       .footer-links{gap:22px}
     }
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
-    /* 2026-10 calm layout：同一件事用同一種底色，靠留白與細線分段 */
-    .opening,.workshop,.admission,.boundary,.history,.testimonials{background:var(--cream)}
-    .opening:after,.admission:before,.testimonials:before{display:none}
-    .opening-quote{padding:4px 0 4px 22px;border-radius:0;background:none;border:0;border-left:2px solid var(--ci-tan);box-shadow:none}
-    .opening-quote:before{display:none}
-    .priority-item{min-height:0;padding:14px 0;border-radius:0;background:none;border:0;border-bottom:1px solid var(--line)}
-    .priority-item b{background:none;color:var(--ci-tan);border:1px solid var(--ci-tan)}
-    .admission-copy{padding:0;border-radius:0;background:none;border:0;box-shadow:none}
-    .medical-note{padding:14px 0 0;border-radius:0;background:none;border-top:1px solid var(--line)}
-    .levels{background:var(--paper);color:var(--ink)}
-    .levels .section-intro,.level-card p,.level-card li{color:#5c5953}
-    .level-card{padding:26px 0 0;border-radius:0;border:0;border-top:2px solid var(--ci-tan);background:none;backdrop-filter:none}
-    .level-no{color:var(--ci-tan)!important}
-    .levels .section-label{color:var(--ci-tan)}
-    .boundary-panel{padding:0;border-radius:0;background:none;color:var(--ink);box-shadow:none}
-    .boundary-copy p{color:#5c5953!important}
-    .boundary .section-label{color:var(--ci-tan)}
-    .boundary-list span{border-radius:0;border:0;border-left:2px solid var(--ci-tan);background:none;color:#5c5953}
-    .testimonial-grid{gap:0!important}
-    .testimonial-card,.testimonial-card:nth-child(n){display:block;padding:30px 0;border-radius:0;border:0;border-bottom:1px solid var(--line);background:none;box-shadow:none}
-    .testimonial-card:before{display:none}
-    .testimonial-body p{font-family:var(--serif);font-size:16.5px;line-height:2.05;color:#4a463f}
-    .testimonial-index{color:var(--ci-tan)}
-    .history-card{padding:16px 0;border-radius:0;background:none;border:0;border-top:1px solid var(--line)}
-    .book-ref{display:grid;grid-template-columns:120px minmax(0,1fr);gap:26px;align-items:center;margin-top:40px;padding-top:30px;border-top:1px solid var(--line)}
-    .book-ref img{width:120px;height:auto;display:block}
-    .book-ref small{color:var(--ci-tan);font-family:var(--en);font-size:11px;letter-spacing:.2em}
-    .book-ref strong{display:block;margin:6px 0 8px;font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.5}
-    .book-ref p{margin:0;color:#5c5953;font-size:14.5px;line-height:1.9}
-    .book-ref a{color:var(--ci-olive);border-bottom:1px solid rgba(96,99,48,.3)}
-    @media (max-width:600px){.book-ref{grid-template-columns:88px minmax(0,1fr);gap:18px}.book-ref img{width:88px}.book-ref strong{font-size:18px}}
+    .instructor-book{display:grid;grid-template-columns:96px minmax(0,1fr);gap:22px;align-items:center;margin:26px 0 0;padding:20px 0 0;border-top:1px solid rgba(200,156,102,.22)}
+    .instructor-book img{display:block;width:96px;height:auto;filter:drop-shadow(0 12px 22px rgba(0,0,0,.45))}
+    .instructor-book small{color:#d8b27b;font-family:var(--en);font-size:11px;letter-spacing:.22em}
+    .instructor-book strong{display:block;margin:5px 0 6px;color:#f7f2e9;font-family:var(--serif);font-size:19px;font-weight:500;line-height:1.5}
+    .instructor-book p{margin:0;color:rgba(247,242,233,.72);font-size:14px;line-height:1.85}
+    .instructor-book a{color:#e8c997;border-bottom:1px solid rgba(232,201,151,.35)}
+    @media (max-width:600px){.instructor-book{grid-template-columns:78px minmax(0,1fr);gap:16px}.instructor-book img{width:78px}.instructor-book strong{font-size:17px}}
   </style>
 </head>
 <body>
@@ -475,14 +451,6 @@
 
       <div class="medical-note">課程後段有一小段身體練習需要赤膊或裸身進行，細節會在報名審查時說明。</div>
 
-      <div class="book-ref">
-        <img src="/assets/book-lingxiu-yoga-dialogue.webp?v=20261001-1" alt="宇色著作《靈修訓體與瑜伽的精彩對話》書封" loading="lazy">
-        <div>
-          <small>FURTHER READING</small>
-          <strong>《靈修訓體與瑜伽的精彩對話》</strong>
-          <p>宇色老師著，柿子文化出版。性能量轉化、脈輪與靈修訓體的觀念，在書裡有更完整的說明。<a href="https://www.books.com.tw/products/E050056941" target="_blank" rel="noopener noreferrer">博客來 ↗</a></p>
-        </div>
-      </div>
       <div class="medical-note">課程內容屬瑜伽練習、身體覺察與健康教育範疇；如有疼痛、慢性病、泌尿生殖系統疾病或其他醫療需求，仍應先接受合格醫療專業人員評估。</div>
     </div>
   </section>
@@ -570,10 +538,18 @@
           <p>南華大學生死教育與諮商研究所碩士</p>
           <p>印度希瓦南達瑜伽師資證</p>
           <p>台灣中華瑜伽師資證</p>
-          <p>著有《靈修訓體與瑜伽的精彩對話》等十六本以上靈修著作</p>
+          <p>著有十六本以上靈修著作</p>
         </div>
         <p class="instructor-bio">這堂課由宇色老師親自帶領。他在研究所受的是諮商訓練，平時帶領靈修與瑜伽。在圈子裡，他做的事情大多是聽，再把談話慢慢帶回身體與修行。</p>
         <p class="instructor-bio">第一次登山，他就挑戰非洲第一高峰吉力馬札羅山，之後又走訪近二十個國家與古文明遺跡，從祕魯馬丘比丘到埃及金字塔、尼泊爾、吳哥窟。他以無極瑤池金母靈修心法與古印度瑜伽精神，一路走出生活的舒適圈。</p>
+        <div class="instructor-book">
+          <img src="/assets/book-lingxiu-yoga-dialogue.webp?v=20261001-2" alt="宇色著作《靈修訓體與瑜伽的精彩對話》書封" loading="lazy">
+          <div>
+            <small>BOOK</small>
+            <strong>《靈修訓體與瑜伽的精彩對話》</strong>
+            <p>宇色老師著，柿子文化出版。性能量轉化、脈輪與靈修訓體的觀念，在書裡有更完整的說明。<a href="https://www.books.com.tw/products/E050056941" target="_blank" rel="noopener noreferrer">博客來 ↗</a></p>
+          </div>
+        </div>
         <blockquote class="instructor-quote">用眼與腳從不同的宗教、文明、國家中重新定義靈修與認識自己。</blockquote>
       </div>
     </div>
@@ -585,31 +561,43 @@
       <p class="section-intro">以下為歷年男性學員課後回饋，保留原本敘述的語氣與學習感受。</p>
       <div class="testimonial-grid">
         <article class="testimonial-card">
+          <figure class="testimonial-person">
+            <img src="/assets/male-yoga-student-01.webp?v=20260930-1" alt="AI 生成的匿名男性學員意象，約三十歲，背面視角" loading="lazy">
+          </figure>
           <div class="testimonial-body">
             <span class="testimonial-index">學員 01</span>
             <p>上完課覺得收穫特別的多，要謝謝老師為我們開這麼一堂課，上課的時候或許大家都比較害羞，我個人覺得這是一件很健康的事情，如果都沒有學到確實的穴位，那真的很可惜，回家要練習的時候真的不知是對是錯，不知有什麼方法可以讓我們精準地了解到按摩及所有穴位的正確位置，個人覺得應該在現場就要學到最正確的方法並練習到位因為我覺得我自己都一直處於非常衝動的狀態，所以我才想說是否可以藉由正確的方式來調整自己，有時候會覺得自己是不是生病，那天上完課聽老師說（脈輪與性之關係）才知道原來可能是某些地方失去平衡，更想深入學習。老師是否可以再針對這樣的課程可以開立進階班的方式讓我們更深入的了解及學習，讓我們想更深入學習的學員可以更進一步地提升自己。</p>
           </div>
         </article>
         <article class="testimonial-card">
+          <figure class="testimonial-person">
+            <img src="/assets/male-yoga-student-02.webp?v=20260930-1" alt="AI 生成的匿名男性學員意象，三十多歲，側背視角" loading="lazy">
+          </figure>
           <div class="testimonial-body">
             <span class="testimonial-index">學員 02</span>
             <p>報名說明內容我不懂什麼是下三輪、體位法，但有寫提昇男性能量的古印度瑜珈體位法，就很引起我的好奇心好想學，最吸引我的是男性私密養生之道，我想這是所有男人都會好奇想了解的，另外規定也很吸引我，需要赤膊與著四角褲（雖然會害羞）但心中確深深的覺得老師一定會教的很深入很實用，才會要求如此，而非一般的文字理論上課，而是真正的體驗學習、實做學習，如果是文字理論我看書上網就好了，其實要報名下去心中早就有放開一切害羞的準備，就想學到真實的確實的實做，上課時老師就有提到二日工作坊，我就特別期待，老師別耽心同學害羞．．．．報名就是想學到最正確，最標準的，回去才能練，才不會去想太多，大家都是男生嘛，怎麼樣變更強更健康才是重點！</p>
           </div>
         </article>
         <article class="testimonial-card">
+          <figure class="testimonial-person">
+            <img src="/assets/male-yoga-student-03.webp?v=20260930-1" alt="AI 生成的匿名男性學員意象，約四十歲，背面視角" loading="lazy">
+          </figure>
           <div class="testimonial-body">
             <span class="testimonial-index">學員 03</span>
             <p>今天很感謝宇色老師的教導以及蘇先生的幫助，在高雄這類型的資訊真的太少，更不用說為男性開課的瑜伽了，今天一日讓我受益良多，學習到很多新的知識以及方法，也確立了很多觀念，很開心今天有報名課程，能學習到正確的知識，網路上資訊混雜而錯誤，一天下來 有豁然開朗的感覺，很期待下階段的深入課程，真的很感謝您及宇色老師。</p>
           </div>
         </article>
         <article class="testimonial-card">
+          <figure class="testimonial-person">
+            <img src="/assets/male-yoga-student-04.webp?v=20260930-1" alt="AI 生成的匿名男性學員意象，四十歲上下，側背視角" loading="lazy">
+          </figure>
           <div class="testimonial-body">
             <span class="testimonial-index">學員 04</span>
             <p>能夠確實感受到會陰穴收縮以及縮肛的感受，即便每天都執行老師所教的手法 ，性慾方面也不會過於旺盛，性功能增強、性慾減少，這點我感到很滿意 ，每晚睡前都會做海狗趴跟拉肝經，肝火降低很多，晚上更好睡 眼睛也不容易乾澀，個性上也比較平和不易發怒，一直以來都只看著資料學習，只做到具其型，不具其意，一日課程對我來說，是能確立與修正所學知識以及實踐與體會，真正達到具其意的一趟旅程。</p>
           </div>
         </article>
       </div>
-      <p class="testimonial-note">為保護學員隱私，分享皆以匿名呈現。以上為個別學員的主觀課後經驗與感受，不代表所有人的結果；涉及身體或健康狀況時，仍應依個人情形評估，必要時尋求專業醫療意見。</p>
+      <p class="testimonial-note">人物圖像為 AI 生成的匿名男性意象，用於保護學員隱私，不代表實際學員本人。以上為個別學員的主觀課後經驗與感受，不代表所有人的結果；涉及身體或健康狀況時，仍應依個人情形評估，必要時尋求專業醫療意見。</p>
     </div>
   </section>
 
