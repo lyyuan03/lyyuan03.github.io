@@ -11,6 +11,10 @@ const {
   normalizeSponsorOfferSettings,
   sponsorPlanAmount
 } = require("./membership-plans");
+const {
+  requireVerifiedCaller,
+  assertCheckoutRateLimit
+} = require("./checkout-guards");
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -211,20 +215,18 @@ exports.createPublicSponsorCheckout = onCall(
   {
     region: REGION,
     secrets: [ecpayConfig, smtpConfig],
+    // App Check deferred until firebase-config.js initializes App Check + Console site key.
     enforceAppCheck: false
   },
   async (request) => {
-    const email = normalizeEmail(request.auth?.token?.email);
-    const uid = cleanText(request.auth?.uid, 128);
+    const { email, uid } = requireVerifiedCaller(
+      request,
+      "請先使用之後要閱讀文章的 Gmail 登入。",
+      "請先完成 Email 驗證後再建立付款申請。"
+    );
     const name = cleanText(request.data?.name || request.auth?.token?.name || "", 60);
     const planMonths = Number(request.data?.planMonths);
 
-    if (!request.auth || !email || !email.includes("@")) {
-      throw new HttpsError("unauthenticated", "請先使用之後要閱讀文章的 Gmail 登入。");
-    }
-    if (request.auth.token.email_verified === false) {
-      throw new HttpsError("failed-precondition", "請先完成 Email 驗證後再建立付款申請。");
-    }
     if (![1, 3].includes(planMonths)) {
       throw new HttpsError("invalid-argument", "目前僅提供一個月或三個月閱讀方案。");
     }
@@ -235,6 +237,29 @@ exports.createPublicSponsorCheckout = onCall(
     const paymentUrl = `${FUNCTIONS_BASE_URL}/membershipPayment?order=${encodeURIComponent(newTradeNo)}&token=${encodeURIComponent(paymentToken)}`;
     const newOrderRef = db.doc(`membershipOrders/${newTradeNo}`);
     const environment = ecpayConfig.value().environment === "production" ? "production" : "stage";
+
+    const memberProbe = await db.doc(`sponsorMemberAccess/${email}`).get();
+    const pendingOrderNo = cleanText(memberProbe.data()?.pendingOrderNo, 20);
+    let skipRateLimit = false;
+    if (pendingOrderNo) {
+      const pending = await db.doc(`membershipOrders/${pendingOrderNo}`).get();
+      const order = pending.exists ? pending.data() : null;
+      const existingPaymentUrl = safePaymentUrl(order?.externalPaymentUrl);
+      skipRateLimit = Boolean(
+        order
+        && order.memberType === "sponsor-member"
+        && order.email === email
+        && order.status === "pending"
+        && order.manualPaymentReview !== true
+        && order.paymentProvider === "ecpay-aio"
+        && millis(order.paymentLinkExpiresAt) > Date.now()
+        && Number(order.planMonths) === planMonths
+        && existingPaymentUrl
+      );
+    }
+    if (!skipRateLimit) {
+      await assertCheckoutRateLimit(uid, email);
+    }
 
     const checkout = await db.runTransaction(async (transaction) => {
       const memberSnapshot = await transaction.get(memberRef);

@@ -12,6 +12,10 @@ const {
   normalizeSponsorOfferSettings,
   sponsorPlanAmount
 } = require("./membership-plans");
+const {
+  requireVerifiedCaller,
+  assertCheckoutRateLimit
+} = require("./checkout-guards");
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -173,20 +177,19 @@ exports.createPublicSponsorCheckout = onCall(
     enforceAppCheck: false
   },
   async (request) => {
-    const email = normalizeEmail(request.auth?.token?.email);
-    const uid = cleanText(request.auth?.uid, 128);
+    const { email, uid } = requireVerifiedCaller(
+      request,
+      "請先使用將來閱讀文章的 Email 登入會員帳號。",
+      "請先完成 Email 驗證後再建立付款申請。"
+    );
     const name = cleanText(request.data?.name || request.auth?.token?.name || "", 60);
     const planMonths = Number(request.data?.planMonths);
 
-    if (!request.auth || !email || !email.includes("@")) {
-      throw new HttpsError("unauthenticated", "請先使用將來閱讀文章的 Email 登入會員帳號。");
-    }
-    if (request.auth.token.email_verified === false) {
-      throw new HttpsError("failed-precondition", "請先完成 Email 驗證後再建立付款申請。");
-    }
     if (![1, 3].includes(planMonths)) {
       throw new HttpsError("invalid-argument", "目前僅提供一個月或三個月方案。");
     }
+
+    await assertCheckoutRateLimit(uid, email);
 
     const memberRef = db.doc(`sponsorMemberAccess/${email}`);
     const newTradeNo = createMerchantTradeNo();
