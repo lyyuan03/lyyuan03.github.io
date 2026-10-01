@@ -93,6 +93,9 @@
     .photo-frame{position:relative;overflow:hidden;background:#302b27;margin:0}
     .photo-frame img{width:100%;height:100%;object-fit:cover;filter:saturate(.78) sepia(.07) contrast(1.03)}
     .photo-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(53,47,42,.32),transparent 42%)}
+    .photo-story-shell.is-image-only{grid-template-columns:1fr;min-height:0}
+    .is-image-only .photo-frame{aspect-ratio:2314/930}
+    .is-image-only .photo-frame img{object-position:center top}
     .photo-copy{display:flex;flex-direction:column;justify-content:center;padding:58px clamp(34px,5vw,70px);background:linear-gradient(145deg,#5d554d,#514b45);color:#fff}
     .photo-copy .section-label{color:#e8c997}
     .photo-copy h2{margin:11px 0 17px;font-family:var(--serif);font-size:clamp(34px,4.1vw,50px);font-weight:500;line-height:1.42}
@@ -121,7 +124,7 @@
     .workshop-visual-copy strong{display:block;margin-top:11px;font-family:var(--serif);font-size:clamp(24px,2.8vw,34px);font-weight:500;line-height:1.65}
     .workshop-visual-copy p{margin:14px 0 0;color:rgba(255,255,255,.72);font-size:15px;line-height:1.95}
     .workshop{background:var(--cream)}
-    .workshop-head{display:grid;grid-template-columns:1fr .9fr;gap:52px;align-items:end}
+    .workshop-head{display:grid;grid-template-columns:1fr;gap:52px;align-items:end}
     .ratings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .rating{padding:16px 17px;border-radius:17px;background:#fff;border:1px solid var(--line)}
     .rating span{display:block;color:#726d65;font-size:12px;letter-spacing:.06em}
@@ -331,8 +334,8 @@
       <div class="breadcrumb" aria-label="麵包屑"><a href="/">首頁</a><span>／</span><a href="/courses/">課程</a><span>／</span><span aria-current="page">男力瑜伽・性與能量</span></div>
       <p class="eyebrow">Men's Yoga · Sexuality & Energy</p>
       <h1>男力瑜伽<span>性與能量一日工作坊</span></h1>
-      <p class="hero-lead">力量不必僵硬。從身體、呼吸與覺察，重新整理男性內在的生命力。</p>
-      <p class="hero-text">以男性身體經驗為核心，融合瑜伽體位法、身心靈修練與性能量議題。課程保留力量感，也保留柔和與覺察，讓練習回到身體本身。</p>
+      <p class="hero-lead">很多關於性的事，男人只能自己摸索。這一天，我們把它攤開來談。</p>
+      <p class="hero-text">課程從性觀念講起，延伸到性跟感情的關係。性衝動、性幻想來的時候怎麼面對，男人又該怎麼調理自己的身體，這些平常沒人講的事，課堂上會一件一件說清楚。瑜伽只做簡單的體位與呼吸，用來練習性能量的轉化。</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#workshop">查看課程內容</a>
         <a class="btn btn-ghost" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">洽詢開課資訊</a>
@@ -350,14 +353,12 @@
   <div class="container course-subnav-inner">
     <div class="course-subnav-links">
       <a href="#about">課程定位</a>
-      <a href="#practice">課堂實景</a>
-      <a href="#admission">優先資格</a>
       <a href="#workshop">課程內容</a>
+      <a href="#boundary">課程界線</a>
       <a href="#levels">初階／中階</a>
+      <a href="#admission">報名資格</a>
       <a href="#instructor">師資介紹</a>
       <a href="#voices">學員分享</a>
-      <a href="#boundary">課程界線</a>
-      <a href="#history">歷年資料</a>
     </div>
     <a class="course-subnav-cta" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">洽詢開課 →</a>
   </div>
@@ -368,48 +369,22 @@
     <div class="container opening-grid">
       <div>
         <span class="section-label">Why This Course</span>
-        <h2>男性的力量，也需要柔和與覺察。</h2>
+        <h2>很多話，男人從來沒有地方說。</h2>
       </div>
       <div class="opening-copy">
-        <div class="opening-quote">身體會留下壓力、慾望與長年形成的習慣。瑜伽讓人重新回到身體，從呼吸與動作裡看見自己。</div>
-        <p>「男力瑜伽・性與能量」原本就是「男力性與塑型瑜伽」中的深度課程，專為男性設計，核心放在性與體位法之間的關聯。</p>
-        <p>這一版課程頁保留原始課堂的男性氣質，但把視覺與閱讀節奏重新整理。力量、穩定、柔軟與活力並置，讓內容不落入僵硬的健身語言，也不把性議題處理得過度神祕。</p>
+        <p>很多男人從小就沒有人教他怎麼當一個男人。父親不在身邊，或者在身邊卻很少開口，關於身體跟慾望的事，都是自己摸索，摸不懂就吞下去。長大以後，工作要扛、家要扛，出了狀況也習慣一個人撐著。</p>
+        <p>這些年做靈性諮詢，坐在我面前的男人，有人是事業卡住，有人是感情一直出問題。談到後來，有時候問題出在身體。身體一直繃著放不開，心裡的話又找不到人說，就這樣一年一年壓著。</p>
+        <div class="opening-quote">修行路上，身體的修煉對男人特別重要。身體放不開，心很難真正靜下來。</div>
+        <p style="margin-top:22px">這堂課會做一些簡單的瑜伽，還有性能量轉換的練習，但瑜伽只佔一小部分。大部分的時間，是留一個空間給大家。平常說不出口的事，在這裡可以慢慢說，我會陪著聽。大家都是男人，不用急，也不用裝。</p>
       </div>
     </div>
   </section>
 
   <section class="photo-story" id="practice" aria-label="原始男力瑜伽課程實景">
-    <div class="photo-story-shell">
+    <div class="photo-story-shell is-image-only">
       <figure class="photo-frame">
         <img src="/assets/course-male-yoga-classroom-hq.webp?v=20260930-hq3" alt="宇色男力瑜伽課程中，多位男性學員練習體位法" loading="lazy" referrerpolicy="no-referrer">
       </figure>
-      <div class="photo-copy">
-        <span class="section-label">Body · Energy · Practice</span>
-        <h2>男人．瑜伽．性本能</h2>
-        <p>課程從男性身體出發，把體位法、呼吸、生命力與性能量放在同一個脈絡裡觀察。</p>
-        <p>身體有力量，也有柔軟；有外放，也有內收。當練習不再只追求做到某一個姿勢，注意力會慢慢回到呼吸、感受與自己的狀態。</p>
-        <strong>力量 × 穩定 × 柔和 × 覺察</strong>
-      </div>
-    </div>
-  </section>
-
-  <section class="section admission" id="admission">
-    <div class="container admission-grid">
-      <div class="admission-lead">
-        <span class="section-label">Admission Priority</span>
-        <h2>本課程具有以下資格者優先錄取</h2>
-        <div class="priority-list" aria-label="優先錄取資格">
-          <div class="priority-item"><b>1</b><span>舊生回流</span></div>
-          <div class="priority-item"><b>2</b><span>1年以上瑜伽基礎者</span></div>
-          <div class="priority-item"><b>3</b><span>靈元院虔誠男信眾</span></div>
-          <div class="priority-item"><b>4</b><span>3年以上靈修或密宗修練經驗</span></div>
-        </div>
-      </div>
-      <div class="admission-copy">
-        <p>這門瑜伽課程針對已經具備一定身心靈修練背景的男性而開設。該課程旨在融合古印度男性瑜伽密修、身心靈修練和性能量瑜伽轉化等多重元素，提供深度的探索和修練體驗，因此，參與者需要擁有一定的先備知識和經驗。基本上，只有符合這些先決條件的學員才能參加該課程。</p>
-        <p>然而，對於那些雖然未必具備上述條件，但願意提供詳細的個人資料、學歷和瑜伽練習經驗的人，也有可能被考慮接受報名。最終的評估將根據每位申請者的具體情況來進行，以確保他們是否具有參加該課程所需的基本背景和資格。</p>
-        <div class="adult-note"><b>成人課程提醒</b><span>課程涉及成人性、身體與私密保健議題；實際課程內容、服裝、接觸方式與練習規範，均以當期課前說明與個人知情同意為準。</span></div>
-      </div>
     </div>
   </section>
 
@@ -419,13 +394,7 @@
         <div>
           <span class="section-label">Course Content</span>
           <h2>男力瑜伽 性與能量工作坊</h2>
-          <p class="section-intro">以瑜伽體位、身體覺察、男性生命課題與私密保健為主要脈絡，進一步討論性能量與生命力的關係。</p>
-        </div>
-        <div class="ratings" aria-label="課程強度">
-          <div class="rating"><span>肌耐力</span><strong>★★☆☆☆</strong></div>
-          <div class="rating"><span>柔軟度</span><strong>★★☆☆☆</strong></div>
-          <div class="rating"><span>消耗體力</span><strong>★★★☆☆</strong></div>
-          <div class="rating"><span>性知識</span><strong>★★★★☆</strong></div>
+          <p class="section-intro">初階以觀念與講解為主，會搭配影片教學。身體接觸很少，需要雙人互動與更深入的練習，都留在中階。</p>
         </div>
       </div>
 
@@ -443,37 +412,60 @@
       <div class="module-list">
         <article class="module">
           <span class="module-no">01</span>
-          <h3>能量轉化與生命力</h3>
-          <p>下三輪脈輪的能量轉化及生命力的重要性。探討下三輪脈輪的能量轉化，以及生命力的關鍵角色。</p>
+          <h3>先坐下來，把話說出口</h3>
+          <p>大家圍成一圈，想說的人說，不想說的人可以先聽。圈子裡講過的話，離開教室就留在教室裡。</p>
         </article>
         <article class="module">
           <span class="module-no">02</span>
-          <h3>性與男性生命課題</h3>
-          <p>性在男性生活中的重要性、性方面的問題與挑戰。研究性在男性生活中所扮演的角色，並探討男性在性方面所面臨的問題和挑戰。</p>
+          <h3>沒有人教過我們的性觀念</h3>
+          <p>男孩對性的認識，多半是自己摸索，或從網路上拼湊來的。這一段把基本的性觀念重新整理一次，包括男性的性反應與性高潮，會搭配影片講解。</p>
         </article>
         <article class="module">
           <span class="module-no">03</span>
-          <h3>古印度瑜伽體位法：提升與平衡性能量</h3>
-          <p>瑜伽體位法的基本原理、調節性能量的應用。解釋瑜伽體位法的核心原則，以及如何運用它來調節性能量以提升和平衡身心狀態。</p>
+          <h3>性跟感情的關係</h3>
+          <p>感情裡出的狀況，不少跟性有關，只是很少人願意說破。這一段談性在伴侶關係裡的位置，還有兩者怎麼互相影響。</p>
         </article>
         <article class="module">
           <span class="module-no">04</span>
-          <h3>性能量與生命力的關聯</h3>
-          <p>性能量的定義與意義、對生命力的影響與作用。探討性能量的概念，並闡述它對生命力的影響和作用。</p>
+          <h3>性衝動與性幻想來的時候</h3>
+          <p>衝動來了，幻想停不下來，很多男人第一個反應是責怪自己。這一段談遇到這些時刻，身體跟心裡發生了什麼，又可以怎麼處理。</p>
         </article>
         <article class="module">
           <span class="module-no">05</span>
-          <h3>男性私密保健和飲食調理</h3>
-          <p>男性私密器官的生理結構和功能、保健和飲食方法。討論男性私密器官的生理結構和功能，以及如何通過保健和飲食調理來維護其健康。</p>
+          <h3>性能量轉化</h3>
+          <p>體位不多，都很簡單，搭配呼吸，把注意力帶回骨盆、會陰與脊柱，練習把性能量往上轉化。這一段也會從宇色老師多年的修行經驗，談慾望在修行路上怎麼安放。建議有瑜伽基礎，或平常有運動習慣。</p>
         </article>
         <article class="module">
           <span class="module-no">06</span>
-          <h3>男性功能保健與按摩技巧</h3>
-          <p>提升男性生殖器官功能的按摩和保健方法。介紹提升男性生殖器官功能的按摩技巧和保健方法。</p>
+          <h3>男人的自我調理</h3>
+          <p>認識私密部位的生理結構，以及平常該怎麼照顧它，飲食跟按摩都會談到。老師調整姿勢前，都會先詢問過你。</p>
         </article>
       </div>
 
+      <div class="medical-note">課程後段有一小段身體練習需要赤膊或裸身進行，細節會在報名審查時說明。</div>
+
       <div class="medical-note">課程內容屬瑜伽練習、身體覺察與健康教育範疇；如有疼痛、慢性病、泌尿生殖系統疾病或其他醫療需求，仍應先接受合格醫療專業人員評估。</div>
+    </div>
+  </section>
+
+  <section class="section boundary" id="boundary">
+    <div class="container">
+      <div class="boundary-panel">
+        <div>
+          <span class="section-label">Course Boundary</span>
+          <h3>這是一門涉及成人性議題的身體課程。</h3>
+        </div>
+        <div class="boundary-copy">
+          <p>歷年中階報名資料曾明確詢問學員對私密身體練習、生理反應與雙人練習的接受程度，因此這類內容不應在未說明的情況下突然出現。</p>
+          <p>未來若重新開課，實際練習內容、接觸方式、先修資格與報名規範，均應以當期正式說明為準。任何涉及身體接觸的練習，都應建立在事前知情、清楚表達與個人意願之上。</p>
+          <div class="boundary-list">
+            <span>課前先了解內容，再決定是否報名</span>
+            <span>不以性向作為課程價值判斷</span>
+            <span>尊重每位學員的身體與心理界線</span>
+            <span>中階須依當期先修資格審核</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -481,30 +473,46 @@
     <div class="container">
       <span class="section-label">Two Levels</span>
       <h2>初階先建立覺察，中階再進入更深的練習。</h2>
-      <p class="section-intro">歷年課程曾採初階與中階兩個層次，中階只開放具先修經驗者報名。未來場次仍以當期正式公告與審核資格為準。</p>
+      <p class="section-intro">初階與中階分開報名。中階須完成初階，並經過面談才能參加。實際場次以靈元院正式公告為準。</p>
       <div class="level-grid">
         <article class="level-card">
           <div class="level-no">01</div>
-          <h3>初階｜建立身體與性議題的覺察</h3>
-          <p>適合第一次接觸這個主題，或已有瑜伽經驗、希望重新理解身體與性之間關係的學員。</p>
+          <h3>初階｜把性弄懂，把話說出口</h3>
+          <p>以觀念講解與影片教學為主，體位簡單，身體接觸很少。適合第一次接觸這個主題的男性。</p>
           <ul>
-            <li>男性身體與瑜伽練習的基本脈絡</li>
-            <li>體位、呼吸與身體反應的觀察</li>
-            <li>性與修行議題的討論</li>
-            <li>個人界線與團體練習原則</li>
+            <li>重新整理性觀念與男性的性反應</li>
+            <li>性跟感情之間的關係</li>
+            <li>性衝動與性幻想的處理</li>
+            <li>簡單的性能量轉化練習</li>
           </ul>
         </article>
         <article class="level-card">
           <div class="level-no">02</div>
-          <h3>中階｜在先修經驗上深化</h3>
-          <p>以完成指定先修課程或具相關練習經驗者為主。可能進一步碰觸較私密的成人性議題與雙人練習，內容須依當期課前說明為準。</p>
+          <h3>中階｜在初階之後，往更深處走</h3>
+          <p>完成初階並通過面談後才能報名。練習全程裸身進行，有更深入的分享與雙人互動，細節會在面談時說明。</p>
           <ul>
-            <li>在既有身體覺察上延伸練習</li>
-            <li>更細緻地理解性反應與能量經驗</li>
-            <li>雙人練習中的溝通與界線</li>
+            <li>更深入的團體分享</li>
+            <li>雙人互動中的溝通與界線</li>
             <li>把練習經驗帶回日常與修行</li>
           </ul>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section admission" id="admission">
+    <div class="container admission-grid">
+      <div class="admission-lead">
+        <span class="section-label">Admission</span>
+        <h2>報名資格</h2>
+        <div class="priority-list" aria-label="報名資格">
+          <div class="priority-item"><b>1</b><span>有瑜伽基礎，或平常有運動習慣</span></div>
+          <div class="priority-item"><b>2</b><span>填寫報名問卷，並通過審查</span></div>
+        </div>
+      </div>
+      <div class="admission-copy">
+        <p>報名時需要填寫問卷，說明報名動機、練習經驗，以及你對課程中裸身練習的感受。審查通過後，才會通知繳費。</p>
+        <div class="adult-note"><b>成人課程提醒</b><span>課程涉及成人性、身體與私密保健議題；實際課程內容、服裝、接觸方式與練習規範，均以當期課前說明與個人知情同意為準。</span></div>
       </div>
     </div>
   </section>
@@ -519,12 +527,14 @@
         <h2>宇色老師</h2>
         <p class="instructor-role">OSEL · WRITER · SPIRITUAL TEACHER</p>
         <div class="instructor-credentials">
-          <p>南華大學生死教育與諮商研究所碩士。</p>
+          <p>靈元院創辦人，靈山派修行近三十年</p>
+          <p>南華大學生死教育與諮商研究所碩士</p>
           <p>印度希瓦南達瑜伽師資證</p>
           <p>台灣中華瑜伽師資證</p>
+          <p>著有十六本以上靈修著作</p>
         </div>
-        <p class="instructor-bio">第一次登山便挑戰非洲第一高峰──5895公尺的吉力馬札羅山（世界第七）、深入被喻為「水藍色星球上最後一片淨土」的稻城亞丁，走訪近二十個國家與古文明遺跡──祕魯馬丘比丘、埃及金字塔、摩洛哥、尼泊爾、古羅馬、柬埔寨吳哥窟、泰國……。</p>
-        <p class="instructor-bio">以無極瑤池金母靈修心法與古印度瑜伽精神勇敢走出生活舒適圈，用眼與腳從不同的宗教、文明、國家中重新定義靈修與認識自己。</p>
+        <p class="instructor-bio">這堂課由宇色老師親自帶領。他在研究所受的是諮商訓練，平時帶領靈修與瑜伽。在圈子裡，他做的事情大多是聽，再把談話慢慢帶回身體與修行。</p>
+        <p class="instructor-bio">第一次登山，他就挑戰非洲第一高峰吉力馬札羅山，之後又走訪近二十個國家與古文明遺跡，從祕魯馬丘比丘到埃及金字塔、尼泊爾、吳哥窟。他以無極瑤池金母靈修心法與古印度瑜伽精神，一路走出生活的舒適圈。</p>
         <blockquote class="instructor-quote">用眼與腳從不同的宗教、文明、國家中重新定義靈修與認識自己。</blockquote>
       </div>
     </div>
@@ -576,23 +586,15 @@
     </div>
   </section>
 
-  <section class="section boundary" id="boundary">
+  <section class="section cta">
     <div class="container">
-      <div class="boundary-panel">
-        <div>
-          <span class="section-label">Course Boundary</span>
-          <h3>這是一門涉及成人性議題的身體課程。</h3>
-        </div>
-        <div class="boundary-copy">
-          <p>歷年中階報名資料曾明確詢問學員對私密身體練習、生理反應與雙人練習的接受程度，因此這類內容不應在未說明的情況下突然出現。</p>
-          <p>未來若重新開課，實際練習內容、接觸方式、先修資格與報名規範，均應以當期正式說明為準。任何涉及身體接觸的練習，都應建立在事前知情、清楚表達與個人意願之上。</p>
-          <div class="boundary-list">
-            <span>課前先了解內容，再決定是否報名</span>
-            <span>不以性向作為課程價值判斷</span>
-            <span>尊重每位學員的身體與心理界線</span>
-            <span>中階須依當期先修資格審核</span>
-          </div>
-        </div>
+      <span class="section-label">Course Inquiry</span>
+      <h2>下一次開課，依靈元院正式公告為準。</h2>
+      <p>目前這個頁面作為「男力瑜伽・性與能量」的靈元院專屬課程入口。若想詢問未來場次、先修資格或是否開放報名，可直接聯絡行政團隊。</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">Telegram 洽詢</a>
+        <a class="btn btn-ghost" href="mailto:lyyuan03@gmail.com?subject=%E7%94%B7%E5%8A%9B%E7%91%9C%E4%BC%BD%E3%83%BB%E6%80%A7%E8%88%87%E8%83%BD%E9%87%8F%E8%AA%B2%E7%A8%8B%E6%B4%BD%E8%A9%A2">Email 洽詢</a>
+        <a class="btn btn-ghost" href="/courses/">回課程總覽</a>
       </div>
     </div>
   </section>
@@ -608,19 +610,6 @@
         <article class="history-card"><small>APPLICATION</small><strong>審核後通知</strong><p>過去報名須完整填寫課程動機與相關經驗，經評估後才通知繳費。</p></article>
       </div>
       <p class="history-note">原始課程資料：<a href="https://kinkiosel.pixnet.net/blog/posts/1032356588" target="_blank" rel="noopener noreferrer">痞客邦舊版課程介紹 ↗</a>。舊日期、價格、行政信箱、場地與退費規範均已視為歷史資料，不作現行招生依據。</p>
-    </div>
-  </section>
-
-  <section class="section cta">
-    <div class="container">
-      <span class="section-label">Course Inquiry</span>
-      <h2>下一次開課，依靈元院正式公告為準。</h2>
-      <p>目前這個頁面作為「男力瑜伽・性與能量」的靈元院專屬課程入口。若想詢問未來場次、先修資格或是否開放報名，可直接聯絡行政團隊。</p>
-      <div class="cta-actions">
-        <a class="btn btn-primary" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">Telegram 洽詢</a>
-        <a class="btn btn-ghost" href="mailto:lyyuan03@gmail.com?subject=%E7%94%B7%E5%8A%9B%E7%91%9C%E4%BC%BD%E3%83%BB%E6%80%A7%E8%88%87%E8%83%BD%E9%87%8F%E8%AA%B2%E7%A8%8B%E6%B4%BD%E8%A9%A2">Email 洽詢</a>
-        <a class="btn btn-ghost" href="/courses/">回課程總覽</a>
-      </div>
     </div>
   </section>
 </main>
