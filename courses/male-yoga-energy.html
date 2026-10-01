@@ -344,6 +344,38 @@
     .instructor-how{margin:26px 0 0;padding:20px 0 0;border-top:1px solid rgba(200,156,102,.22)}
     .instructor-how h3{margin:0 0 10px;color:#f7f2e9;font-family:var(--serif);font-size:20px;font-weight:500;line-height:1.5}
     .instructor-how p{margin:0 0 10px;color:rgba(247,242,233,.78);font-size:15px;line-height:1.95}
+    /* CI soft 3D: 一日流程、帶走什麼、尊重卡片 */
+    .day-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;max-width:1080px;margin:42px auto 0;padding:0;list-style:none;perspective:1200px}
+    .day-flow li{position:relative;isolation:isolate;min-height:208px;padding:24px 16px 20px;text-align:center;border:1px solid rgba(255,255,255,.55);border-radius:26px;background:linear-gradient(145deg,#fffaf2,#e6dbc9);color:#3d332a;box-shadow:0 18px 28px rgba(70,53,34,.15),inset 6px 6px 12px rgba(255,255,255,.72),inset -7px -7px 13px rgba(89,79,71,.09);transition:transform .3s ease}
+    .day-flow li:hover{transform:translateY(-6px)}
+    .day-flow li:not(:last-child):after{content:"";position:absolute;z-index:3;top:50%;right:-17px;width:18px;height:3px;border-radius:99px;background:linear-gradient(90deg,#A58254,#D0B47F)}
+    .day-flow .tone-brown{background:linear-gradient(145deg,#7b6d62,#594F47);color:#f7f2e9;border-color:rgba(255,242,215,.24)}
+    .day-flow .tone-olive{background:linear-gradient(145deg,#89905d,#555b2e);color:#fffaf2;border-color:rgba(238,231,218,.3)}
+    .day-flow .tone-gold{background:linear-gradient(145deg,#d8bd8c,#a37d4b);color:#241b12}
+    .day-flow .flow-index{position:absolute;top:13px;left:16px;font-family:var(--en);font-size:11px;letter-spacing:.18em;opacity:.6}
+    .day-flow .flow-icon{display:grid;place-items:center;width:54px;height:54px;margin:12px auto 14px;border-radius:19px;background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(255,255,255,.22));color:#3d332a;box-shadow:6px 6px 12px rgba(47,40,31,.18),inset 2px 2px 4px rgba(255,255,255,.65);font-family:var(--serif);font-size:25px}
+    .day-flow h3{margin:0;font-family:var(--serif);font-size:18px;font-weight:500;line-height:1.5;color:inherit}
+    .day-flow p{margin:8px 0 0;font-size:13.5px;line-height:1.75;color:inherit;opacity:.84}
+    .takeaway{max-width:1080px;margin:64px auto 0;padding:46px 40px 40px;border-radius:30px;background:linear-gradient(145deg,#efe6d6,#e2d5bf);box-shadow:0 20px 34px rgba(70,53,34,.12),inset 6px 6px 12px rgba(255,255,255,.6)}
+    .takeaway h3{margin:6px 0 10px;font-family:var(--serif);font-size:clamp(24px,3vw,32px);font-weight:500;color:var(--ink);line-height:1.5}
+    .takeaway-lead{margin:0 0 26px;color:#5c5953;font-size:16.5px;line-height:1.95}
+    .takeaway-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .takeaway-grid article{padding:26px 24px 24px;border-radius:24px;box-shadow:0 16px 26px rgba(70,53,34,.16),inset 5px 5px 11px rgba(255,255,255,.28)}
+    .takeaway-grid .tone-brown{background:linear-gradient(145deg,#7b6d62,#594F47);color:#f7f2e9}
+    .takeaway-grid .tone-olive{background:linear-gradient(145deg,#7e8550,#50562c);color:#fffaf2}
+    .takeaway-grid .tone-gold{background:linear-gradient(145deg,#dcc394,#a98453);color:#241b12}
+    .takeaway-grid small{display:block;font-family:var(--en);font-size:11px;letter-spacing:.24em;opacity:.65}
+    .takeaway-grid h4{margin:9px 0 10px;font-family:var(--serif);font-size:20px;font-weight:500;line-height:1.5;color:inherit}
+    .takeaway-grid p{margin:0;font-size:15px;line-height:1.9;color:inherit;opacity:.9}
+    .workshop-story-end{margin-top:46px}
+    .workshop-story-end p:first-child{font-family:var(--serif)}
+    .respect-note{padding:30px 30px 26px;border:1px solid rgba(255,255,255,.28);border-radius:26px;background:linear-gradient(145deg,#7e8550,#50562c);color:#fffaf2;box-shadow:0 18px 28px rgba(48,52,36,.2),inset 6px 6px 12px rgba(255,255,255,.16)}
+    .respect-note h3{color:#fffaf2}
+    .respect-note p{color:rgba(255,250,242,.9)}
+    .instructor-how{padding:26px 28px 18px;border:1px solid rgba(200,156,102,.3);border-radius:24px;background:linear-gradient(145deg,rgba(200,156,102,.16),rgba(96,99,48,.16));box-shadow:0 16px 28px rgba(0,0,0,.28),inset 4px 4px 10px rgba(255,255,255,.05)}
+    @media (max-width:1000px){.day-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.day-flow li:after{display:none}.day-flow li:last-child{grid-column:1/-1}}
+    @media (max-width:760px){.takeaway{padding:32px 20px 24px;border-radius:24px}.takeaway-grid{grid-template-columns:1fr}.day-flow li{min-height:0}}
+    @media (max-width:520px){.day-flow{grid-template-columns:1fr;gap:12px}.day-flow li{display:grid;grid-template-columns:54px 1fr;column-gap:14px;align-items:center;text-align:left;padding:18px 16px}.day-flow .flow-index{position:static;grid-column:2}.day-flow .flow-icon{grid-row:1/4;margin:0}.day-flow li:last-child{grid-column:auto}}
   </style>
 </head>
 <body>
@@ -473,6 +505,14 @@
         </div>
       </div>
 
+      <ol class="day-flow" aria-label="一日流程">
+        <li class="tone-cream"><span class="flow-index">STEP 01</span><span class="flow-icon">談</span><h3>圍坐分享</h3><p>先圍坐下來，想說的人說，不想說的人聽。</p></li>
+        <li class="tone-brown"><span class="flow-index">STEP 02</span><span class="flow-icon">懂</span><h3>性知識</h3><p>從性反應、慾望到伴侶關係，搭配教學影片。</p></li>
+        <li class="tone-olive"><span class="flow-index">STEP 03</span><span class="flow-icon">息</span><h3>性能量</h3><p>簡單體位與呼吸，練習衝動升起時不急著釋放。</p></li>
+        <li class="tone-cream"><span class="flow-index">STEP 04</span><span class="flow-icon">養</span><h3>身體保健</h3><p>私密部位的生理結構、日常保健與自我按摩。</p></li>
+        <li class="tone-gold"><span class="flow-index">STEP 05</span><span class="flow-icon">放</span><h3>後段練習</h3><p>一小段赤膊或裸身練習，參與程度由你決定。</p></li>
+      </ol>
+
       <div class="workshop-story">
         <p class="story-lead">這一天，我們先從男人平常很少有機會好好談的事情開始。</p>
         <p>性、慾望、身體、幻想、高潮、親密關係，以及一個男人究竟如何看待自己的身體。</p>
@@ -491,9 +531,20 @@
         <p>初階課程後段，有一小段練習需要赤膊或裸身進行。很多男人一輩子都在用自己的身體，卻很少在其他男人面前自然地面對它。衣服拿掉的那一刻，心裡的緊張和比較會變得很具體，這也是身體覺察的一部分。</p>
         <p class="story-lead">你不需要證明自己有多開放，也不必勉強自己跨過還沒有準備好的界線。</p>
         <p>所有身體練習都建立在個人意願與清楚同意之上；老師需要調整姿勢或接觸身體之前，都會先徵得你的同意。涉及身體界線的練習，也會事先完整說明，由你自己決定參與的程度。</p>
-        <p class="story-lead">這一天，你會帶走什麼</p>
-        <p>課程結束時，希望你對自己的身體與性多一點理解。</p>
-        <p>你會重新整理男性的性觀念，也看懂性與感情之間的牽動。性衝動、性幻想或慾望出現時，你多一種辨識自己、也把注意力帶回身體的方法。男性身體平常可以怎麼照顧，與自己或別人的身體相處時界線放在哪裡，這一天也會一併談到。</p>
+      </div>
+
+      <div class="takeaway">
+        <span class="section-label">Take Away</span>
+        <h3>這一天，你會帶走什麼</h3>
+        <p class="takeaway-lead">課程結束時，希望你對自己的身體與性多一點理解。</p>
+        <div class="takeaway-grid">
+          <article class="tone-brown"><small>TAKEAWAY 01</small><h4>把性弄懂</h4><p>重新整理男性的性觀念，也看懂性與感情之間的牽動。</p></article>
+          <article class="tone-olive"><small>TAKEAWAY 02</small><h4>辨識自己的方法</h4><p>性衝動、性幻想或慾望出現時，你多一種辨識自己、也把注意力帶回身體的方法。</p></article>
+          <article class="tone-gold"><small>TAKEAWAY 03</small><h4>照顧身體，守住界線</h4><p>男性身體平常可以怎麼照顧，與自己或別人的身體相處時界線放在哪裡，這一天也會一併談到。</p></article>
+        </div>
+      </div>
+
+      <div class="workshop-story workshop-story-end">
         <p>如果你對男性身體、性、瑜伽與性能量轉化一直有好奇，卻始終找不到一個可以認真學習、又不需要假裝或尷尬的地方，這一天，就是從這裡開始。</p>
       </div>
 
