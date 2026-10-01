@@ -250,7 +250,10 @@
     .deck-section{scroll-margin-top:30px;margin:0 0 56px}
     .deck-section:last-child{margin-bottom:0}
     .deck-section .deck-actions{padding-top:12px}
-    .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+    .deck-tag{flex:1 0 100%;color:#d8b870;font:500 13px/1.6 "Noto Sans CJK TC","Noto Sans TC",sans-serif;letter-spacing:.1em}
+.deck-tag:before{content:"◆";margin-right:8px;font-size:9px;vertical-align:1px}
+.deck-tag.is-offline{color:#e8c98a}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
     footer{background:#050b07;color:#eee6d6;border-top:1px solid rgba(216,184,112,.18)}
     @media(max-width:720px){
       .deck-hero{padding:12px 0 0}
@@ -283,8 +286,8 @@
           <li class="global-nav-course-tree">
             <a class="global-nav-course-parent" href="/courses/" aria-current="page">課程</a>
             <ul class="global-nav-sublist" aria-label="課程子目錄">
-              <li><a href="/courses/lingji-practice.html">跟靈乩前輩學靈修的兩堂必修課</a></li>
-              <li><a href="/courses/male-yoga-energy.html">男力瑜伽・性與能量</a></li>
+              <li><a href="/courses/lingji-practice.html">跟靈乩前輩學靈修的兩堂必修課（線上）</a></li>
+              <li><a href="/courses/male-yoga-energy.html">男力瑜伽・性與能量（實體）</a></li>
             </ul>
           </li>
         </ul>
@@ -371,6 +374,7 @@
     </picture>
       <h2 class="sr-only" id="featured-title">跟靈乩前輩學靈修的兩堂必修課</h2>
       <div class="deck-actions" aria-label="兩堂必修課連結">
+        <span class="deck-tag">線上課程｜購買後線上觀看</span>
         <a class="primary" href="/courses/lingji-practice.html">查看完整課程</a>
         <a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">直接前往報名 ↗</a>
       </div>
@@ -383,6 +387,7 @@
     </picture>
       <h2 class="sr-only" id="spiritual-title">先把靈修弄懂</h2>
       <div class="deck-actions" aria-label="靈修課程連結">
+        <span class="deck-tag">線上課程｜購買後線上觀看</span>
         <a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">宇色的靈修思路 ↗</a>
         <a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">靈動的奧祕 ↗</a>
       </div>
@@ -395,6 +400,7 @@
     </picture>
       <h2 class="sr-only" id="consciousness-title">把覺醒帶回生活</h2>
       <div class="deck-actions" aria-label="覺醒與生活課程連結">
+        <span class="deck-tag">線上課程｜購買後線上觀看</span>
         <a href="https://maplebook.kaik.io/learning/soulawakening" target="_blank" rel="noopener noreferrer">靈魂覺醒 ↗</a>
         <a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">財富豐盛 ↗</a>
         <a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">愛的關係 ↗</a>
@@ -408,6 +414,7 @@
     </picture>
       <h2 class="sr-only" id="wellness-title">先照顧好身體與心</h2>
       <div class="deck-actions" aria-label="身心照顧課程連結">
+        <span class="deck-tag">線上課程｜購買後線上觀看</span>
         <a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">身心療遇養護 4 堂必修課 ↗</a>
         <a href="https://page.cashier.ecpay.com.tw/forms/bsVA" target="_blank" rel="noopener noreferrer">靜心排毒與身心修煉 ↗</a>
       </div>
@@ -420,6 +427,7 @@
     </picture>
       <h2 class="sr-only" id="men-title">男人的事，也需要有地方談</h2>
       <div class="deck-actions" aria-label="男性專屬課程連結">
+        <span class="deck-tag is-offline">實體工作坊｜男性限定，報名須經審查</span>
         <a class="primary" href="/courses/male-yoga-energy.html">查看課程介紹</a>
       </div>
     </section>
