@@ -458,6 +458,16 @@
     .theme-lock{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;color:var(--ci-olive);background:rgba(96,99,48,.1);border:1px solid rgba(96,99,48,.2)}
     .theme-link{display:inline-block;margin-top:12px;color:var(--ci-olive);font-size:14.5px;font-weight:600;border-bottom:1px solid rgba(96,99,48,.35)}
     @media(max-width:820px){.theme-row{grid-template-columns:52px minmax(0,1fr);gap:4px 16px;padding:28px 0}.theme-row .theme-copy{grid-column:1/-1;margin-top:12px}.theme-no{font-size:28px}.theme-row h3{font-size:21px}.theme-copy p{font-size:16px}.theme-lock{width:40px;height:40px}}
+
+    /* 課程主題配圖（左圖右文） */
+    .theme-row.has-img{grid-template-columns:220px minmax(0,1fr);gap:0 36px;align-items:center}
+    .theme-fig{margin:0;width:220px;aspect-ratio:1/1;overflow:hidden;border-radius:22px;border:1px solid rgba(165,130,84,.2);box-shadow:0 14px 28px rgba(70,53,34,.14),inset 0 1px 0 rgba(255,255,255,.5);background:#efe6d6}
+    .theme-fig img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+    .theme-row.has-img:hover .theme-fig img{transform:scale(1.05)}
+    .theme-top{display:flex;align-items:baseline;gap:16px;margin-bottom:12px}
+    .theme-top h3{margin:0}
+    .themes-photo-note{margin:14px 4px 0;color:#8a8479;font-size:12.5px}
+    @media(max-width:820px){.theme-row.has-img{grid-template-columns:1fr;gap:18px}.theme-fig{width:100%;aspect-ratio:3/2}.theme-fig img{object-position:center 30%}.theme-row.has-img .theme-copy{grid-column:auto;margin-top:0}}
   </style>
 </head>
 <body>
@@ -622,13 +632,14 @@
         <p class="themes-ratings" aria-label="課程強度"><span>肌耐力 <b aria-label="五顆星中的三顆">★★★☆☆</b></span><span>柔軟度 <b aria-label="五顆星中的兩顆">★★☆☆☆</b></span><span>消耗體力 <b aria-label="五顆星中的三顆">★★★☆☆</b></span></p>
       </div>
       <div class="themes-panel">
-        <article class="theme-row"><span class="theme-no">01</span><h3>高潮上引法</h3><div class="theme-copy"><p>性能量升起來的時候，大部分男人只知道往外送。高潮上引是道家房中術的心法，讓這股力量從身體底部沿著脊椎往上走，進到腦部，再回存到丹田。</p><p>練久了，那股升起來的熱會慢慢變成精神，人反而更清醒、更有力氣。這是整個中階最核心的一項練習，其他主題都圍著它展開。</p></div></article>
-        <article class="theme-row"><span class="theme-no">02</span><h3>性與男人的生命課題</h3><div class="theme-copy"><p>性從來不只是身體的事。一個男人做事開始力不從心，跟另一半越來越說不上話，很多時候，背後是性能量一直在往下掉。</p><p>這一堂會把性放回男人的整個人生來看，看它怎麼牽動工作和感情，也看你怎麼看待自己。在一群男人之間把這些話說出來，很多人會發現，原來自己不是唯一一個。</p></div></article>
-        <article class="theme-row"><span class="theme-no">03</span><h3>轉化性能量的呼吸法</h3><div class="theme-copy"><p>呼吸是帶動能量最直接的方法。課堂上會練緩慢深沉的呼吸，配合身體的覺察，讓積在下腹部的能量跟著氣息慢慢流動。</p><p>這套呼吸法不需要特別的場地，學會之後回家每天都可以自己練。性衝動升起的時候，你會多一個方法照顧自己。</p></div></article>
-        <article class="theme-row"><span class="theme-no">04</span><h3>古印度男性體位法</h3><div class="theme-copy"><p>這套體位法來自古印度瑜伽，扣緊男性機能來設計。從經絡伸展開始，讓氣血往下半身走，喚醒沉在海底輪的能量。</p><p>動作不追求柔軟度，平常有運動習慣的人都做得來。中階會用兩堂課完整練習，每個人的動作老師都會看過、調整過。</p></div></article>
-        <article class="theme-row"><span class="theme-no">05</span><h3>強化男性機能的熏香</h3><div class="theme-copy"><p>熏香在古代的養生裡一直有它的位置。課堂上會介紹適合男性的熏香，怎麼用、什麼時候用。</p><p>練習的時候點上，身心比較容易沉靜下來；回到家，它也可以成為日常調理的一部分。</p></div></article>
+        <article class="theme-row has-img"><figure class="theme-fig"><img src="/assets/course-adv-theme-01.webp?v=20261002-1" alt="男性赤膊盤腿靜坐的背影，一道暖金色的光沿著脊椎往上升（AI 生成）" loading="lazy" width="720" height="720"></figure><div class="theme-main"><div class="theme-top"><span class="theme-no">01</span><h3>高潮上引法</h3></div><div class="theme-copy"><p>性能量升起來的時候，大部分男人只知道往外送。高潮上引是道家房中術的心法，讓這股力量從身體底部沿著脊椎往上走，進到腦部，再回存到丹田。</p><p>練久了，那股升起來的熱會慢慢變成精神，人反而更清醒、更有力氣。這是整個中階最核心的一項練習，其他主題都圍著它展開。</p></div></div></article>
+        <article class="theme-row has-img"><figure class="theme-fig"><img src="/assets/course-adv-theme-02.webp?v=20261002-1" alt="一圈男性盤腿靜坐，地板上有暖金色的光流動（AI 生成）" loading="lazy" width="720" height="720"></figure><div class="theme-main"><div class="theme-top"><span class="theme-no">02</span><h3>性與男人的生命課題</h3></div><div class="theme-copy"><p>性從來不只是身體的事。一個男人做事開始力不從心，跟另一半越來越說不上話，很多時候，背後是性能量一直在往下掉。</p><p>這一堂會把性放回男人的整個人生來看，看它怎麼牽動工作和感情，也看你怎麼看待自己。在一群男人之間把這些話說出來，很多人會發現，原來自己不是唯一一個。</p></div></div></article>
+        <article class="theme-row has-img"><figure class="theme-fig"><img src="/assets/course-adv-theme-03.webp?v=20261002-1" alt="雙手捧在下腹前，掌心透出柔和的金色光（AI 生成）" loading="lazy" width="720" height="720"></figure><div class="theme-main"><div class="theme-top"><span class="theme-no">03</span><h3>轉化性能量的呼吸法</h3></div><div class="theme-copy"><p>呼吸是帶動能量最直接的方法。課堂上會練緩慢深沉的呼吸，配合身體的覺察，讓積在下腹部的能量跟著氣息慢慢流動。</p><p>這套呼吸法不需要特別的場地，學會之後回家每天都可以自己練。性衝動升起的時候，你會多一個方法照顧自己。</p></div></div></article>
+        <article class="theme-row has-img"><figure class="theme-fig"><img src="/assets/course-adv-theme-04.webp?v=20261002-1" alt="男性做低弓步、雙臂上舉，身上有暖金色的光（AI 生成）" loading="lazy" width="720" height="720"></figure><div class="theme-main"><div class="theme-top"><span class="theme-no">04</span><h3>古印度男性體位法</h3></div><div class="theme-copy"><p>這套體位法來自古印度瑜伽，扣緊男性機能來設計。從經絡伸展開始，讓氣血往下半身走，喚醒沉在海底輪的能量。</p><p>動作不追求柔軟度，平常有運動習慣的人都做得來。中階會用兩堂課完整練習，每個人的動作老師都會看過、調整過。</p></div></div></article>
+        <article class="theme-row has-img"><figure class="theme-fig"><img src="/assets/course-adv-theme-05.webp?v=20261002-1" alt="陶碗中的線香升起一縷帶金光的煙，旁邊是植物與瑜伽墊（AI 生成）" loading="lazy" width="720" height="720"></figure><div class="theme-main"><div class="theme-top"><span class="theme-no">05</span><h3>強化男性機能的熏香</h3></div><div class="theme-copy"><p>熏香在古代的養生裡一直有它的位置。課堂上會介紹適合男性的熏香，怎麼用、什麼時候用。</p><p>練習的時候點上，身心比較容易沉靜下來；回到家，它也可以成為日常調理的一部分。</p></div></div></article>
         <article class="theme-row theme-row-locked"><span class="theme-no theme-lock" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg></span><h3>其他練習項目<small>初階學員限定</small></h3><div class="theme-copy"><p>還有幾項練習牽涉到更直接的身體操作，需要有初階的基礎才適合進行。</p><p>每一項怎麼練、實際操作的方式，以及上課要準備的東西，都放在下方學員限定的區塊。完成初階的學員，用上課時登記的 Gmail 登入就看得到。</p><a class="theme-link" href="#members">前往學員限定區 →</a></div></article>
       </div>
+      <p class="themes-photo-note">配圖為 AI 生成的意象示意，不代表學員本人。</p>
     </div>
   </section>
 
