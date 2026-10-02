@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>中階學員管理｜男力瑜伽｜靈元院</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root{--brown:#594F47;--tan:#A58254;--olive:#606330;--ink:#39352F;--muted:#777167;--paper:#F5F1E9;--card:#FBF8F2;--line:rgba(89,79,71,.18);--err:#9b3b2e}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC",sans-serif;line-height:1.8}
+    main{width:min(880px,calc(100% - 32px));margin:40px auto 80px}
+    h1{margin:0;font-family:"Noto Serif TC",serif;font-size:28px;font-weight:500}
+    h2{margin:0 0 6px;font-family:"Noto Serif TC",serif;font-size:21px;font-weight:500}
+    .lead{margin:6px 0 0;color:var(--muted);font-size:14.5px}
+    .card{margin-top:22px;padding:26px 26px 22px;border-radius:20px;background:var(--card);border:1px solid var(--line);box-shadow:0 12px 30px rgba(70,53,34,.07)}
+    .card p.hint{margin:0 0 14px;color:var(--muted);font-size:13.5px}
+    textarea{width:100%;min-height:140px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font:14px/1.7 ui-monospace,Menlo,Consolas,monospace;color:var(--ink)}
+    textarea.big{min-height:380px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+    button{min-height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--olive);background:var(--olive);color:#fff;font:inherit;font-size:14px;cursor:pointer}
+    button.secondary{background:transparent;color:var(--olive)}
+    button.danger{border-color:var(--err);background:transparent;color:var(--err);min-height:32px;padding:0 12px;font-size:12.5px}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .status{margin-top:10px;font-size:13.5px;color:var(--muted);white-space:pre-line}
+    .status.ok{color:var(--olive)}.status.bad{color:var(--err)}
+    .who{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+    td{padding:9px 6px;border-top:1px solid var(--line)}
+    td:last-child{text-align:right}
+    .empty{color:var(--muted);font-size:13.5px}
+    a{color:var(--olive)}
+    #app[hidden]{display:none}
+  </style>
+</head>
+<body>
+<main>
+  <h1>男力瑜伽中階｜學員管理</h1>
+  <p class="lead">開通完成初階的學員觀看 <a href="/courses/male-yoga-energy-advanced.html#members" target="_blank" rel="noopener">中階課程頁</a> 的限定內容，以及編輯限定內容本身。只有靈元院管理員帳號可以使用。</p>
+
+  <section class="card">
+    <div class="who">
+      <div id="who">尚未登入</div>
+      <div class="row" style="margin:0">
+        <button id="login" type="button">管理員 Google 登入</button>
+        <button id="logout" class="secondary" type="button" hidden>登出</button>
+      </div>
+    </div>
+    <div class="status" id="auth-status"></div>
+  </section>
+
+  <div id="app" hidden>
+    <section class="card">
+      <h2>一、開通學員</h2>
+      <p class="hint">一行一個 Gmail（也可以用逗號分隔）。只接受 @gmail.com，須是學員上初階時登記、之後會用來登入的帳號。</p>
+      <textarea id="emails" placeholder="student1@gmail.com&#10;student2@gmail.com"></textarea>
+      <div class="row"><button id="grant" type="button">開通觀看權限</button></div>
+      <div class="status" id="grant-status"></div>
+    </section>
+
+    <section class="card">
+      <h2>二、已開通的學員</h2>
+      <div class="row" style="margin-top:0"><button id="refresh" class="secondary" type="button">重新整理名單</button><span class="empty" id="count"></span></div>
+      <table><tbody id="list"></tbody></table>
+      <div class="status" id="list-status"></div>
+    </section>
+
+    <section class="card">
+      <h2>三、限定內容</h2>
+      <p class="hint">這裡的內容只存在資料庫，不會出現在公開網頁原始碼。可使用 HTML：&lt;h3&gt; 小標、&lt;p&gt; 段落、&lt;ol&gt;/&lt;li&gt; 清單、&lt;p class="note"&gt; 註記、&lt;blockquote&gt; 學員回饋。</p>
+      <textarea id="body" class="big" placeholder="&lt;h3&gt;小標&lt;/h3&gt;&#10;&lt;p&gt;內文……&lt;/p&gt;"></textarea>
+      <div class="row">
+        <button id="load-body" class="secondary" type="button">載入目前內容</button>
+        <button id="save-body" type="button">儲存並發布</button>
+      </div>
+      <div class="status" id="body-status"></div>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+  import { auth, db, provider, isAdminEmail } from "/firebase-config.js";
+  import { onAuthStateChanged, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { arrayRemove, collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const PERMISSION = "male-yoga-advanced";
+  const BODY_ID = "male-yoga-advanced";
+  const TITLE = "男力瑜伽中階｜初階學員限定內容";
+  const $ = (id) => document.getElementById(id);
+  const status = (id, message, tone = "") => { const el = $(id); el.textContent = message; el.className = `status ${tone}`; };
+
+  $("login").addEventListener("click", () => signInWithPopup(auth, provider).catch((error) => status("auth-status", `登入失敗：${error.message}`, "bad")));
+  $("logout").addEventListener("click", () => signOut(auth));
+
+  onAuthStateChanged(auth, (user) => {
+    $("login").hidden = Boolean(user);
+    $("logout").hidden = !user;
+    $("who").textContent = user ? `目前登入：${user.email}` : "尚未登入";
+    const admin = Boolean(user && isAdminEmail(user.email));
+    $("app").hidden = !admin;
+    status("auth-status", user && !admin ? "這個帳號不是管理員，無法使用此頁。" : "", user && !admin ? "bad" : "");
+    if (admin) refreshList();
+  });
+
+  function parseEmails(raw) {
+    const items = raw.split(/[\s,，;；]+/).map((item) => item.trim().toLowerCase()).filter(Boolean);
+    const valid = [...new Set(items.filter((email) => /^[^\s@]+@gmail\.com$/.test(email)))];
+    const invalid = items.filter((email) => !/^[^\s@]+@gmail\.com$/.test(email));
+    return { valid, invalid };
+  }
+
+  $("grant").addEventListener("click", async () => {
+    const { valid, invalid } = parseEmails($("emails").value);
+    if (invalid.length) { status("grant-status", `以下不是有效的 Gmail，請修正後再送出：\n${invalid.join("\n")}`, "bad"); return; }
+    if (!valid.length) { status("grant-status", "請先輸入 Gmail。", "bad"); return; }
+    $("grant").disabled = true;
+    status("grant-status", `正在開通 ${valid.length} 位…`);
+    try {
+      const snapshots = await Promise.all(valid.map((email) => getDoc(doc(db, "memberEntitlements", email))));
+      const batch = writeBatch(db);
+      snapshots.forEach((snapshot, index) => {
+        const email = valid[index];
+        const existing = snapshot.exists() ? snapshot.data() : {};
+        const permissions = [...new Set([...(Array.isArray(existing.permissions) ? existing.permissions : []), PERMISSION])];
+        batch.set(doc(db, "memberEntitlements", email), {
+          email,
+          permissions,
+          schemaVersion: existing.schemaVersion || 1,
+          ...(!snapshot.exists() ? { status: "active", eventPermissionsSource: "male-yoga-advanced-admin" } : {}),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      });
+      await batch.commit();
+      status("grant-status", `已開通 ${valid.length} 位：\n${valid.join("\n")}`, "ok");
+      $("emails").value = "";
+      refreshList();
+    } catch (error) {
+      status("grant-status", `開通失敗：${error.message}`, "bad");
+    } finally { $("grant").disabled = false; }
+  });
+
+  async function refreshList() {
+    status("list-status", "讀取中…");
+    try {
+      const snapshot = await getDocs(query(collection(db, "memberEntitlements"), where("permissions", "array-contains", PERMISSION)));
+      const emails = snapshot.docs.map((item) => item.id).sort();
+      $("count").textContent = `共 ${emails.length} 位`;
+      $("list").innerHTML = emails.length
+        ? emails.map((email) => `<tr><td>${email.replace(/</g, "&lt;")}</td><td><button class="danger" type="button" data-remove="${email.replace(/"/g, "")}">取消權限</button></td></tr>`).join("")
+        : `<tr><td class="empty">目前還沒有開通任何學員。</td><td></td></tr>`;
+      status("list-status", "");
+    } catch (error) {
+      status("list-status", `名單讀取失敗：${error.message}`, "bad");
+    }
+  }
+  $("refresh").addEventListener("click", refreshList);
+
+  $("list").addEventListener("click", async (event) => {
+    const email = event.target?.dataset?.remove;
+    if (!email || !confirm(`確定要取消 ${email} 的中階內容觀看權限嗎？`)) return;
+    try {
+      await setDoc(doc(db, "memberEntitlements", email), { permissions: arrayRemove(PERMISSION), updatedAt: serverTimestamp() }, { merge: true });
+      refreshList();
+    } catch (error) {
+      status("list-status", `取消失敗：${error.message}`, "bad");
+    }
+  });
+
+  $("load-body").addEventListener("click", async () => {
+    try {
+      const snapshot = await getDoc(doc(db, "eventArticleBodies", BODY_ID));
+      if (!snapshot.exists()) { status("body-status", "目前還沒有限定內容。"); return; }
+      $("body").value = snapshot.data().content || "";
+      status("body-status", "已載入目前發布中的內容。", "ok");
+    } catch (error) {
+      status("body-status", `載入失敗：${error.message}`, "bad");
+    }
+  });
+
+  $("save-body").addEventListener("click", async () => {
+    const content = $("body").value.trim();
+    if (!content) { status("body-status", "內容是空的，沒有儲存。", "bad"); return; }
+    if (/<script|\son\w+\s*=|javascript:/i.test(content)) { status("body-status", "內容含有程式碼（script／onclick 等），為了安全沒有儲存。", "bad"); return; }
+    if (!confirm("確定要儲存並發布限定內容嗎？已開通的學員會立刻看到新版本。")) return;
+    $("save-body").disabled = true;
+    try {
+      const bodyRef = doc(db, "eventArticleBodies", BODY_ID);
+      const previous = await getDoc(bodyRef);
+      // 文選資料庫需要一筆「已發布」的對應紀錄，限定全文規則才會放行；hidden／systemRecord 讓它不出現在文選列表。
+      await setDoc(doc(db, "articles", BODY_ID), {
+        title: TITLE,
+        status: "published",
+        hidden: true,
+        systemRecord: true,
+        accessType: "event",
+        eventId: PERMISSION,
+        requiredPermission: PERMISSION,
+        accessBadge: "初階學員限定",
+        series: "男力瑜伽中階",
+        category: "spiritual",
+        content: "",
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      await setDoc(bodyRef, {
+        articleId: BODY_ID,
+        title: TITLE,
+        requiredPermission: PERMISSION,
+        status: "published",
+        active: true,
+        content,
+        previousContentBackup: previous.exists() ? previous.data().content || "" : "",
+        updatedAt: serverTimestamp()
+      });
+      status("body-status", "已儲存並發布。", "ok");
+    } catch (error) {
+      status("body-status", `儲存失敗：${error.message}`, "bad");
+    } finally { $("save-body").disabled = false; }
+  });
+</script>
+</body>
+</html>
