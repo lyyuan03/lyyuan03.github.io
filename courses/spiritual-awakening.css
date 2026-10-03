@@ -260,3 +260,57 @@ h3 { font-family: var(--serif); font-weight: 500; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; }
 }
+
+/* ===== 柔光卡片層：對齊男力瑜伽頁的立體質感（適合誰／課程內容／學員回饋） ===== */
+:root {
+  --soft-shadow: 0 18px 42px rgba(70, 53, 34, .10);
+  --soft-shadow-hover: 0 27px 48px rgba(70, 53, 34, .16);
+  --soft-inset: inset 5px 5px 10px rgba(255, 255, 255, .58), inset -6px -6px 12px rgba(89, 79, 71, .07);
+}
+.audience { background: linear-gradient(180deg, #eee8dd 0%, #f6f1e8 100%); }
+.curriculum { background: linear-gradient(180deg, #fbf8f2 0%, #f3ede3 100%); }
+.testimonials { background: linear-gradient(180deg, #f6f1e8 0%, #eee8dd 100%); }
+
+.audience-grid { gap: 18px; border-top: 0; }
+.audience-item,
+.module,
+.testimonial {
+  border: 1px solid rgba(165, 130, 84, .16);
+  box-shadow: var(--soft-shadow), var(--soft-inset);
+  transition: transform .32s ease, box-shadow .32s ease, border-color .32s ease;
+}
+.audience-item:hover,
+.module:hover,
+.testimonial:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--soft-shadow-hover), var(--soft-inset);
+  border-color: rgba(165, 130, 84, .26);
+}
+
+.audience-item { padding: 30px 28px 30px 88px; border-radius: 24px; background: linear-gradient(145deg, rgba(255, 253, 249, .96), rgba(235, 226, 212, .82)); }
+.audience-item:nth-child(2) { background: linear-gradient(145deg, #fff8ee, #e7d8c4); }
+.audience-item:nth-child(3) { background: linear-gradient(145deg, #f9f5ed, #e3e3d2); }
+.audience-item:nth-child(4) { background: linear-gradient(145deg, #f8f4ed, #e3ddd4); }
+.item-mark { top: 32px; left: 28px; border: 0; color: #fff; background: linear-gradient(145deg, #c39b68, #8f6d44); box-shadow: 0 8px 16px rgba(75, 57, 36, .16), inset 2px 2px 4px rgba(255, 255, 255, .35); }
+
+.curriculum-list { display: grid; gap: 16px; border-top: 0; }
+.module { padding: 28px 28px 28px 26px; border-bottom: 1px solid rgba(165, 130, 84, .16); border-radius: 24px; background: linear-gradient(145deg, #fffaf2 0%, #e9dfd0 100%); }
+.module:nth-child(3n+1) { background: linear-gradient(145deg, #f9f5ed, #e3e3d2); }
+.module:nth-child(3n+2) { background: linear-gradient(145deg, #fff8ee, #e7d8c4); }
+.module:nth-child(3n) { background: linear-gradient(145deg, #f8f4ed, #e3ddd4); }
+
+.testimonial { border-top: 1px solid rgba(165, 130, 84, .16); border-radius: 24px; background: linear-gradient(145deg, #fffdfa, #eee6db); }
+.testimonial:nth-child(2) { background: linear-gradient(145deg, #faf5ed, #e8ded0); }
+.testimonial:nth-child(3) { background: linear-gradient(145deg, #f7f8ee, #dde1ca); }
+
+@media (max-width: 760px) {
+  .audience-grid { gap: 14px; }
+  .audience-item { padding: 24px 22px 24px 76px; border-radius: 22px; }
+  .item-mark { top: 26px; left: 22px; }
+  .curriculum-list { gap: 14px; }
+  .module { padding: 24px 22px; border-radius: 22px; }
+  .testimonial { border-radius: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .audience-item:hover, .module:hover, .testimonial:hover { transform: none; }
+}
