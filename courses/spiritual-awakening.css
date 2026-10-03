@@ -338,28 +338,42 @@ h2{font-size:clamp(30px,3.7vw,46px);line-height:1.5;letter-spacing:.02em}
 .flist details p{margin:0;padding-bottom:24px;color:#766b5d;font-size:16px;line-height:2}
 .flist a{color:var(--olive);border-bottom:1px solid currentColor}
 
-/* 報名 */
-.reg{background:radial-gradient(90% 120% at 12% 0%,#4a4234 0%,#2c2822 55%,#1d2017 100%);color:#f2e8d6;padding:104px 0;overflow:hidden}
-.reg::before{content:"";position:absolute;left:-12%;top:-40%;width:70%;aspect-ratio:1;background:radial-gradient(circle,rgba(236,200,142,.18),transparent 62%);animation:breathe 11s ease-in-out infinite;pointer-events:none}
-.rgrid2{display:grid;grid-template-columns:1.25fr .75fr;gap:80px;align-items:center;position:relative}
-.reg h2{font-size:clamp(34px,4.2vw,56px);color:#f8eed9}
-.reg h2 small{display:block;margin-top:8px;font-size:.5em;color:var(--dawn);letter-spacing:.08em}
-.reg p{color:#ddd2bd;font-size:17px;line-height:2;margin:24px 0 0}
-.ractions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
-.reg .fine{margin-top:22px;color:#b3a88f;font-size:13px;line-height:1.9}
-.online{border-left:1px solid rgba(236,200,142,.25);padding-left:36px}
-.online h3{font-size:23px;line-height:1.7;color:#f3e6cc}
-.online p{font-size:15px}
-.online .tlink{color:var(--dawn);border-color:rgba(236,200,142,.4)}
+/* 講師區塊：與線上課程頁相同 */
+.ins{position:relative;overflow:hidden;background:#0c1712;color:#f5f0e8}
+.ins::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 48%,rgba(165,104,87,.14),transparent 34%),radial-gradient(circle at 78% 18%,rgba(96,115,134,.14),transparent 36%)}
+.ins-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(300px,390px) minmax(0,1fr);gap:64px;align-items:center;padding:66px 0;width:min(1120px,calc(100% - 48px))}
+.ins-photo{position:relative;margin:0;padding:10px;border:1px solid rgba(200,170,123,.3);background:linear-gradient(145deg,rgba(96,115,134,.2),rgba(165,104,87,.18));box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.ins-photo::before{content:"";position:absolute;z-index:2;left:-14px;top:34px;width:44px;height:1px;background:#c8aa7b}
+.ins-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 38%}
+.ins-label{display:flex;align-items:center;gap:11px;width:max-content;max-width:100%;margin-bottom:13px;color:#c8aa7b;font-family:var(--en);font-size:12px;font-weight:500;letter-spacing:.28em;text-transform:uppercase}
+.ins-label::after{content:"";width:42px;height:1px;background:linear-gradient(90deg,currentColor,transparent);opacity:.65}
+.ins-copy h2{margin:0;font-size:clamp(34px,4vw,49px);line-height:1.3;letter-spacing:.07em;color:#f5f0e8}
+.ins-role{margin:11px 0 25px;color:rgba(245,240,232,.5);font-family:var(--en);font-size:14px;letter-spacing:.18em}
+.ins-copy p{max-width:660px;margin:0 0 16px;color:rgba(245,240,232,.8);font-size:17px;font-weight:400;line-height:1.8}
+.ins-copy p:last-child{margin-bottom:0}
+.ins-copy .ins-quote{margin-top:20px;padding:14px 18px;border-left:2px solid #607386;background:rgba(255,255,255,.04);color:rgba(245,240,232,.9);font-family:var(--serif);font-size:18px;line-height:1.65}
 
-/* 頁尾 */
-footer{position:relative;background:#14170f;color:#cdbfa6;padding:72px 0 34px;overflow:hidden;text-align:center}
-.wordmark{font-family:var(--serif);font-size:clamp(64px,14vw,200px);line-height:1.1;white-space:nowrap;letter-spacing:.22em;padding-left:.22em;color:transparent;-webkit-text-stroke:1px rgba(200,156,102,.28);background:linear-gradient(180deg,rgba(236,200,142,.22),transparent 72%);-webkit-background-clip:text;background-clip:text;user-select:none}
-.flogo img{width:132px;margin:28px auto 0;opacity:.8}
-.tagline{margin:14px 0 0;font-family:var(--serif);font-size:16px;letter-spacing:.3em;color:#e0cfa9}
-.flinks{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 30px;margin-top:30px;font-size:13px;color:#c1b49f}
-.flinks a:hover{color:var(--dawn)}
-.copy{margin:28px 0 0;color:#8d836f;font-size:11px;letter-spacing:.06em}
+/* 結尾行動區：與線上課程頁相同的版型 */
+.fcta{position:relative;overflow:hidden;padding:105px 0;text-align:center;background:#0f1a14;color:#f5f0e8}
+.fcta::before{content:"";position:absolute;inset:-40%;background:radial-gradient(circle,rgba(165,130,84,.19),transparent 42%)}
+.fcta-inner{position:relative;z-index:1;width:min(820px,calc(100% - 48px));margin:0 auto}
+.fcta .ins-label{margin-inline:auto}
+.fcta h2{margin:0;font-size:clamp(32px,4.7vw,52px);line-height:1.55;letter-spacing:.07em;color:#f5f0e8}
+.fcta p{margin:22px auto 31px;max-width:640px;color:rgba(245,240,232,.65);font-size:15px;line-height:2}
+.fcta-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.fcta-note{display:block;margin-top:17px;color:rgba(245,240,232,.36);font-size:11px;letter-spacing:.08em;line-height:1.9}
+.fcta-link{display:inline-block;margin-top:14px;color:#c8aa7b;font-size:13px;letter-spacing:.06em;border-bottom:1px solid rgba(200,170,123,.38)}
+.fcta-link:hover{color:#ecc88e}
+
+/* 頁尾：與線上課程頁相同 */
+.lfoot{background:rgba(6,9,5,.98);border-top:1px solid rgba(165,130,84,.1);padding:36px 0 28px}
+.lfoot-inner{display:flex;flex-direction:column;align-items:center;gap:14px}
+.lfoot-mark{width:130px;max-width:42vw;filter:brightness(.78)}
+.lfoot-links{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.lfoot-links a{color:rgba(245,240,232,.38);display:flex;transition:.2s}
+.lfoot-links a:hover{color:#a58254;transform:translateY(-2px)}
+.lfoot-links svg{display:block}
+.lfoot-copy{margin:0;font-size:11px;color:rgba(245,240,232,.2);letter-spacing:.12em}
 
 /* 手機固定報名 */
 .mcta{position:fixed;z-index:1150;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom));display:none;transform:translateY(140%);transition:transform .45s}
@@ -367,12 +381,12 @@ footer{position:relative;background:#14170f;color:#cdbfa6;padding:72px 0 34px;ov
 .mcta .pill{width:100%}
 
 @media(max-width:1050px){
-  .opening .grid,.pgrid,.head2,.cgrid,.rgrid,.ogrid,.fgrid,.rgrid2{gap:44px}
+  .opening .grid,.pgrid,.head2,.cgrid,.rgrid,.ogrid,.fgrid{gap:44px}
 }
 @media(max-width:760px){
   .container{width:calc(100% - 40px)}
   .section{padding:64px 0}
-  .opening .grid,.pgrid,.head2,.cgrid,.rgrid,.ogrid,.fgrid,.rgrid2,.vgrid,.tgrid,.cards{grid-template-columns:1fr;gap:28px}
+  .opening .grid,.pgrid,.head2,.cgrid,.rgrid,.ogrid,.fgrid,.vgrid,.tgrid,.cards{grid-template-columns:1fr;gap:28px}
   .cards{gap:16px;margin-top:32px}
   .gcard{padding:26px 22px 26px 80px;border-radius:22px}.mark{left:22px;top:28px;width:42px;height:42px}
   .horizon{height:200px}
@@ -380,8 +394,11 @@ footer{position:relative;background:#14170f;color:#cdbfa6;padding:72px 0 34px;ov
   .modules{padding-left:38px}.module::before{left:-35px}.module h3{font-size:22px}
   .vhead{margin-top:64px;padding-top:40px}
   .tcard{padding:28px 24px 24px}
-  .online{padding:28px 0 0;border-left:0;border-top:1px solid rgba(236,200,142,.25)}
-  .reg{padding:68px 0 120px}
+  .ins-layout{grid-template-columns:1fr;gap:34px;padding:54px 0}
+  .ins-photo{width:min(330px,100%);margin:0 auto}
+  .ins-copy h2{font-size:37px}
+  .fcta{padding:60px 0 120px}
+  .fcta-actions .btn{width:100%}
   .mcta{display:block}
   .prose p{font-size:17px}
   h2 br{display:none}
