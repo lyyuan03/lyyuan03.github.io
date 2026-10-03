@@ -452,9 +452,14 @@ body.site-auth-enabled .course-subnav{top:calc(56px + var(--site-auth-height,48p
 @media(max-width:768px){.course-subnav{top:58px;margin-top:30px}body.site-auth-enabled .course-subnav{top:calc(58px + var(--site-auth-height,52px))}.subnav-inner{width:100%;padding-left:20px;gap:0}.subnav-links{flex:1;gap:20px;padding-right:20px}.subnav-links a{font-size:12px}.subnav-cta{padding:12px 15px;font-size:12px;border-left:1px solid rgba(200,156,102,.22)}}
 
 
-/* 第一章左欄課堂照片 */
-.opening-photo{margin-top:44px;max-width:460px}
-.opening-photo img{aspect-ratio:4/5;object-position:64% 72%;box-shadow:0 28px 70px rgba(0,0,0,.4)}
+/* 第一章：課堂照片淡化為背景，文字疊在照片上 */
+.opening{overflow:hidden}
+.opening .grid{z-index:1}
+.opening-photo{position:absolute;inset:0;margin:0;z-index:0;pointer-events:none}
+.opening-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 78%;opacity:.3;filter:sepia(.25) saturate(.9);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 24%,#000 62%,transparent 100%),radial-gradient(120% 90% at 50% 55%,#000 40%,transparent 100%);
+  -webkit-mask-composite:source-in;mask-image:linear-gradient(180deg,transparent 0,#000 24%,#000 62%,transparent 100%),radial-gradient(120% 90% at 50% 55%,#000 40%,transparent 100%);mask-composite:intersect}
+.opening-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(38,32,26,.55),rgba(38,32,26,.15) 55%,rgba(38,32,26,.4))}
 
 /* 適合誰：同一 CI 色（金棕）以四種漸層濃度呈現 */
 .cards .gcard{background:var(--g,linear-gradient(#2a2620,#26221c)) padding-box,radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(247,214,150,.95),rgba(165,130,84,.3) 68%) border-box}
