@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#594F47">
+  <meta name="theme-color" content="#0a1710">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <title>靈修覺醒旅程・初階班｜實體靈修課程｜靈元院</title>
   <meta name="description" content="靈元院靈修覺醒旅程初階班，從元神與啟靈談起，釐清氣動、靈動、靈語與天文的疑問。結合觀念說明、實修與課堂討論，建立自己的修行判斷。實體場次依官方公告開放。">
@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/site-navigation.css?v=20260828-ia-3">
-  <link rel="stylesheet" href="/courses/spiritual-awakening.css?v=20261003-2">
+  <link rel="stylesheet" href="/courses/spiritual-awakening.css?v=20261003-3">
   <script src="/analytics-config.js"></script>
   <script src="/analytics.js" defer></script>
   <script type="application/ld+json">
@@ -39,6 +39,10 @@
 </head>
 <body>
 <a class="skip-link" href="#main">跳至課程內容</a>
+<div class="page-progress" id="progress" aria-hidden="true"></div>
+
+<div class="page-progress" id="progress" aria-hidden="true"></div>
+
 <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
   <div class="global-nav-inner">
     <ul class="global-nav-links">
@@ -98,33 +102,147 @@
   </div>
 </nav>
 
-<header class="awakening-hero" id="top">
-  <div class="container hero-grid">
-    <div class="hero-copy">
-      <nav class="breadcrumb" aria-label="麵包屑">
-        <a href="/">首頁</a><span aria-hidden="true">／</span><a href="/courses/">課程</a><span aria-hidden="true">／</span><span aria-current="page">靈修覺醒旅程</span>
-      </nav>
-      <p class="eyebrow">LING YUAN YUAN · SPIRITUAL PRACTICE</p>
-      <p class="course-tag">實體課程 <span aria-hidden="true">・</span> 初階班</p>
-      <h1>靈修覺醒旅程</h1>
-      <p class="hero-lead">啟靈之後，<br>接下來怎麼修？</p>
-      <p class="hero-text">從元神與啟靈談起，釐清靈動、靈語與天文的疑問。把多年聽來的說法，放回信仰、身體與生活裡理解，逐步建立自己的修行判斷。</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#curriculum">看看課程內容 <span aria-hidden="true">↓</span></a>
-        <a class="btn btn-outline" href="#registration">開課與報名資訊</a>
-      </div>
-      <dl class="hero-facts">
-        <div><dt>上課方式</dt><dd>觀念 × 實修 × 討論</dd></div>
-        <div><dt>學習起點</dt><dd>初學與已有經驗者</dd></div>
-        <div><dt>開課安排</dt><dd>場次依官方公告</dd></div>
-      </dl>
+<main id="main">
+<div class="lj">
+  <header class="hero" id="top">
+    <div class="hero-forest" aria-hidden="true">
+      <svg class="forest-scene" viewBox="0 0 1600 760" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <defs>
+          <filter id="hero-canopy-soft" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2.6"></feGaussianBlur>
+          </filter>
+          <filter id="hero-tree-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.2" result="tree-blur"></feGaussianBlur>
+            <feMerge><feMergeNode in="tree-blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+          </filter>
+          <linearGradient id="hero-tree-trunk" x1="0" y1="0" x2="1" y2=".2">
+            <stop offset="0" stop-color="#162d1e"></stop>
+            <stop offset=".46" stop-color="#3b563a"></stop>
+            <stop offset=".76" stop-color="#223b28"></stop>
+            <stop offset="1" stop-color="#0d1c13"></stop>
+          </linearGradient>
+          <radialGradient id="hero-canopy" cx="45%" cy="40%" r="68%">
+            <stop offset="0" stop-color="#456348"></stop>
+            <stop offset=".48" stop-color="#294630"></stop>
+            <stop offset="1" stop-color="#13271b"></stop>
+          </radialGradient>
+          <linearGradient id="hero-tree-gold" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#8d7146"></stop>
+            <stop offset=".48" stop-color="#d4b271"></stop>
+            <stop offset="1" stop-color="#f0dca8"></stop>
+          </linearGradient>
+          <linearGradient id="hero-tree-gold-bright" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#b38c4f"></stop>
+            <stop offset=".54" stop-color="#f5d792"></stop>
+            <stop offset="1" stop-color="#fff2c9"></stop>
+          </linearGradient>
+          <path id="tree-flow-1" pathLength="100" d="M1168 804c37-104 50-177 38-246-13-75 14-132 67-190 56-62 52-128 16-194-33-60-84-109-151-148"></path>
+          <path id="tree-flow-2" pathLength="100" d="M1191 806c35-101 47-173 36-238-12-72 15-123 59-176 45-53 47-111 15-171-43-80-119-133-222-166"></path>
+          <path id="tree-flow-3" pathLength="100" d="M1216 807c30-97 39-164 29-225-12-69 5-118 48-169 61-72 69-151 25-237-29-57-42-116-30-181"></path>
+          <path id="tree-flow-4" pathLength="100" d="M1242 808c25-93 31-158 21-215-11-66 3-112 48-163 62-70 94-153 95-249 0-62 16-121 49-178"></path>
+          <path id="tree-flow-5" pathLength="100" d="M1268 808c20-86 22-146 13-204-10-65 7-106 52-151 65-66 128-103 219-125 55-13 103-39 145-77"></path>
+          <path id="tree-flow-6" pathLength="100" d="M1294 807c12-82 8-140-1-194-9-59 5-98 47-135 64-57 135-74 229-65"></path>
+          <path id="tree-flow-7" pathLength="100" d="M1321 806c2-73-8-127-14-176-7-56 9-91 49-120 54-39 114-49 188-31"></path>
+          <path id="tree-flow-8" pathLength="100" d="M1200 770c-79-4-151 13-215 52-66 40-140 49-223 28"></path>
+          <path id="tree-flow-9" pathLength="100" d="M1293 770c69-20 136-21 201-3 65 19 131 16 199-9"></path>
+          <path id="tree-flow-10" pathLength="100" d="M1182 801c28-88 44-153 34-211-11-64-4-112-49-153-65-59-151-72-259-51"></path>
+          <path id="tree-flow-11" pathLength="100" d="M1231 805c24-92 30-159 19-219-11-65 6-112 45-158 42-50 30-96-21-132-67-47-148-67-245-60"></path>
+          <path id="tree-flow-12" pathLength="100" d="M1281 807c15-83 14-144 5-199-9-61 10-103 55-141 48-40 93-82 125-137 34-59 53-127 56-204"></path>
+          <g id="hero-pine">
+            <path d="M27 116h8L33 67h-4z" fill="currentColor"></path>
+            <path d="M31 0 10 39h12L4 68h15L0 101h62L43 68h15L40 39h12z" fill="currentColor"></path>
+          </g>
+        </defs>
+        <path class="mountain-back" d="M-80 557C105 434 236 489 397 352c156-132 257-87 395 22 118 93 204 48 314-37 159-124 297-34 574 194v271H-80z"></path>
+        <path class="mountain-mid" d="M-100 662C73 548 216 585 355 491c126-85 221-78 345 12 109 78 209 79 330-15 169-132 332-86 650 108v206H-100z"></path>
+        <g class="forest-ridge-back">
+          <use href="#hero-pine" transform="translate(55 475) scale(1.18)"></use>
+          <use href="#hero-pine" transform="translate(162 502) scale(.93)"></use>
+          <use href="#hero-pine" transform="translate(270 451) scale(1.34)"></use>
+          <use href="#hero-pine" transform="translate(405 508) scale(.88)"></use>
+          <use href="#hero-pine" transform="translate(530 468) scale(1.14)"></use>
+          <use href="#hero-pine" transform="translate(665 505) scale(.9)"></use>
+          <use href="#hero-pine" transform="translate(770 463) scale(1.22)"></use>
+          <use href="#hero-pine" transform="translate(910 498) scale(.96)"></use>
+          <use href="#hero-pine" transform="translate(1035 452) scale(1.31)"></use>
+          <use href="#hero-pine" transform="translate(1195 485) scale(1.04)"></use>
+          <use href="#hero-pine" transform="translate(1325 438) scale(1.4)"></use>
+        </g>
+        <g class="forest-ridge-front">
+          <use href="#hero-pine" transform="translate(-10 570) scale(1.55)"></use>
+          <use href="#hero-pine" transform="translate(142 596) scale(1.2)"></use>
+          <use href="#hero-pine" transform="translate(315 548) scale(1.66)"></use>
+          <use href="#hero-pine" transform="translate(512 606) scale(1.12)"></use>
+          <use href="#hero-pine" transform="translate(660 564) scale(1.52)"></use>
+          <use href="#hero-pine" transform="translate(835 594) scale(1.24)"></use>
+          <use href="#hero-pine" transform="translate(1010 543) scale(1.74)"></use>
+          <use href="#hero-pine" transform="translate(1218 582) scale(1.32)"></use>
+          <use href="#hero-pine" transform="translate(1410 536) scale(1.8)"></use>
+        </g>
+        <g class="ancient-tree">
+          <g class="canopy-soft">
+            <path d="M872 151c30-69 118-91 183-54 50-57 153-51 190 15 64 5 106 53 97 105-10 59-77 84-145 62-63 47-159 43-210 1-69 28-155-4-157-65-2-27 13-48 42-64z"></path>
+            <path d="M1078 50c31-73 124-96 191-55 64-47 163-27 188 43 61 5 102 47 96 98-8 57-71 85-138 66-56 45-148 46-205 8-66 27-149-4-153-61-3-37 6-68 21-99z"></path>
+            <path d="M1344 51c37-67 126-82 186-38 70-39 163-6 178 65 57 13 88 61 72 108-18 52-82 66-140 38-59 37-143 26-188-17-66 18-138-23-132-78 3-31 11-57 24-78z"></path>
+            <path d="M878 300c35-64 120-78 181-37 62-40 154-10 173 57 58 10 93 54 81 103-14 55-79 75-142 52-59 41-151 35-200-6-64 24-143-11-142-67 0-44 17-78 49-102z"></path>
+            <path d="M1160 269c32-65 117-84 181-47 61-44 157-21 184 44 61 6 101 49 94 99-8 56-70 83-135 64-58 44-150 43-205 4-65 27-145-5-147-61-2-43 7-76 28-103z"></path>
+            <path d="M1401 260c32-61 112-79 171-43 63-39 150-10 169 54 54 10 87 53 75 98-14 52-75 71-134 49-57 39-140 32-187-6-59 22-133-10-134-63-1-37 12-66 40-89z"></path>
+          </g>
+          <g class="tree-body">
+            <path class="tree-trunk" d="M1157 810c45-110 59-187 47-253-14-79 12-138 61-197 46-55 51-111 17-180l64-27c51 100 36 190-22 267-43 57-48 115-21 184 31 80 85 148 143 206z"></path>
+            <path class="tree-branch branch-heavy" d="M1280 430c-99-75-215-111-357-108"></path>
+            <path class="tree-branch branch-mid" d="M1294 358c-74-102-171-171-291-208"></path>
+            <path class="tree-branch branch-mid" d="M1306 321c-24-112-18-214 24-306"></path>
+            <path class="tree-branch branch-heavy" d="M1312 440c73-73 163-112 271-117"></path>
+            <path class="tree-branch branch-mid" d="M1324 370c78-82 158-146 257-194"></path>
+            <path class="tree-branch branch-fine" d="M1228 487c-83-58-172-83-271-75"></path>
+            <path class="tree-branch branch-fine" d="M1271 401c-54-82-120-139-201-174"></path>
+            <path class="tree-branch branch-fine" d="M1340 402c58-64 122-104 195-122"></path>
+          </g>
+          <g class="tree-bark">
+            <path d="M1186 787c44-102 50-172 39-231-12-70 10-127 59-185 46-56 49-112 24-175"></path>
+            <path d="M1223 798c36-98 42-169 32-226-11-68 8-120 54-174 44-52 56-110 35-181"></path>
+            <path d="M1282 423c-94-66-205-97-332-94"></path>
+            <path d="M1296 352c-71-92-162-155-270-190"></path>
+            <path d="M1318 436c70-65 153-100 250-106"></path>
+          </g>
+          <path class="canopy-edge" d="M872 151c30-69 118-91 183-54 50-57 153-51 190 15M1078 50c31-73 124-96 191-55 64-47 163-27 188 43M1344 51c37-67 126-82 186-38 70-39 163-6 178 65"></path>
+          <g class="tree-flow-base">
+            <use href="#tree-flow-1"></use><use href="#tree-flow-2"></use><use href="#tree-flow-3"></use><use href="#tree-flow-4"></use><use href="#tree-flow-5"></use><use href="#tree-flow-6"></use><use href="#tree-flow-7"></use><use href="#tree-flow-8"></use><use href="#tree-flow-9"></use><use href="#tree-flow-10"></use><use href="#tree-flow-11"></use><use href="#tree-flow-12"></use>
+          </g>
+          <g class="tree-flow-motion">
+            <use href="#tree-flow-1"></use><use href="#tree-flow-2"></use><use href="#tree-flow-3"></use><use href="#tree-flow-4"></use><use href="#tree-flow-5"></use><use href="#tree-flow-6"></use><use href="#tree-flow-7"></use><use href="#tree-flow-8"></use><use href="#tree-flow-9"></use><use href="#tree-flow-10"></use><use href="#tree-flow-11"></use><use href="#tree-flow-12"></use>
+          </g>
+        </g>
+      </svg>
+      <span class="forest-light"></span>
     </div>
-    <figure class="hero-art">
-      <img src="/assets/course-slides/course-forest-bg.png" width="1600" height="900" alt="山林晨光與大樹，靈元院課程意象示意" fetchpriority="high">
-      <figcaption><span>靈元院</span><small>修心在己</small></figcaption>
-    </figure>
-  </div>
-</header>
+    <span class="forest-mist mist-one" aria-hidden="true"></span>
+    <span class="forest-mist mist-two" aria-hidden="true"></span>
+    <span class="forest-mist mist-three" aria-hidden="true"></span>
+    <div class="container hero-grid">
+      <div class="hero-content reveal">
+        <div class="course-breadcrumb" aria-label="麵包屑"><a href="/">首頁</a><span aria-hidden="true">／</span><span>活動</span><span aria-hidden="true">／</span><a href="/courses/">課程</a><span aria-hidden="true">／</span><span aria-current="page">靈修覺醒旅程</span></div>
+        <p class="eyebrow">In-Person Course · Spiritual Practice</p>
+        <h1><span class="hero-title-line">靈修覺醒旅程</span><span class="hero-title-line hero-title-accent">初階班</span></h1>
+        <p class="hero-lead">啟靈之後，接下來怎麼修？</p>
+        <p class="hero-copy">從元神與啟靈談起，釐清靈動、靈語與天文的疑問。把多年聽來的說法，放回信仰、身體與生活裡理解，逐步建立自己的修行判斷。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#curriculum">看看課程內容</a>
+          <a class="btn btn-ghost" href="#registration">開課與報名資訊</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="facts" aria-label="課程概要">
+    <div class="container facts-grid reveal">
+      <div class="fact"><span class="fact-index" aria-hidden="true">01</span><small>METHOD</small><strong>觀念 × 實修 × 討論</strong></div>
+      <div class="fact"><span class="fact-index" aria-hidden="true">02</span><small>START</small><strong>初學與已有經驗者</strong></div>
+      <div class="fact"><span class="fact-index" aria-hidden="true">03</span><small>SCHEDULE</small><strong>場次依官方公告</strong></div>
+    </div>
+  </section>
+</div>
 
 <nav class="course-subnav" aria-label="本頁課程導覽">
   <div class="container subnav-inner">
@@ -135,133 +253,185 @@
   </div>
 </nav>
 
-<main id="main">
-  <section class="section opening" id="about" aria-labelledby="about-title">
-    <div class="container opening-grid">
-      <div class="section-heading">
-        <p class="section-label">ABOUT THE COURSE</p>
-        <h2 id="about-title">走了很多宮廟，<br>還是弄不懂靈修？</h2>
-        <p class="heading-note">先把觀念弄清楚，再談怎麼修。</p>
-      </div>
+<section aria-labelledby="about-title" class="section opening" id="about">
+  <div class="container grid">
+    <div>
+      <h2 id="about-title">走了很多宮廟，<br>還是弄不懂靈修？</h2>
+      <p class="note">先把觀念弄清楚，再談怎麼修。</p>
+    </div>
+    <div class="prose">
+      <p>有人會靈多年，回到家依然不知道怎麼練；有人已經會靈動、說靈語，卻說不清楚這些經驗跟修行有什麼關係。同一個現象，到了不同宮廟，又聽見不同的解釋，愈問愈困惑。</p>
+      <p>「靈修覺醒旅程」初階班，從這些實際的疑問開始。課程會把元神、啟靈、氣動、靈動等常見名詞講清楚，也討論宮壇傳統與個人實修之間的關係，讓你有依據地看待自己的經驗。</p>
+      <p>宇色老師在《我在人間的元神覺醒》中，反覆談到一個問題：看見元神以後，這個人接下來怎麼生活？固執、恐懼、對他人的依賴，會不會隨著修行而改變？這也是初階課程要帶回來看的地方。</p>
+      <p>感應可以成為起點。後面的路，仍需要自己觀察、練習，並修正日常裡的言行。</p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="audience-title" class="section audience" id="audience">
+  <div class="container">
+    <div class="head2">
+      <h2 id="audience-title">帶著疑問來，<br>也可以從頭學起。</h2>
+      <p class="intro">初階班歡迎剛接觸靈修的人，也適合已有經驗、想重新整理觀念的人。沒有靈動或靈語經驗，也能參與。</p>
+    </div>
+    <div class="cards">
+      <article class="gcard"><span class="mark" aria-hidden="true">問</span><h3>接觸宮廟多年，想把觀念弄懂</h3><p>聽過很多元神、主神與天命的說法，卻一直缺少完整的解釋，想釐清它們各自的意義。</p></article>
+      <article class="gcard"><span class="mark" aria-hidden="true">辨</span><h3>身上有感應，想知道怎麼看待</h3><p>對身體晃動、氣的流動或靈動感到疑惑，希望學習觀察與辨識，減少自己猜測的困擾。</p></article>
+      <article class="gcard"><span class="mark" aria-hidden="true">解</span><h3>會說靈語、寫天文，仍有疑問</h3><p>想進一步理解這些表達的形式、意義與使用情境，也學習檢視其中的訊息。</p></article>
+      <article class="gcard"><span class="mark" aria-hidden="true">學</span><h3>尚未啟靈，想先了解這條路</h3><p>對靈修與神祕學有興趣，希望先弄懂修行的脈絡，思考自己的動機與適合的學習方式。</p></article>
+    </div>
+  </div>
+</section>
+
+<div class="horizon" aria-hidden="true"></div>
+
+<section aria-labelledby="curriculum-title" class="section curriculum" id="curriculum">
+  <div class="container cgrid">
+    <div class="cintro">
+      <h2 id="curriculum-title">初階，<br>從這些問題開始。</h2>
+      <p>沿著靈修信仰的脈絡，逐步理解啟靈與元神，再看待自己遇見的現象。課堂也保留討論的空間，讓抽象名詞能對照具體經驗。</p>
+      <a class="tlink" href="#videos">先看看宇色老師怎麼談靈修 ↗</a>
+    </div>
+    <div class="modules" id="modules">
+      <div class="track" aria-hidden="true"><i></i></div>
+      <article class="module"><div class="mno">第一堂</div><h3>靈修的源流，與宮廟的關係</h3><p>從無極瑤池金母的靈修傳統談起，理解宮壇靈修、民間信仰與個人實修的關係，也認識靈乩、乩童與通靈人的差異。</p><ul><li>靈修與民間信仰的觀念差異</li><li>宮廟在靈修歷程中的角色</li><li>從宮壇學習到個人實修</li></ul></article>
+      <article class="module"><div class="mno">第二堂</div><h3>先天啟靈與元神</h3><p>元神是什麼？啟靈的方式有哪些？課程會說明先天與後天啟靈、元神與後天靈等概念，並討論點靈認主與修行的關係。</p><ul><li>不同啟靈方式的脈絡與差異</li><li>元神、後天靈與靈魂的概念</li><li>點靈、認主與主神的意義</li></ul></article>
+      <article class="module"><div class="mno">第三堂</div><h3>氣動、靈動與起乩，如何辨識？</h3><p>身體會動，究竟代表什麼？透過觀念說明與經驗討論，釐清常被混為一談的現象，學習觀察身體與意識的變化。</p><ul><li>氣動與靈動的差異</li><li>起乩與靈動的不同脈絡</li><li>靈動在實修中的位置與觀察方式</li></ul></article>
+      <article class="module"><div class="mno">第四堂</div><h3>靈語與天文，怎麼理解？</h3><p>會說、會寫之後，還有許多需要弄懂的事。課程會介紹靈語與天文的不同表達形式，討論如何理解、解讀與檢視訊息。</p><ul><li>靈語與天文的形式與意義</li><li>表達、理解與解讀之間的關係</li><li>面對訊息時，保留判斷與查證</li></ul><figure class="frame mimg"><img src="/assets/course-awakening-tianwen.webp" width="1027" height="681" alt="黃色紙張上的天文書寫，一支紅筆放在紙邊" loading="lazy"></figure></article>
+      <article class="module"><div class="mno">第五堂</div><h3>接下來，自己的修行怎麼走？</h3><p>把課堂所學帶回個人處境：為什麼想走靈修？適合怎麼練？面對不同導師與說法，又該如何做選擇？</p><ul><li>檢視報名與修行的動機</li><li>建立實修的觀念與態度</li><li>從生活中的情緒、關係與言行，觀察修行</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="videos-title" class="section practice" id="videos">
+  <div class="mist" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="container">
+    <div class="pgrid">
+      <h2 id="videos-title">把問題帶進課堂，<br>把練習帶回生活。</h2>
       <div class="prose">
-        <p>有人會靈多年，回到家依然不知道怎麼練；有人已經會靈動、說靈語，卻說不清楚這些經驗跟修行有什麼關係。同一個現象，到了不同宮廟，又聽見不同的解釋，愈問愈困惑。</p>
-        <p>「靈修覺醒旅程」初階班，從這些實際的疑問開始。課程會把元神、啟靈、氣動、靈動等常見名詞講清楚，也討論宮壇傳統與個人實修之間的關係，讓你有依據地看待自己的經驗。</p>
-        <p>宇色老師在《我在人間的元神覺醒》中，反覆談到一個問題：看見元神以後，這個人接下來怎麼生活？固執、恐懼、對他人的依賴，會不會隨著修行而改變？這也是初階課程要帶回來看的地方。</p>
-        <p class="prose-emphasis">感應可以成為起點。後面的路，仍需要自己觀察、練習，並修正日常裡的言行。</p>
+        <p>除了聽課，也可以整理自己的靈修經歷，提出一直沒有弄懂的問題。從其他學員的經驗裡，也能看見自己習以為常、卻未曾仔細想過的地方。</p>
+        <p>課程結合觀念說明、靜坐與呼吸的觀察，以及靈動相關的實修討論。實際練習由當期講師依課堂進度帶領，學員可以說明自己的狀態與疑問。</p>
+        <p>回家之後，仍需要持續練習。遇到情緒起伏時，能否看見自己的反應？面對家人與工作時，原有的習慣是否有所調整？這些都能成為觀察實修的依據。</p>
       </div>
     </div>
-  </section>
-
-  <section class="section audience" id="audience" aria-labelledby="audience-title">
-    <div class="container">
-      <div class="section-head-inline">
-        <div><p class="section-label">WHO THIS IS FOR</p><h2 id="audience-title">帶著疑問來，<br>也可以從頭學起。</h2></div>
-        <p class="section-intro">初階班歡迎剛接觸靈修的人，也適合已有經驗、想重新整理觀念的人。沒有靈動或靈語經驗，也能參與。</p>
-      </div>
-      <div class="audience-grid">
-        <article class="audience-item"><span class="item-mark" aria-hidden="true">問</span><h3>接觸宮廟多年，想把觀念弄懂</h3><p>聽過很多元神、主神與天命的說法，卻一直缺少完整的解釋，想釐清它們各自的意義。</p></article>
-        <article class="audience-item"><span class="item-mark" aria-hidden="true">辨</span><h3>身上有感應，想知道怎麼看待</h3><p>對身體晃動、氣的流動或靈動感到疑惑，希望學習觀察與辨識，減少自己猜測的困擾。</p></article>
-        <article class="audience-item"><span class="item-mark" aria-hidden="true">解</span><h3>會說靈語、寫天文，仍有疑問</h3><p>想進一步理解這些表達的形式、意義與使用情境，也學習檢視其中的訊息。</p></article>
-        <article class="audience-item"><span class="item-mark" aria-hidden="true">學</span><h3>尚未啟靈，想先了解這條路</h3><p>對靈修與神祕學有興趣，希望先弄懂修行的脈絡，思考自己的動機與適合的學習方式。</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section curriculum" id="curriculum" aria-labelledby="curriculum-title">
-    <div class="container curriculum-grid">
-      <div class="curriculum-intro">
-        <p class="section-label">COURSE CONTENT</p>
-        <h2 id="curriculum-title">初階，<br>從這些問題開始。</h2>
-        <p class="section-intro">沿著靈修信仰的脈絡，逐步理解啟靈與元神，再看待自己遇見的現象。課堂也保留討論的空間，讓抽象名詞能對照具體經驗。</p>
-        <a class="text-link" href="#videos">先看看宇色老師怎麼談靈修 <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="curriculum-list">
-        <article class="module"><span class="module-number" aria-hidden="true">01</span><div><h3>靈修的源流，與宮廟的關係</h3><p>從無極瑤池金母的靈修傳統談起，理解宮壇靈修、民間信仰與個人實修的關係，也認識靈乩、乩童與通靈人的差異。</p><ul><li>靈修與民間信仰的觀念差異</li><li>宮廟在靈修歷程中的角色</li><li>從宮壇學習到個人實修</li></ul></div></article>
-        <article class="module"><span class="module-number" aria-hidden="true">02</span><div><h3>先天啟靈與元神</h3><p>元神是什麼？啟靈的方式有哪些？課程會說明先天與後天啟靈、元神與後天靈等概念，並討論點靈認主與修行的關係。</p><ul><li>不同啟靈方式的脈絡與差異</li><li>元神、後天靈與靈魂的概念</li><li>點靈、認主與主神的意義</li></ul></div></article>
-        <article class="module"><span class="module-number" aria-hidden="true">03</span><div><h3>氣動、靈動與起乩，如何辨識？</h3><p>身體會動，究竟代表什麼？透過觀念說明與經驗討論，釐清常被混為一談的現象，學習觀察身體與意識的變化。</p><ul><li>氣動與靈動的差異</li><li>起乩與靈動的不同脈絡</li><li>靈動在實修中的位置與觀察方式</li></ul></div></article>
-        <article class="module"><span class="module-number" aria-hidden="true">04</span><div><h3>靈語與天文，怎麼理解？</h3><p>會說、會寫之後，還有許多需要弄懂的事。課程會介紹靈語與天文的不同表達形式，討論如何理解、解讀與檢視訊息。</p><ul><li>靈語與天文的形式與意義</li><li>表達、理解與解讀之間的關係</li><li>面對訊息時，保留判斷與查證</li></ul></div></article>
-        <article class="module"><span class="module-number" aria-hidden="true">05</span><div><h3>接下來，自己的修行怎麼走？</h3><p>把課堂所學帶回個人處境：為什麼想走靈修？適合怎麼練？面對不同導師與說法，又該如何做選擇？</p><ul><li>檢視報名與修行的動機</li><li>建立實修的觀念與態度</li><li>從生活中的情緒、關係與言行，觀察修行</li></ul></div></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="practice-band" aria-labelledby="practice-title">
-    <div class="container practice-grid">
-      <div><p class="section-label">PRACTICE &amp; REFLECTION</p><h2 id="practice-title">把問題帶進課堂，<br>把練習帶回生活。</h2></div>
-      <div class="prose"><p>除了聽課，也可以整理自己的靈修經歷，提出一直沒有弄懂的問題。從其他學員的經驗裡，也能看見自己習以為常、卻未曾仔細想過的地方。</p><p>課程結合觀念說明、靜坐與呼吸的觀察，以及靈動相關的實修討論。實際練習由當期講師依課堂進度帶領，學員可以說明自己的狀態與疑問。</p><p>回家之後，仍需要持續練習。遇到情緒起伏時，能否看見自己的反應？面對家人與工作時，原有的習慣是否有所調整？這些都能成為觀察實修的依據。</p></div>
-    </div>
-  </section>
-
-  <section class="section videos" id="videos" aria-labelledby="videos-title">
-    <div class="container">
-      <p class="section-label">WATCH BEFORE YOU JOIN</p>
-      <h2 id="videos-title">先聽宇色老師談靈修</h2>
-      <p class="section-intro">兩支公開影片，分別談啟靈後的經驗，以及踏入靈修之後的生活。可以先看，再對照自己的疑問。</p>
-      <div class="video-grid">
-        <article class="video-card">
+    <figure class="frame band reveal">
+      <img src="/assets/course-awakening-practice.webp" width="1728" height="896" alt="靈元院課堂一角：香爐升起輕煙，後方的學員在空間中活動身體" loading="lazy">
+    </figure>
+    <div class="vhead">
+      <h2>先聽宇色老師談靈修</h2>
+      <p class="intro" style="margin-top:18px;max-width:640px">兩支公開影片，分別談啟靈後的經驗，以及踏入靈修之後的生活。可以先看，再對照自己的疑問。</p>
+      <div class="vgrid">
+        <article>
           <div class="video-frame" data-video-id="Q4-XITaijoI" data-video-title="宇色談啟靈後應該注意哪些事情">
             <button class="video-poster" type="button" aria-label="播放：啟靈後，應該注意哪些事？">
-              <img src="https://i.ytimg.com/vi/Q4-XITaijoI/hqdefault.jpg" width="480" height="360" alt="宇色老師談啟靈與靈修的影片縮圖" loading="lazy">
+              <img src="https://i.ytimg.com/vi/Q4-XITaijoI/hqdefault.jpg" width="480" height="360" alt="宇色老師談啟靈後應該注意哪些事情的影片縮圖" loading="lazy">
               <span class="play-icon" aria-hidden="true"></span><span class="play-label">播放影片</span>
             </button>
           </div>
-          <div class="video-copy"><p class="video-category">啟靈與修行</p><h3>啟靈後，應該注意哪些事？</h3><p>從啟靈後的遭遇談起，討論靈修與宗教的關係，以及如何看待自己的經驗。</p><a class="text-link" href="https://www.youtube.com/watch?v=Q4-XITaijoI" target="_blank" rel="noopener noreferrer">在 YouTube 觀看 <span aria-hidden="true">↗</span></a></div>
+          <div class="vcopy"><small>啟靈與修行</small><h3>啟靈後，應該注意哪些事？</h3><p>從啟靈後的遭遇談起，討論靈修與宗教的關係，以及如何看待自己的經驗。</p><a class="tlink" href="https://www.youtube.com/watch?v=Q4-XITaijoI" target="_blank" rel="noopener noreferrer">在 YouTube 觀看 <span aria-hidden="true">↗</span></a></div>
         </article>
-        <article class="video-card">
+        <article>
           <div class="video-frame" data-video-id="F0K5VpiFYs8" data-video-title="宇色談踏入靈修世界後的生活">
             <button class="video-poster" type="button" aria-label="播放：走進靈修以後，日子有更好過嗎？">
-              <img src="https://i.ytimg.com/vi/F0K5VpiFYs8/hqdefault.jpg" width="480" height="360" alt="宇色老師談靈修與日常生活的影片縮圖" loading="lazy">
+              <img src="https://i.ytimg.com/vi/F0K5VpiFYs8/hqdefault.jpg" width="480" height="360" alt="宇色老師談踏入靈修世界後的生活的影片縮圖" loading="lazy">
               <span class="play-icon" aria-hidden="true"></span><span class="play-label">播放影片</span>
             </button>
           </div>
-          <div class="video-copy"><p class="video-category">感應與生活</p><h3>走進靈修以後，日子有更好過嗎？</h3><p>當敏感體質、通靈與元神成為生活的一部分，還有哪些值得回頭想清楚的問題？</p><a class="text-link" href="https://www.youtube.com/watch?v=F0K5VpiFYs8" target="_blank" rel="noopener noreferrer">在 YouTube 觀看 <span aria-hidden="true">↗</span></a></div>
+          <div class="vcopy"><small>感應與生活</small><h3>走進靈修以後，日子有更好過嗎？</h3><p>當敏感體質、通靈與元神成為生活的一部分，還有哪些值得回頭想清楚的問題？</p><a class="tlink" href="https://www.youtube.com/watch?v=F0K5VpiFYs8" target="_blank" rel="noopener noreferrer">在 YouTube 觀看 <span aria-hidden="true">↗</span></a></div>
         </article>
       </div>
       <noscript><p class="video-note">請使用各影片下方的 YouTube 連結觀看。</p></noscript>
     </div>
   </section>
 
-  <section class="section reading" id="reading" aria-labelledby="reading-title">
-    <div class="container reading-grid">
-      <a class="book-cover" href="https://www.books.com.tw/products/0011060075" target="_blank" rel="noopener noreferrer" aria-label="查看《我在人間的元神覺醒》書籍資訊"><img src="/assets/course-book-yuanshen.webp" width="1000" height="1248" alt="宇色著作《我在人間的元神覺醒》書封" loading="lazy"></a>
-      <div class="reading-copy"><p class="section-label">FURTHER READING</p><h2 id="reading-title">我在人間的<br>元神覺醒</h2><p class="book-subtitle">靈修這些年走過的彎路、看清的陷阱、體悟到的核心原則</p><div class="prose"><p>書中從具體的靈修經驗談起，重新整理元神、啟靈與不同修持方式，也討論如何辨識一位適合自己的靈乩導師。</p><p>知道元神的樣貌之後，仍要面對自己的個性與習慣。書裡那些固執、孤傲、在現實裡卡住的人，提醒讀者回頭看自己的心性與生活。這些問題，也延續到初階課程的學習裡。</p></div><a class="text-link" href="https://www.books.com.tw/products/0011060075" target="_blank" rel="noopener noreferrer">查看書籍介紹 <span aria-hidden="true">↗</span></a><a class="text-link secondary-link" href="/books.html">宇色靈修著作</a></div>
+<section aria-labelledby="reading-title" class="section reading">
+  <div class="container rgrid">
+    <a class="book" href="https://www.books.com.tw/products/0011060075" target="_blank" rel="noopener"><img src="https://lyyuan.tw/assets/course-book-yuanshen.webp" alt="宇色著作《我在人間的元神覺醒》書封"></a>
+    <div>
+      <h2 id="reading-title">我在人間的<br>元神覺醒</h2>
+      <p class="sub">靈修這些年走過的彎路、看清的陷阱、體悟到的核心原則</p>
+      <div class="prose">
+        <p>書中從具體的靈修經驗談起，重新整理元神、啟靈與不同修持方式，也討論如何辨識一位適合自己的靈乩導師。</p>
+        <p>知道元神的樣貌之後，仍要面對自己的個性與習慣。書裡那些固執、孤傲、在現實裡卡住的人，提醒讀者回頭看自己的心性與生活。這些問題，也延續到初階課程的學習裡。</p>
+      </div>
+      <div class="links"><a class="tlink" href="https://www.books.com.tw/products/0011060075" target="_blank" rel="noopener">查看書籍介紹 ↗</a><a class="tlink" href="/books.html">宇色靈修著作</a></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section course-origin" aria-labelledby="origin-title">
-    <div class="container origin-grid">
-      <figure class="origin-portrait"><img src="/assets/course-osel-portrait-v4.webp" width="969" height="1624" alt="宇色老師形象照" loading="lazy"></figure>
-      <div><p class="section-label">COURSE ORIGIN</p><h2 id="origin-title">課程脈絡<br><span>宇色的實修與書寫</span></h2><p class="origin-role">OSEL · 作家 · 靈元院創辦人</p><div class="prose"><p>宇色老師走過近三十年的靈修歷程，長期透過著作、課程與公開分享，談論啟靈、元神、宮壇文化與修行中的困惑。</p><p>「靈修覺醒旅程」沿著這些經驗與問題規劃。課程重視獨立思考，也重視實修：名詞要能理解，經驗要能觀察，學到的觀念要能帶回生活裡檢視。</p></div><p class="teaching-note">當期授課講師與課程安排，請以靈元院開課公告為準。</p></div>
+<section aria-labelledby="origin-title" class="section origin">
+  <div class="container ogrid">
+    <figure class="portrait" style="margin:auto"><img src="https://lyyuan.tw/assets/course-osel-portrait-v4.webp" alt="宇色老師形象照"></figure>
+    <div>
+      <h2 id="origin-title">課程脈絡<br><small>宇色的實修與書寫</small></h2>
+      <p class="role">OSEL · 作家 · 靈元院創辦人</p>
+      <div class="prose">
+        <p>宇色老師走過近三十年的靈修歷程，長期透過著作、課程與公開分享，談論啟靈、元神、宮壇文化與修行中的困惑。</p>
+        <p>「靈修覺醒旅程」沿著這些經驗與問題規劃。課程重視獨立思考，也重視實修：名詞要能理解，經驗要能觀察，學到的觀念要能帶回生活裡檢視。</p>
+      </div>
+      <p class="tnote">當期授課講師與課程安排，請以靈元院開課公告為準。</p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section testimonials" id="testimonials" aria-labelledby="testimonials-title">
-    <div class="container"><p class="section-label">STUDENT REFLECTIONS</p><h2 id="testimonials-title">上過初階班的人，怎麼說？</h2><p class="section-intro">以下節錄自歷年初階班學員的課後分享。</p><div class="testimonial-grid">
-      <figure class="testimonial"><blockquote>上完初階，我重新認識了靈修的世界，原來靈修是一門學問，而不是坊間宮壇或宗教所呈現的那樣神秘，或者是怪力亂神。</blockquote><figcaption>歷年初階班學員 <span>課後分享節錄</span></figcaption></figure>
-      <figure class="testimonial"><blockquote>我太希望老師能做些什麼讓我變得不一樣，後來我發現，老師所沒做的那部份；進而讓我去思考的，才是我收穫最多的部分。</blockquote><figcaption>歷年初階班學員 <span>課後分享節錄</span></figcaption></figure>
-      <figure class="testimonial"><blockquote>感謝老師有系統的整理靈修相關資料，解答我三年來的問題。</blockquote><figcaption>歷年初階班學員 <span>課後分享節錄</span></figcaption></figure>
-    </div></div>
-  </section>
+<section aria-labelledby="testimonials-title" class="section testi" id="testimonials">
+  <div class="container">
+    <h2 id="testimonials-title">上過初階班的人，怎麼說？</h2>
+    <p class="intro" style="margin-top:18px">以下節錄自歷年初階班學員的課後分享。</p>
+    <div class="tgrid">
+      <figure class="tcard"><blockquote>上完初階，我重新認識了靈修的世界，原來靈修是一門學問，而不是坊間宮壇或宗教所呈現的那樣神秘，或者是怪力亂神。</blockquote><figcaption>歷年初階班學員 課後分享節錄</figcaption></figure>
+      <figure class="tcard"><blockquote>我太希望老師能做些什麼讓我變得不一樣，後來我發現，老師所沒做的那部份；進而讓我去思考的，才是我收穫最多的部分。</blockquote><figcaption>歷年初階班學員 課後分享節錄</figcaption></figure>
+      <figure class="tcard"><blockquote>感謝老師有系統的整理靈修相關資料，解答我三年來的問題。</blockquote><figcaption>歷年初階班學員 課後分享節錄</figcaption></figure>
+    </div>
+  </div>
+</section>
 
-  <section class="section faq" id="faq" aria-labelledby="faq-title">
-    <div class="container faq-grid"><div><p class="section-label">QUESTIONS &amp; ANSWERS</p><h2 id="faq-title">報名前，<br>你可能想知道</h2></div><div class="faq-list">
+<section aria-labelledby="faq-title" class="section faq" id="faq">
+  <div class="container fgrid">
+    <h2 id="faq-title">報名前，<br>你可能想知道</h2>
+    <div class="flist">
       <details><summary>尚未啟靈，也沒有靈動經驗，可以參加嗎？</summary><p>可以。初階班從基本觀念開始，適合對靈修有興趣、希望先了解的人。課程會說明啟靈與實修的脈絡，讓你逐步理解自己的學習方向。</p></details>
       <details><summary>接觸宮廟很多年，還需要從初階開始嗎？</summary><p>如果你對元神、靈動、靈語或點靈認主仍有疑問，初階班能提供重新整理觀念的機會。過去的經驗也可以帶進課堂，和所學內容對照。</p></details>
       <details><summary>已經會說靈語、寫天文，還能學到什麼？</summary><p>課程會進一步討論靈語與天文的形式、意義、使用情境與理解方式。已有這些經驗的人，可以帶著具體的疑問參與討論。</p></details>
       <details><summary>上完課一定會啟靈，或知道自己的元神嗎？</summary><p>課程著重觀念與實修，每個人的經驗與進度不同。啟靈、靈動或元神顯現都沒有保證，也不以出現特殊現象作為學習成果。課程會協助你建立觀察與判斷的方法。</p></details>
       <details><summary>是宇色老師親自授課嗎？</summary><p>本課程歷年由靈元院具實修經驗的講師帶領，初階班曾由李師姐授課。當期授課講師與上課安排，請以開課公告為準。</p></details>
       <details><summary>這一頁的課程是線上觀看，還是到現場上課？</summary><p>本頁介紹的是「靈修覺醒旅程」實體初階班。若想先從線上講座學習，可以參考<a href="/courses/lingji-practice.html">「跟靈乩前輩學靈修的兩堂必修課」</a>；兩者的課程範圍與上課方式不同，請分別查看介紹。</p></details>
-    </div></div>
-  </section>
+    </div>
+  </div>
+</section>
 
-  <section class="registration" id="registration" aria-labelledby="registration-title">
-    <div class="container registration-grid"><div><p class="section-label">CLASS ANNOUNCEMENTS</p><h2 id="registration-title">靈修覺醒旅程<br><span>初階班・開課資訊</span></h2><p>開課日期、地點、費用與授課講師，將於靈元院官方公告。報名前請先確認當期場次與課程安排。</p><div class="registration-actions"><a class="btn btn-light" href="https://www.facebook.com/lyy.taiwan" target="_blank" rel="noopener noreferrer">查看開課公告 <span aria-hidden="true">↗</span></a><a class="btn btn-ghost" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">詢問課務</a></div><p class="service-hours">行政服務時間：09:00–17:00，假日不回覆。</p></div><aside class="online-option" aria-labelledby="online-title"><p class="section-label">ONLINE LEARNING</p><h3 id="online-title">想先從線上課程學起？</h3><p>「跟靈乩前輩學靈修的兩堂必修課」從台灣靈修源流與前輩經驗，整理不同的修行模式。可以依自己的需要，先選擇適合的學習方式。</p><a class="text-link" href="/courses/lingji-practice.html">查看線上兩堂必修課 <span aria-hidden="true">↗</span></a></aside></div>
-  </section>
+<section aria-labelledby="registration-title" class="reg" id="registration">
+  <div class="container rgrid2">
+    <div>
+      <h2 id="registration-title">靈修覺醒旅程<small>初階班・開課資訊</small></h2>
+      <p>開課日期、地點、費用與授課講師，將於靈元院官方公告。報名前請先確認當期場次與課程安排。</p>
+      <div class="ractions">
+        <a class="pill gold" href="https://www.facebook.com/lyy.taiwan" target="_blank" rel="noopener">查看開課公告</a>
+        <a class="pill ghost" href="https://t.me/lyyuan" target="_blank" rel="noopener">詢問課務</a>
+      </div>
+      <p class="fine">行政服務時間：09:00–17:00，假日不回覆。<br>啟靈、靈動或元神顯現都沒有保證，課程不以特殊現象作為學習成果。</p>
+    </div>
+    <div class="online">
+      <h3>想先從線上課程學起？</h3>
+      <p>「跟靈乩前輩學靈修的兩堂必修課」從台灣靈修源流與前輩經驗，整理不同的修行模式。可以依自己的需要，先選擇適合的學習方式。</p>
+      <a class="tlink" href="/courses/lingji-practice.html">查看線上兩堂必修課 ↗</a>
+    </div>
+  </div>
+</section>
 </main>
 
-<footer class="course-footer"><div class="container footer-inner"><a href="/" aria-label="回到靈元院首頁"><img src="/assets/footer-logo-gold.svg?v=20260721-1" width="128" alt="靈元院"></a><div class="footer-links"><a href="/courses/">課程總覽</a><a href="/books.html">宇色著作</a><a href="https://t.me/lyyuan_channel" target="_blank" rel="noopener noreferrer">Telegram 官方頻道</a><a href="mailto:lyyuan03@gmail.com">Email</a></div><p>© 2026 靈元院 Ling Yuan Yuan · 修心在己</p></div></footer>
+<footer class="course-footer">
+  <div class="container">
+    <div class="wordmark" aria-hidden="true">修心在己</div>
+    <div class="flogo"><img src="/assets/footer-logo-gold.svg?v=20260721-1" width="132" alt="靈元院"></div>
+    <p class="tagline">靈元院・修心在己</p>
+    <div class="flinks"><a href="/courses/">課程總覽</a><a href="/books.html">宇色著作</a><a href="https://t.me/lyyuan_channel" target="_blank" rel="noopener noreferrer">Telegram 官方頻道</a><a href="mailto:lyyuan03@gmail.com">Email</a></div>
+    <p class="copy">© 2026 靈元院 Ling Yuan Yuan · 修心在己</p>
+  </div>
+</footer>
+<div class="mcta" id="mcta"><a class="pill gold" href="#registration">開課與報名資訊</a></div>
 <script type="module" src="/site-auth-nav.js?v=20260824-auth-mobile-layout-2"></script>
 <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
-<script src="/courses/spiritual-awakening.js?v=20261003-1" defer></script>
+<script src="/courses/spiritual-awakening.js?v=20261003-2" defer></script>
 </body>
 </html>
