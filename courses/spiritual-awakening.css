@@ -248,8 +248,7 @@ h2{font-size:clamp(30px,3.7vw,46px);line-height:1.5;letter-spacing:.02em}
 .gcard p{margin:0;font-size:16px;line-height:1.95;color:#bdb19c}
 
 /* 地平線：夜到晨 */
-.horizon{position:relative;height:300px;background:linear-gradient(180deg,#2f2a22 0%,#5b4c3a 38%,#b98f5c 70%,#f0dcb8 90%,var(--paper) 100%);overflow:hidden}
-.horizon::before{content:"";position:absolute;left:50%;bottom:-40%;width:130%;aspect-ratio:2/1;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,236,190,.95),rgba(236,200,142,.35) 55%,transparent 80%);animation:breathe 10s ease-in-out infinite}
+.blend{height:96px;background:linear-gradient(180deg,#2f2a22 0%,#6b5a44 45%,#d9c4a0 82%,var(--paper) 100%)}
 
 /* 課程：捲動進度 */
 .curriculum{background:var(--paper)}
@@ -389,7 +388,7 @@ h2{font-size:clamp(30px,3.7vw,46px);line-height:1.5;letter-spacing:.02em}
   .opening .grid,.pgrid,.head2,.cgrid,.rgrid,.ogrid,.fgrid,.vgrid,.tgrid,.cards{grid-template-columns:1fr;gap:28px}
   .cards{gap:16px;margin-top:32px}
   .gcard{padding:26px 22px 26px 80px;border-radius:22px}.mark{left:22px;top:28px;width:42px;height:42px}
-  .horizon{height:200px}
+  .blend{height:72px}
   .cintro{position:static}
   .modules{padding-left:38px}.module::before{left:-35px}.module h3{font-size:22px}
   .vhead{margin-top:64px;padding-top:40px}
@@ -441,18 +440,28 @@ body.site-auth-enabled .course-subnav{top:calc(56px + var(--site-auth-height,48p
 .frame::before{left:-14px;top:-14px;border-left:1px solid;border-top:1px solid}
 .frame::after{right:-14px;bottom:-14px;border-right:1px solid;border-bottom:1px solid}
 .frame img{display:block;width:100%;height:100%;object-fit:cover}
-.band{margin-top:72px}
-.band img{aspect-ratio:1728/896;max-height:520px;box-shadow:0 28px 70px rgba(0,0,0,.4)}
-.band figcaption,.mimg figcaption{margin-top:14px;color:#a89d88;font-size:12px;letter-spacing:.1em}
+.mimg figcaption{margin-top:14px;color:#a89d88;font-size:12px;letter-spacing:.1em}
 .mimg{max-width:400px;margin-top:26px}
 .mimg::before,.mimg::after{width:56px;height:56px;border-color:rgba(165,130,84,.6)}
 .mimg img{aspect-ratio:1027/681;box-shadow:0 18px 40px rgba(70,53,34,.22)}
 @media(max-width:760px){
-  .band{margin-top:48px}
-  .band img{aspect-ratio:4/3;object-position:58% center}
   .frame::before{left:-8px;top:-8px;width:52px;height:52px}
   .frame::after{right:-8px;bottom:-8px;width:52px;height:52px}
   .mimg{max-width:100%}
 }
 @media(max-width:768px){.course-subnav{top:58px;margin-top:30px}body.site-auth-enabled .course-subnav{top:calc(58px + var(--site-auth-height,52px))}.subnav-inner{width:100%;padding-left:20px;gap:0}.subnav-links{flex:1;gap:20px;padding-right:20px}.subnav-links a{font-size:12px}.subnav-cta{padding:12px 15px;font-size:12px;border-left:1px solid rgba(200,156,102,.22)}}
 
+
+/* 第一章左欄課堂照片 */
+.opening-photo{margin-top:44px;max-width:460px}
+.opening-photo img{aspect-ratio:4/5;object-position:64% 72%;box-shadow:0 28px 70px rgba(0,0,0,.4)}
+
+/* 適合誰：同一 CI 色（金棕）以四種漸層濃度呈現 */
+.cards .gcard{background:var(--g,linear-gradient(#2a2620,#26221c)) padding-box,radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(247,214,150,.95),rgba(165,130,84,.3) 68%) border-box}
+.cards .gcard:nth-child(1){--g:linear-gradient(135deg,#8a6a3f 0%,#5d4a31 55%,#34291d 100%)}
+.cards .gcard:nth-child(2){--g:linear-gradient(225deg,#7a5f3a 0%,#4c3d2b 55%,#2d2519 100%)}
+.cards .gcard:nth-child(3){--g:linear-gradient(45deg,#6a5334 0%,#3f3324 55%,#2a2318 100%)}
+.cards .gcard:nth-child(4){--g:linear-gradient(315deg,#9a7646 0%,#654f33 50%,#33291c 100%)}
+.cards .gcard .mark{background:linear-gradient(145deg,rgba(236,200,142,.32),rgba(236,200,142,.06));border-color:rgba(236,200,142,.75)}
+.cards .gcard h3{color:#fbf1da}
+.cards .gcard p{color:#e3d6bd;font-size:16px;line-height:1.95}
