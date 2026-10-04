@@ -88,7 +88,13 @@
 
 /* ===== 介紹影片 ===== */
 .a-video{background:linear-gradient(180deg,var(--night),#0d1710)}
-.a-vwrap{max-width:900px;margin:0 auto}
+.a-vwrap{max-width:1040px;margin:0 auto;display:grid;gap:44px}
+.a-vpair{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+.a-vfeature{display:grid;grid-template-columns:1.5fr 1fr;gap:44px;align-items:center}
+.a-vmeta small{display:block;font-family:'Cormorant Garamond',serif;letter-spacing:.2em;color:var(--gl);margin-bottom:10px;font-size:15px}
+.a-vmeta h3{font-family:'Noto Serif TC',serif;font-weight:500;font-size:clamp(19px,2vw,24px);line-height:1.5;color:#f5f0e8;margin:0 0 10px}
+.a-vmeta p{color:rgba(245,240,232,.72);font-size:15px;line-height:1.9;margin:0 0 14px}
+.a-vpair .a-vmeta{padding-top:18px}
 .adv .a-vwrap .video-frame{border-radius:2px;box-shadow:0 30px 80px rgba(0,0,0,.55)}
 .a-vwrap .frame::before,.a-vwrap .frame::after{border-color:rgba(200,170,123,.6)}
 .a-vcap{margin:26px 0 0;color:rgba(245,240,232,.5);font-size:13px;letter-spacing:.08em;text-align:right}
@@ -159,3 +165,5 @@
 @media(prefers-reduced-motion:reduce){
   .a-row,.a-row::before,.a-row::after,.a-glyph{transition:none}
 }
+
+@media(max-width:760px){.a-vfeature,.a-vpair{grid-template-columns:1fr;gap:28px}.a-vwrap{gap:36px}}
