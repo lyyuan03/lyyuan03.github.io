@@ -1,14 +1,15 @@
 /* 課程頁共用版面尺度（區塊留白、標題與內文字級）。所有課程頁最後載入此檔，以統一各頁節奏。
    修改尺度只改這裡的變數；同步與檢查：node scripts/sync-course-rhythm.mjs [--check] */
 :root{
-  --cr-sec:72px;        /* 大區塊上下留白 */
-  --cr-sec-sm:56px;     /* 手機版區塊上下留白 */
+  --cr-sec:64px;        /* 大區塊上下留白 */
+  --cr-sec-sm:48px;     /* 手機版區塊上下留白 */
   --cr-h2:clamp(27px,3.3vw,42px);
   --cr-h2-lh:1.45;
-  --cr-body:17px;
+  --cr-body:17.5px;
+  --cr-note:14px;
   --cr-body-lh:1.95;
-  --cr-small:15px;
-  --cr-faq-q:17px;
+  --cr-small:16px;
+  --cr-faq-q:18px;
 }
 /* 區塊上下留白 */
 body :is(.section,.a-sec,.dialogue-section,.themes-section,.compact-faq){padding-top:var(--cr-sec);padding-bottom:var(--cr-sec)}
@@ -29,10 +30,24 @@ body .course-contact{padding-top:var(--cr-sec);padding-bottom:var(--cr-sec)}
 body .course-contact .cc-lead{font-size:var(--cr-body)}
 @media(max-width:860px){
   body :is(.section,.a-sec,.dialogue-section,.themes-section,.compact-faq,.course-contact){padding-top:var(--cr-sec-sm);padding-bottom:var(--cr-sec-sm)}
-  :root{--cr-body:16px;--cr-small:14.5px;--cr-faq-q:16px}
+  :root{--cr-body:16.5px;--cr-small:15.5px;--cr-faq-q:16.5px;--cr-note:13.5px}
   body .themes-section .theme-panels.is-interactive{padding:28px 22px}
 }
 /* 進階班影片區：間距收緊 */
 body .a-vwrap{gap:36px}
 body .a-vpair{gap:28px}
 body .a-vmeta p{font-size:var(--cr-small)}
+
+/* ===== 內文底線：區塊內所有段落、列點、說明一律不小於內文字級；圖說與備註不小於 --cr-note ===== */
+body :is(.section,.a-sec,.dialogue-section,.themes-section) :is(p,li,dd):not([class*="note"]):not([class*="caption"]):not([class*="role"]):not([class*="lead"]):not([class*="intro"]):not([class*="source"]):not([class*="quote"]):not([class*="sub"]):not(.tnote){font-size:var(--cr-body);line-height:var(--cr-body-lh)}
+body :is(.section,.a-sec,.dialogue-section,.themes-section) :is(p[class*="note"],p[class*="caption"],figcaption,small,p[class*="source"],.tnote,.themes-footnote,.teacher-role){font-size:var(--cr-note);line-height:1.8}
+body :is(.section,.a-sec,.dialogue-section,.themes-section) :is(.record-reflection,.prepare-intro,.format-caption){font-size:var(--cr-body);line-height:var(--cr-body-lh)}
+body :is(.section,.a-sec) li{line-height:1.85}
+/* 列表與卡片的留白收緊 */
+body .record{padding-top:24px;padding-bottom:24px}
+body .record h3{margin-top:8px;font-size:23px;line-height:1.6}
+body :is(.themes-heading,.records-heading,.dialogue-section-heading){margin-bottom:34px}
+body .dialogue-format{margin-top:44px}
+/* 圖片說明疊在圖上的版型：圖框不隨旁邊文字拉高，說明維持在圖內 */
+body .prepare-image{align-self:start}
+body .prepare-image figcaption{font-size:12px;line-height:1.6}
