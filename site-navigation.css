@@ -275,6 +275,26 @@
   background: rgba(165, 130, 84, .11) !important;
 }
 
+.global-nav-sublist .global-nav-course-group {
+  display: block !important;
+  margin: 0 !important;
+  padding: 11px 9px 3px !important;
+  color: rgba(215, 186, 136, .78) !important;
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: .14em !important;
+  line-height: 1.5 !important;
+  list-style: none !important;
+}
+
+.global-nav-sublist .global-nav-course-group:first-child {
+  padding-top: 5px !important;
+}
+
+.global-nav-sublist .global-nav-course-group ~ li:not(.global-nav-course-group) a {
+  padding-left: 18px !important;
+}
+
 @media (max-width: 768px) {
   .global-site-nav,
   .global-nav-inner,
