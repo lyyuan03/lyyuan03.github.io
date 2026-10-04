@@ -1,0 +1,12 @@
+/* 全站共用頁尾樣式。範本：partials/site-footer.html。請勿在各頁另寫頁尾樣式，修改後執行 node scripts/sync-footer.mjs */
+#site-canonical-footer{display:block;width:100%;box-sizing:border-box;background:rgba(6,9,5,.97);border-top:1px solid rgba(165,130,84,.1);padding:36px 0 28px;margin:0;color:#f5f0e8;font-family:"Noto Sans TC",Arial,sans-serif;text-align:center}
+#site-canonical-footer .site-footer-container{width:100%;max-width:1080px;margin:0 auto;padding:0 24px;box-sizing:border-box}
+#site-canonical-footer .site-footer-inner{display:flex;flex-direction:column;align-items:center;gap:14px}
+#site-canonical-footer .site-footer-brand-mark{display:block;width:128px;max-width:34vw;height:auto;margin:0 auto 2px;opacity:.64;filter:saturate(.72) brightness(.78);object-fit:contain}
+#site-canonical-footer .site-footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:28px}
+#site-canonical-footer .site-footer-links a{display:flex;color:rgba(245,240,232,.38);text-decoration:none;transition:color .2s,transform .2s}
+#site-canonical-footer .site-footer-links a:hover,#site-canonical-footer .site-footer-links a:focus-visible{color:#a58254;transform:translateY(-2px)}
+#site-canonical-footer .site-footer-links svg{display:block;width:28px;height:28px}
+#site-canonical-footer .site-footer-copy{margin:0;color:rgba(245,240,232,.2);font-size:11px;line-height:1.7;letter-spacing:.12em}
+@media(max-width:560px){#site-canonical-footer .site-footer-brand-mark{width:112px;max-width:38vw}#site-canonical-footer .site-footer-links{gap:22px}}
+@media(prefers-reduced-motion:reduce){#site-canonical-footer .site-footer-links a{transition:none}}

@@ -81,3 +81,8 @@ console.log(JSON.stringify({
   mutationObservers: observerCount,
   cacheToken: pageToken
 }, null, 2));
+
+// 全站頁尾必須與 partials/site-footer.html 一致（修改頁尾請改範本後執行 node scripts/sync-footer.mjs）
+import { spawnSync } from "node:child_process";
+const footerCheck = spawnSync(process.execPath, [path.join(root, "scripts/sync-footer.mjs"), "--check"], { encoding: "utf8" });
+assert.equal(footerCheck.status, 0, `Footer drift detected:\n${footerCheck.stderr}`);
