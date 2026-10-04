@@ -214,3 +214,8 @@
 .share-shot:hover,.share-shot:focus-visible{transform:translateY(-4px);box-shadow:0 22px 48px rgba(60,48,36,.2)}
 @media(max-width:720px){.share-gallery{grid-template-columns:1fr;gap:18px}}
 @media(prefers-reduced-motion:reduce){.share-shot{transition:none}}
+
+/* 課程全名副標：通靈對話．打開天命通道，直觀全息生命 */
+.rdh h1 .rdh-sub{display:block;margin-top:.5em;font-size:.27em;font-weight:400;line-height:1.7;letter-spacing:.16em;color:#ecc88e}
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media(max-width:720px){.rdh h1 .rdh-sub{font-size:.3em;letter-spacing:.1em}}
