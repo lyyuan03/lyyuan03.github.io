@@ -90,3 +90,7 @@ assert.equal(footerCheck.status, 0, `Footer drift detected:\n${footerCheck.stder
 // 實體課程「報名與洽詢」區塊必須與 partials/course-contact.config.json 一致
 const contactCheck = spawnSync(process.execPath, [path.join(root, "scripts/sync-course-contact.mjs"), "--check"], { encoding: "utf8" });
 assert.equal(contactCheck.status, 0, `Course contact block drift detected:\n${contactCheck.stderr}`);
+
+// 課程頁必須載入最新的共用版面尺度 course-rhythm.css
+const rhythmCheck = spawnSync(process.execPath, [path.join(root, "scripts/sync-course-rhythm.mjs"), "--check"], { encoding: "utf8" });
+assert.equal(rhythmCheck.status, 0, `Course rhythm drift detected:\n${rhythmCheck.stderr}`);
