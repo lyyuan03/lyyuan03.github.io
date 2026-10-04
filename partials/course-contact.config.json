@@ -7,7 +7,10 @@
     "fee": "開課日期、地點與費用，依當期官方公告。",
     "qualification": "帶著疑問來，也可以從頭學起。",
     "note": "啟靈、靈動或元神顯現都沒有保證。",
-    "cross": { "text": "想先從線上課程學起？查看線上兩堂必修課", "href": "/courses/lingji-practice.html" }
+    "cross": {
+      "text": "想先從線上課程學起？查看線上兩堂必修課",
+      "href": "/courses/lingji-practice.html"
+    }
   },
   "courses/spiritual-awakening-advanced.html": {
     "id": "registration",
@@ -17,7 +20,10 @@
     "fee": "開課日期、地點與費用，依當期官方公告。",
     "qualification": "須先完成初階班課程，並經靈元院審核。",
     "note": "靈動、啟靈或功法的出現都沒有保證。",
-    "cross": { "text": "想先了解初階班？查看靈修覺醒旅程・初階班", "href": "/courses/spiritual-awakening.html" }
+    "cross": {
+      "text": "想先了解初階班？查看靈修覺醒旅程・初階班",
+      "href": "/courses/spiritual-awakening.html"
+    }
   },
   "courses/refined-dialogue.html": {
     "id": "announcement",
@@ -26,8 +32,11 @@
     "lead": "下一次開課消息，請留意靈元院官方公告；你也可以先從著作與線上課程，整理自己的理解與問題。",
     "fee": "重新開放後，依當期官方公告。",
     "qualification": "依主題確認先修要求與動機審核。",
-    "note": "此處為課程內容介紹，目前不接受報名。",
-    "cross": { "text": "先看基礎線上課程", "href": "/courses/lingji-practice.html" }
+    "note": "",
+    "cross": {
+      "text": "先看基礎線上課程",
+      "href": "/courses/lingji-practice.html"
+    }
   },
   "courses/male-yoga-energy.html": {
     "id": "inquiry",
@@ -38,7 +47,10 @@
     "qualification": "男性限定，須經審查，確認適合後才會安排上課。",
     "facebook": false,
     "note": "",
-    "cross": { "text": "了解中階課程", "href": "/courses/male-yoga-energy-advanced.html" }
+    "cross": {
+      "text": "了解中階課程",
+      "href": "/courses/male-yoga-energy-advanced.html"
+    }
   },
   "courses/male-yoga-energy-advanced.html": {
     "id": "inquiry",
@@ -49,6 +61,9 @@
     "qualification": "須完成初階並通過面談。",
     "facebook": false,
     "note": "",
-    "cross": { "text": "查看初階課程", "href": "/courses/male-yoga-energy.html" }
+    "cross": {
+      "text": "查看初階課程",
+      "href": "/courses/male-yoga-energy.html"
+    }
   }
 }

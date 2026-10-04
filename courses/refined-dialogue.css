@@ -219,3 +219,17 @@
 .rdh h1 .rdh-sub{display:block;margin-top:.5em;font-size:.27em;font-weight:400;line-height:1.7;letter-spacing:.16em;color:#ecc88e}
 .visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 @media(max-width:720px){.rdh h1 .rdh-sub{font-size:.3em;letter-spacing:.1em}}
+
+/* 首屏白話說明 */
+.rdh .rdh-what{max-width:34em;margin:22px 0 0;font-size:clamp(17px,1.5vw,20px);line-height:1.9;color:var(--dialogue-paper)}
+.rdh .rdh-lead{margin-top:20px}
+/* 現場紀錄：展開全文、來訊截圖收合 */
+.record-more{margin-top:6px}
+.record-more summary,.share-more summary{display:inline-flex;align-items:center;gap:10px;margin-top:6px;cursor:pointer;list-style:none;color:var(--dialogue-olive);font-size:15px;letter-spacing:.08em;border-bottom:1px solid rgba(96,99,48,.5);padding-bottom:3px}
+.record-more summary::-webkit-details-marker,.share-more summary::-webkit-details-marker{display:none}
+.record-more summary:after,.share-more summary:after{content:"＋";font-size:14px}
+.record-more[open] summary,.share-more[open] summary{margin-bottom:16px}
+.record-more[open] summary:after,.share-more[open] summary:after{content:"－"}
+.record-more summary:hover,.share-more summary:hover{color:var(--dialogue-tan);border-color:var(--dialogue-tan)}
+@media(min-width:861px){.record>div>.record-more{grid-column:2}}
+.share-more{margin-top:4px}
