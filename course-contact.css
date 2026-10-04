@@ -1,0 +1,24 @@
+/* 實體課程共用「報名與洽詢」區塊。內容設定：partials/course-contact.config.json；同步：node scripts/sync-course-contact.mjs */
+.course-contact{position:relative;overflow:hidden;isolation:isolate;padding:104px 0;background:linear-gradient(180deg,#0e1710,#121f15);border-top:1px solid rgba(165,130,84,.28);color:#f5f0e8;font-family:"Noto Sans TC",Arial,sans-serif;text-align:left}
+.course-contact:before{content:"";position:absolute;z-index:-1;right:-14%;top:-42%;width:62%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(200,170,123,.18),transparent 64%);pointer-events:none}
+.course-contact .cc-wrap{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:72px;align-items:start;width:min(1120px,calc(100% - 48px));margin:0 auto}
+.course-contact .cc-title{margin:0;max-width:none;text-wrap:balance;color:#f5f0e8;font:500 clamp(28px,3.6vw,44px)/1.6 "Noto Serif TC",serif;letter-spacing:.04em}
+.course-contact .cc-lead{max-width:34em;margin:24px 0 34px;color:rgba(245,240,232,.74);font-size:16px;line-height:2}
+.course-contact .cc-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px}
+.course-contact .cc-btn{display:inline-flex;align-items:center;min-height:52px;padding:0 30px;background:#a58254;color:#fff;font-size:15px;letter-spacing:.1em;text-decoration:none;box-shadow:0 14px 30px rgba(0,0,0,.35);transition:transform .25s,background .25s}
+.course-contact .cc-btn:hover,.course-contact .cc-btn:focus-visible{background:#b48f60;transform:translateY(-2px)}
+.course-contact .cc-btn.is-ghost{background:transparent;color:#f5f0e8;box-shadow:none;padding:0 2px;min-height:44px;border-bottom:1px solid rgba(200,170,123,.55)}
+.course-contact .cc-btn.is-ghost:hover{color:#ecc88e;transform:none}
+.course-contact .cc-cross{display:inline-block;margin-top:26px;color:rgba(245,240,232,.62);font-size:14px;line-height:1.8;text-decoration:none;border-bottom:1px solid rgba(245,240,232,.22)}
+.course-contact .cc-cross:hover{color:#ecc88e;border-color:#ecc88e}
+.course-contact .cc-info{padding:34px 36px 32px;border:1px solid rgba(200,170,123,.3);background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.015));box-shadow:0 1px 0 rgba(255,255,255,.1) inset,0 30px 60px rgba(0,0,0,.4)}
+.course-contact .cc-state{margin:0 0 22px;padding-bottom:18px;border-bottom:1px solid rgba(200,170,123,.28);color:#c8aa7b;font-size:15px;letter-spacing:.1em}
+.course-contact .cc-info dl{margin:0;display:grid;gap:20px}
+.course-contact .cc-info dt{margin:0 0 6px;color:rgba(245,240,232,.5);font-size:13px;letter-spacing:.1em}
+.course-contact .cc-info dd{margin:0;color:#f5f0e8;font-size:16px;line-height:1.8}
+.course-contact .cc-info dd a{color:#f5f0e8;text-decoration:none;border-bottom:1px solid rgba(245,240,232,.5)}
+.course-contact .cc-info dd a:hover{color:#ecc88e;border-color:#ecc88e}
+.course-contact .cc-info dd small{display:block;margin-top:4px;color:rgba(245,240,232,.55);font-size:13px}
+.course-contact .cc-note{margin:22px 0 0;padding-top:18px;border-top:1px solid rgba(200,170,123,.2);color:rgba(245,240,232,.55);font-size:13px;line-height:1.9}
+@media(max-width:860px){.course-contact{padding:72px 0}.course-contact .cc-wrap{grid-template-columns:1fr;gap:44px}.course-contact .cc-info{padding:28px 24px}}
+@media(prefers-reduced-motion:reduce){.course-contact .cc-btn{transition:none}}

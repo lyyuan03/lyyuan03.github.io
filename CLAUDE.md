@@ -21,6 +21,8 @@
 - 修改頁尾時，只改範本與 `site-footer.css`，再執行 `node scripts/sync-footer.mjs` 同步全站；新增頁面時，放一個空的 `<footer></footer>` 後執行同一個指令即可。
 - `node scripts/sync-footer.mjs --check` 已納入 `scripts/audit-production-stability.mjs`，頁尾與範本不一致時審查會失敗。
 - 所有課程頁（初階班、進階班、精煉對話、男力瑜伽、線上課程等）的共用區塊（導覽列、頁尾、報名與聯絡資訊、督導說明）日後修改時，必須同步檢查並更新全部課程頁，不可只改單一頁面。
+- 實體課程（初階班、進階班、精煉對話、男力瑜伽初階與中階）的「報名與洽詢」區塊只有一份範本：內容寫在 `partials/course-contact.config.json`，樣式在 `course-contact.css`，由 `node scripts/sync-course-contact.mjs` 寫入各頁（頁面內以 `<!-- course-contact:start -->` 與 `<!-- course-contact:end -->` 標記）。洽詢方式、參與資格、行政聯絡、服務時間、按鈕名稱一律只改這裡，不在各頁手改，審查腳本會檢查。新增實體課程時，在設定檔加一筆並放入標記即可。
+- 課程頁的區塊標題上方不使用數字編號與英文小標；需要標示分類時，使用中文並保持簡短。
 
 ## 內容風格
 

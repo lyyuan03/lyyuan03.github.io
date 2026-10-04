@@ -86,3 +86,7 @@ console.log(JSON.stringify({
 import { spawnSync } from "node:child_process";
 const footerCheck = spawnSync(process.execPath, [path.join(root, "scripts/sync-footer.mjs"), "--check"], { encoding: "utf8" });
 assert.equal(footerCheck.status, 0, `Footer drift detected:\n${footerCheck.stderr}`);
+
+// 實體課程「報名與洽詢」區塊必須與 partials/course-contact.config.json 一致
+const contactCheck = spawnSync(process.execPath, [path.join(root, "scripts/sync-course-contact.mjs"), "--check"], { encoding: "utf8" });
+assert.equal(contactCheck.status, 0, `Course contact block drift detected:\n${contactCheck.stderr}`);
