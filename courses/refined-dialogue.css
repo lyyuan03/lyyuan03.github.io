@@ -118,8 +118,29 @@
 .rdh .canopy-soft ellipse{fill:url(#hero-canopy)}
 .rdh .canopy-leaves{transform-box:fill-box;transform-origin:50% 100%;animation:rdhSway 9s ease-in-out infinite alternate}
 @keyframes rdhSway{0%{transform:rotate(-.35deg) translateY(1px)}100%{transform:rotate(.45deg) translateY(-3px)}}
-.rdh .forest-scene{filter:saturate(.92) contrast(1.05) brightness(1.02)}
+.rdh .forest-scene{filter:saturate(.95) contrast(1.04) brightness(1.04)}
 .rdh .forest-light{background:radial-gradient(ellipse,rgba(236,208,150,.3),rgba(200,170,123,.1) 42%,transparent 73%)}
 @media(max-width:920px){.forest-scene{left:-14%;width:126%;opacity:.9}.forest-light{right:-7%;width:67%}}
-@media(max-width:768px){.rdh:after{background:linear-gradient(90deg,rgba(5,13,9,.9),rgba(5,13,9,.62) 72%,rgba(5,13,9,.18)),linear-gradient(to top,rgba(5,12,8,.82),transparent 55%)}.forest-scene{left:-76%;width:178%;opacity:.95}.forest-light{right:-22%;width:86%;opacity:.72}.forest-mist{width:210%;left:-55%}}
+@media(max-width:768px){.rdh:after{background:linear-gradient(90deg,rgba(5,13,9,.9),rgba(5,13,9,.62) 72%,rgba(5,13,9,.18)),linear-gradient(to top,rgba(5,12,8,.82),transparent 55%)}.forest-scene{left:-153%;width:256%;opacity:.95}.forest-light{right:-22%;width:86%;opacity:.72}.forest-mist{width:210%;left:-55%}}
 @media(prefers-reduced-motion:reduce){.rdh:before,.rdh-accent,.mountain-back,.forest-ridge-back,.ancient-tree,.canopy-soft,.tree-flow-motion use,.forest-light,.forest-mist,.canopy-leaves,.rdh-fact:after,.rdh-content>*{animation:none!important}.forest-scene{transform:scale(1.025)!important;transition:none}}
+
+/* 靜水一滴：月光、倒影與對話漣漪 */
+.water-scene .star{fill:#f4ead0;opacity:.2;animation:wTwinkle var(--d) ease-in-out var(--t) infinite}
+.water-scene .w-mtn-far{fill:#12281d;opacity:.95}
+.water-scene .w-mtn-near{fill:#0a1a12}
+.water-scene .w-tree{fill:#07140d}
+.water-scene .w-trunk{fill:#07140d}
+.water-scene .w-limb{fill:none;stroke:#07140d;stroke-width:9;stroke-linecap:round}
+.water-scene .w-refl{opacity:.8}
+.water-scene .moon-glow{animation:wGlow 9s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+.water-scene .moon-col{opacity:.8;animation:wShimmer 6s ease-in-out infinite alternate}
+.water-scene .glint{fill:none;stroke:#f0d9a3;stroke-width:1.6;stroke-linecap:round;opacity:.3;animation:wGlint var(--d) ease-in-out var(--t) infinite}
+.water-scene .ring{stroke:#ecc88e;stroke-width:1.3;vector-effect:non-scaling-stroke;opacity:0;transform-box:fill-box;transform-origin:center;animation:wRing 8s cubic-bezier(.2,.5,.3,1) infinite}
+.water-scene .w-drop{opacity:0;animation:wDrop 8s cubic-bezier(.5,0,.9,.6) infinite}
+@keyframes wTwinkle{0%,100%{opacity:.12}50%{opacity:.85}}
+@keyframes wGlow{from{opacity:.6;transform:scale(.96)}to{opacity:1;transform:scale(1.05)}}
+@keyframes wShimmer{from{opacity:.55}to{opacity:.95}}
+@keyframes wGlint{0%,100%{opacity:.12;transform:scaleX(.7)}50%{opacity:.6;transform:scaleX(1.1)}}
+@keyframes wRing{0%,12%{transform:scale(.03);opacity:0}16%{opacity:.85}100%{transform:scale(1);opacity:0}}
+@keyframes wDrop{0%{transform:translateY(0);opacity:0}4%{opacity:1}14%{transform:translateY(407px);opacity:1}15%,100%{transform:translateY(407px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.water-scene .star,.water-scene .moon-glow,.water-scene .moon-col,.water-scene .glint,.water-scene .ring,.water-scene .w-drop{animation:none!important}.water-scene .ring{opacity:.35;transform:scale(.5)}.water-scene .w-drop{opacity:0}}
