@@ -1,4 +1,14 @@
 (() => {
+  const tree = document.querySelector('.rdh-tree');
+  if (tree && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let ticking = false;
+    const move = () => {
+      const y = Math.min(window.scrollY, 900);
+      tree.style.transform = `translate3d(0, ${(y * 0.14).toFixed(1)}px, 0)`;
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(move); } }, { passive: true });
+  }
   const choices = [...document.querySelectorAll('.theme-choice')];
   const panels = [...document.querySelectorAll('.theme-panel')];
   const panelContainer = document.querySelector('.theme-panels');
