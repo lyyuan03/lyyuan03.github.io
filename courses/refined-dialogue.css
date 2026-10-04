@@ -206,3 +206,11 @@
 .record>div>p{grid-column:2;max-width:none!important}
 .record>div>p:first-of-type{margin-top:0!important}
 }
+
+/* 學員來訊截圖：兩欄排列，點擊開啟原圖 */
+.share-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}
+.share-shot{display:block;overflow:hidden;border:1px solid var(--dialogue-line);background:#EDE6D9;box-shadow:0 14px 34px rgba(60,48,36,.12);transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s}
+.share-shot img{display:block;width:100%;height:auto}
+.share-shot:hover,.share-shot:focus-visible{transform:translateY(-4px);box-shadow:0 22px 48px rgba(60,48,36,.2)}
+@media(max-width:720px){.share-gallery{grid-template-columns:1fr;gap:18px}}
+@media(prefers-reduced-motion:reduce){.share-shot{transition:none}}
