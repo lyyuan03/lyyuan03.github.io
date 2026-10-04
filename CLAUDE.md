@@ -15,6 +15,13 @@
 7. 不得把秘密放在前端檔案、Markdown、GitHub Actions log 或 Repository。
 8. 完成後回報：變更檔案、驗證結果、尚未驗證的項目與建議的 commit／PR 說明。
 
+## 全站一致性規則（強制）
+
+- 全站頁尾只有一份範本：`partials/site-footer.html`，樣式在 `site-footer.css`。各頁不得自行撰寫或修改頁尾，也不得用 JavaScript 另行插入頁尾。
+- 修改頁尾時，只改範本與 `site-footer.css`，再執行 `node scripts/sync-footer.mjs` 同步全站；新增頁面時，放一個空的 `<footer></footer>` 後執行同一個指令即可。
+- `node scripts/sync-footer.mjs --check` 已納入 `scripts/audit-production-stability.mjs`，頁尾與範本不一致時審查會失敗。
+- 所有課程頁（初階班、進階班、精煉對話、男力瑜伽、線上課程等）的共用區塊（導覽列、頁尾、報名與聯絡資訊、督導說明）日後修改時，必須同步檢查並更新全部課程頁，不可只改單一頁面。
+
 ## 內容風格
 
 - 使用繁體中文與臺灣用語。
