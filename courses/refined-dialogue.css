@@ -192,3 +192,17 @@
 @media(max-width:1100px){.themes-section .theme-explorer{gap:36px}.theme-glyph{font-size:170px}}
 @media(max-width:720px){.themes-section .theme-choices{border:0;gap:10px;margin-bottom:18px}.themes-section .theme-choice,.themes-section .theme-choice:nth-child(odd),.themes-section .theme-choice:nth-child(-n+2){border:1px solid rgba(200,170,123,.22);min-height:98px;padding:15px 12px}.themes-section .theme-choice:hover,.themes-section .theme-choice[aria-current="true"]{padding-left:12px;transform:none}.themes-section .theme-choice[aria-current="true"]{border-color:rgba(236,200,142,.7)}.themes-section .theme-panels.is-interactive{padding:30px 22px;min-height:0;transform:none}.theme-glyph{font-size:130px;right:10px;top:4px}}
 @media(prefers-reduced-motion:reduce){.themes-section:before,.themes-section:after,.theme-rings i{animation:none!important}.theme-rings{display:none}.themes-section .theme-panel:not([hidden]){animation:none}.themes-section .theme-panels.is-interactive,.theme-glyph,.themes-section .theme-choice{transition:none}}
+
+/* 現場實錄：分組標題與備註 */
+.record-group-title{margin:56px 0 18px;font-size:clamp(22px,2.2vw,28px);line-height:1.5;letter-spacing:.06em;color:var(--dialogue-olive)}
+.records-heading+.record-group-title{margin-top:0}
+.record-list+.record-group-title{margin-top:64px}
+.record-note{margin-top:28px;font-size:14px;line-height:1.8;color:#8B7352}
+.record div>p:not(.record-type){max-width:46em}
+/* 現場實錄：桌機標題在左、全文在右，手機單欄 */
+@media(min-width:861px){
+.record>div{display:grid;grid-template-columns:300px minmax(0,1fr);column-gap:64px;align-items:start}
+.record>div>h3{grid-column:1;grid-row:1/span 12;position:sticky;top:150px;margin:0;font-size:22px;line-height:1.6}
+.record>div>p{grid-column:2;max-width:none!important}
+.record>div>p:first-of-type{margin-top:0!important}
+}
