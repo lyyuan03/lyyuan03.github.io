@@ -1,0 +1,161 @@
+/* 靈修覺醒旅程・進階班
+   與初階班共用頁首、導覽、講師區塊與頁尾（先載入 spiritual-awakening.css），
+   這裡只放進階班專屬的「夜、金、留白」質感與各區塊版型。 */
+
+.adv{
+  --night:#070d09; --ink:#0b130e; --forest:#101a14;
+  --gl:#c8aa7b; --gd:#a58254; --ivory:#f5f0e8; --dawn:#ecc88e;
+  --hair:rgba(200,170,123,.26); --hair-soft:rgba(200,170,123,.13);
+  background:var(--night);
+}
+
+/* ===== 頁首：同一個森林場景，轉成夜色，加上金線外框 ===== */
+.adv .hero{min-height:700px}
+.adv .forest-scene{filter:brightness(.6) saturate(.68) contrast(1.06)}
+.adv .forest-light{background:radial-gradient(ellipse,rgba(236,208,150,.25),rgba(200,170,123,.08) 42%,transparent 73%)}
+.hero-frame{
+  position:absolute;z-index:3;inset:22px;pointer-events:none;border:1px solid rgba(200,170,123,.1);
+  background:
+    linear-gradient(var(--gl),var(--gl)) 0 0/46px 1px no-repeat,
+    linear-gradient(var(--gl),var(--gl)) 0 0/1px 46px no-repeat,
+    linear-gradient(var(--gl),var(--gl)) 100% 0/46px 1px no-repeat,
+    linear-gradient(var(--gl),var(--gl)) 100% 0/1px 46px no-repeat,
+    linear-gradient(var(--gl),var(--gl)) 0 100%/46px 1px no-repeat,
+    linear-gradient(var(--gl),var(--gl)) 0 100%/1px 46px no-repeat,
+    linear-gradient(var(--gl),var(--gl)) 100% 100%/46px 1px no-repeat,
+    linear-gradient(var(--gl),var(--gl)) 100% 100%/1px 46px no-repeat;
+  opacity:.75;
+}
+.hero-level{
+  position:absolute;z-index:4;right:46px;top:50%;transform:translateY(-50%);
+  writing-mode:vertical-rl;color:rgba(200,170,123,.78);font-family:var(--en);font-size:13px;
+  font-weight:500;letter-spacing:.55em;pointer-events:none;
+}
+.hero-level::before,.hero-level::after{content:"";display:block;width:1px;height:70px;margin:18px auto;background:linear-gradient(var(--gl),transparent)}
+.hero-level::after{background:linear-gradient(transparent,var(--gl))}
+.adv .fact:before,.adv .fact:nth-child(2):before,.adv .fact:nth-child(3):before{background:linear-gradient(90deg,var(--gl),transparent)}
+
+/* ===== 共用：進階班區塊 ===== */
+.a-sec{position:relative;padding:128px 0;background:var(--ink);color:#d8d0c0;overflow:hidden}
+.a-sec::before{content:"";position:absolute;top:0;left:50%;width:1px;height:64px;background:linear-gradient(var(--gl),transparent);opacity:.7}
+.a-sec h2{margin:0;color:#f4ecdc;font-weight:400;font-size:clamp(34px,4.4vw,58px);line-height:1.4;letter-spacing:.07em}
+.a-sec .container{width:min(1120px,calc(100% - 64px))}
+.a-top{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:end;margin-bottom:72px}
+.a-top p{margin:0;color:rgba(245,240,232,.7);font-size:17px;line-height:2.05}
+.a-link{display:inline-flex;align-items:center;min-height:44px;margin-top:18px;color:var(--gl);border-bottom:1px solid rgba(200,170,123,.4);font-size:14px;letter-spacing:.05em;transition:color .2s,border-color .2s}
+.a-link:hover{color:var(--dawn);border-color:var(--dawn)}
+
+/* ===== 課程理念 ===== */
+.a-about{background:linear-gradient(180deg,#0a120d 0%,var(--ink) 40%,var(--forest) 100%)}
+.a-about::after{content:"";position:absolute;right:-12%;top:8%;width:62%;aspect-ratio:1;background:radial-gradient(circle,rgba(200,170,123,.1),transparent 62%);pointer-events:none}
+.a-grid{position:relative;display:grid;grid-template-columns:.9fr 1.1fr;gap:96px;align-items:start}
+.a-head{position:sticky;top:150px}
+.a-note{margin:28px 0 0;padding-left:18px;border-left:1px solid var(--gl);color:var(--gl);font-family:var(--serif);font-size:16px;letter-spacing:.08em}
+.a-prose p{margin:0 0 28px;color:rgba(245,240,232,.72);font-size:17.5px;line-height:2.15}
+.a-prose .a-lead{color:#f1e8d5;font-family:var(--serif);font-size:clamp(20px,2.1vw,25px);line-height:1.95;letter-spacing:.03em}
+.a-prose .a-sign{margin:40px 0 0;padding-top:26px;border-top:1px solid var(--hair);color:var(--gl);font-family:var(--serif);font-size:16px;letter-spacing:.1em}
+
+/* ===== 適合誰：條列，不用卡片 ===== */
+.a-audience{background:var(--forest)}
+.a-ledger{border-top:1px solid var(--hair)}
+.a-row{position:relative;display:grid;grid-template-columns:.8fr 1.2fr;gap:64px;padding:44px 0 44px 34px;border-bottom:1px solid var(--hair);transition:background .4s}
+.a-row::before{content:"";position:absolute;left:0;top:58px;width:8px;height:8px;background:var(--gl);transform:rotate(45deg);opacity:.55;transition:opacity .3s,box-shadow .3s}
+.a-row::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(200,170,123,.09),transparent 70%);opacity:0;transition:opacity .45s;pointer-events:none}
+.a-row:hover::after{opacity:1}
+.a-row:hover::before{opacity:1;box-shadow:0 0 14px rgba(236,200,142,.8)}
+.a-row h3{margin:0;color:#f4ecdc;font-size:clamp(21px,2.2vw,27px);font-weight:400;line-height:1.6;letter-spacing:.05em}
+.a-row p{margin:0;color:rgba(245,240,232,.68);font-size:16.5px;line-height:2.05}
+
+/* ===== 課程內容：鐫刻的主題字 ===== */
+.a-curr{background:var(--night)}
+.a-modules{--lp:0%;position:relative;padding-left:38px}
+.adv .a-modules .track{left:0;top:0;bottom:0;width:1px;background:var(--hair-soft);border-radius:0}
+.adv .a-modules .track i{background:linear-gradient(180deg,var(--gd),var(--dawn));box-shadow:0 0 16px rgba(236,200,142,.65);border-radius:0}
+.adv .a-mod{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:56px;align-items:center;padding:64px 0;border-bottom:1px solid var(--hair-soft)}
+.adv .a-mod::before{display:none}
+.adv .a-mod:last-child{border-bottom:0}
+.a-glyph{
+  font-family:var(--serif);font-weight:500;font-size:clamp(78px,9vw,128px);line-height:1;letter-spacing:.04em;
+  color:transparent;-webkit-text-stroke:1px rgba(200,170,123,.34);user-select:none;white-space:nowrap;
+  transition:-webkit-text-stroke-color .6s,filter .6s;
+}
+.adv .a-mod.on .a-glyph{-webkit-text-stroke-color:rgba(236,200,142,.95);filter:drop-shadow(0 0 22px rgba(236,200,142,.28))}
+.a-modbody h3{margin:0 0 16px;color:#f4ecdc;font-size:clamp(22px,2.3vw,29px);font-weight:400;line-height:1.6;letter-spacing:.04em}
+.a-modbody p{margin:0;color:rgba(245,240,232,.72);font-size:16.5px;line-height:2.05}
+.a-modbody ul{display:flex;flex-wrap:wrap;gap:6px 26px;margin:20px 0 0;padding:0;list-style:none;color:rgba(200,170,123,.92);font-size:14.5px;line-height:1.9}
+.a-modbody li{position:relative;padding-left:16px}
+.a-modbody li::before{content:"";position:absolute;left:0;top:.85em;width:5px;height:5px;background:var(--gl);transform:rotate(45deg);opacity:.7}
+
+/* ===== 介紹影片 ===== */
+.a-video{background:linear-gradient(180deg,var(--night),#0d1710)}
+.a-vwrap{max-width:900px;margin:0 auto}
+.adv .a-vwrap .video-frame{border-radius:2px;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.a-vwrap .frame::before,.a-vwrap .frame::after{border-color:rgba(200,170,123,.6)}
+.a-vcap{margin:26px 0 0;color:rgba(245,240,232,.5);font-size:13px;letter-spacing:.08em;text-align:right}
+.a-vcap .a-link{margin:0 0 0 14px;min-height:0}
+
+/* ===== 學員回饋：淺色一段，讓節奏有呼吸 ===== */
+.a-testi{background:#f3eee4;color:#3b3328}
+.a-testi::before{background:linear-gradient(#a58254,transparent)}
+.a-testi h2{color:#2f281f}
+.a-testi .a-top p{color:#6f6556}
+.a-quotes{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.a-quote{position:relative;margin:0;padding:8px 56px 8px 0}
+.a-quote + .a-quote{padding:8px 0 8px 56px;border-left:1px solid rgba(165,130,84,.35)}
+.a-quote::before{content:"“";display:block;height:46px;color:var(--gd);font-family:var(--serif);font-size:84px;line-height:.9}
+.a-quote blockquote{margin:0 0 28px;color:#40372b;font-family:var(--serif);font-size:clamp(18px,1.9vw,22px);line-height:2.05;letter-spacing:.02em}
+.a-quote figcaption{color:#8a7d68;font-size:12.5px;letter-spacing:.1em}
+
+/* ===== 常見問題 ===== */
+.a-faq{background:var(--forest)}
+.a-fgrid{display:grid;grid-template-columns:.75fr 1.25fr;gap:88px;align-items:start}
+.a-faq .a-fgrid h2{position:sticky;top:150px}
+.adv .a-faq .flist{border-top:1px solid var(--hair)}
+.adv .a-faq .flist details{border-bottom:1px solid var(--hair)}
+.adv .a-faq .flist summary{padding:26px 44px 26px 0;color:#f1e8d5;font-family:var(--serif);font-size:18px;font-weight:400;letter-spacing:.03em}
+.adv .a-faq .flist summary::after{background:linear-gradient(var(--gl),var(--gl)) center/100% 1px no-repeat,linear-gradient(var(--gl),var(--gl)) center/1px 100% no-repeat}
+.adv .a-faq .flist details p{padding-bottom:28px;color:rgba(245,240,232,.68);font-size:16px}
+.adv .a-faq .flist a{color:var(--gl);border-bottom:1px solid rgba(200,170,123,.45)}
+
+/* ===== 講師區塊、結尾與頁尾（沿用初階班，進階班只微調質感） ===== */
+.adv .ins{background:#09110c}
+.adv .fcta{background:#070d09}
+.adv .fcta::before{background:radial-gradient(circle,rgba(200,170,123,.2),transparent 42%)}
+.adv .fcta-inner{padding:84px 28px;border:1px solid var(--hair);outline:1px solid var(--hair-soft);outline-offset:12px}
+.adv .fcta h2{font-weight:400}
+
+/* ===== 手機與縮小視窗 ===== */
+@media(max-width:1050px){
+  .a-grid,.a-fgrid{gap:56px}
+  .a-top{gap:40px}
+  .adv .a-mod{grid-template-columns:minmax(180px,230px) minmax(0,1fr);gap:36px}
+}
+@media(max-width:920px){
+  .hero-level{display:none}
+  .a-sec{padding:92px 0}
+  .a-grid,.a-fgrid,.a-top,.a-row,.a-quotes{grid-template-columns:1fr}
+  .a-top{gap:22px;margin-bottom:48px}
+  .a-head,.a-faq .a-fgrid h2{position:static}
+  .a-grid{gap:40px}
+  .a-row{gap:14px;padding:36px 0 36px 28px}
+  .a-row::before{top:50px}
+  .a-quote,.a-quote + .a-quote{padding:8px 0 8px 0;border-left:0}
+  .a-quote + .a-quote{margin-top:44px;padding-top:44px;border-top:1px solid rgba(165,130,84,.35)}
+}
+@media(max-width:760px){
+  .adv .hero{min-height:560px}
+  .adv .fact strong{font-size:17px}
+  .hero-frame{inset:12px}
+  .a-sec{padding:76px 0}
+  .a-sec .container{width:calc(100% - 40px)}
+  .a-modules{padding-left:22px}
+  .adv .a-mod{grid-template-columns:1fr;gap:18px;padding:44px 0}
+  .a-glyph{font-size:84px}
+  .a-prose p{font-size:17px}
+  .a-vcap{text-align:left}
+  .adv .fcta-inner{padding:60px 18px;outline-offset:8px;margin:0 8px}
+  .adv .fcta{padding:70px 0 130px}
+}
+@media(prefers-reduced-motion:reduce){
+  .a-row,.a-row::before,.a-row::after,.a-glyph{transition:none}
+}
