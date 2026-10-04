@@ -1,0 +1,38 @@
+/* 課程頁共用版面尺度（區塊留白、標題與內文字級）。所有課程頁最後載入此檔，以統一各頁節奏。
+   修改尺度只改這裡的變數；同步與檢查：node scripts/sync-course-rhythm.mjs [--check] */
+:root{
+  --cr-sec:72px;        /* 大區塊上下留白 */
+  --cr-sec-sm:56px;     /* 手機版區塊上下留白 */
+  --cr-h2:clamp(27px,3.3vw,42px);
+  --cr-h2-lh:1.45;
+  --cr-body:17px;
+  --cr-body-lh:1.95;
+  --cr-small:15px;
+  --cr-faq-q:17px;
+}
+/* 區塊上下留白 */
+body :is(.section,.a-sec,.dialogue-section,.themes-section,.compact-faq){padding-top:var(--cr-sec);padding-bottom:var(--cr-sec)}
+/* 區塊標題 */
+body :is(.section,.a-sec,.dialogue-section,.themes-section,.course-contact) h2:not(.ins-copy h2){font-size:var(--cr-h2);line-height:var(--cr-h2-lh);letter-spacing:.03em}
+body :is(.section,.a-sec,.dialogue-section) :is(.section-intro,.heading-note,.themes-heading>p){font-size:var(--cr-body);line-height:var(--cr-body-lh)}
+/* 內文 */
+body :is(.dialogue-prose p,.workshop-story p,.opening p,.audience p,.about p){font-size:var(--cr-body);line-height:var(--cr-body-lh)}
+body :is(.dialogue-faq p,.dialogue-faq details a,.flist details p,.compact-faq details p,.faq details p){font-size:var(--cr-small);line-height:1.9}
+body :is(.dialogue-faq summary,.flist summary,.compact-faq summary,.faq summary){font-size:var(--cr-faq-q);line-height:1.7;padding-top:18px;padding-bottom:18px}
+body :is(.dialogue-faq details>div,.flist details p,.compact-faq details p){padding-bottom:18px}
+/* 精煉對話：四種主題區塊收緊，內文放大到可讀 */
+body .themes-section .theme-panels.is-interactive{min-height:0;padding:38px 42px}
+body .themes-section :is(.theme-panel>p:not(.theme-overline),.theme-panel li){font-size:var(--cr-small);line-height:1.95}
+body .themes-section .theme-choice{padding-top:18px;padding-bottom:18px}
+/* 課程洽詢區塊與共用尺度對齊 */
+body .course-contact{padding-top:var(--cr-sec);padding-bottom:var(--cr-sec)}
+body .course-contact .cc-lead{font-size:var(--cr-body)}
+@media(max-width:860px){
+  body :is(.section,.a-sec,.dialogue-section,.themes-section,.compact-faq,.course-contact){padding-top:var(--cr-sec-sm);padding-bottom:var(--cr-sec-sm)}
+  :root{--cr-body:16px;--cr-small:14.5px;--cr-faq-q:16px}
+  body .themes-section .theme-panels.is-interactive{padding:28px 22px}
+}
+/* 進階班影片區：間距收緊 */
+body .a-vwrap{gap:36px}
+body .a-vpair{gap:28px}
+body .a-vmeta p{font-size:var(--cr-small)}

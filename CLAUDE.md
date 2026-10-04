@@ -22,6 +22,7 @@
 - `node scripts/sync-footer.mjs --check` 已納入 `scripts/audit-production-stability.mjs`，頁尾與範本不一致時審查會失敗。
 - 所有課程頁（初階班、進階班、精煉對話、男力瑜伽、線上課程等）的共用區塊（導覽列、頁尾、報名與聯絡資訊、督導說明）日後修改時，必須同步檢查並更新全部課程頁，不可只改單一頁面。
 - 實體課程（初階班、進階班、精煉對話、男力瑜伽初階與中階）的「報名與洽詢」區塊只有一份範本：內容寫在 `partials/course-contact.config.json`，樣式在 `course-contact.css`，由 `node scripts/sync-course-contact.mjs` 寫入各頁（頁面內以 `<!-- course-contact:start -->` 與 `<!-- course-contact:end -->` 標記）。洽詢方式、參與資格、行政聯絡、服務時間、按鈕名稱一律只改這裡，不在各頁手改，審查腳本會檢查。新增實體課程時，在設定檔加一筆並放入標記即可。
+- 課程頁的區塊留白、標題與內文字級只有一套尺度：`course-rhythm.css`（大區塊上下留白 72px、手機 56px；標題最高 42px、行高 1.45；內文 17px、手機 16px；說明小字不低於 14.5px）。各課程頁不得另訂區塊留白或縮小內文，新增課程頁時把頁面加入 `scripts/sync-course-rhythm.mjs` 的清單。版面原則：文字區塊每 100px 高度至少約 30 字，單一區塊不超過一個螢幕高，字少的區塊合併或壓縮，不用留白撐版面。
 - 課程頁的區塊標題上方不使用數字編號與英文小標；需要標示分類時，使用中文並保持簡短。
 
 ## 內容風格
