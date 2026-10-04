@@ -7,6 +7,7 @@
   const showTheme = (name) => {
     const target = panels.find(panel => panel.id === `theme-${name}`);
     if (!target) return;
+    panelContainer.dataset.theme = name;
     panels.forEach(panel => { panel.hidden = panel !== target; });
     choices.forEach(choice => {
       if (choice.dataset.theme === name) choice.setAttribute('aria-current', 'true');
@@ -14,6 +15,26 @@
     });
   };
   panelContainer.classList.add('is-interactive');
+
+  const canTilt = window.matchMedia('(hover: hover) and (min-width: 721px) and (prefers-reduced-motion: no-preference)').matches;
+  if (canTilt) {
+    let frame = 0;
+    panelContainer.addEventListener('pointermove', event => {
+      const box = panelContainer.getBoundingClientRect();
+      const x = (event.clientX - box.left) / box.width;
+      const y = (event.clientY - box.top) / box.height;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        panelContainer.style.setProperty('--ry', ((x - 0.5) * 7).toFixed(2) + 'deg');
+        panelContainer.style.setProperty('--rx', ((0.5 - y) * 5).toFixed(2) + 'deg');
+        panelContainer.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+        panelContainer.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+      });
+    });
+    panelContainer.addEventListener('pointerleave', () => {
+      ['--rx', '--ry'].forEach(name => panelContainer.style.setProperty(name, '0deg'));
+    });
+  }
   const initialTheme = location.hash.startsWith('#theme-') ? location.hash.slice(7) : 'spiritual';
   showTheme(panels.some(panel => panel.id === `theme-${initialTheme}`) ? initialTheme : 'spiritual');
   choices.forEach(choice => {
