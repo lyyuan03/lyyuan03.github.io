@@ -149,3 +149,20 @@ body .section.reading h2{margin:0 0 36px;font-family:var(--ls-serif);font-weight
   .ls-cta a{display:flex;align-items:center;justify-content:center;min-height:50px;background:var(--ls-tan);color:#fff;font-size:16px;letter-spacing:.12em;text-decoration:none;box-shadow:0 12px 28px rgba(0,0,0,.35)}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.ls-btn,.ls-index a,.rd-book img,.lec-more>summary:after{transition:none}}
+
+/* 講次標示 */
+body .section.lec .lec-banner .lec-no{margin:0 0 10px;font:600 15px/1.4 var(--ls-serif);letter-spacing:.3em;color:#d4b271;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+.ls-index .lc-n{display:block;margin-bottom:8px;font:600 14px/1.4 var(--ls-serif);letter-spacing:.24em;color:#d4b271}
+
+/* 四講各自的底圖（暗綠金調，壓在光流之下） */
+.lec-photo{position:absolute;inset:0;z-index:0;display:block;overflow:hidden}
+.lec-photo img{display:block;width:100%;height:100%;object-fit:cover;filter:saturate(.8) contrast(1.05) brightness(.85)}
+.lec-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,22,15,.94) 0%,rgba(10,22,15,.74) 42%,rgba(19,38,27,.38) 100%),linear-gradient(0deg,rgba(10,22,15,.55),rgba(10,22,15,0) 45%)}
+.lec-banner .art{z-index:1}
+.ls-index a{position:relative;overflow:hidden}
+.ls-index .lc-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.34;z-index:0;filter:saturate(.8);transition:opacity .35s,transform .6s}
+.ls-index a::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(10,22,15,.35),rgba(10,22,15,.78))}
+.ls-index a:hover .lc-img{opacity:.5;transform:scale(1.05)}
+.ls-index .lc-n,.ls-index .lc-t,.ls-index .lc-s{position:relative;z-index:2}
+@media(max-width:860px){.lec-photo img{object-position:60% 50%!important}}
+@media(prefers-reduced-motion:reduce){.ls-index .lc-img{transition:none}.ls-index a:hover .lc-img{transform:none}}
