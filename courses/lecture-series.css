@@ -7,10 +7,16 @@ body.lecture-series{margin:0;background:var(--ls-paper);color:var(--ls-brown);fo
 .lecture-series a:focus-visible,.lecture-series summary:focus-visible{outline:2px solid var(--ls-gold);outline-offset:3px}
 
 /* 開頭：山林底圖加深色漸層 */
-.ls-hero{position:relative;padding:136px 0 64px;color:#f5f0e8;background:linear-gradient(180deg,rgba(12,23,18,.5) 0%,rgba(12,23,18,.78) 60%,var(--ls-ink) 100%),url(/assets/course-slides/course-forest-bg.png) center 28%/cover,var(--ls-ink)}
+.ls-hero{position:relative;overflow:hidden;padding:136px 0 64px;color:#f5f0e8;background:radial-gradient(ellipse at 72% 40%,#1b3324 0%,#12241a 38%,var(--ls-ink) 78%)}
+.ls-scene{position:absolute;inset:0;pointer-events:none}
+.ls-scene .art{position:absolute;inset:0;width:100%;height:100%}
+.ls-mist{position:absolute;left:-30%;width:160%;height:150px;top:46%;opacity:.45;filter:blur(18px);mix-blend-mode:screen;background:radial-gradient(ellipse at 20% 55%,rgba(236,241,232,.4),transparent 22%),radial-gradient(ellipse at 52% 45%,rgba(220,232,221,.32),transparent 26%),radial-gradient(ellipse at 82% 55%,rgba(236,241,232,.36),transparent 20%);animation:lsMist 22s ease-in-out infinite alternate}
+.ls-mist-2{top:70%;opacity:.3;animation-duration:30s;animation-direction:alternate-reverse}
+.ls-hero-inner{position:relative;z-index:2}
 .ls-hero-inner{width:min(1120px,calc(100% - 48px));margin:0 auto}
+.ls-core{margin:14px 0 0;font:500 clamp(20px,2.4vw,28px)/1.7 var(--ls-serif);letter-spacing:.14em;color:var(--ls-gold)}
 .ls-hero h1{margin:0;font:600 clamp(38px,5.6vw,66px)/1.3 var(--ls-serif);letter-spacing:.08em;color:#f5f0e8;text-shadow:0 4px 30px rgba(0,0,0,.45)}
-.ls-hero-lead{max-width:32em;margin:22px 0 0;font-size:18px;line-height:2;color:rgba(245,240,232,.88)}
+.ls-hero-lead{max-width:32em;margin:18px 0 0;font-size:18px;line-height:2;color:rgba(245,240,232,.88)}
 .ls-actions{margin:32px 0 0}
 .ls-btn{display:inline-flex;align-items:center;min-height:52px;padding:0 32px;background:var(--ls-tan);color:#fff;font-size:16px;letter-spacing:.12em;text-decoration:none;box-shadow:0 14px 30px rgba(0,0,0,.4);transition:transform .25s,background .25s}
 .ls-btn:hover{background:#b48f60;transform:translateY(-2px)}
@@ -23,8 +29,9 @@ body.lecture-series{margin:0;background:var(--ls-paper);color:var(--ls-brown);fo
 /* 各講：橫幅圖＋上拉的浮起內容卡 */
 body .section.lec{padding:0 0 64px;background:var(--ls-paper)}
 body .section.lec.lec-alt{background:var(--ls-cream)}
-.lec-banner{position:relative;display:flex;align-items:flex-end;min-height:220px;padding:0 0 100px;color:#f5f0e8;background:linear-gradient(180deg,rgba(12,23,18,.2),rgba(12,23,18,.78)),var(--lec-img) var(--lec-pos,center)/cover,var(--ls-ink)}
-.lec-banner-in{width:min(1120px,calc(100% - 48px));margin:0 auto;padding-top:60px}
+.lec-banner{position:relative;overflow:hidden;display:flex;align-items:flex-end;min-height:220px;padding:0 0 100px;color:#f5f0e8;background:radial-gradient(ellipse at 78% 46%,#1d3626 0%,#13261b 45%,var(--ls-ink) 86%)}
+.lec-banner .art{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.lec-banner-in{position:relative;z-index:2;width:min(1120px,calc(100% - 48px));margin:0 auto;padding-top:60px}
 body .section.lec .lec-banner h2{margin:0;color:#f5f0e8;font-family:var(--ls-serif);font-weight:600;text-shadow:0 3px 24px rgba(0,0,0,.5)}
 .lec .lec-sub{margin:10px 0 0;font-size:17px;line-height:1.8;color:rgba(245,240,232,.88)}
 .lec-card{position:relative;box-sizing:border-box;width:min(1120px,calc(100% - 48px));margin:-84px auto 0;padding:44px 48px 28px;background:var(--ls-card);border:1px solid var(--ls-line);border-top:3px solid var(--ls-tan);box-shadow:0 34px 70px rgba(58,45,30,.2),0 2px 0 rgba(255,255,255,.7) inset}
@@ -94,11 +101,35 @@ body .section.reading h2{margin:0 0 36px;font-family:var(--ls-serif);font-weight
 .ins-copy p{max-width:660px;margin:0 0 16px;color:rgba(245,240,232,.8);font-size:17px;line-height:1.8}
 .ins-copy p:last-child{margin-bottom:0}
 
+
+/* 抽象線條：金色流線、光點與漣漪，與靈修覺醒旅程頁同一套金線語彙 */
+.art-line{fill:none;stroke:url(#g-gold);stroke-width:1.2;opacity:.42;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.art-flow{fill:none;stroke:url(#g-bright);stroke-width:2.1;stroke-linecap:round;stroke-dasharray:12 88;vector-effect:non-scaling-stroke;animation:artCurrent 6s linear infinite}
+.art-axis{stroke:url(#g-bright);stroke-width:2.1;stroke-dasharray:60 160;animation:artAxis 4.6s linear infinite;vector-effect:non-scaling-stroke}
+.art-ring{stroke:rgba(240,220,168,.34);stroke-width:1;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:artBreathe 9.6s ease-in-out infinite}
+.art-ripple{stroke:rgba(240,220,168,.5);stroke-width:1.2;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:artRipple 8s ease-out infinite}
+.art-orbit{stroke:url(#g-bright);stroke-width:1.6;stroke-linecap:round;opacity:.8;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:artSpin 30s linear infinite}
+.art-node{opacity:.35;animation:artNode 3.2s ease-in-out infinite}
+.art-halo{transform-box:fill-box;transform-origin:center;animation:artHalo 7s ease-in-out infinite alternate}
+.art-dot{animation:artDot 5s ease-in-out infinite alternate}
+@keyframes artCurrent{to{stroke-dashoffset:-100}}
+@keyframes artAxis{to{stroke-dashoffset:-220}}
+@keyframes artBreathe{0%,100%{transform:scale(.94);opacity:.5}50%{transform:scale(1.06);opacity:1}}
+@keyframes artRipple{0%{transform:scale(.06);opacity:0}12%{opacity:.9}100%{transform:scale(1);opacity:0}}
+@keyframes artSpin{to{transform:rotate(360deg)}}
+@keyframes artNode{0%,100%{opacity:.3;transform:scale(1)}40%{opacity:1}}
+@keyframes artHalo{0%{opacity:.6;transform:scale(.92)}100%{opacity:1;transform:scale(1.08)}}
+@keyframes artDot{0%{opacity:.75}100%{opacity:1}}
+@keyframes lsMist{0%{transform:translate3d(-8%,0,0)}100%{transform:translate3d(12%,6px,0)}}
+@media(max-width:860px){.ls-scene .art{width:170%;left:-60%}.lec-banner .art{width:150%;left:-50%}}
+@media(prefers-reduced-motion:reduce){.art-flow,.art-axis,.art-ring,.art-ripple,.art-orbit,.art-node,.art-halo,.art-dot,.ls-mist{animation:none}.art-ripple{opacity:.25;transform:scale(.6)}.art-flow{stroke-dasharray:none;opacity:.35}}
+
 /* 手機版固定的詢問按鈕 */
 .ls-cta{display:none}
 @media(max-width:980px){.ls-index{grid-template-columns:repeat(2,minmax(0,1fr))}.rd-shelf{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:860px){
   .ls-hero{padding:96px 0 44px}
+  .ls-core{letter-spacing:.08em}
   .ls-hero-lead{font-size:17px}
   .ls-index{margin-top:36px;gap:12px}
   .ls-index a{padding:16px 16px 18px}
