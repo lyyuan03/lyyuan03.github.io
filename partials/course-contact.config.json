@@ -65,5 +65,18 @@
       "text": "查看初階課程",
       "href": "/courses/male-yoga-energy.html"
     }
+  },
+  "courses/lecture-series.html": {
+    "id": "inquiry",
+    "state": "實體課程",
+    "title": "想參加下一場講座，可以先來問問。",
+    "lead": "實體課程的開課日期、地點、費用與授課講師，以靈元院官方公告為準。報名前請先確認當期場次與課程安排。",
+    "fee": "開課日期、地點與費用，依當期官方公告。",
+    "qualification": "對靈修有興趣，或正走在靈修路上的朋友。",
+    "note": "",
+    "cross": {
+      "text": "想先從線上課程學起？查看線上兩堂必修課",
+      "href": "/courses/lingji-practice.html"
+    }
   }
 }
