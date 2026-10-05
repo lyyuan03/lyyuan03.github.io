@@ -389,6 +389,12 @@
     .cta-level-link{display:inline-block;margin-top:14px;color:#e9cfa3;font-size:14px;letter-spacing:.06em;border-bottom:1px solid rgba(233,207,163,.45)}
     .cta-level-link:hover{color:#fff;border-color:#fff}
     @media (max-width:700px){.cta-levels{margin-top:26px}.cta-levels-grid{grid-template-columns:1fr}.cta-levels-grid article{padding:20px 20px 18px}}
+  
+/* 圖檔底圖（不改版面）：疊加層不佔位、不攔截點擊，文字維持在最上方可讀 */
+#admission{position:relative}
+.bgimg{position:absolute;top:0;bottom:0;right:0;width:46%;background-repeat:no-repeat;background-size:cover;pointer-events:none;mix-blend-mode:multiply;opacity:.34;-webkit-mask-image:linear-gradient(90deg,transparent,#000 55%);mask-image:linear-gradient(90deg,transparent,#000 55%)}
+@media(max-width:860px){.bgimg{width:100%;opacity:.12;-webkit-mask-image:linear-gradient(180deg,transparent,#000 40%,transparent);mask-image:linear-gradient(180deg,transparent,#000 40%,transparent)}}
+.bgimg-seated{background-image:url(/assets/male-yoga-seated-20261005.webp);background-position:30% 40%}
   </style>
 <link rel="stylesheet" href="/site-footer.css?v=6152ecf0">
 <link rel="stylesheet" href="/course-contact.css?v=4d7d4e00">
@@ -591,7 +597,7 @@
     <p class="course-photo-note">課程涉及學員個人隱私，除了經學員同意的照片之外，不對外公開實際上課的畫面。這張圖以 AI 生成，用來呈現課堂的情境。</p>
   </section>
 
-  <section class="section admission" id="admission">
+  <section class="section admission" id="admission"><span class="bgimg bgimg-seated" aria-hidden="true"></span>
     <div class="container admission-grid">
       <div class="admission-lead">
         <h2>報名前你需要知道的事</h2>
