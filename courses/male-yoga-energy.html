@@ -395,6 +395,45 @@
 .bgimg{position:absolute;top:0;bottom:0;right:0;width:46%;background-repeat:no-repeat;background-size:cover;pointer-events:none;mix-blend-mode:multiply;opacity:.34;-webkit-mask-image:linear-gradient(90deg,transparent,#000 55%);mask-image:linear-gradient(90deg,transparent,#000 55%)}
 @media(max-width:860px){.bgimg{width:100%;opacity:.12;-webkit-mask-image:linear-gradient(180deg,transparent,#000 40%,transparent);mask-image:linear-gradient(180deg,transparent,#000 40%,transparent)}}
 .bgimg-seated{background-image:url(/assets/male-yoga-seated-20261005.webp);background-position:30% 40%}
+    /* 2026-10-05 初階限定內容：沿用中階的登入閱讀區塊 */
+    .btn-outline{background:transparent;border-color:rgba(255,255,255,.4);color:#fff}
+    .btn-outline:hover{border-color:rgba(255,255,255,.75)}
+    button.btn{font-family:inherit;cursor:pointer}
+    .members-zone{position:relative;overflow:hidden;background:linear-gradient(135deg,#2f2a26 0%,#433c35 50%,#45472a 100%);color:#fff}
+    .members-zone:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 16% 18%,rgba(224,190,137,.13),transparent 32%),radial-gradient(circle at 86% 80%,rgba(255,255,255,.05),transparent 34%);pointer-events:none}
+    .members-zone .container{position:relative;z-index:1}
+    .members-zone .section-label{color:#e9cfa3}
+    .members-zone .section-intro{color:rgba(255,255,255,.66)}
+    .members-gate{position:relative;margin-top:36px;min-height:360px;border-radius:28px;overflow:hidden;border:1px solid rgba(255,255,255,.16);background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.02));box-shadow:0 22px 44px rgba(10,8,6,.28),inset 5px 5px 10px rgba(255,255,255,.05)}
+    .members-gate[hidden],.members-gate [hidden]{display:none!important}
+    .members-gate-preview{position:absolute;inset:0;padding:42px 46px;display:flex;flex-direction:column;gap:18px;filter:blur(6px);opacity:.5}
+    .members-gate-preview span{display:block;height:14px;border-radius:99px;background:rgba(255,255,255,.22)}
+    .members-gate-preview span:nth-child(1){width:38%;height:22px;background:rgba(233,207,163,.4)}
+    .members-gate-preview span:nth-child(2){width:92%}.members-gate-preview span:nth-child(3){width:84%}
+    .members-gate-preview span:nth-child(4){width:31%;height:22px;margin-top:16px;background:rgba(233,207,163,.4)}
+    .members-gate-preview span:nth-child(5){width:88%}.members-gate-preview span:nth-child(6){width:66%}
+    .members-gate-card{position:relative;z-index:1;width:min(520px,calc(100% - 32px));margin:58px auto;padding:34px 32px 30px;text-align:center;border-radius:24px;border:1px solid rgba(233,207,163,.32);background:rgba(36,32,28,.72);backdrop-filter:blur(12px);box-shadow:0 24px 50px rgba(0,0,0,.32)}
+    .members-gate-icon{display:grid;place-items:center;width:54px;height:54px;margin:0 auto 14px;border-radius:18px;color:#e9cfa3;background:linear-gradient(145deg,rgba(233,207,163,.2),rgba(233,207,163,.05));border:1px solid rgba(233,207,163,.3)}
+    .members-gate-title{display:block;font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.6;color:#fff8ee}
+    .members-gate-text{margin:10px 0 0;color:rgba(255,255,255,.72);font-size:15px;line-height:1.9}
+    .members-gate-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
+    .members-gate-actions:empty{display:none}
+    .members-gate-note{margin:16px 0 0;color:rgba(255,255,255,.5);font-size:12.5px;line-height:1.7;word-break:break-all}
+    .members-content{max-width:820px;margin:36px auto 0;padding:44px clamp(22px,4.5vw,52px) 38px;border-radius:28px;background:linear-gradient(145deg,#fbf8f2,#efe7da);color:var(--ink);box-shadow:0 24px 48px rgba(10,8,6,.3),inset 5px 5px 10px rgba(255,255,255,.6)}
+    .members-content[hidden]{display:none}
+    .members-content .members-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;padding:4px 12px;border-radius:99px;background:rgba(96,99,48,.12);color:var(--ci-olive);font-size:12px;font-weight:600;letter-spacing:.1em}
+    .members-content h3{margin:34px 0 12px;font-family:var(--serif);font-size:clamp(22px,2.6vw,27px);font-weight:500;line-height:1.55;color:var(--ink)}
+    .members-content h3:first-of-type{margin-top:14px}
+    .members-content h4{margin:24px 0 8px;font-family:var(--serif);font-size:19px;font-weight:600;line-height:1.6}
+    .members-content p{margin:0 0 16px;color:#5c5953;font-size:16px;line-height:2}
+    .members-content ol,.members-content ul{margin:0 0 18px;padding-left:1.4em;color:#5c5953;font-size:16px;line-height:1.95}
+    .members-content li{margin:6px 0}
+    .members-content .note{margin:14px 0 0;padding:16px 18px;border-radius:16px;background:rgba(96,99,48,.08);color:#6f6a62;font-size:14px;line-height:1.85}
+    .members-content blockquote{margin:18px 0;padding:6px 0 6px 18px;border-left:2px solid var(--ci-tan);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.9}
+    .members-content hr{margin:32px 0;border:0;border-top:1px solid var(--line)}
+    .members-content figure{margin:22px 0}
+    .members-content img{display:block;width:100%;height:auto;border-radius:16px}
+    .members-content figcaption{margin-top:8px;color:#8a8379;font-size:13px}
   </style>
 <link rel="stylesheet" href="/site-footer.css?v=6152ecf0">
 <link rel="stylesheet" href="/course-contact.css?v=c394ffcd">
@@ -478,7 +517,7 @@
       <p class="eyebrow">Men's Yoga · Sexuality & Energy</p>
       <h1>男力瑜伽<span>性與能量一日工作坊</span></h1>
       <p class="hero-lead">很多關於性的事，男人只能自己摸索。這一天，我們把它攤開來談。</p>
-      <p class="hero-text">從性觀念、私密保健談到親密關係，再透過簡單的瑜伽與呼吸，練習一件很少有人教過男人的事：性衝動升起的時候，除了忍住和釋放，身體還有沒有第三條路。</p>
+      <p class="hero-text">從性觀念、身體保健談到親密關係，再透過簡單的瑜伽與呼吸，練習一件很少有人教過男人的事：性衝動升起的時候，除了忍住和釋放，身體還有沒有第三條路。</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#workshop">查看課程內容</a>
         <a class="btn btn-ghost" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer">洽詢開課資訊</a>
@@ -497,6 +536,7 @@
     <div class="course-subnav-links">
       <a href="#about">課程定位</a>
       <a href="#workshop">課程內容</a>
+      <a href="#members">學員限定</a>
       <a href="#admission">報名須知</a>
       <a href="#instructor">師資介紹</a>
       <a href="#voices">學員回饋</a>
@@ -539,31 +579,14 @@
         <li class="tone-cream"><span class="flow-index">STEP 01</span><span class="flow-icon">談</span><h3>圍坐分享</h3><p>先圍坐下來，想說的人說，不想說的人聽。</p></li>
         <li class="tone-brown"><span class="flow-index">STEP 02</span><span class="flow-icon">懂</span><h3>性知識</h3><p>從性反應、慾望到伴侶關係，搭配教學影片。</p></li>
         <li class="tone-olive"><span class="flow-index">STEP 03</span><span class="flow-icon">息</span><h3>性能量</h3><p>簡單體位與呼吸，練習衝動升起時不急著釋放。</p></li>
-        <li class="tone-cream"><span class="flow-index">STEP 04</span><span class="flow-icon">養</span><h3>身體保健</h3><p>私密部位的生理結構、日常保健與自我按摩。</p></li>
-        <li class="tone-gold"><span class="flow-index">STEP 05</span><span class="flow-icon">放</span><h3>後段練習</h3><p>一小段赤膊或裸身練習，參與程度由你決定。</p></li>
+        <li class="tone-cream"><span class="flow-index">STEP 04</span><span class="flow-icon">養</span><h3>身體保健</h3><p>男性身體的照顧與日常保健。</p></li>
+        <li class="tone-gold"><span class="flow-index">STEP 05</span><span class="flow-icon">放</span><h3>後段練習</h3><p>身體覺察練習，細節於審核通過後說明。</p></li>
       </ol>
 
       <div class="workshop-story">
         <p class="story-lead">這一天，我們先從男人平常很少有機會好好談的事情開始。</p>
-        <p>性、慾望、身體、幻想、高潮、親密關係，以及一個男人究竟如何看待自己的身體。</p>
         <p>課程開始時，大家會先圍坐下來。你可以分享，也可以只聽。這裡不要求任何人揭露自己的私事，課堂中的分享也不會被帶出教室。對很多男人來說，光是能夠在一個沒有嘲笑、比較與評價的環境裡談性，本身就是很少有的經驗。</p>
-        <p>我們對性的理解，很多時候來自青春期的摸索、網路、A片、朋友之間零碎的談話，甚至一路到了成年，都沒有人真正把男性的性反應完整地說清楚。</p>
-        <p>因此這一天會重新整理男性的性知識：從身體如何產生性反應、慾望如何形成，到高潮、性幻想、性衝動，以及性與情感、伴侶關係之間的牽動。部分內容會搭配教學影片，讓原本抽象或難以啟齒的問題，可以回到具體的身體與心理機制來理解。</p>
-        <p>如果你曾經對自己的慾望感到困惑，或者習慣壓抑、責怪自己，課堂也會談到：這些反應從哪裡來？什麼需要調節？什麼其實只是男性身體自然的一部分？</p>
-        <p>有些東西知道是一回事，真正感覺到自己的身體，又是另外一回事。</p>
-        <p class="story-lead">接著，我們會開始碰觸「性能量」這件事。</p>
-        <p>在這堂課裡，性能量不只是性慾，它也關係到一個男人怎麼感受自己的生命力和行動力。這股力量升起時，大多數人只會兩種做法：忍住，或者釋放。</p>
-        <p>這個部分的根源來自印度瑜伽的傳統。在這個傳統裡，性被看成一股能量，位置在身體下方的三個脈輪，也就是海底輪、生殖輪與臍輪，通稱「下三輪」。古老的修練方法會用體位、呼吸與覺察，讓人慢慢學會和這股力量相處。沒聽過脈輪、不懂體位法也沒關係，這一天會從頭講起。</p>
-        <p>身體練習的比例不高，會以幾組簡單的瑜伽體位與呼吸練習，帶你感受性衝動升起時，如何不急著釋放，也不需要強行壓住，而是逐漸辨識身體裡的感覺、張力與能量流動，建立後續能量轉化練習的基礎。</p>
-        <p>性能量跟創造力也有關係。很多男人把壓力扛在身上，累積到某個程度，總要找個地方宣洩，這很常見，不需要責怪自己。這一天想讓你練習的，是先看清楚身體裡升起的是什麼，再慢慢把這股力量帶回日常生活。</p>
-        <figure class="opening-photo story-photo">
-          <img src="/assets/course-male-yoga-prone.webp?v=20261001-3" alt="課堂上，學員赤膊俯臥在瑜伽墊上，雙臂交疊，將頭靠在手臂上休息" loading="lazy">
-          <figcaption>歷年男力瑜伽課程實景</figcaption>
-        </figure>
-
-        <p class="story-lead">男性身體也會是這一天很重要的一部分。</p>
-        <p>我們會從男性私密部位的生理結構談起，延伸到日常保健、飲食與自我按摩。對自己的身體感到陌生、害羞，甚至從來沒有好好看過、理解過自己的身體，都沒有關係。課程提供的是一個可以慢慢卸下緊張與遮掩的空間。</p>
-        <p>初階課程後段，有一小段練習需要赤膊或裸身進行。很多男人一輩子都在用自己的身體，卻很少在其他男人面前自然地面對它。衣服拿掉的那一刻，心裡的緊張和比較會變得很具體，這也是身體覺察的一部分。</p>
+        <p>接下來會談性知識、性能量的練習、男性身體的照顧，以及後段的身體練習。這些內容比較私密，完整說明只開放給通過報名審核的學員，登入後可以在下方的「學員限定」區閱讀。</p>
         <p class="story-lead">你不需要證明自己有多開放，也不必勉強自己跨過還沒有準備好的界線。</p>
         <p>所有身體練習都建立在個人意願與清楚同意之上；老師需要調整姿勢或接觸身體之前，都會先徵得你的同意。涉及身體界線的練習，也會事先完整說明，由你自己決定參與的程度。</p>
       </div>
@@ -590,6 +613,33 @@
     </div>
   </section>
 
+  <section class="section members-zone" id="members" aria-labelledby="members-title">
+    <div class="container">
+      <h2 id="members-title">審核通過學員限定內容</h2>
+      <p class="section-intro">這一段只開放給通過報名審核、並經靈元院開通的學員。</p>
+
+      <div class="members-gate" data-state="loading" aria-live="polite">
+        <div class="members-gate-preview" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="members-gate-card">
+          <div class="members-gate-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg>
+          </div>
+          <strong class="members-gate-title" data-gate-title>正在確認閱讀資格…</strong>
+          <p class="members-gate-text" data-gate-text>請稍候。</p>
+          <div class="members-gate-actions">
+            <button class="btn btn-primary" type="button" data-gate-login hidden>用 Gmail 登入</button>
+            <a class="btn btn-outline" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer" data-gate-contact hidden>聯絡靈元院開通</a>
+          </div>
+          <p class="members-gate-note" data-gate-account hidden></p>
+        </div>
+      </div>
+
+      <div class="members-content" id="members-content" hidden></div>
+    </div>
+  </section>
+
   <section class="course-documentary" id="practice" aria-label="課堂情境示意（AI 生成）">
     <div class="photo-story-shell is-image-only">
       <figure class="photo-frame">
@@ -611,7 +661,7 @@
       </div>
       <div class="admission-copy">
         <p>有身體練習或靈修經驗的人，會比較容易進入課程。</p>
-        <p>問卷會詢問你的報名動機、練習經驗，以及你對裸身練習的感受。所有碰觸身體的練習都會事先說明、徵得同意，參與的程度由你自己決定。課程不以性向作任何評價。審查通過後，才會通知繳費。</p>
+        <p>問卷會詢問你的報名動機、練習經驗，以及你對身體練習的感受。所有碰觸身體的練習都會事先說明、徵得同意，參與的程度由你自己決定。課程不以性向作任何評價。審查通過後，才會通知繳費。</p>
         <div class="respect-note">
           <h3>這堂課也需要你帶著尊重來</h3>
           <p>如果你對男性身體、性、瑜伽或性能量有好奇，願意理解自己，也願意尊重其他學員的隱私與身體界線，會比較適合這堂課。</p>
@@ -689,12 +739,12 @@
           <article>
             <small>初階</small>
             <h3>把性弄懂，把話說出口</h3>
-            <p>就是這一頁介紹的這一天。以觀念講解與影片教學為主，體位簡單，身體接觸很少，後段有一小段赤膊或裸身練習，適合第一次接觸這個主題的男性。</p>
+            <p>就是這一頁介紹的這一天。以觀念講解與影片教學為主，體位簡單，身體接觸很少，適合第一次接觸這個主題的男性。</p>
           </article>
           <article class="is-preview">
             <small>中階<em>預告</em></small>
             <h3>在初階之後，往更深處走</h3>
-            <p>之後另行公告開課。須完成初階並通過面談才能報名，練習全程裸身進行，有更深入的分享與雙人互動，細節會在面談時說明。</p>
+            <p>之後另行公告開課。須完成初階並通過面談才能報名，有更深入的分享與雙人練習，細節會在面談時說明。</p>
             <a class="cta-level-link" href="/courses/male-yoga-energy-advanced.html">查看中階介紹 →</a>
           </article>
         </div>
@@ -738,6 +788,67 @@
     </div>
   </div>
 </footer>
+<script type="module">
+  // 初階審核通過學員限定內容：全文只存在 Firestore eventArticleBodies，讀取資格由 Firestore Rules 判斷
+  // （memberEntitlements/{gmail}.permissions 含 male-yoga-beginner）。公開 HTML 不含任何限定內容。
+  import { auth, db } from "/firebase-config.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const BODY_ID = "male-yoga-beginner";
+  const PERMISSION = "male-yoga-beginner";
+  const gate = document.querySelector(".members-gate");
+  const content = document.getElementById("members-content");
+  const title = gate.querySelector("[data-gate-title]");
+  const text = gate.querySelector("[data-gate-text]");
+  const loginButton = gate.querySelector("[data-gate-login]");
+  const contactLink = gate.querySelector("[data-gate-contact]");
+  const account = gate.querySelector("[data-gate-account]");
+  window.__maleYogaBeginnerGateReady = true;
+
+  function setGate(state, email) {
+    gate.dataset.state = state;
+    gate.hidden = false;
+    content.hidden = true;
+    loginButton.hidden = state !== "locked";
+    contactLink.hidden = !["denied", "error", "locked"].includes(state);
+    account.hidden = !email;
+    account.textContent = email ? `目前登入：${email}` : "";
+    const copy = {
+      loading: ["正在確認閱讀資格…", "請稍候。"],
+      locked: ["通過報名審核的學員，請登入查看", "請用報名問卷填寫的 Gmail 登入。靈元院開通之後，完整的課程內容與上課注意事項會出現在這裡。"],
+      denied: ["這個帳號還沒有開通", "如果你已經通過審核，請確認登入的是問卷上填寫的 Gmail，或聯絡靈元院協助開通。"],
+      empty: ["限定內容尚未設定", "管理員帳號：請到初階學員管理頁貼上限定內容並發布。"],
+      error: ["內容暫時無法載入", "請重新整理頁面再試一次，或聯絡靈元院。"]
+    }[state];
+    title.textContent = copy[0];
+    text.textContent = copy[1];
+  }
+
+  loginButton.addEventListener("click", () => {
+    const navLogin = document.getElementById("member-login-button");
+    if (navLogin && !auth.currentUser) navLogin.click();
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { setGate("locked"); return; }
+    setGate("loading", user.email);
+    try {
+      const snapshot = await getDoc(doc(db, "eventArticleBodies", BODY_ID));
+      const body = snapshot.exists() ? snapshot.data() : null;
+      if (!body || body.active === false || body.requiredPermission !== PERMISSION || !body.content) {
+        setGate("empty", user.email);
+        return;
+      }
+      content.innerHTML = `<span class="members-badge">審核通過學員限定</span>${body.content}`;
+      content.hidden = false;
+      gate.hidden = true;
+    } catch (error) {
+      if (error?.code === "permission-denied") setGate("denied", user.email);
+      else { console.warn("初階限定內容暫時無法載入。", error); setGate("error", user.email); }
+    }
+  });
+</script>
 <script type="module" src="/site-auth-nav.js?v=20260824-auth-mobile-layout-2"></script>
 <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
 </body>
