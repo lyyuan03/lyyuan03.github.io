@@ -1,10 +1,10 @@
 /* 課程共用「課程督導」區塊：內容見 partials/course-instructor.config.json，由 scripts/sync-course-instructor.mjs 寫入各頁 */
-.ci{position:relative;overflow:hidden;background:#0c1712;color:#f5f0e8}
-.ci-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;width:min(1120px,calc(100% - 48px));margin:0 auto;min-height:clamp(540px,34vw,680px)}
-.ci-ph{position:relative;order:1;align-self:stretch;margin:0 0 0 calc((100vw - min(1120px,100vw - 48px))/-2)}
-.ci-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:30% 25%;-webkit-mask-image:linear-gradient(270deg,transparent 0,#000 40%);mask-image:linear-gradient(270deg,transparent 0,#000 40%)}
-.ci-ph:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#0c1712,transparent 9%),linear-gradient(180deg,#0c1712,transparent 7%)}
-.ci-copy{order:2;justify-self:end;max-width:540px;padding:56px 0}
+.ci{position:relative;overflow:hidden;background:#1a1d1b;color:#f5f0e8}
+.ci-ph{position:absolute;inset:0;margin:0}
+.ci-ph img{display:block;width:100%;height:100%;object-fit:cover;object-position:70% 22%}
+.ci-ph:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#1a1d1b 0,rgba(26,29,27,.55) 30%,transparent 52%),linear-gradient(180deg,#1a1d1b,transparent 9%),linear-gradient(0deg,#1a1d1b,transparent 9%)}
+.ci-in{display:grid;grid-template-columns:minmax(0,540px) 1fr;align-items:center;width:min(1120px,calc(100% - 48px));margin:0 auto;min-height:clamp(540px,34vw,680px)}
+.ci-copy{position:relative;z-index:1;max-width:540px;padding:56px 0}
 .ci-label{display:block;margin:0 0 14px;color:#c8aa7b;font-size:15px;letter-spacing:.2em}
 .ci-copy h2{margin:0;font-family:"Noto Serif TC",serif;font-weight:600;color:#f5f0e8;letter-spacing:.08em}
 .ci-role{margin:10px 0 22px;color:#c8aa7b;font-family:"Cormorant Garamond",serif;font-size:15px;letter-spacing:.2em}
@@ -19,4 +19,4 @@
 .ci-extra .ci-quote{margin:16px 0 0;font-family:"Noto Serif TC",serif;color:#f5f0e8}
 .ci-book{display:flex;gap:16px;align-items:flex-start;margin:14px 0}
 .ci-book img{width:72px;height:auto;flex:none}
-@media(max-width:860px){.ci-in{grid-template-columns:1fr;min-height:0}.ci-ph{height:380px;margin:0 -24px}.ci-ph img{-webkit-mask-image:linear-gradient(0deg,transparent 0,#000 40%);mask-image:linear-gradient(0deg,transparent 0,#000 40%)}.ci-copy{justify-self:start;padding:8px 0 44px}}
+@media(max-width:860px){.ci-ph{position:relative;inset:auto;height:460px}.ci-ph img{object-position:90% 12%}.ci-ph:after{background:linear-gradient(0deg,#1a1d1b,transparent 22%)}.ci-in{display:block;width:100%;min-height:0}.ci-copy{max-width:none;padding:0 24px 44px;margin-top:-20px}}

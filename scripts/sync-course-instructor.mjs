@@ -13,7 +13,7 @@ const css = readFileSync(join(root, 'course-instructor.css'));
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const render = (extra) => `<section class="ci" id="instructor" aria-label="${esc(c.label)}">
   <div class="ci-in">
-    <figure class="ci-ph"><img src="${c.image}" alt="${esc(c.alt)}" width="820" height="900" loading="lazy"></figure>
+    <figure class="ci-ph"><img src="${c.image}" alt="${esc(c.alt)}" width="2560" height="1440" loading="lazy"></figure>
     <div class="ci-copy">
       <span class="ci-label">${esc(c.label)}</span>
       <h2>${esc(c.name)}</h2>
