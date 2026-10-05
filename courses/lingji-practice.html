@@ -384,7 +384,7 @@
     .research-stat:last-child{padding-right:0;border-right:0}
     .research-stat b{display:block;color:var(--gold-light);font-family:var(--en);font-size:23px;font-weight:500;line-height:1.2}
     .research-stat span{display:block;margin-top:6px;color:rgba(245,240,232,.72);font-size:13px;font-weight:400;line-height:1.5}
-    .book-shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;align-items:end}
+    .book-shelf{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;align-items:end}
     .book-shelf>a{min-width:0}
     .book-item{position:relative;margin:0;padding:10px 10px 11px;border:1px solid rgba(200,170,123,.2);background:rgba(255,255,255,.045);transition:transform .25s,border-color .25s,background .25s}
     .book-item:hover{transform:translateY(-5px);border-color:rgba(200,170,123,.52);background:rgba(255,255,255,.075)}
@@ -658,6 +658,7 @@
     .motion-ready .book-shelf .book-item,.motion-ready .stage-grid .stage-card{opacity:0;transform:translate3d(0,22px,0)}
     .motion-ready .book-shelf.on .book-item,.motion-ready .stage-grid.on .stage-card{animation:contentRise .68s ease forwards}
     .motion-ready .book-shelf.on a:nth-child(2) .book-item,.motion-ready .stage-grid.on .stage-card:nth-child(2){animation-delay:.13s}
+    .motion-ready .book-shelf.on a:nth-child(4) .book-item{animation-delay:.39s}
     .motion-ready .book-shelf.on a:nth-child(3) .book-item,.motion-ready .stage-grid.on .stage-card:nth-child(3){animation-delay:.26s}
 
     @keyframes forestAmbient{0%{background-position:0% 0%;filter:saturate(.9)}100%{background-position:100% 70%;filter:saturate(1.05)}}
@@ -1085,20 +1086,26 @@
           <div class="book-shelf reveal" aria-label="宇色老師相關著作">
             <a href="https://www.books.com.tw/products/0010784866" target="_blank" rel="noopener noreferrer">
               <figure class="book-item">
-                <img src="/assets/course-book-key-report.webp?v=20260828-1" alt="宇色著作《靈修人關鍵報告》封面" loading="lazy">
+                <img src="/assets/course-book-key-report-3d.png?v=20261005-1" alt="宇色著作《靈修人關鍵報告》封面" loading="lazy">
                 <figcaption>《靈修人關鍵報告》</figcaption>
               </figure>
             </a>
             <a href="https://www.books.com.tw/products/0010719221" target="_blank" rel="noopener noreferrer">
               <figure class="book-item">
-                <img src="/assets/course-book-mizang.webp?v=20260828-1" alt="宇色著作《我在人間的靈修迷藏》封面" loading="lazy">
+                <img src="/assets/course-book-mizang-3d.png?v=20261005-1" alt="宇色著作《我在人間的靈修迷藏》封面" loading="lazy">
                 <figcaption>《我在人間的靈修迷藏》</figcaption>
               </figure>
             </a>
             <a href="https://www.books.com.tw/products/0011060075" target="_blank" rel="noopener noreferrer">
               <figure class="book-item">
-                <img src="/assets/course-book-yuanshen.webp?v=20260828-1" alt="宇色著作《我在人間的元神覺醒》封面" loading="lazy">
+                <img src="/assets/course-book-yuanshen-clean.webp?v=20261005-1" alt="宇色著作《我在人間的元神覺醒》封面" loading="lazy">
                 <figcaption>《我在人間的元神覺醒》</figcaption>
+              </figure>
+            </a>
+            <a href="https://www.books.com.tw/products/0010963646" target="_blank" rel="noopener noreferrer">
+              <figure class="book-item">
+                <img src="/assets/course-book-lingyuan-journey.png?v=20261005-1" alt="宇色著作《靈修人的奇幻旅程》封面" loading="lazy">
+                <figcaption>《靈修人的奇幻旅程》</figcaption>
               </figure>
             </a>
             <p class="book-source">書封來源｜博客來</p>
