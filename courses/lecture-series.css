@@ -1,0 +1,79 @@
+/* 靈修美學講座系列頁：四講合一頁。字級與區塊留白由 /course-rhythm.css 統一管理。 */
+:root{--ls-brown:#594F47;--ls-tan:#A58254;--ls-olive:#606330;--ls-paper:#F5F0E8;--ls-cream:#EEE7DA;--ls-line:rgba(89,79,71,.18)}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body.lecture-series{margin:0;background:var(--ls-paper);color:var(--ls-brown);font-family:"Noto Sans TC",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.lecture-series .skip-link{position:absolute;left:12px;top:-60px;z-index:100;padding:10px 16px;background:#fff;color:var(--ls-brown);text-decoration:none;border:1px solid var(--ls-tan)}
+.lecture-series .skip-link:focus{top:12px}
+.lecture-series a:focus-visible,.lecture-series summary:focus-visible{outline:2px solid var(--ls-tan);outline-offset:3px}
+
+/* 開頭 */
+.ls-hero{padding:128px 0 56px;background:var(--ls-paper)}
+.ls-hero-inner{width:min(1120px,calc(100% - 48px));margin:0 auto}
+.ls-hero h1{margin:0;font:600 clamp(34px,5vw,56px)/1.35 "Noto Serif TC",serif;letter-spacing:.06em;color:var(--ls-brown)}
+.ls-hero-lead{max-width:34em;margin:22px 0 0;font-size:17.5px;line-height:2;color:rgba(89,79,71,.86)}
+.ls-index{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--ls-line)}
+.ls-index li{border-left:1px solid var(--ls-line)}
+.ls-index li:first-child{border-left:0}
+.ls-index a{display:block;height:100%;box-sizing:border-box;padding:22px 24px 24px;color:inherit;text-decoration:none;transition:background .25s}
+.ls-index a:hover{background:rgba(165,130,84,.1)}
+.ls-index .lc-t{display:block;font:600 21px/1.5 "Noto Serif TC",serif;letter-spacing:.04em}
+.ls-index .lc-s{display:block;margin-top:6px;font-size:15px;line-height:1.7;color:rgba(89,79,71,.7)}
+
+/* 各講 */
+.lec{background:var(--ls-paper);border-top:1px solid var(--ls-line)}
+.lec.lec-alt{background:var(--ls-cream)}
+.lec-wrap{width:min(1120px,calc(100% - 48px));margin:0 auto;display:grid;grid-template-columns:minmax(230px,320px) minmax(0,1fr);grid-template-areas:"head body";column-gap:64px;align-items:start}
+.lec-head{grid-area:head;position:sticky;top:96px}
+.lec-body{grid-area:body;max-width:40em}
+.lec h2{margin:0;font-family:"Noto Serif TC",serif;font-weight:600;color:var(--ls-brown)}
+.lec .lec-sub{margin:10px 0 0;font-size:16px;line-height:1.8;color:var(--ls-olive)}
+.lec-body p{margin:0 0 1.1em}
+.lec-body .lec-pull{padding-left:18px;border-left:3px solid var(--ls-tan);font-family:"Noto Serif TC",serif;font-weight:500;color:#4a4039}
+.lec-body h3{margin:2.2em 0 .7em;font:600 21px/1.6 "Noto Serif TC",serif;color:var(--ls-brown)}
+.lec-body h4{margin:1.6em 0 .4em;font:600 17.5px/1.7 "Noto Sans TC",sans-serif;color:var(--ls-olive)}
+.lec-body a,.lec-aside a{color:var(--ls-olive);text-decoration:underline;text-underline-offset:3px}
+.lec-link{font-weight:500}
+
+/* 重點卡 */
+.lec-aside{box-sizing:border-box;margin:1.6em 0 0;padding:24px 28px 22px;background:rgba(255,255,255,.5);border:1px solid var(--ls-line);border-top:3px solid var(--ls-tan)}
+.lec-alt .lec-aside{background:rgba(245,240,232,.7)}
+.lec-aside h3{margin:0 0 12px;font:600 18px/1.6 "Noto Serif TC",serif}
+.lec-aside p{margin:0 0 12px}
+.lec-aside .lec-note{margin:14px 0 0;color:rgba(89,79,71,.78)}
+.lec-list{list-style:none;margin:0 0 1.2em;padding:0}
+.lec-list li{position:relative;padding:0 0 0 18px;margin:0 0 .45em}
+.lec-list li:before{content:"";position:absolute;left:0;top:.95em;width:7px;height:1px;background:var(--ls-tan)}
+.lec-aside .lec-list{margin:0}
+.lec-aside .lec-topics{columns:2;column-gap:36px}
+.lec-aside .lec-topics li{break-inside:avoid}
+
+/* 引言、學員回饋 */
+.lec-voice,.lec-story{margin:1.5em 0;padding:4px 0 4px 20px;border-left:1px solid var(--ls-tan);color:rgba(89,79,71,.92)}
+.lec-voice p:last-child,.lec-story p:last-child{margin-bottom:0}
+.lec-story{padding:22px 24px;border:1px solid var(--ls-line);border-left:3px solid var(--ls-tan);background:rgba(255,255,255,.45)}
+.lec-alt .lec-story{background:rgba(245,240,232,.6)}
+.lec-qa .lec-reply{margin-top:-.4em;padding:14px 18px;background:rgba(96,99,48,.08);color:var(--ls-brown)}
+
+/* 展開閱讀 */
+.lec-more{margin-top:1.8em;border-top:1px solid var(--ls-line)}
+.lec-more>summary{display:flex;align-items:center;gap:10px;padding:18px 0;cursor:pointer;list-style:none;font:500 16px/1.6 "Noto Sans TC",sans-serif;letter-spacing:.06em;color:var(--ls-olive)}
+.lec-more>summary::-webkit-details-marker{display:none}
+.lec-more>summary:after{content:"";width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+.lec-more[open]>summary:after{transform:rotate(-135deg) translateY(-2px)}
+.lec-more-body{padding-bottom:6px}
+.lec-more-body>h3:first-child{margin-top:.4em}
+
+/* 索引在手機版改兩欄、各講改單欄 */
+@media(max-width:980px){.ls-index{grid-template-columns:repeat(2,minmax(0,1fr))}.ls-index li:nth-child(odd){border-left:0}.ls-index li:nth-child(n+3){border-top:1px solid var(--ls-line)}}
+@media(max-width:860px){
+  .ls-hero{padding:96px 0 40px}
+  .lec-wrap{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "body";row-gap:22px}
+  .lec-head{position:static}
+  .lec-aside .lec-topics{columns:1}
+  .lec-body{max-width:none}
+  .lec-aside{padding:20px 20px 18px}
+  .lec-story{padding:18px 18px}
+  .ls-index a{padding:16px 16px 18px}
+  .ls-index .lc-t{font-size:18px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.ls-index a,.lec-more>summary:after{transition:none}}

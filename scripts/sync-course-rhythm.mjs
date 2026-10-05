@@ -14,6 +14,7 @@ const pages = [
   'courses/male-yoga-energy.html',
   'courses/male-yoga-energy-advanced.html',
   'courses/lingji-practice.html',
+  'courses/lecture-series.html',
 ];
 const version = createHash('sha1').update(readFileSync(join(root, 'course-rhythm.css'))).digest('hex').slice(0, 8);
 const tag = `<link rel="stylesheet" href="/course-rhythm.css?v=${version}">`;
