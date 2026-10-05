@@ -291,3 +291,11 @@
 .ed-js .ed-reveal.is-in{opacity:1}
 @media(prefers-reduced-motion:reduce){.ed-js .ed-reveal{opacity:1;transition:none}}
 @media(max-width:720px){.ed-split-grid{grid-template-columns:1fr}.ed-ring{right:-260px}.ed-pattern-text b{padding-left:0}.ed-lineage{text-align:left}.ed-goldline{margin-left:0}}
+
+/* ===== 空景與氛圍圖（單色調，與墨綠／深棕一致） ===== */
+.dialogue-band{margin:0;width:100%;height:clamp(240px,42vw,520px);overflow:hidden;background:#1c1814}
+.dialogue-band img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 58%;opacity:.92}
+.dialogue-band-forest{background:#141b12}.dialogue-band-forest img{object-position:50% 40%}
+.records-figure{margin:0 0 36px;max-height:420px;overflow:hidden}
+.records-figure img{display:block;width:100%;height:100%;max-height:420px;object-fit:cover;object-position:30% 92%}
+@media(max-width:720px){.dialogue-band{height:clamp(200px,62vw,320px)}.records-figure{margin-bottom:26px;max-height:300px}.records-figure img{max-height:300px}}
