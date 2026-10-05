@@ -1,0 +1,22 @@
+/* 課程共用「課程督導」區塊：內容見 partials/course-instructor.config.json，由 scripts/sync-course-instructor.mjs 寫入各頁 */
+.ci{position:relative;overflow:hidden;background:#0c1712;color:#f5f0e8}
+.ci-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;width:min(1120px,calc(100% - 48px));margin:0 auto;min-height:540px}
+.ci-ph{position:relative;order:1;align-self:stretch;margin:0 0 0 calc((100vw - min(1120px,100vw - 48px))/-2)}
+.ci-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:30% 20%;-webkit-mask-image:linear-gradient(270deg,transparent 0,#000 40%);mask-image:linear-gradient(270deg,transparent 0,#000 40%)}
+.ci-ph:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#0c1712,transparent 9%),linear-gradient(180deg,#0c1712,transparent 7%)}
+.ci-copy{order:2;justify-self:end;max-width:540px;padding:56px 0}
+.ci-label{display:block;margin:0 0 14px;color:#c8aa7b;font-size:15px;letter-spacing:.2em}
+.ci-copy h2{margin:0;font-family:"Noto Serif TC",serif;font-weight:600;color:#f5f0e8;letter-spacing:.08em}
+.ci-role{margin:10px 0 22px;color:#c8aa7b;font-family:"Cormorant Garamond",serif;font-size:15px;letter-spacing:.2em}
+.ci-copy p{color:rgba(245,240,232,.82)}
+.ci-copy p+p{margin-top:14px}
+.ci-extra{margin-top:22px;padding-top:20px;border-top:1px solid rgba(200,170,123,.28)}
+.ci-extra p{margin:0 0 12px}
+.ci-extra ul{margin:0 0 14px;padding:0;list-style:none}
+.ci-extra li{margin:0 0 4px;color:rgba(245,240,232,.82)}
+.ci-extra h3{margin:18px 0 8px;color:#c8aa7b;font-family:"Noto Serif TC",serif;font-weight:600}
+.ci-extra a{color:#c8aa7b;text-underline-offset:4px}
+.ci-extra .ci-quote{margin:16px 0 0;font-family:"Noto Serif TC",serif;color:#f5f0e8}
+.ci-book{display:flex;gap:16px;align-items:flex-start;margin:14px 0}
+.ci-book img{width:72px;height:auto;flex:none}
+@media(max-width:860px){.ci-in{grid-template-columns:1fr;min-height:0}.ci-ph{height:380px;margin:0 -24px}.ci-ph img{-webkit-mask-image:linear-gradient(0deg,transparent 0,#000 40%);mask-image:linear-gradient(0deg,transparent 0,#000 40%)}.ci-copy{justify-self:start;padding:8px 0 44px}}

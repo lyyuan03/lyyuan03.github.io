@@ -91,6 +91,10 @@ assert.equal(footerCheck.status, 0, `Footer drift detected:\n${footerCheck.stder
 const contactCheck = spawnSync(process.execPath, [path.join(root, "scripts/sync-course-contact.mjs"), "--check"], { encoding: "utf8" });
 assert.equal(contactCheck.status, 0, `Course contact block drift detected:\n${contactCheck.stderr}`);
 
+// 課程「課程督導」區塊必須與 partials/course-instructor.config.json 一致
+const instructorCheck = spawnSync(process.execPath, [path.join(root, "scripts/sync-course-instructor.mjs"), "--check"], { encoding: "utf8" });
+assert.equal(instructorCheck.status, 0, `Course instructor block drift detected:\n${instructorCheck.stderr}`);
+
 // 課程頁必須載入最新的共用版面尺度 course-rhythm.css
 const rhythmCheck = spawnSync(process.execPath, [path.join(root, "scripts/sync-course-rhythm.mjs"), "--check"], { encoding: "utf8" });
 assert.equal(rhythmCheck.status, 0, `Course rhythm drift detected:\n${rhythmCheck.stderr}`);
