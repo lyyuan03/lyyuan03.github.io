@@ -149,3 +149,7 @@ body .section.reading h2{margin:0 0 36px;font-family:var(--ls-serif);font-weight
   .ls-cta a{display:flex;align-items:center;justify-content:center;min-height:50px;background:var(--ls-tan);color:#fff;font-size:16px;letter-spacing:.12em;text-decoration:none;box-shadow:0 12px 28px rgba(0,0,0,.35)}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.ls-btn,.ls-index a,.rd-book img,.lec-more>summary:after{transition:none}}
+
+/* 講次標示 */
+body .section.lec .lec-banner .lec-no{margin:0 0 10px;font:600 15px/1.4 var(--ls-serif);letter-spacing:.3em;color:#d4b271;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+.ls-index .lc-n{display:block;margin-bottom:8px;font:600 14px/1.4 var(--ls-serif);letter-spacing:.24em;color:#d4b271}
