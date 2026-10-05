@@ -81,7 +81,7 @@ body .section.reading{background:linear-gradient(180deg,var(--ls-paper),var(--ls
 body .section.reading h2{margin:0 0 36px;font-family:var(--ls-serif);font-weight:600;color:var(--ls-brown)}
 .rd-shelf{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:36px}
 .rd-book{display:flex;flex-direction:column;align-items:center;gap:14px;color:inherit;text-decoration:none;text-align:center}
-.rd-book img{width:min(190px,100%);height:auto;filter:drop-shadow(12px 20px 16px rgba(59,49,34,.28));transition:transform .3s}
+.rd-book img{width:min(224px,100%);aspect-ratio:224/292;height:auto;object-fit:contain;object-position:50% 100%;filter:drop-shadow(12px 20px 16px rgba(59,49,34,.28));transition:transform .3s}
 .rd-book:hover img{transform:translateY(-6px) rotate(-1deg)}
 .rd-title{font:600 17px/1.6 var(--ls-serif);color:var(--ls-brown)}
 .rd-go{font-size:14px;color:var(--ls-olive);border-bottom:1px solid rgba(96,99,48,.4)}
