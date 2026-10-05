@@ -1,8 +1,7 @@
 /* 課程共用「課程督導」區塊：內容見 partials/course-instructor.config.json，由 scripts/sync-course-instructor.mjs 寫入各頁 */
 .ci{position:relative;overflow:hidden;background:#1a1d1b;color:#f5f0e8}
 .ci-ph{position:absolute;inset:0;margin:0}
-.ci-ph img{display:block;width:100%;height:100%;object-fit:cover;object-position:70% 22%}
-.ci-ph:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#1a1d1b 0,rgba(26,29,27,.55) 30%,transparent 52%),linear-gradient(180deg,#1a1d1b,transparent 9%),linear-gradient(0deg,#1a1d1b,transparent 9%)}
+.ci-ph img{position:absolute;right:max(0px,calc((100% - 1280px)/2));top:0;display:block;height:min(100%,720px);width:auto;max-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 24%),linear-gradient(270deg,transparent 0,#000 8%),linear-gradient(0deg,transparent 0,#000 10%);-webkit-mask-composite:source-in,source-in;mask-image:linear-gradient(90deg,transparent 0,#000 24%),linear-gradient(270deg,transparent 0,#000 8%),linear-gradient(0deg,transparent 0,#000 10%);mask-composite:intersect}
 .ci-in{display:grid;grid-template-columns:minmax(0,540px) 1fr;align-items:center;width:min(1120px,calc(100% - 48px));margin:0 auto;min-height:clamp(540px,34vw,680px)}
 .ci-copy{position:relative;z-index:1;max-width:540px;padding:56px 0}
 .ci-label{display:block;margin:0 0 14px;color:#c8aa7b;font-size:15px;letter-spacing:.2em}
@@ -19,4 +18,4 @@
 .ci-extra .ci-quote{margin:16px 0 0;font-family:"Noto Serif TC",serif;color:#f5f0e8}
 .ci-book{display:flex;gap:16px;align-items:flex-start;margin:14px 0}
 .ci-book img{width:72px;height:auto;flex:none}
-@media(max-width:860px){.ci-ph{position:relative;inset:auto;height:460px}.ci-ph img{object-position:90% 12%}.ci-ph:after{background:linear-gradient(0deg,#1a1d1b,transparent 22%)}.ci-in{display:block;width:100%;min-height:0}.ci-copy{max-width:none;padding:0 24px 44px;margin-top:-20px}}
+@media(max-width:860px){.ci-ph{position:relative;inset:auto;height:380px}.ci-ph img{position:static;width:100%;height:100%;object-fit:cover;object-position:90% 10%;-webkit-mask-image:linear-gradient(0deg,transparent 0,#000 24%);mask-image:linear-gradient(0deg,transparent 0,#000 24%)}.ci-in{display:block;width:100%;min-height:0}.ci-copy{max-width:none;padding:0 24px 44px;margin-top:-12px}}
