@@ -166,3 +166,8 @@ body .section.lec .lec-banner .lec-no{margin:0 0 10px;font:600 15px/1.4 var(--ls
 .ls-index .lc-n,.ls-index .lc-t,.ls-index .lc-s{position:relative;z-index:2}
 @media(max-width:860px){.lec-photo img{object-position:60% 50%!important}}
 @media(prefers-reduced-motion:reduce){.ls-index .lc-img{transition:none}.ls-index a:hover .lc-img{transform:none}}
+
+/* 橫幅左側文字區：光流淡出，標題與副標不被線條穿過 */
+.lec-banner .art{-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 22%,#000 58%);mask-image:linear-gradient(90deg,transparent 0,transparent 22%,#000 58%)}
+body .section.lec .lec-banner .lec-sub{text-shadow:0 2px 14px rgba(0,0,0,.65)}
+@media(max-width:860px){.lec-banner .art{-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 8%,#000 52%);mask-image:linear-gradient(90deg,transparent 0,transparent 8%,#000 52%)}}
