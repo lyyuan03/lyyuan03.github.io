@@ -61,12 +61,3 @@
     document.querySelectorAll('main > section[id]').forEach(section => observer.observe(section));
   }
 })();
-
-// 編輯風文案：緩慢淡入（無 JS 或減少動態時直接顯示）
-(() => {
-  const items = [...document.querySelectorAll('.ed-reveal')];
-  if (!items.length || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  document.documentElement.classList.add('ed-js');
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { threshold: .15 });
-  items.forEach(el => io.observe(el));
-})();
