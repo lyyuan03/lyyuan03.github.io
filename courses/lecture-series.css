@@ -171,3 +171,19 @@ body .section.lec .lec-banner .lec-no{margin:0 0 10px;font:600 15px/1.4 var(--ls
 .lec-banner .art{-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 22%,#000 58%);mask-image:linear-gradient(90deg,transparent 0,transparent 22%,#000 58%)}
 body .section.lec .lec-banner .lec-sub{text-shadow:0 2px 14px rgba(0,0,0,.65)}
 @media(max-width:860px){.lec-banner .art{-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 8%,#000 52%);mask-image:linear-gradient(90deg,transparent 0,transparent 8%,#000 52%)}}
+
+/* 引言橫幅：黑白照片調成暗綠金雙色調，照片在左、引言在右 */
+.ls-quote{position:relative;overflow:hidden;background:var(--ls-ink,#0c1712);color:#f5f0e8}
+.ls-quote-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;width:min(1120px,calc(100% - 48px));margin:0 auto;min-height:560px}
+.ls-quote-ph{position:relative;order:1;align-self:stretch;margin:0 0 0 calc((100vw - min(1120px,100vw - 48px))/-2)}
+.ls-quote-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:30% 20%;-webkit-mask-image:linear-gradient(270deg,transparent 0,#000 40%);mask-image:linear-gradient(270deg,transparent 0,#000 40%)}
+.ls-quote-ph:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--ls-ink,#0c1712),transparent 9%),linear-gradient(180deg,var(--ls-ink,#0c1712),transparent 7%)}
+.ls-quote-copy{order:2;justify-self:end;max-width:520px;padding:56px 0}
+.ls-quote-text{margin:0;font:600 clamp(30px,3.6vw,46px)/1.55 var(--ls-serif);letter-spacing:.08em;color:#f5f0e8}
+.ls-quote-by{margin:22px 0 0;color:#c8aa7b;font-size:15px;letter-spacing:.2em}
+@media(max-width:860px){
+  .ls-quote-in{grid-template-columns:1fr;min-height:0}
+  .ls-quote-ph{height:380px;margin:0 -24px}
+  .ls-quote-ph img{-webkit-mask-image:linear-gradient(0deg,transparent 0,#000 40%);mask-image:linear-gradient(0deg,transparent 0,#000 40%)}
+  .ls-quote-copy{justify-self:start;padding:8px 0 44px}
+}
