@@ -11,6 +11,7 @@ const requireText = (source, text, label) => {
 
 const publishedArticleIds = [
   "2058-future-person-prophecy",
+  "collective-unconscious-election",
   "quantum-frequency-work-wish",
   "this-book-took-thirty-years",
   "yuanshen-destiny-archetype",

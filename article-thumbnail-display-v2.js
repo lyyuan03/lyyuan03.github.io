@@ -1,7 +1,7 @@
 import { db } from "./firebase-config.js";
 import { isNeedATeacherArticle, NEED_A_TEACHER_THUMBNAIL_URL, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-3";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { staticArticles } from "./static-articles.js?v=20260923-ghosts-supernatural-1";
+import { staticArticles } from "./static-articles.js?v=20261006-collective-unconscious-1";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";

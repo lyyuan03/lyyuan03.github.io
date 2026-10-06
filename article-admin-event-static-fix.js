@@ -1,6 +1,6 @@
 import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { staticArticles } from "./static-articles.js?v=20260802-event-admin-fix-1";
+import { staticArticles } from "./static-articles.js?v=20261006-collective-unconscious-1";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAgHy-nPOErzs7NDJossVGPITbenXOfjQY",
