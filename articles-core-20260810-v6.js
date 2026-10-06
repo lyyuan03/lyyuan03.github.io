@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js?v=20260831-permissions-1";
 import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-3";
-import { staticArticles } from "./static-articles.js?v=20260930-blessing-cover-1";
+import { staticArticles } from "./static-articles.js?v=20261006-collective-unconscious-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260923-ghosts-supernatural-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";

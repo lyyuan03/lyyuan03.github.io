@@ -122,6 +122,7 @@ export const recommendedBookCatalog = Object.freeze({
 /** 已發布文章的主題對應。未知的新文章仍會依分類取得預設書目。 */
 export const recommendedBookByArticle = Object.freeze({
   "2058-future-person-prophecy": "goodFortune",
+  "collective-unconscious-election": "awakening",
   "quantum-frequency-work-wish": "quantumPractice",
   "this-book-took-thirty-years": "yuanshenAwakening",
   "yuanshen-destiny-archetype": "yuanshenAwakening",
