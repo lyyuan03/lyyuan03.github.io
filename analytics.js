@@ -242,7 +242,7 @@
   const loadSponsorCheckout = () => {
     if (!location.pathname.endsWith("/articles.html")) return;
     if (!new URLSearchParams(location.search).has("id")) return;
-    loadScript("/sponsor-checkout.js?v=20260803-public-checkout-1", "lyyuan-sponsor-checkout", "module");
+    loadScript("/sponsor-checkout.js?v=20261007-gate-price-sync-1", "lyyuan-sponsor-checkout", "module");
   };
 
   document.addEventListener("click", (event) => {

@@ -1,10 +1,22 @@
 const SIMPLE_GATE_SELECTOR = ".article-paid-gate";
 const RESTORED_GATE_SELECTOR = "[data-paid-gate-restored]";
 
+// 後台價格尚未載入時的預設值，須與後台「方案與付款設定」一致；
+// 載入後由 sponsor-checkout-v3.js 依後台發布的價格同步更新。
 const PLAN_PRICES = Object.freeze({
-  1: { promo: 120, regular: 150 },
-  3: { promo: 300, regular: 400 }
+  1: { promo: 150, regular: 180 },
+  3: { promo: 400, regular: 500 }
 });
+
+function currentPlanPrices() {
+  const live = window.LingYuanSponsorCheckout?.planDisplay?.();
+  if (!live) return { promo: true, limit: 200, month1: { price: PLAN_PRICES[1].promo, regular: PLAN_PRICES[1].regular }, month3: { price: PLAN_PRICES[3].promo, regular: PLAN_PRICES[3].regular } };
+  return { promo: live.promo, limit: live.promoLimit, month1: { price: live.price1, regular: live.regular1 }, month3: { price: live.price3, regular: live.regular3 } };
+}
+
+function regularPriceMarkup(plans, plan) {
+  return plans.promo && plan.regular > plan.price ? `<del>原價 ${money(plan.regular)}</del>` : "<del hidden></del>";
+}
 
 function installStyles() {
   if (document.getElementById("paid-gate-restore-styles")) return;
@@ -57,8 +69,9 @@ function isSponsorGate(node) {
 }
 
 function restoredGateMarkup() {
-  const month1 = PLAN_PRICES[1];
-  const month3 = PLAN_PRICES[3];
+  const plans = currentPlanPrices();
+  const month1 = plans.month1;
+  const month3 = plans.month3;
   return `
     <section class="member-lock-zone paid-lock-zone" data-paid-gate-restored aria-label="解鎖贊助專屬全文">
       <div class="paid-lock-preview" aria-hidden="true">
@@ -68,19 +81,19 @@ function restoredGateMarkup() {
         <div class="member-lock-icon" aria-hidden="true">◇</div>
         <h3>解鎖全文</h3>
         <p>本篇前段開放試閱。加入贊助專屬文章閱讀方案後，可閱讀開通日前 30 天起發表的贊助專屬文章，直到方案到期為止。</p>
-        <div class="paid-promo-note">前 200 名優惠方案</div>
+        <div class="paid-promo-note">${plans.promo ? `前 ${plans.limit} 名優惠方案` : "目前適用一般方案價格"}</div>
         <div class="paid-plan-grid" role="group" aria-label="選擇閱讀方案">
           <button type="button" class="paid-plan" data-sponsor-plan="1">
             <span class="paid-plan-term">1 個月（30 天）</span>
-            <strong class="paid-plan-price">${money(month1.promo)}</strong>
-            <del>原價 ${money(month1.regular)}</del>
+            <strong class="paid-plan-price">${money(month1.price)}</strong>
+            ${regularPriceMarkup(plans, month1)}
             <small>含開通日前 30 天起的文章</small>
           </button>
           <button type="button" class="paid-plan is-featured" data-sponsor-plan="3">
             <span class="paid-plan-badge">推薦</span>
             <span class="paid-plan-term">3 個月（90 天）</span>
-            <strong class="paid-plan-price">${money(month3.promo)}</strong>
-            <del>原價 ${money(month3.regular)}</del>
+            <strong class="paid-plan-price">${money(month3.price)}</strong>
+            ${regularPriceMarkup(plans, month3)}
             <small>含開通日前 30 天起的文章</small>
           </button>
         </div>

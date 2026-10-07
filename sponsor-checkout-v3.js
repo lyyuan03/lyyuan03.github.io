@@ -157,6 +157,18 @@ async function fetchMember() {
   return state.member;
 }
 
+// 非會員看到的方案價格一律以後台「方案與付款設定」發布的 sponsor-offer-status 為準。
+function planDisplay(offer = state.offer) {
+  if (!offer) return null;
+  const promo = state.user ? state.tier === "promo" : offer.promotionAvailable === true;
+  const regular1 = Number(offer.regularPrice1 || 0);
+  const regular3 = Number(offer.regularPrice3 || 0);
+  const price1 = Number(offer.currentPrice1 || (promo ? offer.promoPrice1 : offer.regularPrice1) || 0);
+  const price3 = Number(offer.currentPrice3 || (promo ? offer.promoPrice3 : offer.regularPrice3) || 0);
+  if (!price1 || !price3) return null;
+  return { promo, price1, price3, regular1, regular3, promoLimit: Number(offer.promoLimit || 200) };
+}
+
 function offerMarkup() {
   if (state.error) {
     return `<div class="sponsor-checkout-error" role="alert">${state.error}</div><button type="button" class="sponsor-checkout-retry" data-sponsor-retry>重新讀取方案</button>`;
@@ -238,7 +250,31 @@ function statusElement(host) {
   return status;
 }
 
+function setText(node, text) {
+  if (node && node.textContent !== text) node.textContent = text;
+}
+
+function syncRestoredGatePrices() {
+  const plans = planDisplay();
+  if (!plans) return;
+  restoredGates().forEach((gate) => {
+    setText(gate.querySelector(".paid-promo-note"), plans.promo ? `前 ${plans.promoLimit} 名優惠方案` : "目前適用一般方案價格");
+    [[1, plans.price1, plans.regular1], [3, plans.price3, plans.regular3]].forEach(([months, price, regular]) => {
+      const button = gate.querySelector(`[data-sponsor-plan="${months}"]`);
+      if (!button) return;
+      setText(button.querySelector(".paid-plan-price"), money(price));
+      const del = button.querySelector("del");
+      if (del) {
+        const showRegular = plans.promo && regular > price;
+        setText(del, showRegular ? `原價 ${money(regular)}` : "");
+        if (del.hidden === showRegular) del.hidden = !showRegular;
+      }
+    });
+  });
+}
+
 function renderRestoredGateState() {
+  syncRestoredGatePrices();
   restoredGates().forEach((gate) => {
     const host = gate.querySelector(".paid-lock-card") || gate;
     const existing = host.querySelector(":scope > .sponsor-payment-status");
@@ -383,7 +419,8 @@ installStyles();
 window.LingYuanSponsorCheckout = {
   render,
   refresh,
-  getState: () => ({ ...state })
+  getState: () => ({ ...state }),
+  planDisplay: () => planDisplay()
 };
 
 if (!paymentReturnRedirect()) {
