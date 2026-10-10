@@ -2,7 +2,7 @@
 
 文章 ID：tree-spirits-nature-karma-reincarnation
 
-請將 `tree-spirits-site-images.zip` 解壓後，將本資料夾中以下 **8 個 WebP 圖檔** 上傳至本路徑。網站正文引用的都是相對路徑，請保留檔名，不要改成壓縮檔。
+封面和獨立縮圖已上傳。本資料夾尚須補齊以下 **6 張內文 WebP**。若需自行上傳，請解壓 `tree-spirits-site-images.zip` 並保持原始檔名。
 
 - `cover.webp`：文章內頁首圖與社群分享圖，樹靈哀悼被砍下的老樹（原圖：E27AA572...）
 - `thumbnail-450x800.webp`：文選列表 9:16 無字縮圖（從原圖 055F7DAE... 取景）
@@ -13,4 +13,4 @@
 - `05-felled-tree-spirit.webp`：老樹被砍與自然失衡（原圖 FA51DC36...）
 - `06-replanting-sapling.webp`：樹樁幼苗與重生（原圖 055F7DAE...）
 
-**提醒：** 此分支上尚未有上述圖像時，不得合併 PR。待八張圖片齊備後，請確認文選頁、文章頁與 Open Graph 分享首圖均能載入，手機版沒有裁切、重複及空白。
+**提醒：** 六張正文圖像尚未補齊時，不得合併 PR。待八張圖片齊備後，請確認文選頁、文章頁與 Open Graph 分享首圖均能載入，手機版沒有裁切、重複及空白。
