@@ -200,9 +200,13 @@ function sanitizeUnsafeArticleContent(value = "") {
 }
 
 function renderInline(value = "") {
-  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (_, alt, src) {
-    return /^data:image/i.test(src) ? "" : '<img src="' + src + '" alt="' + alt + '">';
-  });
+  return escapeHtml(value)
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (_, alt, src) {
+      return /^data:image/i.test(src) ? "" : '<img src="' + src + '" alt="' + alt + '">';
+    })
+    .replace(/\[([^\]]+)\]\((https:\/\/[^\s)"'<>]+)\)/g, function (_, label, url) {
+      return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+    });
 }
 
 function renderContent(value = "") {
