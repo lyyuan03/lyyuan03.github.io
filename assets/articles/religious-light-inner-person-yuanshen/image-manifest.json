@@ -1,44 +1,62 @@
 {
   "articleId": "religious-light-inner-person-yuanshen",
-  "coverImage": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/69411bd3-01dd-4073-8bbb-70dffbacb53a.jpg",
-  "thumbnailImage": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/69411bd3-01dd-4073-8bbb-70dffbacb53a.jpg",
+  "coverImage": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/00-cover.jpeg",
+  "thumbnailImage": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/00-cover.jpeg",
   "bodyImages": [
     {
-      "alt": "佐西摩斯與煉金術中的光之人",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/f6bb8912-00af-496c-a259-a3105ade24c6.jpg"
+      "filename": "01-alchemy.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/01-alchemy.jpeg",
+      "alt": "佐西摩斯與煉金術中光之人的象徵",
+      "sha256": "791598aa08f04e80aaef77369d4ea16f8f4e249a7e98c3d584ebd688988b6d49"
     },
     {
-      "alt": "山林師徒與修持",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/2c7221d1-edda-470a-8feb-9bdd4cc3cae5.jpg"
+      "filename": "02-teacher.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/02-teacher.jpeg",
+      "alt": "師徒於山林中談論內在生命與圓滿",
+      "sha256": "8fa565d39ca991f3e149b542d38e53c08f124ef12912fd122c6cdda2d03bbe56"
     },
     {
-      "alt": "修行與內在生命",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/2e2066eb-df05-45df-b7c2-cd73eacb256c.jpg"
+      "filename": "03-temple.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/03-temple.jpeg",
+      "alt": "修行人與發光的內在生命",
+      "sha256": "b87b6bebb21247e8a8d1aed408f79597b917ae34f23388463e340bc7504d6f05"
     },
     {
-      "alt": "夜間遇見光",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/4c61244a-746b-4ac8-a85e-c267e502727e.jpg"
+      "filename": "04-bedroom.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/04-bedroom.jpeg",
+      "alt": "夜間醒來感受到不尋常的光",
+      "sha256": "485e382bea18b565bec6bc373bdb3fdc0bcf1fbc240e5a4df8a22afeb03199f8"
     },
     {
-      "alt": "鏡中內在人",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/12f8e46f-85f4-4f69-a707-d31a7218d1f5.jpg"
+      "filename": "05-mirror.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/05-mirror.jpeg",
+      "alt": "透過鏡子看見尚未認識的內在自己",
+      "sha256": "c69fbc86aa88294717f01c82e2a4e423a88f16b2233cb10c8b2e49c14077775e"
     },
     {
-      "alt": "1911年病者光環情境",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/02ba36a2-ee90-4618-8de4-ba4f8d4e9d14.jpg"
+      "filename": "06-halo.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/06-halo.jpeg",
+      "alt": "1911年來信中見證病者頭部光環的場景示意",
+      "sha256": "a68953b5ba716eff324b0f2b95fc9705f1f59babf9ebef42e9755932d57e5c3b"
     },
     {
-      "alt": "明暗與內在陰影",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/8e3a77c5-e568-47ec-9d31-2b8abad91d28.jpg"
+      "filename": "07-light-shadow.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/07-light-shadow.jpeg",
+      "alt": "光與陰影交會的內在修持",
+      "sha256": "18429bb020d711bcdd6644788f37b54b330355092abd0744cb41cac41f6ca15b"
     },
     {
-      "alt": "臨終親人與光",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/12a423e1-d1cc-4a2b-9fd4-ede7e7f8d7e5.jpg"
+      "filename": "08-farewell.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/08-farewell.jpeg",
+      "alt": "親人離世時看見光影的情境",
+      "sha256": "e0b7f9322f0c324c502486d522318cd9b2492f67159c07d60094f2cb106c9304"
     },
     {
-      "alt": "元神與合一",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/a06190c7-803a-4027-a93c-069911e4d253.jpg"
+      "filename": "09-temple-spirit.jpeg",
+      "url": "https://lyyuan.tw/assets/articles/religious-light-inner-person-yuanshen/09-temple-spirit.jpeg",
+      "alt": "元神感應與內在生命合一的修持象徵",
+      "sha256": "62fe8ac8fd8d19b2a101e7453469b57c0b3e8ea96b8c5e6cb66be6e7c1211ee2"
     }
   ],
-  "security": "Member-only article body must be saved to Firestore paidArticleBodies via authenticated admin; never commit private body to public GitHub"
+  "security": "The public source contains preview text only. The encrypted member body is decrypted exclusively by the existing publishing service and stored in protected Firestore paidArticleBodies."
 }
