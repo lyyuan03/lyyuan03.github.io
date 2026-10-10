@@ -1,0 +1,31 @@
+export const religiousLightInnerPersonArticle = {
+  "id": "religious-light-inner-person-yuanshen",
+  "slug": "religious-light-inner-person-yuanshen",
+  "title": "宗教修持中看見的光，與內在人有什麼關係？",
+  "category": "spiritual",
+  "displayCategory": "靈修",
+  "status": "draft",
+  "updatedAt": "2026-10-10T09:30:00.000Z",
+  "coverImage": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/69411bd3-01dd-4073-8bbb-70dffbacb53a.jpg",
+  "thumbnailImage": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/69411bd3-01dd-4073-8bbb-70dffbacb53a.jpg",
+  "thumbnailTitle": "宗教修持中看見的光，與內在人有什麼關係？",
+  "excerpt": "從宗教中的佛光、靈光與死亡經驗，探討內在人、光之人、榮格自性與元神修持的關係。",
+  "accessType": "paid",
+  "privatePaidContent": true,
+  "topics": [
+    "內在人",
+    "元神",
+    "靈光",
+    "榮格",
+    "宗教修持"
+  ],
+  "series": "靈修辨證",
+  "readingLevel": "深度",
+  "sharePath": "article/religious-light-inner-person-yuanshen.html",
+  "bookTitle": "我在人間的元神覺醒",
+  "bookAuthor": "宇色 Osel",
+  "bookPublisher": "柿子文化",
+  "bookPurchaseUrl": "https://www.books.com.tw/products/0011060075?sloc=main",
+  "bookCoverImage": "https://wsrv.nl/?w=480&output=webp&q=88&url=https%3A%2F%2Fwww.books.com.tw%2Fimg%2F001%2F106%2F00%2F0011060075.jpg",
+  "content": "在宗教修持的過程中，看見光是相當特殊的靈性經驗。有些人靜坐時閉上眼睛便看見白光，誦經持咒時感覺金色的光從頭頂降下。也有自稱具有陰陽眼的人，能看見別人身上的靈性光輝，甚至看見神明籠罩在明亮的光裡。\n\n這類光的經驗，也常出現在與死亡有關的記載中。有人在親人過世後，看見一道光出現在房間裡，沒有看見往生者的身影，卻強烈感覺那道光與親人有關。文獻裡有一名女子，姐姐過世的那一刻，她看見天空掛著一幅巨大的簾子，簾子後面有一束讓人難以忍受的光，她覺得那像是從彼岸透出來的天堂光輝。也有記載提到，有人在睡夢中看見一道光，同一時間，遠方的親人剛好過世。\n\n人類為什麼總是用光來描述靈性、神明，以及死後的生命？佛光、靈光、神光、智慧光，名稱各異，光在修持傳統裡都有特殊的意義。要研究光與修行的關係，就得先問：人為什麼看得見光？這些光與靈性生命有什麼關係？\n\n一些宗教與神祕學文獻提出一個很特別的觀念：每個人的內在，還有另一個人。平常肉眼看不見，卻有自己的內在生命，能以光的形式顯現，有些傳統稱為「內在人」。依這個觀點，看見別人身上的光，那道光就可能是內在人顯現的靈性光輝。接下來，先談什麼是內在人。\n\n<!-- paid-only -->"
+};
