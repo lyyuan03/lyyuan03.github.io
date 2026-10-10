@@ -21,7 +21,7 @@ import { spiritualGoodDeathArticle } from "./article-spiritual-good-death.js?v=2
 import { ghostsPastLivesSupernaturalKnowingArticle } from "./article-ghosts-past-lives-supernatural-knowing.js?v=20260923-1";
 import { blessingTeacherDiscernmentArticle } from "./article-blessing-teacher-discernment.js?v=20261002-cover-photo-1";
 import { collectiveUnconsciousElectionArticle } from "./article-collective-unconscious-election.js?v=20261006-1";
-import { treeSpiritsNatureKarmaReincarnationArticle } from "./article-tree-spirits-nature-karma-reincarnation.js?v=20261010-real-planting-1";
+import { treeSpiritsNatureKarmaReincarnationArticle } from "./article-tree-spirits-nature-karma-reincarnation.js?v=20261010-dizhi-support-1";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260919-jinmu-series-sort-1";
 
 const featuredWealthDisciplineArticle = {
