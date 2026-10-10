@@ -1,0 +1,44 @@
+{
+  "articleId": "religious-light-inner-person-yuanshen",
+  "coverImage": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/69411bd3-01dd-4073-8bbb-70dffbacb53a.jpg",
+  "thumbnailImage": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/69411bd3-01dd-4073-8bbb-70dffbacb53a.jpg",
+  "bodyImages": [
+    {
+      "alt": "佐西摩斯與煉金術中的光之人",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/f6bb8912-00af-496c-a259-a3105ade24c6.jpg"
+    },
+    {
+      "alt": "山林師徒與修持",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/2c7221d1-edda-470a-8feb-9bdd4cc3cae5.jpg"
+    },
+    {
+      "alt": "修行與內在生命",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/2e2066eb-df05-45df-b7c2-cd73eacb256c.jpg"
+    },
+    {
+      "alt": "夜間遇見光",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/4c61244a-746b-4ac8-a85e-c267e502727e.jpg"
+    },
+    {
+      "alt": "鏡中內在人",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/12f8e46f-85f4-4f69-a707-d31a7218d1f5.jpg"
+    },
+    {
+      "alt": "1911年病者光環情境",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/02ba36a2-ee90-4618-8de4-ba4f8d4e9d14.jpg"
+    },
+    {
+      "alt": "明暗與內在陰影",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/8e3a77c5-e568-47ec-9d31-2b8abad91d28.jpg"
+    },
+    {
+      "alt": "臨終親人與光",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/12a423e1-d1cc-4a2b-9fd4-ede7e7f8d7e5.jpg"
+    },
+    {
+      "alt": "元神與合一",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/a06190c7-803a-4027-a93c-069911e4d253.jpg"
+    }
+  ],
+  "security": "Member-only article body must be saved to Firestore paidArticleBodies via authenticated admin; never commit private body to public GitHub"
+}
