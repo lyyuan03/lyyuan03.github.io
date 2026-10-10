@@ -1,6 +1,6 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js?v=20260831-permissions-1";
 import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-3";
-import { staticArticles } from "./static-articles.js?v=20261010-tree-revision-2";
+import { staticArticles } from "./static-articles.js?v=20261010-real-planting-1";
 import { recommendedBookForArticle } from "./article-reading-resources.js?v=20260923-ghosts-supernatural-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -200,9 +200,13 @@ function sanitizeUnsafeArticleContent(value = "") {
 }
 
 function renderInline(value = "") {
-  return escapeHtml(value).replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (_, alt, src) {
-    return /^data:image/i.test(src) ? "" : '<img src="' + src + '" alt="' + alt + '">';
-  });
+  return escapeHtml(value)
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (_, alt, src) {
+      return /^data:image/i.test(src) ? "" : '<img src="' + src + '" alt="' + alt + '">';
+    })
+    .replace(/\[([^\]]+)\]\((https:\/\/[^\s)"'<>]+)\)/g, function (_, label, url) {
+      return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+    });
 }
 
 function renderContent(value = "") {
