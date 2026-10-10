@@ -1,0 +1,79 @@
+name: Publish Religious Light Member Article
+
+on:
+  push:
+    branches: [main, publish/religious-light-inner-person-20261010]
+    paths:
+      - '.github/workflows/publish-religious-light-member-article.yml'
+      - '.github/scripts/publish-religious-light-member-article.mjs'
+      - 'secure-imports/religious-light-inner-person-yuanshen-20261010.enc.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: religious-light-member-publication
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check publication script and membership contracts
+        run: |
+          node --check .github/scripts/publish-religious-light-member-article.mjs
+          node --test .github/scripts/test-religious-light-publication.mjs
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-paid-article-runtime.mjs
+          node scripts/audit-production-stability.mjs
+      - name: Install candidate smoke test runtime
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Start candidate site
+        run: |
+          nohup python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/lyyuan-smoke-server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/articles.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Require five stable paid article loads
+        env:
+          SMOKE_BASE_URL: http://127.0.0.1:4173
+        run: node scripts/smoke-article-candidate.mjs
+
+  store-member-article:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Use the existing Firestore publishing account
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/datastore
+      - name: Decrypt and atomically store the member article
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIRESTORE_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        run: node .github/scripts/publish-religious-light-member-article.mjs
+      - name: Save publication evidence without private text
+        uses: actions/upload-artifact@v4
+        with:
+          name: religious-light-member-publication-report
+          path: /tmp/religious-light-publication-report.json
+          retention-days: 30
