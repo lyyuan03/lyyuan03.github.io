@@ -153,8 +153,8 @@ async function importPatchedArticleCore(moduleUrl) {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20261007-gate-price-sync-1",
-    "./articles-core-20260810-v6.js?v=20261007-gate-price-sync-1&retry=1"
+    "./articles-core-20260810-v6.js?v=20261010-tree-spirit-free-1",
+    "./articles-core-20260810-v6.js?v=20261010-tree-spirit-free-1&retry=1"
   ];
   let lastError = null;
   for (const [index, moduleUrl] of coreModuleUrls.entries()) {
