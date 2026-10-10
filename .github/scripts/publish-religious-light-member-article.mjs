@@ -3,6 +3,7 @@ import { createDecipheriv, createHash, createPublicKey, privateDecrypt, constant
 import { readFileSync, writeFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { pathToFileURL } from "node:url";
+import { execFileSync } from "node:child_process";
 
 export const ARTICLE_ID = "religious-light-inner-person-yuanshen";
 const TITLE = "宗教修持中看見的光，與內在人有什麼關係？";
@@ -114,7 +115,9 @@ async function main() {
   assert.ok(publish || process.env.GITHUB_REF === "refs/heads/publish/religious-light-inner-person-20261010");
   const service = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || "{}");
   assert.equal(service.project_id, PROJECT);
-  assert.ok(service.private_key && process.env.FIRESTORE_ACCESS_TOKEN, "The existing publishing account is required.");
+  assert.ok(service.private_key, "The existing publishing account is required.");
+  const accessToken = process.env.FIRESTORE_ACCESS_TOKEN || execFileSync("gcloud", ["auth", "print-access-token"], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+  assert.ok(accessToken, "The existing publishing account must authenticate.");
   const envelope = JSON.parse(readFileSync(ENVELOPE_PATH, "utf8"));
   const payload = decryptEnvelope(envelope, service.private_key);
   const split = validatePayload(payload);
@@ -126,7 +129,7 @@ async function main() {
   const request = async (suffix, { method = "GET", data, authenticated = true, allow404 = false } = {}) => {
     const response = await fetch(root + suffix, {
       method, headers: {
-        ...(authenticated ? { Authorization: `Bearer ${process.env.FIRESTORE_ACCESS_TOKEN}` } : {}),
+        ...(authenticated ? { Authorization: `Bearer ${accessToken}` } : {}),
         ...(data ? { "Content-Type": "application/json" } : {})
       }, body: data ? JSON.stringify(data) : undefined, signal: AbortSignal.timeout(20000)
     });

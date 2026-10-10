@@ -60,16 +60,14 @@ jobs:
         with:
           node-version: 22
       - name: Use the existing Firestore publishing account
-        id: auth
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          token_format: access_token
-          access_token_scopes: https://www.googleapis.com/auth/datastore
+      - name: Use the existing Google Cloud SDK authentication flow
+        uses: google-github-actions/setup-gcloud@v2
       - name: Decrypt and atomically store the member article
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          FIRESTORE_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
         run: node .github/scripts/publish-religious-light-member-article.mjs
       - name: Save publication evidence without private text
         uses: actions/upload-artifact@v4
