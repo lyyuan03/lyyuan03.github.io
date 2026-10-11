@@ -1,0 +1,28 @@
+name: Export Member Publisher Public Key
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/export-member-publisher-public-key.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  derive-public-key:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Derive non-secret public key from existing publishing identity
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          node - <<'NODE'
+          const {createPublicKey, createHash}=require('node:crypto');
+          if(!process.env.FIREBASE_SERVICE_ACCOUNT_JSON) throw Error('Missing publishing account');
+          const service=JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+          if(service.project_id!=='lyyuan03-membership') throw Error('Unexpected Firestore project');
+          const publicDer=createPublicKey(service.private_key).export({type:'spki',format:'der'});
+          const fp=createHash('sha256').update(publicDer).digest('hex');
+          process.stdout.write('PUBLISHER_PUBLIC_SPKI_DER_BASE64='+publicDer.toString('base64')+'\n');
+          process.stdout.write('PUBLISHER_PUBLIC_SHA256='+fp+'\n');
+          NODE
