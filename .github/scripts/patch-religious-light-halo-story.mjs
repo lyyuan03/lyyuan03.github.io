@@ -87,7 +87,17 @@ async function main() {
   }
   const start = oldBody.indexOf(patch.replaceFrom);
   const end = oldBody.indexOf(patch.replaceTo, start + patch.replaceFrom.length);
-  assert.ok(start >= 0 && end > start && end - start < 1100, "Cannot safely locate unique existing 1911 story paragraph.");
+  if (!(start >= 0 && end > start && end - start < 1100)) {
+    const i1911 = oldBody.indexOf("1911");
+    const iAncient = oldBody.indexOf("古代文獻裡的光之人");
+    const iRussian = oldBody.indexOf("俄羅斯朝聖者的故事");
+    const iMirror = oldBody.indexOf("認識內在人，就像第一次照鏡子");
+    console.log(JSON.stringify({ inspection: "anchor_positions_only", bodyLength: oldBody.length,
+      exactStart: start, exactEnd: end, i1911, iAncient, iRussian, iMirror,
+      distanceFromStartToEnd: end - start, imagePresent: oldBody.includes(patch.expectedImageUrl),
+      occurrences1911: oldBody.split("1911").length - 1 }));
+    throw new Error("Cannot safely locate the original 1911 story. No content was modified.");
+  }
   assert.equal(oldBody.indexOf(patch.replaceFrom, start + 1), -1);
   assert.equal(oldBody.indexOf(patch.replaceTo, end + 1), -1);
   const prefix = oldBody.slice(0, start).replace(/\s*$/, "\n\n");
