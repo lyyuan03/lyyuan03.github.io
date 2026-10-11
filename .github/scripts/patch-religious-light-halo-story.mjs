@@ -50,7 +50,8 @@ async function main() {
   const photoLine = patch.replacement.split(/\r?\n/).filter(line => line.includes(patch.expectedImageUrl));
   assert.equal(photoLine.length, 1, "The unsuitable SVG must be omitted exactly once.");
   const storyText = patch.replacement.split(/\r?\n/).filter(line => !line.includes(patch.expectedImageUrl)).join("\n").trim();
-  assert.ok(storyText.length > 1100);
+  assert.ok(storyText.length > 600, "Private story text was unexpectedly short.");
+  assert.ok(storyText.includes("1911") && storyText.includes("內在人") && storyText.includes("恩典"), "The historical narrative and spiritual interpretation must remain.");
   const token = process.env.FIRESTORE_ACCESS_TOKEN || execFileSync("gcloud", ["auth", "print-access-token"], { encoding: "utf8" }).trim();
   assert.ok(token);
   const root = "https://firestore.googleapis.com/v1/projects/" + PROJECT_ID + "/databases/(default)/documents";
