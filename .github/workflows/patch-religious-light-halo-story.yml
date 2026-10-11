@@ -1,0 +1,48 @@
+name: Patch Religious Light Halo Story Securely
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-religious-light-halo-story.yml'
+      - '.github/scripts/patch-religious-light-halo-story.mjs'
+      - 'secure-imports/religious-light-halo-story-20261011.enc.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: religious-light-halo-story-update
+  cancel-in-progress: false
+
+jobs:
+  patch-member-article:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check patch syntax and paid-content access policy
+        run: |
+          node --check .github/scripts/patch-religious-light-halo-story.mjs
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-paid-article-runtime.mjs
+          node scripts/audit-production-stability.mjs
+      - name: Authenticate using existing Firestore publisher account
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Decrypt private amendment inside runner and update member body only
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/patch-religious-light-halo-story.mjs
+      - name: Save non-sensitive verification only
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: religious-light-halo-story-update-report
+          path: /tmp/religious-light-halo-story-update-report.json
+          retention-days: 30
