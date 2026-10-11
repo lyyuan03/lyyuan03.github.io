@@ -92,7 +92,7 @@ async function main() {
   assert.ok(anchor > 0 && oldBody.indexOf(followingHeading, anchor + 1) === -1,
     "Expected next chapter heading must appear exactly once.");
   const lineStart = oldBody.lastIndexOf("\n", anchor) + 1;
-  assert.match(oldBody.slice(lineStart, anchor), /^#{2,6}\\s+$/, "The insertion anchor must be a Markdown heading.");
+  assert.match(oldBody.slice(lineStart, anchor), /^#{2,6} +$/, "The insertion anchor must be a Markdown heading.");
   const before = oldBody.slice(0, lineStart).trimEnd();
   const after = oldBody.slice(lineStart).trimStart();
   assert.ok(before.includes("古代文獻裡的光之人"), "The preceding ancient light-person section is required.");
