@@ -44,18 +44,13 @@ async function main() {
   assert.ok(patch.replacement.includes(patch.expectedImageUrl), "Illustration must appear in the member-only addition.");
   assert.ok(!patch.replacement.includes(marker));
 
-  // Do not publish the private amendment until its illustrated asset is live.
-  let artLive = false;
-  for (let attempt = 0; attempt < 72 && !artLive; attempt++) {
-    try {
-      const resp = await fetch(patch.expectedImageUrl, { cache: "no-store", signal: AbortSignal.timeout(8000) });
-      const img = resp.ok ? await resp.text() : "";
-      artLive = resp.ok && img.trimStart().startsWith("<svg") && img.includes('viewBox="0 0 1600 900"');
-    } catch { artLive = false; }
-    if (!artLive) await new Promise(resolve => setTimeout(resolve, 5000));
-  }
-  assert.ok(artLive, "Illustration not yet deployed; paid article left unchanged.");
-
+  // The original 9 images remain untouched; the newly generated photorealistic illustration
+  // is delivered separately until its exact original file can be uploaded. Never display
+  // the earlier stylistically incompatible SVG in the paid article.
+  const photoLine = patch.replacement.split(/\r?\n/).filter(line => line.includes(patch.expectedImageUrl));
+  assert.equal(photoLine.length, 1, "The unsuitable SVG must be omitted exactly once.");
+  const storyText = patch.replacement.split(/\r?\n/).filter(line => !line.includes(patch.expectedImageUrl)).join("\n").trim();
+  assert.ok(storyText.length > 1100);
   const token = process.env.FIRESTORE_ACCESS_TOKEN || execFileSync("gcloud", ["auth", "print-access-token"], { encoding: "utf8" }).trim();
   assert.ok(token);
   const root = "https://firestore.googleapis.com/v1/projects/" + PROJECT_ID + "/databases/(default)/documents";
@@ -80,7 +75,7 @@ async function main() {
   assert.ok(pub.content?.stringValue.endsWith(marker), "Public document must contain only the free preview.");
   const oldBody = priv.content?.stringValue;
   assert.ok(oldBody && oldBody.length > 1000);
-  if (oldBody.includes(patch.expectedImageUrl)) {
+  if (oldBody.includes("哥哥早已安靜地睡著") && oldBody.includes("《幽靈・死亡・夢境：榮格取向的鬼文本分析》")) {
     assert.ok(oldBody.includes("《幽靈・死亡・夢境：榮格取向的鬼文本分析》"), "Existing update must match requested source.");
     console.log(JSON.stringify({ articleId: ARTICLE_ID, updated: false, reason: "already_applied", accessType: "paid" }));
     return;
@@ -97,14 +92,14 @@ async function main() {
   const after = oldBody.slice(lineStart).trimStart();
   assert.ok(before.includes("古代文獻裡的光之人"), "The preceding ancient light-person section is required.");
   assert.ok(before.includes("俄羅斯朝聖者的故事"), "The Russian Pilgrim example must be retained before insertion.");
-  const updatedBody = before + "\n\n" + patch.replacement.trim() + "\n\n" + after;
+  const updatedBody = before + "\n\n" + storyText + "\n\n" + after;
   assert.ok(updatedBody.includes("俄羅斯朝聖者的故事"), "The Russian Pilgrim passage must remain.");
   const imageLinks = text => [...text.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g)].map(x => x[1]);
   const oldImages = imageLinks(oldBody), newImages = imageLinks(updatedBody);
   assert.equal(oldImages.length, 9, "Existing nine member illustrations must remain.");
-  assert.equal(newImages.length, 10, "New illustration increases member illustration count to ten.");
+  assert.equal(newImages.length, 9, "Nine existing illustrations must remain; mismatched SVG is excluded.");
   for (const url of oldImages) assert.equal(newImages.filter(candidate => candidate === url).length, 1);
-  assert.equal(newImages.filter(url => url === patch.expectedImageUrl).length, 1);
+  assert.equal(newImages.filter(url => url === patch.expectedImageUrl).length, 0);
   assert.ok(!updatedBody.includes(marker), "The paywall marker must not be in the private-only body.");
   const now = new Date().toISOString();
   const oldVersion = Number(priv.contentVersion?.integerValue || 1);
@@ -136,7 +131,7 @@ async function main() {
   assert.equal(unauth.status, 403, "Anonymous access to paid story must stay blocked.");
   const report = {
     articleId: ARTICLE_ID, updated: true, articleStatus: "published", accessType: "paid",
-    originalIllustrationsRetained: 9, newIllustrations: 1, updatedVersion: version,
+    originalIllustrationsRetained: 9, newIllustrations: 0, updatedVersion: version,
     previewUnchanged: true, privateBodyVerified: true, anonymousPrivateReadStatus: unauth.status,
     articleUrl: "https://lyyuan.tw/articles.html?id=" + ARTICLE_ID
   };
