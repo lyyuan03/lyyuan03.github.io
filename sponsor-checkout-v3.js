@@ -121,7 +121,7 @@ function paymentReturnRedirect() {
     if (target.origin !== location.origin) return false;
     target.searchParams.set("payment", "complete");
     if (target.pathname === location.pathname && target.search === location.search) return false;
-    location.replace(target.href);
+    location.assign(target.href);
     return true;
   } catch {
     return false;

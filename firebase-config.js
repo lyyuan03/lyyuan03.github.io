@@ -63,7 +63,7 @@ export function isAdminEmail(email) {
 
 // 所有使用 Firebase 的頁面都載入同一套登入相容處理，
 // 讓 iPhone、iPad、Android 與桌機使用一致的 Email 判讀與登入狀態。
-import("./auth-mobile-compat.js?v=20260810-admin-login-race-fix-1").catch((error) => {
+import("./auth-mobile-compat.js?v=20261017-inapp-login-1").catch((error) => {
   console.error("跨裝置登入相容模組載入失敗：", error);
 });
 

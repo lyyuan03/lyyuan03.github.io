@@ -14,7 +14,7 @@
     const serviceShellPaths = ["/services/naming.html", "/services/", "/services"];
     if (!serviceShellPaths.includes(currentPath)) return;
 
-    import("/site-auth-nav.js?v=20260804-strict-wellness-1").catch((error) => {
+    import("/site-auth-nav.js?v=20261017-member-menu-1").catch((error) => {
       console.warn("信眾服務會員登入列載入失敗", error);
     });
   };
