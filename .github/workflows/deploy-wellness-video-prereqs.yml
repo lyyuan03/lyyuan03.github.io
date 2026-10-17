@@ -42,8 +42,25 @@ jobs:
           npm --prefix functions ci
           node --test functions/test/wellness-first-join.test.js
 
-      - name: Deploy Firestore indexes only (no --force; unlisted indexes are kept)
-        run: firebase deploy --only firestore:indexes --project lyyuan03-membership --non-interactive
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: lyyuan03-membership
+
+      # firebase CLI 部署索引時會先編譯 firestore.rules（服務帳戶無此權限），改用 gcloud 只建立這一個索引；不會刪除其他索引。
+      - name: Create Firestore composite index only (memberVideos status+accessLevel+publishedMonth)
+        run: |
+          set +e
+          out=$(gcloud firestore indexes composite create \
+            --project=lyyuan03-membership --collection-group=memberVideos --query-scope=collection \
+            --field-config=field-path=status,order=ascending \
+            --field-config=field-path=accessLevel,order=ascending \
+            --field-config=field-path=publishedMonth,order=ascending \
+            --async --quiet 2>&1)
+          code=$?
+          echo "$out"
+          if [ $code -ne 0 ] && ! echo "$out" | grep -qi "already exists"; then exit $code; fi
+          gcloud firestore indexes composite list --project=lyyuan03-membership --format="table(name.basename(),collectionGroup,state,fields[].fieldPath.list())" | grep -i memberVideos || true
 
       - name: Backfill DRY RUN (no writes, emails masked)
         working-directory: functions
