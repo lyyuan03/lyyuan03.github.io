@@ -1,3 +1,4 @@
+import { collectiveUnconsciousElectionPart2Article } from "./article-collective-unconscious-election-part-2.js?v=20261017-1";
 import { dragonCanonConsciousnessFieldArticle } from "./article-dragon-canon-consciousness-field.js?v=20260822-paid-highlight-1&paid-private=20260824-article-system-repair-1";
 import { staticArticles as baseArticles } from "./static-articles-base.js?v=20260730-safe-base-1&paid-private=20260824-article-system-repair-1";
 import { ghostGateAlwaysOpenArticle } from "./article-ghost-gate-always-open.js?v=20260813-draft-1&paid-private=20260824-article-system-repair-1";
@@ -107,6 +108,7 @@ function normalizeArticle(article) {
 
 export const staticArticles = [
   ...jinmuEventArticles.slice(2),
+  collectiveUnconsciousElectionPart2Article,
   religiousLightInnerPersonArticle,
   treeSpiritsNatureKarmaReincarnationArticle,
   collectiveUnconsciousElectionArticle,
