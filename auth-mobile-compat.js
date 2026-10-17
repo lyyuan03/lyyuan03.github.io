@@ -6,7 +6,7 @@ import {
   signInWithPopup,
   signInWithRedirect
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./inapp-browser.js?v=20261017-inapp-login-1";
+import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./inapp-browser.js?v=20261017-inapp-login-2";
 
 const RETURN_URL_KEY = "lyyuan-auth-return-url";
 const AUTH_FLOW_KEY = "lyyuan-auth-flow-v2";

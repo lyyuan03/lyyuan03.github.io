@@ -1,10 +1,27 @@
 // 社群 App 內建瀏覽器（LINE／Facebook／Instagram／Threads／WeChat／TikTok／Android WebView）
 // Google 會以 403 disallowed_useragent 拒絕在內建瀏覽器中登入，因此必須先改用外部瀏覽器開啟。
-export const IN_APP_BROWSER_PATTERN = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Line\/|Barcelona|MicroMessenger|musical_ly|Bytedance|; wv\)/i;
+export const IN_APP_BROWSER_PATTERN = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Line\/|Barcelona|MicroMessenger|musical_ly|Bytedance|Telegram|; wv\)/i;
+
+// iOS 的 App 內建 WKWebView（例如 Telegram iOS）UA 沒有任何 App 標記，但缺少「Safari/」版本字樣；
+// 真正的 Safari、SFSafariViewController 與 iOS 版 Chrome／Firefox／Edge 都帶有 Safari/ 或自身標記。
+export function isIOSWebView(ua = navigator.userAgent) {
+  const value = ua || "";
+  return /iPhone|iPad|iPod/i.test(value)
+    && /AppleWebKit/i.test(value)
+    && !/Safari\//i.test(value)
+    && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(value);
+}
 
 export function isInAppBrowser(ua = navigator.userAgent) {
-  return IN_APP_BROWSER_PATTERN.test(ua || "");
+  if (IN_APP_BROWSER_PATTERN.test(ua || "")) return true;
+  if (isIOSWebView(ua)) return true;
+  try {
+    if (typeof window !== "undefined" && (window.TelegramWebviewProxy || window.TelegramWebview)) return true;
+  } catch {}
+  return false;
 }
+
+const LINE_TRIED_KEY = "lyyuan-line-external-tried";
 
 function isLineApp(ua = navigator.userAgent) {
   return /Line\//i.test(ua || "");
@@ -55,12 +72,21 @@ export function showOpenExternalGuide(message = "") {
       </ol>
       <p>若找不到選項，請按下方按鈕複製網址，貼到 Safari 或 Chrome 網址列。</p>
       <p class="inapp-status" aria-live="polite"></p>
+      <button type="button" class="inapp-safari" hidden>用 Safari 開啟</button>
       <button type="button" class="inapp-copy">複製本頁網址</button>
       <button type="button" class="inapp-close">關閉</button>
     </div>`;
   document.body.appendChild(guide);
   const status = guide.querySelector(".inapp-status");
   if (message) status.textContent = message;
+  const safariButton = guide.querySelector(".inapp-safari");
+  if (/iPhone|iPad|iPod/i.test(navigator.userAgent || "")) {
+    safariButton.hidden = false;
+    safariButton.addEventListener("click", () => {
+      // iOS 17 起支援 x-safari-https://，部分 App 會直接交給 Safari；不支援時請依上方步驟操作。
+      location.href = url.replace(/^https:\/\//, "x-safari-https://");
+    });
+  }
   guide.querySelector(".inapp-close").addEventListener("click", () => guide.remove());
   guide.querySelector(".inapp-copy").addEventListener("click", async () => {
     try {
@@ -81,9 +107,10 @@ export function openInExternalBrowser() {
   if (isLineApp(ua)) {
     const alreadyTried = new URL(location.href).searchParams.get("openExternalBrowser") === "1";
     if (!alreadyTried) {
+      // 帶 openExternalBrowser=1 重新載入；若 LINE 未改用外部瀏覽器，重新載入後會自動顯示說明（見檔案底部）。
+      try { sessionStorage.setItem(LINE_TRIED_KEY, String(Date.now())); } catch {}
       url.searchParams.set("openExternalBrowser", "1");
       location.assign(url.href);
-      window.setTimeout(() => showOpenExternalGuide(), 1500);
       return true;
     }
     showOpenExternalGuide();
@@ -100,3 +127,18 @@ export function openInExternalBrowser() {
   showOpenExternalGuide();
   return true;
 }
+
+// LINE 重新載入後仍停留在 LINE 內（代表 openExternalBrowser 未生效）時，直接顯示改用瀏覽器的說明，
+// 避免會員覺得「按登入沒反應」。
+(function showGuideAfterLineRetry() {
+  try {
+    if (!isLineApp()) return;
+    if (new URL(location.href).searchParams.get("openExternalBrowser") !== "1") return;
+    const tried = Number(sessionStorage.getItem(LINE_TRIED_KEY) || 0);
+    if (!tried || Date.now() - tried > 5 * 60 * 1000) return;
+    sessionStorage.removeItem(LINE_TRIED_KEY);
+    const show = () => showOpenExternalGuide("LINE 未自動改用外部瀏覽器，請依下列步驟操作。");
+    if (document.body) show();
+    else document.addEventListener("DOMContentLoaded", show, { once: true });
+  } catch {}
+})();
