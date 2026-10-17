@@ -1,0 +1,47 @@
+name: Publish Election Collective Paid Article
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'secure-imports/collective-unconscious-election-2026-part-2-20261017.enc.json'
+      - '.github/scripts/publish-election-collective-paid-article.mjs'
+      - '.github/workflows/publish-election-collective-paid-article.yml'
+      - 'assets/articles/collective-unconscious-election-2026-part-2/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: election-collective-paid-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate article code and production contracts
+        run: |
+          node --check .github/scripts/publish-election-collective-paid-article.mjs
+          node --check article-collective-unconscious-election-part-2.js
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-paid-article-runtime.mjs
+          node scripts/audit-production-stability.mjs
+      - name: Authenticate existing Firestore publishing service account
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Decrypt and publish paid body to protected Firestore
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/publish-election-collective-paid-article.mjs
+      - name: Upload non-sensitive publication proof
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: election-collective-paid-publication-report
+          path: /tmp/election-member-publication-report.json
+          retention-days: 30
