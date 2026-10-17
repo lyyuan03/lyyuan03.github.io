@@ -393,10 +393,24 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    // 養生療癒會員影片觀看範圍：只能觀看「首次入會月份（YYYY-MM）」起發布的影片。
+    // 首次入會月份保存於 memberAccess/{email}.wellnessFirstJoinMonth，由 Cloud Functions 寫入且不會延後；
+    // 影片發布月份 publishedMonth 由後台儲存與 Cloud Functions 自動補上。缺少任一欄位時一律不可觀看。
+    function videoWithinFirstJoinMonth(video) {
+      return hasWellnessMemberRecord()
+        && wellnessMember().data.keys().hasAny(["wellnessFirstJoinMonth"])
+        && wellnessMember().data.wellnessFirstJoinMonth is string
+        && wellnessMember().data.wellnessFirstJoinMonth.matches('^[0-9]{4}-[0-9]{2}$')
+        && video.keys().hasAny(["publishedMonth"])
+        && video.publishedMonth is string
+        && video.publishedMonth >= wellnessMember().data.wellnessFirstJoinMonth;
+    }
+
     match /memberVideos/{videoId} {
       allow read: if isAdmin()
         || (resource.data.status == "published"
-          && canReadMemberVideo(resource.data.accessLevel));
+          && canReadMemberVideo(resource.data.accessLevel)
+          && videoWithinFirstJoinMonth(resource.data));
       allow create, update, delete: if isAdmin();
     }
 

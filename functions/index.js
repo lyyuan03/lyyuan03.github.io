@@ -16,6 +16,7 @@ const {
 } = require("./ecpay");
 const { sponsorPlanAmount } = require("./membership-plans");
 const { addDays, nextArticleWindowAnchor, sponsorPlanDays } = require("./article-window");
+const { earliestMonth, fallbackFirstJoinMonth, isMonth, taipeiMonth } = require("./wellness-first-join");
 
 initializeApp();
 const db = getFirestore();
@@ -560,6 +561,10 @@ exports.ecpayMembershipCallback = onRequest(
           pendingOrderNo: FieldValue.delete(),
           updatedAt: nowTimestamp
         };
+        // 養生療癒會員：首次入會月份只在尚未設定時寫入，續會／重新入會不覆寫（另由同步函式往更早修正）。
+        if (activeMember.memberType === "wellness-channel" && !isMonth(member.wellnessFirstJoinMonth)) {
+          activeMember.wellnessFirstJoinMonth = earliestMonth(fallbackFirstJoinMonth(member), taipeiMonth(now));
+        }
         if (order.memberType === "sponsor-member") {
           activeMember.articleAccess = true;
           activeMember.wellnessAccess = false;

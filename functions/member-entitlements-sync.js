@@ -3,6 +3,7 @@
 const { FieldValue, Timestamp, getFirestore } = require("firebase-admin/firestore");
 const { onDocumentWritten } = require("firebase-functions/v2/firestore");
 const { ARTICLE_WINDOW_POLICY, articleWindowStart } = require("./article-window");
+const { resolveFirstJoinMonth, videoPublishedMonth } = require("./wellness-first-join");
 
 const REGION = "asia-east1";
 const SCHEMA_VERSION = 1;
@@ -74,10 +75,11 @@ async function rebuildEntitlement(emailParam) {
   if (!email) return;
 
   const db = getFirestore();
-  const [sponsorSnapshot, wellnessSnapshot, entitlementSnapshot] = await Promise.all([
+  const [sponsorSnapshot, wellnessSnapshot, entitlementSnapshot, historySnapshot] = await Promise.all([
     db.doc(`sponsorMemberAccess/${email}`).get(),
     db.doc(`memberAccess/${email}`).get(),
-    db.doc(`memberEntitlements/${email}`).get()
+    db.doc(`memberEntitlements/${email}`).get(),
+    db.doc(`membershipHistory/${email}`).get()
   ]);
 
   const sponsor = sponsorSnapshot.exists ? sponsorSnapshot.data() || {} : {};
@@ -85,6 +87,21 @@ async function rebuildEntitlement(emailParam) {
   const now = new Date();
   const sponsorAccess = sponsorState(sponsor, email, now);
   const wellnessAccess = wellnessState(wellness, email, now);
+  const history = historySnapshot.exists ? historySnapshot.data() || {} : {};
+
+  // 首次入會月份：取現有值、歷史備份與推估值中最早者；只寫入一次或往更早修正，續會／重新入會不會延後。
+  if (wellnessSnapshot.exists && wellness.memberType === "wellness-channel") {
+    const firstJoinMonth = resolveFirstJoinMonth(wellness, history);
+    if (firstJoinMonth) {
+      if (wellness.wellnessFirstJoinMonth !== firstJoinMonth) {
+        await db.doc(`memberAccess/${email}`).set({ wellnessFirstJoinMonth: firstJoinMonth }, { merge: true });
+      }
+      if (history.wellnessFirstJoinMonth !== firstJoinMonth) {
+        await db.doc(`membershipHistory/${email}`).set({ email, wellnessFirstJoinMonth: firstJoinMonth }, { merge: true });
+      }
+      wellnessAccess.firstJoinMonth = firstJoinMonth;
+    }
+  }
 
   const hasIndependentPermissions = Array.isArray(entitlementSnapshot.data()?.permissions)
     && entitlementSnapshot.data().permissions.length > 0;
@@ -102,6 +119,7 @@ async function rebuildEntitlement(emailParam) {
     wellnessArticleAccess: wellnessAccess.articleAccess,
     wellnessVideoAccess: wellnessAccess.videoAccess,
     lingjiAccess: wellnessAccess.lingji,
+    wellnessFirstJoinMonth: wellnessAccess.firstJoinMonth || history.wellnessFirstJoinMonth || FieldValue.delete(),
     articleWindowPolicy: ARTICLE_WINDOW_POLICY,
     sourceCollections: {
       sponsorMemberAccess: sponsorSnapshot.exists,
@@ -134,6 +152,20 @@ exports.syncEntitlementsFromSponsor = onDocumentWritten(
 exports.syncEntitlementsFromWellness = onDocumentWritten(
   { document: "memberAccess/{email}", region: REGION },
   async (event) => rebuildEntitlement(event.params.email)
+);
+
+// 影片寫入時自動補上 publishedMonth（"YYYY-MM"，台北時間），供 firestore.rules 與查詢比對首次入會月份。
+exports.syncMemberVideoPublishedMonth = onDocumentWritten(
+  { document: "memberVideos/{videoId}", region: REGION },
+  async (event) => {
+    const after = event.data?.after;
+    if (!after?.exists) return;
+    const video = after.data() || {};
+    const month = videoPublishedMonth(video);
+    if (month && video.publishedMonth !== month) {
+      await after.ref.set({ publishedMonth: month }, { merge: true });
+    }
+  }
 );
 
 exports._test = { activeWindow, sponsorState, wellnessState };
