@@ -1,0 +1,84 @@
+name: Deploy wellness video prerequisites (indexes + backfill dry run)
+
+# 僅在 feat/wellness-video-first-join-month 分支修改本檔時執行。
+# 不推送任何 commit、不部署 firestore.rules、不部署 Cloud Functions（專案未使用 Blaze 方案）、不執行 --apply。
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/wellness-video-first-join-month]
+    paths: [.github/workflows/deploy-wellness-video-prereqs.yml, .github/deploy-triggers/wellness-video-prereqs.txt]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-membership-backend
+  cancel-in-progress: false
+
+jobs:
+  prereqs:
+    if: github.repository == 'lyyuan03/lyyuan03.github.io' && github.ref == 'refs/heads/feat/wellness-video-first-join-month'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install Firebase CLI and dependencies
+        run: |
+          npm install --global firebase-tools
+          npm --prefix functions ci
+          node --test functions/test/wellness-first-join.test.js
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: lyyuan03-membership
+
+      # firebase CLI 部署索引時會先編譯 firestore.rules（服務帳戶無此權限），改用 gcloud 只建立這一個索引；不會刪除其他索引。
+      - name: Create Firestore composite index only (memberVideos status+accessLevel+publishedMonth)
+        # 服務帳戶可能沒有建立索引的權限；失敗時仍繼續執行唯讀的 dry run，索引改由站長在 Console 建立。
+        continue-on-error: true
+        run: |
+          set +e
+          out=$(gcloud firestore indexes composite create \
+            --project=lyyuan03-membership --collection-group=memberVideos --query-scope=collection \
+            --field-config=field-path=status,order=ascending \
+            --field-config=field-path=accessLevel,order=ascending \
+            --field-config=field-path=publishedMonth,order=ascending \
+            --async --quiet 2>&1)
+          code=$?
+          echo "$out"
+          if [ $code -ne 0 ] && ! echo "$out" | grep -qi "already exists"; then exit $code; fi
+          gcloud firestore indexes composite list --project=lyyuan03-membership --format="table(name.basename(),collectionGroup,state,fields[].fieldPath.list())" | grep -i memberVideos || true
+
+      - name: Verify memberVideos index (read-only, waits up to ~20 min while building)
+        working-directory: functions
+        run: node check-member-video-index.mjs
+
+      # 只有觸發檔寫明 mode: apply-once（站長已確認月份清單）時才寫入；否則跳過。
+      - name: One-time APPLY (owner approved)
+        if: hashFiles('.github/deploy-triggers/wellness-video-prereqs.txt') != ''
+        working-directory: functions
+        run: |
+          if grep -q '^mode: apply-once' ../.github/deploy-triggers/wellness-video-prereqs.txt; then
+            node backfill-wellness-first-join.mjs --mask --apply
+          else
+            echo "trigger mode is not apply-once; skipping apply"
+          fi
+
+      - name: Backfill DRY RUN (no writes, emails masked)
+        working-directory: functions
+        run: node backfill-wellness-first-join.mjs --mask

@@ -1,8 +1,9 @@
 import { app, auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 import { LINGJI_THRESHOLD, annualCycle } from "./member-dashboard-logic.js";
+import { earliestMonth, fallbackFirstJoinMonth, taipeiMonth } from "./wellness-first-join-client.js?v=20261017-first-join-month-1";
 
 const form = document.getElementById("wellness-member-form");
 const listEl = document.getElementById("wellness-member-list");
@@ -269,12 +270,41 @@ function payload() {
   };
 }
 
+// 首次入會月份（YYYY-MM）：取「現有紀錄、歷史備份（含改 email 前的帳號）、推估值、本次開通當月」中最早者；
+// 只寫入或往更早修正，續會／重新入會不會延後。影片觀看範圍以此為準。
+async function resolveWellnessFirstJoinMonth(data, originalEmail = "") {
+  const emails = [...new Set([data.email, originalEmail].filter(Boolean))];
+  const months = [];
+  for (const email of emails) {
+    const [memberSnapshot, historySnapshot] = await Promise.all([
+      getDoc(doc(db, "memberAccess", email)),
+      getDoc(doc(db, "membershipHistory", email))
+    ]);
+    const existing = memberSnapshot.exists() ? memberSnapshot.data() : {};
+    const history = historySnapshot.exists() ? historySnapshot.data() : {};
+    months.push(existing.wellnessFirstJoinMonth, history.wellnessFirstJoinMonth, fallbackFirstJoinMonth(existing));
+  }
+  // 尚未開通（待付款等）不建立新的首次入會月份，只保留既有紀錄。
+  if (data.status !== "active") return earliestMonth(...months.filter((month, index) => index % 3 !== 2));
+  months.push(fallbackFirstJoinMonth(data));
+  return earliestMonth(...months) || taipeiMonth(new Date());
+}
+
 async function saveMember(event) {
   event.preventDefault();
   const data = payload();
   if (!data.email) return;
   const originalEmail = normalizeEmail(document.getElementById("wellness-member-original-email").value);
+  const firstJoinMonth = await resolveWellnessFirstJoinMonth(data, originalEmail);
+  if (firstJoinMonth) data.wellnessFirstJoinMonth = firstJoinMonth;
   await setDoc(doc(db, "memberAccess", data.email), data, { merge: true });
+  if (firstJoinMonth) {
+    await setDoc(doc(db, "membershipHistory", data.email), {
+      email: data.email,
+      wellnessFirstJoinMonth: firstJoinMonth,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
   await syncWellnessArticleBenefit(data);
   await writeWellnessHistory(data.email, data, "verified");
   if (originalEmail && originalEmail !== data.email) {

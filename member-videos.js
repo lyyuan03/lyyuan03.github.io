@@ -90,7 +90,7 @@ function videoSort(a, b) {
   return (toDate(b.publishedAt)?.getTime() || 0) - (toDate(a.publishedAt)?.getTime() || 0);
 }
 
-async function loadMemberVideos(level, isAdmin = false) {
+async function loadMemberVideos(level, isAdmin = false, firstJoinMonth = "") {
   const videosRef = collection(db, "memberVideos");
   let snapshots;
   if (isAdmin) {
@@ -100,7 +100,9 @@ async function loadMemberVideos(level, isAdmin = false) {
     snapshots = await Promise.all(levels.map((accessLevel) => getDocs(query(
       videosRef,
       where("status", "==", "published"),
-      where("accessLevel", "==", accessLevel)
+      where("accessLevel", "==", accessLevel),
+      // 只能觀看首次入會月份起發布的影片（firestore.rules 同步強制）。
+      where("publishedMonth", ">=", firstJoinMonth)
     ))));
   }
   const now = new Date();
@@ -188,13 +190,23 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
+    const firstJoinMonth = String(member.wellnessFirstJoinMonth || "");
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(firstJoinMonth)) {
+      showAccessState(
+        "影片觀看範圍設定中",
+        "系統正在建立您的首次入會月份紀錄，請稍候幾分鐘後重新整理；若持續出現，請聯繫靈元院行政團隊。",
+        '<button class="access-button" type="button" onclick="location.reload()">重新整理</button><a class="access-button" href="https://t.me/lyyuan" target="_blank" rel="noopener">聯繫行政團隊</a>'
+      );
+      return;
+    }
     const level = evaluateMember(member).effectiveLevel;
-    const videos = await loadMemberVideos(level);
+    const videos = await loadMemberVideos(level, false, firstJoinMonth);
     accessPanel.hidden = true;
     library.hidden = false;
     memberTitle.textContent = `${member.name || user.displayName || "會員"}｜${membershipLevel(member)}`;
     memberMeta.innerHTML = `有效會籍至<br>${escapeHtml(formatDate(member.expiresAt))}`;
-    accountGuide.textContent = `請確認 YouTube 目前登入的帳號為 ${email}；不同帳號即使取得連結也無法觀看。`;
+    const [joinYear, joinMonth] = firstJoinMonth.split("-");
+    accountGuide.textContent = `觀看範圍：${joinYear} 年 ${Number(joinMonth)} 月（首次入會月份）起發布的影片。請確認 YouTube 目前登入的帳號為 ${email}；不同帳號即使取得連結也無法觀看。`;
     renderVideos(videos, email);
   } catch (error) {
     console.error("養生會員影片權限確認失敗：", error);

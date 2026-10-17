@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { after, before, beforeEach, test } from 'node:test';
 import { initializeTestEnvironment, assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
-import { doc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, getDocs, collection, query, where, Timestamp } from 'firebase/firestore';
 
 const email = 'expiry-test@gmail.com';
 const past = Timestamp.fromMillis(Date.now() - 86400000);
@@ -26,13 +26,14 @@ async function seed(kind, expiresAt, entitlement = 'absent', extra = {}) {
       status: 'active', paymentStatus: 'paid', articleAccess: true,
       wellnessAccess: wellness, memberLevel: kind === 'lingji' ? 'lingji' : 'wellness',
       accessScope: 'sponsor-paid-articles', accessVersion: 2,
+      ...(wellness ? { wellnessFirstJoinMonth: '2026-10' } : {}),
       updatedAt: Timestamp.now(), ...extra
     };
     if (expiresAt !== undefined) member.expiresAt = expiresAt;
     await setDoc(doc(db, wellness ? 'memberAccess' : 'sponsorMemberAccess', email), member);
     await setDoc(doc(db, 'paidArticleBodies/article'), { status: 'published', active: true });
-    await setDoc(doc(db, 'memberVideos/wellness'), { status: 'published', accessLevel: 'wellness' });
-    await setDoc(doc(db, 'memberVideos/lingji'), { status: 'published', accessLevel: 'lingji' });
+    await setDoc(doc(db, 'memberVideos/wellness'), { status: 'published', accessLevel: 'wellness', publishedMonth: '2026-10' });
+    await setDoc(doc(db, 'memberVideos/lingji'), { status: 'published', accessLevel: 'lingji', publishedMonth: '2026-11' });
     if (entitlement !== 'absent') {
       await setDoc(doc(db, 'memberEntitlements', email), {
         email, schemaVersion: 1, status: 'inactive',
@@ -76,6 +77,33 @@ test('ordinary wellness membership allows video but not paid article', async () 
   await seed('wellness', future, 'absent', { articleAccess: false });
   await assertFails(getDoc(doc(client(), 'paidArticleBodies/article')));
   await assertSucceeds(getDoc(doc(client(), 'memberVideos/wellness')));
+});
+// 養生會員影片：只能觀看首次入會月份起發布的影片。
+test('wellness video before first-join month is denied, same/later month allowed', async () => {
+  await seed('wellness', future, 'absent', { articleAccess: false });
+  await env.withSecurityRulesDisabled(async ctx => {
+    await setDoc(doc(ctx.firestore(), 'memberVideos/older'), { status: 'published', accessLevel: 'wellness', publishedMonth: '2026-09' });
+    await setDoc(doc(ctx.firestore(), 'memberVideos/nodate'), { status: 'published', accessLevel: 'wellness' });
+  });
+  await assertSucceeds(getDoc(doc(client(), 'memberVideos/wellness')));
+  await assertFails(getDoc(doc(client(), 'memberVideos/older')));
+  await assertFails(getDoc(doc(client(), 'memberVideos/nodate')));
+});
+test('wellness video denied when member has no first-join month', async () => {
+  await seed('wellness', future, 'absent', { articleAccess: false, wellnessFirstJoinMonth: null });
+  await assertFails(getDoc(doc(client(), 'memberVideos/wellness')));
+});
+test('member video query must be bounded by first-join month', async () => {
+  await seed('wellness', future, 'absent', { articleAccess: false });
+  const videos = collection(client(), 'memberVideos');
+  await assertSucceeds(getDocs(query(videos, where('status', '==', 'published'), where('accessLevel', '==', 'wellness'), where('publishedMonth', '>=', '2026-10'))));
+  await assertFails(getDocs(query(videos, where('status', '==', 'published'), where('accessLevel', '==', 'wellness'))));
+});
+test('member cannot write own wellnessFirstJoinMonth or video publishedMonth', async () => {
+  await seed('wellness', future, 'absent', { articleAccess: false });
+  await assertFails(setDoc(doc(client(), 'memberAccess', email), { wellnessFirstJoinMonth: '2020-01' }, { merge: true }));
+  await assertFails(setDoc(doc(client(), 'membershipHistory', email), { wellnessFirstJoinMonth: '2020-01' }, { merge: true }));
+  await assertFails(setDoc(doc(client(), 'memberVideos/wellness'), { publishedMonth: '2020-01' }, { merge: true }));
 });
 test('anonymous and unverified users cannot use valid legacy membership', async () => {
   await seed('sponsor', future);

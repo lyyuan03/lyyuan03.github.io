@@ -336,6 +336,10 @@ async function saveVideo(event) {
       coverImageUrl = "";
     }
 
+    const videoStatus = document.getElementById("member-video-status").value === "published" ? "published" : "draft";
+    if (videoStatus === "published" && !publishedDate) {
+      throw new Error("發布影片必須設定發布日期：養生會員只能觀看首次入會月份起發布的影片，未設定日期的影片會員無法觀看。");
+    }
     statusEl.textContent = "正在儲存會員影片入口…";
     const data = {
       title: document.getElementById("member-video-title").value.trim(),
@@ -347,8 +351,10 @@ async function saveVideo(event) {
       coverImageUrl,
       duration: document.getElementById("member-video-duration").value.trim(),
       accessLevel: document.getElementById("member-video-access-level").value === "lingji" ? "lingji" : "wellness",
-      status: document.getElementById("member-video-status").value === "published" ? "published" : "draft",
+      status: videoStatus,
       publishedAt: publishedDate ? `${publishedDate}T00:00:00+08:00` : "",
+      // 發布月份（台北時間 YYYY-MM），供會員首次入會月份比對。
+      publishedMonth: publishedDate ? String(publishedDate).slice(0, 7) : "",
       sortOrder: Math.max(0, Number(document.getElementById("member-video-sort-order").value) || 0),
       updatedAt: serverTimestamp()
     };
