@@ -86,7 +86,7 @@ async function main() {
   assert.equal(currentStatic.coverImage, payload.coverImage);
   assert.equal(currentStatic.thumbnailImage, thumbUrl);
   assert.equal(publicWithPhoto.split(photoLine).length, 2, 'Exactly one real divination photo must be present.');
-  assert.equal(publicWithPhoto.replace('\\n\\n' + photoLine, ''), `${original.publicContent}\\n\\n${MARKER}`, 'The original article preview may only gain one photo.');
+  assert.equal(publicWithPhoto.replace('\n\n' + photoLine, ''), `${original.publicContent}\n\n${MARKER}`, 'The original article preview may only gain one photo.');
   assert.ok(!publicWithPhoto.includes(payload.coverImage), 'Cover must not repeat in the article body.');
   const assetPhoto='collective-unconscious-election-2026-part-2';
   const newFiles=[
