@@ -1,7 +1,7 @@
 import { db } from "./firebase-config.js";
 import { isNeedATeacherArticle, NEED_A_TEACHER_THUMBNAIL_URL, resolveThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-3";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { staticArticles } from "./static-articles.js?v=20261006-collective-unconscious-1";
+import { staticArticles } from "./static-articles.js?v=20261017-election-photo-cache-3";
 
 const SETTINGS_DOC_ID = "__article-thumbnail-settings";
 const MEDIA_BACKGROUND = "#E8E1D3";
@@ -17,6 +17,8 @@ const BRAND_FALLBACKS = {
 // 某些舊文章的正文圖片由顯示修正模組動態補入，原始 Markdown 內沒有圖片路徑。
 // 這裡記錄「真正的第一張內文故事圖」，避免誤退回統一 CI 圖。
 const FORCED_THUMBNAIL_IMAGES = {
+  // 本篇採用臺灣主題直式縮圖，防止舊列表來源或後台縮圖設定覆蓋新版圖片。
+  "collective-unconscious-election-2026-part-2": "/assets/articles/collective-unconscious-election-2026-part-2/thumbnail-taiwan-450x800.jpeg?v=20261017-3",
   "blessing-teacher-discernment": "/assets/articles/blessing-teacher-discernment/thumbnail-20261002-800.webp?v=20261002-cover-photo-1",
   "channeling-ability-secrets-draft": "/assets/articles/channeling-ability-secrets-draft/00-photo-first-v3.jpg?v=20260906-v3-browserfix-1",
   "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-clean-text-2",
