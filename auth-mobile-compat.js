@@ -1,4 +1,8 @@
-import { auth, provider, isAdminEmail } from "./firebase-config.js";
+import * as firebaseConfigModule from "./firebase-config.js";
+
+const { auth, provider, isAdminEmail } = firebaseConfigModule;
+// 以命名空間讀取，避免瀏覽器仍快取舊版 firebase-config.js 時因缺少匯出而整支模組載入失敗。
+const SELF_HOSTED_AUTH_HANDLER = firebaseConfigModule.SELF_HOSTED_AUTH_HANDLER === true;
 import {
   browserLocalPersistence,
   getRedirectResult,
@@ -92,6 +96,24 @@ function showStatus(message, flow) {
   window.alert(message);
 }
 
+function isSafariBrowser(ua = navigator.userAgent || "") {
+  return /Safari\//.test(ua) && !/Chrome\/|CriOS|FxiOS|EdgiOS|Edg\/|OPR\/|Android/.test(ua);
+}
+
+function waitForSignedInUser(timeoutMs) {
+  if (auth.currentUser) return Promise.resolve(auth.currentUser);
+  return new Promise((resolve) => {
+    let unsubscribe = () => {};
+    const timer = window.setTimeout(() => { unsubscribe(); resolve(auth.currentUser || null); }, timeoutMs);
+    unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) return;
+      window.clearTimeout(timer);
+      unsubscribe();
+      resolve(user);
+    });
+  });
+}
+
 async function beginGoogleLogin(button, flow) {
   // 內建瀏覽器中 Google 會回應 403 disallowed_useragent，絕不在此呼叫 signInWithPopup。
   if (isInAppBrowser) {
@@ -101,15 +123,18 @@ async function beginGoogleLogin(button, flow) {
   }
   rememberLogin(flow);
   setBusy(button, true, flow);
-  await persistenceReady;
+
+  // 必須在點擊事件的同一個同步流程內呼叫 signInWithPopup，前面不可有任何 await，
+  // 否則 iOS Safari 會失去「使用者手勢」而擋下登入視窗。登入狀態保存方式於模組載入時已設定。
+  const slowTimer = window.setTimeout(() => {
+    showStatus("Google 登入視窗仍未完成。若沒有看到登入視窗，請確認瀏覽器未封鎖彈出視窗後再試一次。", flow);
+  }, POPUP_SLOW_MS);
+  const popupPromise = signInWithPopup(auth, provider);
 
   try {
-    const slowTimer = window.setTimeout(() => {
-      showStatus("Google 登入視窗仍未完成。若沒有看到登入視窗，請確認瀏覽器未封鎖彈出視窗，或改用 Safari／Chrome 重新開啟本頁。", flow);
-    }, POPUP_SLOW_MS);
     let result;
     try {
-      result = await signInWithPopup(auth, provider);
+      result = await popupPromise;
     } finally {
       window.clearTimeout(slowTimer);
     }
@@ -132,9 +157,36 @@ async function beginGoogleLogin(button, flow) {
       document.getElementById("member-login-modal")?.classList.remove("is-open");
     }
   } catch (error) {
-    if (["auth/popup-closed-by-user", "auth/cancelled-popup-request"].includes(error?.code)) {
+    if (error?.code === "auth/cancelled-popup-request") {
       clearLoginMemory();
-      showStatus("Google 登入視窗已關閉，尚未完成登入。請再按一次登入；若視窗無法開啟，請改用 Safari 或 Chrome。", flow);
+      return;
+    }
+
+    if (error?.code === "auth/popup-closed-by-user") {
+      // Safari 可能已完成 Google 登入，但因跨網站儲存隔離而誤報「視窗已關閉」；先等候登入狀態。
+      const user = await waitForSignedInUser(5000);
+      if (user) {
+        clearLoginMemory();
+        if (isAdminEmail(user.email)) {
+          if (location.pathname !== "/admin.html") location.assign("/admin.html");
+          return;
+        }
+        document.getElementById("member-login-modal")?.classList.remove("is-open");
+        return;
+      }
+      // 已啟用自架登入處理頁（同網域）時，重新導向登入在 Safari 可正常運作，直接改用。
+      if (SELF_HOSTED_AUTH_HANDLER && isSafariBrowser()) {
+        try {
+          await signInWithRedirect(auth, provider);
+          return;
+        } catch (redirectError) {
+          console.error("Google 重新導向登入失敗：", redirectError);
+        }
+      }
+      clearLoginMemory();
+      showStatus(isSafariBrowser()
+        ? "Google 登入尚未完成。若您已選擇帳號卻仍回到此畫面，可能是 Safari 的「防止跨網站追蹤」阻擋了登入：請至「設定 › Safari」暫時關閉「防止跨網站追蹤」後再登入，或改用 Chrome 開啟本頁。"
+        : "Google 登入視窗已關閉，尚未完成登入。請再按一次登入。", flow);
       return;
     }
 

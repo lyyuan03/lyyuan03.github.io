@@ -31,9 +31,19 @@ if (isAdminPage) {
   });
 }
 
+// 自架 Firebase 登入處理頁（/__/auth/handler 與 /__/firebase/init.json 已放在本站）。
+// Safari／iOS 會隔離第三方網站儲存，authDomain 為 firebaseapp.com 時 Google 登入完成後
+// 結果傳不回本站（顯示「視窗已關閉」）。改成同網域即可解決。
+// ⚠ 啟用前必須先在 Google Cloud Console → API 和服務 → 憑證 → OAuth 2.0 用戶端（Web client，auto created by Google Service）
+//   的「已授權的重新導向 URI」加入 https://lyyuan.tw/__/auth/handler 與 https://www.lyyuan.tw/__/auth/handler，
+//   否則 Google 會回應 redirect_uri_mismatch，所有人都無法登入。
+export const SELF_HOSTED_AUTH_HANDLER = false;
+const SELF_HOSTED_HOSTS = ["lyyuan.tw", "www.lyyuan.tw"];
+const useSelfHostedAuth = SELF_HOSTED_AUTH_HANDLER && SELF_HOSTED_HOSTS.includes(location.hostname);
+
 export const firebaseConfig = {
   apiKey: "AIzaSyAgHy-nPOErzs7NDJossVGPITbenXOfjQY",
-  authDomain: "lyyuan03-membership.firebaseapp.com",
+  authDomain: useSelfHostedAuth ? location.hostname : "lyyuan03-membership.firebaseapp.com",
   projectId: "lyyuan03-membership",
   storageBucket: "lyyuan03-membership.firebasestorage.app",
   messagingSenderId: "77417213320",
@@ -63,7 +73,7 @@ export function isAdminEmail(email) {
 
 // 所有使用 Firebase 的頁面都載入同一套登入相容處理，
 // 讓 iPhone、iPad、Android 與桌機使用一致的 Email 判讀與登入狀態。
-import("./auth-mobile-compat.js?v=20261017-inapp-login-2").catch((error) => {
+import("./auth-mobile-compat.js?v=20261017-safari-popup-1").catch((error) => {
   console.error("跨裝置登入相容模組載入失敗：", error);
 });
 
