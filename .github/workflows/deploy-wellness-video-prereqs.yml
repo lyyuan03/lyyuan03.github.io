@@ -64,6 +64,21 @@ jobs:
           if [ $code -ne 0 ] && ! echo "$out" | grep -qi "already exists"; then exit $code; fi
           gcloud firestore indexes composite list --project=lyyuan03-membership --format="table(name.basename(),collectionGroup,state,fields[].fieldPath.list())" | grep -i memberVideos || true
 
+      - name: Verify memberVideos index (read-only, waits up to ~20 min while building)
+        working-directory: functions
+        run: node check-member-video-index.mjs
+
+      # 只有觸發檔寫明 mode: apply-once（站長已確認月份清單）時才寫入；否則跳過。
+      - name: One-time APPLY (owner approved)
+        if: hashFiles('.github/deploy-triggers/wellness-video-prereqs.txt') != ''
+        working-directory: functions
+        run: |
+          if grep -q '^mode: apply-once' ../.github/deploy-triggers/wellness-video-prereqs.txt; then
+            node backfill-wellness-first-join.mjs --mask --apply
+          else
+            echo "trigger mode is not apply-once; skipping apply"
+          fi
+
       - name: Backfill DRY RUN (no writes, emails masked)
         working-directory: functions
         run: node backfill-wellness-first-join.mjs --mask
