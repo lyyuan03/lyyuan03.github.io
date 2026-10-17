@@ -4,9 +4,10 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/publish-religious-light-member-article.yml'
+      - '.github/workflows/publish-election-collective-2026.yml'
       - '.github/scripts/publish-election-collective-2026.mjs'
       - 'secure-imports/collective-unconscious-election-2026-analysis-20261017.enc.json'
+      - 'assets/articles/collective-unconscious-election-2026-analysis/**'
   workflow_dispatch:
 
 permissions:
