@@ -1,0 +1,44 @@
+name: One-time import election article images
+on:
+  push:
+    branches: [publish/election-collective-20261017]
+    paths:
+      - '.github/workflows/import-election-images-once.yml'
+permissions:
+  contents: write
+jobs:
+  import-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: publish/election-collective-20261017
+          persist-credentials: true
+      - name: Retrieve and verify six original user images
+        env:
+          IMAGE_SOURCES: '{"00-cover.jpeg":{"sha256":"cb23f2fe2d08458531fc2769ff6767b39383519fd129e371d4f3c3d1d52eb467","url":"https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/6c1f3bf6-3351-4003-8da8-b3948968259d.jpg"},"01-taipei.jpeg":{"sha256":"d14139471dec6d8ea68b24d634c04737d20897c40f5889f882d858b1407b3c15","url":"https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/63fca57f-9f75-46b1-82d1-3bec95296348.jpg"},"02-taichung.jpeg":{"sha256":"57809a15144ec25978bd490503345f16c224a6aa7ec6e3d2fc1bc49ab7b65602","url":"https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/ca023066-c345-4b07-9809-4dec4f90bd18.jpg"},"03-kaohsiung.jpeg":{"sha256":"b4e5fbfb706bad2e8d75d1bf2e91a95bdda09639c9dc893f6df1e48b793e5367","url":"https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/1871ece1-2bc8-400d-b95a-1e35d8627a76.jpg"},"04-conclusion.jpeg":{"sha256":"c83b3d0317b70f43876e6b9e8272a4aadc55417bb65bb1d05b9ba554f11ef1e6","url":"https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/7dbf453e-c765-49bd-94bd-fddfc04d57b6.jpg"},"thumbnail-450x800.jpeg":{"sha256":"f679ae20ed1becc0ff725f4e2fdf13ed9a80cfe5b6cee77aecb6bdc219c9b03e","url":"https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/4afe2d49-fa8e-4b88-91a8-63b41d9457c3.jpg"}}'
+        run: |
+          python3 - <<'PY'
+          import os,json,hashlib,urllib.request,pathlib
+          sources=json.loads(os.environ['IMAGE_SOURCES'])
+          root=pathlib.Path('assets/articles/collective-unconscious-election-2026-part-2')
+          root.mkdir(parents=True,exist_ok=True)
+          for name,item in sources.items():
+              req=urllib.request.Request(item['url'],headers={'User-Agent':'Mozilla/5.0'})
+              with urllib.request.urlopen(req,timeout=45) as response:
+                  data=response.read()
+              actual=hashlib.sha256(data).hexdigest()
+              if actual!=item['sha256']: raise RuntimeError(name+': expected original image SHA mismatch')
+              (root/name).write_bytes(data)
+              print(name,len(data),'verified')
+          PY
+      - name: Commit verified image originals to article asset folder
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/articles/collective-unconscious-election-2026-part-2
+          if ! git diff --cached --quiet; then
+            git commit -m "Import six verified original images for paid election article"
+            git push origin HEAD:publish/election-collective-20261017
+          fi
