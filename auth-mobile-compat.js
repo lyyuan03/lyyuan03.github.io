@@ -6,10 +6,12 @@ import {
   signInWithPopup,
   signInWithRedirect
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./inapp-browser.js?v=20261017-inapp-login-1";
 
 const RETURN_URL_KEY = "lyyuan-auth-return-url";
 const AUTH_FLOW_KEY = "lyyuan-auth-flow-v2";
-const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
+const isInAppBrowser = detectInAppBrowser();
+const POPUP_SLOW_MS = 45000;
 
 const persistenceReady = setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error("登入狀態保存設定失敗：", error);
@@ -91,12 +93,26 @@ function showStatus(message, flow) {
 }
 
 async function beginGoogleLogin(button, flow) {
+  // 內建瀏覽器中 Google 會回應 403 disallowed_useragent，絕不在此呼叫 signInWithPopup。
+  if (isInAppBrowser) {
+    document.getElementById("member-login-modal")?.classList.remove("is-open");
+    openInExternalBrowser();
+    return;
+  }
   rememberLogin(flow);
   setBusy(button, true, flow);
   await persistenceReady;
 
   try {
-    const result = await signInWithPopup(auth, provider);
+    const slowTimer = window.setTimeout(() => {
+      showStatus("Google 登入視窗仍未完成。若沒有看到登入視窗，請確認瀏覽器未封鎖彈出視窗，或改用 Safari／Chrome 重新開啟本頁。", flow);
+    }, POPUP_SLOW_MS);
+    let result;
+    try {
+      result = await signInWithPopup(auth, provider);
+    } finally {
+      window.clearTimeout(slowTimer);
+    }
     clearLoginMemory();
 
     if (flow === "admin" && result.user && !isAdminEmail(result.user.email)) {
@@ -118,6 +134,7 @@ async function beginGoogleLogin(button, flow) {
   } catch (error) {
     if (["auth/popup-closed-by-user", "auth/cancelled-popup-request"].includes(error?.code)) {
       clearLoginMemory();
+      showStatus("Google 登入視窗已關閉，尚未完成登入。請再按一次登入；若視窗無法開啟，請改用 Safari 或 Chrome。", flow);
       return;
     }
 
@@ -173,7 +190,7 @@ document.addEventListener("click", (event) => {
     }
 
     if (returnUrl && returnUrl !== `${location.pathname}${location.search}${location.hash}`) {
-      location.replace(returnUrl);
+      location.assign(returnUrl);
     }
   } catch (error) {
     console.error("Google 重新導向登入結果讀取失敗：", error);

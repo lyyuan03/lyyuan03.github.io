@@ -9,8 +9,10 @@ import {
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { activeSponsorMember, activeWellnessMember, activeEntitlement } from "./member-access-resolver.js";
+import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./inapp-browser.js?v=20261017-inapp-login-1";
 
-const AUTH_VERSION = "20260824-auth-mobile-layout-2";
+const AUTH_VERSION = "20261017-member-menu-1";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 
 function installStyles() {
@@ -88,6 +90,7 @@ function installBar() {
       <div id="site-account-menu" class="site-account-menu" hidden>
         <a href="/member-dashboard.html">我的會員中心</a>
         <a href="/member-videos.html" data-wellness-video-link>養生會員影片</a>
+        <button type="button" data-member-retry hidden>重新確認會員資格</button>
         <button type="button" data-member-sign-out>登出</button>
       </div>
     </div>`;
@@ -131,10 +134,11 @@ const memberButton = bar.querySelector("#member-login-button");
 const accountMenu = bar.querySelector("#site-account-menu");
 const signOutButton = accountMenu.querySelector("[data-member-sign-out]");
 const wellnessVideoLink = accountMenu.querySelector("[data-wellness-video-link]");
+const retryButton = accountMenu.querySelector("[data-member-retry]");
 const googleButton = modal.querySelector(".member-google-button");
 const browserNote = modal.querySelector(".member-login-browser-note");
 const loginOffer = modal.querySelector("#member-login-offer");
-const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent);
+const isInAppBrowser = detectInAppBrowser();
 const isMobile = window.matchMedia("(max-width:768px), (pointer:coarse)").matches;
 let hasWellnessAccess = false;
 let hasMemberAccess = false;
@@ -185,19 +189,21 @@ function isActiveWellnessMember(member = {}) {
     && Boolean(expiry && expiry > new Date());
 }
 
-function isActiveSponsorMember(member = {}) {
-  const expiry = toDate(member.expiresAt);
-  return member.memberType === "sponsor-member"
-    && member.status === "active"
-    && member.paymentStatus === "paid"
-    && member.articleAccess === true
-    && member.accessScope === "sponsor-paid-articles"
-    && Number(member.accessVersion || 0) >= 2
-    && Boolean(String(member.lastOrderNo || "").trim())
-    && member.disabled !== true
-    && member.suspended !== true
-    && !member.revokedAt
-    && Boolean(expiry && expiry > new Date());
+// 與 firestore.rules 一致：accessVersion >= 1，不要求 lastOrderNo（人工開通的會員也能辨識）。
+function isActiveSponsorMember(member = {}, email = "") {
+  return activeSponsorMember(member, email);
+}
+
+// 人工開通／活動權限記錄於 memberEntitlements/{email}。
+function hasEntitlementAccess(entitlement = {}, email = "") {
+  if (activeEntitlement(entitlement, email)) return true;
+  const recordEmail = String(entitlement.email || email).trim().toLowerCase();
+  return recordEmail === email
+    && Array.isArray(entitlement.permissions)
+    && entitlement.permissions.length > 0
+    && entitlement.status !== "disabled"
+    && entitlement.disabled !== true
+    && entitlement.suspended !== true;
 }
 
 function isPendingSponsorReservation(member = {}) {
@@ -320,16 +326,21 @@ memberButton.addEventListener("click", async (event) => {
     location.href = "/admin.html";
     return;
   }
-  if (auth.currentUser && hasMemberAccess) {
+  // 登入後一律開啟會員選單（我的會員中心／登出），不再「點名字即登出」。
+  if (auth.currentUser) {
     toggleAccountMenu();
     return;
   }
-  if (auth.currentUser) {
-    memberButton.disabled = true;
-    try { await signOut(auth); } finally { memberButton.disabled = false; }
+  if (isInAppBrowser) {
+    openInExternalBrowser();
     return;
   }
   modal.classList.add("is-open");
+});
+
+retryButton.addEventListener("click", () => {
+  closeAccountMenu();
+  if (auth.currentUser) refreshMemberStatus(auth.currentUser);
 });
 
 signOutButton.addEventListener("click", async () => {
@@ -347,6 +358,11 @@ document.addEventListener("keydown", (event) => {
 });
 
 googleButton.addEventListener("click", async () => {
+  if (isInAppBrowser) {
+    releaseLoginUi();
+    openInExternalBrowser();
+    return;
+  }
   sessionStorage.setItem("site-auth-flow", "member");
   googleButton.disabled = true;
   memberButton.disabled = true;
@@ -399,40 +415,56 @@ onAuthStateChanged(auth, async (user) => {
     memberButton.title = "前往靈元院管理後台";
     return;
   }
+  await refreshMemberStatus(user);
+});
+
+// 單一集合被拒讀（例如尚無該筆記錄的權限）時視為無記錄，不讓整體檢查失敗。
+function readOptionalDoc(collectionName, email) {
+  return getDoc(doc(db, collectionName, email)).catch((error) => {
+    if (error?.code === "permission-denied") return null;
+    throw error;
+  });
+}
+
+async function refreshMemberStatus(user) {
+  hasWellnessAccess = false;
+  hasMemberAccess = false;
+  wellnessVideoLink.hidden = true;
+  retryButton.hidden = true;
+  memberButton.setAttribute("aria-haspopup", "menu");
   const displayName = (user.displayName || "會員").trim().split(/\s+/)[0];
   memberButton.textContent = `${displayName}｜確認資格中…`;
   memberButton.title = user.email || "會員已登入";
   memberButton.disabled = true;
   try {
     const email = (user.email || "").trim().toLowerCase();
-    const [snapshot, sponsorSnapshot] = await withAuthTimeout(Promise.all([
-      getDoc(doc(db, "memberAccess", email)),
-      getDoc(doc(db, "sponsorMemberAccess", email))
-    ]));
-    const member = snapshot.exists() ? snapshot.data() : null;
-    const sponsorMember = sponsorSnapshot.exists() ? sponsorSnapshot.data() : null;
+    const [snapshot, sponsorSnapshot, entitlementSnapshot] = await withAuthTimeout(Promise.all([
+      readOptionalDoc("memberAccess", email),
+      readOptionalDoc("sponsorMemberAccess", email),
+      readOptionalDoc("memberEntitlements", email)
+    ]), 12000);
+    const member = snapshot?.exists() ? snapshot.data() : null;
+    const sponsorMember = sponsorSnapshot?.exists() ? sponsorSnapshot.data() : null;
+    const entitlement = entitlementSnapshot?.exists() ? entitlementSnapshot.data() : null;
     if (auth.currentUser?.uid !== user.uid) return;
-    hasWellnessAccess = Boolean(member && isActiveWellnessMember(member));
+    hasWellnessAccess = Boolean(member && (isActiveWellnessMember(member) || activeWellnessMember(member, email)));
     hasMemberAccess = Boolean(
-      (member && isActiveMember(member))
-      || (sponsorMember && (isActiveSponsorMember(sponsorMember) || isPendingSponsorReservation(sponsorMember)))
+      hasWellnessAccess
+      || (member && isActiveMember(member))
+      || (sponsorMember && (isActiveSponsorMember(sponsorMember, email) || isPendingSponsorReservation(sponsorMember)))
+      || (entitlement && hasEntitlementAccess(entitlement, email))
     );
     wellnessVideoLink.hidden = !hasWellnessAccess;
-    if (hasMemberAccess) {
-      memberButton.textContent = `${displayName} ▾`;
-      memberButton.title = "開啟個人會員選單";
-      memberButton.setAttribute("aria-haspopup", "menu");
-    } else {
-      memberButton.textContent = `${displayName}｜登出`;
-      memberButton.title = "目前帳號沒有有效會員資格；按此登出";
-    }
+    memberButton.textContent = `${displayName} ▾`;
+    memberButton.title = hasMemberAccess ? "開啟個人會員選單" : "目前帳號尚未查到有效會員資格；可至會員中心查看或登出";
   } catch (error) {
     console.error("會員導覽資格確認失敗：", error);
     if (auth.currentUser?.uid === user.uid) {
-      memberButton.textContent = `${displayName}｜登出`;
-      memberButton.title = "暫時無法確認會員資格；按此登出";
+      retryButton.hidden = false;
+      memberButton.textContent = `${displayName}｜重試 ▾`;
+      memberButton.title = "暫時無法確認會員資格；開啟選單可重新確認";
     }
   } finally {
     if (auth.currentUser?.uid === user.uid) memberButton.disabled = false;
   }
-});
+}
