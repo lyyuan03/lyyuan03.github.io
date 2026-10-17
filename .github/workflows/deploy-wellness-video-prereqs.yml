@@ -49,6 +49,8 @@ jobs:
 
       # firebase CLI 部署索引時會先編譯 firestore.rules（服務帳戶無此權限），改用 gcloud 只建立這一個索引；不會刪除其他索引。
       - name: Create Firestore composite index only (memberVideos status+accessLevel+publishedMonth)
+        # 服務帳戶可能沒有建立索引的權限；失敗時仍繼續執行唯讀的 dry run，索引改由站長在 Console 建立。
+        continue-on-error: true
         run: |
           set +e
           out=$(gcloud firestore indexes composite create \
