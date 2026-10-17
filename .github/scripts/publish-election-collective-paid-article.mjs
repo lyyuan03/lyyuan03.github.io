@@ -3,6 +3,7 @@ import { createDecipheriv, createHash, createPublicKey, privateDecrypt, constant
 import { readFileSync, writeFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 import { execFileSync } from 'node:child_process';
+import { collectiveUnconsciousElectionPart2Article as currentStatic } from '../../article-collective-unconscious-election-part-2.js';
 
 const ID = 'collective-unconscious-election-2026-part-2';
 const TITLE = '眾心所向，時勢所生（下）：從占卜看臺灣、臺北、臺中與高雄的集體意識';
@@ -72,7 +73,44 @@ async function main() {
   assert.equal(service.project_id, PROJECT);
   assert.ok(service.private_key);
   const payload = decrypt(JSON.parse(readFileSync(ENVELOPE, 'utf8')), service.private_key);
-  const split = validate(payload);
+  const original = validate(payload);
+  // The encrypted payload remains the authority for all protected member-only text.
+  // The refreshed public preview adds one real divination photo; never publish
+  // private body text into a static JS file or overwrite paid article permissions.
+  const publicWithPhoto = String(currentStatic.content || '').trim();
+  const photoLine = '![本次臺灣地方選舉集體意識占卜的塔羅牌實拍](https://lyyuan.tw/assets/articles/collective-unconscious-election-2026-part-2/01-tarot-divination.jpeg?v=20261017-2)';
+  const thumbUrl = 'https://lyyuan.tw/assets/articles/collective-unconscious-election-2026-part-2/thumbnail-taiwan-450x800.jpeg?v=20261017-2';
+  assert.equal(currentStatic.id, ID);
+  assert.equal(currentStatic.accessType, 'paid');
+  assert.equal(currentStatic.privatePaidContent, true);
+  assert.equal(currentStatic.coverImage, payload.coverImage);
+  assert.equal(currentStatic.thumbnailImage, thumbUrl);
+  assert.equal(publicWithPhoto.split(photoLine).length, 2, 'Exactly one real divination photo must be present.');
+  assert.equal(publicWithPhoto.replace('\\n\\n' + photoLine, ''), `${original.publicContent}\\n\\n${MARKER}`, 'The original article preview may only gain one photo.');
+  assert.ok(!publicWithPhoto.includes(payload.coverImage), 'Cover must not repeat in the article body.');
+  const assetPhoto='collective-unconscious-election-2026-part-2';
+  const newFiles=[
+    ['assets/articles/' + assetPhoto + '/01-tarot-divination.jpeg', 'https://lyyuan.tw/assets/articles/' + assetPhoto + '/01-tarot-divination.jpeg?v=20261017-2'],
+    ['assets/articles/' + assetPhoto + '/thumbnail-taiwan-450x800.jpeg', thumbUrl]
+  ];
+  assert.equal(sha256(readFileSync(newFiles[0][0])), '6c321da24e00c7092af6352ece75985838b72e3006b592fef7925d975bcb8620', 'Tarot photo differs from the original upload.');
+  for (const [filepath] of newFiles) assert.ok(readFileSync(filepath).length > 20000);
+  // GitHub Pages deployment is concurrent with Firestore publication.
+  // Wait until both files are live and byte-identical before referencing them in Firestore.
+  let live=false;
+  for (let attempt=0; attempt<72 && !live; attempt++) {
+    const checks=await Promise.all(newFiles.map(async ([filepath,url])=>{
+      try {
+        const response=await fetch(url,{signal:AbortSignal.timeout(10000),cache:'no-store'});
+        return response.ok && sha256(Buffer.from(await response.arrayBuffer()))===sha256(readFileSync(filepath));
+      } catch {return false;}
+    }));
+    live=checks.every(Boolean);
+    if (!live) await new Promise(resolve=>setTimeout(resolve,5000));
+  }
+  assert.ok(live,'The verified tarot photo and new Taiwan thumbnail must be live before publication.');
+  const publicContent=publicWithPhoto.slice(0, publicWithPhoto.lastIndexOf(MARKER)).trim();
+  const split={...original, publicContent, safeContent:publicWithPhoto};
   const token = process.env.FIRESTORE_ACCESS_TOKEN || execFileSync('gcloud', ['auth','print-access-token'], { encoding: 'utf8' }).trim();
   assert.ok(token);
   const base = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
@@ -97,6 +135,7 @@ async function main() {
   const pubFields = {};
   const keys = ['id','slug','title','category','displayCategory','excerpt','coverImage','thumbnailImage','thumbnailTitle','series','topics','readingLevel','sharePath','bookTitle','bookAuthor','bookPublisher','bookPurchaseUrl','bookCoverImage'];
   for(const key of keys) if(payload[key]!==undefined) pubFields[key]=field(payload[key]);
+  pubFields.thumbnailImage = str(thumbUrl);
   Object.assign(pubFields,{
     status:str('published'),accessType:str('paid'),privatePaidContent:bool(true),content:str(split.safeContent),
     paidContentHash:str(split.hash),paidContentVersion:int(version),eventId:str(''),eventName:str(''),
@@ -122,7 +161,7 @@ async function main() {
   assert.equal(checkPrivate.fields.contentHash.stringValue,split.hash);
   const guest=await fetch(base+bodyPath,{signal:AbortSignal.timeout(15000)});
   assert.equal(guest.status,403,'Anonymous paid body access must be denied.');
-  const report={articleId:ID,status:'published',accessType:'paid',imageCount:6,privateStored:true,publicPreviewChars:split.publicContent.length,privateChars:split.privateContent.length,version,anonymousPrivateReadStatus:guest.status,url:`https://lyyuan.tw/articles.html?id=${ID}`,publishedAt:checkPublic.fields.publishedAt?.timestampValue};
+  const report={articleId:ID,status:'published',accessType:'paid',imageCount:7,tarotPhotoFirst:true,taiwanThumbnail:true,privateStored:true,publicPreviewChars:split.publicContent.length,privateChars:split.privateContent.length,version,anonymousPrivateReadStatus:guest.status,url:`https://lyyuan.tw/articles.html?id=${ID}`,publishedAt:checkPublic.fields.publishedAt?.timestampValue};
   writeFileSync('/tmp/election-member-publication-report.json',JSON.stringify(report,null,2));
   console.log(JSON.stringify(report));
 }
