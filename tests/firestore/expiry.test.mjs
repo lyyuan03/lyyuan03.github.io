@@ -99,6 +99,12 @@ test('member video query must be bounded by first-join month', async () => {
   await assertSucceeds(getDocs(query(videos, where('status', '==', 'published'), where('accessLevel', '==', 'wellness'), where('publishedMonth', '>=', '2026-10'))));
   await assertFails(getDocs(query(videos, where('status', '==', 'published'), where('accessLevel', '==', 'wellness'))));
 });
+test('member cannot write own wellnessFirstJoinMonth or video publishedMonth', async () => {
+  await seed('wellness', future, 'absent', { articleAccess: false });
+  await assertFails(setDoc(doc(client(), 'memberAccess', email), { wellnessFirstJoinMonth: '2020-01' }, { merge: true }));
+  await assertFails(setDoc(doc(client(), 'membershipHistory', email), { wellnessFirstJoinMonth: '2020-01' }, { merge: true }));
+  await assertFails(setDoc(doc(client(), 'memberVideos/wellness'), { publishedMonth: '2020-01' }, { merge: true }));
+});
 test('anonymous and unverified users cannot use valid legacy membership', async () => {
   await seed('sponsor', future);
   for (const ctx of [env.unauthenticatedContext(), env.authenticatedContext('unverified', { email, email_verified: false })]) {

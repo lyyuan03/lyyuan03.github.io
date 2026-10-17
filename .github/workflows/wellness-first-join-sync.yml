@@ -1,0 +1,47 @@
+name: Sync wellness first-join month and video publishedMonth
+
+# 不需 Cloud Functions：每小時補上缺少的 memberAccess.wellnessFirstJoinMonth（取最早、永不延後）
+# 與 memberVideos.publishedMonth（由 publishedAt 換算）。紀錄中 email 一律遮蔽。
+# 預設只做 dry run；儲存庫變數 WELLNESS_FIRST_JOIN_APPLY 設為 "true" 後才會寫入（需站長確認後再開啟）。
+# 排程只在預設分支（main）生效。
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wellness-first-join-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'lyyuan03/lyyuan03.github.io'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install dependencies
+        run: npm --prefix functions ci
+
+      - name: Sync (dry run unless WELLNESS_FIRST_JOIN_APPLY == "true")
+        working-directory: functions
+        env:
+          APPLY: ${{ vars.WELLNESS_FIRST_JOIN_APPLY == 'true' && '--apply' || '' }}
+        run: node backfill-wellness-first-join.mjs --mask $APPLY

@@ -1,12 +1,12 @@
-name: Deploy wellness video prerequisites (functions + indexes + backfill dry run)
+name: Deploy wellness video prerequisites (indexes + backfill dry run)
 
 # 僅在 feat/wellness-video-first-join-month 分支修改本檔時執行。
-# 不推送任何 commit、不部署 firestore.rules、不執行 --apply。
+# 不推送任何 commit、不部署 firestore.rules、不部署 Cloud Functions（專案未使用 Blaze 方案）、不執行 --apply。
 on:
   workflow_dispatch:
   push:
     branches: [feat/wellness-video-first-join-month]
-    paths: [.github/workflows/deploy-wellness-video-prereqs.yml]
+    paths: [.github/workflows/deploy-wellness-video-prereqs.yml, .github/deploy-triggers/wellness-video-prereqs.txt]
 
 permissions:
   contents: read
@@ -36,15 +36,11 @@ jobs:
           cache: npm
           cache-dependency-path: functions/package-lock.json
 
-      - name: Install Firebase CLI and verify functions
+      - name: Install Firebase CLI and dependencies
         run: |
           npm install --global firebase-tools
           npm --prefix functions ci
-          npm --prefix functions run lint
-          npm --prefix functions run deploy-test
-
-      - name: Deploy Cloud Functions only
-        run: firebase deploy --only functions --project lyyuan03-membership --non-interactive
+          node --test functions/test/wellness-first-join.test.js
 
       - name: Deploy Firestore indexes only (no --force; unlisted indexes are kept)
         run: firebase deploy --only firestore:indexes --project lyyuan03-membership --non-interactive
