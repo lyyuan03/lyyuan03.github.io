@@ -153,8 +153,8 @@ async function importPatchedArticleCore(moduleUrl) {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20261010-dizhi-support-1",
-    "./articles-core-20260810-v6.js?v=20261010-dizhi-support-1"
+    "./articles-core-20260810-v6.js?v=20261017-election-photo-cache-3",
+    "./articles-core-20260810-v6.js?v=20261017-election-photo-cache-3"
   ];
   let lastError = null;
   for (const [index, moduleUrl] of coreModuleUrls.entries()) {
