@@ -31,17 +31,11 @@ const existing=await fetch(`${base}/articles/${ID}`,{headers,signal:AbortSignal.
 assert.equal(existing.status,404,'Article ID already exists; refusing overwrite.');
 const bodyExisting=await fetch(`${base}/paidArticleBodies/${ID}`,{headers,signal:AbortSignal.timeout(30000)});
 assert.equal(bodyExisting.status,404,'Private body already exists; refusing overwrite.');
-const bucket='lyyuan03-membership.firebasestorage.app';
 for(const asset of payload.assets){
- const bytes=Buffer.from(asset.data,'base64');assert.equal(hash(bytes),asset.sha256);
- assert.ok(asset.object.startsWith(`articles/${ID}/`));
- const boundary=`draft-${asset.sha256.slice(0,24)}`;
- const metadata={name:asset.object,contentType:'image/jpeg',cacheControl:'public,max-age=31536000,immutable',metadata:{firebaseStorageDownloadTokens:asset.token,articleId:ID,generationMethod:'ChatGPT-imagegen'}};
- const prefix=Buffer.from(`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: image/jpeg\r\n\r\n`);
- const response=await fetch(`https://storage.googleapis.com/upload/storage/v1/b/${bucket}/o?uploadType=multipart&ifGenerationMatch=0`,{method:'POST',headers:{...headers,'Content-Type':`multipart/related; boundary=${boundary}`},body:Buffer.concat([prefix,bytes,Buffer.from(`\r\n--${boundary}--\r\n`)]),signal:AbortSignal.timeout(60000)});
- assert.ok(response.ok,`Image upload HTTP ${response.status}`);
+ assert.ok(asset.url.startsWith('https://raw.githubusercontent.com/lyyuan03/lyyuan03.github.io/e4d6c7f19e09ebce143204736a84c002315befaa/assets/articles/'+ID+'/'));
  const visible=await fetch(asset.url,{signal:AbortSignal.timeout(30000)});
- assert.ok(visible.ok,`Image read HTTP ${visible.status}`);assert.equal(hash(Buffer.from(await visible.arrayBuffer())),asset.sha256);
+ assert.ok(visible.ok,'Draft illustration is unavailable');
+ assert.equal(hash(Buffer.from(await visible.arrayBuffer())),asset.sha256);
 }
 const parts=payload.content.split('<!-- paid-only -->');assert.equal(parts.length,2);
 const preview=parts[0].trim(),privateBody=parts[1].trim();assert.ok(preview.length>1000&&privateBody.length>5000);
