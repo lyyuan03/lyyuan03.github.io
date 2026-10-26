@@ -1,0 +1,37 @@
+name: Import Historical Yuanshen Sponsor Draft
+on:
+  push:
+    branches: ['draft/history-yuanshen-20261026']
+    paths: ['.github/draft-imports/history-yuanshen-20261026.enc.json.part*', '.github/scripts/import-history-yuanshen-draft.mjs', '.github/workflows/import-history-yuanshen-draft.yml']
+permissions:
+  contents: read
+concurrency:
+  group: import-history-yuanshen-draft
+  cancel-in-progress: false
+jobs:
+  import-draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate existing production contracts
+        run: |
+          node --check .github/scripts/import-history-yuanshen-draft.mjs
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-production-stability.mjs
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Import protected draft and verify anonymous denial
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/import-history-yuanshen-draft.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: history-yuanshen-draft-report
+          path: /tmp/history-yuanshen-draft-report.json
+          retention-days: 30
