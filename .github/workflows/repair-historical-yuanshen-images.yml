@@ -1,0 +1,49 @@
+name: Repair Historical Yuanshen Inline Images
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/repair-historical-yuanshen-images.mjs'
+      - '.github/workflows/repair-historical-yuanshen-images.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: historical-yuanshen-inline-image-repair
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate image repair logic and membership security
+        run: |
+          node --check .github/scripts/repair-historical-yuanshen-images.mjs
+          node .github/scripts/repair-historical-yuanshen-images.mjs --self-test
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-paid-article-runtime.mjs
+          node scripts/audit-production-stability.mjs
+          test -s assets/articles/historical-yuanshen-destiny-cultivation/01-spirit-body.jpg
+          test -s assets/articles/historical-yuanshen-destiny-cultivation/02-everyday-cultivation.jpg
+          test -s assets/articles/historical-yuanshen-destiny-cultivation/03-tianwen-ai-cleaned.png
+          test -s assets/articles/historical-yuanshen-destiny-cultivation/04-tianwen-original-photo.jpg
+      - name: Authenticate existing Firebase publisher
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Rewrite broken image URLs only and verify protected body
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/repair-historical-yuanshen-images.mjs
+      - name: Store non-sensitive repair proof
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-yuanshen-image-repair-proof
+          path: /tmp/historical-yuanshen-image-repair-proof.json
+          retention-days: 30
