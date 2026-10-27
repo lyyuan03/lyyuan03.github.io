@@ -64,6 +64,21 @@ function installStyles() {
     }
     @media(max-width:760px){.article-body p.article-inline-image-frame{margin:22px auto!important}}
   `;
+  style.textContent += `
+    .article-view[data-article-id="yuanshen-awakening-lingyu-tianwen-lingquan"] .article-body p.article-inline-image-frame {
+      aspect-ratio:auto!important;height:auto!important;overflow:visible!important;
+      line-height:normal!important;border:0!important;background:transparent!important;
+    }
+    .article-view[data-article-id="yuanshen-awakening-lingyu-tianwen-lingquan"] .article-body img.article-inline-image-managed {
+      position:static!important;inset:auto!important;width:100%!important;max-width:100%!important;
+      height:auto!important;max-height:none!important;object-fit:contain!important;
+      object-position:center!important;transform:none!important;margin:0 auto!important;
+    }
+    .article-view[data-article-id="yuanshen-awakening-lingyu-tianwen-lingquan"] .article-cover {
+      width:100%!important;height:auto!important;max-height:none!important;
+      object-fit:contain!important;object-position:center!important;
+    }
+  `;
   document.head.appendChild(style);
 }
 
