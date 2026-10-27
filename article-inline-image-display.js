@@ -148,64 +148,6 @@ function ensureBlessingTeacherRitualImage(article, id) {
 }
 
 
-/**
- * 作者指定天文／符咒雙圖，僅在目標文章內呈現。
- * 會員私有正文仍由原安全載入器處理，不改動權限或內容。
- */
-function ensureHistoricalYuanshenEvidenceImages(article, id) {
-  if (id !== "historical-yuanshen-destiny-cultivation") return;
-  // Once the member body stores real Markdown image lines, it is authoritative.
-  // Skip the former presentation-only fallback to avoid duplicate figures.
-  if (article.querySelector('.article-body img[src*="27cce1b9-4809-4686-9ee6-f7fd273d90e4"], .article-body img[src*="b13e09e5-c7fb-49cc-8a62-cf6cfcbb1f15"]')) return;
-  const paragraph = [...article.querySelectorAll(".article-body p")].find(
-    (item) => (item.textContent || "").includes("是我這一生看過最漂亮的作品之一")
-  );
-  if (!paragraph || paragraph.nextElementSibling?.dataset.historicalYuanshenEvidence === "true") return;
-
-  const styleId = "historical-yuanshen-evidence-styles";
-  if (!document.getElementById(styleId)) {
-    const style = document.createElement("style");
-    style.id = styleId;
-    style.textContent = [
-      ".historical-yuanshen-evidence{max-width:680px;margin:26px auto 34px}",
-      ".historical-yuanshen-evidence figure{margin:0 0 28px;text-align:center}",
-      ".historical-yuanshen-evidence img{display:block;width:100%;height:auto;object-fit:contain;margin:0 auto}",
-      ".historical-yuanshen-evidence figcaption{margin:11px auto 0;font-size:13px;line-height:1.9;color:#725D48;text-align:left}",
-      "@media(max-width:760px){.historical-yuanshen-evidence{width:100%;margin:20px auto 28px}.historical-yuanshen-evidence figure{margin-bottom:24px}}"
-    ].join("");
-    document.head.appendChild(style);
-  }
-
-  const figures = [
-    {
-      src: "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/27cce1b9-4809-4686-9ee6-f7fd273d90e4.png",
-      alt: "修行者書寫的天文與符咒，AI 清晰化整理版本",
-      caption: "圖一｜AI 清晰化整理版：依據實體拍攝照片進行影像整理，方便辨識符號與線條；細節請以原始照片為準。"
-    },
-    {
-      src: "https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/b13e09e5-c7fb-49cc-8a62-cf6cfcbb1f15.jpg",
-      alt: "修行者書寫的天文與符咒，實體拍攝原圖",
-      caption: "圖二｜實體拍攝原圖：當年作品的實際拍攝紀錄，保留原始影像樣貌。"
-    }
-  ];
-  const group = document.createElement("div");
-  group.className = "historical-yuanshen-evidence";
-  group.dataset.historicalYuanshenEvidence = "true";
-  for (const entry of figures) {
-    const figure = document.createElement("figure");
-    const image = document.createElement("img");
-    image.src = entry.src;
-    image.alt = entry.alt;
-    image.loading = "lazy";
-    image.decoding = "async";
-    const caption = document.createElement("figcaption");
-    caption.textContent = entry.caption;
-    figure.append(image, caption);
-    group.appendChild(figure);
-  }
-  paragraph.insertAdjacentElement("afterend", group);
-}
-
 function apply() {
   installStyles();
   resetManaged();
@@ -215,7 +157,6 @@ function apply() {
   ensureSpiritualGoodDeathCover(article, id);
   ensureNeedATeacherCover(article, id);
   ensureBlessingTeacherRitualImage(article, id);
-  ensureHistoricalYuanshenEvidenceImages(article, id);
   const saved = settingsByArticle.get(id);
   const images = Array.isArray(saved?.images) ? saved.images.slice(0, MAX_IMAGES).map(normalize) : [];
   if (!images.length) return;
