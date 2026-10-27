@@ -1,0 +1,23 @@
+name: Verify cinematic article insertions
+on:
+  pull_request:
+    paths:
+      - '.github/scripts/insert-historical-yuanshen-cinematic.mjs'
+      - '.github/workflows/*historical-yuanshen-cinematic.yml'
+      - 'assets/articles/historical-yuanshen-destiny-cultivation/**'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node --check .github/scripts/insert-historical-yuanshen-cinematic.mjs
+          node .github/scripts/insert-historical-yuanshen-cinematic.mjs --self-test
+          node scripts/verify-draft-paid-content-once.mjs
+          file assets/articles/historical-yuanshen-destiny-cultivation/05-yuan-shikai-toad-bedroom.jpg
+          file assets/articles/historical-yuanshen-destiny-cultivation/06-night-market-woman.jpg
