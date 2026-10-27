@@ -43,6 +43,40 @@ main{max-width:1120px;margin:auto;padding:0 24px 80px}.article-admin-preview-sum
 .article-hook{display:-webkit-box;min-height:5.25em;max-height:5.25em;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3}
 .article-metrics{margin-top:auto;padding-top:16px}
 @media(max-width:760px){.article-list-title{min-height:0;max-height:none;-webkit-line-clamp:unset}.article-hook{min-height:0;max-height:none;-webkit-line-clamp:unset}}
+
+/* 歷史人物元神文章：天文 AI 整理版與實拍原圖統一顯示寬度。
+   保留圖片完整原始比例，不拉伸、裁切，不影響其他會員文章。 */
+.article-view[data-article-id="historical-yuanshen-destiny-cultivation"] .article-body img[src*="03-tianwen-ai-cleaned.png"],
+.article-view[data-article-id="historical-yuanshen-destiny-cultivation"] .article-body img[src*="04-tianwen-original-photo.jpg"]{
+  display:block!important;
+  width:640px!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  position:static!important;
+  transform:none!important;
+  margin:24px auto 12px!important;
+}
+/* 如果舊的後台圖片位置設定替圖片套上 16:9 框，取消裁切。 */
+.article-view[data-article-id="historical-yuanshen-destiny-cultivation"] .article-body p.article-inline-image-frame:has(> img[src*="03-tianwen-ai-cleaned.png"]),
+.article-view[data-article-id="historical-yuanshen-destiny-cultivation"] .article-body p.article-inline-image-frame:has(> img[src*="04-tianwen-original-photo.jpg"]){
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:auto!important;
+  overflow:visible!important;
+  line-height:normal!important;
+  border:0!important;
+  background:transparent!important;
+}
+@media(max-width:760px){
+  .article-view[data-article-id="historical-yuanshen-destiny-cultivation"] .article-body img[src*="03-tianwen-ai-cleaned.png"],
+  .article-view[data-article-id="historical-yuanshen-destiny-cultivation"] .article-body img[src*="04-tianwen-original-photo.jpg"]{
+    margin:18px auto 10px!important;
+  }
+}
+
 </style>
   <link rel="stylesheet" href="/site-navigation.css?v=20261004-nav-1">
 <link rel="stylesheet" href="/site-footer.css?v=6152ecf0">
