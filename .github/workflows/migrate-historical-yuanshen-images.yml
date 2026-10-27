@@ -1,0 +1,48 @@
+name: Migrate Historical Yuanshen Evidence Images Into Paid Body
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/migrate-historical-yuanshen-images.mjs'
+      - '.github/workflows/migrate-historical-yuanshen-images.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-yuanshen-image-markdown-migration
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate image positioning and the protected article contract
+        run: |
+          node --check .github/scripts/migrate-historical-yuanshen-images.mjs
+          node .github/scripts/migrate-historical-yuanshen-images.mjs --self-test
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-paid-article-runtime.mjs
+          node scripts/audit-production-stability.mjs
+      - name: Authenticate existing Firestore publishing service account
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Insert two images in private article Markdown and verify permissions
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/migrate-historical-yuanshen-images.mjs
+      - name: Retain a verification report with no private body text
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-yuanshen-backend-image-markdown-proof
+          path: /tmp/historical-yuanshen-image-backend-report.json
+          retention-days: 30
