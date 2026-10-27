@@ -148,10 +148,6 @@ function ensureBlessingTeacherRitualImage(article, id) {
 }
 
 
-/**
- * 作者指定天文／符咒雙圖，僅在目標文章內呈現。
- * 會員私有正文仍由原安全載入器處理，不改動權限或內容。
- */
 function apply() {
   installStyles();
   resetManaged();
