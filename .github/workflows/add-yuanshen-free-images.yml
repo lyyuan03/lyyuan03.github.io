@@ -1,0 +1,22 @@
+name: Add Contextual Images to Yuanshen Free Article
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/add-yuanshen-free-images.py'
+      - '.github/workflows/add-yuanshen-free-images.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  update-article:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Insert contextual images and verify published public article
+        run: python3 .github/scripts/add-yuanshen-free-images.py
