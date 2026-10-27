@@ -1,0 +1,27 @@
+name: Verify Historical Yuanshen Image URL Repair
+on:
+  pull_request:
+    paths:
+      - '.github/scripts/repair-historical-yuanshen-images.mjs'
+      - '.github/workflows/verify-historical-yuanshen-image-repair.yml'
+      - 'assets/articles/historical-yuanshen-destiny-cultivation/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify no-auth Markdown URL rewrite is idempotent and images are present
+        run: |
+          node --check .github/scripts/repair-historical-yuanshen-images.mjs
+          node .github/scripts/repair-historical-yuanshen-images.mjs --self-test
+          file assets/articles/historical-yuanshen-destiny-cultivation/01-spirit-body.jpg
+          file assets/articles/historical-yuanshen-destiny-cultivation/02-everyday-cultivation.jpg
+          file assets/articles/historical-yuanshen-destiny-cultivation/03-tianwen-ai-cleaned.png
+          file assets/articles/historical-yuanshen-destiny-cultivation/04-tianwen-original-photo.jpg
