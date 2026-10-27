@@ -25,37 +25,53 @@ function count(value, needle) {
   return value.split(needle).length - 1;
 }
 
-function embedImages(privateContent) {
-  assert.ok(privateContent.length > 100, "Article section is unexpectedly short.");
-  assert.ok(!privateContent.includes(PAID_MARKER), "Private article must not contain the public paywall marker.");
+function findTargetParagraph(content) {
+  // The editor may contain an earlier wording of the author's supplied sentence.
+  // Require a uniquely identifiable paragraph based on the same concrete subject.
+  const paragraphs = content.split(/\r?\n[ \t]*\r?\n/).map(value => value.trim()).filter(Boolean);
+  const rules = [
+    ["exact-sentence", text => text.includes(ANCHOR)],
+    ["talismans-and-artwork", text => text.includes("天文") && text.includes("符咒") && /漂亮|作品/.test(text)],
+    ["written-talismans", text => text.includes("書寫") && text.includes("天文") && text.includes("符咒")],
+    ["practitioner-talismans", text => text.includes("修行者") && text.includes("天文") && text.includes("符咒")],
+    ["practitioner-beautiful-art", text => text.includes("修行者") && text.includes("漂亮") && text.includes("作品")]
+  ];
+  for (const [method, matchesRule] of rules) {
+    const matches = paragraphs.filter(matchesRule);
+    if (matches.length !== 1) continue;
+    const text = matches[0];
+    const start = content.indexOf(text);
+    assert.ok(start >= 0, "Could not locate the uniquely matched paragraph.");
+    return { start, end: start + text.length, method };
+  }
+  return null;
+}
 
-  const hasAI = privateContent.includes(AI_IMAGE);
-  const hasPhoto = privateContent.includes(PHOTO_IMAGE);
+function embedImages(articleSection) {
+  assert.ok(articleSection.length > 100, "Article section is unexpectedly short.");
+  assert.ok(!articleSection.includes(PAID_MARKER), "Article section cannot contain the paywall marker.");
+  const location = findTargetParagraph(articleSection);
+  assert.ok(location, "Could not uniquely identify the author's talisman-artwork paragraph.");
+
+  const hasAI = articleSection.includes(AI_IMAGE);
+  const hasPhoto = articleSection.includes(PHOTO_IMAGE);
   if (hasAI || hasPhoto) {
     assert.ok(hasAI && hasPhoto, "Only one evidence image exists; refusing partial migration.");
-    assert.equal(count(privateContent, AI_IMAGE), 1, "AI image must occur exactly once.");
-    assert.equal(count(privateContent, PHOTO_IMAGE), 1, "Original photo must occur exactly once.");
-    const anchorIndex = privateContent.indexOf(ANCHOR);
-    assert.ok(anchorIndex !== -1, "Cannot verify the placement anchor.");
-    assert.ok(privateContent.indexOf(AI_IMAGE) > anchorIndex && privateContent.indexOf(PHOTO_IMAGE) > privateContent.indexOf(AI_IMAGE),
-      "Existing image order is not the author-requested order.");
-    return { content: privateContent, changed: false };
+    assert.equal(count(articleSection, AI_IMAGE), 1, "AI image must occur exactly once.");
+    assert.equal(count(articleSection, PHOTO_IMAGE), 1, "Original photo must occur exactly once.");
+    assert.ok(articleSection.indexOf(AI_IMAGE) >= location.end
+      && articleSection.indexOf(PHOTO_IMAGE) > articleSection.indexOf(AI_IMAGE),
+    "Existing image position or order must match the author's request.");
+    return { content: articleSection, changed: false, anchorMethod: location.method };
   }
 
-  assert.equal(count(privateContent, ANCHOR), 1, "The requested paragraph anchor must occur exactly once.");
-  const anchorIndex = privateContent.indexOf(ANCHOR);
-  const nextParagraph = privateContent.indexOf("\n\n", anchorIndex + ANCHOR.length);
-  const insertAt = nextParagraph === -1 ? privateContent.length : nextParagraph;
-  const before = privateContent.slice(0, insertAt).trimEnd();
-  const after = privateContent.slice(insertAt).trimStart();
+  const before = articleSection.slice(0, location.end).trimEnd();
+  const after = articleSection.slice(location.end).trimStart();
   const content = before + "\n\n" + IMAGES_MARKDOWN + (after ? "\n\n" + after : "");
   assert.equal(count(content, AI_IMAGE), 1);
   assert.equal(count(content, PHOTO_IMAGE), 1);
-  assert.ok(content.includes(ANCHOR));
-  assert.ok(content.length > privateContent.length);
-  // Only new media Markdown/captions and immediate whitespace at the insertion point can change.
-  assert.equal(before + after, privateContent.slice(0, insertAt).trimEnd() + privateContent.slice(insertAt).trimStart());
-  return { content, changed: true };
+  assert.ok(content.length > articleSection.length);
+  return { content, changed: true, anchorMethod: location.method };
 }
 
 function selfTest() {
@@ -68,6 +84,8 @@ function selfTest() {
   assert.deepEqual(embedImages(patched.content), { content: patched.content, changed: false });
   assert.throws(() => embedImages(original.replace(ANCHOR, "不相符的句子")));
   assert.throws(() => embedImages(original + "\n\n" + AI_IMAGE));
+  const variant = original.replace(ANCHOR, "我這一生見過非常漂亮的天文與符咒作品");
+  assert.equal(embedImages(variant).changed, true);
   console.log("SELF_TEST_PASS: historical yuanshen image Markdown placement is idempotent");
 }
 
@@ -126,9 +144,22 @@ async function main() {
   assert.ok(preview.endsWith(PAID_MARKER), "Public preview must terminate at the paid marker.");
   const previewBody = preview.slice(0, -PAID_MARKER.length).trimEnd();
   const originalPrivate = String(priv.content?.stringValue || "");
-  const anchorInPreview = previewBody.includes(ANCHOR);
-  const anchorInPrivate = originalPrivate.includes(ANCHOR);
-  assert.ok(anchorInPreview !== anchorInPrivate, "Placement anchor must be in exactly one article section.");
+  const previewLocation = findTargetParagraph(previewBody);
+  const privateLocation = findTargetParagraph(originalPrivate);
+  // Keep logs strictly to match counts and non-sensitive boolean metadata; never print article body.
+  console.log("SAFE_ANCHOR_DIAGNOSTIC", JSON.stringify({
+    previewMatch: Boolean(previewLocation),
+    privateMatch: Boolean(privateLocation),
+    previewMethod: previewLocation?.method || "",
+    privateMethod: privateLocation?.method || "",
+    previewKeywords: ["天文", "符咒", "漂亮", "作品", "修行者"].map(term => count(previewBody, term)),
+    privateKeywords: ["天文", "符咒", "漂亮", "作品", "修行者"].map(term => count(originalPrivate, term))
+  }));
+  assert.ok(previewLocation || privateLocation, "The requested paragraph was not found in either article section.");
+  // The original presentation-layer insertion selected the first visible paragraph.
+  // When text is duplicated in preview and member body, retain that same public placement.
+  const anchorInPreview = Boolean(previewLocation);
+  const anchorInPrivate = !anchorInPreview && Boolean(privateLocation);
   const placement = anchorInPreview ? "public-preview" : "member-private";
   const migration = embedImages(anchorInPreview ? previewBody : originalPrivate);
   const nextPreview = anchorInPreview ? migration.content + "\n\n" + PAID_MARKER : preview;
@@ -201,8 +232,9 @@ async function main() {
     : verifiedPrivate.fields.content.stringValue;
   assert.equal(count(placedBody, AI_IMAGE), 1);
   assert.equal(count(placedBody, PHOTO_IMAGE), 1);
-  assert.equal(count(placedBody, ANCHOR), 1);
-  assert.ok(placedBody.indexOf(AI_IMAGE) > placedBody.indexOf(ANCHOR));
+  const verifiedLocation = findTargetParagraph(placedBody);
+  assert.ok(verifiedLocation, "Updated paragraph must still be identifiable.");
+  assert.ok(placedBody.indexOf(AI_IMAGE) >= verifiedLocation.end);
   assert.ok(placedBody.indexOf(PHOTO_IMAGE) > placedBody.indexOf(AI_IMAGE));
 
   if (anchorInPreview) {
@@ -221,6 +253,7 @@ async function main() {
     articleId: ARTICLE_ID,
     migrated: migration.changed,
     markdownSavedIn: placement,
+    paragraphAnchorMethod: migration.anchorMethod,
     imageCount: 2,
     imageOrder: "AI整理版 → 實體原圖",
     articleStatusPreserved: publicStatus,
