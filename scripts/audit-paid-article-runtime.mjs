@@ -75,4 +75,6 @@ assert.ok(bootstrap.includes(`article-paid-gate-restore.js?v=${cacheToken}`), "P
 assert.ok(bootstrap.includes(`paid-article-secure-loader.js?v=${cacheToken}`), "Secure-loader cache token is not updated.");
 assert.ok(page.includes(`articles-v6.js?v=${cacheToken}`), "Article bootstrap cache token is not updated.");
 
+await import("./verify-draft-paid-content-once.mjs");
+
 console.log(`Paid article runtime audit passed for ${paidArticles.length} paid article(s), including canonical entitlement authorization and legacy synchronization fallback.`);

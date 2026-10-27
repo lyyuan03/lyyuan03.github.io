@@ -135,6 +135,9 @@ function refreshToc(view) {
 }
 
 function insertPrivateBody(view, content, version, contentHash = "") {
+  // 管理員草稿預覽已經由 article-admin-draft-preview.js 組合完整試閱與會員正文。
+  // 此處若再附加 private body，會把整篇會員段落、圖片與圖說重複顯示一次。
+  if (view?.dataset?.adminDraftPreviewDetail === "true") return false;
   const normalizedContent = String(content || "").trim();
   if (!normalizedContent) return false;
 
@@ -213,6 +216,20 @@ async function hydratePaidBody() {
   if (!articleId || !currentUser?.email) return;
   const view = paidView();
   if (!view) return;
+
+  // 草稿專用預覽直接提供已獲權限管理員的完整內容，正常付費解鎖流程不可再灌入一次。
+  // 檢查 DOM 標記，而不是只依賴登入帳號，以免影響管理員查看正式發布文章。
+  if (view.dataset.adminDraftPreviewDetail === "true") {
+    requestSerial += 1;
+    if (paidBodyUnsubscribe) {
+      paidBodyUnsubscribe();
+      paidBodyUnsubscribe = null;
+    }
+    // 舊版本可能已經加上多餘的第二份會員正文；只移除程式附加的容器。
+    view.querySelectorAll("[data-paid-private-body]").forEach((extraBody) => extraBody.remove());
+    view.querySelectorAll("[data-paid-secure-unlocked], [data-paid-secure-status]").forEach((marker) => marker.remove());
+    return;
+  }
 
   const metadata = await paidMetadata() || {};
   const viewLooksEvent = metadata.accessType === "event"
