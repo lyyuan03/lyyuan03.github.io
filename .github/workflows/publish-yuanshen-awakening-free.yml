@@ -1,0 +1,22 @@
+name: Publish Yuanshen Free Article
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/publish-yuanshen-awakening-free.py'
+      - '.github/workflows/publish-yuanshen-awakening-free.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Directly publish free article and verify Firestore
+        run: python3 .github/scripts/publish-yuanshen-awakening-free.py
