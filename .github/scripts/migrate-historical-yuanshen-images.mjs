@@ -81,7 +81,10 @@ function selfTest() {
   assert.equal(count(patched.content, AI_IMAGE), 1);
   assert.equal(count(patched.content, PHOTO_IMAGE), 1);
   assert.ok(patched.content.indexOf(AI_IMAGE) < patched.content.indexOf("## 後文"));
-  assert.deepEqual(embedImages(patched.content), { content: patched.content, changed: false });
+  const repeated = embedImages(patched.content);
+  assert.equal(repeated.content, patched.content);
+  assert.equal(repeated.changed, false);
+  assert.equal(repeated.anchorMethod, "exact-sentence");
   assert.throws(() => embedImages(original.replace(ANCHOR, "不相符的句子")));
   assert.throws(() => embedImages(original + "\n\n" + AI_IMAGE));
   const variant = original.replace(ANCHOR, "我這一生見過非常漂亮的天文與符咒作品");
