@@ -13,7 +13,7 @@ fields=req(path)["fields"]
 assert fields["status"]["stringValue"]=="published" and fields["accessType"]["stringValue"]=="open"
 body=fields["content"]["stringValue"]
 question="我想請教老師，您在書中一直反覆說到，元神覺醒後自會講靈語、寫天文、打靈拳，這是每一個元神覺醒後都會有的現象嗎？如果沒有，是不是代表元神尚未覺醒？"
-intro="讀者提問\n\n有網友閱讀《我在人間的元神覺醒》後，留下這個問題：\n\n「"+question+"」\n\n宇色老師回覆\n\n"
+intro="網友提問：元神覺醒後，一定會說靈語、寫天文、打靈拳嗎？\n\n日前，有位網友在 Facebook 留言，提出了一個關於元神覺醒的問題：\n\n「"+question+"」\n\n當時，靈元院小編已經針對這個問題作了回覆，說明每個人的元神條件與修行過程不同，靈語、天文及靈拳並不是判斷元神是否覺醒的唯一依據，也因此需要老師依照個別情況帶領。\n\n不過，這位網友提出的問題，其實還可以談得更深入。\n\n為什麼有些人在元神覺醒後會出現靈語、天文或靈拳，有些人卻完全沒有這些現象？如果這些都不是必要條件，老師又該如何判斷一個人的元神狀態？\n\n這些問題，牽涉到元神本身的條件、覺醒的過程，以及覺醒之後的修持方向。\n\n我想藉由這次的提問，進一步談談其中的差別。\n\n"
 if question not in body:
  body=intro+body
 body=re.sub(r"(?m)^#{1,6}\\s+(.+)$",lambda m:m.group(1),body)
