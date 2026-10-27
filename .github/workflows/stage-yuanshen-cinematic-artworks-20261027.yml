@@ -1,0 +1,45 @@
+name: Stage Yuan Shikai and Night Market Story Artworks
+on:
+  push:
+    branches: [feature/yuan-shikai-night-market-story-images-20261027]
+    paths:
+      - '.github/workflows/stage-yuanshen-cinematic-artworks-20261027.yml'
+permissions:
+  contents: write
+jobs:
+  stage-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Preserve original AI artwork assets in the site repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="assets/articles/historical-yuanshen-destiny-cultivation"
+          mkdir -p "$root"
+          curl -fLS --retry 3 --connect-timeout 15 --max-time 100 \
+            'https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/d86e3f57-39fe-4935-b7ff-176480a76599.png' \
+            -o "$root/05-yuan-shikai-toad-legend.png"
+          curl -fLS --retry 3 --connect-timeout 15 --max-time 100 \
+            'https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/16a3de0a-2c1f-43a5-95c3-501e681b680d.png' \
+            -o "$root/06-night-market-woman-lucidity.png"
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("assets/articles/historical-yuanshen-destiny-cultivation")
+          for filename in ("05-yuan-shikai-toad-legend.png","06-night-market-woman-lucidity.png"):
+              raw=(root/filename).read_bytes()
+              assert raw.startswith(bytes.fromhex("89504e470d0a1a0a")) and len(raw)>1000000, f"Invalid image: {filename}"
+              width=int.from_bytes(raw[16:20],"big")
+              height=int.from_bytes(raw[20:24],"big")
+              assert width==1672 and height==941, f"Unexpected image dimensions: {filename}: {width}x{height}"
+              print("ASSET_OK",filename,len(raw),width,height)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$root/05-yuan-shikai-toad-legend.png" "$root/06-night-market-woman-lucidity.png"
+          git diff --cached --quiet && { echo "Already staged"; exit 0; }
+          git commit -m "Add two original cinematic story artworks as site images"
+          git push origin HEAD:feature/yuan-shikai-night-market-story-images-20261027
