@@ -26,7 +26,7 @@ function count(value, needle) {
 }
 
 function embedImages(privateContent) {
-  assert.ok(privateContent.length > 250, "Private article body is unexpectedly short.");
+  assert.ok(privateContent.length > 100, "Article section is unexpectedly short.");
   assert.ok(!privateContent.includes(PAID_MARKER), "Private article must not contain the public paywall marker.");
 
   const hasAI = privateContent.includes(AI_IMAGE);
@@ -124,67 +124,110 @@ async function main() {
   assert.equal(priv.active?.booleanValue, true, "Private body must remain active.");
   const preview = String(pub.content?.stringValue || "");
   assert.ok(preview.endsWith(PAID_MARKER), "Public preview must terminate at the paid marker.");
-  assert.ok(!preview.includes(ANCHOR), "Placement anchor must be in the protected member body.");
-  const oldBody = String(priv.content?.stringValue || "");
-  const migration = embedImages(oldBody);
+  const previewBody = preview.slice(0, -PAID_MARKER.length).trimEnd();
+  const originalPrivate = String(priv.content?.stringValue || "");
+  const anchorInPreview = previewBody.includes(ANCHOR);
+  const anchorInPrivate = originalPrivate.includes(ANCHOR);
+  assert.ok(anchorInPreview !== anchorInPrivate, "Placement anchor must be in exactly one article section.");
+  const placement = anchorInPreview ? "public-preview" : "member-private";
+  const migration = embedImages(anchorInPreview ? previewBody : originalPrivate);
+  const nextPreview = anchorInPreview ? migration.content + "\n\n" + PAID_MARKER : preview;
+  const nextPrivate = anchorInPrivate ? migration.content : originalPrivate;
 
   if (migration.changed) {
-    const oldVersion = Math.max(0, Number(priv.contentVersion?.integerValue || 0));
-    const version = oldVersion + 1;
-    const nextHash = digest(migration.content);
     const now = new Date().toISOString();
-    const publicFields = {
-      ...pub,
-      paidContentHash: str(nextHash),
-      paidContentVersion: int(version),
-      updatedAt: timestamp(now)
-    };
-    const privateFields = {
-      ...priv,
-      content: str(migration.content),
-      contentHash: str(nextHash),
-      contentVersion: int(version),
-      previousContentBackup: str(oldBody),
-      previousContentHashBackup: str(priv.contentHash?.stringValue || ""),
-      previousContentVersionBackup: int(oldVersion),
-      previousBackupAt: timestamp(now),
-      updatedAt: timestamp(now)
-    };
-
-    await request(":commit", {
-      method: "POST",
-      data: { writes: [
-        { update: { name: publicDoc.name, fields: publicFields }, currentDocument: { updateTime: publicDoc.updateTime } },
-        { update: { name: privateDoc.name, fields: privateFields }, currentDocument: { updateTime: privateDoc.updateTime } }
-      ] }
-    });
+    if (anchorInPreview) {
+      // Add the author-supplied images to the same preview paragraph visible in the editor.
+      // Do not change the member-only private document, paywall, or paid body metadata.
+      const nextPublicFields = {
+        ...pub,
+        content: str(nextPreview),
+        previousContentBackup: str(preview),
+        previousContentBackupAt: timestamp(now),
+        updatedAt: timestamp(now)
+      };
+      await request(":commit", {
+        method: "POST",
+        data: { writes: [{
+          update: { name: publicDoc.name, fields: nextPublicFields },
+          currentDocument: { updateTime: publicDoc.updateTime }
+        }] }
+      });
+    } else {
+      // If the author later moves the paragraph into the private member body,
+      // preserve private access and update the matching version/hash atomically.
+      const oldVersion = Math.max(0, Number(priv.contentVersion?.integerValue || 0));
+      const version = oldVersion + 1;
+      const nextHash = digest(nextPrivate);
+      const nextPublicFields = {
+        ...pub,
+        paidContentHash: str(nextHash),
+        paidContentVersion: int(version),
+        updatedAt: timestamp(now)
+      };
+      const nextPrivateFields = {
+        ...priv,
+        content: str(nextPrivate),
+        contentHash: str(nextHash),
+        contentVersion: int(version),
+        previousContentBackup: str(originalPrivate),
+        previousContentHashBackup: str(priv.contentHash?.stringValue || ""),
+        previousContentVersionBackup: int(oldVersion),
+        previousBackupAt: timestamp(now),
+        updatedAt: timestamp(now)
+      };
+      await request(":commit", {
+        method: "POST",
+        data: { writes: [
+          { update: { name: publicDoc.name, fields: nextPublicFields }, currentDocument: { updateTime: publicDoc.updateTime } },
+          { update: { name: privateDoc.name, fields: nextPrivateFields }, currentDocument: { updateTime: privateDoc.updateTime } }
+        ] }
+      });
+    }
   }
 
   const [verifiedPublic, verifiedPrivate] = await Promise.all([
     request("/articles/" + ARTICLE_ID),
     request("/paidArticleBodies/" + ARTICLE_ID)
   ]);
-  assert.equal(verifiedPublic.fields.content.stringValue, preview, "Public preview must remain unchanged.");
+  assert.equal(verifiedPublic.fields.content.stringValue, nextPreview, "Article editor content was not saved as expected.");
+  assert.ok(nextPreview.endsWith(PAID_MARKER), "The private article boundary must remain intact.");
   assert.equal(verifiedPublic.fields.accessType.stringValue, "paid");
-  assert.equal(verifiedPrivate.fields.content.stringValue, migration.content, "Private body did not persist.");
-  const updated = verifiedPrivate.fields.content.stringValue;
-  assert.equal(count(updated, AI_IMAGE), 1);
-  assert.equal(count(updated, PHOTO_IMAGE), 1);
-  assert.equal(verifiedPublic.fields.paidContentHash.stringValue, digest(updated));
-  assert.equal(Number(verifiedPublic.fields.paidContentVersion.integerValue), Number(verifiedPrivate.fields.contentVersion.integerValue));
+  assert.equal(verifiedPublic.fields.status?.stringValue, publicStatus, "Article publication state must not change.");
+  assert.equal(verifiedPrivate.fields.status?.stringValue, privateStatus, "Private publication state must not change.");
+  assert.equal(verifiedPrivate.fields.content.stringValue, nextPrivate, "Member-only body must remain intact.");
+  const placedBody = anchorInPreview
+    ? verifiedPublic.fields.content.stringValue
+    : verifiedPrivate.fields.content.stringValue;
+  assert.equal(count(placedBody, AI_IMAGE), 1);
+  assert.equal(count(placedBody, PHOTO_IMAGE), 1);
+  assert.equal(count(placedBody, ANCHOR), 1);
+  assert.ok(placedBody.indexOf(AI_IMAGE) > placedBody.indexOf(ANCHOR));
+  assert.ok(placedBody.indexOf(PHOTO_IMAGE) > placedBody.indexOf(AI_IMAGE));
 
+  if (anchorInPreview) {
+    assert.equal(verifiedPublic.fields.paidContentHash?.stringValue, pub.paidContentHash?.stringValue,
+      "Editing the preview must not alter the private body hash.");
+    assert.equal(verifiedPublic.fields.paidContentVersion?.integerValue, pub.paidContentVersion?.integerValue,
+      "Editing the preview must not change the member body version.");
+  } else {
+    assert.equal(verifiedPublic.fields.paidContentHash.stringValue, digest(nextPrivate));
+    assert.equal(Number(verifiedPublic.fields.paidContentVersion.integerValue),
+      Number(verifiedPrivate.fields.contentVersion.integerValue));
+  }
   const unauthorized = await fetch(root + "/paidArticleBodies/" + ARTICLE_ID, { signal: AbortSignal.timeout(20000) });
   assert.equal(unauthorized.status, 403, "Unauthenticated readers must be denied the member body.");
   const report = {
     articleId: ARTICLE_ID,
     migrated: migration.changed,
+    markdownSavedIn: placement,
     imageCount: 2,
-    markdownSavedInPrivateBody: true,
     imageOrder: "AI整理版 → 實體原圖",
-    publicPreviewUnchanged: true,
-    memberPermissionsUnchanged: true,
+    articleStatusPreserved: publicStatus,
+    privateBodyUnchanged: anchorInPreview,
+    privateArticleAccessPreserved: true,
     anonymousPrivateReadStatus: unauthorized.status,
-    editorCanLoadMarkdownFromFirestore: true,
+    editorContainsImageMarkdown: true,
     url: "https://lyyuan.tw/articles.html?id=" + ARTICLE_ID
   };
   writeFileSync("/tmp/historical-yuanshen-image-backend-report.json", JSON.stringify(report, null, 2));
