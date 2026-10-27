@@ -154,6 +154,9 @@ function ensureBlessingTeacherRitualImage(article, id) {
  */
 function ensureHistoricalYuanshenEvidenceImages(article, id) {
   if (id !== "historical-yuanshen-destiny-cultivation") return;
+  // Once the member body stores real Markdown image lines, it is authoritative.
+  // Skip the former presentation-only fallback to avoid duplicate figures.
+  if (article.querySelector('.article-body img[src*="27cce1b9-4809-4686-9ee6-f7fd273d90e4"], .article-body img[src*="b13e09e5-c7fb-49cc-8a62-cf6cfcbb1f15"]')) return;
   const paragraph = [...article.querySelectorAll(".article-body p")].find(
     (item) => (item.textContent || "").includes("是我這一生看過最漂亮的作品之一")
   );
