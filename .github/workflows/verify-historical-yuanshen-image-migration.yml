@@ -1,0 +1,24 @@
+name: Verify Historical Yuanshen Image Migration
+on:
+  pull_request:
+    paths:
+      - '.github/scripts/migrate-historical-yuanshen-images.mjs'
+      - '.github/workflows/verify-historical-yuanshen-image-migration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and safe dry-run without Firebase credentials
+        run: |
+          node --check .github/scripts/migrate-historical-yuanshen-images.mjs
+          node .github/scripts/migrate-historical-yuanshen-images.mjs --self-test
