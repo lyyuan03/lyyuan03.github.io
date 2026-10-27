@@ -59,7 +59,7 @@ function embedImages(privateContent) {
 }
 
 function selfTest() {
-  const original = "## 前文\n\n這是測試段落，" + ANCHOR + "。\n\n## 後文\n\n其他原始文字。".repeat(15);
+  const original = "## 前文\n\n這是測試段落，" + ANCHOR + "。\n\n## 後文\n\n其他原始文字。".repeat(50);
   const patched = embedImages(original);
   assert.equal(patched.changed, true);
   assert.equal(count(patched.content, AI_IMAGE), 1);
