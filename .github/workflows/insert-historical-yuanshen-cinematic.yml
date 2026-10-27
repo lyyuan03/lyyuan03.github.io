@@ -1,0 +1,49 @@
+name: Insert Historical Yuanshen Cinematic Images
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/insert-historical-yuanshen-cinematic.mjs'
+      - '.github/workflows/insert-historical-yuanshen-cinematic.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: historical-yuanshen-cinematic-insert
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate image repair logic and membership security
+        run: |
+          node --check .github/scripts/insert-historical-yuanshen-cinematic.mjs
+          node .github/scripts/insert-historical-yuanshen-cinematic.mjs --self-test
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-paid-article-runtime.mjs
+          node scripts/audit-production-stability.mjs
+          test -s assets/articles/historical-yuanshen-destiny-cultivation/01-spirit-body.jpg
+          test -s assets/articles/historical-yuanshen-destiny-cultivation/02-everyday-cultivation.jpg
+          test -s assets/articles/historical-yuanshen-destiny-cultivation/03-tianwen-ai-cleaned.png
+          test -s assets/articles/historical-yuanshen-destiny-cultivation/04-tianwen-original-photo.jpg
+      - name: Authenticate existing Firebase publisher
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Rewrite broken image URLs only and verify protected body
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/insert-historical-yuanshen-cinematic.mjs
+      - name: Store non-sensitive repair proof
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-yuanshen-cinematic-proof
+          path: /tmp/historical-yuanshen-cinematic-proof.json
+          retention-days: 30
