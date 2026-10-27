@@ -105,10 +105,22 @@ async function main() {
   ]);
   const pub = publicDoc.fields || {};
   const priv = privateDoc.fields || {};
-  assert.equal(pub.status?.stringValue, "published", "Article must remain published.");
+  // Some manually managed member articles retain draft status while under editorial review.
+  // This is a content-only edit: never change either record's original publication state.
+  const publicStatus = String(pub.status?.stringValue || "");
+  const privateStatus = String(priv.status?.stringValue || "");
+  console.log("SAFE_ARTICLE_METADATA", JSON.stringify({
+    publicStatus,
+    privateStatus,
+    accessType: pub.accessType?.stringValue || "",
+    hasProtectedBody: pub.privatePaidContent?.booleanValue === true,
+    privateActive: priv.active?.booleanValue === true
+  }));
+  assert.ok(["draft", "published"].includes(publicStatus), "Public article has an unrecognized status.");
+  assert.ok(["draft", "published"].includes(privateStatus), "Private body has an unrecognized status.");
+  assert.ok(/蔣中正|毛澤東|袁世凱/.test(String(pub.title?.stringValue || "")), "Article title is not the author's requested historical yuanshen article.");
   assert.equal(pub.accessType?.stringValue, "paid", "Article must remain member-only.");
   assert.equal(pub.privatePaidContent?.booleanValue, true, "Paid protection must remain enabled.");
-  assert.equal(priv.status?.stringValue, "published", "Private body status must be published.");
   assert.equal(priv.active?.booleanValue, true, "Private body must remain active.");
   const preview = String(pub.content?.stringValue || "");
   assert.ok(preview.endsWith(PAID_MARKER), "Public preview must terminate at the paid marker.");
