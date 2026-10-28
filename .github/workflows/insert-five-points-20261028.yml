@@ -1,0 +1,21 @@
+name: Insert Five Points Infographic Into Article
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/insert-five-points-20261028.py'
+      - '.github/workflows/insert-five-points-20261028.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  insert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Add infographic to published article and verify
+        run: python3 .github/scripts/insert-five-points-20261028.py
