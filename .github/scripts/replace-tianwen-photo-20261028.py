@@ -9,7 +9,15 @@ def req(path,method="GET",payload=None):
  data=None if payload is None else json.dumps(payload,ensure_ascii=False).encode()
  request=urllib.request.Request(root+path,data=data,method=method,headers={"Authorization":"Bearer "+token,"Content-Type":"application/json"})
  with urllib.request.urlopen(request,timeout=35) as r:return json.load(r)
-with urllib.request.urlopen(urllib.request.Request(NEW,method="HEAD"),timeout=30) as r:assert r.status==200
+import time
+for attempt in range(24):
+ try:
+  with urllib.request.urlopen(urllib.request.Request(NEW,method="HEAD"),timeout=15) as r:
+   assert r.status==200
+  break
+ except Exception:
+  if attempt==23:raise
+  time.sleep(10)
 path="/articles/"+I
 doc=req(path);f=doc["fields"]
 assert f["status"]["stringValue"]=="published" and f["accessType"]["stringValue"]=="open"
