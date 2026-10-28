@@ -1,0 +1,29 @@
+name: Upload Five Points Infographic
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/upload-five-points-20261028.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download provided infographic
+        run: |
+          set -euo pipefail
+          mkdir -p assets/articles/yuanshen-awakening
+          curl -fL --retry 3 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/81eebfe0-422a-46e4-9119-98085b3790a1.jpg' -o assets/articles/yuanshen-awakening/yuanshen-five-key-points-20261028.jpg
+          test "$(wc -c < assets/articles/yuanshen-awakening/yuanshen-five-key-points-20261028.jpg)" -gt 100000
+      - name: Push image to PR branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/articles/yuanshen-awakening/yuanshen-five-key-points-20261028.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "Add five-points infographic"
+            git push origin HEAD:refs/heads/assets/yuanshen-five-points-20261028
+          fi
