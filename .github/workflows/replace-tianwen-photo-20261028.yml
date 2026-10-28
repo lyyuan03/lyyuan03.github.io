@@ -1,0 +1,39 @@
+name: Replace Tianwen Article Inline Photo
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/replace-tianwen-photo-20261028.py'
+      - '.github/workflows/replace-tianwen-photo-20261028.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  replace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download exact approved replacement image into website
+        run: |
+          set -euo pipefail
+          mkdir -p assets/articles/yuanshen-awakening
+          curl --fail --location --retry 3 --silent --show-error 'https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/e95e02c1-6713-42ef-9dfe-c7ba98df8b08.jpg' -o assets/articles/yuanshen-awakening/tianwen-flat-replacement-20261028.jpg
+          file assets/articles/yuanshen-awakening/tianwen-flat-replacement-20261028.jpg
+          test "$(wc -c < assets/articles/yuanshen-awakening/tianwen-flat-replacement-20261028.jpg)" -gt 100000
+      - name: Commit new image to website repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/articles/yuanshen-awakening/tianwen-flat-replacement-20261028.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "Replace framed Tianwen photo with flat borderless original"
+            git push origin HEAD:main
+          fi
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Replace only original inline image URL in Firestore
+        run: python3 .github/scripts/replace-tianwen-photo-20261028.py
