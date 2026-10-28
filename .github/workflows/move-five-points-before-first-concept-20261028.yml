@@ -1,0 +1,21 @@
+name: Move Five Points Infographic Before First Concept
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/move-five-points-before-first-concept-20261028.py'
+      - '.github/workflows/move-five-points-before-first-concept-20261028.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  move:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Move image without modifying other article text
+        run: python3 .github/scripts/move-five-points-before-first-concept-20261028.py
