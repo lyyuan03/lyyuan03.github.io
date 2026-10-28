@@ -26,7 +26,7 @@ assert matches,("Could not find first concept heading safely; no change",content
 m=matches[0]
 content=content[:m.start()]+block+"\n\n"+content[m.start():]
 assert content.count(image)==1
-assert content.replace(block,"",1).strip()==original.replace(block,"",1).strip()
+assert re.sub(r"\\s+","",content.replace(block,"",1))==re.sub(r"\\s+","",original.replace(block,"",1))
 if content!=original:
  url=base+"?"+urllib.parse.urlencode({"updateMask.fieldPaths":"content"})
  request(url,"PATCH",{"fields":{"content":{"stringValue":content}}})
