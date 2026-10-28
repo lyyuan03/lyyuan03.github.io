@@ -29,7 +29,9 @@ jobs:
           git add assets/articles/yuanshen-awakening/tianwen-flat-replacement-20261028.jpg
           if ! git diff --cached --quiet; then
             git commit -m "Replace framed Tianwen photo with flat borderless original"
-            git push origin HEAD:refs/heads/assets/tianwen-flat-replacement-20261028\n            echo "Image branch created. Merge image PR before running Firestore replacement."\n            exit 0
+            git push origin HEAD:refs/heads/assets/tianwen-flat-replacement-20261028
+            echo "Image branch created; merge the image PR before rerunning."
+            exit 0
           fi
       - uses: google-github-actions/auth@v2
         with:
