@@ -1,3 +1,4 @@
+import { publicMitochondriaBookReviewArticle } from "./article-reading-mitochondria-medicine-energy.js?v=20261101-1";
 import { lingdongMitochondriaEnergyArticle } from "./article-lingdong-mitochondria-energy-public.js?v=20261101-1";
 import { collectiveUnconsciousElectionPart2Article } from "./article-collective-unconscious-election-part-2.js?v=20261017-2";
 import { dragonCanonConsciousnessFieldArticle } from "./article-dragon-canon-consciousness-field.js?v=20260822-paid-highlight-1&paid-private=20260824-article-system-repair-1";
@@ -109,6 +110,7 @@ function normalizeArticle(article) {
 
 export const staticArticles = [
   ...jinmuEventArticles.slice(2),
+  publicMitochondriaBookReviewArticle,
   lingdongMitochondriaEnergyArticle,
   collectiveUnconsciousElectionPart2Article,
   religiousLightInnerPersonArticle,
