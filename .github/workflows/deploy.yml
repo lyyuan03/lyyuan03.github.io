@@ -52,7 +52,7 @@ jobs:
         run: |
           npm init -y >/dev/null 2>&1
           npm install --no-save playwright@1.55.0 >/dev/null
-          npx playwright install --with-deps chromium >/dev/null
+          npx playwright install chromium --only-shell >/dev/null
       - name: Start candidate site
         run: |
           nohup python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/lyyuan-smoke-server.log 2>&1 &
