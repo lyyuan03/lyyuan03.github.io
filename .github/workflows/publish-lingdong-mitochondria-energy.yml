@@ -1,0 +1,48 @@
+name: Publish Lingdong Mitochondria Paid Article
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-lingdong-mitochondria-energy.yml'
+      - '.github/scripts/publish-lingdong-mitochondria-energy.mjs'
+      - 'secure-imports/lingdong-mitochondria-energy-20261101.enc.json'
+      - 'assets/articles/lingdong-mitochondria-energy/**'
+      - 'article-lingdong-mitochondria-energy-public.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: lingdong-mitochondria-paid-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript and paid article protections
+        run: |
+          node --check .github/scripts/publish-lingdong-mitochondria-energy.mjs
+          node --check article-lingdong-mitochondria-energy-public.js
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-paid-article-runtime.mjs
+          node scripts/audit-production-stability.mjs
+      - name: Authenticate existing Firestore publishing account
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Verify original images and publish protected member body
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/publish-lingdong-mitochondria-energy.mjs
+      - name: Save non-sensitive publication proof
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingdong-paid-publication-report
+          path: /tmp/lingdong-publication-report.json
+          retention-days: 30
