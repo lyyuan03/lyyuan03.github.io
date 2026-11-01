@@ -69,6 +69,8 @@ async function main(){
   assert.equal(sa.project_id,PROJECT);
   assert.ok(sa.private_key,'Missing existing Firestore service account');
   const payload=decryptEnvelope(JSON.parse(readFileSync(ENVELOPE,'utf8')),sa.private_key);
+  // 出版前移除正文中多餘的 Markdown 粗體星號；保留圖片、標題與條列語法。
+  payload.content = String(payload.content || '').replace(/\*\*/g, '');
   const split=validate(payload);
   // GitHub Pages deployment runs separately. Require all image bytes to exist publicly before publication.
   let imagesVerified=false;
