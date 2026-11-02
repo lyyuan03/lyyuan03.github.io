@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_top"><title>靈元院｜116年丁未歲點燈</title><style>
+:root{color-scheme:dark;--bg:#0f1a14;--panel:#1c2a22;--gold:#c5a26f;--ink:#f5f1e9;--soft:#c4c9c0}
+*{box-sizing:border-box}body{margin:0;background:transparent;color:var(--ink);font:15px/1.7 "Noto Sans TC","Microsoft JhengHei",sans-serif}.app{padding:8px 4px 24px;max-width:850px;margin:auto}
+h2,h3{font-family:"Noto Serif TC",Georgia,serif;font-weight:500;letter-spacing:.08em}h2{font-size:24px;text-align:center;margin:14px 0 10px}h3{font-size:18px;color:var(--gold);margin:0 0 12px}
+.sub{text-align:center;font-size:13px;color:var(--soft);margin:0 0 24px}.panel{border:1px solid rgba(197,162,111,.32);border-radius:8px;padding:24px;margin:16px 0;background:rgba(15,26,20,.9)}
+input,select{width:100%;padding:12px;background:#13211a;border:1px solid #58624f;border-radius:4px;color:var(--ink);font:inherit}input:focus,select:focus{outline:2px solid var(--gold)}label{display:block;color:#d9d5c8;font-size:13px;margin:10px 0 5px}
+button{font:inherit;cursor:pointer;border-radius:4px;padding:11px 17px;border:1px solid var(--gold);background:var(--gold);color:#171d14;font-weight:600}button.secondary{background:transparent;color:var(--gold)}button:disabled{opacity:.45;cursor:not-allowed}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.note{font-size:13px;color:#b8b5aa;line-height:1.8}.error{color:#ffb3a6}.ok{color:#d5e7c5}.status{min-height:30px;margin-top:12px;font-size:13px}.person{background:#17261e;border:1px solid #536047;border-radius:6px;padding:16px;margin:12px 0}.person strong{color:var(--gold)}
+.lamprow{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}.lampcheck{display:flex;align-items:center;gap:5px;font-size:13px;margin:0;padding:7px 10px;border:1px solid #536047;border-radius:4px;cursor:pointer}.lampcheck input,.consent input{width:auto;accent-color:var(--gold)}.cost{font-size:23px;font-weight:700;color:var(--gold);margin:12px 0}.consent{display:flex;gap:9px;align-items:start;margin-top:12px}.consent label{margin:0}.muted{opacity:.75}.hide{display:none!important}.bank{background:#17261e;border:1px solid rgba(197,162,111,.4);padding:16px;border-radius:4px}
+@media(max-width:600px){.panel{padding:16px}.grid{grid-template-columns:1fr}.lampcheck{width:100%}}
+</style></head><body><div class="app"><h2>116年丁未歲・年度點燈</h2><p class="sub">太歲燈・破災降魔燈・廣財運通燈</p>
+<section class="panel" id="login"><h3>信眾 Email 驗證</h3><p class="note">請使用您本人管理點燈名單的 Email，完成驗證後即可查看自己歷年儲存的家人名單。</p>
+<label for="email">電子郵件</label><input id="email" type="email" autocomplete="email" placeholder="example@gmail.com" maxlength="120">
+<div style="margin-top:12px"><button id="send" type="button">寄送六位數驗證碼</button></div>
+<div id="verifyBox" class="hide"><label for="code">收到的驗證碼</label><input id="code" maxlength="6" inputmode="numeric" autocomplete="one-time-code"><button style="margin-top:10px" id="verify" type="button">驗證並登入</button></div><p id="loginStatus" class="status" aria-live="polite"></p></section>
+<div id="memberArea" class="hide">
+<section class="panel"><h3>聯絡人資料</h3><div class="grid"><div><label for="contactName">聯絡人姓名</label><input id="contactName" maxlength="80"></div><div><label for="contactPhone">聯絡電話</label><input id="contactPhone" type="tel" maxlength="30"></div></div>
+<p class="note">以上資訊僅供本年度點燈登記及匯款核對聯繫使用。</p><button id="saveContact" type="button">儲存聯絡人</button></section>
+<section class="panel"><h3>家庭點燈名單</h3><p class="note">首次登記時新增名單，往後年度即可直接選用。請確認您有權提供並管理受益人的資料。</p>
+<div id="people"></div>
+<div class="grid"><div><label for="personName">點燈人姓名</label><input id="personName" maxlength="80"></div><div><label for="calendar">出生曆法</label><select id="calendar"><option>農曆</option><option>國曆</option></select></div><div><label for="birthday">出生年月日</label><input id="birthday" placeholder="例：民國 065/05/12 或西元 1980/05/12" maxlength="30"></div><div><label for="birthHour">出生時辰（選填）</label><select id="birthHour"><option value="">不填寫</option><option>子時</option><option>丑時</option><option>寅時</option><option>卯時</option><option>辰時</option><option>巳時</option><option>午時</option><option>未時</option><option>申時</option><option>酉時</option><option>戌時</option><option>亥時</option><option>不詳</option></select></div></div>
+<button id="savePerson" class="secondary" style="margin-top:14px" type="button">新增家人資料</button></section>
+<section class="panel"><h3>登記明細與功德金</h3><p class="note">每位點燈者可勾選不同燈別。總燈首及公司行號燈請另洽靈元院行政團隊，網站不預先收取未公告的金額。</p>
+<div id="selections"></div><p class="cost" id="total">合計 NT$ 0</p>
+<div class="bank"><strong>轉帳資訊</strong><div>中國信託 科博館分行　銀行代碼 822</div><div>帳號：1595-4039-1887</div><p class="note">完成登記後才會產生訂單編號及匯款通知；行政確認入帳後才視為核款完成。</p></div>
+<div class="consent"><input type="checkbox" id="consent"><label for="consent">我已閱讀並同意：僅為年度點燈報名、法會名冊、匯款確認及相關聯繫提供資料；若代他人登記，確認有權提供其個人資料，並願意配合必要的資料更正。</label></div>
+<p class="status" id="submitStatus" aria-live="polite"></p><button id="submit" disabled type="button">確認送出點燈登記</button></section></div>
+<section class="panel hide" id="done"><h3>登記已建立</h3><div id="receipt"></div><p class="note">請保留訂單編號。此階段為待匯款，不代表已完成核款。</p></section>
+<p class="note" style="text-align:center">如遇系統或點燈疑問，請聯絡靈元院行政團隊：lyyuan03@gmail.com</p></div>
+<script>
+(function(){
+'use strict';
+var token='',profile=null,editingId='';
+const $=id=>document.getElementById(id);
+const money=n=>'NT$ '+Number(n).toLocaleString('zh-TW');
+function status(id,s,bad){$(id).textContent=s;$(id).className='status '+(bad?'error':'ok')}
+function run(fn,args,onSuccess,onFail){const f=google.script.run.withSuccessHandler(onSuccess).withFailureHandler(e=>{if(onFail)onFail(e);else status('submitStatus',e.message||String(e),true)});f[fn].apply(f,args)}
+function el(tag,txt,cls){const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;if(cls)n.className=cls;return n}
+function inputValue(id){return $(id).value.trim()}
+$('send').onclick=()=>{status('loginStatus','驗證碼寄送中…');$('send').disabled=true;run('requestCode',[inputValue('email')],()=>{status('loginStatus','驗證碼已寄到信箱，有效期限10分鐘。');$('verifyBox').classList.remove('hide');$('send').disabled=false},e=>{status('loginStatus',e.message,true);$('send').disabled=false})};
+$('verify').onclick=()=>{status('loginStatus','驗證中…');run('verifyCode',[inputValue('email'),inputValue('code')],r=>{token=r.token;profile=r.profile;$('login').classList.add('hide');$('memberArea').classList.remove('hide');refresh()},e=>status('loginStatus',e.message,true))};
+function refresh(){
+ $('contactName').value=profile.name||'';$('contactPhone').value=profile.phone||'';
+ const list=$('people');list.replaceChildren();profile.family.forEach(p=>{
+   const pbox=el('div',undefined,'person');pbox.appendChild(el('strong',p.name));
+   pbox.appendChild(el('div',p.calendar+' '+p.birth+(p.hour?'・'+p.hour:''),'note'));
+   const b=el('button','編輯','secondary');b.type='button';b.style.marginTop='6px';
+   b.onclick=()=>{editingId=p.id;$('personName').value=p.name;$('calendar').value=p.calendar;$('birthday').value=p.birth;$('birthHour').value=p.hour||'';$('savePerson').textContent='儲存修改';};
+   pbox.appendChild(b);list.appendChild(pbox);
+ });renderSelections();
+}
+function renderSelections(){
+ const root=$('selections');root.replaceChildren();
+ for(const p of profile.family){
+   const box=el('div',undefined,'person');box.appendChild(el('strong',p.name));const picks=el('div',undefined,'lamprow');
+   for(const l of profile.lamps){
+     const label=el('label',undefined,'lampcheck');const ck=el('input');ck.type='checkbox';ck.dataset.person=p.id;ck.dataset.lamp=l.lamp;ck.disabled=!l.open;ck.onchange=recalc;
+     label.appendChild(ck);label.appendChild(el('span',l.lamp+'｜每位'+money(l.price)+(l.open?'':'（尚未開放）')));picks.appendChild(label);
+   }
+   box.appendChild(picks);root.appendChild(box);
+ }
+ recalc();
+}
+function recalc(){const lamps=new Map(profile.lamps.map(x=>[x.lamp,x.price]));let total=0;document.querySelectorAll('.lampcheck input:checked').forEach(c=>total+=lamps.get(c.dataset.lamp)||0);$('total').textContent='合計 '+money(total);$('submit').disabled=total<=0||!$('consent').checked;}
+$('consent').onchange=recalc;
+$('saveContact').onclick=()=>{run('saveContact',[token,{name:inputValue('contactName'),phone:inputValue('contactPhone')}],r=>{profile=r;refresh();status('submitStatus','聯絡人資料已儲存')})};
+$('savePerson').onclick=()=>{run('saveFamily',[token,{id:editingId,name:inputValue('personName'),calendar:$('calendar').value,birth:inputValue('birthday'),hour:$('birthHour').value}],r=>{
+ profile=r;editingId='';$('personName').value='';$('birthday').value='';$('birthHour').value='';$('savePerson').textContent='新增家人資料';refresh();status('submitStatus','名單已儲存');
+})};
+$('submit').onclick=()=>{
+ const selected=Array.from(document.querySelectorAll('.lampcheck input:checked')).map(c=>({personId:c.dataset.person,lamp:c.dataset.lamp}));
+ if(!confirm('確認送出本年度點燈登記？請先核對姓名、燈別與應繳金額。'))return;
+ $('submit').disabled=true;status('submitStatus','正在建立訂單，請勿重複送出…');
+ run('submitOrder',[token,selected,$('consent').checked],r=>{
+   $('memberArea').classList.add('hide');$('done').classList.remove('hide');
+   const box=$('receipt');box.replaceChildren();box.appendChild(el('p','訂單編號：'+r.id));r.lines.forEach(x=>box.appendChild(el('div',x.name+'｜'+x.lamp+'｜'+money(x.price))));
+   box.appendChild(el('p','總金額：'+money(r.total),'cost'));box.appendChild(el('p',r.mailed?'已寄送回函至您的 Email。':'訂單已儲存，但回函寄送失敗，請聯絡行政團隊。','note'));
+ },e=>{status('submitStatus',e.message,true);recalc()});
+};
+})();
+</script></body></html>
