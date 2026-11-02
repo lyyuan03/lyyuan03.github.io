@@ -11,6 +11,7 @@ button{font:inherit;cursor:pointer;border-radius:4px;padding:11px 17px;border:1p
 </style></head><body><div class="app"><h2>116年丁未歲・年度點燈</h2><p class="sub">太歲燈・破災降魔燈・廣財運通燈</p>
 <section class="panel" id="login"><h3>信眾 Email 驗證</h3><p class="note">請使用您本人管理點燈名單的 Email，完成驗證後即可查看自己歷年儲存的家人名單。</p>
 <label for="email">電子郵件</label><input id="email" type="email" autocomplete="email" placeholder="example@gmail.com" maxlength="120">
+<div class="consent" style="margin:12px 0"><input id="privacy" type="checkbox"><label for="privacy">我已了解：靈元院為辦理 116 年點燈登記、年度續點、法會名冊、核款及必要聯繫，蒐集與保存我提供的聯絡資料及受益人資料；可透過 lyyuan03@gmail.com 申請查詢、更正或刪除依法得刪除的資料。資料不對其他信眾公開。</label></div>
 <div style="margin-top:12px"><button id="send" type="button">寄送六位數驗證碼</button></div>
 <div id="verifyBox" class="hide"><label for="code">收到的驗證碼</label><input id="code" maxlength="6" inputmode="numeric" autocomplete="one-time-code"><button style="margin-top:10px" id="verify" type="button">驗證並登入</button></div><p id="loginStatus" class="status" aria-live="polite"></p></section>
 <div id="memberArea" class="hide">
@@ -37,7 +38,7 @@ function status(id,s,bad){$(id).textContent=s;$(id).className='status '+(bad?'er
 function run(fn,args,onSuccess,onFail){const f=google.script.run.withSuccessHandler(onSuccess).withFailureHandler(e=>{if(onFail)onFail(e);else status('submitStatus',e.message||String(e),true)});f[fn].apply(f,args)}
 function el(tag,txt,cls){const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;if(cls)n.className=cls;return n}
 function inputValue(id){return $(id).value.trim()}
-$('send').onclick=()=>{status('loginStatus','驗證碼寄送中…');$('send').disabled=true;run('requestCode',[inputValue('email')],()=>{status('loginStatus','驗證碼已寄到信箱，有效期限10分鐘。');$('verifyBox').classList.remove('hide');$('send').disabled=false},e=>{status('loginStatus',e.message,true);$('send').disabled=false})};
+$('send').onclick=()=>{if(!$('privacy').checked){status('loginStatus','請先閱讀並勾選個資蒐集告知',true);return;}status('loginStatus','驗證碼寄送中…');$('send').disabled=true;run('requestCode',[inputValue('email')],()=>{status('loginStatus','驗證碼已寄到信箱，有效期限10分鐘。');$('verifyBox').classList.remove('hide');$('send').disabled=false},e=>{status('loginStatus',e.message,true);$('send').disabled=false})};
 $('verify').onclick=()=>{status('loginStatus','驗證中…');run('verifyCode',[inputValue('email'),inputValue('code')],r=>{token=r.token;profile=r.profile;$('login').classList.add('hide');$('memberArea').classList.remove('hide');refresh()},e=>status('loginStatus',e.message,true))};
 function refresh(){
  $('contactName').value=profile.name||'';$('contactPhone').value=profile.phone||'';
