@@ -7,7 +7,7 @@
  * 必須經 Email 驗證才能存取個人及家人資料。
  */
 const CFG = Object.freeze({
-  spreadsheet: '18asL7T8YZCVChJeVdWwMp2DUnOhqneBF7qeO_WcJfo0',
+  spreadsheet: PropertiesService.getScriptProperties().getProperty('LAMP_SPREADSHEET_ID'),
   year: '116年丁未',
   bankCode: '822',
   bankAccount: '1595-4039-1887'
@@ -20,7 +20,7 @@ function mail_(v){const s=str_(v,120).toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@
 function hex_(s){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,String(s),Utilities.Charset.UTF_8).map(x=>('0'+(x&255).toString(16)).slice(-2)).join('');}
 function lock_(fn){const l=LockService.getScriptLock();if(!l.tryLock(20000))throw Error('系統忙碌，請稍後重試');try{return fn();}finally{l.releaseLock();}}
 function pepper_(){const p=PropertiesService.getScriptProperties().getProperty('PEPPER');if(!p)throw Error('請先完成系統初始化');return p;}
-function setupLampSystem(){const p=PropertiesService.getScriptProperties();if(!p.getProperty('PEPPER'))p.setProperty('PEPPER',Utilities.getUuid()+Utilities.getUuid()+Utilities.getUuid());return '完成初始化';}
+function setupLampSystem(){const p=PropertiesService.getScriptProperties();if(!p.getProperty('LAMP_SPREADSHEET_ID'))throw Error('請先設定 LAMP_SPREADSHEET_ID 指令碼屬性');if(!p.getProperty('PEPPER'))p.setProperty('PEPPER',Utilities.getUuid()+Utilities.getUuid()+Utilities.getUuid());return '完成初始化';}
 function doGet(){return HtmlService.createHtmlOutputFromFile('Index').setTitle('靈元院｜116年丁未歲年度點燈').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);}
 function trace_(who,action,id,result){table_(S.audit).appendRow([new Date(),who,action,id,result,'']);}
 function lamps_(){return data_(S.setting).filter(r=>String(r[0])===CFG.year&&String(r[2])==='個人燈').map(r=>({lamp:String(r[1]),price:Number(r[3])||0,open:String(r[5])==='開放'}));}
@@ -33,7 +33,7 @@ function requestCode(v){
   return lock_(()=>{
     const cache=CacheService.getScriptCache(),k='send:'+hex_(e);
     if(cache.get(k))throw Error('驗證碼已寄出，請稍候再申請');
-    const code=String(Math.floor(Math.random()*1000000)).padStart(6,'0'),hash=hex_(pepper_()+':'+e+':'+code);
+    const code=String(parseInt(hex_(Utilities.getUuid()+Utilities.getUuid()).slice(0,12),16)%1000000).padStart(6,'0'),hash=hex_(pepper_()+':'+e+':'+code);
     const sh=table_(S.codes),rows=data_(S.codes),i=rows.findIndex(r=>str_(r[0],120).toLowerCase()===e);
     const line=[e,hash,new Date(Date.now()+600000),0,new Date(),''];
     if(i>=0)sh.getRange(i+2,1,1,6).setValues([line]);else sh.appendRow(line);
