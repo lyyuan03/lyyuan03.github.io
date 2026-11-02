@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>丙午觀音出家日｜專屬文選匯入｜靈元院管理</title>
+<style>
+:root{color-scheme:dark;--bg:#111b18;--panel:#1c2925;--gold:#d2b88b;--text:#ede7d9;--muted:#a8b4ad}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#293b30,#111b18 60%);color:var(--text);font-family:"Noto Sans TC",system-ui,sans-serif;line-height:1.75}
+main{max-width:790px;margin:0 auto;padding:48px 20px 90px}
+h1,h2{font-family:"Noto Serif TC",Georgia,serif;line-height:1.5}h1{font-size:clamp(24px,4vw,34px);font-weight:600;margin:6px 0 12px}h2{font-size:20px}
+small,.muted{color:var(--muted)}.eyebrow{letter-spacing:.22em;color:var(--gold);font-size:12px}
+section{background:var(--panel);border:1px solid #4b5345;border-radius:14px;padding:23px;margin:22px 0}
+code{font-size:.85em;overflow-wrap:anywhere;color:#d9d1a9}
+button,a.action{font:inherit;cursor:pointer;display:inline-block;padding:10px 17px;border-radius:8px;border:1px solid var(--gold);background:var(--gold);color:#17241e;text-decoration:none;margin:5px 7px 5px 0}
+button.secondary,a.secondary{background:transparent;color:var(--gold)}button:disabled{opacity:.48;cursor:not-allowed}
+input[type=file]{width:100%;border:1px dashed #927f5b;padding:24px 12px;border-radius:8px;max-width:100%;background:#18231f;color:var(--text)}
+ol{padding-left:22px}li{margin:7px 0}.warn{color:#eac89f}.ok{color:#a8e5bf}
+#status{white-space:pre-wrap;overflow-wrap:anywhere;background:#101a17;padding:14px;border-radius:8px;min-height:58px}
+#adminArea[hidden],#signedOut[hidden]{display:none}a{color:var(--gold)}
+</style>
+</head>
+<body>
+<main>
+<div class="eyebrow">靈元院｜內容管理</div>
+<h1>觀音出家日法儀專屬文選</h1>
+<p class="muted">2026（丙午）年｜文章與六張圖片的安全匯入</p>
+<section>
+<h2>文章設定</h2>
+<p><strong>拜觀音多年，為什麼人生還是有這麼多苦難？</strong></p>
+<p>分類：靈．修行<br>性質：法儀登記者限定<br>狀態：未公開草稿<br>活動權限：<code>2026-guanyin-renunciation</code></p>
+<p class="warn">此管理頁不包含正文、信眾 Email 或授權金鑰。匯入後全文存入受保護的 Firestore，未核准信眾不能閱讀。</p>
+</section>
+<section id="signedOut">
+<h2>管理員登入</h2>
+<p>請使用靈元院的管理員 Gmail 登入。所有寫入權限仍由 Firebase Security Rules 驗證。</p>
+<button id="login" type="button">使用 Google 管理員登入</button>
+</section>
+<div id="adminArea" hidden>
+<section>
+<h2>匯入完整文章與圖片</h2>
+<p>選擇先前製作的 <strong>guanyin_2026_private_import.zip</strong>。匯入功能會驗證文章 ID、八個問答、五個內文配圖及七張圖檔，然後一次建立文章草稿與受保護正文。</p>
+<input type="file" id="archive" accept=".zip,application/zip">
+<p><button id="import" type="button" disabled>匯入為私有草稿</button><button id="logout" class="secondary" type="button">登出</button></p>
+<p class="muted">圖片上傳至 Firebase Storage（七張，包含封面與 9:16 列表縮圖）。匯入過程不公開正文，也不會發布文章。</p>
+</section>
+<section>
+<h2>匯入狀態</h2>
+<div id="status" role="status" aria-live="polite">請先選取 ZIP 檔案。</div>
+<p id="viewLink" hidden><a id="draftLink" class="action secondary" href="/articles.html?id=2026-guanyin-renunciation-reflections">前往官網文選草稿預覽</a> <a class="action secondary" href="/admin.html">返回文章後台</a></p>
+</section>
+</div>
+<p><a href="/admin.html">← 返回靈元院文章後台</a></p>
+</main>
+<script type="module">
+import {auth,db,storage,provider,isAdminEmail} from "./firebase-config.js";
+import {onAuthStateChanged,signInWithPopup,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {doc,getDoc,writeBatch,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {ref,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+const ARTICLE_ID="2026-guanyin-renunciation-reflections";
+const PERMISSION="2026-guanyin-renunciation";
+const ASSETS=["01-cover.webp","02-suffering-compassion.webp","03-great-compassion-mantra.webp","04-transforming-anger.webp","05-guanyin-dream.webp","06-ceremony-compassion.webp","thumbnail-9x16.webp"];
+const byId=(id)=>document.getElementById(id);
+const encoder=new TextDecoder("utf-8",{fatal:true});
+function report(msg){byId("status").textContent=msg;}
+function requireAdmin(){if(!auth.currentUser||!isAdminEmail(auth.currentUser.email))throw Error("只有靈元院管理員可執行匯入");}
+function zipEntries(buffer){
+  const v=new DataView(buffer);const b=new Uint8Array(buffer);
+  if(b.byteLength>8*1024*1024)throw Error("ZIP 檔案超出 8MB 上限");
+  let end=-1;
+  for(let i=b.length-22;i>=Math.max(0,b.length-65557);i--){
+    if(v.getUint32(i,true)===0x06054b50){end=i;break;}
+  }
+  if(end<0)throw Error("找不到 ZIP 中央目錄");
+  const count=v.getUint16(end+10,true);let pos=v.getUint32(end+16,true);
+  if(count>32)throw Error("ZIP 項目過多");
+  const entries=new Map();let total=0;
+  for(let i=0;i<count;i++){
+    if(v.getUint32(pos,true)!==0x02014b50)throw Error("ZIP 中央目錄格式錯誤");
+    const method=v.getUint16(pos+10,true),compressed=v.getUint32(pos+20,true),
+      size=v.getUint32(pos+24,true),nameLength=v.getUint16(pos+28,true),
+      extraLength=v.getUint16(pos+30,true),commentLength=v.getUint16(pos+32,true),
+      local=v.getUint32(pos+42,true),name=encoder.decode(b.slice(pos+46,pos+46+nameLength));
+    if(!name||name.includes("..")||name.startsWith("/")||entries.has(name))throw Error("ZIP 檔案路徑或名稱有誤");
+    if(method!==0&&method!==8)throw Error("ZIP 使用不支援的壓縮方式");
+    if(size>2*1024*1024)throw Error("單一項目超出安全大小");
+    total+=size;if(total>6*1024*1024)throw Error("ZIP 解壓後超出安全大小");
+    if(v.getUint32(local,true)!==0x04034b50)throw Error("ZIP 區段格式錯誤");
+    const start=local+30+v.getUint16(local+26,true)+v.getUint16(local+28,true);
+    if(start+compressed>b.length)throw Error("ZIP 檔案不完整");
+    entries.set(name,{method,size,data:b.slice(start,start+compressed)});
+    pos+=46+nameLength+extraLength+commentLength;
+  }
+  return entries;
+}
+async function unzipPart(entry){
+  if(!entry)throw Error("匯入包缺少必要內容");
+  const bytes=entry.method===0?entry.data:new Uint8Array(
+    await new Response(new Blob([entry.data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer()
+  );
+  if(bytes.length!==entry.size)throw Error("ZIP 檔案內容長度不符");
+  return bytes;
+}
+async function getText(entries,name){return encoder.decode(await unzipPart(entries.get(name)));}
+function checkMarkdown(markdown){
+  if(!markdown.startsWith("# 拜觀音多年，為什麼人生還是有這麼多苦難？"))throw Error("匯入文章標題不符");
+  for(const n of ["一","二","三","四","五","六","七","八"])
+    if(!markdown.includes("## "+n+"、"))throw Error("文章問答缺少第 "+n+" 題");
+  if(!markdown.includes("觀音出家日的意義"))throw Error("文章缺少法儀結語");
+  for(const name of ASSETS.slice(1,6))
+    if(!markdown.includes("assets/"+name))throw Error("文章缺少圖片位置："+name);
+}
+async function importArchive(file){
+  requireAdmin();
+  if(!file||!file.name.toLowerCase().endsWith(".zip"))throw Error("請選擇正確的 ZIP 匯入包");
+  report("檢查文章及圖片資料中…");
+  const entries=zipEntries(await file.arrayBuffer());
+  const meta=JSON.parse(await getText(entries,"manifest-draft.json"));
+  if(meta.articleId!==ARTICLE_ID||meta.requiredPermission!==PERMISSION||meta.status!=="draft"||meta.accessType!=="event"||meta.content!=="")
+    throw Error("文章設定或權限不符合預期");
+  let content=await getText(entries,"article-with-images.md");
+  checkMarkdown(content);
+  const articleRef=doc(db,"articles",ARTICLE_ID);
+  const privateRef=doc(db,"eventArticleBodies",ARTICLE_ID);
+  const [oldArticle,oldBody]=await Promise.all([getDoc(articleRef),getDoc(privateRef)]);
+  if((oldArticle.exists()&&oldArticle.data().status!=="draft")||(oldBody.exists()&&oldBody.data().status!=="draft"))
+    throw Error("偵測到同 ID 已發表內容。為避免覆寫，已中止匯入");
+  const urls={};
+  for(let i=0;i<ASSETS.length;i++){
+    requireAdmin();
+    const name=ASSETS[i],bytes=await unzipPart(entries.get("assets/"+name));
+    if(bytes.length<10000)throw Error("圖片檔案異常："+name);
+    report("上傳圖片 "+(i+1)+"/"+ASSETS.length+"："+name);
+    const object=ref(storage,"articles/"+ARTICLE_ID+"/"+name);
+    await uploadBytes(object,new Blob([bytes],{type:"image/webp"}),{
+      contentType:"image/webp",customMetadata:{articleId:ARTICLE_ID,usage:name==="thumbnail-9x16.webp"?"thumbnail":"article"}
+    });
+    urls[name]=await getDownloadURL(object);
+  }
+  for(const name of ASSETS.slice(1,6)){
+    const source="](assets/"+name+")";
+    if(!content.includes(source))throw Error("圖片 Markdown 參照遺失："+name);
+    content=content.replaceAll(source,"]("+urls[name]+")");
+  }
+  if(/!\[[^\]]*\]\(assets\//.test(content))throw Error("還有未替換的圖片參照");
+  report("圖片上傳完成，正在寫入活動專屬私有草稿…");
+  const hashBytes=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(content));
+  const contentHash=Array.from(new Uint8Array(hashBytes),x=>x.toString(16).padStart(2,"0")).join("");
+  const batch=writeBatch(db);
+  const base={
+    id:ARTICLE_ID,slug:ARTICLE_ID,title:meta.title,
+    excerpt:meta.excerpt,category:"spiritual",displayCategory:"靈修",
+    series:"2026（丙午）年觀音出家日法儀專文",status:"draft",
+    accessType:"event",eventId:PERMISSION,eventName:"2026（丙午）年觀音出家日法儀",
+    requiredPermission:PERMISSION,
+    accessBadge:"2026觀音出家日法儀登記信眾專屬",
+    accessDeniedMessage:meta.accessDeniedMessage||"僅限完成登記並經核准的信眾閱讀",
+    coverImage:urls["01-cover.webp"],thumbnailImage:urls["thumbnail-9x16.webp"],
+    content:"",previousContentBackup:"",encryptedContent:"",eventIv:"",
+    magicLinkAccess:{},updatedAt:serverTimestamp(),
+    ...(oldArticle.exists()?{}:{createdAt:serverTimestamp()})
+  };
+  batch.set(articleRef,base,{merge:true});
+  batch.set(privateRef,{
+    articleId:ARTICLE_ID,title:meta.title,requiredPermission:PERMISSION,
+    status:"draft",active:true,content,contentHash,updatedAt:serverTimestamp(),
+    ...(oldBody.exists()?{}:{createdAt:serverTimestamp()})
+  },{merge:true});
+  await batch.commit();
+  const [verifiedPublic,verifiedPrivate]=await Promise.all([getDoc(articleRef),getDoc(privateRef)]);
+  if(!verifiedPublic.exists()||verifiedPublic.data().content!==""||
+     verifiedPublic.data().status!=="draft"||!verifiedPrivate.exists()||
+     verifiedPrivate.data().contentHash!==contentHash||
+     verifiedPrivate.data().requiredPermission!==PERMISSION)
+    throw Error("寫入完成，但驗證結果不符，請停止發布並聯繫管理員");
+  report("完成：文章八個問答、封面、五張內文圖片與列表縮圖已寫入。\n目前仍是私有草稿；尚未發布，也未授權任何信眾 Email。\n請從官網管理員帳號預覽，確認排版後再處理登記者權限。");
+  byId("viewLink").hidden=false;
+}
+byId("login").addEventListener("click",async()=>{
+  try{await signInWithPopup(auth,provider);}catch(error){report("管理員登入失敗："+error.message);}
+});
+byId("logout").addEventListener("click",()=>signOut(auth));
+byId("archive").addEventListener("change",()=>{byId("import").disabled=!byId("archive").files.length;});
+byId("import").addEventListener("click",async()=>{
+  byId("import").disabled=true;
+  try{await importArchive(byId("archive").files[0]);}
+  catch(error){console.error("觀音文章匯入失敗",error);report("匯入未完成："+error.message);}
+  finally{byId("import").disabled=false;}
+});
+onAuthStateChanged(auth,(user)=>{
+  const ok=Boolean(user&&isAdminEmail(user.email));
+  byId("signedOut").hidden=ok;
+  byId("adminArea").hidden=!ok;
+  if(user&&!ok)report("目前登入的帳號沒有靈元院管理權限。請登出後使用管理員 Gmail。");
+});
+</script>
+</body></html>
