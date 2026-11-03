@@ -414,6 +414,36 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    // 會員專屬提問（贊助專屬文章）：私密，會員只能建立／讀取自己的提問；只有管理者可讀全部與回覆。
+    function validNewMemberQuestion() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(["uid", "email", "articleId", "articleTitle", "question", "status", "createdAt", "updatedAt"])
+        && d.keys().hasAll(["uid", "email", "articleId", "articleTitle", "question", "status", "createdAt", "updatedAt"])
+        && d.uid == request.auth.uid
+        && d.email == request.auth.token.email
+        && d.articleId is string && d.articleId.size() > 0 && d.articleId.size() <= 200
+        && d.articleTitle is string && d.articleTitle.size() <= 300
+        && d.question is string && d.question.size() >= 5 && d.question.size() <= 2000
+        && d.status == "open"
+        && d.createdAt == request.time
+        && d.updatedAt == request.time;
+    }
+
+    match /memberQuestions/{questionId} {
+      allow get, list: if isAdmin()
+        || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if verifiedEmail()
+        && validNewMemberQuestion()
+        && canReadPaidArticles(request.resource.data.articleId);
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(["reply", "replyBy", "repliedAt", "status", "updatedAt"])
+        && (!request.resource.data.keys().hasAny(["reply"])
+          || (request.resource.data.reply is string && request.resource.data.reply.size() <= 5000))
+        && request.resource.data.status in ["open", "answered", "closed"];
+      allow delete: if isAdmin();
+    }
+
     match /membershipOrders/{orderId} {
       allow read: if isAdmin();
       allow create, update, delete: if false;
