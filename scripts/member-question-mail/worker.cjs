@@ -51,10 +51,11 @@ async function deliver({ db, transport, from, doc, item, timestamp }) {
 }
 
 async function main() {
-  const { initializeApp, applicationDefault } = require('../../functions/node_modules/firebase-admin/app');
-  const { getFirestore, FieldValue, FieldPath } = require('../../functions/node_modules/firebase-admin/firestore');
-  const { getAuth } = require('../../functions/node_modules/firebase-admin/auth');
-  const nodemailer = require('../../functions/node_modules/nodemailer');
+  const dependencies = require('node:module').createRequire(require('node:path').resolve(__dirname, '../../functions/package.json'));
+  const { initializeApp, applicationDefault } = dependencies('firebase-admin/app');
+  const { getFirestore, FieldValue, FieldPath } = dependencies('firebase-admin/firestore');
+  const { getAuth } = dependencies('firebase-admin/auth');
+  const nodemailer = dependencies('nodemailer');
   initializeApp({ credential: applicationDefault(), projectId: 'lyyuan03-membership' });
   const db = getFirestore();
   const auth = getAuth();
