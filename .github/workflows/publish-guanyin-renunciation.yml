@@ -36,6 +36,10 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: functions/package-lock.json
+      - name: Setup Python for illustration processing
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Assert secured article does not appear in public assets
         run: |
           test -s secure-imports/guanyin-renunciation-20261103.sealed.json
@@ -50,8 +54,8 @@ jobs:
           node scripts/audit-production-stability.mjs
       - name: Build first-party assets from author-provided images
         run: |
-          python3 -m pip install --user --disable-pip-version-check Pillow==11.3.0
-          python3 scripts/build-guanyin-illustrations.py
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          python scripts/build-guanyin-illustrations.py
       - name: Commit only the eight first-party article images
         run: |
           set -euo pipefail
