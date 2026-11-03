@@ -227,12 +227,14 @@ const JINMU_MANAGED_EVENT_IDS = [
   "2026-jinmu-am",
   "2026-jinmu-pm",
   "2026-jinmu-build-patron",
-  "2026-jinmu-build-supporter"
+  "2026-jinmu-build-supporter",
+  "2026-guanyin-renunciation"
 ];
 
 function canonicalJinmuEventId(name = "", suppliedId = "") {
   const normalizedId = String(suppliedId || "").trim().toLowerCase();
   if (JINMU_MANAGED_EVENT_IDS.includes(normalizedId)) return normalizedId;
+  if (/觀音出家|觀世音菩薩出家|guanyin-renunciation/i.test(`${name} ${suppliedId}`)) return "2026-guanyin-renunciation";
 
   const label = `${name} ${suppliedId}`;
   if (/總功德主/.test(label)) return "2026-jinmu-build-patron";
