@@ -7,6 +7,7 @@ on:
       - "functions/publish-guanyin-renunciation.mjs"
       - "scripts/build-guanyin-illustrations.py"
       - "secure-imports/guanyin-renunciation-20261103.sealed.json"
+      - "assets/articles/2026-guanyin-renunciation-suffering/**"
       - ".github/workflows/publish-guanyin-renunciation.yml"
   workflow_dispatch:
 
@@ -56,23 +57,36 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check Pillow==11.3.0
           python scripts/build-guanyin-illustrations.py
-      - name: Commit only the eight first-party article images
+      - name: Create protected-review branch for the eight website assets
+        id: images
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add assets/articles/2026-guanyin-renunciation-suffering/*.webp
           if git diff --cached --quiet; then
-            echo "Article images already mirrored in repository"
+            echo "needs_pr=0" >> "$GITHUB_OUTPUT"
+            echo "First-party images already committed"
           else
-            git commit -m "Mirror Guanyin author illustrations to first-party assets"
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
+            echo "needs_pr=1" >> "$GITHUB_OUTPUT"
+            branch="feat/guanyin-illustrations-20261103"
+            if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+              echo "Image branch already exists; review and merge it through a pull request"
+            else
+              git checkout -b "$branch"
+              git commit -m "Add the eight Guanyin article illustrations"
+              git push origin HEAD:"$branch"
+              echo "Created image-only branch; production remains locked until protected PR merge"
+            fi
           fi
+      - name: Stop publication until image PR has been merged
+        if: steps.images.outputs.needs_pr == '1'
+        run: echo "Images await protected PR merge. Private Firestore article not yet published."
       - name: Start Pages deployment including article images
+        if: steps.images.outputs.needs_pr != '1'
         run: gh workflow run deploy.yml --ref main
       - name: Wait for public first-party images
+        if: steps.images.outputs.needs_pr != '1'
         shell: bash
         run: |
           set -euo pipefail
@@ -93,10 +107,13 @@ jobs:
           echo "Missing deployed images, refusing to publish article metadata"
           exit 1
       - name: Install Firebase admin dependencies
+        if: steps.images.outputs.needs_pr != '1'
         run: npm --prefix functions ci
       - name: Publish Firestore public metadata plus private activity-only article body
+        if: steps.images.outputs.needs_pr != '1'
         run: node functions/publish-guanyin-renunciation.mjs
       - name: Verify public article URL responds
+        if: steps.images.outputs.needs_pr != '1'
         run: |
           curl -fIL --max-time 25 \
             "https://lyyuan.tw/article/guanyin-renunciation-suffering.html"
