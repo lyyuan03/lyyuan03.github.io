@@ -379,7 +379,38 @@ function renderMetricItems(metric, compact = false) {
   const shares = Number(metric.shares || 0);
   const copies = Number(metric.copies || 0);
   if (!compact) return `<span>閱讀 ${views}</span><span>分享 ${shares}</span><span>複製 ${copies}</span>`;
-  return `<span class="article-metric"><span class="article-metric-label">閱讀</span><span class="article-metric-value">${views}</span></span><span class="article-metric"><span class="article-metric-label">分享</span><span class="article-metric-value">${shares}</span></span><span class="article-metric"><span class="article-metric-label">複製</span><span class="article-metric-value">${copies}</span></span>`;
+  // 卡片只顯示閱讀數，且達門檻才顯示，避免低數字產生反效果。
+  if (views < CARD_VIEW_THRESHOLD) return "";
+  return `<span class="article-metric is-views"><span aria-hidden="true">👁</span> <span class="article-metric-value">${views.toLocaleString("zh-TW")}</span> 人讀過</span>`;
+}
+
+const CARD_VIEW_THRESHOLD = 100;
+const HOT_ARTICLE_COUNT = 3;
+const NEW_ARTICLE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
+function hotArticleIds() {
+  return new Set((loadedArticles || [])
+    .filter((article) => article.status !== "draft")
+    .map((article) => [articleKey(article), Number(metricFor(articleKey(article)).views || 0)])
+    .filter(([, views]) => views > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, HOT_ARTICLE_COUNT)
+    .map(([key]) => key));
+}
+
+function isNewArticle(article) {
+  const time = articlePublishedTime(article);
+  return Boolean(time) && Date.now() - time >= 0 && Date.now() - time < NEW_ARTICLE_WINDOW_MS;
+}
+
+function refreshCoverBadges() {
+  const hot = hotArticleIds();
+  const byKey = new Map((loadedArticles || []).map((article) => [articleKey(article), article]));
+  document.querySelectorAll("[data-article-cover-badges]").forEach((node) => {
+    const key = node.dataset.articleCoverBadges;
+    const article = byKey.get(key);
+    node.innerHTML = `${hot.has(key) ? '<span class="article-cover-badge is-hot">🔥 熱門</span>' : ""}${article && isNewArticle(article) ? '<span class="article-cover-badge is-new">✨ 新文</span>' : ""}`;
+  });
 }
 
 function renderMetricSummary(articleId, compact = false) {
@@ -526,6 +557,7 @@ function renderList(articles) {
             <div class="article-card-media">
               ${getArticleThumbnail(article) ? `<img src="${escapeHtml(getArticleThumbnail(article))}" alt="${escapeHtml(article.title || "靈元院文選")}" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
               <div class="article-card-media-gradient" aria-hidden="true"></div>
+              <span class="article-cover-badges" data-article-cover-badges="${escapeHtml(key)}"></span>
             </div>
             <div class="article-card-content">
               <div class="article-card-heading">
@@ -557,6 +589,7 @@ function renderList(articles) {
   });
   bindLimitedReadingCountdowns();
   bindListMotion();
+  refreshCoverBadges();
 }
 
 function bindListMotion() {
@@ -1086,7 +1119,7 @@ async function loadArticles() {
   watchActiveFirestoreArticle(activeArticleForWatch);
   renderTabs();
   renderCurrentView();
-  void loadArticleMetrics().then(() => loadedArticles.forEach((article) => updateMetricSummary(articleKey(article))));
+  void loadArticleMetrics().then(() => { loadedArticles.forEach((article) => updateMetricSummary(articleKey(article))); refreshCoverBadges(); });
 }
 
 // 首次載入統一交給 onAuthStateChanged。
