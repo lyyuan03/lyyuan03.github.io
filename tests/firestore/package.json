@@ -8,6 +8,7 @@
     "firebase-tools": "15.30.2"
   },
   "scripts": {
-    "test": "cd ../.. && firebase emulators:exec --only firestore --project demo-membership-expiry --config firebase.expiry-tests.json 'node --test tests/firestore/expiry.test.mjs'"
+    "test": "cd ../.. && firebase emulators:exec --only firestore --project demo-membership-expiry --config firebase.expiry-tests.json 'node --test tests/firestore/expiry.test.mjs'",
+    "test:member-questions": "cd ../.. && firebase emulators:exec --only firestore --project demo-member-questions --config firebase.member-questions-tests.json 'node --test tests/firestore/member-questions.test.mjs'"
   }
 }
