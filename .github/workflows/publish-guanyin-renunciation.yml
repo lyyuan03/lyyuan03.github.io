@@ -1,0 +1,98 @@
+name: Publish secured Guanyin Renunciation article
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "functions/publish-guanyin-renunciation.mjs"
+      - "scripts/build-guanyin-illustrations.py"
+      - "secure-imports/guanyin-renunciation-20261103.sealed.json"
+      - ".github/workflows/publish-guanyin-renunciation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: secure-guanyin-renunciation-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout merged production source
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - name: Assert secured article does not appear in public assets
+        run: |
+          test -s secure-imports/guanyin-renunciation-20261103.sealed.json
+          if grep -RFl '拜觀世音菩薩的人，心裡往往藏著一個不太敢問出口的疑惑。' \
+              articles.html static-articles.js assets/articles/2026-guanyin-renunciation-suffering 2>/dev/null; then
+            echo "Private article text found in public site"
+            exit 1
+          fi
+          node --check functions/publish-guanyin-renunciation.mjs
+          node scripts/lock-paid-article-access-policy.mjs
+          node scripts/audit-paid-article-runtime.mjs
+          node scripts/audit-production-stability.mjs
+      - name: Build first-party assets from author-provided images
+        run: |
+          python3 -m pip install --user --disable-pip-version-check Pillow==11.3.0
+          python3 scripts/build-guanyin-illustrations.py
+      - name: Commit only the eight first-party article images
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/articles/2026-guanyin-renunciation-suffering/*.webp
+          if git diff --cached --quiet; then
+            echo "Article images already mirrored in repository"
+          else
+            git commit -m "Mirror Guanyin author illustrations to first-party assets"
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
+          fi
+      - name: Start Pages deployment including article images
+        run: gh workflow run deploy.yml --ref main
+      - name: Wait for public first-party images
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 65); do
+            cover_status="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 14 \
+              "https://lyyuan.tw/assets/articles/2026-guanyin-renunciation-suffering/cover.webp?check=20261103" || true)"
+            last_status="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 14 \
+              "https://lyyuan.tw/assets/articles/2026-guanyin-renunciation-suffering/06-guanyin.webp?check=20261103" || true)"
+            thumb_status="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 14 \
+              "https://lyyuan.tw/assets/articles/2026-guanyin-renunciation-suffering/thumbnail-9x16.webp?check=20261103" || true)"
+            if [[ "$cover_status" == 200 && "$last_status" == 200 && "$thumb_status" == 200 ]]; then
+              echo "Cover, body illustrations and thumbnail are live"
+              exit 0
+            fi
+            echo "Waiting for Pages... $attempt (cover $cover_status, body $last_status, thumb $thumb_status)"
+            sleep 9
+          done
+          echo "Missing deployed images, refusing to publish article metadata"
+          exit 1
+      - name: Install Firebase admin dependencies
+        run: npm --prefix functions ci
+      - name: Publish Firestore public metadata plus private activity-only article body
+        run: node functions/publish-guanyin-renunciation.mjs
+      - name: Verify public article URL responds
+        run: |
+          curl -fIL --max-time 25 \
+            "https://lyyuan.tw/article/guanyin-renunciation-suffering.html"
