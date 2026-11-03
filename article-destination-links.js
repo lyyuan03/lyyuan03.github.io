@@ -408,6 +408,7 @@
       if (article.querySelector(".article-share-restored")) return;
       let share = article.querySelector(".article-share");
       if (share?.dataset.originalSyntaxRestored === "true") return;
+      if (share?.dataset.shareV2 === "true") return;
 
       const metrics = share?.querySelector(".article-metrics");
       const { shareUrl, shareTitle } = getRestoredShareDetails(article, share);

@@ -895,31 +895,116 @@ function getShareUrl(article) {
   return new URL(`articles.html?id=${encodeURIComponent(articleKey(article))}`, location.origin).href;
 }
 
+const SHARE_ICONS = {
+  line: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.9-3.5 8-5.9C21.4 14.3 22 12.7 22 11c0-4.4-4.5-8-10-8Z"/></svg>',
+  facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 8h3V4.4c-.5-.1-2.1-.2-4-.2-3.9 0-6.6 2.4-6.6 6.8v3.8H2v4h4.4V24h5.4v-5.2h4.5l.7-4h-5.2v-3.4C11.8 9.8 12.2 8 14 8Z"/></svg>',
+  system: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+  telegram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.5 3.3 18.4 20c-.2 1.2-.9 1.5-1.9.9l-4.7-3.5-2.3 2.2c-.2.3-.5.5-1 .5l.4-4.8 8.7-7.9c.4-.3-.1-.5-.6-.2L6.2 14 1.6 12.5c-1-.3-1-1 .2-1.5L20 4c.8-.3 1.6.2 1.5 1.3Z"/></svg>',
+  email: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="5.2" width="18.4" height="13.6" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+
+// 分享區塊只帶標題與網址，不帶任何正文（付費文章亦同）。
 function renderArticleShare(article) {
   const articleId = articleKey(article);
   const shareUrl = getShareUrl(article);
+  const title = article.title || "靈元院文選";
   const encodedUrl = encodeURIComponent(shareUrl);
-  const encodedText = encodeURIComponent(`${article.title || "靈元院文選"} ${shareUrl}`);
-  const encodedTitle = encodeURIComponent(article.title || "靈元院文選");
-  return `<div class="article-share" aria-label="文章分享">${renderMetricSummary(articleId)}<div class="article-share-actions"><a class="article-share-icon facebook" href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Facebook" title="Facebook">f</a><a class="article-share-icon instagram" href="https://www.instagram.com/lyyuan03/" target="_blank" rel="noopener noreferrer" aria-label="前往靈元院 Instagram" title="Instagram">◎</a><a class="article-share-icon line" data-share-metric href="https://social-plugins.line.me/lineit/share?url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="分享到 LINE" title="LINE">L</a><a class="article-share-icon telegram" data-share-metric href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer" aria-label="分享到 Telegram" title="Telegram">T</a><a class="article-share-icon email" data-share-metric href="mailto:?subject=${encodedTitle}&body=${encodedText}" aria-label="用 Email 分享" title="Email">@</a><button class="article-share-icon copy article-share-copy" type="button" data-share-url="${escapeHtml(shareUrl)}" aria-label="複製文章連結" title="複製連結">⧉</button></div><span class="article-share-status" role="status" aria-live="polite"></span></div>`;
+  const encodedTitle = encodeURIComponent(title);
+  const encodedEmail = encodeURIComponent(`${title}\n\n${shareUrl}`);
+  return `<section class="article-share article-share-v2" data-share-v2="true" data-original-syntax-restored="true" data-share-url="${escapeHtml(shareUrl)}" data-share-title="${escapeHtml(title)}" aria-label="分享這篇文章">
+    <h3 class="article-share-heading">分享這篇給需要的人</h3>
+    <p class="article-share-sub">一句話、一個連結，也許正好是朋友此刻需要的。</p>
+    <div class="article-share-primary">
+      <a class="article-share-btn is-line" data-share-metric href="https://social-plugins.line.me/lineit/share?url=${encodedUrl}" target="_blank" rel="noopener noreferrer">${SHARE_ICONS.line}<span>分享到 LINE</span></a>
+      <a class="article-share-btn is-facebook" data-share-metric href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer">${SHARE_ICONS.facebook}<span>分享到 Facebook</span></a>
+      <button class="article-share-btn is-system" type="button" data-share-system hidden>${SHARE_ICONS.system}<span>更多分享方式</span></button>
+      <button class="article-share-btn is-copy article-share-copy" type="button" data-share-url="${escapeHtml(shareUrl)}">${SHARE_ICONS.copy}<span>複製連結</span></button>
+    </div>
+    <div class="article-share-secondary">
+      <a class="article-share-link" data-share-metric href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer">${SHARE_ICONS.telegram}<span>Telegram</span></a>
+      <a class="article-share-link" data-share-metric href="mailto:?subject=${encodedTitle}&body=${encodedEmail}">${SHARE_ICONS.email}<span>Email</span></a>
+    </div>
+    ${renderMetricSummary(articleId)}
+    <span class="article-share-status" role="status" aria-live="polite"></span>
+  </section>`;
+}
+
+function showShareToast(message) {
+  let toast = document.getElementById("article-share-toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "article-share-toast";
+    toast.className = "article-share-toast";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  window.clearTimeout(showShareToast.hideTimer);
+  showShareToast.hideTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 2600);
+}
+
+async function copyTextToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    window.prompt("請複製以下內容", text);
+    return false;
+  }
 }
 
 async function copyArticleUrl(button, articleId) {
-  const status = document.querySelector(".article-share-status");
-  try {
-    await navigator.clipboard.writeText(button.dataset.shareUrl);
-    if (status) status.textContent = "已複製連結";
+  if (await copyTextToClipboard(button.dataset.shareUrl)) {
+    showShareToast("✓ 已複製，貼到 LINE 給朋友");
     incrementArticleMetric(articleId, "copies");
-  } catch {
-    window.prompt("請複製文章連結", button.dataset.shareUrl);
   }
 }
 
 function bindArticleShare(articleId) {
-  const copyButton = document.querySelector(".article-share-copy");
+  const share = document.querySelector(".article-share-v2");
+  if (!share || share.dataset.shareBound === "true") return;
+  share.dataset.shareBound = "true";
+  const copyButton = share.querySelector(".article-share-copy");
   copyButton?.addEventListener("click", () => copyArticleUrl(copyButton, articleId));
-  document.querySelectorAll("[data-share-metric]").forEach((link) => link.addEventListener("click", () => incrementArticleMetric(articleId, "shares")));
+  share.querySelectorAll("[data-share-metric]").forEach((link) => link.addEventListener("click", () => incrementArticleMetric(articleId, "shares")));
+  const systemButton = share.querySelector("[data-share-system]");
+  if (systemButton && typeof navigator.share === "function") {
+    systemButton.hidden = false;
+    systemButton.addEventListener("click", async () => {
+      try {
+        await navigator.share({ title: share.dataset.shareTitle, url: share.dataset.shareUrl });
+        incrementArticleMetric(articleId, "shares");
+      } catch {}
+    });
+  }
 }
+
+// 金句分享（article-key-quote-display.js 送出事件）：分享金句＋標題＋網址。
+window.addEventListener("lyyuan:share-quote", async (event) => {
+  const share = document.querySelector(".article-share-v2");
+  const view = document.querySelector(".article-view[data-article-id]");
+  const articleId = view?.dataset.articleId || "";
+  if (!share || !articleId) return;
+  const quote = String(event.detail?.quote || "").trim().slice(0, 300);
+  if (!quote) return;
+  const title = share.dataset.shareTitle || "靈元院文選";
+  const url = share.dataset.shareUrl;
+  const text = `「${quote}」\n——《${title}》靈元院文選`;
+  if (typeof navigator.share === "function") {
+    try {
+      await navigator.share({ title, text, url });
+      incrementArticleMetric(articleId, "shares");
+    } catch {}
+    return;
+  }
+  if (await copyTextToClipboard(`${text}\n${url}`)) {
+    showShareToast("✓ 已複製金句，貼到 LINE 給朋友");
+    incrementArticleMetric(articleId, "copies");
+  }
+});
 
 function bindArticleExperience() {
   const article = document.querySelector(".article-view");
