@@ -1,0 +1,35 @@
+name: Member Question Email (no Firebase deployment)
+on:
+  schedule:
+    - cron: '17,47 * * * *'
+  workflow_dispatch:
+    inputs:
+      send:
+        description: 'Send pending mail (false only counts; no writes or mail)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: member-question-mail
+  cancel-in-progress: false
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm --prefix functions ci
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Process member question notifications
+        env:
+          SMTP_CONFIG: ${{ secrets.SMTP_CONFIG }}
+          SEND_MEMBER_QUESTION_MAIL: ${{ github.event_name == 'schedule' || inputs.send == true }}
+        run: node scripts/member-question-mail/worker.cjs

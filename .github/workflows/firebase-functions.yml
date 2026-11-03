@@ -25,6 +25,7 @@ jobs:
     permissions:
       contents: read
     steps:
+      - uses: actions/checkout@v4
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
@@ -42,6 +43,14 @@ jobs:
             token=$(gcloud auth print-access-token)
             curl --silent --show-error --fail --header "Authorization: Bearer $token" "https://firebaseextensions.googleapis.com/v1beta/projects/$project/instances" || echo "Extension inventory unavailable"
           done
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Read-only notification readiness
+        run: |
+          npm --prefix functions ci
+          node scripts/member-question-mail/worker.cjs
 
   deploy-functions:
     if: github.event_name != 'workflow_dispatch' || inputs.mode != 'inventory'
