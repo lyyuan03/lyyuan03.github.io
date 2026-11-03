@@ -294,6 +294,12 @@ function renderArticleGuide(article, compact = false) {
   const sourceTag = guide.sourceTag || "";
   const level = guide.level || "";
   const levelClass = articleLevelClassNames[level] || "";
+  if (compact) {
+    // 卡片：最多 2 個標籤，不顯示「深度／初識」等級。
+    const cardTags = [sourceTag, ...topics].filter(Boolean).slice(0, 2);
+    if (!cardTags.length) return "";
+    return `<div class="article-guide is-compact">${cardTags.map((tag) => `<span class="article-topic">${escapeHtml(tag)}</span>`).join("")}</div>`;
+  }
   if (!topics.length && !sourceTag && !level) return "";
   return `<div class="article-guide${compact ? " is-compact" : ""}">
     ${level ? `<span class="article-level${levelClass ? ` ${levelClass}` : ""}">${escapeHtml(level)}</span>` : ""}
@@ -367,7 +373,53 @@ function renderTabs() {
     ["spirit-world", categoryLabels["spirit-world"]],
     ["reading", categoryLabels.reading]
   ];
-  tabs.innerHTML = categories.map(([key, label]) => `<a class="${activeCategory === key ? "active" : ""}" href="articles.html${key ? `?category=${encodeURIComponent(key)}` : ""}">${label}</a>`).join("");
+  const hrefFor = (category, access) => {
+    const query = new URLSearchParams();
+    if (category) query.set("category", category);
+    if (access && access !== "all") query.set("access", access);
+    const text = query.toString();
+    return `articles.html${text ? `?${text}` : ""}`;
+  };
+  const currentAccess = normalizedAccessFilter();
+  tabs.innerHTML = categories.map(([key, label]) => `<a class="${activeCategory === key ? "active" : ""}" href="${hrefFor(key, currentAccess)}">${key ? topicLabels[key] || label : label}</a>`).join("");
+  if (accessTabs) {
+    accessTabs.innerHTML = ACCESS_FILTERS.map(([key, label]) => `<a class="${currentAccess === key ? "active" : ""}" href="${hrefFor(activeCategory, key)}">${label}</a>`).join("");
+  }
+}
+
+// ---- 文選卡片顯示層：只做顯示對應，不改變 accessType 或付費 gate ----
+const accessTabs = document.getElementById("access-tabs");
+const ACCESS_FILTERS = [["all", "全部"], ["open", "🔓 免費"], ["paid", "👑 贊助"], ["event", "🎟 活動"]];
+const topicLabels = { spiritual: "靈修", worldly: "人生", "spirit-world": "靈界", reading: "書房" };
+const cardSeriesById = {
+  "fantasy-intuition-or-yuanshen": "靈修辨證",
+  "yuanshen-awakening-eleven-principles": "靈修辨證",
+  "lingxiu-yuanshen-reality": "靈修辨證",
+  "lingxiu-zouhuo-rumo": "靈修辨證",
+  "2026-guanyin-vow-lamp-record": "觀音修行",
+  "celebrity-death-dream-spirit-five-checks": "靈界辨證",
+  "wealth-as-water": "財富與生命",
+  "market-crash-money-self-control": "財富與生命",
+  "good-fortune-believe-in-yourself-choices": "生命選擇"
+};
+
+function normalizedAccessFilter() {
+  return activeAccess === "free" ? "open" : activeAccess;
+}
+
+function cardAccessDisplay(article) {
+  const access = articleAccess(article);
+  if (access === "event") return { key: "event", label: "🎟 活動專屬" };
+  if (access === "paid") return { key: "paid", label: "👑 贊助專屬" };
+  if (articleIsLimitedOpen(article)) return { key: "limited", label: "⏳ 限時免費" };
+  return { key: "free", label: "🔓 免費" };
+}
+
+function cardTopicLabel(article) {
+  const topic = topicLabels[article?.category] || "文選";
+  let series = String(article?.series || cardSeriesById[articleKey(article)] || "").replace(/｜專屬文選$/, "").replace(/系列$/, "").trim();
+  if (series === topic || series === "宇色書房") series = "";
+  return series ? `${topic}・${series}系列` : topic;
 }
 
 function metricFor(articleId) {
@@ -525,7 +577,7 @@ function bindLimitedReadingCountdowns() {
 function renderList(articles) {
   const filtered = articles.filter((article) => {
     const matchesCategory = !activeCategory || article.category === activeCategory;
-    const matchesAccess = activeAccess === "all" || articleAccess(article) === activeAccess;
+    const matchesAccess = normalizedAccessFilter() === "all" || articleAccess(article) === normalizedAccessFilter();
     const matchesEvent = !magicEventId || article.eventId === magicEventId;
     return matchesCategory && matchesAccess && matchesEvent;
   });
@@ -550,20 +602,19 @@ function renderList(articles) {
       ${visibleArticles.map((article) => {
         const key = articleKey(article);
         const access = articleAccess(article);
-        const accessLabel = article.accessBadge || (access === "event" ? "活動限定" : access === "paid" ? "贊助專屬" : articleIsLimitedOpen(article) ? "限時免費" : "免費閱讀");
+        const accessDisplay = cardAccessDisplay(article);
         const isDraftPreview = article.status === "draft" && adminPreviewEnabled();
         return `
           <a class="article-card" data-article-id="${escapeHtml(key)}" href="${standaloneArticlePaths.get(key) || `articles.html?id=${encodeURIComponent(key)}`}${magicToken ? `&event=${encodeURIComponent(article.eventId || magicEventId)}&token=${encodeURIComponent(magicToken)}` : ""}">
             <div class="article-card-media">
               ${getArticleThumbnail(article) ? `<img src="${escapeHtml(getArticleThumbnail(article))}" alt="${escapeHtml(article.title || "靈元院文選")}" loading="lazy" decoding="async">` : '<div class="article-card-placeholder" aria-hidden="true">靈元院文選</div>'}
               <div class="article-card-media-gradient" aria-hidden="true"></div>
+              <span class="article-cover-access">${isDraftPreview ? '<span class="article-cover-access-badge is-draft">草稿預覽</span>' : ""}<span class="article-cover-access-badge is-${accessDisplay.key}">${accessDisplay.label}</span></span>
               <span class="article-cover-badges" data-article-cover-badges="${escapeHtml(key)}"></span>
             </div>
             <div class="article-card-content">
-              <div class="article-card-heading">
-                <div class="article-meta">${categoryLabels[article.category] || "文選"}</div>
-                <span class="article-card-badges">${isDraftPreview ? '<span class="article-access-badge is-draft">草稿預覽</span>' : ""}<span class="article-access-badge is-${access}">${accessLabel}</span></span>
-              </div>
+              <div class="article-meta" hidden>${categoryLabels[article.category] || "文選"}</div>
+              <div class="article-topic-pill is-${escapeHtml(article.category || "other")}">${escapeHtml(cardTopicLabel(article))}</div>
               <h2 class="article-list-title">${escapeHtml(article.title || "未命名文章")}</h2>
               ${renderArticleGuide(article, true)}
               ${renderLimitedReadingCountdown(key, articleIsPaid(article))}

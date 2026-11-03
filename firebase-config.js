@@ -12,7 +12,7 @@ if (/(^|\/)articles\.html$/i.test(currentPath)) {
   });
   import("./article-protection.js?v=20260723-member-watermark-1");
   import("./article-paid-badge.js?v=20260722-3");
-  import("./article-taxonomy-v2.js?v=20260801-taxonomy-3");
+  // article-taxonomy-v2.js 已停用：主題標籤與系列改由 articles-core 卡片模板直接輸出，避免兩排標籤。
   import("./article-inline-image-display.js?v=20261027-historical-yuanshen-markdown-1");
 }
 
