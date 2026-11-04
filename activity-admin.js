@@ -80,7 +80,7 @@ function renderArticleEventSearchOptions() {
     .map((event) => articleEventOptionHtml(event, selectedId))
     .join("");
 
-  if (select.innerHTML !== html) select.innerHTML = html;
+  if (select.dataset.lastEventHtml !== html) { select.dataset.lastEventHtml = html; select.innerHTML = html; }
   if (selectedId && visibleEvents.some((event) => event.id === selectedId)) select.value = selectedId;
 
   if (articleEventSearchHint) {
