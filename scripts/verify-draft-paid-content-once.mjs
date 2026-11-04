@@ -11,8 +11,8 @@ assert.match(draft, /data-admin-draft-preview-detail="true"/);
 assert.match(draft, /function hydratePaidDraft\(/);
 assert.match(draft, /return \{ \.\.\.article, content: \[publicContent, privateContent\]/);
 assert.match(secure, /view\.dataset\.adminDraftPreviewDetail === "true"/);
-assert.match(html, /articles-v6\.js\?v=20261103-member-questions-1/);
-assert.match(loader, /paid-article-secure-loader\.js\?v=20261103-member-questions-1/);
+assert.match(html, /articles-v6\.js\?v=20261103-share-block-1/);
+assert.match(loader, /paid-article-secure-loader\.js\?v=20261103-share-block-1/);
 
 function extractFunction(start, end) {
   const from = secure.indexOf(start);

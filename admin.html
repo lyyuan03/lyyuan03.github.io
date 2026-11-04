@@ -42,7 +42,6 @@
       <a class="btn" href="#activity-management">活動管理</a>
       <a class="btn" href="#base64-cleanup-panel">Base64 檢查</a>
       <a class="btn" href="#sponsor-members">贊助會員</a>
-      <a class="btn" href="#member-questions">會員提問</a>
       <a class="btn" href="#wellness-members">養生療癒會員</a>
       <a class="btn" href="#member-video-management">會員影片</a>
       <a class="btn" href="articles.html" target="_blank">查看前台文章</a>
@@ -377,22 +376,6 @@
       </div>
     </section>
 
-    <section id="member-questions" class="panel membership-panel">
-      <div class="panel-head">
-        <h2>會員專屬提問</h2>
-        <span id="member-questions-status-message" class="status" aria-live="polite"></span>
-      </div>
-      <div class="membership-layout" style="grid-template-columns:1fr">
-        <div class="membership-card">
-          <div class="top-actions" style="margin-bottom:12px">
-            <select id="member-questions-filter"><option value="open">待回覆</option><option value="answered">已回覆</option><option value="all">全部</option></select>
-            <button id="member-questions-reload" class="btn" type="button">重新整理</button>
-          </div>
-          <p class="membership-help">提問僅會員本人與管理者可見，不會公開。送出回覆後，系統會寄信通知會員（需已部署 Cloud Functions）。</p>
-          <div id="member-questions-list" class="membership-list"><div class="empty">請以管理者帳號登入。</div></div>
-        </div>
-      </div>
-    </section>
     <section id="member-video-management" class="panel membership-panel">
       <div class="panel-head">
         <h2>養生會員私人影片</h2>
@@ -439,6 +422,5 @@
 <script type="module" src="membership-admin.js?v=20260930-plan-days-1"></script>
 <script type="module" src="wellness-member-admin.js?v=20261017-first-join-month-1"></script>
 <script type="module" src="member-video-admin.js?v=20261017-first-join-month-1"></script>
-<script type="module" src="admin-member-questions.js?v=20261103-member-questions-1"></script>
 </body>
 </html>
