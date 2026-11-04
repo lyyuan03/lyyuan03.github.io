@@ -4,6 +4,13 @@
   const YUANSHEN_ARTICLE_ID = "yuanshen-destiny-archetype";
   const YUANSHEN_IMAGE_VERSION = "20260807-yuanshen-live-3";
   const YUANSHEN_IMAGE_BASE = "assets/articles/yuanshen-destiny-archetype/";
+  const GUANYIN_RENUNCIATION_ARTICLE_ID = "2026-guanyin-renunciation-suffering";
+
+  if (new URLSearchParams(location.search).get("id") === GUANYIN_RENUNCIATION_ARTICLE_ID) {
+    void import("./article-guanyin-renunciation-video.js?v=20261104-guanyin-video-1").catch((error) => {
+      console.error("觀音出家日文章影片載入失敗。", error);
+    });
+  }
 
   const bookIcon = `
     <svg viewBox="0 0 24 24" aria-hidden="true">
