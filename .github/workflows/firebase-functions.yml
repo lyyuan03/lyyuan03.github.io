@@ -3,12 +3,6 @@ name: Deploy Firebase Membership Backend
 # 可由 Actions 手動執行，或更新指定請求檔案後執行一次完整部署。
 on:
   workflow_dispatch:
-    inputs:
-      mode:
-        description: "deploy or read-only inventory (no API enablement)"
-        type: choice
-        options: [deploy, inventory]
-        default: deploy
   push:
     branches: ["main"]
     paths:
@@ -19,41 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  inventory:
-    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'inventory'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-      - uses: google-github-actions/setup-gcloud@v2
-      - name: Read accessible projects and function inventories
-        shell: bash
-        run: |
-          set -euo pipefail
-          gcloud projects list --format="table(projectId,name)"
-          projects=$(gcloud projects list --format="value(projectId)")
-          for project in $(printf "%s\nlyyuan03-membership\n" "$projects" | sort -u); do
-            echo "Project: $project"
-            gcloud functions list --project="$project" --format="table(name,region,environment,state)" || true
-            gcloud services list --enabled --project="$project" --filter="name:(cloudfunctions.googleapis.com OR cloudbuild.googleapis.com OR firebasemods.googleapis.com)" --format="value(name)" || true
-            token=$(gcloud auth print-access-token)
-            curl --silent --show-error --fail --header "Authorization: Bearer $token" "https://firebaseextensions.googleapis.com/v1beta/projects/$project/instances" || echo "Extension inventory unavailable"
-          done
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Read-only notification readiness
-        run: |
-          npm --prefix functions ci
-          node scripts/member-question-mail/worker.cjs
-
   deploy-functions:
-    if: github.event_name != 'workflow_dispatch' || inputs.mode != 'inventory'
     runs-on: ubuntu-latest
     permissions:
       contents: write
