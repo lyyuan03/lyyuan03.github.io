@@ -734,26 +734,12 @@ function renderArticleRows(items) {
 }
 
 function bindArticleListButtons() {
-  // 改用事件委派：只在清單容器綁定一次，清單重繪後點擊仍一定能進入 selectArticle。
-  if (!listEl || listEl.dataset.articleClickBound === "1") return;
-  listEl.dataset.articleClickBound = "1";
-  listEl.addEventListener("click", (event) => {
-    const button = event.target?.closest?.(".article-item[data-id]");
-    if (!button || !listEl.contains(button)) return;
-    event.preventDefault();
-    try {
+  listEl.querySelectorAll(".article-item[data-id]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
       selectArticle(button.dataset.id);
-    } catch (error) {
-      reportArticleSelectError(error);
-    }
+    });
   });
-}
-
-function reportArticleSelectError(error) {
-  console.error("文章編輯表單載入失敗：", error);
-  const detail = error?.message ? `：${error.message}` : "";
-  try { setSaveStatus(`文章載入失敗${detail}`, "error"); } catch (_) { /* ignore */ }
-  try { showAdminToast(`文章載入失敗${detail}，請重新整理後再試。`, "error"); } catch (_) { /* ignore */ }
 }
 
 function renderList() {
@@ -801,7 +787,9 @@ function selectArticle(articleId) {
       window.setTimeout(() => formFields.title.focus({ preventScroll: true }), 250);
     });
   } catch (error) {
-    reportArticleSelectError(error);
+    console.error("文章編輯表單載入失敗：", error);
+    setSaveStatus("文章載入失敗，請重新整理頁面", "error");
+    showAdminToast("文章載入失敗，請重新整理後再試。", "error");
   }
 }
 
@@ -1433,7 +1421,6 @@ form.addEventListener("change", (event) => {
   if (!isThumbnailControlTarget(event.target)) markDirty();
 });
 accessTypeInput?.addEventListener("change", toggleEventAccess);
-bindArticleListButtons();
 newButton.addEventListener("click", newArticle);
 importButton?.addEventListener("click", async () => {
   if (!currentId) return;
