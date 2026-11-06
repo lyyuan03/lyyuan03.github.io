@@ -795,7 +795,7 @@
   // （memberEntitlements/{gmail}.permissions 含 male-yoga-beginner）。公開 HTML 不含任何限定內容。
   import { auth, db, isAdminEmail } from "/firebase-config.js";
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { doc, getDocFromServer } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const BODY_ID = "male-yoga-beginner";
   const PERMISSION = "male-yoga-beginner";
@@ -838,32 +838,62 @@
     if (navLogin && !auth.currentUser) navLogin.click();
   });
 
+  function showAuthorizedMessage(adminReader, unavailable = false) {
+    const heading = unavailable ? "限定全文暫時無法讀取" : "限定全文尚未發布";
+    const detail = unavailable
+      ? "你的閱讀資格已確認，但目前無法取得限定全文。請聯絡靈元院協助確認。"
+      : "你的閱讀資格已開通。靈元院發布限定全文後，重新整理頁面即可閱讀。";
+    content.innerHTML = adminReader
+      ? '<span class="members-badge">靈元院管理員</span><h3>' + heading + '</h3><p>' +
+        (unavailable ? "管理員已登入，但目前無法取得全文，請檢查資料庫與文章發布狀態。" : "目前尚無可顯示的限定全文，請確認是否已將原稿儲存到資料庫。") +
+        '</p><p><a class="btn btn-primary" href="/courses/male-yoga-beginner-admin.html#body">查看限定內容設定</a></p>'
+      : '<span class="members-badge">閱讀資格已開通</span><h3>' + heading + '</h3><p>' + detail + '</p>';
+    content.hidden = false;
+    gate.hidden = true;
+  }
+
   onAuthStateChanged(auth, async (user) => {
     const request = ++gateRequest;
     if (!user) { setGate("locked"); return; }
     setGate("loading", user.email);
+    const adminReader = Boolean(user.emailVerified && isAdminEmail(user.email));
+    let accessVerified = adminReader;
+    const sameUser = () => request === gateRequest && auth.currentUser?.uid === user.uid;
     try {
-      const snapshot = await getDoc(doc(db, "eventArticleBodies", BODY_ID));
-      if (request !== gateRequest || auth.currentUser?.uid !== user.uid) return;
-      const body = snapshot.exists() ? snapshot.data() : null;
-      const adminReader = Boolean(user.emailVerified && isAdminEmail(user.email));
-      if (!body || !body.content || (!adminReader && (body.active === false || body.requiredPermission !== PERMISSION))) {
-        if (adminReader) {
-          // 已驗證管理員不應看到學員用的鎖頭；資料庫沒有正文時清楚說明。
-          content.innerHTML = '<span class="members-badge">靈元院管理員</span><h3>目前沒有可顯示的限定全文</h3><p>已成功登入管理員帳號，但資料庫尚未提供這堂課的全文。請確認是否已儲存原稿。</p><p><a class="btn btn-primary" href="/courses/male-yoga-beginner-admin.html#body">查看限定內容設定</a></p>';
-          content.hidden = false;
-          gate.hidden = true;
-        } else {
-          setGate("empty", user.email);
+      if (!adminReader) {
+        if (!user.emailVerified || !user.email) { setGate("denied", user.email); return; }
+        // 先從伺服器確認這位學員是否已開通，不以正文讀取失敗推斷未開通。
+        const email = user.email.trim().toLowerCase();
+        const entitlementSnapshot = await getDocFromServer(doc(db, "memberEntitlements", email));
+        if (!sameUser()) return;
+        const entitlement = entitlementSnapshot.exists() ? entitlementSnapshot.data() : null;
+        if (!entitlement
+          || entitlement.email !== email
+          || !Array.isArray(entitlement.permissions)
+          || !entitlement.permissions.includes(PERMISSION)
+          || entitlement.disabled === true
+          || entitlement.suspended === true
+          || entitlement.status === "disabled") {
+          setGate("denied", user.email);
+          return;
         }
+        accessVerified = true;
+      }
+
+      const snapshot = await getDocFromServer(doc(db, "eventArticleBodies", BODY_ID));
+      if (!sameUser()) return;
+      const body = snapshot.exists() ? snapshot.data() : null;
+      if (!body || !body.content || (!adminReader && (body.active !== true || body.status !== "published" || body.requiredPermission !== PERMISSION))) {
+        showAuthorizedMessage(adminReader);
         return;
       }
       content.innerHTML = `<span class="members-badge">審核通過學員限定</span>${body.content}`;
       content.hidden = false;
       gate.hidden = true;
     } catch (error) {
-      if (request !== gateRequest || auth.currentUser?.uid !== user.uid) return;
-      if (error?.code === "permission-denied") setGate("denied", user.email);
+      if (!sameUser()) return;
+      if (error?.code === "permission-denied" && !accessVerified) setGate("denied", user.email);
+      else if (accessVerified) showAuthorizedMessage(adminReader, true);
       else { console.warn("初階限定內容暫時無法載入。", error); setGate("error", user.email); }
     }
   });
