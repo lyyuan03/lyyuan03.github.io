@@ -846,7 +846,8 @@
       const snapshot = await getDoc(doc(db, "eventArticleBodies", BODY_ID));
       if (request !== gateRequest || auth.currentUser?.uid !== user.uid) return;
       const body = snapshot.exists() ? snapshot.data() : null;
-      if (!body || body.active === false || body.requiredPermission !== PERMISSION || !body.content) {
+      const adminReader = Boolean(user.emailVerified && isAdminEmail(user.email));
+      if (!body || !body.content || (!adminReader && (body.active === false || body.requiredPermission !== PERMISSION))) {
         setGate("empty", user.email);
         return;
       }
