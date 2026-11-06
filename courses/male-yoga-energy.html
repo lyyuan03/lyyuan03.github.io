@@ -848,7 +848,14 @@
       const body = snapshot.exists() ? snapshot.data() : null;
       const adminReader = Boolean(user.emailVerified && isAdminEmail(user.email));
       if (!body || !body.content || (!adminReader && (body.active === false || body.requiredPermission !== PERMISSION))) {
-        setGate("empty", user.email);
+        if (adminReader) {
+          // 已驗證管理員不應看到學員用的鎖頭；資料庫沒有正文時清楚說明。
+          content.innerHTML = '<span class="members-badge">靈元院管理員</span><h3>目前沒有可顯示的限定全文</h3><p>已成功登入管理員帳號，但資料庫尚未提供這堂課的全文。請確認是否已儲存原稿。</p><p><a class="btn btn-primary" href="/courses/male-yoga-beginner-admin.html#body">查看限定內容設定</a></p>';
+          content.hidden = false;
+          gate.hidden = true;
+        } else {
+          setGate("empty", user.email);
+        }
         return;
       }
       content.innerHTML = `<span class="members-badge">審核通過學員限定</span>${body.content}`;
