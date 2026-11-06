@@ -12,8 +12,10 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase
 import { activeSponsorMember, activeWellnessMember, activeEntitlement } from "./member-access-resolver.js";
 import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./inapp-browser.js?v=20261017-inapp-login-2";
 
-const AUTH_VERSION = "20261017-member-menu-1";
+const AUTH_VERSION = "20261106-course-admin-1";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
+// 課程頁明確提供就地管理入口時，管理員登入後留在該頁；其他頁維持既有後台導向。
+const courseAdminButton = document.querySelector("[data-course-admin-open]");
 
 function installStyles() {
   if (document.getElementById("site-auth-nav-styles")) return;
@@ -323,7 +325,8 @@ getRedirectResult(auth).catch((error) => console.error("Google 重新導向登�
 memberButton.addEventListener("click", async (event) => {
   event.stopPropagation();
   if (auth.currentUser && isAdminEmail(auth.currentUser.email)) {
-    location.href = "/admin.html";
+    if (courseAdminButton) courseAdminButton.click();
+    else location.href = "/admin.html";
     return;
   }
   // 登入後一律開啟會員選單（我的會員中心／登出），不再「點名字即登出」。
@@ -374,7 +377,7 @@ googleButton.addEventListener("click", async () => {
       return;
     }
     const result = await signInWithPopup(auth, provider);
-    if (isAdminEmail(result.user?.email)) {
+    if (isAdminEmail(result.user?.email) && !courseAdminButton) {
       location.href = "/admin.html";
       return;
     }
@@ -399,7 +402,8 @@ onAuthStateChanged(auth, async (user) => {
   wellnessVideoLink.hidden = true;
   memberButton.disabled = false;
   memberButton.setAttribute("aria-haspopup", "false");
-  if (user && sessionStorage.getItem("site-auth-flow") === "member" && isAdminEmail(user.email)) {
+  memberButton.setAttribute("aria-controls", "site-account-menu");
+  if (user && sessionStorage.getItem("site-auth-flow") === "member" && isAdminEmail(user.email) && !courseAdminButton) {
     sessionStorage.removeItem("site-auth-flow");
     location.href = "/admin.html";
     return;
@@ -411,8 +415,12 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
   if (isAdminEmail(user.email)) {
-    memberButton.textContent = "進入管理後台";
-    memberButton.title = "前往靈元院管理後台";
+    memberButton.textContent = courseAdminButton ? "學員開通" : "進入管理後台";
+    memberButton.title = courseAdminButton ? "開啟本課程的學員開通介面" : "前往靈元院管理後台";
+    if (courseAdminButton) {
+      memberButton.setAttribute("aria-haspopup", "dialog");
+      memberButton.setAttribute("aria-controls", "course-admin-dialog");
+    }
     return;
   }
   await refreshMemberStatus(user);

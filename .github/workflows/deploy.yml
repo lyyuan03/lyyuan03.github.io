@@ -36,6 +36,8 @@ jobs:
         run: node scripts/audit-paid-article-runtime.mjs
       - name: Audit production stability contract
         run: node scripts/audit-production-stability.mjs
+      - name: Verify course admin access and permission preservation
+        run: node --experimental-vm-modules --test scripts/tests/male-yoga-admin.test.mjs
 
   candidate-smoke:
     needs: validate

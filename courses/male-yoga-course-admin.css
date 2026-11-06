@@ -1,0 +1,27 @@
+#course-admin-dialog{box-sizing:border-box;width:min(620px,calc(100% - 32px));max-height:calc(100dvh - 40px);margin:auto;padding:28px;border:1px solid var(--line);border-radius:22px;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.8;overflow:auto;box-shadow:0 24px 80px rgba(30,25,20,.25)}
+#course-admin-dialog::backdrop{background:rgba(35,30,24,.64)}
+#course-admin-dialog .course-admin-heading,#course-admin-dialog .course-admin-list-heading{display:flex;justify-content:space-between;align-items:center;gap:16px}
+#course-admin-dialog h2{margin:0;font-family:var(--serif);font-size:27px;line-height:1.5}
+#course-admin-dialog h3{margin:0;font-size:17px}
+#course-admin-dialog p{margin:10px 0}
+#course-admin-dialog .course-admin-label{margin:0;color:var(--ci-tan);font-size:12px;letter-spacing:.1em}
+#course-admin-dialog button{font:inherit;cursor:pointer}
+#course-admin-dialog button:disabled{opacity:.5;cursor:wait}
+#course-admin-dialog [data-course-admin-close]{width:44px;height:44px;flex-shrink:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ci-brown);font-size:27px}
+#course-admin-dialog .course-admin-account{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+#course-admin-dialog label{display:block;margin:20px 0 8px;font-weight:500}
+#course-admin-dialog textarea{box-sizing:border-box;width:100%;min-height:100px;max-height:240px;resize:vertical;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:16px/1.7 var(--sans)}
+#course-admin-dialog .course-admin-hint{font-size:13px;color:var(--muted)}
+#course-admin-dialog .course-admin-status{font-size:14px;white-space:pre-line;overflow-wrap:anywhere}
+#course-admin-dialog [data-kind="success"]{color:var(--olive-deep)}
+#course-admin-dialog [data-kind="error"]{color:#9b3b2e}
+#course-admin-dialog .course-admin-students{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+#course-admin-dialog [data-course-admin-list]{margin:12px 0 0;padding:0;list-style:none}
+#course-admin-dialog [data-course-admin-list] li{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
+#course-admin-dialog .course-admin-email{min-width:0;overflow-wrap:anywhere}
+#course-admin-dialog .course-admin-remove,#course-admin-dialog [data-course-admin-refresh]{flex-shrink:0;min-height:44px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ci-brown);font-size:13px}
+#course-admin-dialog .course-admin-footer{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:24px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ci-olive)}
+#course-admin-dialog .course-admin-footer a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-underline-offset:4px}
+#course-admin-dialog [data-course-admin-sign-out]{min-height:44px;padding:0;border:0;background:transparent;color:var(--muted);font-size:13px}
+#course-admin-dialog :focus-visible{outline:3px solid var(--ci-tan);outline-offset:3px}
+@media(max-width:480px){#course-admin-dialog{padding:20px;max-height:calc(100dvh - 24px)}#course-admin-dialog h2{font-size:24px}#course-admin-dialog [data-course-admin-list] li{font-size:13px;gap:8px}}
