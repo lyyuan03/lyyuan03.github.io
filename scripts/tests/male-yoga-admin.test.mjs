@@ -181,8 +181,8 @@ test("初階頁先確認已開通權限，再嘗試讀取限定正文；內容�
   const entitlementRead = html.indexOf('getDocFromServer(doc(db, "memberEntitlements", email))');
   const articleRead = html.indexOf('getDocFromServer(doc(db, "eventArticleBodies", BODY_ID))');
   assert.ok(entitlementRead > 0 && articleRead > entitlementRead, "應先讀取已開通名單");
-  assert.match(html, /entitlement\\.permissions\\.includes\\(PERMISSION\\)/);
-  assert.match(html, /showAuthorizedMessage\\(adminReader\\)/);
-  assert.match(html, /else if \\(accessVerified\\) showAuthorizedMessage\\(adminReader, true\\)/);
-  assert.match(html, /gate\\.hidden = true;/);
+  assert.ok(html.includes('entitlement.permissions.includes(PERMISSION)'));
+  assert.ok(html.includes('showAuthorizedMessage(adminReader)'));
+  assert.ok(html.includes('else if (accessVerified) showAuthorizedMessage(adminReader, true)'));
+  assert.ok(html.includes('gate.hidden = true;'));
 });
