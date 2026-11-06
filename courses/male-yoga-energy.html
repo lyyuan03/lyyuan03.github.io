@@ -630,6 +630,8 @@
           <p class="members-gate-text" data-gate-text>請稍候。</p>
           <div class="members-gate-actions">
             <button class="btn btn-primary" type="button" data-gate-login hidden>用 Gmail 登入</button>
+            <button class="btn btn-primary" type="button" data-course-admin-open aria-haspopup="dialog" aria-controls="course-admin-dialog" hidden>開通學員 Gmail</button>
+            <a class="btn btn-outline" href="/courses/male-yoga-beginner-admin.html#body" data-course-admin-content hidden>設定限定內容</a>
             <a class="btn btn-outline" href="https://t.me/lyyuan" target="_blank" rel="noopener noreferrer" data-gate-contact hidden>聯絡靈元院開通</a>
           </div>
           <p class="members-gate-note" data-gate-account hidden></p>
@@ -791,7 +793,7 @@
 <script type="module">
   // 初階審核通過學員限定內容：全文只存在 Firestore eventArticleBodies，讀取資格由 Firestore Rules 判斷
   // （memberEntitlements/{gmail}.permissions 含 male-yoga-beginner）。公開 HTML 不含任何限定內容。
-  import { auth, db } from "/firebase-config.js";
+  import { auth, db, isAdminEmail } from "/firebase-config.js";
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -804,6 +806,9 @@
   const loginButton = gate.querySelector("[data-gate-login]");
   const contactLink = gate.querySelector("[data-gate-contact]");
   const account = gate.querySelector("[data-gate-account]");
+  const adminButton = gate.querySelector("[data-course-admin-open]");
+  const contentSettings = gate.querySelector("[data-course-admin-content]");
+  let gateRequest = 0;
   window.__maleYogaBeginnerGateReady = true;
 
   function setGate(state, email) {
@@ -814,11 +819,14 @@
     contactLink.hidden = !["denied", "error", "locked"].includes(state);
     account.hidden = !email;
     account.textContent = email ? `目前登入：${email}` : "";
+    const admin = Boolean(auth.currentUser?.emailVerified && isAdminEmail(auth.currentUser.email));
+    adminButton.hidden = !admin;
+    contentSettings.hidden = !admin;
     const copy = {
       loading: ["正在確認閱讀資格…", "請稍候。"],
       locked: ["通過報名審核的學員，請登入查看", "請用報名問卷填寫的 Gmail 登入。靈元院開通之後，完整的課程內容與上課注意事項會出現在這裡。"],
       denied: ["這個帳號還沒有開通", "如果你已經通過審核，請確認登入的是問卷上填寫的 Gmail，或聯絡靈元院協助開通。"],
-      empty: ["限定內容尚未設定", "管理員帳號：請到初階學員管理頁貼上限定內容並發布。"],
+      empty: ["限定內容尚未設定", "請點「設定限定內容」貼上內容並發布；點「開通學員 Gmail」即可管理閱讀資格。"],
       error: ["內容暫時無法載入", "請重新整理頁面再試一次，或聯絡靈元院。"]
     }[state];
     title.textContent = copy[0];
@@ -831,10 +839,12 @@
   });
 
   onAuthStateChanged(auth, async (user) => {
+    const request = ++gateRequest;
     if (!user) { setGate("locked"); return; }
     setGate("loading", user.email);
     try {
       const snapshot = await getDoc(doc(db, "eventArticleBodies", BODY_ID));
+      if (request !== gateRequest || auth.currentUser?.uid !== user.uid) return;
       const body = snapshot.exists() ? snapshot.data() : null;
       if (!body || body.active === false || body.requiredPermission !== PERMISSION || !body.content) {
         setGate("empty", user.email);
@@ -844,12 +854,40 @@
       content.hidden = false;
       gate.hidden = true;
     } catch (error) {
+      if (request !== gateRequest || auth.currentUser?.uid !== user.uid) return;
       if (error?.code === "permission-denied") setGate("denied", user.email);
       else { console.warn("初階限定內容暫時無法載入。", error); setGate("error", user.email); }
     }
   });
 </script>
-<script type="module" src="/site-auth-nav.js?v=20261017-member-menu-2"></script>
+<link rel="stylesheet" href="/courses/male-yoga-course-admin.css?v=20261106-1">
+<dialog id="course-admin-dialog" aria-labelledby="course-admin-title" aria-describedby="course-admin-description">
+  <div class="course-admin-heading">
+    <div><p class="course-admin-label">男力瑜伽・初階</p><h2 id="course-admin-title">學員開通</h2></div>
+    <button type="button" data-course-admin-close aria-label="關閉學員開通">×</button>
+  </div>
+  <p id="course-admin-description">輸入已通過報名審核的學員 Gmail，開通本頁限定內容的閱讀資格。</p>
+  <p class="course-admin-account" data-course-admin-account></p>
+  <form data-course-admin-form>
+    <label for="course-admin-emails">學員 Gmail</label>
+    <textarea id="course-admin-emails" rows="3" placeholder="student@gmail.com" aria-describedby="course-admin-email-help" required spellcheck="false" autocapitalize="none" autocomplete="off"></textarea>
+    <p id="course-admin-email-help" class="course-admin-hint">可一次輸入多位，一行一個，或以逗號分隔。請填寫學員日後會用來登入的 @gmail.com 帳號。</p>
+    <button class="btn btn-primary" type="submit">開通觀看權限</button>
+    <p class="course-admin-status" data-course-admin-status role="status" aria-live="polite"></p>
+  </form>
+  <section class="course-admin-students" aria-labelledby="course-admin-list-title">
+    <div class="course-admin-list-heading"><h3 id="course-admin-list-title">已開通學員</h3><button type="button" data-course-admin-refresh>重新整理</button></div>
+    <p class="course-admin-status" data-course-admin-list-status role="status" aria-live="polite"></p>
+    <ul data-course-admin-list></ul>
+  </section>
+  <div class="course-admin-footer">
+    <a href="/courses/male-yoga-beginner-admin.html#body">設定限定內容</a>
+    <a href="/admin.html">全站管理後台</a>
+    <button type="button" data-course-admin-sign-out>登出管理帳號</button>
+  </div>
+</dialog>
+<script type="module" src="/courses/male-yoga-course-admin.js?v=20261106-1"></script>
+<script type="module" src="/site-auth-nav.js?v=20261106-course-admin-1"></script>
 <script src="/site-navigation.js?v=20260828-ia-3" defer></script>
 </body>
 </html>
