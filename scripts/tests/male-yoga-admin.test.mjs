@@ -174,3 +174,15 @@ test("登出後到達的名單回應不會重新顯示學生信箱", async () =>
   assert.equal(h.field("[data-course-admin-list]").children.length, 0);
   assert.equal(h.field("[data-course-admin-account]").textContent, "");
 });
+
+
+test("初階頁先確認已開通權限，再嘗試讀取限定正文；內容未發布不誤報未開通", () => {
+  const html = fs.readFileSync(new URL("../../courses/male-yoga-energy.html", import.meta.url), "utf8");
+  const entitlementRead = html.indexOf('getDocFromServer(doc(db, "memberEntitlements", email))');
+  const articleRead = html.indexOf('getDocFromServer(doc(db, "eventArticleBodies", BODY_ID))');
+  assert.ok(entitlementRead > 0 && articleRead > entitlementRead, "應先讀取已開通名單");
+  assert.match(html, /entitlement\\.permissions\\.includes\\(PERMISSION\\)/);
+  assert.match(html, /showAuthorizedMessage\\(adminReader\\)/);
+  assert.match(html, /else if \\(accessVerified\\) showAuthorizedMessage\\(adminReader, true\\)/);
+  assert.match(html, /gate\\.hidden = true;/);
+});
