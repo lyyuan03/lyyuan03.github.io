@@ -795,7 +795,7 @@
   // （memberEntitlements/{gmail}.permissions 含 male-yoga-beginner）。公開 HTML 不含任何限定內容。
   import { auth, db, isAdminEmail } from "/firebase-config.js";
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { doc, getDocFromServer } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { doc, getDocFromServer, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const BODY_ID = "male-yoga-beginner";
   const PERMISSION = "male-yoga-beginner";
@@ -852,6 +852,79 @@
     gate.hidden = true;
   }
 
+  async function showRecoveredAdminPreview(user, sameUser) {
+    const { recoverLegacyMaleYogaBody } = await import("./male-yoga-legacy-recovery.js?v=20261107-1");
+    const recoveredHtml = await recoverLegacyMaleYogaBody();
+    if (!sameUser()) return;
+
+    // 原始詳細段落只在已驗證的管理員登入後預覽；未發布前一般學員看不到。
+    content.innerHTML =
+      '<span class="members-badge">靈元院管理員｜原稿預覽</span>' +
+      '<h3>已找回改版前的課程詳細段落</h3>' +
+      '<p>以下為 2026 年 10 月 5 日改版前保存的原始說明。資料庫目前沒有可顯示的限定全文，因此先供官方帳號預覽。</p>' +
+      recoveredHtml +
+      '<p class="note">若內容正確，按下方按鈕即可儲存到限定文章資料庫，開放已開通學員閱讀。系統不會覆蓋既有的完整文章。</p>' +
+      '<p><button class="btn btn-primary" type="button" data-recover-course-body>恢復並發布給已開通學員</button></p>' +
+      '<p data-recover-course-status role="status" aria-live="polite"></p>';
+    content.hidden = false;
+    gate.hidden = true;
+
+    const button = content.querySelector("[data-recover-course-body]");
+    const status = content.querySelector("[data-recover-course-status]");
+    button.addEventListener("click", async () => {
+      if (!sameUser() || !user.emailVerified || !isAdminEmail(user.email)) return;
+      if (!window.confirm("確定將已找回的原始課程詳細段落儲存並發布給已開通的學員嗎？")) return;
+      button.disabled = true;
+      status.textContent = "正在儲存限定全文…";
+      try {
+        const bodyRef = doc(db, "eventArticleBodies", BODY_ID);
+        const articleRef = doc(db, "articles", BODY_ID);
+        const result = await runTransaction(db, async (transaction) => {
+          // 交易重新讀取伺服器資料，避免覆寫其他管理員已儲存的正文。
+          const [existingBody, existingArticle] = await Promise.all([
+            transaction.get(bodyRef),
+            transaction.get(articleRef)
+          ]);
+          if (existingBody.exists() && String(existingBody.data()?.content || "").trim()) {
+            return "already-published";
+          }
+          transaction.set(articleRef, {
+            title: "男力瑜伽初階｜審核通過學員限定內容",
+            status: "published",
+            hidden: true,
+            systemRecord: true,
+            accessType: "event",
+            eventId: PERMISSION,
+            requiredPermission: PERMISSION,
+            accessBadge: "審核通過學員限定",
+            series: "男力瑜伽初階",
+            ...(!existingArticle.exists() ? { content: "" } : {}),
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+          transaction.set(bodyRef, {
+            articleId: BODY_ID,
+            title: "男力瑜伽初階｜審核通過學員限定內容",
+            requiredPermission: PERMISSION,
+            status: "published",
+            active: true,
+            content: recoveredHtml,
+            source: "restored-from-2026-10-05-pre-gate-page",
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+          return "restored";
+        });
+        if (!sameUser()) return;
+        status.textContent = result === "restored" ? "已儲存並發布。正在更新頁面…" : "已有其他管理員發布文章，正在讀取最新內容…";
+        window.location.reload();
+      } catch (error) {
+        if (!sameUser()) return;
+        console.error("恢復課程限定全文失敗：", error);
+        status.textContent = "儲存失敗，原稿仍可在本頁預覽。請確認管理員權限及網路連線。";
+        button.disabled = false;
+      }
+    });
+  }
+
   onAuthStateChanged(auth, async (user) => {
     const request = ++gateRequest;
     if (!user) { setGate("locked"); return; }
@@ -884,7 +957,17 @@
       if (!sameUser()) return;
       const body = snapshot.exists() ? snapshot.data() : null;
       if (!body || !body.content || (!adminReader && (body.active !== true || body.status !== "published" || body.requiredPermission !== PERMISSION))) {
-        showAuthorizedMessage(adminReader);
+        if (adminReader && (!body || !String(body.content || "").trim())) {
+          try {
+            await showRecoveredAdminPreview(user, sameUser);
+          } catch (recoveryError) {
+            if (!sameUser()) return;
+            console.warn("無法取得改版前的課程原稿：", recoveryError);
+            showAuthorizedMessage(true, true);
+          }
+        } else {
+          showAuthorizedMessage(adminReader);
+        }
         return;
       }
       content.innerHTML = `<span class="members-badge">審核通過學員限定</span>${body.content}`;
