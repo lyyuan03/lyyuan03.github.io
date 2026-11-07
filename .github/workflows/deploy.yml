@@ -74,6 +74,10 @@ jobs:
         env:
           SMOKE_BASE_URL: http://127.0.0.1:4173
         run: node scripts/smoke-admin-gate.mjs
+      - name: Verify historical restricted body recovery
+        env:
+          SMOKE_BASE_URL: http://127.0.0.1:4173
+        run: node scripts/smoke-male-yoga-legacy-recovery.mjs
 
   deploy:
     if: github.event_name != 'pull_request'
