@@ -70,6 +70,10 @@ jobs:
         env:
           SMOKE_BASE_URL: http://127.0.0.1:4173
         run: node scripts/smoke-article-candidate.mjs
+      - name: Verify admin login gate initializes
+        env:
+          SMOKE_BASE_URL: http://127.0.0.1:4173
+        run: node scripts/smoke-admin-gate.mjs
 
   deploy:
     if: github.event_name != 'pull_request'
