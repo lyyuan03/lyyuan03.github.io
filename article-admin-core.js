@@ -1,5 +1,9 @@
 import { auth, db, provider, storage, isAdminEmail } from "./firebase-config.js?v=20260831-permissions-1";
-import { staticArticles } from "./static-articles.js?v=20261006-collective-unconscious-1";
+// 大量靜態文章的載入不應阻塞管理員登入；即使單篇檔案失敗，仍須可進入 Firestore 後台。
+let staticArticles = [];
+const staticArticlesReady = import("./static-articles.js?v=20261006-collective-unconscious-1")
+  .then((module) => { staticArticles = Array.isArray(module.staticArticles) ? module.staticArticles : []; })
+  .catch((error) => { console.error("靜態文章清單載入失敗，繼續使用資料庫文章：", error); });
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260831-permissions-1";
 import { signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -852,6 +856,7 @@ function showFirestoreError(error) {
 async function loadArticles() {
   listEl.innerHTML = '<div class="empty">載入中…</div>';
   try {
+    await staticArticlesReady;
     let snapshot = await getDocs(collection(db, "articles"));
     const didDraftImport = await importMissingStaticDrafts(snapshot);
     if (didDraftImport) {
