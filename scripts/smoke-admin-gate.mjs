@@ -23,7 +23,7 @@ console.log(JSON.stringify({ result, errors: errors.slice(0, 30) }, null, 2));
 
 // 靜態文章模組缺失或被阻擋時，後台的登入仍必須啟用。
 const failedContext = await browser.newContext({ serviceWorkers: "block", locale: "zh-TW" });
-await failedContext.route(/\\/static-articles\\.js(?:\\?|$)/, (route) => route.abort("failed"));
+await failedContext.route(/\/static-articles\.js(?:\?|$)/, (route) => route.abort("failed"));
 const failedPage = await failedContext.newPage();
 const degradedErrors = [];
 failedPage.on("pageerror", (error) => degradedErrors.push(String(error).slice(0, 300)));
