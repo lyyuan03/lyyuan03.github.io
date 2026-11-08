@@ -1,0 +1,71 @@
+name: Import Karma Placebo Sponsor Draft (no publishing)
+
+on:
+  push:
+    branches:
+      - draft/karma-placebo-20261108
+    paths:
+      - .github/workflows/import-karma-placebo-paid-draft.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: karma-placebo-paid-draft-20261108
+  cancel-in-progress: false
+
+jobs:
+  write-firestore-draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout isolated draft branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Download encrypted article and seven original images
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/karma-import /tmp/karma-images
+          curl --fail --location --silent --show-error --retry 3 --max-time 80 \
+            'https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/aa3c2218-b4bc-4c5f-a372-03c6456ea75e.zip' \
+            --output /tmp/karma-secure-bundle.zip
+          curl --fail --location --silent --show-error --retry 3 --max-time 80 \
+            'https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/2ef34391-f1b9-4075-9af0-acd1a5d96377.zip' \
+            --output /tmp/karma-images.zip
+          unzip -tq /tmp/karma-secure-bundle.zip
+          unzip -tq /tmp/karma-images.zip
+          unzip -q /tmp/karma-secure-bundle.zip -d /tmp/karma-import
+          unzip -q /tmp/karma-images.zip 'images/*' -d /tmp/karma-images
+          test -s /tmp/karma-import/karma-as-placebo-20261108.enc.json
+          test "$(find /tmp/karma-images/images -maxdepth 1 -name '*.webp' | wc -l | tr -d ' ')" = 7
+          node --check .github/scripts/import-karma-placebo-paid-draft.mjs
+
+      - name: Authenticate with existing protected Firestore publishing identity
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Decrypt, write and verify sponsor-only draft
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/import-karma-placebo-paid-draft.mjs
+
+      - name: Save non-sensitive read-back verification
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: karma-placebo-draft-verified
+          path: /tmp/karma-import-report.json
+          retention-days: 30
