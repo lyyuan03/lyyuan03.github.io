@@ -18,7 +18,7 @@ function buildLamps(){
  sorted.forEach(l=>{
  const target='#lamp-'+l.k.replace(/^(head_|co_)/,'');
 
-$(target).insertAdjacentHTML('beforeend',`<article class="lamp" data-key="${l.k}"><label class="lamp-head" for="check-${l.k}"><input type="checkbox" id="check-${l.k}" class="lamp-check"><span class="lamp-icon">${icon}</span><span class="lamp-name"><strong>${registrationType[l.r]}</strong><small>${l.n}${l.r==='個人'?'・每位芳名':''}</small></span><span class="price" data-price="${l.k}">${l.r==='個人'?money(l.p):'<small>金額待確認</small>'}</span></label><p class="lamp-purpose">${lampPurposes[l.k]||''}${lampFortune[l.k] ? '<br>'+lampFortune[l.k] : ''}${l.r==='個人'?'':'<br>功德金請洽本院 Telegram。'}</p><div class="people" hidden><p class="hint">${l.r==='個人'?'請填芳名、出生年月日與現居地址。':'金額由行政確認後通知，尚未計入總額。'}</p><div class="person-list"></div><button type="button" class="subbtn add-person">＋ 新增${l.r==='公司'?'公司':'芳名'}</button></div></article>`)})}
+$(target).insertAdjacentHTML('beforeend',`<article class="lamp" data-key="${l.k}"><label class="lamp-head" for="check-${l.k}"><input type="checkbox" id="check-${l.k}" class="lamp-check"><span class="lamp-icon">${icon}</span><span class="lamp-name"><strong>${registrationType[l.r]}</strong><small>${l.n}${l.r==='個人'?'・每位芳名':''}</small>${l.r==='個人' && ['pozai','guangcai'].includes(l.k)?'<span class="lamp-hot">熱門</span>':''}</span><span class="price" data-price="${l.k}">${l.r==='個人'?money(l.p):'<small>金額待確認</small>'}</span></label><p class="lamp-purpose">${lampPurposes[l.k]||''}${lampFortune[l.k] ? '<br>'+lampFortune[l.k] : ''}${l.r==='個人'?'':'<br>功德金請洽本院 Telegram。'}</p><div class="people" hidden><p class="hint">${l.r==='個人'?'請填芳名、出生年月日與現居地址。':'金額由行政確認後通知，尚未計入總額。'}</p><div class="person-list"></div><button type="button" class="subbtn add-person">＋ 新增${l.r==='公司'?'公司':'芳名'}</button></div></article>`)})}
 function bindPeople(el, rowHTML){
  const check=el.querySelector('input[type=checkbox]');
  const people=el.querySelector('.people');
@@ -298,15 +298,9 @@ $$('[data-product]').forEach(row=>{const i=Number(row.dataset.product);if(!Numbe
  const countOf = value => Number.isSafeInteger(value) && value >= 0 ? value : 0;
  try {
   if (!proof || !bars) return;
-  const mock = new URLSearchParams(location.search).get('mockStats') === '1';
-  let stats;
-  if (mock) {
-   stats = {ok:true,event:'lamp-116-dingwei',totalSignups:25,lamps:[{name:'太歲燈',count:12},{name:'破災降魔燈',count:9},{name:'廣財運通燈',count:4}],taisuiFanZodiacs:{counts:[{zodiac:'羊',count:9},{zodiac:'牛',count:7},{zodiac:'龍',count:5},{zodiac:'狗',count:3}]}};
-  } else {
-   const response = await fetch('https://script.google.com/macros/s/AKfycbzVWhkaSoSIsBKTBcYnmbAg9Gbka0aBczkSQeAVsvWlz7a6rqByzwuCVlkykMnmTHRh/exec?action=stats&event=lamp-116-dingwei');
-   if (!response.ok) return;
-   stats = await response.json();
-  }
+  const response = await fetch('https://script.google.com/macros/s/AKfycbzVWhkaSoSIsBKTBcYnmbAg9Gbka0aBczkSQeAVsvWlz7a6rqByzwuCVlkykMnmTHRh/exec?action=stats&event=lamp-116-dingwei');
+  if (!response.ok) return;
+  const stats = await response.json();
   if (stats.ok !== true || stats.event !== 'lamp-116-dingwei' || !Number.isSafeInteger(stats.totalSignups) || stats.totalSignups < 0) return;
   const total = stats.totalSignups;
   if (total < 10) {
@@ -318,7 +312,7 @@ $$('[data-product]').forEach(row=>{const i=Number(row.dataset.product);if(!Numbe
   proof.hidden = false;
   const families = {'太歲燈':'taisui','破災降魔燈':'pozai','廣財運通燈':'guangcai'};
   const lamps = Array.isArray(stats.lamps) ? stats.lamps : [];
-  lamps.filter(lamp => families[lamp.name] && countOf(lamp.count) > 0)
+  lamps.filter(lamp => Object.hasOwn(families, lamp.name) && countOf(lamp.count) > 0)
    .sort((a,b) => b.count - a.count).slice(0,3).forEach(lamp => {
     const card = document.querySelector(`.lamp[data-key="${families[lamp.name]}"] .lamp-name`);
     if (!card || card.querySelector('.lamp-hot')) return;
@@ -328,7 +322,7 @@ $$('[data-product]').forEach(row=>{const i=Number(row.dataset.product);if(!Numbe
     card.append(tag);
    });
   const counts = stats.taisuiFanZodiacs?.counts;
-  if (!Array.isArray(counts) || !['羊','牛','龍','狗'].every(zodiac => counts.some(item => item.zodiac === zodiac && Number.isSafeInteger(item.count) && item.count >= 0))) return;
+  if (!Array.isArray(counts) || !['羊','牛','龍','狗'].every(zodiac => counts.filter(item => item?.zodiac === zodiac).length === 1 && counts.some(item => item?.zodiac === zodiac && Number.isSafeInteger(item.count) && item.count >= 0))) return;
   const rows = ['羊','牛','龍','狗'].map(zodiac => ({zodiac, count:counts.find(item => item.zodiac === zodiac).count})).sort((a,b) => b.count - a.count);
   const max = Math.max(1, ...rows.map(row => row.count));
   rows.forEach((row,index) => {
@@ -345,9 +339,10 @@ $$('[data-product]').forEach(row=>{const i=Number(row.dataset.product);if(!Numbe
    item.append(label,track);
    bars.append(item);
   });
+  document.getElementById('zodiacCards').hidden = true;
   bars.hidden = false;
   // Commit the initial zero width before the single animation start.
   void bars.offsetWidth;
   requestAnimationFrame(() => bars.classList.add('stats-ready'));
- } catch { /* Keep the static zodiac introduction when stats are unavailable. */ }
+ } catch { /* Keep the static zodiac cards when stats are unavailable. */ }
 })();
