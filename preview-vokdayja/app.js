@@ -280,3 +280,60 @@ $$('[data-product]').forEach(row=>{const i=Number(row.dataset.product);if(!Numbe
   });
 })();
 
+
+// Read-only social proof: one request per page load, independent of registration.
+(async function loadSignupStats() {
+ const proof = document.getElementById('signupProof');
+ const bars = document.getElementById('zodiacBars');
+ const countOf = value => Number.isSafeInteger(value) && value >= 0 ? value : 0;
+ try {
+  if (!proof || !bars) return;
+  const mock = new URLSearchParams(location.search).get('mockStats') === '1';
+  let stats;
+  if (mock) {
+   stats = {ok:true,event:'lamp-116-dingwei',totalSignups:25,lamps:[{name:'太歲燈',count:12},{name:'破災降魔燈',count:9},{name:'廣財運通燈',count:4}],taisuiFanZodiacs:{counts:[{zodiac:'羊',count:9},{zodiac:'牛',count:7},{zodiac:'龍',count:5},{zodiac:'狗',count:3}]}};
+  } else {
+   const response = await fetch('https://script.google.com/macros/s/AKfycbzVWhkaSoSIsBKTBcYnmbAg9Gbka0aBczkSQeAVsvWlz7a6rqByzwuCVlkykMnmTHRh/exec?action=stats&event=lamp-116-dingwei');
+   if (!response.ok) return;
+   stats = await response.json();
+  }
+  if (stats.ok !== true || stats.event !== 'lamp-116-dingwei' || !Number.isSafeInteger(stats.totalSignups) || stats.totalSignups < 0) return;
+  const total = stats.totalSignups;
+  proof.textContent = `已有 ${total.toLocaleString('zh-TW')} 位信眾點亮`;
+  proof.hidden = false;
+  if (total < 10) return;
+  const families = {'太歲燈':'taisui','破災降魔燈':'pozai','廣財運通燈':'guangcai'};
+  const lamps = Array.isArray(stats.lamps) ? stats.lamps : [];
+  lamps.filter(lamp => families[lamp.name] && countOf(lamp.count) > 0)
+   .sort((a,b) => b.count - a.count).slice(0,3).forEach(lamp => {
+    const card = document.querySelector(`.lamp[data-key="${families[lamp.name]}"] .lamp-name`);
+    if (!card || card.querySelector('.lamp-hot')) return;
+    const tag = document.createElement('span');
+    tag.className = 'lamp-hot';
+    tag.textContent = '熱門';
+    card.append(tag);
+   });
+  const counts = stats.taisuiFanZodiacs?.counts;
+  if (!Array.isArray(counts) || !['羊','牛','龍','狗'].every(zodiac => counts.some(item => item.zodiac === zodiac && Number.isSafeInteger(item.count) && item.count >= 0))) return;
+  const rows = ['羊','牛','龍','狗'].map(zodiac => ({zodiac, count:counts.find(item => item.zodiac === zodiac).count})).sort((a,b) => b.count - a.count);
+  const max = Math.max(1, ...rows.map(row => row.count));
+  rows.forEach((row,index) => {
+   const item = document.createElement('div');
+   item.className = 'zodiac-row';
+   const label = document.createElement('p');
+   label.textContent = `${row.zodiac}　${row.count.toLocaleString('zh-TW')} 人已點${index === 0 && row.count > 0 ? '　🔥 最多人點' : ''}`;
+   const track = document.createElement('div');
+   track.className = 'zodiac-track';
+   track.setAttribute('aria-hidden','true');
+   const fill = document.createElement('span');
+   fill.style.setProperty('--bar-width', `${row.count / max * 100}%`);
+   track.append(fill);
+   item.append(label,track);
+   bars.append(item);
+  });
+  bars.hidden = false;
+  // Commit the initial zero width before the single animation start.
+  void bars.offsetWidth;
+  requestAnimationFrame(() => bars.classList.add('stats-ready'));
+ } catch { /* Keep the static zodiac introduction when stats are unavailable. */ }
+})();
