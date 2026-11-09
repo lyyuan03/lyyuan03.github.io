@@ -84,16 +84,16 @@ const over=goods>0&&$('#overseas').checked,shipping=goods?(over?0:goods>=4000?0:
 buildLamps();lampDefs.forEach(l=>bindPeople($(`[data-key="${l.k}"]`),()=>personHTML(l)));buildSponsors();calc();$('#form').addEventListener('input',calc);$('#form').addEventListener('change',calc);
 function activateTab(b){$$('[data-role]').forEach(x=>{const active=x===b;x.setAttribute('aria-selected',active);x.tabIndex=active?0:-1;$('#'+x.getAttribute('aria-controls')).hidden=!active})}$$('[data-role]').forEach((b,i)=>{b.tabIndex=i? -1:0;b.onclick=()=>activateTab(b);b.onkeydown=e=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const tabs=$$('[data-role]'),next=e.key==='Home'?0:e.key==='End'?2:(i+(e.key==='ArrowRight'?1:2))%3;activateTab(tabs[next]);tabs[next].focus()}}});
 
-$('#form').noValidate=true;$('#form').onsubmit=e=>{e.preventDefault();calc();const selected=$$('.lamp-check:checked').length||$$('[data-quantity]').some(x=>+x.value)||$$('.sponsor-check:checked').length;$('#lampError').textContent=selected?'':'請至少登記一項燈別、贊助或請購品。';if(!selected){$('#lanterns').scrollIntoView({block:'start'});return}const invalid=$('#form').querySelector(':invalid');if(invalid){const pane=invalid.closest('[role=tabpanel]');if(pane&&pane.hidden)activateTab($(`[aria-controls="${pane.id}"]`));invalid.reportValidity();invalid.focus();return}$('#result .eyebrow')&&($('#result .eyebrow').textContent='SIGNUP');$('#result h2').textContent='正在送出…';$('#resultBody').innerHTML=`<p>正在將報名資料送至靈元院報名表，請稍候。</p>`;const _rf=$('#result .result-foot');if(_rf)_rf.hidden=true;$('#result').showModal()};$$('#result .close,#result .closeResult').forEach(b=>b.onclick=()=>$('#result').close());
+$('#form').noValidate=true;$('#form').onsubmit=e=>{e.preventDefault();calc();const selected=$$('.lamp-check:checked').length||$$('[data-quantity]').some(x=>+x.value)||$$('.sponsor-check:checked').length;$('#lampError').textContent=selected?'':'請至少登記一項燈別、贊助或請購品。';if(!selected){$('#lanterns').scrollIntoView({block:'start'});return}const invalid=$('#form').querySelector(':invalid');if(invalid){const pane=invalid.closest('[role=tabpanel]');if(pane&&pane.hidden)activateTab($(`[aria-controls="${pane.id}"]`));invalid.reportValidity();invalid.focus();return}$('#result .eyebrow')&&($('#result .eyebrow').textContent='SIGNUP');$('#result h2').textContent='正在送出…';$('#resultBody').innerHTML=`<p>正在將報名資料送至靈元院報名表，請稍候。</p>`;const _rf=$('#result .result-foot');if(_rf)_rf.hidden=true;$('#result').showModal();return true};$$('#result .close,#result .closeResult').forEach(b=>b.onclick=()=>$('#result').close());
 let records=[{id:'DEMO-001',name:'王小明',lamp:'太歲燈、廣財運通燈',amount:1800,status:'已核帳'},{id:'DEMO-002',name:'林美華',lamp:'破災降魔燈・總燈首',amount:null,status:'待確認'},{id:'DEMO-003',name:'陳怡君',lamp:'破災降魔燈',amount:680,status:'已回報匯款'}];function renderRecords(){const q=$('#search').value.trim(),status=$('#filterStatus').value;$('#adminRows').innerHTML=records.filter(r=>(!q||[r.id,r.name,r.lamp].join().includes(q))&&(!status||r.status===status)).map(r=>`<tr><td>${r.id.replace('DEMO-','登記-')}</td><td>${r.name}</td><td>${r.lamp}</td><td>${r.amount===null?'待確認':money(r.amount)}</td><td><span class="tag">${r.status}</span></td><td><button class="subbtn" data-detail="${r.id}">檢視</button></td></tr>`).join('')||'<tr><td colspan="6">查無符合的報名資料</td></tr>'}renderRecords();$('#search').oninput=renderRecords;$('#filterStatus').onchange=renderRecords;$('#adminRows').onclick=e=>{const id=e.target.dataset.detail;if(!id)return;const r=records.find(x=>x.id===id);$('#resultBody').innerHTML=`<p>${r.id.replace('DEMO-','登記-')}・${r.name}</p><p>${r.lamp}</p><p>金額：${r.amount===null?'待確認':money(r.amount)}｜狀態：${r.status}</p><p class="hint">版面操作示意，非雲端報名紀錄。</p>`;$('#result').showModal()};
 function switchView(admin){$('#front').hidden=admin;$('#admin').hidden=!admin;const sv=$('#switchView');if(sv)sv.textContent=admin?'查看報名頁':'管理後台';window.scrollTo({top:0,behavior:'instant'})}const switchViewBtn=$('#switchView');if(switchViewBtn)switchViewBtn.onclick=()=>switchView($('#admin').hidden);const backFrontBtn=$('#backFront');if(backFrontBtn)backFrontBtn.onclick=()=>switchView(false);$$('[data-admin]').forEach(b=>b.onclick=()=>{$$('[data-admin]').forEach(x=>x.classList.toggle('on',x===b));$$('[data-admin-pane]').forEach(p=>p.hidden=p.dataset.adminPane!==b.dataset.admin)});$('#priceSettings').innerHTML=lampDefs.filter(l=>l.r==='個人').map(l=>`<label for="price-${l.k}">${l.n}（每位芳名）</label><input id="price-${l.k}" type="number" min="0" step="1" value="${l.p}">`).join('');$('#applyPrices').onclick=()=>{let defs=lampDefs.filter(l=>l.r==='個人');if(defs.some(l=>!$('#price-'+l.k).checkValidity()||$('#price-'+l.k).value==='')){$('#settingMsg').textContent='請填寫有效的非負整數金額。';return}defs.forEach(l=>{l.p=+$('#price-'+l.k).value;$(`[data-price="${l.k}"]`).textContent=money(l.p)});calc();$('#settingMsg').textContent='已套用至本頁，重新整理後還原。'};$('#applyText').onclick=()=>{$('h1').textContent=$('#editHero').value;if($('.banner-action p span')){$('.banner-action p span').textContent=$('#editSub').value;}$('#textMsg').textContent='已套用至報名頁，重新整理後還原。'};
 if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.08});$$('.reveal').forEach(el=>observer.observe(el))}for(let i=0;i<12;i++){const p=document.createElement('i');p.className='mote';p.style.cssText=`left:${8+i*7.4}%;top:${20+(i*17)%60}%;animation-delay:-${i*.8}s;animation-duration:${8+i%5}s`;document.querySelector('.hero')?.append(p)}
 
 const imageDialog=$('#imageDialog'),imageScroll=$('.image-scroll');$$('.poster-open').forEach(button=>button.addEventListener('click',()=>{const img=button.querySelector('img');$('#imageLarge').src=img.src;$('#imageLarge').alt=img.alt;$('#imageTitle').textContent=button.getAttribute('aria-label').replace('放大閱讀：','');imageScroll.classList.remove('zoomed');$('#imageZoom').textContent='原尺寸閱讀';imageDialog.showModal();imageScroll.scrollTop=0;imageScroll.scrollLeft=0}));$('#imageClose').onclick=()=>imageDialog.close();$('#imageZoom').onclick=()=>{const zoomed=imageScroll.classList.toggle('zoomed');$('#imageZoom').textContent=zoomed?'符合視窗':'原尺寸閱讀'};imageDialog.addEventListener('click',e=>{if(e.target===imageDialog)imageDialog.close()});
 
-// Session-only preview: no authentication, email delivery or production persistence.
+// Session list contains only server-confirmed submissions; editing uses email tokens.
 const previewEntries = new Map();
-let editingEntry = null, preEditDraft = null, entryCounter = 0;
+let editToken = null, editId = null, loadingEdit = false, submitting = false;
 const formNode = $('#form');
 function registrationName(data){return data.fields.name.trim()||data.sponsors.filter(item=>item.selected).flatMap(item=>item.people).map(([name])=>name.trim()).find(Boolean)||''}
 const scalarIds = ['name','email','phone','overseas','address','last5','remitNote','cert','note'];
@@ -115,56 +115,64 @@ function restoreRegistration(data){
  $$('#registrationTerms input').forEach((x,i)=>x.checked=!!data.agreements[i]);calc();
 }
 const recordsDialog=document.createElement('dialog');recordsDialog.className='modal';recordsDialog.id='myRecordsDialog';recordsDialog.setAttribute('aria-label','查詢與修改報名');
-recordsDialog.innerHTML='<button class="close" type="button" aria-label="關閉">×</button><h2>查詢／修改我的報名</h2><div class="notice">報名資料送出成功後會寫入靈元院 Google 報名表。<br>此處僅列出本次開啟期間的紀錄，重新整理後清除；已成功寫入的雲端資料仍保留。</div><p class="hint">Gmail 驗證及線上查詢／修改流程仍在建置中；目前如需更正請聯繫行政。本頁操作不會寄送驗證碼或通知信。</p><div id="myRecordsList"></div>';
+recordsDialog.innerHTML='<button class="close" type="button" aria-label="關閉">×</button><h2>查詢／修改我的報名</h2><div class="notice">修改請使用確認信中的專屬連結。Gmail 收件匣中的確認信連結是正式修改途徑，請勿轉傳。</div><p class="hint">以下僅列出本次開啟期間成功送出的紀錄，重新整理後清除；雲端資料仍保留。</p><div id="myRecordsList"></div>';
 document.body.append(recordsDialog);recordsDialog.querySelector('.close').onclick=()=>recordsDialog.close();
 function showMyRecords(){
- $('#myRecordsList').innerHTML=previewEntries.size?[...previewEntries.values()].map(r=>`<section style="border-top:1px solid var(--line);padding:18px 0"><strong>${esc(r.id)}・${esc(registrationName(r.data))}</strong><p class="hint">版本 ${r.version}｜${esc(r.updated)}<br>${r.pending?'有變更待行政確認；目前核定資料維持原內容。':'尚無待審變更'}</p><label for="stage-${r.id}">本頁處理進度（不更新雲端，實際進度請洽行政）</label><select id="stage-${r.id}" data-stage="${r.id}">${['尚未匯款','已回報匯款','已核帳','芳名已製作','法儀已執行','商品已出貨'].map(x=>`<option ${r.stage===x?'selected':''}>${x}</option>`).join('')}</select><p><button type="button" class="subbtn" data-edit-entry="${r.id}">查看／修改這筆報名</button></p><details><summary>查看修改紀錄（${r.history.length}）</summary>${r.history.map(h=>`<p class="hint">${esc(h.time)}｜${esc(h.message)}</p>`).join('')||'<p class="hint">尚未修改</p>'}</details></section>`).join(''):'<p>目前尚無本次開啟期間的紀錄。請先填寫報名表並按「確認送出」；先前已送出的報名如需查詢或更正，請聯繫行政。</p>';
+ $('#myRecordsList').innerHTML=previewEntries.size?[...previewEntries.values()].map(r=>`<p>${esc(r.id)}・${esc(registrationName(r.data))}</p>`).join(''):'<p>目前尚無本次開啟期間的紀錄。查詢或修改先前報名，請使用確認信中的專屬連結。</p>';
  recordsDialog.showModal();
 }
 $('#openMyRecords').onclick=showMyRecords;$('#heroMyRecords').onclick=showMyRecords;
-recordsDialog.addEventListener('change',e=>{if(e.target.dataset.stage)previewEntries.get(e.target.dataset.stage).stage=e.target.value});
 function setEditButtons(active){$$('button[type="submit"]').filter(x=>x.form===formNode).forEach(x=>x.textContent=active?'儲存修改':'確認送出 →')}
-function applyStageLocks(r){
- const nameLocked=['芳名已製作','法儀已執行','商品已出貨'].includes(r.stage), shipped=r.stage==='商品已出貨';
- // Later stages conservatively lock both ritual entries and paid quantities.
- if(nameLocked)$$('.lamp input,.lamp select,.lamp button').forEach(x=>x.disabled=true);
- if(shipped){$$('[data-quantity]').forEach(x=>x.disabled=true);$('#address').disabled=true;$('#overseas').disabled=true}
- $('#email').disabled=true;
- $('#editPolicy').textContent='登記信箱用於身分驗證，變更請聯繫行政。'+(r.stage==='尚未匯款'?'目前可修改資料、燈別及數量。':'涉及燈別、請購品或金額的變更須送行政確認。')+(nameLocked?'芳名相關資料已鎖定，需更正請聯繫行政。':'')+(shipped?'商品已出貨，數量及寄送地址已鎖定。':'');
+function clearEditQuery(){const url=new URL(location.href);url.searchParams.delete('edit');history.replaceState(null,'',url)}
+$('#cancelEdit').onclick=()=>{
+ if(!confirm('離開後將放棄這次尚未儲存的修改，是否繼續？'))return;
+ editToken=null;editId=null;clearEditQuery();formNode.reset();
+ restoreRegistration({fields:{},lamps:lampDefs.map(l=>({key:l.k,selected:false,people:[]})),sponsors:sponsors.map(()=>({selected:false,people:[]})),quantities:[],agreements:[]});
+ $('#editBanner').hidden=true;setEditButtons(false);
+};
+// Convert API objects to the input-value arrays used by capture/restore.
+function registrationFromApi(data){
+ return {
+  fields:data.fields||{},
+  lamps:lampDefs.map(l=>{
+   const item=(data.lamps||[]).find(item=>item.key===l.k);
+   return {key:l.k,selected:!!item&&(item.selected??true),people:(item?.people||[]).map(p=>l.r==='公司'?[p.name,p.address]:[p.name,p.calendar,p.birthYear,p.birthMonth,p.birthDay,p.address])};
+  }),
+  sponsors:sponsors.map(([key])=>{
+   const item=(data.sponsors||[]).find(item=>item.key===key);
+   return {selected:!!item&&(item.selected??true),people:(item?.people||[]).map(p=>[p.name,p.amount])};
+  }),
+  quantities:products.map(([name])=>(data.products||[]).find(p=>p.name===name)?.qty??0),
+  agreements:Array.from({length:7},(_,i)=>!!data.agreements?.['agree'+(i+1)])
+ };
 }
-recordsDialog.addEventListener('click',e=>{
- const id=e.target.dataset.editEntry;if(!id)return;
- if(editingEntry){alert('請先儲存或離開目前正在修改的報名。');return}
- const r=previewEntries.get(id);preEditDraft=captureRegistration();editingEntry=r;
- restoreRegistration(r.pending||r.data);$$('#registrationTerms input').forEach(x=>x.checked=false);
- $('#editBanner').hidden=false;$('#editTitle').textContent=`修改 ${id}｜${r.stage}`;applyStageLocks(r);setEditButtons(true);recordsDialog.close();$('#register').scrollIntoView({block:'start'});
-});
-formNode.addEventListener('input',()=>{if(editingEntry)applyStageLocks(editingEntry)});
-formNode.addEventListener('change',()=>{if(editingEntry)applyStageLocks(editingEntry)});
-$('#cancelEdit').onclick=()=>{if(!confirm('離開後將放棄這次尚未儲存的修改，是否繼續？'))return;const draft=preEditDraft;editingEntry=null;restoreRegistration(draft);preEditDraft=null;$('#editBanner').hidden=true;setEditButtons(false)};
-function changedDescriptions(before,after){
- const labels={name:'登記人姓名',email:'Email',phone:'聯絡方式',overseas:'海外寄送',address:'寄送地址',last5:'匯款後五碼',remitNote:'匯款附言',cert:'感謝狀',note:'備註'};
- const changes=[];for(const k of scalarIds)if(before.fields[k]!==after.fields[k])changes.push(labels[k]);
- if(JSON.stringify(before.lamps)!==JSON.stringify(after.lamps))changes.push('燈別／芳名資料');
- if(JSON.stringify(before.sponsors)!==JSON.stringify(after.sponsors))changes.push('贊助項目／資料');
- if(JSON.stringify(before.quantities)!==JSON.stringify(after.quantities))changes.push('請購數量');return changes;
-}
-function financialSignature(d){return JSON.stringify({lamps:d.lamps.filter(l=>l.selected).map(l=>[l.key,l.people.length]),quantities:d.quantities,sponsors:d.sponsors.map((item,i)=>item.selected?item.people.map(([,amount])=>sponsors[i][2]||Number(amount)):[]),overseas:d.fields.overseas})}
+(async function loadEmailRegistration(){
+ const params=new URLSearchParams(location.search);if(!params.has('edit'))return;
+ const token=params.get('edit');loadingEdit=true;
+ $('#editBanner').hidden=false;$('#editTitle').textContent='正在載入報名…';$('#cancelEdit').hidden=true;
+ const blank=captureRegistration();
+ try{
+  if(!token)throw new Error('missing token');
+  const url=new URL(window.LYYUAN_SIGNUP_WEBAPP_URL);url.searchParams.set('action','load');url.searchParams.set('token',token);
+  const response=await fetch(url,{redirect:'follow'});if(!response.ok)throw new Error('load failed');
+  const data=await response.json();if(data.ok!==true||!data.id)throw new Error('invalid token');
+  restoreRegistration(registrationFromApi(data));editToken=token;editId=data.id;
+  $('#editTitle').textContent=`正在修改報名 ${editId}`;
+  $('#editPolicy').textContent='修改完成後請按「儲存修改」，資料將更新至原報名。請勿轉傳專屬連結。';
+  $('#cancelEdit').hidden=false;setEditButtons(true);
+ }catch{
+  restoreRegistration(blank);clearEditQuery();
+  $('#editTitle').textContent='無法載入報名資料';
+  $('#editPolicy').textContent='修改連結可能無效或已過期，請確認使用確認信中的完整連結，或聯繫行政。下方空白表單仍可填寫新報名。';
+ }finally{loadingEdit=false}
+})();
 const originalPreviewSubmit=formNode.onsubmit;
 formNode.onsubmit=e=>{
- originalPreviewSubmit(e);if(!$('#result').open)return;
- const data=captureRegistration(),now=new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});let r=editingEntry,review=false;
- if(r){
- const before=r.pending||r.data,changes=changedDescriptions(before,data);
- if(!changes.length){$('#result h2').textContent='沒有變更';$('#resultBody').innerHTML='<p>沒有資料變更，原登記紀錄維持不變。</p>';return}
- review=r.stage!=='尚未匯款'&&financialSignature(r.data)!==financialSignature(data);
- r.history.push({time:now,message:(review?'送行政確認：':'已更新：')+changes.join('、'),before:structuredClone(before),after:structuredClone(data)});
- if(review)r.pending=data;else{r.data=data;r.pending=null}r.version++;r.updated=now;
- }else{
- r={id:'LOCAL-'+String(++entryCounter).padStart(3,'0'),data,stage:'尚未匯款',version:1,updated:now,history:[],pending:null};previewEntries.set(r.id,r);
- }
- if(editingEntry){editingEntry=null;unlockPreview();restoreRegistration(data);$('#editBanner').hidden=true;preEditDraft=null;setEditButtons(false)}
- (function sendSignupToSheet(regData, localId){
+ e.preventDefault();if(loadingEdit||submitting)return;
+ if(originalPreviewSubmit(e)!==true)return;
+ const data=captureRegistration(),savingEdit=!!editToken;
+ submitting=true;
+ (function sendSignupToSheet(regData){
    const endpoint=String(window.LYYUAN_SIGNUP_WEBAPP_URL||'').trim();
    const eyebrow=$('#result .eyebrow');
    const foot=$('#result .result-foot');
@@ -176,16 +184,17 @@ formNode.onsubmit=e=>{
    };
    const showOk=(serverId)=>{
      if(eyebrow)eyebrow.textContent='SIGNUP COMPLETE';
-     $('#result h2').textContent='報名已送出';
+     $('#result h2').textContent=savingEdit?'已更新':'報名已送出';
      if(foot)foot.hidden=true;
      const who=esc(registrationName(regData)||'');
-     $('#resultBody').innerHTML=`<p>${who}，報名資料已送出。</p><p>報名編號：<b style="color:var(--gold)">${esc(serverId||'')}</b></p><p>${currentPending?'目前可計算金額':'功德金總計'}：<b style="color:var(--gold)">${money(currentTotal)}</b></p>${currentPending?'<p class="hint">另有項目待行政確認金額。</p>':''}<div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">請於收到行政確認通知後，再依通知金額匯款。本編號已寫入靈元院報名表。</p>`;
+     $('#resultBody').innerHTML=`<p>${who}，${savingEdit?'報名資料已更新':'報名資料已送出'}。</p><p>報名編號：<b style="color:var(--gold)">${esc(serverId||'')}</b></p><p>${currentPending?'目前可計算金額':'功德金總計'}：<b style="color:var(--gold)">${money(currentTotal)}</b></p>${currentPending?'<p class="hint">另有項目待行政確認金額。</p>':''}<div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">請於收到行政確認通知後，再依通知金額匯款。本編號已寫入靈元院報名表。</p>`;
    };
-   if(!endpoint){showFail('報名後端尚未設定。');return;}
+   if(!endpoint){showFail('報名後端尚未設定。');submitting=false;return;}
    const roleOf=k=>(lampDefs.find(l=>l.k===k)||{}).r||'';
    const nameOf=k=>(lampDefs.find(l=>l.k===k)||{}).n||'';
    const priceOf=k=>(lampDefs.find(l=>l.k===k)||{}).p||0;
    const payload={
+     ...(savingEdit?{mode:'edit',token:editToken}:{}),
      event:window.LYYUAN_SIGNUP_EVENT||'lamp-116-dingwei',
      honeypot:($('#website')&&$('#website').value)||'',
      fields:regData.fields,
@@ -207,19 +216,20 @@ formNode.onsubmit=e=>{
    fetch(endpoint,{method:'POST',mode:'cors',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
      .then(r=>r.json().catch(()=>({ok:false,error:'回應格式錯誤'})))
      .then(res=>{
-       if(res&&res.ok){
-         if(localId&&previewEntries.has(localId)){const ent=previewEntries.get(localId);ent.serverId=res.id;ent.id=res.id;previewEntries.delete(localId);previewEntries.set(res.id,ent);}
+       if(res&&res.ok===true&&res.id&&(!savingEdit||res.updated===true)){
+         previewEntries.set(res.id,{id:res.id,data:regData});
          showOk(res.id);
        }else{
          showFail('寫入報名表失敗：'+((res&&res.error)||'未知錯誤'));
        }
      })
-     .catch(()=>showFail('無法連線報名後端，請稍後再試或聯繫行政。'));
- })(data, r&&r.id);
+     .catch(()=>showFail('無法連線報名後端，請稍後再試或聯繫行政。'))
+     .finally(()=>{submitting=false});
+ })(data);
 };
 
 // Leaving a preview must never imply durable registration.
-window.addEventListener('beforeunload',e=>{if(previewEntries.size||editingEntry){e.preventDefault();e.returnValue=''}});
+window.addEventListener('beforeunload',e=>{if(editToken){e.preventDefault();e.returnValue=''}});
 
 
 const productPhotos={"spirit": "assets/image-05.webp", "wealth": "assets/image-06.webp", "incense": "assets/image-07.webp", "career": "assets/image-08.webp", "love": "assets/image-09.webp", "single": "assets/image-10.webp", "triple": "assets/image-11.webp"};
