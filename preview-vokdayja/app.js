@@ -84,7 +84,7 @@ const over=goods>0&&$('#overseas').checked,shipping=goods?(over?0:goods>=4000?0:
 buildLamps();lampDefs.forEach(l=>bindPeople($(`[data-key="${l.k}"]`),()=>personHTML(l)));buildSponsors();calc();$('#form').addEventListener('input',calc);$('#form').addEventListener('change',calc);
 function activateTab(b){$$('[data-role]').forEach(x=>{const active=x===b;x.setAttribute('aria-selected',active);x.tabIndex=active?0:-1;$('#'+x.getAttribute('aria-controls')).hidden=!active})}$$('[data-role]').forEach((b,i)=>{b.tabIndex=i? -1:0;b.onclick=()=>activateTab(b);b.onkeydown=e=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const tabs=$$('[data-role]'),next=e.key==='Home'?0:e.key==='End'?2:(i+(e.key==='ArrowRight'?1:2))%3;activateTab(tabs[next]);tabs[next].focus()}}});
 
-$('#form').noValidate=true;$('#form').onsubmit=e=>{e.preventDefault();calc();const selected=$$('.lamp-check:checked').length||$$('[data-quantity]').some(x=>+x.value)||$$('.sponsor-check:checked').length;$('#lampError').textContent=selected?'':'請至少登記一項燈別、贊助或請購品。';if(!selected){$('#lanterns').scrollIntoView({block:'start'});return}const invalid=$('#form').querySelector(':invalid');if(invalid){const pane=invalid.closest('[role=tabpanel]');if(pane&&pane.hidden)activateTab($(`[aria-controls="${pane.id}"]`));invalid.reportValidity();invalid.focus();return}$('#resultBody').innerHTML=`<p>${esc(registrationName(captureRegistration()))}，已完成登記送出。</p><p>${currentPending?'目前可計算金額':'功德金總計'}：<b style="color:var(--gold)">${money(currentTotal)}</b></p>${currentPending?'<p class="hint">另有項目待行政確認。</p>':''}<div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">請於收到行政確認通知後，依通知金額匯款。資料已送出至靈元院報名表；請於收到行政確認通知後，再依通知金額匯款。</p>`;$('#result').showModal()};$$('#result .close,#result .closeResult').forEach(b=>b.onclick=()=>$('#result').close());
+$('#form').noValidate=true;$('#form').onsubmit=e=>{e.preventDefault();calc();const selected=$$('.lamp-check:checked').length||$$('[data-quantity]').some(x=>+x.value)||$$('.sponsor-check:checked').length;$('#lampError').textContent=selected?'':'請至少登記一項燈別、贊助或請購品。';if(!selected){$('#lanterns').scrollIntoView({block:'start'});return}const invalid=$('#form').querySelector(':invalid');if(invalid){const pane=invalid.closest('[role=tabpanel]');if(pane&&pane.hidden)activateTab($(`[aria-controls="${pane.id}"]`));invalid.reportValidity();invalid.focus();return}$('#result .eyebrow')&&($('#result .eyebrow').textContent='SIGNUP');$('#result h2').textContent='正在送出…';$('#resultBody').innerHTML=`<p>正在將報名資料送至靈元院報名表，請稍候。</p>`;const _rf=$('#result .result-foot');if(_rf)_rf.hidden=true;$('#result').showModal()};$$('#result .close,#result .closeResult').forEach(b=>b.onclick=()=>$('#result').close());
 let records=[{id:'DEMO-001',name:'王小明（示範）',lamp:'太歲燈、廣財運通燈',amount:1800,status:'已核帳'},{id:'DEMO-002',name:'林美華（示範）',lamp:'破災降魔燈・總燈首',amount:null,status:'待確認'},{id:'DEMO-003',name:'陳怡君（示範）',lamp:'破災降魔燈',amount:680,status:'已回報匯款'}];function renderRecords(){const q=$('#search').value.trim(),status=$('#filterStatus').value;$('#adminRows').innerHTML=records.filter(r=>(!q||[r.id,r.name,r.lamp].join().includes(q))&&(!status||r.status===status)).map(r=>`<tr><td>${r.id}</td><td>${r.name}</td><td>${r.lamp}</td><td>${r.amount===null?'待確認':money(r.amount)}</td><td><span class="tag">${r.status}</span></td><td><button class="subbtn" data-detail="${r.id}">檢視</button></td></tr>`).join('')||'<tr><td colspan="6">查無符合的示範資料</td></tr>'}renderRecords();$('#search').oninput=renderRecords;$('#filterStatus').onchange=renderRecords;$('#adminRows').onclick=e=>{const id=e.target.dataset.detail;if(!id)return;const r=records.find(x=>x.id===id);$('#resultBody').innerHTML=`<p>${r.id}・${r.name}</p><p>${r.lamp}</p><p>金額：${r.amount===null?'待確認':money(r.amount)}｜狀態：${r.status}</p><p class="hint">以上為虛構資料，僅供版面與操作檢視。</p>`;$('#result').showModal()};
 function switchView(admin){$('#front').hidden=admin;$('#admin').hidden=!admin;const sv=$('#switchView');if(sv)sv.textContent=admin?'查看報名頁':'管理後台預覽';window.scrollTo({top:0,behavior:'instant'})}const switchViewBtn=$('#switchView');if(switchViewBtn)switchViewBtn.onclick=()=>switchView($('#admin').hidden);const backFrontBtn=$('#backFront');if(backFrontBtn)backFrontBtn.onclick=()=>switchView(false);$$('[data-admin]').forEach(b=>b.onclick=()=>{$$('[data-admin]').forEach(x=>x.classList.toggle('on',x===b));$$('[data-admin-pane]').forEach(p=>p.hidden=p.dataset.adminPane!==b.dataset.admin)});$('#priceSettings').innerHTML=lampDefs.filter(l=>l.r==='個人').map(l=>`<label for="price-${l.k}">${l.n}（每位芳名）</label><input id="price-${l.k}" type="number" min="0" step="1" value="${l.p}">`).join('');$('#applyPrices').onclick=()=>{let defs=lampDefs.filter(l=>l.r==='個人');if(defs.some(l=>!$('#price-'+l.k).checkValidity()||$('#price-'+l.k).value==='')){$('#settingMsg').textContent='請填寫有效的非負整數金額。';return}defs.forEach(l=>{l.p=+$('#price-'+l.k).value;$(`[data-price="${l.k}"]`).textContent=money(l.p)});calc();$('#settingMsg').textContent='已套用至本頁預覽，重新整理後還原。'};$('#applyText').onclick=()=>{$('h1').textContent=$('#editHero').value;if($('.banner-action p span')){$('.banner-action p span').textContent=$('#editSub').value;}$('#textMsg').textContent='已套用至報名頁預覽。'};
 if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.08});$$('.reveal').forEach(el=>observer.observe(el))}for(let i=0;i<12;i++){const p=document.createElement('i');p.className='mote';p.style.cssText=`left:${8+i*7.4}%;top:${20+(i*17)%60}%;animation-delay:-${i*.8}s;animation-duration:${8+i%5}s`;document.querySelector('.hero')?.append(p)}
@@ -123,7 +123,7 @@ function showMyRecords(){
 }
 $('#openMyRecords').onclick=showMyRecords;$('#heroMyRecords').onclick=showMyRecords;
 recordsDialog.addEventListener('change',e=>{if(e.target.dataset.stage)previewEntries.get(e.target.dataset.stage).stage=e.target.value});
-function setEditButtons(active){$$('button[type="submit"]').filter(x=>x.form===formNode).forEach(x=>x.textContent=active?'儲存修改（預覽）':'確認試填結果 →')}
+function setEditButtons(active){$$('button[type="submit"]').filter(x=>x.form===formNode).forEach(x=>x.textContent=active?'儲存修改':'確認送出 →')}
 function applyStageLocks(r){
  const nameLocked=['芳名已製作','法儀已執行','商品已出貨'].includes(r.stage), shipped=r.stage==='商品已出貨';
  // Later stages conservatively lock both ritual entries and paid quantities.
@@ -156,20 +156,32 @@ formNode.onsubmit=e=>{
  const data=captureRegistration(),now=new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});let r=editingEntry,review=false;
  if(r){
  const before=r.pending||r.data,changes=changedDescriptions(before,data);
- if(!changes.length){$('#resultBody').innerHTML='<p>沒有資料變更，原登記紀錄維持不變。</p>';return}
+ if(!changes.length){$('#result h2').textContent='沒有變更';$('#resultBody').innerHTML='<p>沒有資料變更，原登記紀錄維持不變。</p>';return}
  review=r.stage!=='尚未匯款'&&financialSignature(r.data)!==financialSignature(data);
  r.history.push({time:now,message:(review?'送行政確認：':'已更新：')+changes.join('、'),before:structuredClone(before),after:structuredClone(data)});
  if(review)r.pending=data;else{r.data=data;r.pending=null}r.version++;r.updated=now;
  }else{
- r={id:'PREVIEW-'+String(++entryCounter).padStart(3,'0'),data,stage:'尚未匯款',version:1,updated:now,history:[],pending:null};previewEntries.set(r.id,r);
+ r={id:'LOCAL-'+String(++entryCounter).padStart(3,'0'),data,stage:'尚未匯款',version:1,updated:now,history:[],pending:null};previewEntries.set(r.id,r);
  }
- $('#result h2').textContent=editingEntry?(review?'變更申請預覽':'修改已暫存於本頁'):'試填紀錄已暫存';
- $('#resultBody').insertAdjacentHTML('afterbegin',`<div class="notice"><strong>${esc(r.id)}</strong><br>${review?'已模擬送交行政確認，原核定資料維持不變。':'已保留在本次頁面，可重新開啟修改。'}<br>重新整理或關閉頁面後清除；尚未寄送任何通知。</div>`);
  if(editingEntry){editingEntry=null;unlockPreview();restoreRegistration(data);$('#editBanner').hidden=true;preEditDraft=null;setEditButtons(false)}
- // Live: append rows to Google Sheet via Apps Script Web App (no timers/observers).
- (function sendSignupToSheet(regData){
+ (function sendSignupToSheet(regData, localId){
    const endpoint=String(window.LYYUAN_SIGNUP_WEBAPP_URL||'').trim();
-   if(!endpoint)return;
+   const eyebrow=$('#result .eyebrow');
+   const foot=$('#result .result-foot');
+   const showFail=msg=>{
+     if(eyebrow)eyebrow.textContent='SIGNUP FAILED';
+     $('#result h2').textContent='送出失敗';
+     if(foot)foot.hidden=true;
+     $('#resultBody').innerHTML=`<p class="statusmsg error">${esc(msg)}</p><p class="hint">本頁仍保留本次填寫內容，請修正後再試，或聯繫行政。</p>`;
+   };
+   const showOk=(serverId)=>{
+     if(eyebrow)eyebrow.textContent='SIGNUP COMPLETE';
+     $('#result h2').textContent='報名已送出';
+     if(foot)foot.hidden=true;
+     const who=esc(registrationName(regData)||'');
+     $('#resultBody').innerHTML=`<p>${who}，報名資料已送出。</p><p>報名編號：<b style="color:var(--gold)">${esc(serverId||'')}</b></p><p>${currentPending?'目前可計算金額':'功德金總計'}：<b style="color:var(--gold)">${money(currentTotal)}</b></p>${currentPending?'<p class="hint">另有項目待行政確認金額。</p>':''}<div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">請於收到行政確認通知後，再依通知金額匯款。本編號已寫入靈元院報名表。</p>`;
+   };
+   if(!endpoint){showFail('報名後端尚未設定。');return;}
    const roleOf=k=>(lampDefs.find(l=>l.k===k)||{}).r||'';
    const nameOf=k=>(lampDefs.find(l=>l.k===k)||{}).n||'';
    const priceOf=k=>(lampDefs.find(l=>l.k===k)||{}).p||0;
@@ -195,18 +207,15 @@ formNode.onsubmit=e=>{
    fetch(endpoint,{method:'POST',mode:'cors',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
      .then(r=>r.json().catch(()=>({ok:false,error:'回應格式錯誤'})))
      .then(res=>{
-       const note=document.createElement('p');
-       if(res&&res.ok){note.className='hint';note.textContent='已寫入靈元院報名表，編號：'+(res.id||'');}
-       else{note.className='statusmsg error';note.textContent='寫入報名表失敗：'+((res&&res.error)||'未知錯誤')+'。本頁仍保留試填紀錄，請稍後再試或聯繫行政。';}
-       $('#resultBody').append(note);
+       if(res&&res.ok){
+         if(localId&&previewEntries.has(localId)){const ent=previewEntries.get(localId);ent.serverId=res.id;ent.id=res.id;previewEntries.delete(localId);previewEntries.set(res.id,ent);}
+         showOk(res.id);
+       }else{
+         showFail('寫入報名表失敗：'+((res&&res.error)||'未知錯誤'));
+       }
      })
-     .catch(()=>{
-       const note=document.createElement('p');
-       note.className='statusmsg error';
-       note.textContent='無法連線報名後端。本頁仍保留試填紀錄，請稍後再試或聯繫行政。';
-       $('#resultBody').append(note);
-     });
- })(data);
+     .catch(()=>showFail('無法連線報名後端，請稍後再試或聯繫行政。'));
+ })(data, r&&r.id);
 };
 
 // Leaving a preview must never imply durable registration.
