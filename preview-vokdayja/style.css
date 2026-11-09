@@ -784,7 +784,14 @@ nav{gap:12px;position:sticky}
 .signup-proof{margin:26px auto 0;padding:10px 20px;max-width:1060px;text-align:center;color:#81571f;font-family:var(--serif)}
 .zodiac-popularity{margin:20px 0 24px;padding:18px 20px;border:1px solid #a5825445;background:#f6f0e5;border-radius:6px;color:#81571f}
 .zodiac-popularity h4{margin:0 0 8px;font:500 17px var(--serif)}
-.zodiac-intro{margin:0;font-size:13px}
+.zodiac-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.zodiac-cards[hidden]{display:none}
+.zodiac-card{padding:16px;border:1px solid #a582543d;border-radius:6px;background:#fffcf6}
+.zodiac-card h5{margin:0;font:600 18px var(--serif)}
+.zodiac-card p{margin:10px 0 0;font-size:13px;line-height:1.8}
+.zodiac-card-emphasis{border-color:#A58254;background:linear-gradient(135deg,#fff9e9,#f4e5c9);box-shadow:0 0 16px #c9a06335}
+.zodiac-priority{display:inline-block;margin-top:8px;color:#704814;font:12px/1.8 var(--sans)}
+@media(max-width:480px){.zodiac-cards{grid-template-columns:1fr}}
 .zodiac-row p{margin:14px 0 5px;font-size:13px;letter-spacing:.02em}
 .zodiac-track{height:9px;overflow:hidden;border-radius:8px;background:#a5825422}
 .zodiac-track span{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#A58254,#C9A063);transition:width 1.2s ease}
