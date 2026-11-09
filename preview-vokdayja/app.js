@@ -299,9 +299,13 @@ $$('[data-product]').forEach(row=>{const i=Number(row.dataset.product);if(!Numbe
   }
   if (stats.ok !== true || stats.event !== 'lamp-116-dingwei' || !Number.isSafeInteger(stats.totalSignups) || stats.totalSignups < 0) return;
   const total = stats.totalSignups;
+  if (total < 10) {
+   proof.hidden = true;
+   proof.textContent = '';
+   return;
+  }
   proof.textContent = `已有 ${total.toLocaleString('zh-TW')} 位信眾點亮`;
   proof.hidden = false;
-  if (total < 10) return;
   const families = {'太歲燈':'taisui','破災降魔燈':'pozai','廣財運通燈':'guangcai'};
   const lamps = Array.isArray(stats.lamps) ? stats.lamps : [];
   lamps.filter(lamp => families[lamp.name] && countOf(lamp.count) > 0)
