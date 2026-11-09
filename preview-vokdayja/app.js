@@ -86,7 +86,7 @@ function activateTab(b){$$('[data-role]').forEach(x=>{const active=x===b;x.setAt
 
 $('#form').noValidate=true;$('#form').onsubmit=e=>{e.preventDefault();calc();const selected=$$('.lamp-check:checked').length||$$('[data-quantity]').some(x=>+x.value)||$$('.sponsor-check:checked').length;$('#lampError').textContent=selected?'':'請至少登記一項燈別、贊助或請購品。';if(!selected){$('#lanterns').scrollIntoView({block:'start'});return}const invalid=$('#form').querySelector(':invalid');if(invalid){const pane=invalid.closest('[role=tabpanel]');if(pane&&pane.hidden)activateTab($(`[aria-controls="${pane.id}"]`));invalid.reportValidity();invalid.focus();return}$('#resultBody').innerHTML=`<p>${esc(registrationName(captureRegistration()))}，已完成登記送出。</p><p>${currentPending?'目前可計算金額':'功德金總計'}：<b style="color:var(--gold)">${money(currentTotal)}</b></p>${currentPending?'<p class="hint">另有項目待行政確認。</p>':''}<div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">請於收到行政確認通知後，依通知金額匯款。資料已送出至靈元院報名表；請於收到行政確認通知後，再依通知金額匯款。</p>`;$('#result').showModal()};$$('#result .close,#result .closeResult').forEach(b=>b.onclick=()=>$('#result').close());
 let records=[{id:'DEMO-001',name:'王小明（示範）',lamp:'太歲燈、廣財運通燈',amount:1800,status:'已核帳'},{id:'DEMO-002',name:'林美華（示範）',lamp:'破災降魔燈・總燈首',amount:null,status:'待確認'},{id:'DEMO-003',name:'陳怡君（示範）',lamp:'破災降魔燈',amount:680,status:'已回報匯款'}];function renderRecords(){const q=$('#search').value.trim(),status=$('#filterStatus').value;$('#adminRows').innerHTML=records.filter(r=>(!q||[r.id,r.name,r.lamp].join().includes(q))&&(!status||r.status===status)).map(r=>`<tr><td>${r.id}</td><td>${r.name}</td><td>${r.lamp}</td><td>${r.amount===null?'待確認':money(r.amount)}</td><td><span class="tag">${r.status}</span></td><td><button class="subbtn" data-detail="${r.id}">檢視</button></td></tr>`).join('')||'<tr><td colspan="6">查無符合的示範資料</td></tr>'}renderRecords();$('#search').oninput=renderRecords;$('#filterStatus').onchange=renderRecords;$('#adminRows').onclick=e=>{const id=e.target.dataset.detail;if(!id)return;const r=records.find(x=>x.id===id);$('#resultBody').innerHTML=`<p>${r.id}・${r.name}</p><p>${r.lamp}</p><p>金額：${r.amount===null?'待確認':money(r.amount)}｜狀態：${r.status}</p><p class="hint">以上為虛構資料，僅供版面與操作檢視。</p>`;$('#result').showModal()};
-function switchView(admin){$('#front').hidden=admin;$('#admin').hidden=!admin;$('#switchView').textContent=admin?'查看報名頁':'管理後台預覽';window.scrollTo({top:0,behavior:'instant'})}$('#switchView').onclick=()=>switchView($('#admin').hidden);$('#backFront').onclick=()=>switchView(false);$$('[data-admin]').forEach(b=>b.onclick=()=>{$$('[data-admin]').forEach(x=>x.classList.toggle('on',x===b));$$('[data-admin-pane]').forEach(p=>p.hidden=p.dataset.adminPane!==b.dataset.admin)});$('#priceSettings').innerHTML=lampDefs.filter(l=>l.r==='個人').map(l=>`<label for="price-${l.k}">${l.n}（每位芳名）</label><input id="price-${l.k}" type="number" min="0" step="1" value="${l.p}">`).join('');$('#applyPrices').onclick=()=>{let defs=lampDefs.filter(l=>l.r==='個人');if(defs.some(l=>!$('#price-'+l.k).checkValidity()||$('#price-'+l.k).value==='')){$('#settingMsg').textContent='請填寫有效的非負整數金額。';return}defs.forEach(l=>{l.p=+$('#price-'+l.k).value;$(`[data-price="${l.k}"]`).textContent=money(l.p)});calc();$('#settingMsg').textContent='已套用至本頁預覽，重新整理後還原。'};$('#applyText').onclick=()=>{$('h1').textContent=$('#editHero').value;if($('.banner-action p span')){$('.banner-action p span').textContent=$('#editSub').value;}$('#textMsg').textContent='已套用至報名頁預覽。'};
+function switchView(admin){$('#front').hidden=admin;$('#admin').hidden=!admin;const sv=$('#switchView');if(sv)sv.textContent=admin?'查看報名頁':'管理後台預覽';window.scrollTo({top:0,behavior:'instant'})}const switchViewBtn=$('#switchView');if(switchViewBtn)switchViewBtn.onclick=()=>switchView($('#admin').hidden);const backFrontBtn=$('#backFront');if(backFrontBtn)backFrontBtn.onclick=()=>switchView(false);$$('[data-admin]').forEach(b=>b.onclick=()=>{$$('[data-admin]').forEach(x=>x.classList.toggle('on',x===b));$$('[data-admin-pane]').forEach(p=>p.hidden=p.dataset.adminPane!==b.dataset.admin)});$('#priceSettings').innerHTML=lampDefs.filter(l=>l.r==='個人').map(l=>`<label for="price-${l.k}">${l.n}（每位芳名）</label><input id="price-${l.k}" type="number" min="0" step="1" value="${l.p}">`).join('');$('#applyPrices').onclick=()=>{let defs=lampDefs.filter(l=>l.r==='個人');if(defs.some(l=>!$('#price-'+l.k).checkValidity()||$('#price-'+l.k).value==='')){$('#settingMsg').textContent='請填寫有效的非負整數金額。';return}defs.forEach(l=>{l.p=+$('#price-'+l.k).value;$(`[data-price="${l.k}"]`).textContent=money(l.p)});calc();$('#settingMsg').textContent='已套用至本頁預覽，重新整理後還原。'};$('#applyText').onclick=()=>{$('h1').textContent=$('#editHero').value;if($('.banner-action p span')){$('.banner-action p span').textContent=$('#editSub').value;}$('#textMsg').textContent='已套用至報名頁預覽。'};
 if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.08});$$('.reveal').forEach(el=>observer.observe(el))}for(let i=0;i<12;i++){const p=document.createElement('i');p.className='mote';p.style.cssText=`left:${8+i*7.4}%;top:${20+(i*17)%60}%;animation-delay:-${i*.8}s;animation-duration:${8+i%5}s`;document.querySelector('.hero')?.append(p)}
 
 const imageDialog=$('#imageDialog'),imageScroll=$('.image-scroll');$$('.poster-open').forEach(button=>button.addEventListener('click',()=>{const img=button.querySelector('img');$('#imageLarge').src=img.src;$('#imageLarge').alt=img.alt;$('#imageTitle').textContent=button.getAttribute('aria-label').replace('放大閱讀：','');imageScroll.classList.remove('zoomed');$('#imageZoom').textContent='原尺寸閱讀';imageDialog.showModal();imageScroll.scrollTop=0;imageScroll.scrollLeft=0}));$('#imageClose').onclick=()=>imageDialog.close();$('#imageZoom').onclick=()=>{const zoomed=imageScroll.classList.toggle('zoomed');$('#imageZoom').textContent=zoomed?'符合視窗':'原尺寸閱讀'};imageDialog.addEventListener('click',e=>{if(e.target===imageDialog)imageDialog.close()});
@@ -218,3 +218,56 @@ const detailPoster=document.querySelector('#items .poster-open img').src;
 const productDetails=['以特殊香材製成，點燃供香時可祈請招財之氣，為財運祈福。', '適合全年日常供香與修持，於供香時祈願一年財運亨通、財路順遂。', '適合全年日常供香與修持，於供香時祈願一年財運亨通、財路順遂。', '用於居家淨化，祈請驅除穢氣、護佑家宅，願全家一年平安。', '用於居家淨化，祈請驅除穢氣、護佑家宅，願全家一年平安。', '祈願元神安定、光彩顯發，護持日常身心安穩。本年度僅限 66 枚請供。', '祈願財富滿堂、富足善緣。', '祈願事業順遂、願行開展。', '祈願感情和合、善緣圓滿。'];
 const photoKeys=['single','triple','triple','incense','incense','spirit','wealth','career','love'];
 $$('[data-product]').forEach(row=>{const i=Number(row.dataset.product);if(!Number.isInteger(i)||!products[i])return;const actual=productPhotos[photoKeys[i]],src=actual||detailPoster;const button=document.createElement('button');button.type='button';button.className='product-thumb';button.setAttribute('aria-label','放大查看：'+products[i][0]);const img=document.createElement('img');img.src=src;img.alt=products[i][0]+(actual?'商品示意圖':'細則圖（非商品實照）');img.loading='lazy';button.append(img);const caption=document.createElement('span');caption.textContent=actual?'放大照片':'細則圖';button.append(caption);row.prepend(button);const d=document.createElement('small');d.textContent=productDetails[i];row.querySelector('.desc').append(d);button.onclick=()=>{$('#imageLarge').src=src;$('#imageLarge').alt=img.alt;$('#imageTitle').textContent=products[i][0]+(actual?'':'・商品實照待補');imageScroll.classList.remove('zoomed');$('#imageZoom').textContent='原尺寸閱讀';imageDialog.showModal();imageScroll.scrollTop=0}});
+
+/* 主站導覽：下拉＋手機選單（純 click，無 timer／MutationObserver） */
+(function initSiteNav(){
+  const nav=document.querySelector('nav');
+  if(!nav)return;
+  const links=nav.querySelector('#siteNavLinks');
+  const toggle=nav.querySelector('#navToggle');
+  const closeAll=except=>{
+    nav.querySelectorAll('.nav-item.is-open').forEach(item=>{
+      if(item===except)return;
+      item.classList.remove('is-open');
+      const t=item.querySelector(':scope > .nav-trigger');
+      if(t)t.setAttribute('aria-expanded','false');
+    });
+  };
+  nav.querySelectorAll('.nav-trigger').forEach(trigger=>{
+    trigger.addEventListener('click',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      const item=trigger.closest('.nav-item');
+      if(!item)return;
+      const willOpen=!item.classList.contains('is-open');
+      closeAll(item);
+      item.classList.toggle('is-open',willOpen);
+      trigger.setAttribute('aria-expanded',String(willOpen));
+    });
+  });
+  if(toggle&&links){
+    toggle.addEventListener('click',e=>{
+      e.stopPropagation();
+      const open=!links.classList.contains('is-open');
+      links.classList.toggle('is-open',open);
+      toggle.setAttribute('aria-expanded',String(open));
+      toggle.textContent=open?'關閉':'選單';
+      if(!open)closeAll();
+    });
+  }
+  document.addEventListener('click',()=>{
+    closeAll();
+    if(links&&links.classList.contains('is-open')){
+      links.classList.remove('is-open');
+      if(toggle){toggle.setAttribute('aria-expanded','false');toggle.textContent='選單';}
+    }
+  });
+  if(links)links.addEventListener('click',e=>e.stopPropagation());
+  nav.addEventListener('keydown',e=>{
+    if(e.key!=='Escape')return;
+    closeAll();
+    if(links)links.classList.remove('is-open');
+    if(toggle){toggle.setAttribute('aria-expanded','false');toggle.textContent='選單';toggle.focus();}
+  });
+})();
+
