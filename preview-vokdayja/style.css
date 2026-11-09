@@ -580,3 +580,168 @@ body>.mobiletotal{z-index:29}
 @media(max-width:740px){.journey{gap:12px;padding:16px 16px 24px}.summary{position:static}}
 @media(max-width:760px){body{background-attachment:scroll,scroll}.walking-goat{display:none}.mountain-smoke{opacity:0}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.panel.reveal,.reveal.in,.banner-picture{opacity:1!important;transform:none!important}}
+
+/* ========== 主站導覽項目（紙色調・本地實作，不引用 dark global-nav） v=20261109-signup-nav-1 ========== */
+nav{gap:12px;position:sticky}
+.nav-toggle{
+  display:none;
+  border:1px solid #a48a5c88;
+  background:#fffaf0;
+  color:#614721;
+  border-radius:7px;
+  padding:8px 14px;
+  font-size:13px;
+  letter-spacing:.12em;
+  box-shadow:var(--shadow-near), var(--inset-paper);
+}
+.navlinks{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px 14px;
+  align-items:center;
+  justify-content:flex-end;
+  font-size:13px;
+  color:#5a4326;
+}
+.navlinks .nav-link,
+.navlinks .nav-trigger{
+  position:relative;
+  color:#5a4326;
+  background:transparent;
+  border:0;
+  padding:6px 2px;
+  font:inherit;
+  letter-spacing:.08em;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.navlinks .nav-link:after,
+.navlinks .nav-trigger:after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-5px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  transform:scaleX(0);
+  opacity:0;
+  transition:transform .28s,opacity .28s;
+}
+.navlinks .nav-link:hover:after,
+.navlinks .nav-trigger:hover:after,
+.navlinks .nav-trigger.is-active:after,
+.navlinks .nav-link.active:after{
+  transform:scaleX(1);opacity:1;
+}
+.navlinks .nav-trigger.is-active{color:var(--gold);font-weight:500}
+.nav-item{position:relative}
+.nav-drop{
+  display:none;
+  position:absolute;
+  top:calc(100% + 10px);
+  left:0;
+  z-index:40;
+  min-width:210px;
+  max-width:min(360px,92vw);
+  margin:0;padding:8px 0;
+  list-style:none;
+  background:linear-gradient(165deg,#fffdf7,#f4e8d0);
+  border:1px solid #b99a6555;
+  border-radius:10px;
+  box-shadow:0 16px 40px #6c4f2428, inset 0 1px #fff9;
+}
+.nav-item.is-open > .nav-drop{display:block}
+.nav-drop a{
+  display:block;
+  padding:9px 16px;
+  color:#4f3d22;
+  font-size:12.5px;
+  letter-spacing:.06em;
+  line-height:1.55;
+  white-space:normal;
+}
+.nav-drop a:hover{background:#f0e2c4;color:#6a4518}
+.nav-drop .nav-group{
+  margin:6px 0 2px;
+  padding:8px 16px 2px;
+  color:#8a6a3a;
+  font-size:11px;
+  letter-spacing:.14em;
+  list-style:none;
+}
+.nav-course{padding:0}
+.nav-course-parent{
+  display:block;
+  padding:9px 16px;
+  color:#553d24;
+  font-weight:500;
+}
+.nav-sub{
+  list-style:none;
+  margin:0 0 6px;
+  padding:0 0 4px 10px;
+  border-left:1px solid #c6ad8166;
+  margin-left:16px;
+}
+.nav-sub a{padding:7px 12px;font-size:12px;color:#5d503d}
+.navlinks .outline{
+  margin-left:4px;
+  white-space:nowrap;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+}
+@media(max-width:1100px){
+  .navlinks{gap:4px 10px;font-size:12px}
+  .navlinks .outline{padding:6px 10px;font-size:12px}
+}
+@media(max-width:860px){
+  .nav-toggle{display:inline-flex;align-items:center}
+  .navlinks{
+    display:none;
+    position:absolute;
+    top:100%;
+    left:0;right:0;
+    z-index:35;
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
+    padding:10px 16px 18px;
+    background:linear-gradient(180deg,#faf6eefc,#f1e6cff8);
+    border-bottom:1px solid #b99a6555;
+    box-shadow:0 18px 36px #6c4f2420;
+    max-height:min(78vh,640px);
+    overflow:auto;
+  }
+  .navlinks.is-open{display:flex}
+  .navlinks .nav-link,
+  .navlinks .nav-trigger{
+    width:100%;
+    text-align:left;
+    padding:12px 4px;
+    border-bottom:1px solid #cbb89244;
+  }
+  .navlinks .nav-link:after,
+  .navlinks .nav-trigger:after{display:none}
+  .nav-item{width:100%}
+  .nav-drop{
+    position:static;
+    display:none;
+    min-width:0;
+    max-width:none;
+    margin:0 0 8px;
+    box-shadow:none;
+    border-radius:8px;
+  }
+  .nav-item.is-open > .nav-drop{display:block}
+  .navlinks .outline{
+    margin:12px 0 4px;
+    justify-content:center;
+    width:100%;
+  }
+  /* override legacy mobile hide of in-page anchors */
+  .navlinks>a:not(.outline){display:block}
+}
+@media(prefers-reduced-motion:reduce){
+  .navlinks .nav-link:after,
+  .navlinks .nav-trigger:after{transition:none}
+}
