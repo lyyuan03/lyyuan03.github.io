@@ -287,9 +287,16 @@ $$('[data-product]').forEach(row=>{const i=Number(row.dataset.product);if(!Numbe
  const bars = document.getElementById('zodiacBars');
  const countOf = value => Number.isSafeInteger(value) && value >= 0 ? value : 0;
  try {
-  const response = await fetch('https://script.google.com/macros/s/AKfycbzVWhkaSoSIsBKTBcYnmbAg9Gbka0aBczkSQeAVsvWlz7a6rqByzwuCVlkykMnmTHRh/exec?action=stats&event=lamp-116-dingwei');
-  if (!response.ok) return;
-  const stats = await response.json();
+  if (!proof || !bars) return;
+  const mock = new URLSearchParams(location.search).get('mockStats') === '1';
+  let stats;
+  if (mock) {
+   stats = {ok:true,event:'lamp-116-dingwei',totalSignups:25,lamps:[{name:'太歲燈',count:12},{name:'破災降魔燈',count:9},{name:'廣財運通燈',count:4}],taisuiFanZodiacs:{counts:[{zodiac:'羊',count:9},{zodiac:'牛',count:7},{zodiac:'龍',count:5},{zodiac:'狗',count:3}]}};
+  } else {
+   const response = await fetch('https://script.google.com/macros/s/AKfycbzVWhkaSoSIsBKTBcYnmbAg9Gbka0aBczkSQeAVsvWlz7a6rqByzwuCVlkykMnmTHRh/exec?action=stats&event=lamp-116-dingwei');
+   if (!response.ok) return;
+   stats = await response.json();
+  }
   if (stats.ok !== true || stats.event !== 'lamp-116-dingwei' || !Number.isSafeInteger(stats.totalSignups) || stats.totalSignups < 0) return;
   const total = stats.totalSignups;
   proof.textContent = `已有 ${total.toLocaleString('zh-TW')} 位信眾點亮`;

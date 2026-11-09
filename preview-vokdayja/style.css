@@ -777,9 +777,9 @@ nav{gap:12px;position:sticky}
 .lamp.selected,.lamp:has(.lamp-check:checked){border-color:#C9A063;box-shadow:0 8px 22px #81571f18,0 0 20px #c9a06328,inset 0 0 18px #e8bd6815}
 .lamp:active{transform:translateY(-1px);border-color:#C9A063;box-shadow:0 10px 24px #81571f24,0 0 18px #c9a06335}
 @media(hover:hover) and (pointer:fine){.lamp:hover{transform:translateY(-3px);border-color:#C9A063;box-shadow:0 14px 28px #81571f28,0 0 22px #c9a06335}}
-#form button[type=submit],.summary button[type=submit]{color:#49300f;border:1px solid #a58254d9;background:linear-gradient(155deg,#f5e6c8 0%,#e6c98a 28%,#c9a063 62%,#a58254 100%);box-shadow:0 7px 16px #81571f30,inset 0 1px 0 #fff9,inset 0 -2px 6px #81571f45;min-height:48px}
-#form button[type=submit]:before,.summary button[type=submit]:before{inset:1px 1px auto;height:46%;border-radius:9px 9px 40% 40%;background:linear-gradient(180deg,#fff9,transparent);animation:none;transform:none}
-#form button[type=submit]:after,.summary button[type=submit]:after{inset:0;background:linear-gradient(105deg,transparent 32%,#ffffff60 48%,transparent 64%);box-shadow:none;opacity:.55;animation:none}
+#form button[type=submit],.summary button[type=submit]{position:relative;isolation:isolate;overflow:hidden;color:#49300f;border:1px solid #a58254d9;background:linear-gradient(155deg,#f5e6c8 0%,#e6c98a 28%,#c9a063 62%,#a58254 100%);box-shadow:0 7px 16px #81571f30,inset 0 1px 0 #fff9,inset 0 -2px 6px #81571f45;min-height:48px}
+#form button[type=submit]:before,.summary button[type=submit]:before{content:"";position:absolute;z-index:0;inset:1px 1px auto;height:46%;border-radius:999px 999px 40% 40%;background:linear-gradient(180deg,#fff9,transparent);animation:none!important;transform:none;pointer-events:none}
+#form button[type=submit]:after,.summary button[type=submit]:after{content:"";position:absolute;z-index:0;inset:0;background:linear-gradient(105deg,transparent 32%,#ffffff60 48%,transparent 64%);box-shadow:none;opacity:.55;animation:none!important;pointer-events:none}
 @media(hover:hover) and (pointer:fine){#form button[type=submit]:hover,.summary button[type=submit]:hover{transform:translateY(-3px);box-shadow:0 13px 25px #81571f40,inset 0 2px 0 #fff9,inset 0 -3px 8px #81571f40,0 0 18px #a5825428}}
 .signup-proof{margin:26px auto 0;padding:10px 20px;max-width:1060px;text-align:center;color:#81571f;font-family:var(--serif)}
 .zodiac-popularity{margin:20px 0 24px;padding:18px 20px;border:1px solid #a5825445;background:#f6f0e5;border-radius:6px;color:#81571f}
