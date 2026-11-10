@@ -1,6 +1,6 @@
 # 報名頁犯太歲生肖卡片 CI
 
-僅修改卡片 CSS 與 style.css、app.js 引用快取版本 `20261110-zodiac-ci-1`。文字、escape、config、grid 與 stats 成功後隱藏卡片的行為均沿用既有程式。
+卡片 CSS、renderZodiacCards 的靜態圖片對應與 style.css、app.js 引用快取版本更新為 `20261110-zodiac-img-1`。既有文字、esc() 轉義、config 結構與 stats 成功後隱藏卡片／顯示 #zodiacBars 的行為不變。
 
 ## 品牌色與對應
 
@@ -23,23 +23,33 @@
 | 牛標題／內文 | #F5F0E8 | #A33B2B → #873024 | 5.75 / 7.47 | 5.75:1 |
 | 龍標題／內文 | #F5F0E8 | #0F1A14 → #172218 | 15.71 / 14.48 | 14.48:1 |
 | 狗標題／內文 | #F5F0E8 | #606330 → #505329 | 5.57 / 7.09 | 5.57:1 |
-| 羊／牛優先標籤 | #F5F0E8 | #1A1208（不透明） | 16.33 | 16.33:1 |
+| 羊／牛優先標籤 | #4A2A08 | #FFD97A → #F4B942（不透明） | 9.50768 / 7.29759 | 7.30:1 |
 
 各漸層 RGB 通道均單調增減，因此端點涵蓋其內文背景最差亮度；inset 高光及暗邊只在邊緣，不覆蓋文字。所有文字皆超過一般文字 AA 4.5:1。
 
 ## 立體與動態
 
-多層接觸陰影、柔影、品牌光暈，搭配 inset 高光與暗邊、145 度漸層。羊牛採 2px 邊框、5px 頂緣、更強光暈及黑底金框標籤；龍狗採較輕陰影。
+多層接觸陰影、柔影、品牌光暈，搭配 inset 高光與暗邊、145 度漸層。羊牛採 2px 邊框、5px 頂緣、更強光暈及暖金／琥珀漸層標籤（深褐字、#9B681E 邊框、細緻 inset 高光與棕色柔影，在金底仍有區隔）；龍狗採較輕陰影。
 
 卡片以 transform 上下浮動 2px、週期 9 秒，延遲為 0 / -2.25 / -4.5 / -6.75 秒。hover 僅在 `(hover:hover) and (pointer:fine)` 生效；hover／focus-within 透過 transform 個別屬性 translate、rotate 再抬升 3px、傾斜 -0.4 度。不引入計時器、observer、JS 動畫或 shimmer。卡片目前無可聚焦內容，focus-within 規則預留給未來既有內容包含互動元素時使用，不新增 tab stop。
 
-reduced-motion 關閉 animation、transition、互動位移及旋轉，保留靜態抬升與陰影。未改 grid、卡片外不套用任何新樣式。
+reduced-motion 關閉 animation、transition、互動位移及旋轉，保留靜態抬升與陰影。外層維持桌機雙欄、手機單欄；有圖片的卡片內採 grid，文字與圖片分欄，間距 14px／手機 10px。圖片寬 112px／手機 88px，不覆蓋文字；卡片外不套用新樣式。
 
 ## 本機驗證（2026-11-10）
 
 - Chrome `/usr/bin/google-chrome`、puppeteer-core；本機靜態伺服器 :4173。阻擋外部請求以驗證 config／stats 不可達時的預設四張卡，無提交資料。
 - 1280px：雙欄；390px：單欄。頁面無水平溢出，各卡 scrollWidth 未超過 clientWidth，截圖檢查無截字。
-- 一般與 hover 截圖：`/workspace/signup-zodiac-ci/codex-shots/zodiac-{1280,390}{,-hover}.png`。手機不啟用 hover 效果。
+- 一般與 hover 截圖：`/workspace/signup-zodiac-ci/v2/codex-shots/zodiac-{1280,390}{,-hover}.png`。手機不啟用 hover 效果。
 - 兩種尺寸 reduced-motion：四張卡 computed animation-name 均為 none，transition-duration 均為 0s。
 - deploy.yml validate：全站 JS syntax、paid access policy lock、paid runtime audit、production stability audit、male-yoga-admin 8 項測試全部通過。
 - deploy.yml candidate-smoke：Playwright 1.55.0 Chromium runtime；文章 5-load、admin gate、歷史 restricted body recovery 全部通過。測試依賴安裝於 /tmp，未納入提交。
+
+## 動物圖片來源與處理
+
+圖片來源為 `preview-vokdayja/assets/image-03.webp` 海報裁切的羊、牛、龍、狗頭像；由使用者預先完成柔邊去背、透明 WebP 與奶油色柔光暈。將 `/workspace/signup-zodiac-ci/v2/assets/` 提供的 8 個檔案逐位元複製至 `preview-vokdayja/assets/`，保留原檔名及內容，沒有重新裁切、改圖或使用其他來源。
+
+`renderZodiacCards()` 內的靜態 Map 只對應羊／牛／龍／狗，圖片標記的 src、srcset 均為固定 `./assets/` 路徑，不拼接 config。其他生肖完全不輸出 img，保留原卡片文字與外觀。所有 config 文字繼續 esc()；不新增設定欄位。新增 alt「羊的生肖圖」等，1x/2x srcset、原始比例 width/height、loading="lazy"、decoding="async"。1x 尺寸依序為 240×217、222×240、240×142、237×240。
+
+圖片使用輕微 drop-shadow 與 translateZ(6px)，跟隨卡片既有 CSS 浮動，不另增動畫或 JavaScript 計時器。reduced-motion 下卡片與圖片 computed animation-name 均為 none。
+
+補充驗證：攔截 action=config，回傳 config.default.js 同結構且追加「兔」卡片的 JSON；確認五張卡正常渲染、兔卡不含 img、無 pageerror。四張已知生肖 naturalWidth > 0；兩個尺寸的文字區與圖片區無重疊、卡片與文字無水平溢出。8 個圖片與使用者原檔雜湊相同。

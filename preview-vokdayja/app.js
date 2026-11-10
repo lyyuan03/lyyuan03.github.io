@@ -133,7 +133,13 @@ function renderTabs(){
  bindTabs();
 }
 function renderZodiacCards(){
- $('#zodiacCards').innerHTML=CFG.zodiac.cards.map(c=>`<article class="zodiac-card${c.emphasis?' zodiac-card-emphasis':''}"><h5>${esc(c.zodiac)}（${esc(c.relation)}）</h5>${c.emphasis?`<span class="zodiac-priority">${esc(c.tag)}</span>`:''}<p>${esc(c.text)}</p></article>`).join('');
+ const images=new Map([
+  ['羊','<img class="zodiac-animal" src="./assets/taisui-goat.webp" srcset="./assets/taisui-goat.webp 1x, ./assets/taisui-goat@2x.webp 2x" width="240" height="217" loading="lazy" decoding="async" alt="羊的生肖圖">'],
+  ['牛','<img class="zodiac-animal" src="./assets/taisui-ox.webp" srcset="./assets/taisui-ox.webp 1x, ./assets/taisui-ox@2x.webp 2x" width="222" height="240" loading="lazy" decoding="async" alt="牛的生肖圖">'],
+  ['龍','<img class="zodiac-animal" src="./assets/taisui-dragon.webp" srcset="./assets/taisui-dragon.webp 1x, ./assets/taisui-dragon@2x.webp 2x" width="240" height="142" loading="lazy" decoding="async" alt="龍的生肖圖">'],
+  ['狗','<img class="zodiac-animal" src="./assets/taisui-dog.webp" srcset="./assets/taisui-dog.webp 1x, ./assets/taisui-dog@2x.webp 2x" width="237" height="240" loading="lazy" decoding="async" alt="狗的生肖圖">'],
+ ]);
+ $('#zodiacCards').innerHTML=CFG.zodiac.cards.map(c=>{const image=images.get(c.zodiac)||'';return `<article class="zodiac-card${c.emphasis?' zodiac-card-emphasis':''}${image?' zodiac-card-illustrated':''}"><div class="zodiac-copy"><h5>${esc(c.zodiac)}（${esc(c.relation)}）</h5>${c.emphasis?`<span class="zodiac-priority">${esc(c.tag)}</span>`:''}<p>${esc(c.text)}</p></div>${image}</article>`}).join('');
  $('#zodiacCards').hidden=false;$('#zodiacBars').hidden=true;$('#zodiacBars').innerHTML='';$('#zodiacBars').classList.remove('stats-ready');
 }
 function renderProducts(){
