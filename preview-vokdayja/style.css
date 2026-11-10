@@ -1120,7 +1120,7 @@ html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
   }
 }
 
-/* Images share the card's CSS-only float; reserve their intrinsic aspect ratio. */
+/* Circular images share the card's CSS-only float and fade into its background. */
 .zodiac-cards .zodiac-card-illustrated {
   display:grid;
   grid-template-columns:minmax(0,1fr) 112px;
@@ -1130,11 +1130,20 @@ html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
 .zodiac-cards .zodiac-copy {min-width:0}
 .zodiac-cards .zodiac-animal {
   display:block;
-  width:100%;
-  height:auto;
-  filter:drop-shadow(0 5px 5px #4a2a0833);
+  width:112px;
+  height:112px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 40%,rgba(0,0,0,.55) 68%,transparent 100%);
+  mask-image:radial-gradient(circle closest-side,#000 40%,rgba(0,0,0,.55) 68%,transparent 100%);
+  -webkit-mask-size:100% 100%;
+  mask-size:100% 100%;
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
   transform:translateZ(6px);
 }
 @media (max-width:480px) {
   .zodiac-cards .zodiac-card-illustrated {grid-template-columns:minmax(0,1fr) 88px;gap:10px}
+  .zodiac-cards .zodiac-animal {width:88px;height:88px}
 }
