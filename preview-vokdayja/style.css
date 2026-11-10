@@ -1096,12 +1096,12 @@ html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
 }
 .zodiac-cards .zodiac-priority {
   padding:3px 9px;
-  border:1px solid #C9A063;
+  border:1px solid #9B681E;
   border-radius:4px;
-  background:#1a1208;
-  color:#F5F0E8;
+  background:linear-gradient(135deg,#FFD97A,#F4B942);
+  color:#4A2A08;
   font-weight:700;
-  box-shadow:inset 0 1px 0 #ffffff26,0 2px 4px #00000026;
+  box-shadow:inset 0 1px 0 #ffffff99,0 2px 5px #70481440;
 }
 .zodiac-cards .zodiac-card:focus-within {translate:0 -3px;rotate:-.4deg}
 @media (hover:hover) and (pointer:fine) {
@@ -1118,4 +1118,23 @@ html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
     translate:none;
     rotate:none;
   }
+}
+
+/* Images share the card's CSS-only float; reserve their intrinsic aspect ratio. */
+.zodiac-cards .zodiac-card-illustrated {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 112px;
+  align-items:center;
+  gap:14px;
+}
+.zodiac-cards .zodiac-copy {min-width:0}
+.zodiac-cards .zodiac-animal {
+  display:block;
+  width:100%;
+  height:auto;
+  filter:drop-shadow(0 5px 5px #4a2a0833);
+  transform:translateZ(6px);
+}
+@media (max-width:480px) {
+  .zodiac-cards .zodiac-card-illustrated {grid-template-columns:minmax(0,1fr) 88px;gap:10px}
 }
