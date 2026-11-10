@@ -3,8 +3,30 @@
 const DEFAULT_CFG=window.LYYUAN_SIGNUP_DEFAULT_CONFIG;
 let eventStatus='開放';const EVENT_CLOSED_TEXT={'關閉':'本次報名目前已關閉，暫不接受新的報名。','草稿':'本次活動尚未開放報名。'};
 let CFG=DEFAULT_CFG,lampDefs=[],products=[],sponsors=[],registrationType={},lampPurposes={},lampFortune={},hotKeys=new Set(),lastStats=null;let uid=0,currentTotal=0,currentPending=false;
+/* 116年度專屬籤詩對外文案：內建與雲端設定一律以本頁核定版本顯示。 */
+const ANNUAL_FORTUNE_COPY={"head_taisui":"慈賜<strong>《歲運呈祥・吉慶天籤》</strong><br>開示116年流年吉凶、運勢起伏與應注意之事，指引趨吉避凶、逢凶化吉，祈願歲序安泰、福運亨通。","head_pozai":"慈賜<strong>《破厄消災・福慧靈籤》</strong><br>開示116年災厄防範、平安護身與修行課題，指引化解障礙、增長福慧，祈願災消障除、身心安泰。","head_guangcai":"慈賜<strong>《財祿亨通・歲運金籤》</strong><br>開示116年財運盛衰、求財契機與事業運程，指引財路宜忌、進退時機，祈願財源廣進、福祿盈門。","co_pozai":"慈賜<strong>《鎮業化煞・安泰聖籤》</strong><br>開示116年企業經營可能面臨的阻礙、風險與應注意之事，指引防範災厄、化解不利、穩固事業根基，祈願營運平安、員工安康、諸事順遂。","co_guangcai":"慈賜<strong>《鴻業昌隆・財祿金籤》</strong><br>開示116年企業財運、營運走勢、商機財路與事業發展，指引經營宜忌、財務進退及拓展契機，祈願生意興隆、財源廣進、鴻業昌盛。"};
+const ANNUAL_FORTUNE_NOTE="<strong>116年度慈賜籤詩</strong>本年度太歲燈、破災降魔燈、廣財運通燈總燈首，以及破災降魔燈、廣財運通燈公司行號燈，分別慈賜專屬年度籤詩，開示116年應留意的運勢、平安、修行與事業方向。";
+function applyAnnualFortuneCopy(config) {
+  if (!config || !Array.isArray(config.lamps)) return config;
+  return {
+    ...config,
+    lamps: config.lamps.map(lamp => {
+      const fortune = ANNUAL_FORTUNE_COPY[lamp.key];
+      if (!fortune) return lamp;
+      return {
+        ...lamp,
+        fortune,
+        ...(lamp.key === 'head_guangcai'
+          ? {gift:'特贈結緣－<strong>【廣財運通香2入組】</strong>。'}
+          : {})
+      };
+    }),
+    copy:{...config.copy, fortuneTag:'賜籤詩', fortuneLabel:'116年度慈賜籤詩'},
+    page:{...config.page, fortuneNote:ANNUAL_FORTUNE_NOTE}
+  };
+}
 /* 設定：內建預設（config.default.js）立即渲染；雲端設定抓回後若不同才重繪。 */
-function setCfg(cfg){CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
+function setCfg(cfg){cfg=applyAnnualFortuneCopy(cfg);CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
 const cfgVars=()=>({freeThreshold:'NT$'+Number(CFG.shipping.freeThreshold).toLocaleString('en-US'),shippingFee:'NT$'+Number(CFG.shipping.fee).toLocaleString('en-US'),deadline:String(CFG.meta.deadline||'').replace('T',' ').replace(/-/g,'/')});
 const tpl=(s,extra)=>String(s==null?'':s).replace(/\{\{(\w+)\}\}/g,(m,k)=>{const v=Object.assign(cfgVars(),extra||{});return k in v?v[k]:m});
 const rich=s=>esc(s).replace(/&lt;(\/?)(strong|b)&gt;/g,'<$1$2>').replace(/&lt;br\s*\/?&gt;/g,'<br>');
