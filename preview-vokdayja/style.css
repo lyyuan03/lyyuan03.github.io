@@ -1038,3 +1038,12 @@ nav{gap:12px;position:sticky}
 
 /* 116 年五類籤詩：僅籤詩名稱採朱紅色粗體，附贈品及說明維持原樣。 */
 .lamp-fortune-text > strong:first-of-type{color:#ae2431 !important;font-weight:800 !important}
+
+/* 多活動：非預設活動載入前整頁隱藏；載入失敗（找不到／草稿／網路）時顯示說明文字，不顯示預設活動內容。 */
+html[data-ev]{background:#faf6ee}
+html[data-ev] body{visibility:hidden}
+html[data-ev]::before{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:24px;text-align:center;font:500 18px/1.8 'Noto Serif TC',serif;color:#594F47;visibility:visible;background:#faf6ee}
+html[data-ev="pending"]::before{content:"載入活動內容中…";animation:evSlow 0s 12s forwards}
+html[data-ev="unavailable"] body{display:none}
+html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
+@keyframes evSlow{to{content:"載入時間較長，請重新整理頁面。"}}
