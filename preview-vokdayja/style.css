@@ -852,3 +852,50 @@ nav{gap:12px;position:sticky}
 @media(max-width:1000px){.annual-deadline{gap:14px;grid-template-columns: minmax(135px,.65fr) minmax(210px,.9fr) minmax(245px,1.2fr);padding:18px}.annual-deadline__dates{padding-left:13px}.annual-deadline__dates p{font-size:12px}.annual-flip__tile{width:45px;height:68px}.annual-flip__top,.annual-flip__bottom{font-size:54px;line-height:68px}.annual-flip__bottom{line-height:0}}
 @media(max-width:740px){.annual-deadline-wide{padding:0 16px;margin-top:14px}.annual-deadline{display:flex;flex-wrap:wrap;gap:14px 16px;padding:20px;align-items:center;justify-content:center}.annual-deadline__eyebrow{width:100%;text-align:center;margin:0}.annual-deadline h3{width:100%;text-align:center;font-size:24px}.annual-deadline__count{width:100%;min-height:72px}.annual-deadline__dates{width:100%;border-left:0;border-top:1px solid #A5825477;padding:12px 0 0;gap:9px}.annual-deadline__dates p{font-size:12px}.annual-deadline__closed{width:100%}.layout>.summary{position:static!important;top:auto!important;margin:30px 0!important}}
 @media(prefers-reduced-motion:reduce){.annual-flip__tile.flipping .annual-flip__top,.annual-flip__tile.flipping .annual-flip__bottom{animation:none}}
+
+/* 2026-11-10: keep the title centered vertically and render both halves of each digit. */
+.annual-deadline__heading {
+  grid-column:1;
+  grid-row:1;
+  align-self:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0;
+  position:relative;
+  z-index:1;
+}
+.annual-deadline__heading .annual-deadline__eyebrow{margin:0 0 10px}
+.annual-deadline__heading h3{margin:0;line-height:1.45}
+.annual-deadline__count,.annual-deadline__dates,.annual-deadline__closed{
+  grid-row:1;
+  align-self:center;
+}
+.annual-flip__tile{--annual-tile-height:74px;height:var(--annual-tile-height);}
+.annual-flip__top,.annual-flip__bottom{
+  height:50%;
+  line-height:normal;
+  padding:0;
+  overflow:hidden;
+}
+.annual-flip__glyph{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:var(--annual-tile-height);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font:600 60px/1 'Cormorant Garamond',Georgia,serif;
+  white-space:nowrap;
+}
+.annual-flip__bottom .annual-flip__glyph{top:calc(var(--annual-tile-height) / -2)}
+@media(max-width:1000px){
+  .annual-flip__tile{--annual-tile-height:68px}
+  .annual-flip__glyph{font-size:54px}
+}
+@media(max-width:740px){
+  .annual-deadline__heading{width:100%;text-align:center;align-items:center}
+  .annual-deadline__heading h3{width:100%}
+}
