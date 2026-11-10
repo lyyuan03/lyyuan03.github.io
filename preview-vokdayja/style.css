@@ -1050,3 +1050,72 @@ html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
 
 .lock-note{margin:.35rem 0 .6rem;padding:0 1rem;color:var(--pale);font-size:.9rem}
 .lamp.admin-locked .price small{display:none}.lamp.admin-locked .price::after{content:'已由行政確認';font-size:.82rem}.lamp.admin-locked .people>.hint{display:none}
+
+/* Signup zodiac CI cards — 20261110-zodiac-ci-1; card-only visual treatment. */
+.zodiac-cards .zodiac-card {
+  --card-ci:#C9A063;
+  --card-end:#ead8b4;
+  --card-text:#1a1208;
+  --card-glow:#c9a06330;
+  --card-lift:-2px;
+  min-width:0;
+  position:relative;
+  border:1px solid var(--card-ci);
+  border-top:3px solid var(--card-ci);
+  border-radius:10px;
+  background:linear-gradient(145deg,var(--card-ci),var(--card-end));
+  color:var(--card-text);
+  box-shadow:inset 0 1px 0 #ffffff66,inset 0 -2px 0 #00000026,
+    0 2px 3px #1a12081a,0 8px 16px #1a12081f,0 14px 24px var(--card-glow);
+  transform:translateY(var(--card-lift));
+  animation:signup-zodiac-float 9s ease-in-out infinite;
+  transition:translate .35s ease,rotate .35s ease;
+  overflow-wrap:anywhere;
+}
+.zodiac-cards .zodiac-card:nth-child(2) {
+  --card-ci:#a33b2b;--card-end:#873024;--card-text:#F5F0E8;--card-glow:#a33b2b30;
+  animation-delay:-2.25s;
+}
+.zodiac-cards .zodiac-card:nth-child(3) {
+  --card-ci:#0f1a14;--card-end:#172218;--card-text:#F5F0E8;--card-glow:#0f1a141c;
+  animation-delay:-4.5s;
+}
+.zodiac-cards .zodiac-card:nth-child(4) {
+  --card-ci:#606330;--card-end:#505329;--card-text:#F5F0E8;--card-glow:#60633026;
+  animation-delay:-6.75s;
+}
+.zodiac-cards .zodiac-card h5,
+.zodiac-cards .zodiac-card p {color:var(--card-text)}
+.zodiac-cards .zodiac-card-emphasis {
+  --card-lift:-3px;
+  border-width:2px;
+  border-top-width:5px;
+  box-shadow:inset 0 1px 0 #ffffff99,inset 0 -2px 0 #00000033,
+    0 3px 4px #1a120826,0 10px 18px #1a12082b,0 16px 28px var(--card-glow),
+    0 0 0 2px #c9a06340;
+}
+.zodiac-cards .zodiac-priority {
+  padding:3px 9px;
+  border:1px solid #C9A063;
+  border-radius:4px;
+  background:#1a1208;
+  color:#F5F0E8;
+  font-weight:700;
+  box-shadow:inset 0 1px 0 #ffffff26,0 2px 4px #00000026;
+}
+.zodiac-cards .zodiac-card:focus-within {translate:0 -3px;rotate:-.4deg}
+@media (hover:hover) and (pointer:fine) {
+  .zodiac-cards .zodiac-card:hover {translate:0 -3px;rotate:-.4deg}
+}
+@keyframes signup-zodiac-float {
+  0%,100% {transform:translateY(var(--card-lift))}
+  50% {transform:translateY(calc(var(--card-lift) - 2px))}
+}
+@media (prefers-reduced-motion:reduce) {
+  .zodiac-cards .zodiac-card {
+    animation:none;
+    transition:none;
+    translate:none;
+    rotate:none;
+  }
+}
