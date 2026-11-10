@@ -20,8 +20,8 @@
     Array.from(str).forEach((character, i) => {
       const tile = document.createElement('span');
       tile.className = 'annual-flip__tile';
-      tile.innerHTML = '<span class="annual-flip__top"></span><span class="annual-flip__bottom"></span>';
-      tile.querySelectorAll('span').forEach(part => { part.textContent = character; });
+      tile.innerHTML = '<span class="annual-flip__top"><span class="annual-flip__glyph"></span></span><span class="annual-flip__bottom"><span class="annual-flip__glyph"></span></span>';
+      tile.querySelectorAll('.annual-flip__glyph').forEach(part => { part.textContent = character; });
       if (animate && !reducedMotion && previous !== null && previous[i] !== character) tile.classList.add('flipping');
       digits.append(tile);
     });
