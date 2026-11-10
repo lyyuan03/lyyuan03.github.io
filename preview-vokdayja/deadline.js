@@ -9,7 +9,9 @@
   if (!root || !digits || !form) return;
   let last = null;
   let closed = false;
-  function setDigits(value) {
+  let introSequence = 0;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function setDigits(value, animate = true) {
     const str = String(value);
     if (str === last) return;
     const previous = last;
@@ -20,10 +22,28 @@
       tile.className = 'annual-flip__tile';
       tile.innerHTML = '<span class="annual-flip__top"></span><span class="annual-flip__bottom"></span>';
       tile.querySelectorAll('span').forEach(part => { part.textContent = character; });
-      if (previous !== null && previous[i] !== character) tile.classList.add('flipping');
+      if (animate && !reducedMotion && previous !== null && previous[i] !== character) tile.classList.add('flipping');
       digits.append(tile);
     });
     digits.setAttribute('aria-label', '還有 ' + str + ' 天截止');
+  }
+  function startIntro() {
+    const remaining = DEADLINE - Date.now();
+    if (remaining <= 0) return;
+    const actual = Math.ceil(remaining / DAY);
+    if (reducedMotion) { setDigits(actual, false); return; }
+    // The entry sequence uses several fast flap changes, then settles on actual days.
+    const count = String(actual).length;
+    const steps = 11;
+    let step = 0;
+    setDigits('8'.repeat(count), false);
+    const sequence = window.setInterval(() => {
+      if (Date.now() >= DEADLINE) { window.clearInterval(sequence); disableRegistration(); return; }
+      step += 1;
+      if (step >= steps) { window.clearInterval(sequence); introSequence = 0; setDigits(Math.ceil((DEADLINE - Date.now()) / DAY)); return; }
+      setDigits(String((step * 37 + 19) % (10 ** count)).padStart(count, '0'));
+    }, 160);
+    introSequence = sequence;
   }
   function disableRegistration() {
     if (closed) return;
@@ -46,7 +66,7 @@
   function refresh() {
     const remaining = DEADLINE - Date.now();
     if (remaining <= 0) { disableRegistration(); return; }
-    setDigits(Math.ceil(remaining / DAY));
+    if (!introSequence) setDigits(Math.ceil(remaining / DAY));
   }
   document.addEventListener('submit', event => {
     if (event.target !== form || Date.now() < DEADLINE) return;
@@ -55,6 +75,7 @@
     disableRegistration();
   }, true);
   refresh();
+  startIntro();
   window.setInterval(refresh, 30000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 })();
