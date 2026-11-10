@@ -1,6 +1,7 @@
 
 'use strict';const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],money=n=>'NT$ '+Number(n).toLocaleString('zh-TW'),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DEFAULT_CFG=window.LYYUAN_SIGNUP_DEFAULT_CONFIG;
+let eventStatus='開放';const EVENT_CLOSED_TEXT={'關閉':'本次報名目前已關閉，暫不接受新的報名。','草稿':'本次活動尚未開放報名。'};
 let CFG=DEFAULT_CFG,lampDefs=[],products=[],sponsors=[],registrationType={},lampPurposes={},lampFortune={},hotKeys=new Set(),lastStats=null;let uid=0,currentTotal=0,currentPending=false;
 /* 設定：內建預設（config.default.js）立即渲染；雲端設定抓回後若不同才重繪。 */
 function setCfg(cfg){CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
@@ -9,7 +10,7 @@ const tpl=(s,extra)=>String(s==null?'':s).replace(/\{\{(\w+)\}\}/g,(m,k)=>{const
 const rich=s=>esc(s).replace(/&lt;(\/?)(strong|b)&gt;/g,'<$1$2>').replace(/&lt;br\s*\/?&gt;/g,'<br>');
 const cfgGet=path=>path.split('.').reduce((o,k)=>o==null?o:o[k],CFG);
 window.LYYUAN_SIGNUP_WEBAPP_URL=window.LYYUAN_SIGNUP_WEBAPP_URL||'https://script.google.com/macros/s/AKfycbzVWhkaSoSIsBKTBcYnmbAg9Gbka0aBczkSQeAVsvWlz7a6rqByzwuCVlkykMnmTHRh/exec';
-window.LYYUAN_SIGNUP_EVENT=window.LYYUAN_SIGNUP_EVENT||'lamp-116-dingwei';const icon='<svg viewBox="0 0 40 50" fill="none" aria-hidden="true"><path d="M20 2v5M9 9h22M10 12c-8 10-8 17 0 25h20c8-8 8-15 0-25H10ZM9 40h22M20 40v8M15 43v4M25 43v4" stroke="currentColor" stroke-width="1.1"/><path d="M20 13v23M13 13c-4 10-4 15 0 23M27 13c4 10 4 15 0 23" stroke="currentColor" opacity=".45"/><ellipse cx="20" cy="25" rx="5" ry="8" fill="currentColor" opacity=".18"/></svg>';
+window.LYYUAN_SIGNUP_EVENT=window.LYYUAN_SIGNUP_EVENT||(()=>{try{const e=new URLSearchParams(location.search).get('event');return e&&/^[a-z0-9][a-z0-9-]{2,60}$/.test(e)?e:''}catch{return''}})()||'lamp-116-dingwei';const icon='<svg viewBox="0 0 40 50" fill="none" aria-hidden="true"><path d="M20 2v5M9 9h22M10 12c-8 10-8 17 0 25h20c8-8 8-15 0-25H10ZM9 40h22M20 40v8M15 43v4M25 43v4" stroke="currentColor" stroke-width="1.1"/><path d="M20 13v23M13 13c-4 10-4 15 0 23M27 13c4 10 4 15 0 23" stroke="currentColor" opacity=".45"/><ellipse cx="20" cy="25" rx="5" ry="8" fill="currentColor" opacity=".18"/></svg>';
 function personHTML(l){const id=++uid,company=l.r==='公司',year=new Date().getFullYear()-1911;return `<div class="person"><div class="person-title">${company?'公司行號':'芳名'}資料</div><button type="button" class="remove">移除此位</button><label for="pn${id}" class="req">${company?'公司名稱':'姓名'}</label><input id="pn${id}" data-person-name required placeholder="${company?'公司行號全名':'請填芳名'}">${company?'':`<label for="cal${id}" class="req">曆別</label><select id="cal${id}" required><option value="">請先選擇國曆或農曆</option><option>國曆</option><option>農曆</option></select><label class="req" for="by${id}">出生年月日（民國）</label><div class="birth"><select id="by${id}" aria-label="民國出生年" required><option value="">民國年</option>${Array.from({length:year},(_,i)=>`<option value="${year-i}">民國 ${year-i} 年</option>`).join('')}</select><input aria-label="出生月" type="number" required min="1" max="12" placeholder="月"><input aria-label="出生日" type="number" required min="1" max="31" placeholder="日"></div>`}<label for="pa${id}" class="req">${company?'公司地址':'現居地址'}</label><input id="pa${id}" required placeholder="請填寫完整地址"></div>`}
 function buildLamps(){
  const c=CFG.copy,order=CFG.roleOrder;
@@ -119,7 +120,7 @@ function applyStaticCopy(){
  $$('[data-cfg-html]').forEach(el=>{const v=cfgGet(el.dataset.cfgHtml);if(typeof v==='string')el.innerHTML=rich(tpl(v))});
  $$('[data-cfg-tail]').forEach(el=>{const v=cfgGet(el.dataset.cfgTail);let t=null;el.childNodes.forEach(n=>{if(n.nodeType===3&&n.nodeValue.trim())t=n});if(t&&typeof v==='string')t.nodeValue=tpl(v)});
  $$('img[data-img]').forEach(img=>{const c=(CFG.images||{})[img.dataset.img];if(!c)return;if(c.src&&img.getAttribute('src')!==c.src)img.setAttribute('src',c.src);if(typeof c.alt==='string')img.alt=c.alt;const b=img.closest('button');if(b&&c.label)b.setAttribute('aria-label','放大閱讀：'+c.label)});
- const dl=CFG.meta.deadline;if(dl){const banner=$('.preview');const passed=Date.parse(dl+(/[zZ]|[+-]\d\d:?\d\d$/.test(dl)?'':'+08:00'))<Date.now();banner.append(document.createElement('br'),tpl(passed?CFG.copy.deadlinePassed:CFG.copy.deadlineNote))}
+ const dl=CFG.meta.deadline;{const note=EVENT_CLOSED_TEXT[eventStatus];if(note)$('.preview').append(document.createElement('br'),note)}if(dl){const banner=$('.preview');const passed=Date.parse(dl+(/[zZ]|[+-]\d\d:?\d\d$/.test(dl)?'':'+08:00'))<Date.now();banner.append(document.createElement('br'),tpl(passed?CFG.copy.deadlinePassed:CFG.copy.deadlineNote))}
 }
 function renderDynamic(){
  renderTabs();renderZodiacCards();buildLamps();lampDefs.forEach(l=>bindPeople($(`[data-key="${l.k}"]`),()=>personHTML(l)));buildSponsors();applyStaticCopy();renderProducts();renderAgreements();renderPriceSettings();calc();
@@ -349,7 +350,9 @@ function cfgLooksValid(c){
   const url=new URL(window.LYYUAN_SIGNUP_WEBAPP_URL);url.searchParams.set('action','config');url.searchParams.set('event',window.LYYUAN_SIGNUP_EVENT);
   const response=await fetch(url,{redirect:'follow'});if(!response.ok)return;
   const data=await response.json();
-  if(data.ok!==true||data.event!==window.LYYUAN_SIGNUP_EVENT||!cfgLooksValid(data.config))return;
+  if(data.ok!==true||data.event!==window.LYYUAN_SIGNUP_EVENT)return;
+  const st=typeof data.status==='string'&&data.status?data.status:'開放';if(st!==eventStatus){eventStatus=st;applyStaticCopy()}
+  if(!cfgLooksValid(data.config))return;
   if(canon(data.config)===canon(CFG)||submitting)return;
   const snap=snapKeyed();setCfg(data.config);renderDynamic();restoreKeyed(snap);
  }catch{ /* 保持內建預設 */ }
