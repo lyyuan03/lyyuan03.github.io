@@ -816,34 +816,39 @@ nav{gap:12px;position:sticky}
 @media(max-width:740px){.falling-leaf:nth-child(n+4){display:none}.falling-leaf{animation-duration:44s}.falling-leaf:nth-child(2){animation-duration:48s}.falling-leaf:nth-child(3){animation-duration:46s}.zodiac-popularity{padding:16px}}
 @media(prefers-reduced-motion:reduce){.lamp-fortune::before{animation:none;transform:none;opacity:.35}.falling-leaves{display:none}.lamp,.lamp:hover,.lamp:active,#form button[type=submit]:hover,.summary button[type=submit]:hover{transform:none}.lamp{transition:none!important}.zodiac-track span{transition:none}}
 
-/* 丁未年年度點燈：CIS 色系翻牌倒數與右側同寬欄位。 */
-.signup-side-column{min-width:0;align-self:start;display:flex;flex-direction:column;gap:20px;position:sticky;top:108px}
-.signup-side-column>.summary{position:relative!important;top:auto!important;width:100%;min-width:0;margin:0!important}
-.annual-deadline{position:relative;overflow:hidden;isolation:isolate;width:100%;min-width:0;border:1px solid #A58254;border-radius:14px;padding:22px 20px 20px;background:linear-gradient(153deg,#f9f3e6 0%,#e2e3d6 54%,#d0d4b8 100%);box-shadow:0 12px 26px #594f4726;color:#594F47}
-.annual-deadline:before{content:"";position:absolute;inset:7px;border:1px solid #A5825440;border-radius:10px;pointer-events:none}
-.annual-deadline:after{content:"";position:absolute;right:-40px;top:-52px;width:170px;height:170px;border:1px solid #60633020;border-radius:50%;box-shadow:0 0 0 19px #6063300c,0 0 0 38px #60633008;pointer-events:none}
-.annual-deadline__ornament{position:absolute;right:26px;top:19px;font-size:26px;color:#A58254;transform:rotate(-16deg);opacity:.85}
-.annual-deadline__eyebrow{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:.27em;color:#87683f;margin:0 0 4px}
-.annual-deadline h3{font-family:var(--serif);font-size:23px;font-weight:500;letter-spacing:.1em;color:#594F47;margin:0 0 15px}
-.annual-deadline__count{display:flex;gap:9px;justify-content:center;align-items:center;min-height:82px;margin-bottom:18px}
-.annual-deadline__word{white-space:nowrap;color:#594F47;font-family:var(--serif);font-size:15px}
-.annual-flip{display:inline-flex;gap:4px;align-items:center;justify-content:center;white-space:nowrap}
-.annual-flip__tile{width:48px;height:72px;display:flex;flex-direction:column;position:relative;perspective:300px;border-radius:8px;background:#594F47;box-shadow:0 4px 0 #39342e,0 9px 13px #594f4730;color:#f8f0da;text-align:center;font:500 48px/72px 'Cormorant Garamond',Georgia,serif;font-variant-numeric:tabular-nums}
-.annual-flip__top,.annual-flip__bottom{position:absolute;left:0;right:0;height:50%;overflow:hidden;display:block;background:linear-gradient(#72665b,#594F47)}
-.annual-flip__top{top:0;border-radius:8px 8px 0 0;line-height:72px;border-bottom:1px solid #342f2a}
-.annual-flip__bottom{bottom:0;border-radius:0 0 8px 8px;line-height:0;background:linear-gradient(#51483f,#665a4e)}
-.annual-flip__tile:after{content:"";position:absolute;z-index:3;top:50%;left:0;right:0;height:2px;background:#332e2999;transform:translateY(-50%);box-shadow:0 1px 0 #f0dfbc30}
-.annual-flip__tile.flipping .annual-flip__top{transform-origin:bottom;animation:annualFlipDown .65s ease-in-out both}
-@keyframes annualFlipDown{0%{transform:rotateX(0)}48%{transform:rotateX(-85deg)}52%{transform:rotateX(-85deg)}100%{transform:rotateX(0)}}
-.annual-deadline__dates{border-top:1px solid #A5825480;padding-top:13px;display:grid;gap:11px}
-.annual-deadline__dates p{display:flex;gap:9px;align-items:flex-start;margin:0;color:#594F47;font:12px/1.8 var(--sans);letter-spacing:0}
-.annual-deadline__dates p>span:first-child{color:#A58254;font-size:16px;line-height:1.5}
-.annual-deadline__dates b{font-weight:600;color:#594F47}
-.annual-deadline__closed{font:600 18px/1.7 var(--serif);text-align:center;color:#594F47;margin:9px 0 17px}
+
+/* 丁未年度點燈：頂部橫幅自由捲動，右側明細獨立 sticky。 */
+.annual-deadline-wide{max-width:1120px;margin:22px auto 0;padding:0 24px}
+.annual-deadline{position:relative;overflow:hidden;isolation:isolate;width:100%;border:1px solid #A58254;border-radius:16px;padding:19px 26px;background:linear-gradient(118deg,#f6f2e9 0%,#e8e9dd 57%,#d8ddc5 100%);box-shadow:0 12px 26px #594f471a;color:#594F47;display:grid;grid-template-columns:minmax(165px,.8fr) minmax(240px,1fr) minmax(285px,1.25fr);gap:24px;align-items:center}
+.annual-deadline:before{content:"";position:absolute;inset:7px;border:1px solid #A5825440;border-radius:11px;pointer-events:none}
+.annual-deadline:after{content:"";position:absolute;right:-48px;top:-80px;width:230px;height:230px;border:1px solid #6063301e;border-radius:50%;box-shadow:0 0 0 22px #60633009,0 0 0 44px #60633008;pointer-events:none}
+.annual-deadline__eyebrow{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:.23em;color:#87683f;margin:0 0 5px}
+.annual-deadline h3{font:500 clamp(22px,2.4vw,29px)/1.4 var(--serif);letter-spacing:.12em;color:#594F47;margin:0}
+.annual-deadline__ornament{position:absolute;top:13px;right:20px;font-size:20px;color:#A58254;opacity:.7}
+.annual-deadline__count{grid-column:2;grid-row:1 / span 2;display:flex;gap:12px;justify-content:center;align-items:center;min-height:82px}
+.annual-deadline__word{font:500 16px var(--serif);white-space:nowrap;color:#594F47}
+.annual-flip{display:inline-flex;gap:5px;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.annual-flip__tile{position:relative;display:block;width:54px;height:74px;border-radius:8px;perspective:400px;filter:drop-shadow(0 5px 4px #594f4732)}
+.annual-flip__top,.annual-flip__bottom{position:absolute;left:0;right:0;height:50%;overflow:hidden;display:block;color:#b52535;text-align:center;font:600 60px/74px 'Cormorant Garamond',Georgia,serif;background:#fffdf9}
+.annual-flip__top{top:0;border-radius:8px 8px 0 0;border-bottom:1px solid #b9aa9c;line-height:74px;background:linear-gradient(#fff,#fff9f6)}
+.annual-flip__bottom{bottom:0;border-radius:0 0 8px 8px;line-height:0;background:linear-gradient(#f5efe9,#fff)}
+.annual-flip__tile:after{content:"";position:absolute;top:50%;left:0;right:0;z-index:5;height:2px;background:#806e6144;transform:translateY(-50%)}
+.annual-flip__tile.flipping .annual-flip__top{transform-origin:bottom;backface-visibility:hidden;animation:annualFlipTop .16s ease-in both}
+.annual-flip__tile.flipping .annual-flip__bottom{transform-origin:top;backface-visibility:hidden;animation:annualFlipBottom .16s .13s ease-out both}
+@keyframes annualFlipTop{0%{transform:rotateX(0deg)}100%{transform:rotateX(-85deg)}}
+@keyframes annualFlipBottom{0%{transform:rotateX(85deg)}100%{transform:rotateX(0deg)}}
+.annual-deadline__dates{grid-column:3;grid-row:1 / span 2;min-width:0;border-left:1px solid #A5825477;padding-left:20px;display:grid;gap:10px;position:relative;z-index:1}
+.annual-deadline__dates p{display:flex;gap:8px;align-items:flex-start;margin:0;color:#594F47;font:13px/1.7 var(--sans);letter-spacing:0}
+.annual-deadline__dates p>span:first-child{color:#A58254;font-size:17px;line-height:1.5}
+.annual-deadline__dates b{font-weight:600}
+.annual-deadline__closed{grid-column:2;grid-row:1 / span 2;text-align:center;font:600 18px/1.6 var(--serif);color:#9d2933;position:relative;z-index:1}
 .annual-deadline[aria-disabled="true"] .annual-deadline__count{display:none}
 .annual-deadline[aria-disabled="true"] .annual-deadline__closed{display:block}
+.annual-deadline__closed[hidden]{display:none}
+.layout>.summary{position:sticky!important;top:108px!important;align-self:start!important;margin:0!important}
 #form.signup-closed{opacity:.78}
 #form.signup-closed input,#form.signup-closed select,#form.signup-closed textarea,#form.signup-closed button{cursor:not-allowed}
-.signup-side-column button[type="submit"]:disabled,#form button[type="submit"]:disabled{opacity:.55;cursor:not-allowed!important;animation:none!important;transform:none!important}
-@media(max-width:740px){.signup-side-column{position:static;gap:16px}.annual-deadline{padding:20px 18px}.annual-flip__tile{width:44px;height:68px;font-size:44px;line-height:68px}.annual-flip__top{line-height:68px}}
-@media(prefers-reduced-motion:reduce){.annual-flip__tile.flipping .annual-flip__top{animation:none}}
+.summary button[type="submit"]:disabled,#form button[type="submit"]:disabled{opacity:.55;cursor:not-allowed!important;animation:none!important;transform:none!important}
+@media(max-width:1000px){.annual-deadline{gap:14px;grid-template-columns: minmax(135px,.65fr) minmax(210px,.9fr) minmax(245px,1.2fr);padding:18px}.annual-deadline__dates{padding-left:13px}.annual-deadline__dates p{font-size:12px}.annual-flip__tile{width:45px;height:68px}.annual-flip__top,.annual-flip__bottom{font-size:54px;line-height:68px}.annual-flip__bottom{line-height:0}}
+@media(max-width:740px){.annual-deadline-wide{padding:0 16px;margin-top:14px}.annual-deadline{display:flex;flex-wrap:wrap;gap:14px 16px;padding:20px;align-items:center;justify-content:center}.annual-deadline__eyebrow{width:100%;text-align:center;margin:0}.annual-deadline h3{width:100%;text-align:center;font-size:24px}.annual-deadline__count{width:100%;min-height:72px}.annual-deadline__dates{width:100%;border-left:0;border-top:1px solid #A5825477;padding:12px 0 0;gap:9px}.annual-deadline__dates p{font-size:12px}.annual-deadline__closed{width:100%}.layout>.summary{position:static!important;top:auto!important;margin:30px 0!important}}
+@media(prefers-reduced-motion:reduce){.annual-flip__tile.flipping .annual-flip__top,.annual-flip__tile.flipping .annual-flip__bottom{animation:none}}
