@@ -47,6 +47,16 @@
       else nav.querySelector(".global-nav-links")?.appendChild(item);
     }
 
+    const activityMenu = nav.querySelector("#global-nav-activity");
+    const annualLink = Array.from(activityMenu?.querySelectorAll("a") || [])
+      .find((link) => normalizedPath(new URL(link.href, window.location.origin).pathname) === "/niandian.html");
+    if (annualLink && !activityMenu.querySelector(".global-nav-annual-subitem")) {
+      const annualSubitem = document.createElement("li");
+      annualSubitem.className = "global-nav-annual-subitem";
+      annualSubitem.innerHTML = '<a href="/preview-vokdayja/">丁未年（116年）年度點燈</a>';
+      annualLink.closest("li")?.after(annualSubitem);
+    }
+
     const services = nav.querySelector("#global-nav-services");
     pruneUnfinishedServiceItems(services);
     if (services && currentPath.startsWith("/services")) {

@@ -373,3 +373,13 @@
     transition: none !important;
   }
 }
+
+.global-nav-annual-subitem > a {
+  padding-left: 38px !important;
+  color: #c5a26f !important;
+  font-size: 13px !important;
+}
+.global-nav-annual-subitem > a:hover,
+.global-nav-annual-subitem > a:focus-visible {
+  color: #f0dfbc !important;
+}
