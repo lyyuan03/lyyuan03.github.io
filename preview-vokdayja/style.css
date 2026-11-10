@@ -1035,3 +1035,6 @@ nav{gap:12px;position:sticky}
  .annual-flip__tile.flipping .annual-flip__top,
  .annual-flip__tile.flipping .annual-flip__bottom{animation:none !important}
 }
+
+/* 116 年五類籤詩：僅籤詩名稱採朱紅色粗體，附贈品及說明維持原樣。 */
+.lamp-fortune-text > strong:first-of-type{color:#ae2431 !important;font-weight:800 !important}
