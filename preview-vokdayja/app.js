@@ -81,7 +81,19 @@ function buildSponsors(){
   bindPeople($('#sponsor-'+key),()=>sponsorRow(fixed));
  });
 }
-function calc(){let lines=[],lamps=0,goods=0,hasGuang=false,pending=false;lampDefs.forEach(l=>{const el=$(`[data-key="${l.k}"]`);if(!el.querySelector('.lamp-check').checked)return;const count=el.querySelectorAll('.person').length;if(l.n==='廣財運通燈')hasGuang=true;if(l.r==='個人'){lamps+=l.p*count;lines.push([`${l.n}・個人燈 ${count} 位`,l.p*count])}else{pending=true;lines.push([`${l.n}・${registrationType[l.r]} ${count} ${l.r==='公司'?'家':'位'}`,'待行政確認'])}});products.forEach(([n,p,stock],i)=>{const input=$(`[data-quantity="${i}"]`),raw=Number(input.value),valid=Number.isSafeInteger(raw)&&raw>=0&&(stock===null||raw<=stock);input.setCustomValidity(valid?'':stock===null?'請填寫零或正整數數量。':'請填寫 0 至 '+stock+' 的整數數量。');const qty=valid?raw:0;if(qty){goods+=qty*p;lines.push([n+' × '+qty,qty*p])}});let donation=0;
+var editLocks=null;
+function prodSig(){return $$('[data-quantity]').map(x=>Number(x.value)||0).join(',')}
+function applyEditLocks(){
+ if(!editLocks)return;
+ if(editLocks.sig==null)editLocks.sig=prodSig();
+ editLocks.lamps.forEach(k=>{const el=$(`[data-key="${k}"]`);if(!el)return;
+  el.querySelectorAll('input,select,textarea,button').forEach(x=>x.disabled=true);
+  el.classList.add('admin-locked');
+  const head=el.querySelector('.lamp-head');
+  if(head&&!el.querySelector('[data-locked-note]'))head.insertAdjacentHTML('afterend','<p class="hint lock-note" data-locked-note role="note">此項已由行政確認，如需更改請聯絡行政。</p>');
+ });
+}
+function calc(){let lines=[],lamps=0,goods=0,hasGuang=false,pending=false;lampDefs.forEach(l=>{const el=$(`[data-key="${l.k}"]`);if(!el.querySelector('.lamp-check').checked)return;const count=el.querySelectorAll('.person').length;if(l.n==='廣財運通燈')hasGuang=true;if(l.r==='個人'){lamps+=l.p*count;lines.push([`${l.n}・個人燈 ${count} 位`,l.p*count])}else if(editLocks&&editLocks.lamps.includes(l.k)){lines.push([`${l.n}・${registrationType[l.r]} ${count} ${l.r==='公司'?'家':'位'}`,'已由行政確認'])}else{pending=true;lines.push([`${l.n}・${registrationType[l.r]} ${count} ${l.r==='公司'?'家':'位'}`,'待行政確認'])}});products.forEach(([n,p,stock],i)=>{const input=$(`[data-quantity="${i}"]`),raw=Number(input.value),valid=Number.isSafeInteger(raw)&&raw>=0&&(stock===null||raw<=stock);input.setCustomValidity(valid?'':stock===null?'請填寫零或正整數數量。':'請填寫 0 至 '+stock+' 的整數數量。');const qty=valid?raw:0;if(qty){goods+=qty*p;lines.push([n+' × '+qty,qty*p])}});let donation=0;
 sponsors.forEach(([key,title,fixed])=>{
  const card=$('#sponsor-'+key);
  if(!card.querySelector('.sponsor-check').checked)return;
@@ -101,7 +113,7 @@ const standardRegistration=Boolean($$('.lamp-check:checked').length||goods);
  field.required=standardRegistration;
  field.labels[0].classList.toggle('req',standardRegistration);
 });
-const over=goods>0&&$('#overseas').checked,shipping=goods?(over?0:goods>=CFG.shipping.freeThreshold?0:CFG.shipping.fee):0;if(goods)lines.push(['運費',over?'海外另計':shipping]);if(over&&goods)pending=true;currentTotal=lamps+goods+donation+shipping;currentPending=pending;$('#shippingFields').hidden=goods===0;$('#noShipping').hidden=goods>0;$('#overseas').disabled=goods===0;$('#address').disabled=goods===0;$('#address').required=goods>0;$('#addressLabel').classList.toggle('req',goods>0);$('#shippingMsg').textContent=goods?(over?'海外運費由行政另行確認。':shipping?`本次運費 NT$${CFG.shipping.fee}。`:'本次請購已達免運門檻。'):'僅登記點燈，無須運費。';$('#pendingHint').hidden=!pending;$('#totalLabel').textContent=pending?'目前可計算金額':'功德金總計';$('#totalNote').textContent=pending?'另有金額待行政確認':lines.length?'依本次登記項目即時計算':'請選擇燈別、贊助項目或請購品。';$('#total').textContent=$('#mobileAmount').textContent=money(currentTotal);$('#sidebarRows').innerHTML=lines.length?lines.map(([n,p])=>`<div class="sumrow"><span>${esc(n)}</span><span>${typeof p==='number'?money(p):p}</span></div>`).join(''):'<p class="hint">尚未選擇登記項目</p>';$('#breakdown').innerHTML=(lines.length?lines:[['尚未選擇項目',0]]).map(([n,p])=>`<tr><td>${esc(n)}</td><td>${typeof p==='number'?money(p):p}</td></tr>`).join('')+`<tr><td><b>${pending?'目前可計算金額':'合計'}</b></td><td><b>${money(currentTotal)}</b></td></tr>`}
+const over=goods>0&&$('#overseas').checked,shipping=goods?(over?0:goods>=CFG.shipping.freeThreshold?0:CFG.shipping.fee):0;const shipLocked=!!(editLocks&&editLocks.shipping)&&over&&goods>0&&editLocks.sig===prodSig();if(goods)lines.push(['運費',over?(shipLocked?'已由行政確認':'海外另計'):shipping]);if(over&&goods&&!shipLocked)pending=true;currentTotal=lamps+goods+donation+shipping;currentPending=pending;$('#shippingFields').hidden=goods===0;$('#noShipping').hidden=goods>0;$('#overseas').disabled=goods===0||shipLocked;$('#address').disabled=goods===0;$('#address').required=goods>0;$('#addressLabel').classList.toggle('req',goods>0);$('#shippingMsg').textContent=goods?(over?(shipLocked?'海外運費已由行政確認；若更改請購品，運費需由行政重新確認。':'海外運費由行政另行確認。'):shipping?`本次運費 NT$${CFG.shipping.fee}。`:'本次請購已達免運門檻。'):'僅登記點燈，無須運費。';$('#pendingHint').hidden=!pending;$('#totalLabel').textContent=pending?'目前可計算金額':'功德金總計';$('#totalNote').textContent=pending?'另有金額待行政確認':lines.length?'依本次登記項目即時計算':'請選擇燈別、贊助項目或請購品。';const hideTotal=!!(editLocks&&editLocks.totalHidden);$('#total').textContent=$('#mobileAmount').textContent=hideTotal?'請以確認信為準':money(currentTotal);if(hideTotal){$('#totalLabel').textContent='功德金總計';$('#totalNote').textContent='總金額請以確認信為準'}$('#sidebarRows').innerHTML=lines.length?lines.map(([n,p])=>`<div class="sumrow"><span>${esc(n)}</span><span>${typeof p==='number'?money(p):p}</span></div>`).join(''):'<p class="hint">尚未選擇登記項目</p>';$('#breakdown').innerHTML=(lines.length?lines:[['尚未選擇項目',0]]).map(([n,p])=>`<tr><td>${esc(n)}</td><td>${typeof p==='number'?money(p):p}</td></tr>`).join('')+`<tr><td><b>${pending?'目前可計算金額':'合計'}</b></td><td><b>${hideTotal?'請以確認信為準':money(currentTotal)}</b></td></tr>`}
 $('#form').addEventListener('input',calc);$('#form').addEventListener('change',calc);
 function activateTab(b){$$('[data-role]').forEach(x=>{const active=x===b;x.setAttribute('aria-selected',active);x.tabIndex=active?0:-1;$('#'+x.getAttribute('aria-controls')).hidden=!active})}function bindTabs(){const tabs=$$('[data-role]');tabs.forEach((b,i)=>{b.tabIndex=i? -1:0;b.onclick=()=>activateTab(b);b.onkeydown=e=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=tabs.length,next=e.key==='Home'?0:e.key==='End'?n-1:(i+(e.key==='ArrowRight'?1:n-1))%n;activateTab(tabs[next]);tabs[next].focus()}}})}
 
@@ -162,7 +174,7 @@ function restoreKeyed(s){
  products.forEach(([n],i)=>{const el=$(`[data-quantity="${i}"]`);if(el&&s.qty[n]!=null)el.value=s.qty[n]});
  $$('#registrationTerms input').forEach(x=>{if(s.agree[x.id])x.checked=true});
  const tab=s.tab&&$('#'+s.tab);if(tab)activateTab(tab);
- calc();
+ applyEditLocks();calc();
 }
 setCfg(DEFAULT_CFG);renderDynamic();
 
@@ -180,6 +192,7 @@ function unlockPreview(){
  $$('.lamp input,.lamp select,.lamp button,[data-quantity]').forEach(x=>x.disabled=false);
  scalarIds.forEach(id=>{if($('#'+id))$('#'+id).disabled=false});
  $$('[data-locked-note]').forEach(x=>x.remove());
+ $$('.admin-locked').forEach(x=>x.classList.remove('admin-locked'));
 }
 function restoreRegistration(data){
  unlockPreview();
@@ -201,7 +214,7 @@ function setEditButtons(active){$$('button[type="submit"]').filter(x=>x.form===f
 function clearEditQuery(){const url=new URL(location.href);url.searchParams.delete('edit');history.replaceState(null,'',url)}
 $('#cancelEdit').onclick=()=>{
  if(!confirm('離開後將放棄這次尚未儲存的修改，是否繼續？'))return;
- editToken=null;editId=null;clearEditQuery();formNode.reset();
+ editToken=null;editId=null;editLocks=null;clearEditQuery();formNode.reset();
  restoreRegistration({fields:{},lamps:lampDefs.map(l=>({key:l.k,selected:false,people:[]})),sponsors:sponsors.map(()=>({selected:false,people:[]})),quantities:[],agreements:[]});
  $('#editBanner').hidden=true;setEditButtons(false);
 };
@@ -231,12 +244,12 @@ function registrationFromApi(data){
   const url=new URL(window.LYYUAN_SIGNUP_WEBAPP_URL);url.searchParams.set('action','load');url.searchParams.set('token',token);
   const response=await fetch(url,{redirect:'follow'});if(!response.ok)throw new Error('load failed');
   const data=await response.json();if(data.ok!==true||!data.id)throw new Error('invalid token');
-  restoreRegistration(registrationFromApi(data));editToken=token;editId=data.id;
+  restoreRegistration(registrationFromApi(data));editToken=token;editId=data.id;editLocks=data.locks||null;applyEditLocks();calc();
   $('#editTitle').textContent=`正在修改報名 ${editId}`;
   $('#editPolicy').textContent='修改完成後請按「儲存修改」，資料將更新至原報名。請勿轉傳專屬連結。';
   $('#cancelEdit').hidden=false;setEditButtons(true);
  }catch{
-  restoreRegistration(blank);clearEditQuery();
+  editLocks=null;restoreRegistration(blank);clearEditQuery();
   $('#editTitle').textContent='無法載入報名資料';
   $('#editPolicy').textContent='修改連結可能無效或已過期，請確認使用確認信中的完整連結，或聯繫行政。下方空白表單仍可填寫新報名。';
  }finally{loadingEdit=false}
@@ -258,12 +271,13 @@ formNode.onsubmit=e=>{
      $('#resultBody').innerHTML=`<p class="statusmsg error">${esc(msg)}</p><p class="hint">本頁仍保留本次填寫內容，請修正後再試，或聯繫行政。</p>`;
    };
    const showOk=(serverId,res)=>{
-     if(res&&res.totals&&Number.isFinite(res.totals.computable)){currentTotal=res.totals.computable;currentPending=!!res.totals.pending}
+     const hiddenTotal=!!(res&&res.totals&&res.totals.hidden);
+     if(res&&res.totals&&Number.isFinite(res.totals.computable)){currentTotal=res.totals.computable;currentPending=!!res.totals.pending}else if(hiddenTotal){currentPending=!!res.totals.pending}
      if(eyebrow)eyebrow.textContent='SIGNUP COMPLETE';
      $('#result h2').textContent=savingEdit?'已更新':'報名已送出';
      if(foot)foot.hidden=true;
      const who=esc(registrationName(regData)||'');
-     $('#resultBody').innerHTML=`<p>${who}，${savingEdit?'報名資料已更新':'報名資料已送出'}。</p><p>報名編號：<b style="color:var(--gold)">${esc(serverId||'')}</b></p><p>${currentPending?'目前可計算金額':'功德金總計'}：<b style="color:var(--gold)">${money(currentTotal)}</b></p>${currentPending?'<p class="hint">另有項目待行政確認金額。</p>':''}<div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">請於收到行政確認通知後，再依通知金額匯款。本編號已寫入靈元院報名表。</p>${res&&res.priceAdjusted?'<p class="hint">金額已依最新價格設定重新計算。</p>':''}`;
+     $('#resultBody').innerHTML=`<p>${who}，${savingEdit?'報名資料已更新':'報名資料已送出'}。</p><p>報名編號：<b style="color:var(--gold)">${esc(serverId||'')}</b></p>${hiddenTotal?'<p>總金額請以確認信為準。</p>':`<p>${currentPending?'目前可計算金額':'功德金總計'}：<b style="color:var(--gold)">${money(currentTotal)}</b></p>`}${currentPending?'<p class="hint">另有項目待行政確認金額。</p>':''}<div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">請於收到行政確認通知後，再依通知金額匯款。本編號已寫入靈元院報名表。</p>${res&&res.priceAdjusted?'<p class="hint">金額已依最新價格設定重新計算。</p>':''}`;
    };
    if(!endpoint){showFail('報名後端尚未設定。');submitting=false;return;}
    const roleOf=k=>(lampDefs.find(l=>l.k===k)||{}).r||'';

@@ -1047,3 +1047,6 @@ html[data-ev="pending"]::before{content:"載入活動內容中…";animation:evS
 html[data-ev="unavailable"] body{display:none}
 html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
 @keyframes evSlow{to{content:"載入時間較長，請重新整理頁面。"}}
+
+.lock-note{margin:.35rem 0 .6rem;padding:0 1rem;color:var(--pale);font-size:.9rem}
+.lamp.admin-locked .price small{display:none}.lamp.admin-locked .price::after{content:'已由行政確認';font-size:.82rem}.lamp.admin-locked .people>.hint{display:none}
