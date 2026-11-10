@@ -1,7 +1,7 @@
 
 'use strict';const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],money=n=>'NT$ '+Number(n).toLocaleString('zh-TW'),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DEFAULT_CFG=window.LYYUAN_SIGNUP_DEFAULT_CONFIG;
-let eventStatus='開放';const EVENT_CLOSED_TEXT={'關閉':'本次報名目前已關閉，暫不接受新的報名。','草稿':'本次活動尚未開放報名。'};
+let eventStatus='開放',previewMode=false;const EVENT_CLOSED_TEXT={'關閉':'本次報名目前已關閉，暫不接受新的報名。','草稿':'本次活動尚未開放報名。'},EVENT_PREVIEW_TEXT='預覽模式：此活動為草稿，尚未公開，目前無法送出報名。';
 let CFG=DEFAULT_CFG,lampDefs=[],products=[],sponsors=[],registrationType={},lampPurposes={},lampFortune={},hotKeys=new Set(),lastStats=null;let uid=0,currentTotal=0,currentPending=false;
 /* 116年度專屬籤詩對外文案：內建與雲端設定一律以本頁核定版本顯示。 */
 const ANNUAL_FORTUNE_COPY={"head_taisui":"慈賜<strong>《歲運呈祥・吉慶天籤》</strong><br>開示116年流年吉凶、運勢起伏與應注意之事，指引趨吉避凶、逢凶化吉，祈願歲序安泰、福運亨通。","head_pozai":"慈賜<strong>《破厄消災・福慧靈籤》</strong><br>開示116年災厄防範、平安護身與修行課題，指引化解障礙、增長福慧，祈願災消障除、身心安泰。","head_guangcai":"慈賜<strong>《財祿亨通・歲運金籤》</strong><br>開示116年財運盛衰、求財契機與事業運程，指引財路宜忌、進退時機，祈願財源廣進、福祿盈門。","co_pozai":"慈賜<strong>《鎮業化煞・安泰聖籤》</strong><br>開示116年企業經營可能面臨的阻礙、風險與應注意之事，指引防範災厄、化解不利、穩固事業根基，祈願營運平安、員工安康、諸事順遂。","co_guangcai":"慈賜<strong>《鴻業昌隆・財祿金籤》</strong><br>開示116年企業財運、營運走勢、商機財路與事業發展，指引經營宜忌、財務進退及拓展契機，祈願生意興隆、財源廣進、鴻業昌盛。"};
@@ -137,12 +137,12 @@ function renderPriceSettings(){
  $('#priceSettings').innerHTML=lampDefs.filter(l=>l.r==='個人').map(l=>`<label for="price-${l.k}">${l.n}（每位芳名）</label><input id="price-${l.k}" type="number" min="0" step="1" value="${l.p}">`).join('');
 }
 function applyStaticCopy(){
- document.title=CFG.meta.pageTitle;
+ if(CFG.event===window.LYYUAN_SIGNUP_EVENT)document.title=CFG.meta.pageTitle;
  $$('[data-cfg]').forEach(el=>{const v=cfgGet(el.dataset.cfg);if(typeof v==='string')el.textContent=tpl(v)});
  $$('[data-cfg-html]').forEach(el=>{const v=cfgGet(el.dataset.cfgHtml);if(typeof v==='string')el.innerHTML=rich(tpl(v))});
  $$('[data-cfg-tail]').forEach(el=>{const v=cfgGet(el.dataset.cfgTail);let t=null;el.childNodes.forEach(n=>{if(n.nodeType===3&&n.nodeValue.trim())t=n});if(t&&typeof v==='string')t.nodeValue=tpl(v)});
  $$('img[data-img]').forEach(img=>{const c=(CFG.images||{})[img.dataset.img];if(!c)return;if(c.src&&img.getAttribute('src')!==c.src)img.setAttribute('src',c.src);if(typeof c.alt==='string')img.alt=c.alt;const b=img.closest('button');if(b&&c.label)b.setAttribute('aria-label','放大閱讀：'+c.label)});
- const dl=CFG.meta.deadline;{const note=EVENT_CLOSED_TEXT[eventStatus];if(note)$('.preview').append(document.createElement('br'),note)}if(dl){const banner=$('.preview');const passed=Date.parse(dl+(/[zZ]|[+-]\d\d:?\d\d$/.test(dl)?'':'+08:00'))<Date.now();banner.append(document.createElement('br'),tpl(passed?CFG.copy.deadlinePassed:CFG.copy.deadlineNote))}
+ const dl=CFG.meta.deadline;{const note=previewMode?EVENT_PREVIEW_TEXT:EVENT_CLOSED_TEXT[eventStatus];if(note)$('.preview').append(document.createElement('br'),note)}if(dl){const banner=$('.preview');const passed=Date.parse(dl+(/[zZ]|[+-]\d\d:?\d\d$/.test(dl)?'':'+08:00'))<Date.now();const dn=tpl(passed?CFG.copy.deadlinePassed:CFG.copy.deadlineNote);if(dn)banner.append(document.createElement('br'),dn)}
 }
 function renderDynamic(){
  renderTabs();renderZodiacCards();buildLamps();lampDefs.forEach(l=>bindPeople($(`[data-key="${l.k}"]`),()=>personHTML(l)));buildSponsors();applyStaticCopy();renderProducts();renderAgreements();renderPriceSettings();calc();
@@ -367,17 +367,30 @@ function cfgLooksValid(c){
  try{return c&&c.schema===1&&c.event===window.LYYUAN_SIGNUP_EVENT&&arr(c.families)&&arr(c.lamps)&&arr(c.products)&&Array.isArray(c.sponsors)&&arr(c.agreements)&&c.zodiac&&Array.isArray(c.zodiac.cards)&&c.shipping&&num(c.shipping.fee)&&num(c.shipping.freeThreshold)&&c.copy&&c.meta&&c.roleLabels&&Array.isArray(c.roleOrder)&&
   c.lamps.every(l=>l.key&&c.families.some(f=>f.id===l.family)&&['個人','公司','總燈首'].includes(l.role)&&num(l.price))&&c.products.every(p=>p.name&&num(p.price)&&(p.limit==null||(Number.isSafeInteger(p.limit)&&p.limit>0)))&&c.sponsors.every(x=>x.key&&x.title&&num(x.fixed))&&new Set(c.lamps.map(l=>l.key)).size===c.lamps.length&&new Set(c.products.map(p=>p.name)).size===c.products.length}catch{return false}
 }
+/* 非內建活動（?event=其他活動）：載入完成前整頁隱藏（<head> 內小段指令已先標記 data-ev），避免閃現預設活動內容；失敗時顯示說明文字，不顯示預設活動。 */
+const BUILTIN_EV=DEFAULT_CFG.event===window.LYYUAN_SIGNUP_EVENT;
+const PREVIEW_TOKEN=(()=>{try{const t=new URLSearchParams(location.search).get('preview');return t&&/^[A-Za-z0-9_-]{16,80}$/.test(t)?t:''}catch{return''}})();
+function evGate(msg){const r=document.documentElement;if(!msg){r.removeAttribute('data-ev');r.removeAttribute('data-ev-msg');return}document.title='靈元院點燈報名';r.setAttribute('data-ev','unavailable');r.setAttribute('data-ev-msg',msg)}
+function announceDeadline(){document.dispatchEvent(new CustomEvent('lyyuan-config',{detail:{deadline:CFG.meta.deadline||''}}))}
 (async function loadCloudConfig(){
+ let fail='';
  try{
-  const url=new URL(window.LYYUAN_SIGNUP_WEBAPP_URL);url.searchParams.set('action','config');url.searchParams.set('event',window.LYYUAN_SIGNUP_EVENT);
-  const response=await fetch(url,{redirect:'follow'});if(!response.ok)return;
-  const data=await response.json();
-  if(data.ok!==true||data.event!==window.LYYUAN_SIGNUP_EVENT)return;
-  const st=typeof data.status==='string'&&data.status?data.status:'開放';if(st!==eventStatus){eventStatus=st;applyStaticCopy()}
-  if(!cfgLooksValid(data.config))return;
-  if(canon(data.config)===canon(CFG)||submitting)return;
-  const snap=snapKeyed();setCfg(data.config);renderDynamic();restoreKeyed(snap);
- }catch{ /* 保持內建預設 */ }
+  const url=new URL(window.LYYUAN_SIGNUP_WEBAPP_URL);url.searchParams.set('action','config');url.searchParams.set('event',window.LYYUAN_SIGNUP_EVENT);if(PREVIEW_TOKEN)url.searchParams.set('preview',PREVIEW_TOKEN);
+  const response=await fetch(url,{redirect:'follow'});
+  if(!response.ok)fail='net';else{
+   const data=await response.json();
+   if(data.ok!==true||data.event!==window.LYYUAN_SIGNUP_EVENT)fail=data&&data.status===404?'unknown':'net';
+   else{
+    const st=typeof data.status==='string'&&data.status?data.status:'開放',pv=data.preview===true&&st==='草稿';
+    if(st!==eventStatus||pv!==previewMode){eventStatus=st;previewMode=pv;applyStaticCopy()}
+    if(!cfgLooksValid(data.config))fail=st==='草稿'?'draft':'net';
+    else if(canon(data.config)!==canon(CFG)&&!submitting){const snap=snapKeyed();setCfg(data.config);renderDynamic();restoreKeyed(snap)}
+   }
+  }
+ }catch{fail='net'}
+ if(BUILTIN_EV){announceDeadline();return} /* 內建活動：行為與以前相同，只多通知倒數條目前截止時間 */
+ if(fail){evGate({unknown:'找不到這個活動，請確認網址是否正確。',draft:'本次活動尚未開放報名。'}[fail]||'目前無法載入活動內容，請稍後重新整理頁面。');return}
+ evGate('');announceDeadline();
 })();
 
 // Read-only social proof: one request per page load, independent of registration.

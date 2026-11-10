@@ -2,12 +2,12 @@
 window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
  "schema": 1,
  "event": "lamp-116-dingwei",
- "version": 1,
+ "version": 2,
  "meta": {
   "pageTitle": "丁未年點燈登記・靈元院",
   "srTitle": "116年丁未年度點燈登記",
   "yearLabel": "116丁未年",
-  "deadline": ""
+  "deadline": "2027-02-10T23:59"
  },
  "shipping": {
   "freeThreshold": 4000,
@@ -326,7 +326,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
   "signupProof": "已有 {{count}} 位信眾點亮",
   "zodiacBar": "{{zodiac}}　{{count}} 人已點",
   "zodiacTop": "　🔥 最多人點",
-  "deadlineNote": "報名截止：{{deadline}}",
+  "deadlineNote": "",
   "deadlinePassed": "本次報名已截止。"
  },
  "page": {
