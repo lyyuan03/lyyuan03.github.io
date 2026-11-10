@@ -1428,6 +1428,37 @@ function isThumbnailControlTarget(target) {
   return target instanceof Element && Boolean(target.closest("#thumbnail-control-panel"));
 }
 
+// Native validation runs before submit, so report failures here without changing saving.
+form.addEventListener("invalid", (event) => {
+  const invalidFields = Array.from(form.elements)
+    .filter((field) => field.willValidate && !field.validity.valid);
+  const missing = [];
+  const errors = [];
+  const bookLabels = {
+    bookTitle: "延伸書名",
+    bookPurchaseUrl: "書籍連結",
+    bookCoverImage: "書封圖片網址"
+  };
+  invalidFields.forEach((field) => {
+    const label = bookLabels[field.name]
+      || field.labels?.[0]?.textContent.trim()
+      || field.name;
+    if (field.validity.valueMissing) missing.push(label);
+    else if (field.validity.typeMismatch) errors.push(label + "格式不正確");
+    else errors.push(label + "：" + field.validationMessage);
+  });
+  const messages = [];
+  if (missing.length) messages.push("請填寫" + missing.join("、"));
+  messages.push(...errors);
+  setSaveStatus("尚未儲存：" + messages.join("；"), "error");
+  // Suppress native popups so they cannot move focus to a later invalid field.
+  event.preventDefault();
+  if (event.target === invalidFields[0]) {
+    invalidFields[0].scrollIntoView({ block: "center" });
+    invalidFields[0].focus({ preventScroll: true });
+  }
+}, true);
+
 form.addEventListener("submit", saveArticle);
 form.addEventListener("input", (event) => {
   if (isThumbnailControlTarget(event.target)) return;
