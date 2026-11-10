@@ -12,8 +12,9 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase
 import { activeSponsorMember, activeWellnessMember, activeEntitlement } from "./member-access-resolver.js";
 import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./inapp-browser.js?v=20261017-inapp-login-2";
 
-const AUTH_VERSION = "20261106-course-admin-1";
+const AUTH_VERSION = "20261110-zodiac-preview-1";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
+const ZODIAC_PREVIEW_URL = "https://lyyuan-2027-zodiac-preview-20261110.levelbrook1.chatgpt.site";
 // 課程頁明確提供就地管理入口時，管理員登入後留在該頁；其他頁維持既有後台導向。
 const courseAdminButton = document.querySelector("[data-course-admin-open]");
 
@@ -27,6 +28,8 @@ function installStyles() {
     #site-auth-bar{position:fixed;top:56px;left:0;right:0;z-index:98;height:var(--site-auth-height);display:flex;align-items:center;justify-content:flex-end;padding:0 24px;background:rgba(7,11,6,.97);border-bottom:1px solid rgba(165,130,84,.22);font-family:'Noto Sans TC','Arial',sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.08)}
     .site-auth-actions{position:relative;display:flex;align-items:center;gap:9px}
     .site-auth-button{height:34px;padding:6px 14px;border:1px solid rgba(165,130,84,.48);background:rgba(165,130,84,.07);color:#C5A26F;font:inherit;font-size:12px;letter-spacing:.1em;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s,border-color .2s,transform .2s}
+    #admin-zodiac-preview-link{display:inline-flex;align-items:center;text-decoration:none}
+    #admin-zodiac-preview-link[hidden]{display:none!important}
     .site-auth-button:hover{background:rgba(165,130,84,.17);border-color:rgba(197,162,111,.72);transform:translateY(-1px)}
     .site-auth-button:disabled{opacity:.55;cursor:wait;transform:none}
     .site-account-menu{position:absolute;top:calc(100% + 9px);right:0;z-index:1300;width:220px;padding:7px;background:rgba(12,18,10,.99);border:1px solid rgba(165,130,84,.34);box-shadow:0 16px 42px rgba(0,0,0,.46)}
@@ -73,6 +76,7 @@ function installStyles() {
       #site-auth-bar{padding:0 12px;justify-content:center}
       .site-auth-actions{width:100%;max-width:220px;gap:8px}
       .site-auth-button{flex:1;min-width:0;padding:6px 8px;font-size:11.5px}
+      #site-auth-bar:has(#admin-zodiac-preview-link:not([hidden])) .site-auth-actions{max-width:396px}
       .site-account-menu{left:0;right:0;width:100%}
       .member-login-card{padding:38px 24px 30px}
     }
@@ -88,6 +92,7 @@ function installBar() {
   bar.setAttribute("data-auth-version", AUTH_VERSION);
   bar.innerHTML = `
     <div class="site-auth-actions" aria-label="網站登入">
+      <a id="admin-zodiac-preview-link" class="site-auth-button" href="${ZODIAC_PREVIEW_URL}" target="_blank" rel="noopener noreferrer" hidden>2027 生肖預覽</a>
       <button id="member-login-button" class="site-auth-button" type="button" aria-haspopup="false" aria-expanded="false" aria-controls="site-account-menu">會員登入</button>
       <div id="site-account-menu" class="site-account-menu" hidden>
         <a href="/member-dashboard.html">我的會員中心</a>
@@ -133,6 +138,7 @@ installStyles();
 const bar = installBar();
 const modal = installMemberModal();
 const memberButton = bar.querySelector("#member-login-button");
+const zodiacPreviewLink = bar.querySelector("#admin-zodiac-preview-link");
 const accountMenu = bar.querySelector("#site-account-menu");
 const signOutButton = accountMenu.querySelector("[data-member-sign-out]");
 const wellnessVideoLink = accountMenu.querySelector("[data-wellness-video-link]");
@@ -396,6 +402,7 @@ googleButton.addEventListener("click", async () => {
 
 onAuthStateChanged(auth, async (user) => {
   closeAccountMenu();
+  zodiacPreviewLink.hidden = true;
   if (user) releaseLoginUi();
   hasWellnessAccess = false;
   hasMemberAccess = false;
@@ -415,6 +422,7 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
   if (isAdminEmail(user.email)) {
+    zodiacPreviewLink.hidden = false;
     memberButton.textContent = courseAdminButton ? "學員開通" : "進入管理後台";
     memberButton.title = courseAdminButton ? "開啟本課程的學員開通介面" : "前往靈元院管理後台";
     if (courseAdminButton) {
