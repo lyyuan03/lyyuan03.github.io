@@ -84,7 +84,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
    "role": "總燈首",
    "price": 0,
    "purpose": "安奉個人專屬祿位，祈願化解流年沖犯、安定元神，護持全年平安。",
-   "fortune": "116年個人專屬<strong>【歲序康泰】</strong>籤詩。",
+   "fortune": "慈賜<strong>《歲運呈祥・吉慶天籤》</strong><br>開示116年流年吉凶、運勢起伏與應注意之事，指引趨吉避凶、逢凶化吉，祈願歲序安泰、福運亨通。",
    "gift": "",
    "hot": false,
    "enabled": true
@@ -96,7 +96,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
    "role": "總燈首",
    "price": 0,
    "purpose": "安奉個人專屬祿位，祈願消災解厄、降伏心魔，護持身心安定。",
-   "fortune": "116年個人專屬<strong>【福慧勵業】</strong>籤詩。",
+   "fortune": "慈賜<strong>《破厄消災・福慧靈籤》</strong><br>開示116年災厄防範、平安護身與修行課題，指引化解障礙、增長福慧，祈願災消障除、身心安泰。",
    "gift": "",
    "hot": false,
    "enabled": true
@@ -108,7 +108,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
    "role": "總燈首",
    "price": 0,
    "purpose": "安奉個人專屬祿位，祈願廣納財氣、財運亨通。",
-   "fortune": "116年個人專屬<strong>【財祿運勢】</strong>籤詩。",
+   "fortune": "慈賜<strong>《財祿亨通・歲運金籤》</strong><br>開示116年財運盛衰、求財契機與事業運程，指引財路宜忌、進退時機，祈願財源廣進、福祿盈門。",
    "gift": "特贈結緣－<strong>【廣財運通香2入組】</strong>。",
    "hot": false,
    "enabled": true
@@ -120,7 +120,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
    "role": "公司",
    "price": 0,
    "purpose": "安奉公司行號專屬祿位，祈願營運平順、人事和合，減少事業阻礙。",
-   "fortune": "",
+   "fortune": "慈賜<strong>《鎮業化煞・安泰聖籤》</strong><br>開示116年企業經營可能面臨的阻礙、風險與應注意之事，指引防範災厄、化解不利、穩固事業根基，祈願營運平安、員工安康、諸事順遂。",
    "gift": "",
    "hot": false,
    "enabled": true
@@ -132,7 +132,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
    "role": "公司",
    "price": 0,
    "purpose": "安奉公司行號專屬祿位，祈願財源順暢、貴人相助，護持事業開展。",
-   "fortune": "116年公司專屬<strong>【財祿運勢】</strong>籤詩。",
+   "fortune": "慈賜<strong>《鴻業昌隆・財祿金籤》</strong><br>開示116年企業財運、營運走勢、商機財路與事業發展，指引經營宜忌、財務進退及拓展契機，祈願生意興隆、財源廣進、鴻業昌盛。",
    "gift": "",
    "hot": false,
    "enabled": true
@@ -314,7 +314,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
  ],
  "copy": {
   "hotTag": "熱門",
-  "fortuneTag": "附籤詩",
+  "fortuneTag": "賜籤詩",
   "fortuneLabel": "116年度慈賜籤詩",
   "pendingPrice": "金額待確認",
   "personalSuffix": "・每位芳名",
@@ -344,7 +344,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
   "sec02Note": "可同時登記多種燈別",
   "lampsIntro": "先參閱安燈項目與生肖說明，再選擇下方燈別。圖片皆可點擊放大。",
   "lampsHint": "先選擇燈別，再勾選該燈別的登記類別。可跨燈別登記。",
-  "fortuneNote": "<strong>116年度慈賜點燈籤詩</strong>睽違一年，116年度點燈賜籤詩，祈願神明慈悲指引，為安奉總燈首、廣財運通公司行號燈善信開示年度福運與修持方向。<br>點燈籤詩依每年法儀因緣安排，並非年年皆有，因緣殊勝。",
+  "fortuneNote": "<strong>116年度慈賜籤詩</strong>本年度太歲燈、破災降魔燈、廣財運通燈總燈首，以及破災降魔燈、廣財運通燈公司行號燈，分別慈賜專屬年度籤詩，開示116年應留意的運勢、平安、修行與事業方向。",
   "sec03": "建院隨喜功德",
   "sponsorHint": "勾選贊助項目後填寫資料。每個項目可新增多筆。",
   "sec04": "新春香品・御守請購",
