@@ -1135,8 +1135,8 @@ html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
   aspect-ratio:1;
   object-fit:cover;
   border-radius:50%;
-  -webkit-mask-image:radial-gradient(circle closest-side,#000 40%,rgba(0,0,0,.55) 68%,transparent 100%);
-  mask-image:radial-gradient(circle closest-side,#000 40%,rgba(0,0,0,.55) 68%,transparent 100%);
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 50%,rgba(0,0,0,.55) 76%,transparent 100%);
+  mask-image:radial-gradient(circle closest-side,#000 50%,rgba(0,0,0,.55) 76%,transparent 100%);
   -webkit-mask-size:100% 100%;
   mask-size:100% 100%;
   -webkit-mask-repeat:no-repeat;

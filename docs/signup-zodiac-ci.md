@@ -1,6 +1,6 @@
 # 報名頁犯太歲生肖卡片 CI
 
-卡片 CSS、renderZodiacCards 的靜態圖片對應與 style.css、app.js 引用快取版本更新為 `20261110-zodiac-circle-1`。既有文字、esc() 轉義、config 結構與 stats 成功後隱藏卡片／顯示 #zodiacBars 的行為不變。
+卡片 CSS、renderZodiacCards 的靜態圖片對應與 style.css、app.js 引用快取版本更新為 `20261111-ink-hd-1`。既有文字、esc() 轉義、config 結構與 stats 成功後隱藏卡片／顯示 #zodiacBars 的行為不變。
 
 ## 品牌色與對應
 
@@ -35,21 +35,28 @@
 
 reduced-motion 關閉 animation、transition、互動位移及旋轉，保留靜態抬升與陰影。外層維持桌機雙欄、手機單欄；有圖片的卡片內採 grid，文字與圖片分欄，間距 14px／手機 10px。圖片寬 112px／手機 88px，不覆蓋文字；卡片外不套用新樣式。
 
-## 本機驗證（2026-11-10）
+## 本機驗證（2026-11-11）
 
 - Chrome `/usr/bin/google-chrome`、puppeteer-core；本機靜態伺服器 :4173。阻擋外部請求以驗證 config／stats 不可達時的預設四張卡，無提交資料。
 - 1280px：雙欄；390px：單欄。頁面無水平溢出，各卡 scrollWidth 未超過 clientWidth，截圖檢查無截字。
-- 一般與 hover 截圖：`/workspace/signup-zodiac-ci/v3/codex-shots/zodiac-{1280,390}{,-hover}.png`。手機不啟用 hover 效果。
+- 一般與 hover 截圖：`/workspace/signup-zodiac-ci/v4/codex-shots/zodiac-{1280,390}{,-hover}.png`。手機不啟用 hover 效果。
 - 兩種尺寸 reduced-motion：四張卡 computed animation-name 均為 none，transition-duration 均為 0s。
 - deploy.yml validate：全站 JS syntax、paid access policy lock、paid runtime audit、production stability audit、male-yoga-admin 8 項測試全部通過。
 - deploy.yml candidate-smoke：Playwright 1.55.0 Chromium runtime；文章 5-load、admin gate、歷史 restricted body recovery 全部通過。測試依賴安裝於 /tmp，未納入提交。
 
 ## 動物圖片來源與處理
 
-圖片來源為 `preview-vokdayja/assets/image-03.webp` 海報的羊、牛、龍、狗頭部方形裁切，由使用者預先抹除書法痕跡、填補缺口。新圖為不透明正方形；將 `/workspace/signup-zodiac-ci/v3/assets/taisui-circle-{goat,ox,dragon,dog}.webp` 與各自的 `@2x.webp` 共 8 檔逐位元複製到公開 assets，未改圖。舊版去背頭像 8 檔已移除，無其他引用。
+圖片以海報水墨風 AI 生成，羊、牛、龍、狗均無任何文字，背景為柔和沙色的不透明正方形。將使用者提供的 /workspace/signup-zodiac-ci/v4/assets/ 內 taisui-ink-{goat,ox,dragon,dog}.webp、@2x.webp、@3x.webp 共 12 檔逐位元複製到公開 assets，未改圖。已確認舊圓形圖無其他引用並刪除 8 檔。
 
-`renderZodiacCards()` 的靜態 Map 只對應羊／牛／龍／狗，src、1x/2x srcset 使用固定新路徑，不拼接 config。其他生肖完全不輸出 img。所有 config 文字繼續 esc()；alt、loading="lazy"、decoding="async" 維持。四圖 width/height 均為 128；1x 為 128×128，2x 為 256×256。
+`renderZodiacCards()` 的靜態 Map 只對應羊／牛／龍／狗，src、1x/2x/3x srcset 使用固定新路徑，不拼接 config。其他生肖完全不輸出 img。所有 config 文字繼續 esc()；alt、loading="lazy"、decoding="async" 維持。四圖 width/height 均為 128；1x 為 128×128，2x 為 256×256，3x 為 384×384。
 
-CSS 顯示尺寸統一為桌機 112×112、≤480px 手機 88×88，aspect-ratio:1、object-fit:cover、border-radius:50%。標準與 WebKit mask-image 都使用 `radial-gradient(circle closest-side,#000 40%,rgba(0,0,0,.55) 68%,transparent 100%)`，mask-size 為 100% 100% 且不重複，讓邊緣平滑融入四種卡色。移除圖片 drop-shadow，避免奶油色光圈與貼紙感。保留 translateZ(6px) 與卡片既有 CSS 浮動；reduced-motion 下卡片與圖片 animation-name 均為 none。
+CSS 顯示尺寸統一為桌機 112×112、≤480px 手機 88×88，aspect-ratio:1、object-fit:cover、border-radius:50%。標準與 WebKit mask-image 都使用 `radial-gradient(circle closest-side,#000 50%,rgba(0,0,0,.55) 76%,transparent 100%)`，mask-size 為 100% 100% 且不重複，讓邊緣平滑融入四種卡色。移除圖片 drop-shadow，避免奶油色光圈與貼紙感。保留 translateZ(6px) 與卡片既有 CSS 浮動；reduced-motion 下卡片與圖片 animation-name 均為 none。
 
-補充驗證：四張已知生肖 naturalWidth 均為 128；兩個尺寸的圖片顯示尺寸一致，文字區與圖片區無重疊，頁面無水平溢出。實際檢視四種卡色的一般／hover 截圖，邊緣平滑漸隱，狗圖左下角無缺口。8 個新圖片與使用者原檔逐位元相同。
+補充驗證：四張已知生肖 naturalWidth 均為 128；兩個尺寸的圖片顯示尺寸一致，文字區與圖片區無重疊，頁面無水平溢出。實際檢視四種卡色的一般／hover 截圖，邊緣平滑漸隱，龍卡深底仍可辨識沙色中心，但外緣平順淡出，無硬圓盤邊界，保留指定 50%／76% 遮罩。13 個新圖片（含高解析海報）與使用者原檔逐位元相同。
+
+
+## 海報高解析燈箱
+
+image-03-hd.webp 為使用者提供的 Real-ESRGAN x4plus 3x 放大版本（3165×4473），內容未改，逐位元複製。一般顯示與雲端 images.zodiac.src 仍使用 assets/image-03.webp。只在點擊 .poster-open 時，以 URL pathname 檔名對照改用同目錄 image-03-hd.webp，保留 origin、路徑與 query；其他海報及「原尺寸閱讀」邏輯維持。初次載入不請求高解析檔。
+
+本次燈箱驗證：1280／390 初次網路請求均無 image-03-hd.webp；點開生肖海報後 #imageLarge naturalWidth 為 3165，原尺寸閱讀切換正常；image-02 燈箱仍使用原檔。13 個新檔均與來源逐位元一致。
