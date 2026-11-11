@@ -1195,3 +1195,96 @@ html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
  #items{scroll-margin-top:85px}
 }
 @media(prefers-reduced-motion:reduce){.exclusive-float{transition:none}}
+
+/* 丁未年選物浮標：只加強入口視覺，不影響原彈窗與導購行為。 */
+.exclusive-float{
+  width:184px;
+  min-height:136px;
+  padding:19px 12px 17px;
+  gap:8px;
+  isolation:isolate;
+  overflow:hidden;
+  border:2px solid #f5d791;
+  border-radius:19px;
+  background:linear-gradient(142deg,#9b632d 0%,#49371e 40%,#172d28 100%);
+  box-shadow:0 0 0 4px rgba(199,151,67,.18),0 15px 35px rgba(31,25,13,.46),inset 0 1px 0 rgba(255,248,199,.7);
+  animation:exclusiveAttentionFloat 4.8s ease-in-out infinite,exclusiveAttentionGlow 3.2s ease-in-out infinite;
+  will-change:transform;
+}
+.exclusive-float::before{
+  content:"";
+  position:absolute;
+  inset:-35% -60%;
+  z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(110deg,transparent 37%,rgba(255,242,191,.33) 47%,rgba(255,255,255,.65) 51%,transparent 61%);
+  transform:translateX(-120%) rotate(-8deg);
+  animation:exclusiveAttentionShine 5.5s ease-in-out infinite;
+}
+.exclusive-float::after{
+  content:"限定選物";
+  position:absolute;
+  top:7px;
+  right:-24px;
+  width:96px;
+  transform:rotate(38deg);
+  background:#b52d34;
+  color:#fff9e5;
+  font:700 10px/1.55 'Noto Sans TC',sans-serif;
+  letter-spacing:.08em;
+  box-shadow:0 2px 7px rgba(0,0,0,.3);
+  pointer-events:none;
+}
+.exclusive-float__eyebrow{font-size:13px;font-weight:700;color:#fff0bd;text-shadow:0 1px 4px #000a}
+.exclusive-float__title{font-size:19px;font-weight:800;color:#fff8e8;text-shadow:0 2px 8px #000b}
+.exclusive-float__action{
+  display:inline-block;
+  margin-top:3px;
+  padding:5px 13px;
+  border:1px solid rgba(255,237,179,.65);
+  border-radius:999px;
+  color:#3c2815;
+  background:linear-gradient(#f7e3b8,#dcb773);
+  box-shadow:0 3px 9px rgba(0,0,0,.25);
+  font-weight:700;
+}
+.exclusive-float:hover{
+  animation-play-state:paused;
+  transform:translateY(-50%) scale(1.075);
+  box-shadow:0 0 0 6px rgba(226,184,103,.26),0 22px 45px rgba(31,25,13,.55),0 0 24px rgba(241,191,92,.5);
+}
+@keyframes exclusiveAttentionFloat{
+  0%,100%{transform:translateY(-50%)}
+  50%{transform:translateY(calc(-50% - 7px))}
+}
+@keyframes exclusiveAttentionGlow{
+  0%,100%{box-shadow:0 0 0 3px rgba(199,151,67,.16),0 15px 35px rgba(31,25,13,.43),0 0 4px rgba(235,188,93,.15)}
+  50%{box-shadow:0 0 0 6px rgba(226,184,103,.24),0 17px 39px rgba(31,25,13,.5),0 0 23px rgba(241,191,92,.42)}
+}
+@keyframes exclusiveAttentionShine{
+  0%,22%{transform:translateX(-120%) rotate(-8deg)}
+  38%,100%{transform:translateX(120%) rotate(-8deg)}
+}
+@media(max-width:740px){
+  .exclusive-float{
+    width:142px;min-height:94px;padding:13px 8px 10px;gap:4px;
+    border-radius:15px;
+    animation:exclusiveAttentionFloatMobile 4.8s ease-in-out infinite,exclusiveAttentionGlow 3.2s ease-in-out infinite;
+  }
+  .exclusive-float__eyebrow{font-size:10px}
+  .exclusive-float__title{font-size:15px}
+  .exclusive-float__action{font-size:10px;padding:3px 10px}
+  .exclusive-float:hover{transform:translateY(-4px) scale(1.04)}
+  .exclusive-float::after{top:5px;right:-28px;font-size:8px}
+}
+@keyframes exclusiveAttentionFloatMobile{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .exclusive-float,.exclusive-float::before{animation:none!important;will-change:auto}
+  .exclusive-float:hover{transform:translateY(-50%)}
+}
+@media(prefers-reduced-motion:reduce) and (max-width:740px){
+  .exclusive-float:hover{transform:none}
+}
