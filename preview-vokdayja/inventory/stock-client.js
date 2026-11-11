@@ -9,10 +9,16 @@
   const items = document.getElementById('items');
   const productsBox = document.getElementById('products');
   if (!form || !items || !productsBox) return;
-  const map = [
-    ['guangcai-incense',1],['guangcai-incense',3],['guangcai-incense',3],
-    ['zhen-sha-powder',3],['zhen-sha-powder',3]
-  ];
+  const skuUnits = {
+    p1:['guangcai-incense',1], p2:['guangcai-incense',3],p3:['guangcai-incense',3],
+    p4:['zhen-sha-powder',3],p5:['zhen-sha-powder',3]
+  };
+  const mappedProducts = () => {
+    const list = typeof CFG !== 'undefined' && CFG && Array.isArray(CFG.products) ?
+      CFG.products : (window.LYYUAN_SIGNUP_DEFAULT_CONFIG?.products || []);
+    return list.map((p,i) => ({i,sku:skuUnits[p.id]?.[0],units:skuUnits[p.id]?.[1] || 0}))
+      .filter(p => p.sku && p.units);
+  };
   let available = null;
   let requestRunning = false;
   let supported = true;
@@ -31,14 +37,15 @@
   };
   function demand() {
     const consumed = {'guangcai-incense':giftCount(),'zhen-sha-powder':0};
-    map.forEach(([sku,units],i) => { consumed[sku] += quantity(i)*units; });
+    mappedProducts().forEach(({i,sku,units}) => { consumed[sku] += quantity(i)*units; });
     return consumed;
   }
   function validatePayload(payload) {
     if (!available || isEdit()) return '';
     let needed = {'guangcai-incense':0,'zhen-sha-powder':0};
     (payload.products || []).forEach((p,i) => {
-      if (i < map.length) needed[map[i][0]] += (Number(p.qty) || 0) * map[i][1];
+      const product = mappedProducts().find(x => x.i === i);
+      if (product) needed[product.sku] += (Number(p.qty) || 0) * product.units;
     });
     const h = (payload.lamps || []).find(p => p.key === 'head_guangcai' && p.selected);
     if (h) needed['guangcai-incense'] += 2 * (h.people || []).length;
@@ -66,7 +73,7 @@
       ' 包。不同優惠組合與總燈首贈品共用庫存；實際以送出當下確認為準。';
     if (isEdit()) return;
     const used = demand();
-    map.forEach(([sku,units],i) => {
+    mappedProducts().forEach(({i,sku,units}) => {
       const input = document.querySelector('[data-quantity="'+i+'"]');
       if (!input) return;
       const current = quantity(i);
