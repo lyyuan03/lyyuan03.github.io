@@ -1288,3 +1288,80 @@ html[data-ev="unavailable"]::before{content:attr(data-ev-msg)}
 @media(prefers-reduced-motion:reduce) and (max-width:740px){
   .exclusive-float:hover{transform:none}
 }
+
+/* Mobile-only: full card on arrival; scroll, form focus, or X reduces to a tiny poster shortcut. */
+.exclusive-float__compact-icon,.exclusive-float-dismiss{display:none}
+@media(max-width:740px){
+  .exclusive-float:not(.exclusive-float--collapsed){
+    right:12px;
+    bottom:84px;
+    animation:exclusiveAttentionGlow 3.2s ease-in-out infinite;
+  }
+  .exclusive-float:not(.exclusive-float--collapsed):hover{
+    transform:none;
+  }
+  .exclusive-float-dismiss:not([hidden]){
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:fixed;
+    right:6px;
+    bottom:calc(84px + 83px);
+    width:29px;
+    height:29px;
+    padding:0;
+    z-index:42;
+    border:1px solid #e7cca2;
+    border-radius:50%;
+    background:#f9f1e4;
+    color:#69462b;
+    font:700 22px/1 Arial,sans-serif;
+    box-shadow:0 2px 8px #35271755;
+    cursor:pointer;
+  }
+  .exclusive-float--collapsed,
+  .exclusive-float--collapsed:hover{
+    top:50% !important;
+    bottom:auto !important;
+    right:0 !important;
+    width:46px !important;
+    height:46px !important;
+    min-height:46px !important;
+    padding:0 !important;
+    gap:0 !important;
+    overflow:hidden !important;
+    border-radius:50% 0 0 50% !important;
+    border:2px solid #e9c678 !important;
+    border-right:0 !important;
+    background:linear-gradient(145deg,#a87738,#584023 65%,#29362c) !important;
+    box-shadow:0 3px 11px #211b1850 !important;
+    animation:none !important;
+    transform:translateY(-50%) !important;
+    transition:none !important;
+    will-change:auto !important;
+  }
+  .exclusive-float--collapsed::before,
+  .exclusive-float--collapsed::after{
+    display:none !important;
+    content:none !important;
+    animation:none !important;
+  }
+  .exclusive-float--collapsed .exclusive-float__eyebrow,
+  .exclusive-float--collapsed .exclusive-float__title,
+  .exclusive-float--collapsed .exclusive-float__action{
+    display:none !important;
+  }
+  .exclusive-float--collapsed .exclusive-float__compact-icon{
+    display:block !important;
+    color:#fff0bc;
+    font:700 26px/1 'Noto Serif TC',serif;
+    text-shadow:0 0 4px #fff3bd80;
+  }
+  .exclusive-float--collapsed:focus-visible{
+    outline:3px solid #ad702d !important;
+    outline-offset:3px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .exclusive-float:not(.exclusive-float--collapsed){animation:none !important}
+}
