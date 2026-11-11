@@ -1208,3 +1208,6 @@ body.signup-page .exclusive-dialog__body{max-height:calc(100dvh - 128px)}
   font:700 12px/1.6 'Noto Sans TC',sans-serif;
 }
 .product.inventory-soldout [data-quantity]{cursor:not-allowed;opacity:.58}
+
+/* 達國內免運門檻時強調提示 */
+#shippingMsg.shipping-free{color:#b42318;font-weight:700}
