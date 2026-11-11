@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><link rel="stylesheet" href="./style.css?v=20261111-ink-hd-1"><script>/* 非預設活動（?event=其他活動）：在第一次繪製前先隱藏整頁，等該活動設定載入後才顯示，避免閃現預設活動內容。 */(function(){try{var e=new URLSearchParams(location.search).get('event');if(e&&e!=='lamp-116-dingwei'&&/^[a-z0-9][a-z0-9-]{2,60}$/.test(e)){var r=document.documentElement;r.setAttribute('data-ev','pending');document.title='靈元院點燈報名'}}catch(x){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>丁未年點燈登記・靈元院</title><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet"></head><body>
+<!doctype html><html lang="zh-Hant"><head><link rel="stylesheet" href="./style.css?v=20261111-exclusive-poster-1"><script>/* 非預設活動（?event=其他活動）：在第一次繪製前先隱藏整頁，等該活動設定載入後才顯示，避免閃現預設活動內容。 */(function(){try{var e=new URLSearchParams(location.search).get('event');if(e&&e!=='lamp-116-dingwei'&&/^[a-z0-9][a-z0-9-]{2,60}$/.test(e)){var r=document.documentElement;r.setAttribute('data-ev','pending');document.title='靈元院點燈報名'}}catch(x){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>丁未年點燈登記・靈元院</title><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet"></head><body>
 <div class="japanese-scene" aria-hidden="true"><div class="falling-leaves"><i class="falling-leaf"></i><i class="falling-leaf"></i><i class="falling-leaf"></i><i class="falling-leaf"></i><i class="falling-leaf"></i><i class="falling-leaf"></i></div><svg class="mountain-smoke" viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#A58254" stroke-width="1.1" stroke-linecap="round"><path d="M137 123 C104 106 178 93 147 73 S111 44 151 22"/><path d="M157 134 C126 110 191 101 169 80 S145 54 178 32"/><path d="M119 110 C96 91 132 83 125 64 S105 41 127 25"/></g></svg><svg class="walking-goat" viewBox="0 0 260 230" fill="none" xmlns="http://www.w3.org/2000/svg"><g class="goat-drift"><g class="goat-body" stroke="#594F47" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
 <!-- Far legs, each articulated at hip/shoulder and knee. -->
 <g class="goat-leg far front"><path d="M100 132 Q96 153 102 170"/><g class="goat-shin"><path d="M102 170 L98 204 L91 211 L103 211 L109 176" fill="#f4efe4"/></g></g>
@@ -63,4 +63,43 @@
   </div>
 </footer><div class="mobiletotal"><span>本次可計算金額<b id="mobileAmount">NT$ 0</b></span><a href="#review" class="btn">查看登記明細 ↑</a></div></div><div id="admin" hidden><div class="adminwrap"><div class="adminbar"><div class="heading"><p class="eyebrow">ADMINISTRATION</p><h2>點燈登記・管理後台</h2><p class="hint">版面操作示意，尚未連接管理者登入或雲端報名資料。</p></div><button class="subbtn" id="backFront">返回報名頁</button></div><div class="adminstats"><div class="stat">登記筆數<b id="adminCount">3</b></div><div class="stat">待確認金額<b>1</b></div><div class="stat">已核帳<b>1</b></div></div><div class="adminnav" aria-label="後台分頁"><button class="subbtn on" data-admin="regs">報名資料</button><button class="subbtn" data-admin="settings">燈別與金額</button><button class="subbtn" data-admin="texts">網頁內容</button><button class="subbtn" data-admin="system">系統設定</button></div><section class="panel" data-admin-pane="regs"><div class="sectionline"><h3>報名資料管理</h3><small>版面操作示意</small></div><div class="grid"><input id="search" aria-label="搜尋報名資料" placeholder="搜尋登記編號、姓名或燈別"><select id="filterStatus" aria-label="篩選狀態"><option value="">全部狀態</option><option>待確認</option><option>已回報匯款</option><option>已核帳</option></select></div><div class="tablewrap"><table class="admin"><thead><tr><th>登記編號</th><th>登記人</th><th>燈別</th><th>金額</th><th>狀態</th><th>操作</th></tr></thead><tbody id="adminRows"></tbody></table></div></section><section class="panel" data-admin-pane="settings" hidden><h3>燈別與金額設定</h3><p class="hint">修改僅套用至目前開啟的頁面，重新整理後還原；不會更新雲端設定。</p><div id="priceSettings"></div><p><button type="button" class="btn" id="applyPrices">套用至本頁</button></p><p class="statusmsg" id="settingMsg"></p></section><section class="panel" data-admin-pane="texts" hidden><h3>網頁內容編輯</h3><label for="editHero">首屏標題</label><input id="editHero" value="點亮心光・安奉好年"><label for="editSub">首屏副標</label><input id="editSub" value="太歲燈　破災降魔燈　廣財運通燈"><p><button class="btn" id="applyText">套用至本頁</button></p><p class="statusmsg" id="textMsg"></p></section><section class="panel" data-admin-pane="system" hidden><h3>系統串接狀態</h3><div class="service-status">報名資料已寫入靈元院 Google 報名表（一年一表、一活動一分頁）。可透過 Gmail 確認信中的專屬連結修改；歷年帶入與跨法會共用仍待後續串接。</div><table class="review"><tr><td>Apps Script 服務</td><td>已連接（報名寫入）</td></tr><tr><td>Google 管理者登入</td><td>尚未連接</td></tr><tr><td>Email 驗證碼</td><td>尚未連接</td></tr><tr><td>資料備份與版本紀錄</td><td>尚未建立</td></tr></table><p class="hint">送出會寫入報名表；核帳、回函與信箱驗證仍依行政流程。本頁的紀錄清單與修改狀態僅保留於本次開啟期間，重新整理後清除；報名資料修改請使用確認信中的專屬連結。</p></section></div></div>
 <dialog id="result" class="modal"><button type="button" class="close" aria-label="關閉">×</button><p class="eyebrow">SIGNUP</p><h2>正在送出…</h2><div id="resultBody"></div><p class="notice result-foot" hidden>送出結果將顯示於此。</p><button type="button" class="btn closeResult">返回檢視</button></dialog>
+
+<!-- 丁未年限定商品：側邊浮動導覽與原圖海報 -->
+<button type="button" class="exclusive-float" id="exclusiveFloat" aria-haspopup="dialog" aria-controls="exclusivePosterDialog" aria-label="查看116年丁未年限定開運結緣選物">
+  <span class="exclusive-float__eyebrow">116 丁未年限定</span>
+  <span class="exclusive-float__title">開運結緣選物</span>
+  <span class="exclusive-float__action">點我探索 <span aria-hidden="true">↗</span></span>
+</button>
+<dialog class="exclusive-dialog" id="exclusivePosterDialog" aria-label="116年丁未年限定商品海報">
+  <div class="exclusive-dialog__body">
+    <div class="exclusive-dialog__header">
+      <span>靈元院｜116年丁未年限定選物</span>
+      <button type="button" class="exclusive-dialog__close" id="exclusivePosterClose" aria-label="關閉商品海報">✕</button>
+    </div>
+    <div class="exclusive-dialog__art">
+      <img src="https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/57c87714-0da6-4b3a-beb1-df4840e03ae6.png" alt="靈元院116年丁未年限定商品海報：廣財運通香、鎮煞護安香粉與元神光彩御守系列" loading="lazy" decoding="async">
+    </div>
+    <div class="exclusive-dialog__footer">
+      <button type="button" class="exclusive-dialog__shop" id="exclusivePosterShop">前往選購香品・御守 <span aria-hidden="true">↓</span></button>
+      <span>關閉海報後，直接帶你前往本頁請購區</span>
+    </div>
+  </div>
+</dialog>
+<script>
+(() => {
+  const openButton = document.getElementById('exclusiveFloat');
+  const dialog = document.getElementById('exclusivePosterDialog');
+  const closeButton = document.getElementById('exclusivePosterClose');
+  const shopButton = document.getElementById('exclusivePosterShop');
+  const target = document.getElementById('items');
+  if (!openButton || !dialog || !closeButton || !shopButton || !target) return;
+  openButton.addEventListener('click', () => { if (!dialog.open) dialog.showModal(); });
+  closeButton.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+  shopButton.addEventListener('click', () => {
+    dialog.close();
+    target.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'});
+  });
+})();
+</script>
 <dialog class="image-dialog" id="imageDialog" aria-label="圖片放大閱讀"><div class="image-tools"><strong id="imageTitle">圖片說明</strong><button type="button" class="subbtn" id="imageZoom">原尺寸閱讀</button><button type="button" class="subbtn" id="imageClose">關閉 ✕</button></div><div class="image-scroll"><img id="imageLarge" alt=""></div></dialog><script src="./config.default.js?v=20261110-signup-confirm-1" defer></script><script src="./app.js?v=20261111-ink-hd-1" defer></script><script src="./deadline.js?v=20261110-signup-confirm-1" defer></script></body></html>
