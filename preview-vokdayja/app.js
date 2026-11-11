@@ -309,6 +309,9 @@ formNode.onsubmit=e=>{
      agreements:Object.fromEntries((regData.agreements||[]).map((v,i)=>['agree'+(i+1),!!v])),
      totals:{computable:currentTotal,pending:!!currentPending}
    };
+   // 庫存 API 上線後才啟用；未取得後端即時庫存時不臆測、不阻斷原收單。
+   const stockFailure = typeof window.LYYUAN_STOCK_VALIDATE==='function' ? window.LYYUAN_STOCK_VALIDATE(payload) : '';
+   if(stockFailure){showFail(stockFailure);submitting=false;return;}
    fetch(endpoint,{method:'POST',mode:'cors',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
      .then(r=>r.json().catch(()=>({ok:false,error:'回應格式錯誤'})))
      .then(res=>{

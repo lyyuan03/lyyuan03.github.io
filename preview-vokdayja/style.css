@@ -1199,3 +1199,12 @@ body.signup-page .exclusive-dialog__body{max-height:calc(100dvh - 128px)}
  body.signup-page .exclusive-dialog__body{max-height:calc(100dvh - 134px)}
 }
 @media(max-width:740px){body.signup-page .exclusive-float{top:auto}}
+
+/* 只有取得後端最新庫存才會使用；已售完組合保留商品說明但停止輸入。 */
+.product.inventory-soldout .price::after{
+  content:"  已售完";
+  display:block;
+  color:#a52e32;
+  font:700 12px/1.6 'Noto Sans TC',sans-serif;
+}
+.product.inventory-soldout [data-quantity]{cursor:not-allowed;opacity:.58}
