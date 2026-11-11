@@ -12,8 +12,9 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase
 import { activeSponsorMember, activeWellnessMember, activeEntitlement } from "./member-access-resolver.js";
 import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./inapp-browser.js?v=20261017-inapp-login-2";
 
-const AUTH_VERSION = "20261110-zodiac-preview-1";
+const AUTH_VERSION = "20261111-zodiac-status-1";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
+const ZODIAC_STATUS_URL = "/2027-zodiac.html";
 const ZODIAC_PREVIEW_URL = "https://lyyuan-2027-zodiac-preview-20261110.levelbrook1.chatgpt.site";
 // 課程頁明確提供就地管理入口時，管理員登入後留在該頁；其他頁維持既有後台導向。
 const courseAdminButton = document.querySelector("[data-course-admin-open]");
@@ -30,6 +31,9 @@ function installStyles() {
     .site-auth-button{height:34px;padding:6px 14px;border:1px solid rgba(165,130,84,.48);background:rgba(165,130,84,.07);color:#C5A26F;font:inherit;font-size:12px;letter-spacing:.1em;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s,border-color .2s,transform .2s}
     #admin-zodiac-preview-link{display:inline-flex;align-items:center;text-decoration:none}
     #admin-zodiac-preview-link[hidden]{display:none!important}
+    .global-nav-dropdown .global-nav-zodiac-subitem>a{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;padding-left:38px!important;color:#c5a26f!important;white-space:normal!important}
+    .global-nav-zodiac-subitem [data-zodiac-status-label]{display:inline-flex;flex:0 0 auto;align-items:center;min-height:19px;padding:2px 7px;border:1px solid rgba(197,162,111,.34);border-radius:999px;background:rgba(165,130,84,.1);color:#d8bd91;font-size:9px;line-height:1.35;letter-spacing:.08em;white-space:nowrap}
+    .global-nav-zodiac-subitem [data-zodiac-status-link][data-zodiac-access="private"] [data-zodiac-status-label]{border-color:rgba(197,162,111,.62);background:rgba(197,162,111,.18);color:#f0d7a8}
     .site-auth-button:hover{background:rgba(165,130,84,.17);border-color:rgba(197,162,111,.72);transform:translateY(-1px)}
     .site-auth-button:disabled{opacity:.55;cursor:wait;transform:none}
     .site-account-menu{position:absolute;top:calc(100% + 9px);right:0;z-index:1300;width:220px;padding:7px;background:rgba(12,18,10,.99);border:1px solid rgba(165,130,84,.34);box-shadow:0 16px 42px rgba(0,0,0,.46)}
@@ -46,6 +50,7 @@ function installStyles() {
       html body.site-auth-enabled #site-auth-bar{top:58px!important;left:0!important;right:0!important;width:100%!important;min-width:0!important;height:52px!important;padding:0 14px!important;justify-content:center!important;background:rgba(7,11,6,.97)!important;border-bottom:1px solid rgba(165,130,84,.22)!important;z-index:1201!important}
       html body.site-auth-enabled #site-auth-bar .site-auth-actions{width:100%!important;max-width:396px!important}
       html body.site-auth-enabled #site-auth-bar .site-auth-button{width:100%!important;display:block!important}
+      html body.site-auth-enabled #site-auth-bar .site-auth-button[hidden]{display:none!important}
       html.is-article-detail body.site-auth-enabled main,body.site-auth-enabled.is-article-detail main{padding-top:84px!important}
       html:not(.is-article-detail) body.site-auth-enabled .hero{margin-top:52px!important}
     }
@@ -77,6 +82,7 @@ function installStyles() {
       .site-auth-actions{width:100%;max-width:220px;gap:8px}
       .site-auth-button{flex:1;min-width:0;padding:6px 8px;font-size:11.5px}
       #site-auth-bar:has(#admin-zodiac-preview-link:not([hidden])) .site-auth-actions{max-width:396px}
+      .global-nav-dropdown .global-nav-zodiac-subitem>a{align-items:flex-start!important;flex-wrap:wrap!important;gap:5px!important;padding-left:32px!important;white-space:normal!important}
       .site-account-menu{left:0;right:0;width:100%}
       .member-login-card{padding:38px 24px 30px}
     }
@@ -92,7 +98,7 @@ function installBar() {
   bar.setAttribute("data-auth-version", AUTH_VERSION);
   bar.innerHTML = `
     <div class="site-auth-actions" aria-label="網站登入">
-      <a id="admin-zodiac-preview-link" class="site-auth-button" href="${ZODIAC_PREVIEW_URL}" target="_blank" rel="noopener noreferrer" hidden>2027 生肖預覽</a>
+      <a id="admin-zodiac-preview-link" class="site-auth-button" href="${ZODIAC_PREVIEW_URL}" target="_blank" rel="noopener noreferrer" title="僅限靈元院管理帳號" hidden>2027 生肖｜不公開預覽</a>
       <button id="member-login-button" class="site-auth-button" type="button" aria-haspopup="false" aria-expanded="false" aria-controls="site-account-menu">會員登入</button>
       <div id="site-account-menu" class="site-account-menu" hidden>
         <a href="/member-dashboard.html">我的會員中心</a>
@@ -104,6 +110,50 @@ function installBar() {
   document.body.appendChild(bar);
   document.body.classList.add("site-auth-enabled");
   return bar;
+}
+
+function ensureZodiacStatusLinks() {
+  document.querySelectorAll(".global-nav-activity-menu").forEach((menu) => {
+    let item = menu.querySelector(".global-nav-zodiac-subitem");
+    if (item) return;
+    item = document.createElement("li");
+    item.className = "global-nav-zodiac-subitem";
+    item.innerHTML = `
+      <a data-zodiac-status-link href="${ZODIAC_STATUS_URL}">
+        <span>2027 十二生肖流年指引</span>
+        <span data-zodiac-status-label>內容建置中</span>
+      </a>`;
+    const annualSubitem = menu.querySelector(".global-nav-annual-subitem");
+    const annualMainLink = Array.from(menu.querySelectorAll("a")).find((link) => {
+      try { return new URL(link.href, window.location.origin).pathname === "/niandian.html"; }
+      catch { return false; }
+    });
+    const anchorItem = annualSubitem || annualMainLink?.closest("li");
+    if (anchorItem) anchorItem.after(item);
+    else menu.prepend(item);
+  });
+}
+
+function updateZodiacStatusLinks(isAdmin) {
+  ensureZodiacStatusLinks();
+  document.querySelectorAll("[data-zodiac-status-link]").forEach((link) => {
+    const label = link.querySelector("[data-zodiac-status-label]");
+    link.dataset.zodiacAccess = isAdmin ? "private" : "status";
+    link.href = isAdmin ? ZODIAC_PREVIEW_URL : ZODIAC_STATUS_URL;
+    link.title = isAdmin
+      ? "開啟僅限靈元院管理帳號的 2027 生肖不公開預覽"
+      : "2027 十二生肖流年指引目前內容建置中";
+    if (isAdmin) {
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.removeAttribute("aria-current");
+    } else {
+      link.removeAttribute("target");
+      link.removeAttribute("rel");
+      if (window.location.pathname === ZODIAC_STATUS_URL) link.setAttribute("aria-current", "page");
+    }
+    if (label) label.textContent = isAdmin ? "不公開預覽" : "內容建置中";
+  });
 }
 
 function installMemberModal() {
@@ -137,6 +187,7 @@ function installMemberModal() {
 installStyles();
 const bar = installBar();
 const modal = installMemberModal();
+updateZodiacStatusLinks(false);
 const memberButton = bar.querySelector("#member-login-button");
 const zodiacPreviewLink = bar.querySelector("#admin-zodiac-preview-link");
 const accountMenu = bar.querySelector("#site-account-menu");
@@ -403,6 +454,7 @@ googleButton.addEventListener("click", async () => {
 onAuthStateChanged(auth, async (user) => {
   closeAccountMenu();
   zodiacPreviewLink.hidden = true;
+  updateZodiacStatusLinks(false);
   if (user) releaseLoginUi();
   hasWellnessAccess = false;
   hasMemberAccess = false;
@@ -423,6 +475,7 @@ onAuthStateChanged(auth, async (user) => {
   }
   if (isAdminEmail(user.email)) {
     zodiacPreviewLink.hidden = false;
+    updateZodiacStatusLinks(true);
     memberButton.textContent = courseAdminButton ? "學員開通" : "進入管理後台";
     memberButton.title = courseAdminButton ? "開啟本課程的學員開通介面" : "前往靈元院管理後台";
     if (courseAdminButton) {
