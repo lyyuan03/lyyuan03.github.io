@@ -101,10 +101,11 @@ function submitOrder(token,selection,consent){
     const ds=table_(S.detail);details.forEach(d=>ds.appendRow(['D-'+Utilities.getUuid(),oid,CFG.year,d.lamp,'個人燈',d.id,d.name,d.cost,1,d.cost]));
     trace_(e,'建立訂單',oid,'成功');
     const lines=details.map(d=>d.lamp+'｜'+d.name.slice(0,1)+'○｜NT$'+d.cost).join('\n');
-    const body='感謝您登記靈元院 116年丁未歲年度點燈。\n\n訂單編號：'+oid+
-      '\n登記明細：\n'+lines+'\n\n功德金合計：NT$'+total+
+    const displayName = member[2] || '信眾';
+    const body = displayName + ' 師兄師姐 您好：\n\n感謝您本次登記116年丁未年年度點燈。\n\n訂單編號：' + oid +
+      '\n登記明細：\n' + lines + '\n\n功德金合計：NT$' + total +
       '\n\n【轉帳資訊】\n中國信託科博館分行\n銀行代碼：822\n帳號：1595-4039-1887\n\n狀態：待匯款；須經行政核款後方完成作業。';
-    let mailed=true;try{MailApp.sendEmail({to:e,subject:'靈元院｜116年丁未歲點燈回函 '+oid,body:body});}catch(err){mailed=false;trace_(e,'回函寄送失敗',oid,'需補寄');}
+    let mailed=true;try{MailApp.sendEmail({to:e,subject:'靈元院｜116年丁未年年度點燈回函 '+oid,body:body});}catch(err){mailed=false;trace_(e,'回函寄送失敗',oid,'需補寄');}
     return {id:oid,total:total,mailed:mailed,lines:details.map(d=>({name:d.name,lamp:d.lamp,price:d.cost}))};
   });
 }
