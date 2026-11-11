@@ -328,57 +328,6 @@ formNode.onsubmit=e=>{
 window.addEventListener('beforeunload',e=>{if(editToken){e.preventDefault();e.returnValue=''}});
 
 
-/* 主站導覽：下拉＋手機選單（純 click，無 timer／MutationObserver） */
-(function initSiteNav(){
-  const nav=document.querySelector('nav');
-  if(!nav)return;
-  const links=nav.querySelector('#siteNavLinks');
-  const toggle=nav.querySelector('#navToggle');
-  const closeAll=except=>{
-    nav.querySelectorAll('.nav-item.is-open').forEach(item=>{
-      if(item===except)return;
-      item.classList.remove('is-open');
-      const t=item.querySelector(':scope > .nav-trigger');
-      if(t)t.setAttribute('aria-expanded','false');
-    });
-  };
-  nav.querySelectorAll('.nav-trigger').forEach(trigger=>{
-    trigger.addEventListener('click',e=>{
-      e.preventDefault();
-      e.stopPropagation();
-      const item=trigger.closest('.nav-item');
-      if(!item)return;
-      const willOpen=!item.classList.contains('is-open');
-      closeAll(item);
-      item.classList.toggle('is-open',willOpen);
-      trigger.setAttribute('aria-expanded',String(willOpen));
-    });
-  });
-  if(toggle&&links){
-    toggle.addEventListener('click',e=>{
-      e.stopPropagation();
-      const open=!links.classList.contains('is-open');
-      links.classList.toggle('is-open',open);
-      toggle.setAttribute('aria-expanded',String(open));
-      toggle.textContent=open?'關閉':'選單';
-      if(!open)closeAll();
-    });
-  }
-  document.addEventListener('click',()=>{
-    closeAll();
-    if(links&&links.classList.contains('is-open')){
-      links.classList.remove('is-open');
-      if(toggle){toggle.setAttribute('aria-expanded','false');toggle.textContent='選單';}
-    }
-  });
-  if(links)links.addEventListener('click',e=>e.stopPropagation());
-  nav.addEventListener('keydown',e=>{
-    if(e.key!=='Escape')return;
-    closeAll();
-    if(links)links.classList.remove('is-open');
-    if(toggle){toggle.setAttribute('aria-expanded','false');toggle.textContent='選單';toggle.focus();}
-  });
-})();
 
 // 雲端設定：每次載入只抓一次；與內建預設相同就什麼都不做，不同才重繪（保留已填內容）。
 const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.keys(x).sort().reduce((o,key)=>(o[key]=x[key],o),{}):x);
