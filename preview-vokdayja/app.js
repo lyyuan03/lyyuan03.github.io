@@ -26,7 +26,7 @@ function applyAnnualFortuneCopy(config) {
   };
 }
 /* 設定：內建預設（config.default.js）立即渲染；雲端設定抓回後若不同才重繪。 */
-function setCfg(cfg){cfg=applyAnnualFortuneCopy(cfg);CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
+function setCfg(cfg){cfg=applyAnnualFortuneCopy(cfg);if(cfg.event==='lamp-116-dingwei')cfg={...cfg,agreements:[{"key":"agree1","title":"報名規則與注意事項","text":"我已閱讀並了解本法儀之報名規則及相關注意事項。","serverRequired":true},{"key":"agree2","title":"法儀取消與退費","text":"我了解完成報名及繳費後，法儀相關作業即開始進行，恕不受理取消或退費。","serverRequired":true},{"key":"agree3","title":"資料確認與修正","text":"我已確認填寫資料正確；如有明顯誤填或誤選，同意由行政團隊依報名資料協助修正。","serverRequired":true}]};CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
 const cfgVars=()=>({freeThreshold:'NT$'+Number(CFG.shipping.freeThreshold).toLocaleString('en-US'),shippingFee:'NT$'+Number(CFG.shipping.fee).toLocaleString('en-US'),deadline:String(CFG.meta.deadline||'').replace('T',' ').replace(/-/g,'/')});
 const tpl=(s,extra)=>String(s==null?'':s).replace(/\{\{(\w+)\}\}/g,(m,k)=>{const v=Object.assign(cfgVars(),extra||{});return k in v?v[k]:m});
 const rich=s=>esc(s).replace(/&lt;(\/?)(strong|b)&gt;/g,'<$1$2>').replace(/&lt;br\s*\/?&gt;/g,'<br>');
@@ -149,7 +149,7 @@ function renderProducts(){
 }
 function renderAgreements(){
  const box=$('#registrationTerms');box.querySelectorAll('label.choice').forEach(x=>x.remove());
- box.insertAdjacentHTML('beforeend',CFG.agreements.map(a=>`<label class="choice"><input type="checkbox" id="${esc(a.key)}" required><span><strong style="color:var(--pale)">${esc(a.title)}</strong><br>${esc(tpl(a.text))}</span></label>`).join(''));
+ box.insertAdjacentHTML('beforeend',CFG.agreements.map(a=>`<label class="choice"><input type="checkbox" id="${esc(a.key)}" required><span>${esc(tpl(a.text))}</span></label>`).join(''));
 }
 function renderPriceSettings(){
  $('#priceSettings').innerHTML=lampDefs.filter(l=>l.r==='個人').map(l=>`<label for="price-${l.k}">${l.n}（每位芳名）</label><input id="price-${l.k}" type="number" min="0" step="1" value="${l.p}">`).join('');

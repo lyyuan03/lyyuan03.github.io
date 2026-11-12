@@ -269,48 +269,24 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
   "hotTopN": 3
  },
  "agreements": [
-  {
-   "key": "agree1",
-   "title": "資料核對",
-   "text": "我已確認登記人聯絡方式、各位芳名、曆別、出生年月日及地址正確。送出後如需更正，請使用確認信中的專屬連結。已核帳之金額變動須行政確認，芳名已製作、法儀已執行或商品已出貨的相關資料，請聯繫行政。",
-   "serverRequired": true
-  },
-  {
-   "key": "agree2",
-   "title": "金額及匯款",
-   "text": "我已核對燈別、請購數量與金額。總燈首、公司行號及海外運費須待行政確認，收到確認通知後再依通知金額匯款；回報後五碼仍須經行政核帳。",
-   "serverRequired": true
-  },
-  {
-   "key": "agree3",
-   "title": "運費與寄送",
-   "text": "我了解國內免運門檻僅計香品及御守金額，未滿 {{freeThreshold}} 自動加計 {{shippingFee}}；僅點燈免運費。海外運費另計；如因填寫錯誤或未領取而須再次寄送，將先告知並確認補寄費用。",
-   "serverRequired": true
-  },
-  {
-   "key": "agree4",
-   "title": "取消與退費",
-   "text": "我了解年度點燈於報名繳費後將啟動法務安排，原則上不受理個人因素的取消與退費。香品、御守的取消或退貨依商品性質與適用法令辦理；依法應受理或可歸責於本院的情形，不受前述限制。",
-   "serverRequired": true
-  },
-  {
-   "key": "agree5",
-   "title": "法儀與請購說明",
-   "text": "我已了解所登記的燈別與請購品內容。祈福法儀不保證特定結果；正式名額及商品數量以行政確認為準。",
-   "serverRequired": true
-  },
-  {
-   "key": "agree6",
-   "title": "個人資料使用",
-   "text": "我同意靈元院於本次報名、法儀芳名製作、核帳、寄送及相關通知所需範圍內使用所填資料。若代他人登記，已取得其同意。",
-   "serverRequired": true
-  },
-  {
-   "key": "agree7",
-   "title": "報名內容確認",
-   "text": "我了解送出後資料會寫入靈元院報名表；總燈首、公司行號及海外運費須待行政確認後再依通知匯款，請勿在未收到通知前自行匯款。",
-   "serverRequired": false
-  }
+   {
+     "key": "agree1",
+     "title": "報名規則與注意事項",
+     "text": "我已閱讀並了解本法儀之報名規則及相關注意事項。",
+     "serverRequired": true
+   },
+   {
+     "key": "agree2",
+     "title": "法儀取消與退費",
+     "text": "我了解完成報名及繳費後，法儀相關作業即開始進行，恕不受理取消或退費。",
+     "serverRequired": true
+   },
+   {
+     "key": "agree3",
+     "title": "資料確認與修正",
+     "text": "我已確認填寫資料正確；如有明顯誤填或誤選，同意由行政團隊依報名資料協助修正。",
+     "serverRequired": true
+   }
  ],
  "copy": {
   "hotTag": "熱門",
