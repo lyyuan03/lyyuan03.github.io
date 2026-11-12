@@ -107,11 +107,11 @@ sponsors.forEach(([key,title,fixed])=>{
   donation+=price;
  });
 });
-const standardRegistration=Boolean($$('.lamp-check:checked').length||goods);
+// 登記人三個聯絡欄位始終必填，紅色星號不受燈別選擇影響。
 ['name','email','phone'].forEach(id=>{
  const field=$('#'+id);
- field.required=standardRegistration;
- field.labels[0].classList.toggle('req',standardRegistration);
+ field.required=true;
+ field.labels[0].classList.add('req');
 });
 const over=goods>0&&$('#overseas').checked,shipping=goods?(over?0:goods>=CFG.shipping.freeThreshold?0:CFG.shipping.fee):0;const shipLocked=!!(editLocks&&editLocks.shipping)&&over&&goods>0&&editLocks.sig===prodSig();if(goods)lines.push(['運費',over?(shipLocked?'已由行政確認':'海外另計'):shipping]);if(over&&goods&&!shipLocked)pending=true;currentTotal=lamps+goods+donation+shipping;currentPending=pending;$('#shippingFields').hidden=goods===0;$('#noShipping').hidden=goods>0;$('#overseas').disabled=goods===0||shipLocked;$('#address').disabled=goods===0;$('#address').required=goods>0;$('#addressLabel').classList.toggle('req',goods>0);$('#shippingMsg').classList.toggle('shipping-free',goods>0&&!over&&shipping===0);$('#shippingMsg').textContent=goods?(over?(shipLocked?'海外運費已由行政確認；若更改請購品，運費需由行政重新確認。':'海外運費由行政另行確認。'):shipping?`本次運費 NT$${CFG.shipping.fee}。`:'本次請購已達免運門檻。'):'僅登記點燈，無須運費。';$('#pendingHint').hidden=!pending;$('#totalLabel').textContent=pending?'目前可計算金額':'功德金總計';$('#totalNote').textContent=pending?'另有金額待行政確認':lines.length?'依本次登記項目即時計算':'請選擇燈別、贊助項目或請購品。';const hideTotal=!!(editLocks&&editLocks.totalHidden);$('#total').textContent=$('#mobileAmount').textContent=hideTotal?'請以確認信為準':money(currentTotal);if(hideTotal){$('#totalLabel').textContent='功德金總計';$('#totalNote').textContent='總金額請以確認信為準'}$('#sidebarRows').innerHTML=lines.length?lines.map(([n,p])=>`<div class="sumrow"><span>${esc(n)}</span><span>${typeof p==='number'?money(p):p}</span></div>`).join(''):'<p class="hint">尚未選擇登記項目</p>';$('#breakdown').innerHTML=(lines.length?lines:[['尚未選擇項目',0]]).map(([n,p])=>`<tr><td>${esc(n)}</td><td>${typeof p==='number'?money(p):p}</td></tr>`).join('')+`<tr><td><b>${pending?'目前可計算金額':'合計'}</b></td><td><b>${hideTotal?'請以確認信為準':money(currentTotal)}</b></td></tr>`}
 $('#form').addEventListener('input',calc);$('#form').addEventListener('change',calc);
