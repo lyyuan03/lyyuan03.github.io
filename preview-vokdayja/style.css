@@ -1215,3 +1215,8 @@ body.signup-page .exclusive-dialog__body{max-height:calc(100dvh - 128px)}
 /* 登記人資料：必填標示採紅色，其他版面維持原設定 */
 .sectionline small[data-cfg="page.sec01Note"]{color:#c62828}
 label.req[for="name"]::after,label.req[for="email"]::after,label.req[for="phone"]::after{color:#c62828}
+
+/* 登記人三欄顯示紅色必填星號，不重複顯示偽元素 */
+label[for="name"]::after,label[for="email"]::after,label[for="phone"]::after{content:none!important}
+label .required-star{color:#c62828!important;font-weight:700;margin-left:.2em}
+label:not(.req)>.required-star{display:none}
