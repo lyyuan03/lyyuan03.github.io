@@ -330,7 +330,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
   "deadlinePassed": "本次報名已截止。"
  },
  "page": {
-  "banner": "線上報名資料送出後會寫入靈元院報名表；請確認資料正確，並待行政通知後再匯款。",
+  "banner": "",
   "heroButton": "開始點燈登記 ↓",
   "journey1": "填寫登記資料",
   "journey2": "選擇燈別與請購品",
