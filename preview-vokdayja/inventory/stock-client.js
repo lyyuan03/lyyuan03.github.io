@@ -22,7 +22,6 @@
   let available = null;
   let requestRunning = false;
   let supported = true;
-  let note = null;
   const isEdit = () => typeof editToken !== 'undefined' && !!editToken;
   const quantity = i => {
     const input = document.querySelector('[data-quantity="'+i+'"]');
@@ -59,19 +58,7 @@
   function update() {
     if (!available || form.classList.contains('signup-closed')) return;
     if (!note) {
-      note = document.createElement('p');
-      note.className = 'hint';
-      note.id = 'inventoryLiveNote';
-      note.setAttribute('role','status');
-      note.style.cssText = 'margin:12px 0;padding:10px 14px;border:1px solid #bda477;border-radius:9px;background:#faf1dd;color:#6d4d2b;font-size:13px;';
-      const hint = items.querySelector('.hint');
-      if(hint) hint.insertAdjacentElement('afterend',note);
-      else items.prepend(note);
-    }
-    note.textContent = '可登記庫存：廣財運通香 ' + available['guangcai-incense'] +
-      ' 盒、鎮煞護安香粉 ' + available['zhen-sha-powder'] +
-      ' 包。不同優惠組合與總燈首贈品共用庫存；實際以送出當下確認為準。';
-    if (isEdit()) return;
+  eturn;
     const used = demand();
     mappedProducts().forEach(({i,sku,units}) => {
       const input = document.querySelector('[data-quantity="'+i+'"]');
