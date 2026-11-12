@@ -26,7 +26,7 @@ function applyAnnualFortuneCopy(config) {
   };
 }
 /* 設定：內建預設（config.default.js）立即渲染；雲端設定抓回後若不同才重繪。 */
-function setCfg(cfg){cfg=applyAnnualFortuneCopy(cfg);CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
+function setCfg(cfg){cfg=applyAnnualFortuneCopy(cfg);if(cfg.event===DEFAULT_CFG.event){cfg={...cfg,page:{...cfg.page,sec02Note:'',lampsIntro:DEFAULT_CFG.page.lampsIntro}};}CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
 const cfgVars=()=>({freeThreshold:'NT$'+Number(CFG.shipping.freeThreshold).toLocaleString('en-US'),shippingFee:'NT$'+Number(CFG.shipping.fee).toLocaleString('en-US'),deadline:String(CFG.meta.deadline||'').replace('T',' ').replace(/-/g,'/')});
 const tpl=(s,extra)=>String(s==null?'':s).replace(/\{\{(\w+)\}\}/g,(m,k)=>{const v=Object.assign(cfgVars(),extra||{});return k in v?v[k]:m});
 const rich=s=>esc(s).replace(/&lt;(\/?)(strong|b)&gt;/g,'<$1$2>').replace(/&lt;br\s*\/?&gt;/g,'<br>');
