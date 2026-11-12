@@ -1211,3 +1211,7 @@ body.signup-page .exclusive-dialog__body{max-height:calc(100dvh - 128px)}
 
 /* 達國內免運門檻時強調提示 */
 #shippingMsg.shipping-free{color:#b42318;font-weight:700}
+
+/* 登記人資料：必填標示採紅色，其他版面維持原設定 */
+.sectionline small[data-cfg="page.sec01Note"]{color:#c62828}
+label.req[for="name"]::after,label.req[for="email"]::after,label.req[for="phone"]::after{color:#c62828}
