@@ -57,8 +57,7 @@
   window.LYYUAN_STOCK_VALIDATE = validatePayload;
   function update() {
     if (!available || form.classList.contains('signup-closed')) return;
-    if (!note) {
-  eturn;
+    if (isEdit()) return;
     const used = demand();
     mappedProducts().forEach(({i,sku,units}) => {
       const input = document.querySelector('[data-quantity="'+i+'"]');
