@@ -115,7 +115,7 @@ function lyStockAppend_(ss,orderId,delta,kind,note) {
   if(!changes.length)return;
   var sh=lyStockSheet_(ss,LYY_STOCK.ledgerTab),stamp=new Date();
   var rows=changes.map(function(sku){
-    return[stamp,Utilities.getUuid(),String(orderId),sku,kind,delta[sku],kind,note||'',Session.getEffectiveUser().getEmail()||'system',String(orderId)+':'+sku+':'+Utilities.getUuid()];
+    return[stamp,Utilities.getUuid(),String(orderId),sku,kind,delta[sku],kind,note||'','system',String(orderId)+':'+sku+':'+Utilities.getUuid()];
   });
   sh.getRange(sh.getLastRow()+1,1,rows.length,10).setValues(rows);
   SpreadsheetApp.flush();
