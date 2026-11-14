@@ -286,6 +286,12 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
      "title": "資料確認與修正",
      "text": "我已確認填寫資料正確；如有明顯誤填或誤選，同意由行政團隊依報名資料協助修正。",
      "serverRequired": true
+   },
+   {
+     "key": "agree4",
+     "title": "個人資料使用同意",
+     "text": "本人同意靈元院於本次法會報名登記、行政聯繫、儀軌執行及祈福疏文製作等必要範圍內，蒐集、處理及利用所提供之個人資料，並依法妥善保護，不作其他無關用途。如代親友登記，確認已取得當事人同意。",
+     "serverRequired": true
    }
  ],
  "copy": {
