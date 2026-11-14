@@ -26,7 +26,7 @@ function applyAnnualFortuneCopy(config) {
   };
 }
 /* 設定：內建預設（config.default.js）立即渲染；雲端設定抓回後若不同才重繪。 */
-function setCfg(cfg){cfg=applyAnnualFortuneCopy(cfg);if(cfg.event==='lamp-116-dingwei')cfg={...cfg,agreements:[{"key":"agree1","title":"報名規則與注意事項","text":"我已閱讀並了解本法儀之報名規則及相關注意事項。","serverRequired":true},{"key":"agree2","title":"法儀取消與退費","text":"我了解完成報名及繳費後，法儀相關作業即開始進行，恕不受理取消或退費。","serverRequired":true},{"key":"agree3","title":"資料確認與修正","text":"我已確認填寫資料正確；如有明顯誤填或誤選，同意由行政團隊依報名資料協助修正。","serverRequired":true}]};if(cfg.event===DEFAULT_CFG.event){cfg={...cfg,page:{...cfg.page,sec02Note:'',lampsIntro:DEFAULT_CFG.page.lampsIntro}};}CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
+function setCfg(cfg){cfg=applyAnnualFortuneCopy(cfg);cfg={...cfg,agreements:cfg.agreements.filter(a=>a.serverRequired!==false)};if(cfg.event===DEFAULT_CFG.event){cfg={...cfg,page:{...cfg.page,sec02Note:'',lampsIntro:DEFAULT_CFG.page.lampsIntro}};}CFG=cfg;lampDefs=cfg.lamps.map(l=>({k:l.key,n:l.name,p:l.price,r:l.role}));products=cfg.products.map(p=>[p.name,p.price,p.limit==null?null:p.limit,false]);sponsors=cfg.sponsors.map(s=>[s.key,s.title,s.fixed]);registrationType=cfg.roleLabels;lampPurposes={};lampFortune={};hotKeys=new Set();cfg.lamps.forEach(l=>{lampPurposes[l.key]=l.purpose||'';if(l.fortune||l.gift)lampFortune[l.key]=[l.fortune,l.gift].filter(Boolean).join('<br>');if(l.hot)hotKeys.add(l.key)})}
 const cfgVars=()=>({freeThreshold:'NT$'+Number(CFG.shipping.freeThreshold).toLocaleString('en-US'),shippingFee:'NT$'+Number(CFG.shipping.fee).toLocaleString('en-US'),deadline:String(CFG.meta.deadline||'').replace('T',' ').replace(/-/g,'/')});
 const tpl=(s,extra)=>String(s==null?'':s).replace(/\{\{(\w+)\}\}/g,(m,k)=>{const v=Object.assign(cfgVars(),extra||{});return k in v?v[k]:m});
 const rich=s=>esc(s).replace(/&lt;(\/?)(strong|b)&gt;/g,'<$1$2>').replace(/&lt;br\s*\/?&gt;/g,'<br>');
@@ -237,7 +237,7 @@ function registrationFromApi(data){
    return {selected:!!item&&(item.selected??true),people:(item?.people||[]).map(p=>[p.name,p.amount])};
   }),
   quantities:products.map(([name])=>(data.products||[]).find(p=>p.name===name)?.qty??0),
-  agreements:Array.from({length:CFG.agreements.length},(_,i)=>!!data.agreements?.['agree'+(i+1)])
+  agreements:CFG.agreements.map(a=>!!data.agreements?.[a.key])
  };
 }
 (async function loadEmailRegistration(){
@@ -306,7 +306,7 @@ formNode.onsubmit=e=>{
        return{key,title,fixed:fixed||0,selected:!!item.selected,people:(item.people||[]).map(vals=>({name:vals[0]||'',amount:vals[1]||''}))};
      }),
      products:products.map(([n,p],i)=>({name:n,qty:Number(regData.quantities[i]||0)||0,unitPrice:p})),
-     agreements:Object.fromEntries((regData.agreements||[]).map((v,i)=>['agree'+(i+1),!!v])),
+     agreements:Object.fromEntries(CFG.agreements.map((a,i)=>[a.key,!!(regData.agreements||[])[i]])),
      totals:{computable:currentTotal,pending:!!currentPending}
    };
    // 庫存 API 上線後才啟用；未取得後端即時庫存時不臆測、不阻斷原收單。
