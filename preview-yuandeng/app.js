@@ -395,7 +395,7 @@ window.addEventListener('beforeunload', e => { if (editToken) { e.preventDefault
   if (fail) { evGate({ unknown: '找不到這個活動，請確認網址是否正確。', draft: '本次活動尚未開放報名。' }[fail] || '目前無法載入活動內容，請稍後重新整理頁面。'); return; }
   evGate(''); announceDeadline();
   const params = new URLSearchParams(location.search);
-  if (params.has('applied')) { clearQuery('applied'); const p = readProfile(); if (p) fillProfile(p, '已帶入您太歲燈報名的資料（姓名、Email、電話），可自行修改。送出後會建立一筆新的圓燈報名，不會更動太歲燈報名。'); }
+  if (params.has('applied')) { clearQuery('applied'); const p = readProfile(); if (p) fillProfile(p, '已帶入您太歲燈報名的資料（姓名、Email、電話），可自行修改。送出後會建立一筆新的圓燈報名，不會更動太歲燈報名。'); clearProfile(); /* 帶入後立即清除這台裝置暫存的姓名／Email／電話 */ }
   if (params.get('edit')) loadEmailRegistration(params.get('edit'));
   if ('IntersectionObserver' in window) { const ob = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); ob.unobserve(en.target); } }), { threshold: .08 }); $$('.reveal').forEach(el => ob.observe(el)); }
   else $$('.reveal').forEach(el => el.classList.add('in'));
