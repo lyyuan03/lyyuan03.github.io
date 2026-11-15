@@ -2,7 +2,7 @@
 // 權限完全交給 Firestore Rules（eventArticleBodies + memberEntitlements.permissions）判斷；
 // 本檔不下載未授權內容，也不以 CSS 隱藏全文。只在本頁區塊 data-lamp-enabled="true" 時啟用。
 // 文案來源：docs/dingwei-2027-exclusive-reading-copy.md（PR #443）。
-import { auth, db } from "./firebase-config.js";
+import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -30,6 +30,14 @@ const COPY = {
     title: "年度點燈專屬解讀",
     lines: ["您的閱讀資格已確認。", "以下為靈元院 2027 丁未年所屬生肖專屬內容。"]
   },
+  adminPreview: {
+    title: "管理員預覽｜尚未公開的生肖全文",
+    lines: ["以下內容只透過安全資料庫讀取。管理帳號可查看未發布、暫停開放或已發布的私人正文。"]
+  },
+  adminEmpty: {
+    title: "尚未建立此生肖的限定正文",
+    lines: ["目前查無私人文章。請到生肖內容管理頁建立，再返回此頁閱讀。"]
+  },
   error: {
     title: "專屬內容暫時無法載入",
     lines: ["目前無法確認閱讀資格或取得文章內容，請稍後重新整理頁面。若持續發生，請與靈元院行政團隊聯繫。"]
@@ -43,16 +51,18 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ 
 const paragraphs = (text) => String(text || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
   .map((p) => `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`).join("");
 
-function render(state, { content = "", email = "" } = {}) {
+function render(state, { content = "", email = "", meta = "" } = {}) {
   const copy = COPY[state];
   root.hidden = false;
   root.dataset.lampState = state;
   root.innerHTML = `
     <p class="zp-lock">${escapeHtml(copy.title)}</p>
     ${copy.lines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+    ${meta ? `<p class="zp-lamp-account">${escapeHtml(meta)}</p>` : ""}
+    ${(state === "adminPreview" || state === "adminEmpty") ? `<p><a class="zp-lamp-editor-link" href="/admin-zodiac-lamp.html">管理與編輯十二生肖限定全文</a></p>` : ""}
     ${email && (state === "noAccess" || state === "otherZodiac") ? `<p class="zp-lamp-account">目前登入：${escapeHtml(email)}</p>` : ""}
     ${copy.button ? `<button class="zp-lamp-login" type="button">${escapeHtml(copy.button)}</button>` : ""}
-    ${state === "granted" ? `<div class="zp-lamp-body">${paragraphs(content)}</div>` : ""}`;
+    ${(state === "granted" || state === "adminPreview") && content.trim() ? `<div class="zp-lamp-body">${paragraphs(content)}</div>` : ""}`;
   root.querySelector(".zp-lamp-login")?.addEventListener("click", () => {
     document.querySelector("#member-login-button")?.click();
   });
@@ -73,12 +83,18 @@ async function load(user) {
   const run = ++serial;
   if (!user) return render("signedOut");
   const email = user.email || "";
+  const admin = isAdminEmail(email);
   try {
     const snapshot = await getDoc(doc(db, "eventArticleBodies", PERMISSION_PREFIX + zodiac));
     if (run !== serial) return;
     const data = snapshot.exists() ? snapshot.data() : null;
-    if (data && data.requiredPermission === PERMISSION_PREFIX + zodiac && data.active !== false) {
-      return render("granted", { content: data.content });
+    if (admin) {
+      if (!data) return render("adminEmpty");
+      const meta = `資料狀態：${data.status || "未標註"}｜${data.active === false ? "已暫停對信眾開放" : "可供有權限者閱讀"}｜正文 ${String(data.content || "").length} 字`;
+      return render("adminPreview", { content: String(data.content || ""), meta });
+    }
+    if (data && data.requiredPermission === PERMISSION_PREFIX + zodiac && data.status === "published" && data.active === true) {
+      return render("granted", { content: String(data.content || "") });
     }
     return render("error");
   } catch (error) {
