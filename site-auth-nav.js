@@ -12,7 +12,7 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase
 import { activeSponsorMember, activeWellnessMember, activeEntitlement } from "./member-access-resolver.js";
 import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./inapp-browser.js?v=20261017-inapp-login-2";
 
-const AUTH_VERSION = "20261111-zodiac-status-1";
+const AUTH_VERSION = "20261115-zodiac-status-2";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 const ZODIAC_STATUS_URL = "/2027-zodiac.html";
 const ZODIAC_PREVIEW_URL = "https://lyyuan-2027-zodiac-preview-20261110.levelbrook1.chatgpt.site";
@@ -121,7 +121,7 @@ function ensureZodiacStatusLinks() {
     item.innerHTML = `
       <a data-zodiac-status-link href="${ZODIAC_STATUS_URL}">
         <span>2027 十二生肖流年指引</span>
-        <span data-zodiac-status-label>鼠牛虎已上線</span>
+        <span data-zodiac-status-label>十二生肖已上線</span>
       </a>`;
     const annualSubitem = menu.querySelector(".global-nav-annual-subitem");
     const annualMainLink = Array.from(menu.querySelectorAll("a")).find((link) => {
@@ -142,7 +142,7 @@ function updateZodiacStatusLinks(isAdmin) {
     link.href = isAdmin ? ZODIAC_PREVIEW_URL : ZODIAC_STATUS_URL;
     link.title = isAdmin
       ? "開啟僅限靈元院管理帳號的 2027 生肖不公開預覽"
-      : "2027 十二生肖流年指引：鼠、牛、虎已上線，其餘生肖整理中";
+      : "2027 十二生肖流年指引已上線";
     if (isAdmin) {
       link.target = "_blank";
       link.rel = "noopener noreferrer";
@@ -152,7 +152,7 @@ function updateZodiacStatusLinks(isAdmin) {
       link.removeAttribute("rel");
       if (window.location.pathname === ZODIAC_STATUS_URL) link.setAttribute("aria-current", "page");
     }
-    if (label) label.textContent = isAdmin ? "不公開預覽" : "鼠牛虎已上線";
+    if (label) label.textContent = isAdmin ? "不公開預覽" : "十二生肖已上線";
   });
 }
 
