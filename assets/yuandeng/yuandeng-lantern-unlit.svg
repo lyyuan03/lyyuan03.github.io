@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="136" viewBox="0 0 128 136" fill="none" aria-hidden="true">
+<desc>未點亮燈；米色底建議使用深金線條</desc>
+<defs><linearGradient id="lantern-unlit-body" x1="35" y1="28" x2="93" y2="105" gradientUnits="userSpaceOnUse"><stop stop-color="#EAD8B4" stop-opacity=".14"/><stop offset=".48" stop-color="#C9A063" stop-opacity=".1"/><stop offset="1" stop-color="#A58254" stop-opacity=".16"/></linearGradient></defs>
+
+<g id="lantern-unlit-layer-aura"/>
+<g id="lantern-unlit-layer-body"><path d="M53 23Q64 16 75 23" stroke="#A58254" stroke-width="2"/><path d="M64 11V21 M49 24H79 M43 31H85" stroke="#C9A063" stroke-width="2.3" stroke-linecap="round"/><path d="M44 33Q31 63 44 98Q64 110 84 98Q97 63 84 33Q64 29 44 33Z" fill="url(#lantern-unlit-body)" stroke="#C9A063" stroke-width="1.7"/><path d="M49 36Q42 63 49 94M79 36Q86 63 79 94" stroke="#A58254" stroke-opacity=".62" stroke-width="1"/><path d="M46 99H82M53 108H75" stroke="#C9A063" stroke-width="2.3" stroke-linecap="round"/><path d="M64 109V119 M60 120L64 125 68 120" stroke="#A58254" stroke-width="1.2"/><path d="M45 98Q64 110 83 98" stroke="#A58254" stroke-opacity=".9" stroke-width="1"/></g>
+<g id="lantern-unlit-layer-flame"><path d="M64 60C70 66 69 75 64 80C58 75 58 68 64 60Z" stroke="#A58254" stroke-width="1.2" stroke-opacity=".64"/></g>
+<g id="lantern-unlit-layer-highlight"><path d="M45 35Q64 31 83 35" stroke="#EAD8B4" stroke-opacity=".57" stroke-width="1"/><path d="M50 38Q45 59 49 77" stroke="#EAD8B4" stroke-opacity=".3" stroke-width="1"/></g>
+</svg>

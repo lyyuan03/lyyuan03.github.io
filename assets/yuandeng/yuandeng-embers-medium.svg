@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500" fill="none" aria-hidden="true">
+  <defs>
+    <radialGradient id="embers-medium-halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#EAD8B4" stop-opacity=".82"/>
+      <stop offset=".35" stop-color="#C9A063" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#A58254" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="864" cy="31" r="3.1" fill="#EAD8B4" opacity=".61"/><circle cx="864" cy="31" r="12.3" fill="url(#embers-medium-halo)" opacity=".39"/>
+  <circle cx="724" cy="199" r="2.1" fill="#C9A063" opacity=".45"/><circle cx="298" cy="248" r="2.2" fill="#A58254" opacity=".28"/>
+  <circle cx="535" cy="389" r="3.4" fill="#C9A063" opacity=".56"/><circle cx="339" cy="291" r="3.4" fill="#EAD8B4" opacity=".22"/>
+  <circle cx="548" cy="78" r="0.9" fill="#EAD8B4" opacity=".5"/><circle cx="183" cy="471" r="0.7" fill="#A58254" opacity=".49"/>
+  <circle cx="269" cy="433" r="3.5" fill="#C9A063" opacity=".46"/><circle cx="269" cy="433" r="13.8" fill="url(#embers-medium-halo)" opacity=".29"/>
+  <circle cx="170" cy="71" r="2.5" fill="#C9A063" opacity=".59"/><circle cx="524" cy="152" r="3.6" fill="#EAD8B4" opacity=".43"/>
+  <circle cx="53" cy="247" r="0.7" fill="#EAD8B4" opacity=".49"/><circle cx="838" cy="322" r="0.7" fill="#A58254" opacity=".42"/>
+  <circle cx="557" cy="357" r="1.1" fill="#C9A063" opacity=".59"/><circle cx="342" cy="446" r="1.0" fill="#C9A063" opacity=".59"/>
+  <circle cx="773" cy="318" r="0.8" fill="#EAD8B4" opacity=".35"/><circle cx="773" cy="318" r="3.3" fill="url(#embers-medium-halo)" opacity=".29"/>
+  <circle cx="36" cy="223" r="2.9" fill="#EAD8B4" opacity=".65"/><circle cx="260" cy="438" r="0.8" fill="#A58254" opacity=".41"/>
+  <circle cx="373" cy="148" r="1.3" fill="#A58254" opacity=".17"/><circle cx="656" cy="68" r="1.5" fill="#C9A063" opacity=".35"/>
+  <circle cx="506" cy="212" r="1.9" fill="#C9A063" opacity=".63"/><circle cx="205" cy="350" r="2.0" fill="#EAD8B4" opacity=".65"/>
+  <circle cx="823" cy="363" r="3.4" fill="#C9A063" opacity=".65"/><circle cx="823" cy="363" r="13.2" fill="url(#embers-medium-halo)" opacity=".41"/>
+  <circle cx="766" cy="357" r="1.2" fill="#A58254" opacity=".26"/><circle cx="222" cy="257" r="1.4" fill="#C9A063" opacity=".45"/>
+  <circle cx="31" cy="172" r="1.7" fill="#C9A063" opacity=".58"/><circle cx="318" cy="456" r="1.2" fill="#EAD8B4" opacity=".59"/>
+  <circle cx="413" cy="452" r="2.5" fill="#C9A063" opacity=".58"/><circle cx="441" cy="474" r="1.2" fill="#A58254" opacity=".18"/>
+  <circle cx="679" cy="131" r="3.6" fill="#A58254" opacity=".2"/><circle cx="679" cy="131" r="14.1" fill="url(#embers-medium-halo)" opacity=".19"/>
+  <circle cx="523" cy="142" r="2.0" fill="#C9A063" opacity=".47"/><circle cx="860" cy="254" r="2.5" fill="#EAD8B4" opacity=".16"/>
+  <circle cx="725" cy="61" r="1.9" fill="#C9A063" opacity=".63"/>
+</svg>

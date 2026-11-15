@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" fill="none" aria-hidden="true">
+<desc>米色背景的稀疏深金光點，不含淺金光暈</desc>
+<defs></defs>
+<g id="beige-specks-tile-layer-body" fill="#A58254"><circle cx="17" cy="22" r="1.1" opacity=".45"/><circle cx="109" cy="63" r=".85" opacity=".34"/><circle cx="183" cy="21" r="1.35" opacity=".34"/><circle cx="31" cy="132" r=".6" opacity=".45"/><circle cx="155" cy="169" r="1" opacity=".3"/><circle cx="213" cy="116" r=".75" opacity=".36"/></g><g id="beige-specks-tile-layer-highlight" fill="#C9A063"><circle cx="66" cy="80" r="1.1" opacity=".4"/><circle cx="193" cy="194" r=".8" opacity=".38"/><circle cx="96" cy="202" r=".8" opacity=".3"/></g>
+</svg>
