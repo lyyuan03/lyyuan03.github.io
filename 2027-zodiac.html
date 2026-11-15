@@ -3,10 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#0f1a14">
-  <meta name="description" content="靈元院 2027 丁未年十二生肖流年指引上線狀態。">
-  <title>2027 丁未年十二生肖流年指引｜內容建置中｜靈元院</title>
+  <meta name="description" content="靈元院 2027 丁未年十二生肖流年指引：依地支關係與民間流年術語，整理各生肖的傳統說法與編者讀法。">
+  <title>2027 丁未年十二生肖流年指引｜靈元院</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:wght@400;500&display=swap">
   <link rel="stylesheet" href="/site-navigation.css?v=20261110-dingwei-1">
   <link rel="stylesheet" href="/site-footer.css?v=6152ecf0">
@@ -32,6 +31,24 @@
     .zodiac-status-actions a:focus-visible{outline:2px solid #d9bd87;outline-offset:4px}
     @media(max-width:560px){.zodiac-status-main{padding:112px 16px 58px}.zodiac-status-card{padding:42px 22px}.zodiac-status-kicker{font-size:10px;letter-spacing:.23em}.zodiac-status-actions{flex-direction:column}.zodiac-status-actions a{width:100%}}
     @media(prefers-reduced-motion:reduce){.zodiac-status-actions a{transition:none}.zodiac-status-actions a:hover,.zodiac-status-actions a:focus-visible{transform:none}}
+    .zo-main{width:min(980px,100%);margin:0 auto;padding:128px 24px 76px}
+    .zo-kicker{margin:0 0 14px;color:var(--gold);font-family:var(--en);font-size:12px;letter-spacing:.34em}
+    .zo-draft{display:inline-block;margin:0 0 22px;padding:4px 14px;border:1px solid rgba(197,162,111,.45);border-radius:999px;color:#dec38f;font-size:12px;letter-spacing:.16em}
+    .zo-main h1{text-align:left}
+    .zo-main h1 small{display:block;margin-bottom:6px;color:var(--gold);font-size:.42em;letter-spacing:.24em}
+    .zo-intro{margin-top:24px;font-family:var(--serif);font-size:18px;line-height:2;color:rgba(245,241,233,.86)}
+    .zo-main h2{margin:56px 0 18px;font-family:var(--serif);font-weight:400;font-size:24px;letter-spacing:.14em;color:var(--gold)}
+    .zo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+    .zo-card{display:flex;flex-direction:column;gap:6px;padding:22px;border:1px solid rgba(197,162,111,.3);background:linear-gradient(145deg,rgba(15,26,20,.84),rgba(8,15,10,.76));color:var(--cream);text-decoration:none;transition:border-color .2s,transform .2s}
+    a.zo-card:hover,a.zo-card:focus-visible{border-color:#d9bd87;transform:translateY(-2px)}
+    .zo-card.is-pending{opacity:.5}
+    .zo-branch{color:var(--gold);font-family:var(--serif);font-size:14px;letter-spacing:.2em}
+    .zo-card strong{font-family:var(--serif);font-weight:500;font-size:24px;letter-spacing:.12em}
+    .zo-rel{font-size:14px;color:rgba(245,241,233,.7)}
+    .zo-go{margin-top:6px;font-size:13px;color:var(--gold);letter-spacing:.1em}
+    .zo-guide{margin:-6px 0 20px;font-size:15px;color:rgba(245,241,233,.7)}
+    .zo-notes{margin-top:48px;font-size:14px;line-height:1.9;color:rgba(245,241,233,.55)}
+    @media(max-width:560px){.zo-main{padding:112px 16px 58px}.zo-grid{grid-template-columns:1fr 1fr}.zo-card{padding:16px}}
   </style>
   <script src="/analytics-config.js"></script>
   <script src="/analytics.js" defer></script>
@@ -104,19 +121,14 @@
     </div>
   </nav>
 
-  <main class="zodiac-status-main">
-    <section class="zodiac-status-card" aria-labelledby="zodiac-status-title">
-      <p class="zodiac-status-kicker">2027 DING-WEI · ZODIAC FORTUNE GUIDE</p>
-      <p class="zodiac-status-pill" role="note">內容建置中</p>
-      <h1 id="zodiac-status-title"><span>2027 丁未年</span>十二生肖流年指引</h1>
-      <div class="zodiac-status-rule" aria-hidden="true"></div>
-      <p class="zodiac-status-lead">完整內容正在整理與審校，尚未正式公開。</p>
-      <p class="zodiac-status-note">正式上線後，將於靈元院官方網站與官方頻道公告。</p>
-      <div class="zodiac-status-actions">
-        <a class="primary" href="/niandian.html">返回年度點燈</a>
-        <a href="/">返回首頁</a>
-      </div>
-    </section>
+  <main class="zo-main">
+    <p class="zo-kicker">2027 DING-WEI · ZODIAC GUIDE</p>
+    <h1><small>2027 丁未年</small>十二生肖流年指引</h1>
+    <div class="zo-intro" data-copy-slot="overview-intro"><p>一年更替，人的境遇有時隨之轉動，有時仍延續著未竟的課題。靈元院依丁未年的地支關係與民間流年術語，整理十二生肖的傳統說法，並從象徵與心性的角度提出閱讀方向。每篇文章區分資料記載與編者詮釋，讓讀者理解名詞的來處，也有空間對照自己的生活。生肖只是觀察歲運的一個入口，個別經驗仍不能由單一生肖概括。</p></div>
+    <h2>十二生肖</h2>
+    <p class="zo-guide">選擇您的生肖，閱讀丁未年流年概覽與星曜詮釋。</p>
+    <div class="zo-grid"><a class="zo-card" href="/2027-zodiac-rat.html"><span class="zo-branch">子</span><strong>屬鼠</strong><span class="zo-rel">與太歲：害</span><span class="zo-go">查看生肖流年指引</span></a><a class="zo-card" href="/2027-zodiac-ox.html"><span class="zo-branch">丑</span><strong>屬牛</strong><span class="zo-rel">與太歲：沖</span><span class="zo-go">查看生肖流年指引</span></a><a class="zo-card" href="/2027-zodiac-tiger.html"><span class="zo-branch">寅</span><strong>屬虎</strong><span class="zo-rel">與太歲：無</span><span class="zo-go">查看生肖流年指引</span></a><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">卯</span><strong>屬兔</strong><span class="zo-rel">與太歲：三合</span><span class="zo-go">整理中</span></div><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">辰</span><strong>屬龍</strong><span class="zo-rel">與太歲：無</span><span class="zo-go">整理中</span></div><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">巳</span><strong>屬蛇</strong><span class="zo-rel">與太歲：無</span><span class="zo-go">整理中</span></div><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">午</span><strong>屬馬</strong><span class="zo-rel">與太歲：六合</span><span class="zo-go">整理中</span></div><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">未</span><strong>屬羊</strong><span class="zo-rel">與太歲：值太歲</span><span class="zo-go">整理中</span></div><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">申</span><strong>屬猴</strong><span class="zo-rel">與太歲：無</span><span class="zo-go">整理中</span></div><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">酉</span><strong>屬雞</strong><span class="zo-rel">與太歲：無</span><span class="zo-go">整理中</span></div><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">戌</span><strong>屬狗</strong><span class="zo-rel">與太歲：刑、破</span><span class="zo-go">整理中</span></div><div class="zo-card is-pending" aria-disabled="true"><span class="zo-branch">亥</span><strong>屬豬</strong><span class="zo-rel">與太歲：三合</span><span class="zo-go">整理中</span></div></div>
+    <p class="zo-notes">神煞是古人觀看時間的一套象徵語言，各家起例與說法不一。各生肖頁分「傳統說法」與「編者讀法」兩部分呈現。</p>
   </main>
 
   <footer id="site-canonical-footer">
