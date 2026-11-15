@@ -33,7 +33,7 @@
   }
 
   /* 手機點擊回饋：觸控時補上按下狀態 */
-  const pressables = ".zp-gated-link, .zp-lamp-login, .zm-btn, .zm-seal, .zp-nav a";
+  const pressables = ".zp-gated-link, .zp-lamp-login, .zm-btn, .zp-nav a"; // .zm-seal 按下回饋見 zodiac-picker.js
   document.addEventListener("pointerdown", (e) => {
     const el = e.target.closest?.(pressables);
     if (!el || e.pointerType === "mouse") return;

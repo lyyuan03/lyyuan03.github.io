@@ -1,0 +1,68 @@
+/* 十二生肖選擇區：共用圖片徽章元件
+   用於 2027-zodiac.html（總覽頁）與十二個生肖獨立文章頁，
+   單一檔案維護尺寸、排列、留白與互動樣式，避免各頁各自維護。
+   徽章圖片本身已內建香檳金筆刷圓環與書法字，這裡只負責外層的
+   立體邊框、陰影、hover 抬升與光暈、按下回饋、目前生肖的深色金框選取。 */
+.zm-picker{margin-top:60px}
+.zm-picker-title{margin:0 0 6px;font:500 20px/1.6 'Noto Serif TC',serif;letter-spacing:.16em;color:#4f3923}
+.zm-picker-hint{margin:0 0 20px;font-size:14px;color:rgba(10,16,12,.6)}
+.zm-picker ol{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:0;padding:0;list-style:none}
+.zm-picker li{display:block}
+
+.zm-seal{
+ position:relative;isolation:isolate;display:block;
+ aspect-ratio:1;border-radius:50%;overflow:hidden;
+ background:#f4efe4;
+ border:3px solid rgba(165,130,84,.55);
+ box-shadow:
+  inset 0 1px 0 rgba(255,255,255,.55),
+  0 3px 0 rgba(165,130,84,.3),
+  0 8px 16px rgba(92,68,32,.16);
+ transition:transform .25s cubic-bezier(.22,.61,.36,1),
+  box-shadow .25s cubic-bezier(.22,.61,.36,1),
+  border-color .25s cubic-bezier(.22,.61,.36,1);
+ -webkit-tap-highlight-color:transparent;
+}
+.zm-seal img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
+
+@media(hover:hover) and (pointer:fine){
+ .zm-seal:hover{
+  transform:translateY(-3px);
+  border-color:#C9A063;
+  box-shadow:
+   inset 0 1px 0 rgba(255,255,255,.6),
+   0 0 0 2px rgba(234,216,180,.9),
+   0 0 20px rgba(201,160,99,.5),
+   0 5px 0 rgba(165,130,84,.35),
+   0 14px 22px rgba(92,68,32,.18);
+ }
+}
+.zm-seal:active,.zm-seal.zm-pressed{
+ transform:translateY(2px) scale(.96);
+ box-shadow:inset 0 2px 6px rgba(165,130,84,.35),0 1px 0 rgba(165,130,84,.3);
+}
+.zm-seal:focus-visible{outline:2px solid #0A100C;outline-offset:4px}
+
+/* 目前所在生肖：深色底加雙層金框，與未選取的徽章明顯區隔 */
+.zm-seal[aria-current="page"]{
+ border-color:#0A100C;
+ box-shadow:
+  0 0 0 3px #0A100C,
+  0 0 0 6px #C9A063,
+  0 10px 22px rgba(10,16,12,.35);
+}
+@media(hover:hover) and (pointer:fine){
+ .zm-seal[aria-current="page"]:hover{transform:none}
+}
+
+@media(max-width:768px){
+ .zm-picker ol{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+ .zm-seal{border-width:2px}
+ .zm-seal[aria-current="page"]{box-shadow:0 0 0 2px #0A100C,0 0 0 4px #C9A063,0 8px 16px rgba(10,16,12,.3)}
+}
+@media(max-width:360px){.zm-picker ol{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+@media(prefers-reduced-motion:reduce){
+ .zm-seal{transition:none}
+ .zm-seal:hover,.zm-seal:active,.zm-seal.zm-pressed{transform:none}
+}

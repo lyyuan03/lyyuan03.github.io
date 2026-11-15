@@ -155,38 +155,7 @@ html.zm-ready .zp-main>h2.zm-in{opacity:1;transform:none}
 .zp-nav a:active{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(165,130,84,.3),0 1px 0 rgba(165,130,84,.35)}
 .zp-nav a:focus-visible{outline:2px solid #0A100C;outline-offset:4px}
 
-/* ---------- 十二生肖選擇區：立體徽章 ---------- */
-.zm-picker{margin-top:60px}
-.zm-picker-title{margin:0 0 6px;font:500 20px/1.6 'Noto Serif TC',serif;letter-spacing:.16em;color:#4f3923}
-.zm-picker-hint{margin:0 0 20px;font-size:14px;color:rgba(10,16,12,.6)}
-.zm-picker ol{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:0;padding:0;list-style:none}
-.zm-seal{
- position:relative;isolation:isolate;
- display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
- aspect-ratio:1;border-radius:50%;
- text-decoration:none;color:#4f3923;
- background:radial-gradient(circle at 50% 32%,#fffdf8,#f1e6d0 70%,#e6d6b6);
- border:1px solid rgba(165,130,84,.5);
- box-shadow:inset 0 1px 0 #fff,inset 0 -3px 6px rgba(165,130,84,.22),0 3px 0 rgba(165,130,84,.3),0 8px 16px rgba(92,68,32,.13);
- transition:transform .25s var(--zm-ease),box-shadow .25s var(--zm-ease),border-color .25s;
- -webkit-tap-highlight-color:transparent;
-}
-.zm-seal::before{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid rgba(201,160,99,.28);pointer-events:none}
-.zm-seal b{font:500 clamp(20px,2.6vw,26px)/1.1 'Noto Serif TC',serif;color:#7a531c}
-.zm-seal span{font-size:13px;letter-spacing:.2em;padding-left:.2em}
-@media(hover:hover) and (pointer:fine){
- .zm-seal:hover{transform:translateY(-3px);border-color:#C9A063;box-shadow:inset 0 1px 0 #fff,0 0 0 1px rgba(234,216,180,.9),0 0 18px rgba(201,160,99,.45),0 5px 0 rgba(165,130,84,.35),0 14px 22px rgba(92,68,32,.18)}
-}
-.zm-seal:active,.zm-seal.zm-pressed{transform:translateY(2px) scale(.97);box-shadow:inset 0 2px 6px rgba(165,130,84,.35),0 1px 0 rgba(165,130,84,.3)}
-.zm-seal:focus-visible{outline:2px solid #0A100C;outline-offset:4px}
-.zm-seal[aria-current="page"]{
- color:#F5F0E8;
- background:radial-gradient(circle at 50% 30%,#2a3a2c,#0A100C 72%);
- border-color:#C9A063;
- box-shadow:inset 0 1px 0 rgba(234,216,180,.35),0 0 0 3px rgba(234,216,180,.55),0 0 22px rgba(201,160,99,.4),0 6px 14px rgba(10,16,12,.3);
-}
-.zm-seal[aria-current="page"] b{color:#EAD8B4}
-.zm-seal[aria-current="page"]::before{border-color:rgba(234,216,180,.4)}
+/* ---------- 十二生肖選擇區：見共用檔案 zodiac-picker.css / zodiac-picker.js ---------- */
 
 /* ---------- 點燈專屬全文：深色立體框體、金色邊線、柔光、鎖頭 ---------- */
 .zp-gated-preview,.zp-lamp{position:relative;isolation:isolate;overflow:hidden}
@@ -219,12 +188,9 @@ body:has(> .zp-main) .zp-lamp,body:has(> .zp-main) .zp-gated-preview{
  .zp-main>.zp-hero img{transform:scale(1.02)}
  .zp-main>.zp-hero{box-shadow:0 0 0 4px rgba(255,252,246,.9),0 0 0 5px rgba(201,160,99,.4),0 16px 34px #5c442026}
  @keyframes zm-rise{from{opacity:.6;transform:translate3d(0,6px,0)}to{opacity:1;transform:none}}
- .zm-picker ol{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
- .zm-seal span{font-size:12px;letter-spacing:.12em}
  .zp-gated-link,.zp-lamp-login{width:100%}
  .zm-btn{width:100%}
 }
-@media(max-width:360px){.zm-picker ol{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
 /* ---------- 減少動態 ---------- */
 @media(prefers-reduced-motion:reduce){
