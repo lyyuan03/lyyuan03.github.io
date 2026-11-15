@@ -17,7 +17,7 @@ const css = `
 #inline-image-list img[src*="/${ARTICLE_ID}/"],
 #thumbnail-preview-media img[src*="/${ARTICLE_ID}/"],
 #preview img[src*="/${ARTICLE_ID}/"] {
-  filter: brightness(1.075) saturate(1.16) contrast(1.045) !important;
+  filter: brightness(1.045) saturate(1.075) contrast(1.025) !important;
 }
 #article-root .article-view[data-article-id="${ARTICLE_ID}"] .article-cover,
 #article-root .article-view[data-article-id="${ARTICLE_ID}"] .article-body img {
