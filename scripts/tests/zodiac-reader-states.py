@@ -71,7 +71,7 @@ SCENARIOS = {
     "adminPreview": scenario(ADMIN, {"data": {"status": "published", "active": False, "requiredPermission": "dingwei-2027-rat", "content": FIXTURE}}),
     "adminEmpty": scenario(ADMIN, None),
 }
-XSS = '## <img src=x onerror="window.__xss=1">標題\n\n<script>window.__xss=2</script>段落\n\n> <b onmouseover="window.__xss=3">引言</b>'
+XSS = '## <img src=x onerror="window.__xss=1">標題\n\n<script>window.__xss=2</script>段落\n\n> <b onmouseover="window.__xss=3">引言</b>\n\n**<img src=x onerror="window.__xss=4">粗體包住的注入**'
 XSS_SCENARIO = scenario(USER, {"data": {"status": "published", "active": True, "requiredPermission": "dingwei-2027-rat", "content": XSS}})
 
 results = []
@@ -183,8 +183,11 @@ async def main():
         SCENARIOS["xss"] = XSS_SCENARIO
         ctx, page, errors = await open_page(browser, "xss")
         x = await page.evaluate("""() => ({ flag: window.__xss, tags: document.querySelectorAll('.zr-exclusive img, .zr-exclusive script, .zr-exclusive b').length,
-          shown: document.querySelector('.zr-exclusive').textContent.includes('<script>') })""")
+          shown: document.querySelector('.zr-exclusive').textContent.includes('<script>'),
+          strongTags: document.querySelectorAll('.zr-exclusive strong').length,
+          strongText: document.querySelector('.zr-exclusive strong')?.textContent || '' })""")
         check("正文含 HTML：不執行、不產生標籤，以純文字顯示", x["flag"] is None and x["tags"] == 0 and x["shown"], json.dumps(x))
+        check("粗體包住 HTML 注入：只產生 <strong>，裡面是逐字顯示的文字，不會額外長出 <img>", x["strongTags"] >= 1 and "<img" in x["strongText"], json.dumps(x))
         await ctx.close()
         del SCENARIOS["xss"]
 
@@ -200,7 +203,10 @@ async def main():
           tocLinks: document.querySelectorAll('.zm-toc a').length,
           tocOpen: document.querySelector('.zm-toc')?.open,
           tocFixed: getComputedStyle(document.querySelector('.zm-toc')).position,
-          scriptInjected: document.querySelector('.zr-exclusive script, .zr-exclusive [onerror]') !== null
+          scriptInjected: document.querySelector('.zr-exclusive script, .zr-exclusive [onerror]') !== null,
+          boldText: document.querySelector('.zr-exclusive strong')?.textContent || '',
+          boldHtml: document.querySelector('.zr-exclusive strong')?.outerHTML || '',
+          loneStarKept: document.querySelector('.zr-exclusive').textContent.includes('本句只有一個 * 符號')
         })""")
         check("授權：專屬章節 4 個（依測試原稿）", info["h2"] == 4, str(info["h2"]))
         check("授權：節氣時間軸 12 個月份，順序完整", info["months"] == 12, str(info["months"]))
@@ -210,6 +216,9 @@ async def main():
         check("授權：目錄分為公開篇／點燈專屬", info["tocGroups"] == ["公開篇", "點燈專屬"], str(info["tocGroups"]))
         check("授權：桌面寬螢幕目錄固定於側邊", info["tocFixed"] == "fixed", info["tocFixed"])
         check("授權：正文不產生可執行標籤", not info["scriptInjected"])
+        check("授權：成對 ** 轉為 <strong>，文字不增刪", info["boldText"] == "粗體測試：", info["boldText"])
+        check("授權：<strong> 不含其他標籤或屬性", info["boldHtml"] == "<strong>粗體測試：</strong>", info["boldHtml"])
+        check("授權：單獨的 * 原樣保留，不被誤判為粗體", info["loneStarKept"])
         order = await page.evaluate("[...document.querySelectorAll('.zr-month h3')].map(h => h.textContent.slice(0,2)).join('')")
         check("授權：月份順序與原稿一致", order == "寅月卯月辰月巳月午月未月申月酉月戌月亥月子月丑月", order)
 

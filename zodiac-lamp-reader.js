@@ -4,8 +4,10 @@
 // 文案來源：docs/dingwei-2027-exclusive-reading-copy.md（PR #443）。
 //
 // 正文格式（純文字，管理頁不接受 HTML）：空行分段；「## 」章節標題；「### 」小節標題；
-// 「> 」作者或審稿者標記的引言。章節標題含「流月／節氣」時，其下的小節以節氣時間軸呈現；
-// 含「年度總結／結語／修行建議」時以總結版面呈現。只改變版面，不增刪任何文字。
+// 「> 」作者或審稿者標記的引言；成對的「**文字**」轉為粗體（與 articles-core 公開文章的
+// 粗體排版一致），沒有成對出現的「*」一律保留原樣顯示，不猜測意思。章節標題含「流月／節氣」
+// 時，其下的小節以節氣時間軸呈現；含「年度總結／結語／修行建議」時以總結版面呈現。
+// 只改變版面，不增刪任何文字；本檔不接受原稿中的任何 HTML，一律先跳脫再比對 ** 標記。
 // 渲染完成後發出 document 事件「zodiac:content」，供 zodiac-motion.js 重建目錄與章節進場。
 import { auth, db, isAdminEmail } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -69,7 +71,11 @@ const root = document.querySelector("[data-lamp-reader]");
 const zodiac = root?.dataset.zodiac;
 
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const inline = (text) => escapeHtml(text).replace(/\n/g, "<br>");
+// 粗體：對已完整跳脫的文字，只把「成對的 **文字**」換成 <strong>，不產生任何其他標籤或屬性，
+// 也不會讓原稿中的 < > 等字元變成可執行的 HTML。單獨出現、沒有成對的 * 原樣保留。
+const applyBold = (escaped) => escaped.replace(/\*\*([^*]+?)\*\*/g, "<strong>$1</strong>");
+const inlineText = (text) => applyBold(escapeHtml(text));
+const inline = (text) => inlineText(text).replace(/\n/g, "<br>");
 
 // 純文字 → 區塊。所有文字先跳脫，只產生固定的標籤，不接受任何 HTML。
 export function parseBody(text) {
@@ -115,9 +121,9 @@ export function renderBody(text) {
   let s = 0, m = 0;
   const block = (b) => b.type === "p" ? `<p>${inline(b.text)}</p>`
     : b.type === "quote" ? `<blockquote class="zr-quote"><p>${inline(b.text)}</p></blockquote>`
-    : `<h3 id="zr-h${++m}">${escapeHtml(b.text)}</h3>`;
+    : `<h3 id="zr-h${++m}">${inlineText(b.text)}</h3>`;
   return sections.map((sec) => {
-    const head = sec.h2 ? `<h2 id="zr-s${++s}">${escapeHtml(sec.h2)}</h2>` : "";
+    const head = sec.h2 ? `<h2 id="zr-s${++s}">${inlineText(sec.h2)}</h2>` : "";
     if (sec.kind !== "months") {
       const body = sec.items.map(block).join("");
       return sec.kind === "summary" ? `<section class="zr-summary">${head}${body}</section>` : head + body;
@@ -135,7 +141,7 @@ export function renderBody(text) {
           return `<li><a href="#${g.id}" title="${escapeHtml(g.title)}">${escapeHtml(short)}</a></li>`;
         }).join("")}</ol></nav>`
       : "";
-    const months = groups.map((g) => `<article class="zr-month"><h3 id="${g.id}">${escapeHtml(g.title)}</h3>${g.items.map(block).join("")}</article>`).join("");
+    const months = groups.map((g) => `<article class="zr-month"><h3 id="${g.id}">${inlineText(g.title)}</h3>${g.items.map(block).join("")}</article>`).join("");
     return `<section class="zr-months">${head}${lead.map(block).join("")}${chips}<div class="zr-timeline">${months}</div></section>`;
   }).join("");
 }
