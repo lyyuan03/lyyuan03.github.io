@@ -26,27 +26,38 @@
     for (var i = 0; i < 7; i++) g.appendChild(document.createElement('i'));
     reg.parentNode.insertBefore(g, reg);
   }
-  var PHOTOS = [
-    ['banner', 'photos/g-banner.webp', 800, 1067, '道場牆面掛著三幅紅色布條，分別寫著「春」「滿」「福」，下方有木製矮櫃', '春滿福', '歲末迎新，紅布條高掛。'],
-    ['lamps', 'photos/g-lamps.webp', 1200, 773, '成排點亮的供燈，橘紅色燈盞中各有一點火光', '一盞一盞，都是心願', '成排點亮的供燈，一點火光，一份心意。'],
-    ['candle', 'photos/g-candle.webp', 1000, 804, '一盞點亮的燭燈，旁邊是一朵桃紅色的菊花，後方是供燈架', '一盞燈，一份誠心', '燭光與鮮花，安靜陪著每一份心願。'],
-    ['apples', 'photos/g-apples.webp', 1024, 655, '供桌上的紅蘋果，貼著寫有「進寶招財」的紅色貼紙', '進寶招財', '供桌上的蘋果，貼著紅色吉祥貼紙。']
-  ];
-  function gallery(before) {
-    if (!before || !before.parentNode || document.querySelector('.yd-gallery')) return;
-    var sec = document.createElement('section');
-    sec.className = 'yd-gallery'; sec.setAttribute('aria-label', '道場實景');
-    var html = '<div class="yd-gallery__head"><h2>歲末迎新・道場一隅</h2><p>以下皆為道場實際拍攝的畫面</p></div><div class="yd-gallery__grid">';
-    for (var i = 0; i < PHOTOS.length; i++) {
-      var p = PHOTOS[i];
-      html += '<figure class="yd-ph yd-ph--' + p[0] + '"><img src="' + p[1] + '" width="' + p[2] + '" height="' + p[3] + '" alt="' + p[4] + '" loading="lazy" decoding="async"><figcaption><strong>' + p[5] + '</strong><span>' + p[6] + '</span></figcaption></figure>';
-    }
-    sec.innerHTML = html + '</div>';
-    before.parentNode.insertBefore(sec, before);
+  /* 照片分散在報名流程各處，各自配合所在區塊的文案 */
+  function fig(cls, src, w, h, alt, title, text) {
+    return '<figure class="yd-ph ' + cls + '"><img src="' + src + '" width="' + w + '" height="' + h + '" alt="' + alt + '" loading="lazy" decoding="async"><figcaption><strong>' + title + '</strong><span>' + text + '</span></figcaption></figure>';
+  }
+  function put(el, where, html, tag) {
+    if (!el || !el.parentNode) return;
+    var n = document.createElement(tag || 'div'); n.innerHTML = html;
+    var node = n.firstChild;
+    if (where === 'before') el.parentNode.insertBefore(node, el);
+    else el.parentNode.insertBefore(node, el.nextSibling);
+  }
+  function photos() {
+    if (document.querySelector('.yd-ph')) return;
+    var h2 = document.querySelector('h2[data-cfg="page.formTitle"]');
+    var head = h2 && h2.closest('.heading');
+    /* A. 報名表開頭：春滿福（直幅，維持原比例，旁邊配文字） */
+    put(head || document.querySelector('section.panel.reveal'), 'before',
+      '<section class="yd-feature reveal" aria-label="歲末迎新">' +
+      fig('yd-ph--tall', 'photos/g-banner.webp', 800, 1067, '道場牆面掛著三幅紅色布條，分別寫著「春」「滿」「福」，下方有木製矮櫃', '春滿福', '道場牆上新掛的紅布條。') +
+      '<div class="yd-feature__txt"><h2>歲末迎新</h2><p>辭舊迎新之際，道場牆上掛起紅色布條，春、滿、福三字依序排開。</p><p>一年將盡，邀請您以一盞燈回向過去一年的平安，也為新的一年留下一份心願。</p></div></section>', 'div');
+    /* B. 選擇燈別：燭光與菊花（16:9） */
+    var lan = document.querySelector('#lanterns .sectionline');
+    put(lan, 'after', fig('yd-ph--band yd-ph--candle', 'photos/g-candle.webp', 1000, 804, '一盞點亮的燭燈，旁邊是一朵桃紅色的菊花，後方是供燈架', '一盞燈，一份誠心', '燭光與鮮花，安靜陪著每一份心願。'));
+    /* C. 建院隨喜功德：進寶招財（16:9） */
+    var don = document.querySelector('#donationSection > h3');
+    put(don, 'after', fig('yd-ph--band', 'photos/g-apples.webp', 1024, 655, '供桌上的紅蘋果，貼著寫有「進寶招財」的紅色貼紙', '進寶招財', '供桌上的蘋果，貼著紅色吉祥貼紙。'));
+    /* D. 明細之前：成排供燈（寬幅 21:9，作為收尾） */
+    put(document.getElementById('review'), 'before', fig('yd-ph--wide', 'photos/g-lamps.webp', 1200, 773, '成排點亮的供燈，橘紅色燈盞中各有一點火光', '一點火光，一份心意', '確認登記明細並送出後，即完成報名。'));
   }
   function init() {
     garland();
-    gallery(document.querySelector('.yd-garland') || document.getElementById('register'));
+    photos();
     var box = document.getElementById('sponsorChoices');
     if (box) {
       decorate(box);
