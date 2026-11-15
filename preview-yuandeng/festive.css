@@ -1,0 +1,172 @@
+/* 圓燈總回向法儀・過年喜慶與宗教氛圍層（朱紅＋金）
+   疊在 style.css / yuandeng.css 之後載入。不改背景圖、不改表單結構與送出流程。
+   色彩：朱紅 #B5302A（深 #7C1D1A／亮 #D8483C）、金 #C9A063（亮 #F4D98E／深 #9C7330）、米白底。
+   動態只用 opacity / transform，並尊重 prefers-reduced-motion。 */
+
+body.signup-page{
+  --yd-red:#B5302A;--yd-red-hi:#D8483C;--yd-red-lo:#7C1D1A;
+  --yd-gold-hi:#F4D98E;--yd-gold:#C9A063;--yd-gold-lo:#9C7330;
+}
+
+/* ── 1. 禮謝燈：未亮（沙米色）→ 勾選後點亮（朱紅燈籠＋佛光） ── */
+body.signup-page .lamp-icon{position:relative;width:48px;height:60px;overflow:visible}
+body.signup-page .lamp-icon svg{position:absolute;inset:0;opacity:0}
+body.signup-page .lamp-icon::before,
+body.signup-page .lamp-icon::after{content:"";position:absolute;pointer-events:none;background:center / contain no-repeat}
+body.signup-page .lamp-icon::before{inset:0;background-image:url("festive/yuandeng-lantern-red-unlit.svg");filter:drop-shadow(0 3px 3px #5c442030)}
+body.signup-page .lamp-icon::after{
+  left:50%;top:-16%;width:156%;aspect-ratio:1 / 1;
+  background-image:url("festive/yuandeng-lantern-red-lit.svg");
+  opacity:0;transform:translateX(-50%) scale(.82);
+  transition:opacity .55s ease,transform .55s cubic-bezier(.22,.61,.36,1);
+}
+body.signup-page .lamp.selected .lamp-icon::after{
+  opacity:1;transform:translateX(-50%) scale(1);
+  animation:ydFlame 4.2s ease-in-out .6s infinite;
+}
+body.signup-page .lamp.selected .lamp-icon::before{opacity:0;transition:opacity .35s ease}
+@keyframes ydFlame{0%,100%{opacity:1}50%{opacity:.82}}
+
+/* 與 newyear-fx 並存：它也會對 .lamp-icon::before 畫光暈（預設 opacity:0），這裡明確蓋回，並隱藏它的小燈籠圖示 */
+html.fx-on body.signup-page .lamp-icon::before{inset:0;border-radius:0;box-shadow:none;opacity:1;background-repeat:no-repeat;background-position:center;background-size:contain}
+html.fx-on body.signup-page .lamp.selected .lamp-icon::before{opacity:0}
+html.fx-on body.signup-page .sponsor-card.selected .lamp-icon::before{opacity:1}
+html.fx-on body.signup-page .fx-lantern-ico{display:none}
+
+/* 選中的燈卡：暖金底、左側朱紅條、柔和金光 */
+body.signup-page .lamp.selected{
+  background:linear-gradient(165deg,#fff5da 0%,#f8e0a6 58%,#f1cd84 100%);
+  border-color:#b5302a99;
+  box-shadow:inset 4px 0 0 var(--yd-red),inset 0 0 0 1px #e2bd6a66,0 0 28px #f0b44a45,var(--shadow-mid);
+}
+body.signup-page input[type=checkbox],
+body.signup-page input[type=radio]{accent-color:var(--yd-red)}
+
+/* ── 2. 贊助項目：蓮花／寶珠／回紋基石，選取時浮起並發光 ── */
+body.signup-page .sponsor-card .lamp-icon::before{background-image:url("festive/yuandeng-flame-mark.svg")}
+body.signup-page .sponsor-card[data-yd-icon="landscape"] .lamp-icon::before{background-image:url("festive/yuandeng-sponsor-landscape.svg")}
+body.signup-page .sponsor-card[data-yd-icon="ritual"] .lamp-icon::before{background-image:url("festive/yuandeng-sponsor-ritual.svg")}
+body.signup-page .sponsor-card[data-yd-icon="hardware"] .lamp-icon::before{background-image:url("festive/yuandeng-sponsor-hardware.svg")}
+body.signup-page .sponsor-card .lamp-icon{width:46px;height:46px}
+body.signup-page .sponsor-card .lamp-icon::after{display:none}
+body.signup-page .sponsor-card .lamp-icon::before{transition:transform .35s ease,filter .35s ease}
+body.signup-page .sponsor-card.selected .lamp-icon::before{opacity:1;transform:translateY(-2px) scale(1.08);filter:drop-shadow(0 3px 7px #b5302a66)}
+
+/* ── 3. 區塊卡片：極淡回紋底紋＋四角金線角花 ── */
+body.signup-page .panel{
+  background-image:url("festive/yuandeng-tile-soft.svg"),linear-gradient(180deg,#fffcf6 0%,#faf4e8 100%);
+  background-size:80px 80px,auto;
+}
+body.signup-page .panel::after{
+  content:"";position:absolute;inset:4px;pointer-events:none;z-index:2;
+  background:
+    url("festive/yuandeng-corner-tl.svg") left top / 28px 28px no-repeat,
+    url("festive/yuandeng-corner-tr.svg") right top / 28px 28px no-repeat,
+    url("festive/yuandeng-corner-bl.svg") left bottom / 28px 28px no-repeat,
+    url("festive/yuandeng-corner-br.svg") right bottom / 28px 28px no-repeat;
+}
+@media (min-width:741px){
+  body.signup-page .panel::after{inset:5px;background-size:34px 34px,34px 34px,34px 34px,34px 34px}
+}
+
+/* ── 4. 標題橫條：朱漆底、金字、凸起金印編號、金色回紋與細邊 ── */
+body.signup-page .panel > .sectionline,
+body.signup-page .panel > h3:first-child{
+  position:relative;
+  margin:-28px -28px 24px;padding:16px 28px 15px;
+  border-radius:9px 9px 0 0;
+  border-bottom:2px solid #e2bd6a;
+  background:
+    url("festive/yuandeng-tile-gold.svg") 0 0 / 64px 64px,
+    linear-gradient(180deg,#d4473c 0%,#b5302a 40%,#8c211d 100%);
+  box-shadow:inset 0 1px 0 #ffffff55,inset 0 -4px 8px #4a0e0c66,0 3px 7px #5a121038;
+  align-items:center;
+}
+body.signup-page .panel > h3:first-child{display:flex;align-items:center}
+body.signup-page .panel > .sectionline h3{margin:0}
+body.signup-page .panel > .sectionline h3,
+body.signup-page .panel > h3:first-child{
+  color:#fbe9b4;text-shadow:0 1px 0 #5a1210,0 0 10px #f2c86a55;letter-spacing:.12em;
+}
+body.signup-page .panel > .sectionline small{color:#f5dfa6;opacity:.95}
+body.signup-page h3 .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:2.2em;height:2.2em;border-radius:50%;margin-right:.75em;vertical-align:middle;
+  font:700 14px/1 'Cormorant Garamond',serif;font-variant-numeric:lining-nums;letter-spacing:0;
+  color:#6e1714;text-shadow:0 1px 0 #fff8;
+  background:radial-gradient(circle at 32% 26%,#fff2c6 0%,#e4be6c 48%,#a6792f 100%);
+  box-shadow:0 2px 5px #3a0a0866,inset 0 1px 0 #fffb,inset 0 -2px 3px #6a4a1c66,0 0 0 2px #7c1d1a;
+}
+@media (max-width:960px){
+  body.signup-page .panel > .sectionline,
+  body.signup-page .panel > h3:first-child{margin:-24px -20px 22px;padding:14px 20px 13px}
+}
+@media (max-width:740px){
+  body.signup-page .panel > .sectionline,
+  body.signup-page .panel > h3:first-child{margin:-23px -18px 20px;padding:13px 18px 12px}
+  body.signup-page .lamp-icon{width:40px;height:50px}
+  body.signup-page .sponsor-card .lamp-icon{width:38px;height:38px}
+}
+
+/* 與 newyear-fx 並存：它把編號文字改成金色，金印上需用深朱紅才看得清楚 */
+html.fx-3d body.signup-page .sectionline h3 .num,
+html.fx-3d body.signup-page .panel > h3:first-child .num{color:#6e1714}
+
+/* 頁首三步驟的編號：同樣的凸起金印 */
+body.signup-page .journey b{
+  color:#6e1714;
+  background:radial-gradient(circle at 32% 26%,#fff2c6 0%,#e4be6c 48%,#a6792f 100%);
+  border:1px solid #7c1d1a;
+  box-shadow:0 2px 5px #3a0a0855,inset 0 1px 0 #fffb,inset 0 -2px 3px #6a4a1c66;
+}
+
+/* ── 5. 燈串：報名區上方一排朱紅燈籠，各自緩緩擺動 ── */
+.yd-garland{
+  position:relative;height:84px;max-width:1120px;margin:2px auto -34px;padding:0 6%;
+  display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;
+}
+.yd-garland::before{
+  content:"";position:absolute;left:3%;right:3%;top:0;height:16px;
+  border-top:2px solid #d9ae5e;border-radius:50% 50% 0 0 / 100% 100% 0 0;opacity:.85;
+}
+.yd-garland i{
+  display:block;width:38px;height:62px;margin-top:9px;
+  background:url("festive/yuandeng-garland-lantern.svg") center / contain no-repeat;
+  filter:drop-shadow(0 6px 5px #5a121038);
+  transform-origin:50% 0;animation:ydSwing 4.6s ease-in-out infinite alternate;
+}
+.yd-garland i:nth-child(2n){animation-duration:5.4s;animation-delay:-1.4s;margin-top:15px}
+.yd-garland i:nth-child(3n){animation-duration:4.1s;animation-delay:-2.6s}
+.yd-garland i:nth-child(4){margin-top:19px}
+@keyframes ydSwing{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+@media (max-width:740px){
+  .yd-garland{height:62px;margin-bottom:-22px;padding:0 4%}
+  .yd-garland i{width:28px;height:46px}
+  .yd-garland i:nth-child(n+6){display:none}
+}
+
+/* ── 6. 頂端「會員登入」列改為不透明，避免下方文字透出 ── */
+html body.signup-page.site-auth-enabled #site-auth-bar{background:#faf6ee!important}
+
+/* ── 7. 送出成功：伺服器確認後（#result.yd-ok）才出現蓮花座上的燈與「圓滿回向」 ── */
+#result.yd-ok h2{text-align:center}
+#result.yd-ok h2::before{
+  content:"";display:block;width:min(380px,100%);aspect-ratio:320 / 200;margin:-8px auto 0;
+  background:url("festive/yuandeng-success-lotus.svg") center / contain no-repeat;
+  animation:ydLampIn 1.2s cubic-bezier(.22,.61,.36,1) both;
+}
+#result.yd-ok h2::after{
+  content:"圓滿回向";display:block;margin-top:4px;
+  font:600 16px/1.8 'Noto Serif TC',serif;letter-spacing:.7em;text-indent:.7em;text-align:center;color:#a02923;
+  animation:ydFadeUp 1s ease .55s both;
+}
+@keyframes ydLampIn{from{opacity:0;transform:translateY(10px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes ydFadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  body.signup-page .lamp-icon::after,
+  body.signup-page .sponsor-card .lamp-icon::before,
+  .yd-garland i,
+  #result.yd-ok h2::before,
+  #result.yd-ok h2::after{animation:none!important;transition:none!important}
+}

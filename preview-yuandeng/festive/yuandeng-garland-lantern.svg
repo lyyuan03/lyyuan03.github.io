@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="96" viewBox="0 0 60 96" fill="none" aria-hidden="true">
+<defs>
+<radialGradient id="yg-body" cx="22" cy="38" r="34" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F26B57"/><stop offset=".5" stop-color="#C7352D"/><stop offset="1" stop-color="#7A1B18"/></radialGradient>
+<radialGradient id="yg-glow" cx="30" cy="48" r="20" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFF0BA"/><stop offset=".6" stop-color="#FFC866" stop-opacity=".7"/><stop offset="1" stop-color="#FFB24A" stop-opacity="0"/></radialGradient>
+<linearGradient id="yg-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBEBB4"/><stop offset=".5" stop-color="#D9AE5E"/><stop offset="1" stop-color="#9C7330"/></linearGradient>
+</defs>
+<path d="M30 0V12" stroke="#D9AE5E" stroke-width="1.6"/>
+<rect x="19" y="12" width="22" height="6" rx="2" fill="url(#yg-gold)"/>
+<path d="M18 18C2 28 2 62 18 72H42C58 62 58 28 42 18Z" fill="url(#yg-body)" stroke="#8E2420" stroke-width="1"/>
+<path d="M30 18V72M23 19C12 31 12 59 23 71M37 19C48 31 48 59 37 71" stroke="#F4D98E" stroke-opacity=".55" stroke-width="1"/>
+<ellipse cx="30" cy="46" rx="14" ry="22" fill="url(#yg-glow)"/>
+<ellipse cx="19" cy="40" rx="3.5" ry="12" transform="rotate(-10 19 40)" fill="#fff" fill-opacity=".22"/>
+<rect x="19" y="72" width="22" height="6" rx="2" fill="url(#yg-gold)"/>
+<path d="M30 78V92M26 78V88M34 78V88" stroke="#D9AE5E" stroke-width="1.3" stroke-linecap="round"/>
+<circle cx="30" cy="93" r="2" fill="#E8C677"/>
+</svg>

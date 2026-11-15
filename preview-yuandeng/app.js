@@ -291,6 +291,7 @@ formNode.onsubmit = e => {
   const showFail = msg => { if (eyebrow) eyebrow.textContent = 'SIGNUP FAILED'; $('#result h2').textContent = '送出失敗'; if (foot) foot.hidden = true; $('#resultBody').innerHTML = `<p class="statusmsg error">${esc(msg)}</p><p class="hint">本頁仍保留本次填寫內容，請修正後再試，或聯繫行政。</p>`; };
   const showOk = res => {
     if (res.totals && Number.isFinite(res.totals.computable)) currentTotal = res.totals.computable;
+    $('#result').classList.add('yd-ok'); // 過年氛圍：伺服器確認成功後才顯示點亮的燈（festive.css）
     if (eyebrow) eyebrow.textContent = 'SIGNUP COMPLETE'; $('#result h2').textContent = savingEdit ? '已更新' : '報名已送出'; if (foot) foot.hidden = true;
     $('#resultBody').innerHTML = `<p>${esc(payload.fields.name)}，${savingEdit ? '報名資料已更新' : '報名資料已送出'}。</p><p>報名編號：<b style="color:var(--gold)">${esc(res.id || '')}</b></p><p>功德金總計：<b style="color:var(--gold)">${money(currentTotal)}</b></p><div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">確認信將寄至 ${esc(payload.fields.email)}（若未收到請檢查垃圾郵件匣）。本編號已寫入靈元院報名表。</p>${res.priceAdjusted ? '<p class="hint">金額已依最新價格設定重新計算。</p>' : ''}`;
   };
