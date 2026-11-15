@@ -8,11 +8,11 @@ import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
 const ARTICLE_ID = 'love-universal-emotion-and-fidelity';
-const REVISION = '20261115-user-four-methods-exact-v3';
+const REVISION = '20261115-user-four-methods-exact-v4';
 const START = '### 四項心法，也要在日常生活中實踐';
 const END = '## 我為什麼希望你讀一讀《請問愛》';
 const NEW_START = '## 情慾、財富與修行：四個讓能量找到出口的方法';
-const ENVELOPE = 'secure-imports/love-four-methods-v3.enc.json';
+const ENVELOPE = 'secure-imports/love-four-methods-v4.enc.json';
 const hash = x => createHash('sha256').update(x).digest('hex');
 const decode = x => Buffer.from(String(x), 'base64url');
 const creds = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || '{}');
@@ -32,8 +32,11 @@ const text = String(p.replacement || '').trim();
 if (p.articleId!==ARTICLE_ID || p.revision!==REVISION || p.startMarker!==START ||
     p.endMarker!==END || p.newMarker!==NEW_START || !text.startsWith(NEW_START) ||
     text.includes(START) || text.includes(END) || text.includes('**') || text.includes('母娘') ||
-    text.length < 2200 || text.length > 4000 ||
-    ['### 第一點：','### 第二點：','### 第三點：','### 第四點：','### 結語：'].some(t=>text.split(t).length!==2)) {
+    text.length < 2700 || text.length > 4000 ||
+    !text.includes('這裡需要分清楚兩件事：節制與壓抑。') ||
+    !text.includes('老師是一面鏡子，不是能量的唯一出口。') ||
+    !text.includes('放縱也不會讓能量被轉化。') ||
+    ['### 開場：','### 第一點：','### 第二點：','### 第三點：','### 第四點：','### 結語：'].some(t=>text.split(t).length!==2)) {
   throw new Error('Private revision section validation failed');
 }
 const app = initializeApp({credential:cert(creds),projectId:'lyyuan03-membership'});
@@ -76,7 +79,7 @@ await db.runTransaction(async tx=>{
     previousContentVersionBackup:Number(b.contentVersion||0),
     previousBackupAt:FieldValue.serverTimestamp(),
     content:next,contentHash:newHash,contentVersion:version,
-    source:'user-provided-four-methods-20261115-v3',updatedAt:FieldValue.serverTimestamp()
+    source:'user-provided-four-methods-20261115-v4',updatedAt:FieldValue.serverTimestamp()
   });
   tx.update(articleRef,{paidContentHash:newHash,paidContentVersion:version,updatedAt:FieldValue.serverTimestamp()});
   proof={changed:true,privateVersion:version,privateLength:next.length,publicContent:a.content,images:imageRefs(old),cover:a.coverImage,thumbnail:a.thumbnailImage,expected:next};
