@@ -1,13 +1,152 @@
-/* 2027生肖頁依 116 年年度點燈報名頁 .forest 的背景設定。 */
+/* ==========================================================================
+   2027 丁未年十二生肖：共用背景與閱讀版面
+   背景依 116 年度點燈報名頁（/preview-vokdayja/）實際生效畫面：
+   goat-bg-2027-no-goat.jpg ＋ 米白透明遮罩（42% / 28% / 48%）＋ 和紙纖維紋理。
+   以固定圖層（position:fixed）呈現，桌面與手機皆以視窗大小裁切，
+   避免手機版 background-attachment:scroll 時整張圖被拉伸到整頁高度。
+   只作用於含 .zp-main 的生肖文章頁；總覽頁維持原設定（舊瀏覽器亦退回原設定）。
+   ========================================================================== */
+
+/* 總覽頁（無 .zp-main）與不支援 :has() 的瀏覽器沿用此設定：
+   與報名頁（/preview-vokdayja/）相同的和紙背景，不使用森林／大樹圖。 */
 body{
- background-color:#0a100c!important;
- background-image:linear-gradient(90deg,#0a100cb8,#0a100c40,#0a100cb0),url('/forest-path.jpg')!important;
- background-position:center 47%!important;
+ background-color:#f4efe4!important;
+ background-image:linear-gradient(180deg,#f4efe86b,#f4efe847,#f4efe87a),url('/preview-vokdayja/assets/goat-bg-2027-no-goat.jpg')!important;
+ background-position:center center!important;
  background-size:cover!important;
  background-repeat:no-repeat!important;
  background-attachment:fixed!important;
- color:#f5f0e8;
+ color:#0A100C;
 }
+@media(max-width:768px){body{background-attachment:scroll!important;background-position:center top!important}}
+
+/* ---------- 生肖文章頁：和紙羊年背景 ---------- */
+body:has(> .zp-main){
+ --zp-ink:#0A100C;
+ --zp-text:rgba(10,16,12,.88);
+ --zp-text-soft:rgba(10,16,12,.72);
+ --zp-text-faint:rgba(10,16,12,.6);
+ --zp-gold-hi:#EAD8B4;
+ --zp-gold:#C9A063;
+ --zp-gold-lo:#A58254;
+ --zp-gold-ink:#7a531c;      /* 報名頁小字用深金，確保 4.5:1 以上對比 */
+ --zp-cream:#F5F0E8;
+ --zp-paper:#f4efe4;
+ background:var(--zp-paper)!important;
+ color:var(--zp-text);
+}
+body:has(> .zp-main)::before{
+ content:"";
+ position:fixed;
+ inset:0;
+ z-index:-2;
+ pointer-events:none;
+ background:
+  linear-gradient(180deg,rgba(244,239,228,.42) 0%,rgba(244,239,228,.28) 35%,rgba(244,239,228,.48) 100%),
+  url('/preview-vokdayja/assets/goat-bg-2027-no-goat.jpg') center center/cover no-repeat;
+}
+body:has(> .zp-main)::after{
+ content:"";
+ position:fixed;
+ inset:0;
+ z-index:-1;
+ pointer-events:none;
+ opacity:.22;
+ background:
+  radial-gradient(ellipse at 0 0,#dfbf8028,transparent 55%),
+  repeating-linear-gradient(0deg,transparent 0 3px,#b8a17b08 3px 4px),
+  repeating-linear-gradient(90deg,transparent 0 5px,#a8926c07 5px 6px),
+  repeating-radial-gradient(ellipse at 40% 80%,transparent 0 22px,#b8a17b0c 23px 24px,transparent 25px 46px);
+}
+
+/* 導覽列：與報名頁相同的奶油配色 */
+body:has(> .zp-main) .global-site-nav,
+body:has(> .zp-main) .global-site-nav .global-nav-dropdown,
+html body:has(> .zp-main).site-auth-enabled #site-auth-bar,
+body:has(> .zp-main).site-auth-enabled #site-auth-bar .site-account-menu{
+ background:rgba(250,246,238,.96)!important;color:#4f3923!important;border-color:#a58254!important;
+}
+body:has(> .zp-main) .global-site-nav a,
+body:has(> .zp-main) .global-site-nav button,
+body:has(> .zp-main) .global-site-nav .global-nav-group,
+body:has(> .zp-main) .global-site-nav .global-nav-course-group,
+body:has(> .zp-main) .global-site-nav .global-nav-course-parent::after,
+body:has(> .zp-main).site-auth-enabled #site-auth-bar .site-auth-button,
+body:has(> .zp-main).site-auth-enabled #site-auth-bar .site-account-menu a,
+body:has(> .zp-main).site-auth-enabled #site-auth-bar .site-account-menu button{
+ color:#4f3923!important;border-color:#a58254!important;
+}
+body:has(> .zp-main) .global-site-nav a:hover,
+body:has(> .zp-main) .global-site-nav a:focus-visible,
+body:has(> .zp-main).site-auth-enabled #site-auth-bar button:hover{background:#ecdfc9!important}
+body:has(> .zp-main) .global-site-nav .global-nav-sublist{border-color:#a58254!important}
+
+/* 閱讀面板：整篇文章一張和紙面板，段落本身不做成卡片 */
+body:has(> .zp-main) .zp-main{
+ position:relative;
+ width:min(900px,calc(100% - 40px));
+ margin:124px auto 72px;
+ padding:56px clamp(24px,6vw,64px) 60px;
+ background:linear-gradient(180deg,rgba(255,252,246,.86),rgba(255,252,246,.8));
+ border:1px solid rgba(165,130,84,.32);
+ border-radius:14px;
+ box-shadow:0 2px 4px #5c442014,0 18px 44px #5c44201f,inset 0 1px 0 #fffdf8;
+}
+body:has(> .zp-main) .zp-main::after{
+ content:"";position:absolute;inset:6px;border:1px solid rgba(201,160,99,.14);border-radius:10px;pointer-events:none;
+}
+body:has(> .zp-main) .zp-crumb{color:var(--zp-text-faint)}
+body:has(> .zp-main) .zp-crumb a{color:var(--zp-gold-ink)}
+body:has(> .zp-main) .zp-kicker{color:var(--zp-gold-ink)}
+body:has(> .zp-main) .zp-draft{border-color:rgba(165,130,84,.6);color:var(--zp-gold-ink);background:rgba(234,216,180,.3)}
+body:has(> .zp-main) h1{color:var(--zp-ink)}
+body:has(> .zp-main) h1 small{color:var(--zp-gold-ink)}
+body:has(> .zp-main) .zp-hero{border-color:rgba(165,130,84,.45);background:#efe6d4;box-shadow:0 10px 30px #5c44202a}
+body:has(> .zp-main) .zp-lead{color:var(--zp-text)}
+body:has(> .zp-main) .zp-rel{border-left-color:var(--zp-gold-lo);background:rgba(201,160,99,.1);color:var(--zp-text-soft)}
+body:has(> .zp-main) .zp-rel b{color:var(--zp-gold-ink)}
+body:has(> .zp-main) .zp-main>h2{color:var(--zp-gold-ink)}
+body:has(> .zp-main) .zp-reading p{color:var(--zp-text)}
+body:has(> .zp-main) .zp-term{border-color:rgba(165,130,84,.3);background:rgba(255,252,246,.7)}
+body:has(> .zp-main) .zp-term h3{color:var(--zp-ink)}
+body:has(> .zp-main) .zp-role{color:var(--zp-gold-ink)}
+body:has(> .zp-main) .zp-term p{color:var(--zp-text)}
+body:has(> .zp-main) .zp-term p.pending{color:var(--zp-text-faint)}
+body:has(> .zp-main) .zp-badge{border-color:rgba(165,130,84,.55);color:var(--zp-gold-ink)}
+body:has(> .zp-main) .zp-badge.todo{border-color:rgba(10,16,12,.25);color:var(--zp-text-faint)}
+body:has(> .zp-main) .zp-src{color:var(--zp-text-faint)}
+body:has(> .zp-main) .zp-src a,body:has(> .zp-main) .zp-notes a{color:var(--zp-gold-ink)}
+body:has(> .zp-main) .zp-tone{color:var(--zp-text)}
+body:has(> .zp-main) .zp-nav a{border-color:rgba(165,130,84,.6);color:var(--zp-gold-ink);background:rgba(255,252,246,.6)}
+body:has(> .zp-main) .zp-nav a:hover,body:has(> .zp-main) .zp-nav a:focus-visible{background:rgba(201,160,99,.18);color:var(--zp-ink)}
+body:has(> .zp-main) .zp-notes{color:var(--zp-text-faint)}
+
+/* 點燈專屬區：保留深色 CIS 框體，與公開內容形成層級差異 */
+body:has(> .zp-main) .zp-gated-preview,
+body:has(> .zp-main) .zp-lamp{
+ color:rgba(245,240,232,.84);
+ background:linear-gradient(150deg,#18241b,#0A100C);
+ border:1px solid rgba(201,160,99,.55);
+ border-radius:10px;
+ box-shadow:0 18px 44px #2a1e0e33,inset 0 1px 0 rgba(234,216,180,.12);
+}
+body:has(> .zp-main) .zp-lamp p{color:rgba(245,240,232,.84)}
+body:has(> .zp-main) .zp-lamp .zp-lock{color:var(--zp-gold)}
+
+/* 主視覺待補：缺圖生肖的暫用框，標示清楚，不以其他圖片代替 */
+.zp-hero--pending{
+ position:relative;display:grid;place-items:center;align-content:center;gap:10px;
+ background:radial-gradient(ellipse at 50% 42%,rgba(234,216,180,.55),rgba(239,230,212,.9) 62%)!important;
+ border-style:dashed!important;
+}
+.zp-hero--pending .zp-hero-glyph{font-family:'Noto Serif TC',serif;font-size:clamp(64px,12vw,112px);line-height:1;color:rgba(165,130,84,.55);letter-spacing:0}
+.zp-hero--pending .zp-hero-note{font-size:13px;letter-spacing:.24em;color:#7a531c}
+
+@media(max-width:768px){
+ body:has(> .zp-main) .zp-main{width:calc(100% - 20px);margin:120px auto 48px;padding:36px 18px 44px;border-radius:12px}
+}
+
+/* ---------- 文章版面（原有設定） ---------- */
 .zp-feature-title{font-size:clamp(22px,3.8vw,30px);letter-spacing:.06em;line-height:1.6;margin-top:48px}
 .zp-reading p{margin:0 0 1.35em;font-family:var(--serif);font-size:clamp(16px,1.9vw,18px);line-height:2.05;letter-spacing:.035em;color:rgba(245,241,233,.93)}
 .zp-gated-preview{margin-top:58px;padding:30px clamp(20px,4vw,40px);background:linear-gradient(150deg,rgba(18,29,21,.94),rgba(9,19,13,.94));border:1px solid rgba(197,162,111,.5);box-shadow:0 24px 70px rgba(0,0,0,.25)}
@@ -17,7 +156,7 @@ body{
 .zp-gated-preview .zp-gated-note{font-size:13px;color:rgba(245,241,233,.69)}
 .zp-gated-link{display:inline-flex;align-items:center;min-height:46px;border:1px solid var(--gold);padding:9px 22px;color:var(--gold);font-size:14px;text-decoration:none}
 .zp-gated-link:hover,.zp-gated-link:focus-visible{background:rgba(197,162,111,.17);color:var(--cream)}
-@media(max-width:768px){body{background-attachment:scroll!important;background-position:center top!important}.zp-reading p{line-height:1.95}.zp-gated-preview{padding:22px 18px}}
+@media(max-width:768px){.zp-reading p{line-height:1.95}.zp-gated-preview{padding:22px 18px}}
 
 .zp-gated-preview[hidden],.zp-lamp[hidden]{display:none!important}
 .zp-lamp[data-lamp-state="adminPreview"]{border-style:solid;background:rgba(11,22,14,.9)}
