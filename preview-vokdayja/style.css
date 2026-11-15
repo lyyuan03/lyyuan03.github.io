@@ -1220,3 +1220,8 @@ label.req[for="name"]::after,label.req[for="email"]::after,label.req[for="phone"
 label[for="name"]::after,label[for="email"]::after,label[for="phone"]::after{content:none!important}
 label .required-star{color:#c62828!important;font-weight:700;margin-left:.2em}
 label:not(.req)>.required-star{display:none}
+
+/* 丁未年點燈頁使用與首頁相同的森林背景；表單維持原有淺底對比 */
+body.signup-page{background-color:#0a100c;background-image:linear-gradient(180deg,rgba(10,15,8,.35),rgba(10,15,8,.58) 55%,rgba(10,15,8,.82)),url('/forest-path.jpg');background-position:center center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed}
+body.signup-page .forest{background:url('/forest-path.jpg') center center/cover no-repeat;filter:saturate(.65) brightness(.62)}
+@media(max-width:768px){body.signup-page{background-attachment:scroll;background-position:center top}}
