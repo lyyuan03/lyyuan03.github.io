@@ -68,8 +68,8 @@ async function publishPaidArticle(payload) {
   if (payload.articleId !== ARTICLE_ID || payload.accessType !== 'paid' || payload.status !== 'published') {
     throw new Error('文章識別碼或付費發布狀態不正確');
   }
-  const publicText = String(payload.publicContent || '').trim();
-  const privateText = String(payload.privateContent || '').trim();
+  const publicText = String(payload.publicContent || '').replaceAll('**', '').trim();
+  const privateText = String(payload.privateContent || '').replaceAll('**', '').trim();
   if (!publicText || privateText.length < 1000 || publicText.includes(PAID_MARKER) || privateText.includes(PAID_MARKER)) {
     throw new Error('試閱區／會員正文格式不符合規格');
   }
