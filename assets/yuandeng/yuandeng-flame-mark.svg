@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="72" viewBox="0 0 80 72" fill="none" aria-hidden="true">
+<desc>區塊的小型燈火標記</desc>
+<defs><linearGradient id="flame-mark-body" x1="40" y1="8" x2="40" y2="63" gradientUnits="userSpaceOnUse"><stop stop-color="#EAD8B4" stop-opacity=".23"/><stop offset=".55" stop-color="#C9A063" stop-opacity=".3"/><stop offset="1" stop-color="#A58254" stop-opacity=".32"/></linearGradient></defs>
+<g id="flame-mark-layer-aura"/>
+<g id="flame-mark-layer-body"><path d="M40 8C55 27 59 40 40 62C22 44 29 28 40 8Z" fill="url(#flame-mark-body)" stroke="#A58254" stroke-width="1.5"/><path d="M36 57Q40 61 44 57" stroke="#A58254" stroke-width="1"/></g>
+<g id="flame-mark-layer-flame"><path d="M41 30C48 38 49 47 40 54C32 47 34 37 41 30Z" fill="#C9A063"/></g>
+<g id="flame-mark-layer-highlight"><path d="M39 12Q49 27 51 35" stroke="#EAD8B4" stroke-width="1" stroke-opacity=".8"/><path d="M41 34Q45 41 44 45" stroke="#EAD8B4" stroke-width="1" stroke-opacity=".83"/></g>
+</svg>

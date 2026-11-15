@@ -4,8 +4,8 @@
 
 ## 安裝（只加兩行標籤）
 ```html
-<link rel="stylesheet" href="/assets/newyear-fx/newyear-fx.css?v=20261115-fx-2">   <!-- 放 <head> 內，其他 CSS 之後 -->
-<script src="/assets/newyear-fx/newyear-fx.js?v=20261115-fx-2" defer></script>      <!-- 放 </body> 前、頁面 app.js 之後 -->
+<link rel="stylesheet" href="/assets/newyear-fx/newyear-fx.css?v=20261115-fx-3">   <!-- 放 <head> 內，其他 CSS 之後 -->
+<script src="/assets/newyear-fx/newyear-fx.js?v=20261115-fx-3" defer></script>      <!-- 放 </body> 前、頁面 app.js 之後 -->
 ```
 選用：在 `newyear-fx.js` 之前用 `window.LYYUAN_FX = {...}` 覆寫參數（不需要就不寫）。
 
@@ -41,17 +41,22 @@
 - 使用者系統開啟「減少動態效果」（prefers-reduced-motion）：完全不啟動（不插入任何節點、不載入素材）；執行中切換也即時生效。
 - 最快撤除：從頁面移除那兩行標籤即可，頁面無任何相依。
 
-## 素材（SVG，由設計提供，放 `/assets/yuandeng/`；目前缺檔，全部走備援）
-新增（v3 pack 預期檔名，確認後只需改 `assets` 對照表）：`yuandeng-cloud-tile.svg`（視差底紋，缺檔用內建回紋）、`yuandeng-card-halo.svg`、`yuandeng-card-flame.svg`（缺檔用 CSS 漸層）。
-| 檔名 | 用途 |
-|---|---|
-| `yuandeng-title-halo.svg` | 主視覺標題後方光暈，淡入一次（缺檔：CSS 漸層光暈） |
-| `yuandeng-embers-medium.svg` | 主視覺緩慢上升；**手機只用這張** |
-| `yuandeng-embers-large.svg` | 僅桌機：主視覺與成功畫面背景 |
-| `yuandeng-embers-small.svg` | 區塊右上角裝飾（靜態、僅桌機） |
-| `yuandeng-flame-mark.svg` | 區塊標題前的小火焰（靜態，CSS 偽元素） |
-| `yuandeng-lantern-unlit.svg` / `yuandeng-lantern-lit.svg` | 每個燈別選項勾選框右側，隨勾選切換（缺檔：CSS 繪製小燈籠）；不改原勾選邏輯 |
-| `yuandeng-success-circle.svg` | 成功畫面圓環，只在伺服器回報成功後出現（缺檔：CSS 圓環） |
+## 素材（v3 素材包，已放在 `/assets/yuandeng/`；來源說明見該資料夾 README.md）
+只用三階金（#EAD8B4／#C9A063／#A58254），無紅色、無腳本。載入前先探測，缺檔自動備援。
+| `assets` 鍵 | 檔案 | 用途 |
+|---|---|---|
+| `titleHalo` | `yuandeng-title-halo.svg` | 主視覺標題後方光暈，淡入一次 |
+| `embersMedium` / `embersLarge` | `yuandeng-embers-medium/large.svg` | 主視覺緩慢上升；Large 僅桌機（含成功畫面背景）；手機只用 Medium |
+| `flameMark` | `yuandeng-flame-mark.svg` | 區塊標題前小火焰（靜態） |
+| `lanternUnlit` / `lanternLit` | `yuandeng-lantern-unlit/lit.svg` | 燈別選項左側，隨勾選切換 |
+| `successCircle` | `yuandeng-success-circle.svg` | 成功畫面「燈＋光暈」，伺服器回報成功後才出現；文字由 HTML 負責 |
+| `cardCorners` | `yuandeng-card-corners.svg` | 米色卡片四角（以 4 塊 1:1 裁切，不變形） |
+| `cloudFretTile` | `yuandeng-cloud-fret-tile.svg` | 米色區祥雲／回紋視差底紋，整層 opacity .04（`tileOpacity`） |
+| `beigeSpecksTile` | `yuandeng-beige-specks-tile.svg` | 米色區稀疏深金光點，視差較快（`specksOpacity`） |
+| `sponsorLandscape` / `sponsorRitual` / `sponsorHardware` | `yuandeng-sponsor-*.svg` | 三項贊助圖示（依標題「景觀園藝／神像供具／硬體設備」對應） |
+| `stepDivider` | `yuandeng-step-divider.svg` | 步驟標題列雙線菱形分隔 |
+| `depthFar` / `depthNear` | `yuandeng-depth-far/near.svg` | 暗色區遠／近景粒子層（慢速視差；有素材時取代 CSS 備援粒子） |
+未使用：`yuandeng-embers-small.svg`（深色區低密度點綴）。
 所有裝飾節點皆 `aria-hidden="true"`、`pointer-events:none`。
 
 ## 觸發時機

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="136" viewBox="0 0 128 136" fill="none" aria-hidden="true">
+<desc>點亮燈；分層可獨立動畫</desc>
+<defs>
+<linearGradient id="lantern-lit-body" x1="35" y1="28" x2="93" y2="105" gradientUnits="userSpaceOnUse"><stop stop-color="#EAD8B4" stop-opacity=".38"/><stop offset=".48" stop-color="#C9A063" stop-opacity=".19"/><stop offset="1" stop-color="#A58254" stop-opacity=".22"/></linearGradient>
+<radialGradient id="lantern-lit-aura" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(64 69) rotate(90) scale(44 39)"><stop stop-color="#EAD8B4" stop-opacity=".55"/><stop offset=".4" stop-color="#C9A063" stop-opacity=".23"/><stop offset="1" stop-color="#A58254" stop-opacity="0"/></radialGradient>
+<linearGradient id="lantern-lit-flame" x1="64" y1="39" x2="64" y2="89" gradientUnits="userSpaceOnUse"><stop stop-color="#EAD8B4"/><stop offset=".57" stop-color="#C9A063"/><stop offset="1" stop-color="#A58254"/></linearGradient>
+</defs>
+<g id="lantern-lit-layer-aura"><ellipse cx="64" cy="69" rx="39" ry="44" fill="url(#lantern-lit-aura)"/></g>
+<g id="lantern-lit-layer-body">
+ <path d="M53 23Q64 16 75 23" stroke="#A58254" stroke-width="2"/>
+ <path d="M64 11V21 M49 24H79 M43 31H85" stroke="#C9A063" stroke-width="2.3" stroke-linecap="round"/>
+ <path d="M44 33Q31 63 44 98Q64 110 84 98Q97 63 84 33Q64 29 44 33Z" fill="url(#lantern-lit-body)" stroke="#C9A063" stroke-width="1.7"/>
+ <path d="M49 36Q42 63 49 94M79 36Q86 63 79 94" stroke="#A58254" stroke-opacity=".62" stroke-width="1"/>
+ <path d="M46 99H82M53 108H75" stroke="#C9A063" stroke-width="2.3" stroke-linecap="round"/><path d="M64 109V119 M60 120L64 125 68 120" stroke="#A58254" stroke-width="1.2"/>
+ <!-- lower relief shadow -->
+ <path d="M45 98Q64 110 83 98" stroke="#A58254" stroke-opacity=".92" stroke-width="1"/>
+</g>
+<g id="lantern-lit-layer-flame"><path d="M64 40C75 55 82 68 64 87C47 73 55 56 64 40Z" fill="url(#lantern-lit-flame)"/><path d="M64 57C71 67 70 76 63 81C57 73 59 65 64 57Z" fill="#EAD8B4" fill-opacity=".84"/></g>
+<g id="lantern-lit-layer-highlight"><path d="M45 35Q64 31 83 35" stroke="#EAD8B4" stroke-opacity=".85" stroke-width="1" stroke-linecap="round"/><path d="M50 38Q45 59 49 77" stroke="#EAD8B4" stroke-opacity=".52" stroke-width="1"/><path d="M49 25H79" stroke="#EAD8B4" stroke-opacity=".58" stroke-width="1"/></g>
+
+</svg>

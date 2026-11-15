@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" fill="none" aria-hidden="true">
+<desc>僅深色首屏使用</desc>
+<defs><radialGradient id="title-halo-glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 180) rotate(90) scale(180 600)"><stop stop-color="#EAD8B4" stop-opacity=".26"/><stop offset=".34" stop-color="#C9A063" stop-opacity=".18"/><stop offset=".72" stop-color="#A58254" stop-opacity=".06"/><stop offset="1" stop-color="#A58254" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="600" cy="180" rx="600" ry="180" fill="url(#title-halo-glow)"/>
+</svg>
