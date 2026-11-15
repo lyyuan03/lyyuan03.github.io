@@ -1,0 +1,374 @@
+/* ==========================================================================
+   2027 丁未年十二生肖：共用文章閱讀系統（第一階段：屬鼠範本）
+   接在 zodiac-reading.css（和紙背景）與 zodiac-motion.css（動態、按鈕）之後載入。
+   只定義版型、字級、留白與元件外觀；不含文章文字，不涉權限。
+   公開篇（A 區）是靜態 HTML；點燈專屬全文（B 區）由 zodiac-lamp-reader.js 從 Firestore
+   載入後以相同字級規則呈現。
+   品牌色：#EAD8B4 高光金／#C9A063 主體金／#A58254 深金／#0A100C 深墨／#F5F0E8 米白
+   ========================================================================== */
+
+body:has(> .zp-main){
+ --zr-ink:#0A100C;
+ --zr-text:rgba(10,16,12,.86);
+ --zr-soft:rgba(10,16,12,.68);
+ --zr-gold-ink:#7a531c;          /* 小字用深金，和紙底對比 ≥ 4.5:1 */
+ --zr-gold:#C9A063;
+ --zr-gold-lo:#A58254;
+ --zr-gold-hi:#EAD8B4;
+ --zr-rule:rgba(165,130,84,.32);
+ --zr-body:18px;
+ --zr-leading:2;
+ --zr-gap-section:72px;
+ --zr-gap-sub:40px;
+ --zr-anchor:128px;              /* 固定導覽列高度＋留白，錨點不被遮住 */
+}
+
+/* ---------- 標題與正文字級 ---------- */
+/* 標題只在標點處換行（keep-all），太長且無標點時才允許任意換行，避免「生／活」這類拆字 */
+body:has(> .zp-main) .zp-main h1,
+body:has(> .zp-main) .zp-main h2,
+body:has(> .zp-main) .zp-main h3{word-break:keep-all;overflow-wrap:anywhere}
+body:has(> .zp-main) .zp-main h1{
+ font-family:'Noto Serif TC',serif;font-weight:400;
+ font-size:clamp(32px,5.2vw,46px);line-height:1.45;letter-spacing:.12em;
+ text-wrap:balance;
+}
+body:has(> .zp-main) .zp-main h1 small{font-size:clamp(14px,1.6vw,17px);letter-spacing:.3em;margin-bottom:10px}
+body:has(> .zp-main) .zp-main>h2,
+body:has(> .zp-main) .zr-exclusive h2{
+ margin:var(--zr-gap-section) 0 22px;
+ font-family:'Noto Serif TC',serif;font-weight:500;
+ font-size:clamp(22px,3vw,28px);line-height:1.6;letter-spacing:.08em;
+ color:var(--zr-gold-ink);
+ text-wrap:balance;line-break:strict;
+ scroll-margin-top:var(--zr-anchor);
+}
+body:has(> .zp-main) .zr-exclusive h2{position:relative;padding-top:34px}
+body:has(> .zp-main) .zr-exclusive h2::before{
+ content:"";position:absolute;left:0;top:0;width:min(220px,60%);height:9px;
+ background:
+  radial-gradient(circle,#C9A063 0 2px,transparent 2.5px) 0 50%/9px 9px no-repeat,
+  linear-gradient(90deg,#A58254,rgba(201,160,99,.5) 55%,transparent) 14px 50%/calc(100% - 14px) 1px no-repeat;
+}
+body:has(> .zp-main) .zr-exclusive .zr-summary > h2::before{display:none}
+body:has(> .zp-main) .zr-exclusive h3{
+ margin:var(--zr-gap-sub) 0 14px;
+ font-family:'Noto Serif TC',serif;font-weight:500;
+ font-size:clamp(18px,2.2vw,20px);line-height:1.7;letter-spacing:.08em;
+ color:var(--zr-ink);
+ text-wrap:balance;line-break:strict;
+ scroll-margin-top:var(--zr-anchor);
+}
+body:has(> .zp-main) .zp-lead{
+ margin:32px 0 0;
+ font-family:'Noto Serif TC',serif;font-size:clamp(17px,2vw,19px);line-height:2.05;letter-spacing:.04em;
+ color:var(--zr-text);text-wrap:pretty;line-break:strict;
+}
+body:has(> .zp-main) .zp-reading,
+body:has(> .zp-main) .zr-exclusive{max-width:none}
+body:has(> .zp-main) .zp-reading p,
+body:has(> .zp-main) .zr-exclusive p{
+ margin:0 0 1.3em;
+ font-family:'Noto Serif TC',serif;font-size:var(--zr-body);line-height:var(--zr-leading);letter-spacing:.035em;
+ color:var(--zr-text);text-wrap:pretty;line-break:strict;
+}
+body:has(> .zp-main) .zp-rel{margin-top:24px}
+body:has(> .zp-main) .zp-main>.zp-hero{margin-top:32px}
+
+/* 文字欄置中：每行約 33～35 個全形字（以正文字級計）。主視覺保留整個面板寬度，其餘集中於閱讀欄寬 */
+body:has(> .zp-main) .zp-main > :not(.zp-hero):not(.zm-picker):not(.zr-switch){
+ max-width:calc(var(--zr-body) * 35);margin-left:auto;margin-right:auto;
+}
+body:has(> .zp-main) .zp-main > .zr-switch,
+body:has(> .zp-main) .zp-main > .zm-picker{max-width:calc(var(--zr-body) * 35 + 120px);margin-left:auto;margin-right:auto}
+
+/* ---------- 公開篇與專屬全文的分界 ---------- */
+.zr-divide{
+ display:flex;align-items:center;gap:18px;
+ margin:var(--zr-gap-section) 0 28px;
+ font:500 13px/1.6 'Noto Serif TC',serif;letter-spacing:.32em;color:var(--zr-gold-ink);
+}
+.zr-divide::before,.zr-divide::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--zr-gold-lo) 30%,var(--zr-gold-lo) 70%,transparent)}
+.zr-divide span{display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
+.zr-divide span::before{content:"";width:7px;height:7px;transform:rotate(45deg);border:1px solid var(--zr-gold-lo);background:var(--zr-gold-hi)}
+body:has(> .zp-main) .zr-divide + .zp-lamp{margin-top:0}
+
+/* ---------- 專屬區：未登入、未授權等狀態維持精簡深色框；授權後正文回到和紙閱讀面 ---------- */
+body:has(> .zp-main) .zp-lamp .zr-gate p{margin:0 0 8px}
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"],
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"]{
+ padding:0!important;background:none!important;border:0!important;box-shadow:none!important;
+ overflow:visible;color:var(--zr-text);
+}
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"]::before,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"]::after,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"]::before,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"]::after{display:none}
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"] .zr-gate,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"] .zr-gate{
+ position:relative;padding:22px clamp(20px,4vw,32px);
+ color:rgba(245,240,232,.84);
+ background:linear-gradient(150deg,#18241b,#0A100C);
+ border:1px solid rgba(201,160,99,.55);border-radius:10px;
+ box-shadow:inset 0 1px 0 rgba(234,216,180,.18),0 4px 0 #050906,0 16px 36px rgba(42,30,14,.28);
+}
+body:has(> .zp-main) .zp-lamp[data-lamp-state] .zr-gate p{color:rgba(245,240,232,.84)}
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"] .zr-gate{border-style:dashed}
+body:has(> .zp-main) .zp-lamp .zr-exclusive{
+ margin-top:12px;padding-top:4px;border-top:0;
+ color:var(--zr-text);font-family:inherit;font-size:inherit;line-height:inherit;
+}
+body:has(> .zp-main) .zp-lamp .zr-exclusive > p:first-child{margin-top:36px}
+
+/* ---------- 引言：只用於原稿中以「> 」標記的句子 ---------- */
+body:has(> .zp-main) .zr-quote{
+ position:relative;margin:44px 0;padding:6px 0 6px 28px;
+ border-left:2px solid var(--zr-gold);
+}
+body:has(> .zp-main) .zr-quote::before{
+ content:"";position:absolute;left:-5px;top:0;width:8px;height:8px;border-radius:50%;background:var(--zr-gold-hi);box-shadow:0 0 0 1px var(--zr-gold-lo);
+}
+body:has(> .zp-main) .zr-quote p{
+ margin:0;font-family:'Noto Serif TC',serif;font-weight:500;
+ font-size:clamp(19px,2.4vw,23px);line-height:1.9;letter-spacing:.06em;color:var(--zr-ink);
+}
+
+/* ---------- 十二節氣月：月份段落導覽與時間軸，文字完整依原稿順序 ---------- */
+.zr-month-nav{margin:6px 0 28px;max-width:100%;overflow:hidden}
+.zr-month-nav ol{
+ display:flex;gap:8px;margin:0;padding:2px 2px 10px;list-style:none;
+ overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+ scrollbar-width:thin;scrollbar-color:var(--zr-gold-lo) transparent;
+}
+.zr-month-nav li{flex:0 0 auto;scroll-snap-align:start}
+@media(min-width:769px){.zr-month-nav ol{flex-wrap:wrap;overflow:visible;padding-bottom:2px}}
+.zr-month-nav a{
+ display:inline-flex;align-items:center;min-height:38px;padding:6px 14px;border-radius:999px;
+ border:1px solid rgba(165,130,84,.45);background:rgba(255,252,246,.75);
+ font:500 14px/1.4 'Noto Serif TC',serif;letter-spacing:.08em;color:var(--zr-gold-ink);text-decoration:none;
+ transition:background .2s,border-color .2s,color .2s;
+}
+.zr-month-nav a:hover,.zr-month-nav a:focus-visible{background:rgba(201,160,99,.16);border-color:var(--zr-gold-lo);color:var(--zr-ink)}
+.zr-month-nav a:focus-visible{outline:2px solid var(--zr-ink);outline-offset:2px}
+.zr-timeline{position:relative;padding-left:30px}
+.zr-timeline::before{content:"";position:absolute;left:6px;top:10px;bottom:10px;width:1px;background:linear-gradient(180deg,var(--zr-gold-lo),rgba(165,130,84,.18))}
+.zr-month{position:relative;padding-bottom:6px}
+body:has(> .zp-main) .zr-month h3{margin-top:34px}
+.zr-month:first-child h3{margin-top:4px!important}
+.zr-month h3::before{
+ content:"";position:absolute;left:-29px;top:.62em;width:11px;height:11px;border-radius:50%;
+ background:radial-gradient(circle at 40% 35%,#fff7e4,var(--zr-gold) 70%);border:1px solid var(--zr-gold-lo);
+ box-shadow:0 0 0 4px rgba(244,239,228,.95);
+}
+.zr-month h3{position:relative}
+
+/* ---------- 年度總結：與一般正文區隔的層次 ---------- */
+body:has(> .zp-main) .zr-summary{
+ position:relative;margin:var(--zr-gap-section) 0 0;padding:8px 0 4px 0;
+}
+body:has(> .zp-main) .zr-summary > h2{
+ margin-top:0;padding-top:30px;text-align:left;
+}
+body:has(> .zp-main) .zr-summary > h2::after{
+ content:"";display:block;width:48px;height:1px;margin-top:16px;background:var(--zr-gold-lo);
+}
+body:has(> .zp-main) .zr-summary{
+ border-top:1px solid var(--zr-rule);border-bottom:1px solid var(--zr-rule);
+ background:linear-gradient(180deg,rgba(234,216,180,.18),rgba(234,216,180,0) 60%);
+ padding-bottom:24px;
+}
+body:has(> .zp-main) .zr-summary p{font-size:calc(var(--zr-body) + 1px)}
+
+/* ---------- 目錄：分組標示；寬螢幕改為左側章節導覽 ---------- */
+.zm-toc .zm-toc-group{margin:12px 18px 0;font:500 12px/1.6 'Noto Sans TC',sans-serif;letter-spacing:.24em;color:var(--zr-gold-ink)}
+.zm-toc .zm-toc-group + ol{padding-top:0}
+@media(min-width:1360px){
+ body:has(> .zp-main) .zm-toc{
+  position:fixed;z-index:20;top:132px;
+  left:max(16px,calc(50% - 450px - 244px));width:212px;max-height:calc(100vh - 176px);overflow:auto;
+  margin:0;border-radius:10px;background:rgba(255,252,246,.8);backdrop-filter:blur(6px);
+ }
+ body:has(> .zp-main) .zm-toc summary{pointer-events:none;min-height:42px;font-size:14px}
+ body:has(> .zp-main) .zm-toc summary::after{display:none}
+ body:has(> .zp-main) .zm-toc a{font-size:14px;padding:8px 4px}
+}
+
+/* ---------- 生肖切換：上一生肖／十二生肖總覽／下一生肖 ---------- */
+.zr-switch{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;margin:var(--zr-gap-section) 0 0}
+.zr-switch a{-webkit-tap-highlight-color:transparent}
+.zr-switch-step{
+ display:flex;align-items:center;gap:12px;min-height:64px;padding:8px 18px 8px 8px;border-radius:999px;
+ text-decoration:none;color:#3b2a12;
+ background:linear-gradient(180deg,#fffdf8,#f1e5cd);
+ border:1px solid rgba(165,130,84,.6);
+ box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(165,130,84,.25),0 3px 0 rgba(165,130,84,.4),0 10px 18px rgba(92,68,32,.14);
+ transition:transform .22s var(--zm-ease,ease),box-shadow .22s var(--zm-ease,ease);
+}
+.zr-switch-prev{justify-self:start}
+.zr-switch-next{flex-direction:row-reverse;padding:8px 8px 8px 18px;text-align:right;justify-self:end}
+.zr-switch-step img{flex:0 0 48px;width:48px;height:48px;border-radius:50%;box-shadow:0 0 0 2px rgba(201,160,99,.6)}
+.zr-switch-step span{display:flex;flex-direction:column;font:500 16px/1.4 'Noto Serif TC',serif;letter-spacing:.12em}
+.zr-switch-step small{font:400 12px/1.5 'Noto Sans TC',sans-serif;letter-spacing:.2em;color:var(--zr-gold-ink)}
+@media(hover:hover) and (pointer:fine){
+ .zr-switch-step:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 #fff,0 5px 0 rgba(165,130,84,.42),0 16px 24px rgba(92,68,32,.18)}
+}
+.zr-switch-step:active,.zr-switch-step.zm-pressed{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(165,130,84,.3),0 1px 0 rgba(165,130,84,.35)}
+.zr-switch a:focus-visible{outline:2px solid var(--zr-ink);outline-offset:4px}
+
+/* ---------- 章節進場（只在 html.zm-ready 時，且文字從可讀的半透明開始） ---------- */
+html.zm-ready body:has(> .zp-main) .zr-exclusive h2,
+html.zm-ready body:has(> .zp-main) .zr-exclusive h3,
+html.zm-ready body:has(> .zp-main) .zr-quote,
+html.zm-ready body:has(> .zp-main) .zr-divide{
+ opacity:.35;transform:translate3d(0,10px,0);
+ transition:opacity .7s var(--zm-ease,ease),transform .7s var(--zm-ease,ease);
+}
+html.zm-ready body:has(> .zp-main) .zm-in{opacity:1!important;transform:none!important}
+.zp-main>.zp-lead{animation:zm-rise .7s var(--zm-ease,ease) .18s both}
+
+/* ---------- 平板與手機 ---------- */
+@media(max-width:768px){
+ body:has(> .zp-main){--zr-body:16px;--zr-leading:1.98;--zr-gap-section:56px;--zr-gap-sub:32px;--zr-anchor:112px}
+ .zr-switch{grid-template-columns:1fr 1fr;gap:12px}
+ .zr-switch-home{grid-column:1 / -1;grid-row:2;width:100%}
+ .zr-switch-step{min-height:58px;padding-right:12px}
+ .zr-switch-next{padding-left:12px}
+ .zr-switch-step img{flex-basis:40px;width:40px;height:40px}
+ .zr-switch-step span{font-size:15px;letter-spacing:.08em}
+ .zr-timeline{padding-left:24px}
+ .zr-month h3::before{left:-23px}
+ body:has(> .zp-main) .zr-quote{padding-left:20px}
+}
+@media(max-width:360px){.zr-divide{letter-spacing:.2em;gap:10px}}
+
+@media(prefers-reduced-motion:reduce){
+ html.zm-ready body:has(> .zp-main) .zr-exclusive h2,
+ html.zm-ready body:has(> .zp-main) .zr-exclusive h3,
+ html.zm-ready body:has(> .zp-main) .zr-quote,
+ html.zm-ready body:has(> .zp-main) .zr-divide{opacity:1;transform:none;transition:none}
+ .zp-main>.zp-lead{animation:none}
+ .zr-switch-step,.zr-month-nav a{transition:none}
+ .zr-switch-step:hover,.zr-switch-step:active,.zr-switch-step.zm-pressed{transform:none}
+}
+
+/* ==========================================================================
+   刊物式閱讀調整（2026-11-15）：把「排版正確的網誌」往「年度刊物的一個章節」推進。
+   1 主視覺與和紙同一語系　2 紙面延伸（底圖不變）　3 標題加重並加「朱印」
+   4 點燈區改為淺色封緘　5 內文墨色加深、開篇與結尾加留白與記號
+   只改外觀，不動文章文字；全部放在檔案最後，覆蓋較早載入的深色框與白框設定。
+   ========================================================================== */
+body:has(> .zp-main){
+ --zr-text:rgba(10,16,12,.93);
+ --zr-soft:rgba(10,16,12,.76);
+ --zr-seal:#9a3b2e;              /* 朱印：僅用於小面積印記 */
+}
+
+/* 2 背景（底圖與遮罩）維持 zodiac-reading.css 原設定不變；只讓閱讀面板更接近整張紙 */
+body:has(> .zp-main) .zp-main{
+ background:linear-gradient(180deg,rgba(255,253,248,.95),rgba(253,249,241,.93));
+ border-color:rgba(165,130,84,.22);
+ box-shadow:0 1px 2px #5c44200f,0 24px 60px #5c442018,inset 0 1px 0 #fffdf8;
+}
+body:has(> .zp-main) .zp-main::after{border-color:rgba(201,160,99,.1)}
+
+/* 1 主視覺：降低飽和、偏暖，邊緣沒入紙色，不再用白框＋金框把它框成貼上去的圖 */
+body:has(> .zp-main) .zp-main>.zp-hero{
+ margin-top:40px;border:0;border-radius:3px;background:#efe6d4;
+ box-shadow:0 14px 34px #5c442022;
+}
+body:has(> .zp-main) .zp-main>.zp-hero img{filter:saturate(.58) sepia(.26) contrast(.94) brightness(1.06) hue-rotate(-6deg)}
+body:has(> .zp-main) .zp-main>.zp-hero::after{
+ background:
+  linear-gradient(180deg,rgba(244,236,218,.22),transparent 24%,transparent 56%,rgba(250,246,236,.78) 100%),
+  radial-gradient(ellipse at 50% 46%,transparent 52%,rgba(244,236,218,.38) 100%);
+ box-shadow:none;mix-blend-mode:normal;
+}
+@media(max-width:768px){
+ body:has(> .zp-main) .zp-main>.zp-hero{box-shadow:0 10px 24px #5c44201c}
+}
+
+/* 3 頁首：標題加大，英文小標與重複的年份讓位給朱印（小標仍保留給輔助閱讀） */
+body:has(> .zp-main) .zp-main .zp-kicker{
+ position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+}
+body:has(> .zp-main) .zp-main h1{
+ font-weight:500;font-size:clamp(38px,6.4vw,62px);line-height:1.3;letter-spacing:.16em;color:var(--zr-ink);
+}
+body:has(> .zp-main) .zp-main h1 small{font-weight:400;color:var(--zr-gold-ink);margin-bottom:14px}
+body:has(> .zp-main) .zp-main h1::after{height:1px;width:96px;margin-top:22px}
+.zr-seal{
+ position:absolute;top:clamp(78px,9vw,100px);right:clamp(24px,6vw,64px);z-index:2;
+ width:clamp(48px,6.5vw,64px);aspect-ratio:1;display:grid;place-items:center;
+ font:600 clamp(26px,3.6vw,34px)/1 'Noto Serif TC',serif;color:#fbf3e6;
+ background:var(--zr-seal);border-radius:4px;
+ box-shadow:inset 0 0 0 2px rgba(251,243,230,.35),inset 0 0 0 4px var(--zr-seal),0 2px 6px rgba(120,40,30,.25);
+ opacity:.92;transform:rotate(-3deg);user-select:none;
+}
+@media(max-width:560px){.zr-seal{top:28px;right:20px;width:44px;font-size:24px}}
+
+/* 5 開篇與結尾：導語放大並以細線收束；全文結尾加印記，讓版面有起訖 */
+body:has(> .zp-main) .zp-lead{
+ font-size:clamp(18px,2.2vw,21px);line-height:2.1;letter-spacing:.05em;
+ padding-bottom:30px;margin-bottom:6px;border-bottom:1px solid var(--zr-rule);
+}
+body:has(> .zp-main) .zp-rel{margin-top:30px}
+body:has(> .zp-main) .zp-notes{position:relative;padding-top:34px;margin-top:var(--zr-gap-section)}
+body:has(> .zp-main) .zp-notes::before{
+ content:"";position:absolute;left:50%;top:0;width:9px;height:9px;transform:translateX(-50%) rotate(45deg);
+ border:1px solid var(--zr-gold-lo);background:var(--zr-gold-hi);
+}
+
+/* 4 點燈區：淺色「封緘」，細金線雙框，不再是全頁最重的黑塊 */
+body:has(> .zp-main) .zp-lamp:not([data-lamp-state="granted"]):not([data-lamp-state="adminPreview"]),
+body:has(> .zp-main) .zp-gated-preview,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"] .zr-gate,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"] .zr-gate{
+ color:var(--zr-text);
+ background:linear-gradient(180deg,rgba(252,246,232,.92),rgba(247,239,221,.9));
+ border:1px solid rgba(165,130,84,.5);border-radius:6px;
+ box-shadow:inset 0 0 0 4px rgba(255,252,246,.8),inset 0 0 0 5px rgba(201,160,99,.28),0 8px 24px #5c44201a!important;
+}
+body:has(> .zp-main) .zp-lamp::after,body:has(> .zp-main) .zp-gated-preview::after{
+ background:radial-gradient(ellipse,rgba(234,216,180,.5),transparent 65%);
+}
+body:has(> .zp-main) .zp-lamp::before,body:has(> .zp-main) .zp-gated-preview::before{border-color:transparent}
+body:has(> .zp-main) .zp-lamp p,
+body:has(> .zp-main) .zp-lamp[data-lamp-state] .zr-gate p,
+body:has(> .zp-main) .zp-gated-preview p{color:var(--zr-soft)}
+body:has(> .zp-main) .zp-lamp .zp-lock,
+body:has(> .zp-main) .zp-gated-preview .zp-gated-label{color:var(--zr-gold-ink);font-weight:500;letter-spacing:.12em}
+body:has(> .zp-main) .zp-lamp .zp-lock::before,
+body:has(> .zp-main) .zp-gated-label::before{
+ border-color:rgba(165,130,84,.6);box-shadow:0 0 0 3px rgba(255,252,246,.8);
+ background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a531c' stroke-width='1.4' stroke-linecap='round'%3E%3Crect x='6' y='10.5' width='12' height='9' rx='1.6'/%3E%3Cpath d='M8.6 10.5V8a3.4 3.4 0 0 1 6.8 0v2.5'/%3E%3Ccircle cx='12' cy='14.6' r='1.1' fill='%237a531c' stroke='none'/%3E%3C/svg%3E") center/20px 20px no-repeat,
+  #fbf5e8;
+}
+body:has(> .zp-main) .zp-lamp .zp-lamp-editor-link{color:var(--zr-gold-ink)}
+
+/* ---------- 題圖（尚無繪製主視覺的生肖）：和紙、金色圓相、生肖徽章與地支字 ----------
+   以既有徽章組成完整的章節題圖，不再顯示「待補」虛線框；日後有繪製主視覺時換回 <img> 即可。 */
+body:has(> .zp-main) .zp-main>.zp-hero--emblem{
+ aspect-ratio:2.3/1;display:grid;place-items:center;overflow:hidden;border:0;
+ background:
+  radial-gradient(circle at 50% 50%,transparent 0 calc(min(34vw,150px) - 1px),rgba(165,130,84,.55) min(34vw,150px),transparent calc(min(34vw,150px) + 1.5px)),
+  radial-gradient(circle at 50% 50%,rgba(234,216,180,.75),rgba(234,216,180,.18) min(40vw,190px),transparent min(62vw,330px)),
+  linear-gradient(90deg,transparent 0 8%,rgba(165,130,84,.32) 8% calc(8% + 1px),transparent calc(8% + 1px) calc(92% - 1px),rgba(165,130,84,.32) calc(92% - 1px) 92%,transparent 92%),
+  linear-gradient(180deg,#f6eedb,#efe4cc);
+}
+body:has(> .zp-main) .zp-main>.zp-hero--emblem::after{
+ background:linear-gradient(180deg,transparent 60%,rgba(250,246,236,.7));
+}
+body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-badge{
+ grid-area:1/1;position:relative;z-index:1;width:min(46%,236px);height:auto;object-fit:contain;
+ border-radius:50%;clip-path:circle(43%);mix-blend-mode:multiply;filter:none;transform:scale(1.12);will-change:auto;
+}
+body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-glyph{
+ grid-area:1/1;justify-self:end;align-self:end;margin:0 calc(8% + 22px) 18px 0;
+ font:400 clamp(40px,7vw,76px)/1 'Noto Serif TC',serif;color:rgba(165,130,84,.34);letter-spacing:0;
+}
+@media(max-width:768px){
+ body:has(> .zp-main) .zp-main>.zp-hero--emblem{aspect-ratio:16/10}
+ body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-badge{width:min(50%,190px)}
+ body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-glyph{margin:0 calc(8% + 10px) 10px 0}
+}

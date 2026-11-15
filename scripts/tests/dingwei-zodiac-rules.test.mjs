@@ -96,6 +96,13 @@ const listQuery = (db) => getDocs(query(collection(db, "memberEntitlements"), wh
 await t("名單：管理員可載入已開通名單", assertSucceeds(listQuery(ADMIN)));
 await t("名單：一般使用者不可載入名單", assertFails(listQuery(A)));
 
+// ---- 2026-11-15 閱讀系統稽核：補充必要情境 ----
+for (const z of Z) await t(`稽核：管理員可讀${z}`, assertSucceeds(body(ADMIN, z)));
+for (const z of Z) await t(`稽核：只有其他活動權限者不可讀${z}`, assertFails(body(C, z)));
+for (const z of Z) await t(`稽核：未登入不可讀${z}`, assertFails(body(env.unauthenticatedContext().firestore(), z)));
+await t("稽核：讀取不存在的正文文件被拒（不透露是否已建立）", assertFails(getDoc(doc(A, "eventArticleBodies", "dingwei-2027-none"))));
+await t("稽核：一般使用者不可讀他人外殼以外的正文清單", assertFails(getDocs(collection(A, "eventArticleBodies"))));
+
 // ---- 安全修正：isAdmin() 必須檢查 email_verified ----
 // 目前只有 Google 登入一個管理員帳號，email_verified 一律為 true，所以修正不影響正常流程；
 // 這裡模擬「未驗證信箱但使用 lyyuan03@gmail.com」的狀況，確認修正後會被拒絕（舊規則會放行）。
