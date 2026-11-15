@@ -232,7 +232,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
  "zodiac": {
   "title": "丁未年・犯太歲生肖",
   "family": "taisui",
-  "statsNote": "羊座太歲、牛正沖、龍與狗偏沖",
+  "statsNote": "羊值太歲、牛沖太歲、鼠害太歲、狗刑太歲兼破太歲",
   "cards": [
    {
     "zodiac": "羊",
@@ -243,24 +243,24 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
    },
    {
     "zodiac": "牛",
-    "relation": "正沖",
+    "relation": "沖太歲",
     "emphasis": true,
     "tag": "今年最需安太歲",
-    "text": "屬牛正沖太歲，宜及早安奉"
+    "text": "屬牛沖太歲，宜及早安奉"
    },
    {
-    "zodiac": "龍",
-    "relation": "偏沖",
+    "zodiac": "鼠",
+    "relation": "害太歲",
     "emphasis": false,
     "tag": "",
-    "text": "屬龍偏沖太歲，宜謹慎安奉"
+    "text": "屬鼠害太歲，宜謹慎安奉"
    },
    {
     "zodiac": "狗",
-    "relation": "偏沖",
+    "relation": "刑、破太歲",
     "emphasis": false,
     "tag": "",
-    "text": "屬狗偏沖太歲，宜謹慎安奉"
+    "text": "屬狗刑太歲兼破太歲，宜謹慎安奉"
    }
   ]
  },
@@ -351,7 +351,7 @@ window.LYYUAN_SIGNUP_DEFAULT_CONFIG={
   },
   "zodiac": {
    "src": "assets/image-03.webp",
-   "alt": "116年丁未年：羊座太歲、牛正沖、龍與狗偏沖。",
+   "alt": "116年丁未年：羊值太歲、牛沖太歲、鼠害太歲、狗刑太歲兼破太歲。",
    "label": "丁未年犯太歲生肖",
    "caption": "丁未年犯太歲生肖"
   },
