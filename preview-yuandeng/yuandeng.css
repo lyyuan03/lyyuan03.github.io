@@ -33,3 +33,12 @@ html:root body.signup-page.site-auth-enabled #site-auth-bar .site-account-menu{
   background:#faf6ee!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 /* 燈首／個人燈列沿用彩色燈照片圖示：不讓 newyear-fx 的一次性光暈動畫套在照片上 */
 html.fx-on .yd-option.fx-lit-pulse .lamp-icon::before,html.fx-on .yd-option.fx-lit-pulse .lamp-icon svg{animation:none!important}
+
+/* ── 燈別分頁（沿用太歲燈 .tabs 底線樣式）＋ 燈首／個人燈卡片 ── */
+.yd-tabs{margin-top:4px}
+.yd-tabs button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.45;padding:10px 6px;font-size:clamp(12px,3.3vw,15px);cursor:pointer}
+.yd-tabs .yd-tab-count{display:inline-block;margin-left:5px;min-width:18px;padding:0 5px;border-radius:9px;background:#B5302A;color:#fff;font:normal 11px/18px var(--sans);text-align:center;vertical-align:1px}
+.yd-tabs .yd-tab-count[hidden]{display:none}
+.yd-family .yd-options{padding-top:0}
+.yd-option .yd-opt-head .lamp-name small{display:block}
+.yd-option .yd-opt-head .price{margin-left:auto;white-space:nowrap}

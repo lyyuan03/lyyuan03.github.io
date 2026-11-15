@@ -45,8 +45,8 @@ function applyStaticCopy() {
   $$('[data-cfg]').forEach(el => { const v = cfgGet(el.dataset.cfg); if (typeof v === 'string' && v) el.textContent = v; });
   $$('[data-cfg-html]').forEach(el => { const v = cfgGet(el.dataset.cfgHtml); if (typeof v === 'string' && v) el.innerHTML = rich(v); });
   $$('[data-cfg-tail]').forEach(el => { const v = cfgGet(el.dataset.cfgTail); let t = null; el.childNodes.forEach(n => { if (n.nodeType === 3 && n.nodeValue.trim()) t = n; }); if (t && typeof v === 'string' && v) t.nodeValue = v; });
-  const img = { src: '/assets/yuandeng-banner-2027-dingwei.webp', alt: '116年2月11日（四）辭歲謝平安・圓燈總迴向法儀（丁未年）' }, slot = $('#bannerSlot'), pic = $('#bannerImg');
-  if (img && img.src) { pic.src = img.src; pic.alt = img.alt || ''; pic.hidden = false; slot.classList.remove('empty'); }
+  const img = { src: '/assets/yuandeng-banner-2027-yuandeng.webp', srcset: '/assets/yuandeng-banner-2027-yuandeng-1048.webp 1048w, /assets/yuandeng-banner-2027-yuandeng.webp 2097w', alt: '辭歲謝平安・圓燈總迴向法儀　116/1/31（日）丙午' }, slot = $('#bannerSlot'), pic = $('#bannerImg');
+  if (img && img.src) { if (img.srcset) { pic.srcset = img.srcset; pic.sizes = '(max-width: 1120px) 100vw, 1120px'; } pic.src = img.src; pic.alt = img.alt || ''; pic.hidden = false; slot.classList.remove('empty'); }
   else { pic.hidden = true; slot.classList.add('empty'); }
   $('#transferInfo').innerHTML = rich(CFG.page.transferInfo || '');
   const note = $('#modeNote');
@@ -69,31 +69,42 @@ function personHTML() {
   return `<div class="person"><div class="person-title">芳名</div><button type="button" class="remove">移除此位</button><label for="pn${id}" class="req">姓名</label><input id="pn${id}" data-person-name required maxlength="40" autocomplete="off" placeholder="請填芳名"></div>`;
 }
 function optionHTML(l) {
-  /* 沿用太歲燈（preview-vokdayja）的燈列版型：勾選框＋圖示＋標題／副標＋金額，勾選後展開詳細框（.people） */
-  return `<div class="yd-option" data-key="${esc(l.key)}"><label class="lamp-head yd-opt-head"><input type="checkbox" class="opt-check"><span class="lamp-icon">${ICON}</span><span class="lamp-name"><strong>${esc(optLabel(l))}</strong></span><span class="price">${money(l.price)}／位</span></label><div class="people yd-names" hidden><div class="person-list"></div><button type="button" class="subbtn add-person">${esc(CFG.copy.addPerson || '＋ 新增芳名')}</button></div></div>`;
+  /* 沿用太歲燈（preview-vokdayja）「總燈首」卡片版型：勾選框＋圖示＋粗體標題＋小標（燈別）＋右側金額，勾選後展開詳細框（.people） */
+  const fam = (CFG.families.find(f => f.id === l.family) || {}).label || '';
+  return `<div class="yd-option" data-key="${esc(l.key)}"><label class="lamp-head yd-opt-head"><input type="checkbox" class="opt-check"><span class="lamp-icon">${ICON}</span><span class="lamp-name"><strong>${esc(optLabel(l))}</strong><small>${esc(fam)}</small></span><span class="price">${money(l.price)}／位</span></label><div class="people yd-names" hidden><div class="person-list"></div><button type="button" class="subbtn add-person">${esc(CFG.copy.addPerson || '＋ 新增芳名')}</button></div></div>`;
 }
 function renderLamps() {
+  /* 上方一排燈別分頁（沿用太歲燈 .tabs 底線樣式）；點選燈別後，下方顯示該燈別的「燈首／個人燈」兩張卡片 */
   const box = $('#lampFamilies'); box.innerHTML = '';
-  CFG.families.forEach(f => {
-    const ls = CFG.lamps.filter(l => l.family === f.id && l.enabled !== false).sort((a, b) => (optLabel(a) === '燈首' ? 0 : 1) - (optLabel(b) === '燈首' ? 0 : 1));
-    if (!ls.length) return;
-    box.insertAdjacentHTML('beforeend', `<article class="lamp yd-family" data-family="${esc(f.id)}"><label class="lamp-head" for="fam-${esc(f.id)}"><input type="checkbox" id="fam-${esc(f.id)}" class="fam-check"><span class="lamp-icon">${ICON}</span><span class="lamp-name"><strong>${esc(f.label)}</strong><small>${esc(ls.map(l => optLabel(l) + ' ' + money(l.price)).join('　／　'))}</small></span></label><div class="people yd-options" hidden><p class="hint">請選擇燈首或個人燈（可兩者都登記），填寫姓名後可持續新增芳名。</p>${ls.map(optionHTML).join('')}</div></article>`);
+  const fams = CFG.families.map(f => ({ f, ls: CFG.lamps.filter(l => l.family === f.id && l.enabled !== false).sort((a, b) => (optLabel(a) === '燈首' ? 0 : 1) - (optLabel(b) === '燈首' ? 0 : 1)) })).filter(x => x.ls.length);
+  box.insertAdjacentHTML('beforeend', `<div class="tabs yd-tabs" role="tablist" aria-label="禮謝燈別">${fams.map((x, i) => `<button type="button" role="tab" id="yd-tab-${esc(x.f.id)}" aria-selected="${i === 0}" aria-controls="yd-lamp-${esc(x.f.id)}" data-yd-tab="${esc(x.f.id)}"${i ? ' tabindex="-1"' : ''}><span class="yd-tab-label">${esc(x.f.label)}</span><em class="yd-tab-count" hidden></em></button>`).join('')}</div>`);
+  fams.forEach((x, i) => {
+    box.insertAdjacentHTML('beforeend', `<div class="yd-family" id="yd-lamp-${esc(x.f.id)}" role="tabpanel" aria-labelledby="yd-tab-${esc(x.f.id)}" data-family="${esc(x.f.id)}" data-label="${esc(x.f.label)}"${i ? ' hidden' : ''}><input type="checkbox" class="fam-check" id="fam-${esc(x.f.id)}" hidden tabindex="-1" aria-hidden="true"><div class="yd-options">${x.ls.map(optionHTML).join('')}</div></div>`);
+  });
+}
+function activateLampTab(id, focus) {
+  $$('#lampFamilies [data-yd-tab]').forEach(b => {
+    const on = b.dataset.ydTab === id;
+    b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; if (on && focus) b.focus();
+    const panel = $('#' + b.getAttribute('aria-controls')); if (panel) panel.hidden = !on;
   });
 }
 function lampEl(key) { return $(`.yd-option[data-key="${key}"]`); }
-function isSelected(key) { const o = lampEl(key); return !!(o && o.querySelector('.opt-check').checked && o.closest('.yd-family').querySelector('.fam-check').checked); }
+function isSelected(key) { const o = lampEl(key); return !!(o && o.querySelector('.opt-check').checked); }
 function namesOf(key) { const o = lampEl(key); return o ? [...o.querySelectorAll('[data-person-name]')].map(i => i.value) : []; }
 function syncAll() {
   $$('.yd-family').forEach(f => {
-    const on = f.querySelector('.fam-check').checked;
+    /* 燈別由分頁切換；只要該燈別有勾選任一項，就視為已選（隱藏的 .fam-check 僅作內部同步） */
+    const n = f.querySelectorAll('.opt-check:checked').length, on = n > 0;
+    f.querySelector('.fam-check').checked = on;
     f.classList.toggle('selected', on);
-    f.querySelector('.yd-options').hidden = !on;
+    const cnt = $(`[data-yd-tab="${f.dataset.family}"] .yd-tab-count`); if (cnt) { cnt.hidden = !on; cnt.textContent = on ? String(n) : ''; }
     f.querySelectorAll('.yd-option').forEach(o => {
       const oc = o.querySelector('.opt-check').checked, list = o.querySelector('.person-list');
       o.classList.toggle('on', oc);
-      o.querySelector('.yd-names').hidden = !(on && oc);
-      if (on && oc && !list.children.length) list.insertAdjacentHTML('beforeend', personHTML());
-      list.querySelectorAll('input').forEach(i => { i.disabled = !(on && oc); });
+      o.querySelector('.yd-names').hidden = !oc;
+      if (oc && !list.children.length) list.insertAdjacentHTML('beforeend', personHTML());
+      list.querySelectorAll('input').forEach(i => { i.disabled = !oc; });
     });
   });
   $$('.sponsor-card').forEach(card => {
@@ -107,6 +118,7 @@ function syncAll() {
 }
 document.addEventListener('click', e => {
   const t = e.target;
+  const tab = t.closest && t.closest('#lampFamilies [data-yd-tab]'); if (tab) { activateLampTab(tab.dataset.ydTab); return; }
   if (t.closest('#lampFamilies') || t.closest('#sponsorChoices')) {
     if (t.matches('.add-person')) {
       const list = t.parentElement.querySelector('.person-list'), sponsor = t.closest('.sponsor-card');
@@ -120,6 +132,14 @@ document.addEventListener('click', e => {
   }
 });
 document.addEventListener('change', e => { if (e.target.matches('.fam-check,.opt-check,.sponsor-check')) syncAll(); });
+document.addEventListener('keydown', e => {
+  const b = e.target.closest && e.target.closest('#lampFamilies [data-yd-tab]');
+  if (!b || !['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
+  e.preventDefault();
+  const tabs = $$('#lampFamilies [data-yd-tab]'), i = tabs.indexOf(b), n = tabs.length;
+  const next = e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : (i + (e.key === 'ArrowRight' ? 1 : n - 1)) % n;
+  activateLampTab(tabs[next].dataset.ydTab, true);
+});
 
 /* ───── 建院隨喜功德 ───── */
 function sponsorRow(fixed) {
@@ -180,6 +200,7 @@ function restoreRegistration(data) {
     o.closest('.yd-family').querySelector('.fam-check').checked = true; o.querySelector('.opt-check').checked = true;
     setPeople(o.querySelector('.person-list'), personHTML, names.map(n => [n]));
   });
+  const firstOn = $$('.yd-option .opt-check').find(c => c.checked); if (firstOn) activateLampTab(firstOn.closest('.yd-family').dataset.family);
   CFG.sponsors.forEach(s => {
     const item = (data.sponsors || []).find(x => x.key === s.key), rows = (item && item.people) || [];
     if (!item || item.selected === false || !rows.length) return;
@@ -256,7 +277,7 @@ function checkSelection() {
   $$('.yd-family').forEach(f => {
     if (!f.querySelector('.fam-check').checked) return;
     const n = f.querySelectorAll('.opt-check:checked').length;
-    if (!n && !problem) problem = `請在「${f.querySelector('.lamp-name strong').textContent}」選擇燈首或個人燈。`;
+    if (!n && !problem) problem = `請在「${f.dataset.label}」選擇燈首或個人燈。`;
     lamps += n;
   });
   const sponsors = $$('.sponsor-check:checked').length;
@@ -287,7 +308,7 @@ formNode.onsubmit = e => {
   e.preventDefault(); if (loadingEdit || submitting || !CFG) return;
   calc();
   if (!checkSelection()) return;
-  const invalid = formNode.querySelector(':invalid'); if (invalid) { invalid.reportValidity(); invalid.focus(); return; }
+  const invalid = formNode.querySelector(':invalid'); if (invalid) { const pane = invalid.closest('.yd-family'); if (pane && pane.hidden) activateLampTab(pane.dataset.family); invalid.reportValidity(); invalid.focus(); return; }
   const savingEdit = !!editToken, payload = buildPayload(savingEdit), eyebrow = $('#result .eyebrow'), foot = $('#result .result-foot');
   const showFail = msg => { if (eyebrow) eyebrow.textContent = 'SIGNUP FAILED'; $('#result h2').textContent = '送出失敗'; if (foot) foot.hidden = true; $('#resultBody').innerHTML = `<p class="statusmsg error">${esc(msg)}</p><p class="hint">本頁仍保留本次填寫內容，請修正後再試，或聯繫行政。</p>`; };
   const showOk = res => {
