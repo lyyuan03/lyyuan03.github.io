@@ -253,7 +253,7 @@ html.zm-ready body:has(> .zp-main) .zm-in{opacity:1!important;transform:none!imp
 
 /* ==========================================================================
    刊物式閱讀調整（2026-11-15）：把「排版正確的網誌」往「年度刊物的一個章節」推進。
-   1 主視覺與和紙同一語系　2 紙面延伸、背景退後　3 標題加重並加「朱印」
+   1 主視覺與和紙同一語系　2 紙面延伸（底圖不變）　3 標題加重並加「朱印」
    4 點燈區改為淺色封緘　5 內文墨色加深、開篇與結尾加留白與記號
    只改外觀，不動文章文字；全部放在檔案最後，覆蓋較早載入的深色框與白框設定。
    ========================================================================== */
@@ -263,12 +263,7 @@ body:has(> .zp-main){
  --zr-seal:#9a3b2e;              /* 朱印：僅用於小面積印記 */
 }
 
-/* 2 背景退後：同一張和紙圖，加厚米白遮罩；閱讀面板更接近整張紙 */
-body:has(> .zp-main)::before{
- background:
-  linear-gradient(180deg,rgba(244,239,228,.7) 0%,rgba(244,239,228,.58) 40%,rgba(244,239,228,.72) 100%),
-  url('/preview-vokdayja/assets/goat-bg-2027-no-goat.jpg') center center/cover no-repeat;
-}
+/* 2 背景（底圖與遮罩）維持 zodiac-reading.css 原設定不變；只讓閱讀面板更接近整張紙 */
 body:has(> .zp-main) .zp-main{
  background:linear-gradient(180deg,rgba(255,253,248,.95),rgba(253,249,241,.93));
  border-color:rgba(165,130,84,.22);

@@ -38,13 +38,15 @@
 - 章節標題含「年度總結」「結語」「修行建議」時，以總結版面呈現。
 - 沒有這些標記的舊格式純文字，照原本方式逐段顯示。
 
-## 四、套用到其他十一生肖的步驟（待屬鼠範本確認後執行）
+## 四、套用到其他十一生肖的步驟（2026-11-15 已套用全部十二頁）
 
 1. 各頁 `<head>` 加入 `zodiac-motion.css`、`zodiac-article.css`；`</body>` 前加入 `zodiac-motion.js`。
 2. 在 `<section class="zp-lamp" …>` 前加入分界：`<div class="zr-divide" role="separator" …><span>年度點燈專屬全文</span></div>`。
 3. 以 `.zr-switch`（上一生肖／十二生肖總覽／下一生肖）取代 `.zp-nav`，放在生肖選擇區之前；上一、下一生肖依十二生肖循環（鼠的上一個是豬）。
 4. 公開篇的 HTML 文字不動。
-5. 執行 `python3 scripts/tests/zodiac-reader-states.py`（改 PAGE 參數逐頁跑）與下列審查腳本。
+5. 頁首加 `<span class="zr-seal" aria-hidden="true">地支</span>`（朱印）。
+6. 逐頁測試：`ZODIAC=ox python3 scripts/tests/zodiac-reader-states.py`，再跑下列審查腳本。
+7. 和紙底圖與遮罩維持 `zodiac-reading.css` 原設定，不在本系統覆蓋。
 
 ## 五、權限稽核結果（2026-11-15）
 

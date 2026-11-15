@@ -14,7 +14,9 @@
   <link rel="stylesheet" href="/site-navigation.css?v=20261110-dingwei-1">
   <link rel="stylesheet" href="/site-footer.css?v=6152ecf0">
   <link rel="stylesheet" href="/zodiac-reading.css?v=20261115-paper-bg-1">
+  <link rel="stylesheet" href="/zodiac-motion.css?v=20261115-reading-1">
   <link rel="stylesheet" href="/zodiac-picker.css?v=20261115-badges-1">
+  <link rel="stylesheet" href="/zodiac-article.css?v=20261115-reading-3">
   <style>
 :root{--gold:#c5a26f;--cream:#f5f1e9;--dark:#0f1a14;--serif:'Noto Serif TC','Georgia',serif;--sans:'Noto Sans TC','Arial',sans-serif;--en:'Cormorant Garamond',serif}
 *{box-sizing:border-box}html,body{min-height:100%;margin:0}
@@ -131,6 +133,7 @@ h2{margin:56px 0 18px;font-family:var(--serif);font-weight:400;font-size:24px;le
   </nav>
 
   <main class="zp-main">
+    <span class="zr-seal" aria-hidden="true">寅</span>
     <p class="zp-crumb"><a href="/2027-zodiac.html">2027 丁未年十二生肖</a> ／ 屬虎</p>
     <p class="zp-kicker">2027 DING-WEI · 寅</p>
     <h1><small>2027 丁未年</small>屬虎（寅）</h1>
@@ -155,7 +158,15 @@ h2{margin:56px 0 18px;font-family:var(--serif);font-weight:400;font-size:24px;le
       <a class="zp-gated-link" href="/preview-vokdayja/">查看丁未年年度點燈</a>
     </section>
 
+    <div class="zr-divide" role="separator" aria-label="以下為年度點燈專屬全文"><span>年度點燈專屬全文</span></div>
+
     <section class="zp-lamp" aria-label="點燈專屬內容" aria-live="polite" data-lamp-reader data-zodiac="tiger" data-lamp-enabled="true" hidden></section>
+
+    <nav class="zr-switch" aria-label="生肖切換">
+      <a class="zr-switch-step zr-switch-prev" href="/2027-zodiac-ox.html" aria-label="上一生肖：屬牛"><img src="/assets/zodiac-2027/badges/ox-badge-256.webp" alt="" width="256" height="256" loading="lazy" decoding="async"><span><small>上一生肖</small>屬牛</span></a>
+      <a class="zr-switch-home zm-btn" href="/2027-zodiac.html">十二生肖總覽</a>
+      <a class="zr-switch-step zr-switch-next" href="/2027-zodiac-rabbit.html" aria-label="下一生肖：屬兔"><img src="/assets/zodiac-2027/badges/rabbit-badge-256.webp" alt="" width="256" height="256" loading="lazy" decoding="async"><span><small>下一生肖</small>屬兔</span></a>
+    </nav>
 
     <nav class="zm-picker" aria-label="選擇我的生肖">
       <h2 class="zm-picker-title">選擇我的生肖</h2>
@@ -175,8 +186,6 @@ h2{margin:56px 0 18px;font-family:var(--serif);font-weight:400;font-size:24px;le
         <li><a class="zm-seal" href="/2027-zodiac-pig.html" aria-label="查看 2027 丁未年屬豬流年指引"><img src="/assets/zodiac-2027/badges/pig-badge-512.webp" srcset="/assets/zodiac-2027/badges/pig-badge-256.webp 256w, /assets/zodiac-2027/badges/pig-badge-512.webp 512w, /assets/zodiac-2027/badges/pig-badge-1024.webp 1024w" sizes="(max-width:768px) 22vw, 140px" alt="" loading="lazy" decoding="async" width="512" height="512"></a></li>
       </ol>
     </nav>
-
-    <div class="zp-nav"><a href="/2027-zodiac-ox.html">← 牛</a><a href="/2027-zodiac-rabbit.html">兔 →</a></div>
 
     <p class="zp-notes">本文的地支與星曜資料取自傳統曆法及民間流年整理，各家起例可能不同；生活與心性討論供自我觀察，不能推斷個人的疾病、財富或命運。點燈專屬正文另存於受權限保護的資料庫。</p>
   </main>
@@ -200,6 +209,7 @@ h2{margin:56px 0 18px;font-family:var(--serif);font-weight:400;font-size:24px;le
   <script type="module" src="/site-auth-nav.js?v=20261115-zodiac-admin-review-1"></script>
   <script src="/site-navigation.js?v=20261110-dingwei-1" defer></script>
   <script src="/zodiac-picker.js?v=20261115-badges-1" defer></script>
-  <script type="module" src="/zodiac-lamp-reader.js?v=20261115-admin-review-1"></script>
+  <script src="/zodiac-motion.js?v=20261115-reading-1" defer></script>
+  <script type="module" src="/zodiac-lamp-reader.js?v=20261115-reading-1"></script>
 </body>
 </html>

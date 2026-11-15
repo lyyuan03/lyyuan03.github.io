@@ -15,8 +15,15 @@ Firestore 規則本身的權限測試在 dingwei-zodiac-rules.test.mjs（模擬�
 import asyncio, json, sys, pathlib
 from playwright.async_api import async_playwright
 
+import os
 BASE = "http://127.0.0.1:8123"
-PAGE = f"{BASE}/2027-zodiac-rat.html"
+ORDER = ["rat","ox","tiger","rabbit","dragon","snake","horse","goat","monkey","rooster","dog","pig"]
+ZODIAC = os.environ.get("ZODIAC", "rat")          # ZODIAC=ox python3 ... 逐頁測試
+IDX = ORDER.index(ZODIAC)
+PREV, NEXT = ORDER[IDX - 1], ORDER[(IDX + 1) % 12]
+OTHER = NEXT                                       # 「其他生肖」情境使用的權限
+PERM = f"dingwei-2027-{ZODIAC}"
+PAGE = f"{BASE}/2027-zodiac-{ZODIAC}.html"
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 FIXTURE = (ROOT / "scripts/tests/zodiac-reader-fixture.txt").read_text(encoding="utf-8")
 MARK = "版型測試資料"            # 只出現在專屬測試正文
@@ -59,20 +66,20 @@ def scenario(user, body=None, ent=None):
 USER = {"email": "a@gmail.com", "uid": "u-a"}
 ADMIN = {"email": "lyyuan03@gmail.com", "uid": "u-admin"}
 DENIED = {"error": "permission-denied"}
-GRANTED_BODY = {"data": {"status": "published", "active": True, "requiredPermission": "dingwei-2027-rat", "content": FIXTURE}}
+GRANTED_BODY = {"data": {"status": "published", "active": True, "requiredPermission": PERM, "content": FIXTURE}}
 SCENARIOS = {
     "signedOut": scenario(None),
     "noAccess": scenario(USER, DENIED, None),
-    "otherZodiac": scenario(USER, DENIED, {"data": {"permissions": ["dingwei-2027-ox"]}}),
+    "otherZodiac": scenario(USER, DENIED, {"data": {"permissions": [f"dingwei-2027-{OTHER}"]}}),
     "network": scenario(USER, {"error": "unavailable"}),
     "authExpired": scenario(USER, {"error": "unauthenticated"}),
-    "notReady": scenario(USER, {"data": {"status": "published", "active": True, "requiredPermission": "dingwei-2027-ox", "content": FIXTURE}}),
+    "notReady": scenario(USER, {"data": {"status": "published", "active": True, "requiredPermission": f"dingwei-2027-{OTHER}", "content": FIXTURE}}),
     "granted": scenario(USER, GRANTED_BODY),
-    "adminPreview": scenario(ADMIN, {"data": {"status": "published", "active": False, "requiredPermission": "dingwei-2027-rat", "content": FIXTURE}}),
+    "adminPreview": scenario(ADMIN, {"data": {"status": "published", "active": False, "requiredPermission": PERM, "content": FIXTURE}}),
     "adminEmpty": scenario(ADMIN, None),
 }
 XSS = '## <img src=x onerror="window.__xss=1">標題\n\n<script>window.__xss=2</script>段落\n\n> <b onmouseover="window.__xss=3">引言</b>\n\n**<img src=x onerror="window.__xss=4">粗體包住的注入**'
-XSS_SCENARIO = scenario(USER, {"data": {"status": "published", "active": True, "requiredPermission": "dingwei-2027-rat", "content": XSS}})
+XSS_SCENARIO = scenario(USER, {"data": {"status": "published", "active": True, "requiredPermission": PERM, "content": XSS}})
 
 results = []
 def check(name, ok, info=""):
@@ -246,7 +253,7 @@ async def main():
         check("月份導覽跳轉後標題可見", top >= navb, f"{top:.0f}")
 
         await page.evaluate("window.scrollTo(0,0)")
-        await stitched(page, "rat-granted-desktop-full.png")
+        await stitched(page, f"{ZODIAC}-granted-desktop-full.png")
 
         # 生肖切換 hover
         sw = page.locator(".zr-switch")
@@ -256,10 +263,10 @@ async def main():
         box = await sw.bounding_box()
         await page.screenshot(path=str(OUT / "switch-hover.png"), clip={"x": box["x"] - 20, "y": box["y"] - 20 + await page.evaluate("scrollY"), "width": box["width"] + 40, "height": box["height"] + 50}, full_page=True)
         hrefs = await page.evaluate("[...document.querySelectorAll('.zr-switch a')].map(a => a.getAttribute('href'))")
-        check("生肖切換連結：上一豬／總覽／下一牛", hrefs == ["/2027-zodiac-pig.html", "/2027-zodiac.html", "/2027-zodiac-ox.html"], str(hrefs))
+        check("生肖切換連結：上一／總覽／下一", hrefs == [f"/2027-zodiac-{PREV}.html", "/2027-zodiac.html", f"/2027-zodiac-{NEXT}.html"], str(hrefs))
         await page.click(".zr-switch-next")
         await page.wait_for_load_state("domcontentloaded")
-        check("點擊下一生肖導向屬牛頁", page.url.endswith("/2027-zodiac-ox.html"), page.url)
+        check("點擊下一生肖導向正確頁面", page.url.endswith(f"/2027-zodiac-{NEXT}.html"), page.url)
         await page.go_back()
         await page.wait_for_function("document.querySelector('[data-lamp-reader]')?.dataset.lampState === 'granted'")
 
@@ -295,17 +302,17 @@ async def main():
         await page.tap(".zm-toc a[href='#zr-s2']")
         await page.wait_for_timeout(700)
         check("390px：選取章節後目錄自動收合", await page.evaluate("!document.querySelector('.zm-toc').open"))
-        await stitched(page, "rat-granted-mobile-full.png")
+        await stitched(page, f"{ZODIAC}-granted-mobile-full.png")
         check("390px：無 JavaScript 錯誤", not errors, "; ".join(errors))
         await ctx.close()
 
         ctx, page, errors = await open_page(browser, "signedOut", mobile=True)
         overflow = await page.evaluate("document.documentElement.scrollWidth")
         check("390px 未登入：無橫向溢出", overflow <= 390, str(overflow))
-        await stitched(page, "rat-signedout-mobile-full.png")
+        await stitched(page, f"{ZODIAC}-signedout-mobile-full.png")
         await ctx.close()
         ctx, page, errors = await open_page(browser, "signedOut")
-        await stitched(page, "rat-signedout-desktop-full.png")
+        await stitched(page, f"{ZODIAC}-signedout-desktop-full.png")
         await ctx.close()
 
         # ---- 減少動態 ----
