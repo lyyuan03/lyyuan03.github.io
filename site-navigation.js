@@ -71,6 +71,14 @@
         registrationItem.setAttribute("data-parent", "lixing");
         parentItem.after(registrationItem);
       }
+      // 報名法儀 底下列出目前開放報名的法儀（辭歲謝平安・圓燈總迴向法儀，截止後自動停止顯示）。
+      const yuandengDeadline = Date.parse("2027-01-29T23:59:59+08:00");
+      if (registrationItem && Date.now() <= yuandengDeadline && !activityMenu.querySelector(".global-nav-ritual-event")) {
+        const eventItem = document.createElement("li");
+        eventItem.className = "global-nav-ritual-subitem global-nav-ritual-event";
+        eventItem.innerHTML = '<a href="/preview-yuandeng/">辭歲謝平安・圓燈總迴向法儀</a>';
+        registrationItem.after(eventItem);
+      }
     }
 
     const services = nav.querySelector("#global-nav-services");

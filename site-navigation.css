@@ -399,3 +399,13 @@
 .global-nav-ritual-subitem > a[aria-current="page"] {
   color: #d7ba88 !important;
 }
+
+/* 報名法儀底下的單項法儀（例：辭歲謝平安・圓燈總迴向法儀） */
+.global-nav-ritual-event > a {
+  padding-left: 56px !important;
+  color: #c5a26f !important;
+}
+.global-nav-ritual-event > a::before {
+  content: "└ ";
+  color: rgba(200, 170, 123, .60);
+}
