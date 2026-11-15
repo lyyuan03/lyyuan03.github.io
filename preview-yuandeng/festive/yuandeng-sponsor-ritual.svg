@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" aria-hidden="true">
+<desc>神像供具：寶珠與基座</desc>
+<defs></defs>
+<g id="sponsor-ritual-layer-aura"/>
+<g id="sponsor-ritual-layer-body" stroke="#A58254" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><circle cx="48" cy="34" r="16" fill="#C9A063" fill-opacity=".11"/><path d="M27 56Q48 47 69 56L63 66H33L27 56Z" fill="#C9A063" fill-opacity=".1"/><path d="M37 66V75H59V66"/><path d="M30 77H66M25 83H71"/><path d="M26 55Q35 50 42 52M54 52Q64 50 70 55"/></g>
+<g id="sponsor-ritual-layer-flame"/>
+<g id="sponsor-ritual-layer-highlight" stroke="#C9A063" stroke-width="1" stroke-linecap="round"><path d="M39 25Q43 20 48 20"/><path d="M30 56Q48 52 66 56"/><path d="M38 67H58"/><path d="M38 75H58" stroke="#A58254" opacity=".65"/></g>
+</svg>

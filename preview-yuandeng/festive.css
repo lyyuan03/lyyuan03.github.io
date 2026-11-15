@@ -1,0 +1,93 @@
+/* 圓燈總回向法儀・過年氛圍層
+   疊在 style.css / yuandeng.css 之後載入。不改背景圖、不改表單結構與送出流程。
+   色彩只用三階金：高光 #EAD8B4、主體 #C9A063、陰影 #A58254（無紅色）。
+   動態只用 opacity / transform，並尊重 prefers-reduced-motion。 */
+
+/* ── 1. 燈卡圖示：未亮 → 勾選後點亮（原內嵌 SVG 保留，只是隱藏） ── */
+body.signup-page .lamp-icon{position:relative;width:46px;height:50px}
+body.signup-page .lamp-icon svg{position:absolute;inset:0;opacity:0}
+body.signup-page .lamp-icon::before,
+body.signup-page .lamp-icon::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:center / contain no-repeat;
+}
+body.signup-page .lamp-icon::before{background-image:url("festive/yuandeng-lantern-unlit.svg")}
+body.signup-page .lamp-icon::after{
+  background-image:url("festive/yuandeng-lantern-lit.svg");
+  opacity:0;transform:scale(.9);
+  transition:opacity .5s ease,transform .5s ease;
+}
+body.signup-page .lamp.selected .lamp-icon::after{
+  opacity:1;transform:scale(1);
+  animation:ydFlame 4.8s ease-in-out .6s infinite;
+}
+@keyframes ydFlame{0%,100%{opacity:1}50%{opacity:.84}}
+
+/* ── 2. 贊助項目：依項目換成不同圖示，不再全部是燈籠 ── */
+body.signup-page .sponsor-card .lamp-icon::before{background-image:url("festive/yuandeng-flame-mark.svg")}
+body.signup-page .sponsor-card[data-yd-icon="landscape"] .lamp-icon::before{background-image:url("festive/yuandeng-sponsor-landscape.svg")}
+body.signup-page .sponsor-card[data-yd-icon="ritual"] .lamp-icon::before{background-image:url("festive/yuandeng-sponsor-ritual.svg")}
+body.signup-page .sponsor-card[data-yd-icon="hardware"] .lamp-icon::before{background-image:url("festive/yuandeng-sponsor-hardware.svg")}
+body.signup-page .sponsor-card .lamp-icon::after{display:none}
+body.signup-page .sponsor-card .lamp-icon::before{transition:transform .35s ease,filter .35s ease}
+body.signup-page .sponsor-card.selected .lamp-icon::before{transform:translateY(-2px) scale(1.06);filter:drop-shadow(0 3px 6px #c9a06388)}
+
+/* ── 3. 區塊卡片：極淡回紋底紋 + 四角金線角花（立體的細部層次） ── */
+body.signup-page .panel{
+  background-image:url("festive/yuandeng-tile-soft.svg"),linear-gradient(180deg,#fffcf6 0%,#faf4e8 100%);
+  background-size:80px 80px,auto;
+}
+body.signup-page .panel::after{
+  content:"";position:absolute;inset:4px;pointer-events:none;
+  background:
+    url("festive/yuandeng-corner-tl.svg") left top / 28px 28px no-repeat,
+    url("festive/yuandeng-corner-tr.svg") right top / 28px 28px no-repeat,
+    url("festive/yuandeng-corner-bl.svg") left bottom / 28px 28px no-repeat,
+    url("festive/yuandeng-corner-br.svg") right bottom / 28px 28px no-repeat;
+}
+@media (min-width:741px){
+  body.signup-page .panel::after{
+    inset:5px;
+    background-size:34px 34px,34px 34px,34px 34px,34px 34px;
+  }
+}
+
+/* ── 4. 步驟編號：凸起的金印（高光在上、陰影在下） ── */
+body.signup-page h3 .num{
+  min-width:2.1em;height:2.1em;border-radius:50%;
+  margin-right:.7em;vertical-align:middle;
+  font:600 14px/1 'Cormorant Garamond',serif;font-variant-numeric:lining-nums;letter-spacing:0;
+  color:#3a2a12;text-shadow:0 1px 0 #fff7;
+  background:radial-gradient(circle at 32% 26%,#f8ebc6 0%,#d8b46f 48%,#9a7236 100%);
+  box-shadow:0 2px 5px #5c442040,inset 0 1px 0 #fff9,inset 0 -2px 3px #6a4a1c55;
+}
+
+/* ── 5. 修正：頂端「會員登入」列改為不透明，避免下方文字透出 ── */
+html body.signup-page.site-auth-enabled #site-auth-bar{background:#faf6ee!important}
+
+/* ── 6. 送出成功：伺服器確認後（#result.yd-ok）才出現點亮的燈與「圓滿回向」 ── */
+#result.yd-ok h2{text-align:center}
+#result.yd-ok h2::before{
+  content:"";display:block;width:min(440px,112%);max-width:none;aspect-ratio:640 / 300;margin:-34px -6% -14px;
+  background:url("festive/yuandeng-success-circle.svg") center / contain no-repeat;
+  animation:ydLampIn 1.1s cubic-bezier(.22,.61,.36,1) both;
+}
+#result.yd-ok h2::after{
+  content:"圓滿回向";display:block;margin-top:2px;
+  font:500 15px/1.8 'Noto Serif TC',serif;letter-spacing:.7em;text-indent:.7em;text-align:center;color:#8a6428;
+  animation:ydFadeUp 1s ease .5s both;
+}
+@keyframes ydLampIn{from{opacity:0;transform:translateY(8px) scale(.82)}to{opacity:1;transform:none}}
+@keyframes ydFadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── 手機：圖示略縮，避免擠壓燈名 ── */
+@media (max-width:740px){
+  body.signup-page .lamp-icon{width:40px;height:44px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  body.signup-page .lamp-icon::after,
+  body.signup-page .sponsor-card .lamp-icon::before,
+  #result.yd-ok h2::before,
+  #result.yd-ok h2::after{animation:none!important;transition:none!important}
+}
