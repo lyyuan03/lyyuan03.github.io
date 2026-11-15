@@ -191,6 +191,7 @@ const scalarIds = ['name', 'email', 'phone', 'last5', 'remitNote', 'cert', 'note
 function captureFields() { const f = {}; scalarIds.forEach(id => { const el = $('#' + id); if (el) f[id] = el.value; }); return f; }
 function setPeople(list, rowFn, rows) { list.innerHTML = ''; rows.forEach(vals => { list.insertAdjacentHTML('beforeend', rowFn()); const inputs = list.lastElementChild.querySelectorAll('input'); vals.forEach((v, i) => { if (inputs[i]) inputs[i].value = v ?? ''; }); }); }
 function restoreRegistration(data) {
+  ['#reuseProfile', '#reuseLamps'].forEach(id => { const c = $(id); if (c) c.checked = false; }); ['#reuseProfileMsg', '#reuseLampsMsg'].forEach(id => { const m = $(id); if (m) { m.hidden = true; m.textContent = ''; } });
   scalarIds.forEach(id => { const el = $('#' + id); if (el) el.value = (data.fields || {})[id] ?? (id === 'cert' ? '不索取' : ''); });
   $$('.fam-check,.opt-check,.sponsor-check').forEach(c => { c.checked = false; });
   CFG.lamps.forEach(l => {
@@ -214,7 +215,6 @@ function restoreRegistration(data) {
 
 /* ───── 套用之前的報名資料（姓名／Email／電話） ───── */
 function readProfile() { try { const p = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null'); return p && p.email ? p : null; } catch { return null; } }
-function saveProfile(f, src) { try { localStorage.setItem(PROFILE_KEY, JSON.stringify({ name: f.name || '', email: f.email || '', phone: f.phone || '', src, at: Date.now() })); } catch { /* 無痕模式等：略過 */ } }
 function clearProfile() { try { localStorage.removeItem(PROFILE_KEY); } catch { /* ignore */ } }
 function showProfileNote(msg, withClear) {
   const n = $('#profileNote'); n.hidden = false;
@@ -226,12 +226,78 @@ function fillProfile(p, msg) {
   showProfileNote(msg, true); calc();
   $('#name').scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
-function applyPrevious() {
-  const p = readProfile();
-  if (p) { fillProfile(p, '已套用之前的資料（姓名、Email、電話），可自行修改。資料只存在這台裝置的瀏覽器。'); return; }
-  const d = $('#myRecordsDialog'); $('#myRecordsBody').innerHTML = '<h2>套用之前的報名資料</h2><div class="notice">這台裝置上沒有找到之前的報名資料。</div><p>請打開您「太歲燈」報名的確認信，點信中的專屬連結，進入頁面後按「以此資料報名圓燈」，即可帶入姓名、Email 與電話。</p><p class="hint">帶入的資料仍可修改；送出後會建立一筆新的圓燈報名，不會更動您的太歲燈報名。</p>'; d.showModal();
+
+/* ───── 套用我之前的資料（以 Email＋電話向後端查詢統一報名資料；已會員登入則改以 Firebase 驗證 Email） ───── */
+async function memberCtx() {
+  /* 取得已登入會員的 Firebase ID token（後端會驗證，前端自報的 Email 不採信）；失敗一律當作未登入 */
+  try {
+    const wait = new Promise((_, rj) => setTimeout(() => rj(new Error('timeout')), 4000));
+    const mod = await Promise.race([import('/firebase-config.js'), wait]);
+    const auth = mod && mod.auth; if (!auth) return null;
+    if (typeof auth.authStateReady === 'function') await Promise.race([auth.authStateReady(), wait]);
+    const u = auth.currentUser; if (!u || !u.email) return null;
+    const token = await u.getIdToken();
+    return token ? { token, email: String(u.email).trim().toLowerCase() } : null;
+  } catch { return null; }
 }
-$('#heroApplyPrev').onclick = applyPrevious; $('#applyPrev').onclick = applyPrevious;
+async function lookupPrevious(scope, email, phone, ctx) {
+  const body = { action: 'lookup', scope, email, phone };
+  if (ctx) body.idToken = ctx.token;
+  const response = await fetch(ENDPOINT, { method: 'POST', mode: 'cors', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  if (!response.ok) throw new Error('net');
+  return response.json();
+}
+function applyLampMatch(lamps) {
+  let n = 0, skipped = 0, firstFam = '';
+  (lamps || []).forEach(l => {
+    const names = (l.people || []).filter(Boolean);
+    const cl = CFG.lamps.find(x => x.enabled !== false && x.key === l.key) || CFG.lamps.find(x => x.enabled !== false && x.name === l.name);
+    const o = cl && names.length ? lampEl(cl.key) : null;
+    if (!o) { skipped++; return; }
+    o.querySelector('.opt-check').checked = true;
+    setPeople(o.querySelector('.person-list'), personHTML, names.map(x => [x]));
+    n++; if (!firstFam) firstFam = cl.family;
+  });
+  syncAll(); if (firstFam) activateLampTab(firstFam);
+  return { n, skipped };
+}
+const REUSE_NF = '尚未找到之前的報名紀錄，請手動填寫';
+async function runReuse(kind) {
+  const cb = $(kind === 'lamps' ? '#reuseLamps' : '#reuseProfile'), msg = $(kind === 'lamps' ? '#reuseLampsMsg' : '#reuseProfileMsg');
+  const say = (t, err) => { msg.hidden = !t; msg.textContent = t || ''; msg.classList.toggle('error', !!err); };
+  if (!cb.checked) { say(''); return; }
+  if (!CFG || cb.dataset.busy) { cb.checked = false; return; }
+  cb.dataset.busy = '1'; cb.disabled = true; say('查詢中…');
+  try {
+    const ctx = await memberCtx();
+    let email = $('#email').value.trim(); const phone = $('#phone').value.trim();
+    if (!email && ctx) { email = ctx.email; $('#email').value = email; }
+    const viaMember = !!ctx && ctx.email === email.toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || (!phone && !viaMember)) {
+      cb.checked = false; say(kind === 'lamps' ? '請先在「01 登記人資料」填寫 Email 與行動電話，再勾選此項。' : '請先填寫 Email 與行動電話，再勾選此項。', true);
+      (email ? $('#phone') : $('#email')).focus(); return;
+    }
+    const data = await lookupPrevious(kind === 'lamps' ? 'lamps' : 'profile', email, phone, ctx);
+    if (!data || data.ok !== true) { cb.checked = false; say(data && data.code === 'rate' ? '查詢次數過多，請稍後再試，或直接手動填寫。' : (data && data.code === 'need' ? '請先填寫 Email 與行動電話，再勾選此項。' : '目前無法查詢，請稍後再試，或直接手動填寫。'), true); return; }
+    if (!data.found) { cb.checked = false; say(REUSE_NF, true); return; }
+    if (kind === 'lamps') {
+      const r = applyLampMatch(data.lamps);
+      if (!r.n) { cb.checked = false; say('找到您之前的登記，但燈別與本次不同，無法自動帶入，請手動選擇。', true); return; }
+      say(`已帶入 ${r.n} 項點燈項目與芳名，可自行修改或取消。` + (r.skipped ? `另有 ${r.skipped} 項因本次燈別不同未帶入。` : ''));
+    } else {
+      if (data.name) $('#name').value = data.name;
+      say('已帶入姓名，可自行修改。'); calc();
+    }
+  } catch { cb.checked = false; say('目前無法查詢，請稍後再試，或直接手動填寫。', true); }
+  finally { cb.disabled = false; delete cb.dataset.busy; }
+}
+$('#reuseProfile').addEventListener('change', () => runReuse('profile'));
+$('#reuseLamps').addEventListener('change', () => runReuse('lamps'));
+$('#heroApplyPrev').onclick = () => {
+  const cb = $('#reuseProfile'), row = cb.closest('.yd-reuse');
+  cb.scrollIntoView({ block: 'center', behavior: 'smooth' }); cb.focus({ preventScroll: true });
+  row.classList.add('yd-reuse-flash'); setTimeout(() => row.classList.remove('yd-reuse-flash'), 2200);
+};
 
 /* ───── 查詢／修改我的報名 ───── */
 const recordsDialog = document.createElement('dialog'); recordsDialog.className = 'modal'; recordsDialog.id = 'myRecordsDialog'; recordsDialog.setAttribute('aria-label', '查詢與修改報名');
@@ -323,7 +389,7 @@ formNode.onsubmit = e => {
     .then(r => r.json().catch(() => ({ ok: false, error: '回應格式錯誤' })))
     .then(res => {
       if (res && res.ok === true && res.id && (!savingEdit || res.updated === true)) {
-        previewEntries.set(res.id, { id: res.id, data: { fields: payload.fields } }); saveProfile(payload.fields, 'submit'); showOk(res);
+        previewEntries.set(res.id, { id: res.id, data: { fields: payload.fields } }); showOk(res);
       } else showFail('寫入報名表失敗：' + ((res && res.error) || '未知錯誤'));
     })
     .catch(() => showFail('無法連線報名後端，請稍後再試或聯繫行政。'))
