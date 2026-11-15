@@ -15,7 +15,7 @@ import { isInAppBrowser as detectInAppBrowser, openInExternalBrowser } from "./i
 const AUTH_VERSION = "20261115-zodiac-status-2";
 const SPONSOR_OFFER_STATUS_URL = "https://asia-east1-lyyuan03-membership.cloudfunctions.net/sponsorOfferStatus";
 const ZODIAC_STATUS_URL = "/2027-zodiac.html";
-const ZODIAC_PREVIEW_URL = "https://lyyuan-2027-zodiac-preview-20261110.levelbrook1.chatgpt.site";
+const ZODIAC_PREVIEW_URL = "/admin-zodiac-lamp.html";
 // 課程頁明確提供就地管理入口時，管理員登入後留在該頁；其他頁維持既有後台導向。
 const courseAdminButton = document.querySelector("[data-course-admin-open]");
 
@@ -98,7 +98,7 @@ function installBar() {
   bar.setAttribute("data-auth-version", AUTH_VERSION);
   bar.innerHTML = `
     <div class="site-auth-actions" aria-label="網站登入">
-      <a id="admin-zodiac-preview-link" class="site-auth-button" href="${ZODIAC_PREVIEW_URL}" target="_blank" rel="noopener noreferrer" title="僅限靈元院管理帳號" hidden>2027 生肖｜不公開預覽</a>
+      <a id="admin-zodiac-preview-link" class="site-auth-button" href="${ZODIAC_PREVIEW_URL}" target="_blank" rel="noopener noreferrer" title="僅限靈元院管理帳號" hidden>2027 生肖｜限定文章管理</a>
       <button id="member-login-button" class="site-auth-button" type="button" aria-haspopup="false" aria-expanded="false" aria-controls="site-account-menu">會員登入</button>
       <div id="site-account-menu" class="site-account-menu" hidden>
         <a href="/member-dashboard.html">我的會員中心</a>
@@ -141,7 +141,7 @@ function updateZodiacStatusLinks(isAdmin) {
     link.dataset.zodiacAccess = isAdmin ? "private" : "status";
     link.href = isAdmin ? ZODIAC_PREVIEW_URL : ZODIAC_STATUS_URL;
     link.title = isAdmin
-      ? "開啟僅限靈元院管理帳號的 2027 生肖不公開預覽"
+      ? "開啟僅限靈元院管理帳號的 2027 生肖限定文章管理"
       : "2027 十二生肖流年指引已上線";
     if (isAdmin) {
       link.target = "_blank";
@@ -152,7 +152,7 @@ function updateZodiacStatusLinks(isAdmin) {
       link.removeAttribute("rel");
       if (window.location.pathname === ZODIAC_STATUS_URL) link.setAttribute("aria-current", "page");
     }
-    if (label) label.textContent = isAdmin ? "不公開預覽" : "十二生肖已上線";
+    if (label) label.textContent = isAdmin ? "限定文章管理" : "十二生肖已上線";
   });
 }
 
