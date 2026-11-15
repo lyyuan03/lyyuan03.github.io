@@ -47,3 +47,18 @@ html.fx-on .yd-option.fx-lit-pulse .lamp-icon::before,html.fx-on .yd-option.fx-l
 .yd-merit{position:relative;margin:0 0 20px;overflow:hidden;border-radius:6px;background:#f6ecd6;line-height:0;
   box-shadow:0 0 0 1px #8a5f2277,0 0 0 6px #f7f0e1,0 0 0 7px #c9a06355,0 14px 28px #3a1a0a44,0 30px 60px #3a1a0a22}
 .yd-merit img{display:block;width:100%;height:auto}
+
+/* ── 功德項目表：點圖放大提示＋燈箱 ── */
+.yd-merit-open{position:relative;display:block;width:100%;padding:0;margin:0;border:0;background:none;cursor:zoom-in;font:inherit;line-height:0;-webkit-tap-highlight-color:transparent}
+.yd-merit-open:focus-visible{outline:3px solid #B5302A;outline-offset:-3px}
+.yd-merit-hint{position:absolute;right:10px;bottom:10px;padding:3px 11px;border-radius:999px;background:#2a1a0cb8;color:#fbe9b4;font:500 12px/1.7 var(--sans);letter-spacing:.12em;pointer-events:none}
+.yd-lb{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;background:#0a0604ee;opacity:0;transition:opacity .25s ease}
+.yd-lb[hidden]{display:none}
+.yd-lb.yd-lb-on{opacity:1}
+.yd-lb-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:2;padding:8px 20px;border:1px solid #c9a063;border-radius:999px;background:#2a1a0ce6;color:#fbe9b4;font:600 15px/1.5 var(--sans);letter-spacing:.2em;cursor:pointer}
+.yd-lb-close:focus-visible{outline:3px solid #fbe9b4;outline-offset:2px}
+.yd-lb-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;overscroll-behavior:contain;display:flex;padding:56px 12px 20px}
+.yd-lb-img{display:block;margin:auto;width:min(100%,1054px);height:auto;border-radius:4px;box-shadow:0 10px 40px #000a}
+@media (max-width:740px){.yd-lb-scroll{padding:56px 6px 16px}}
+html.yd-lb-lock{overflow:hidden}
+@media (prefers-reduced-motion:reduce){.yd-lb{transition:none}}

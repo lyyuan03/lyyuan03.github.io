@@ -368,3 +368,39 @@ window.addEventListener('beforeunload', e => { if (editToken) { e.preventDefault
     btn.classList.add('yd-dock'); clearTimeout(t); t = setTimeout(() => btn.classList.remove('yd-dock'), 900);
   }, { passive: true });
 })();
+
+/* ───── 功德項目表：點圖放大（燈箱）；Esc／點背景／「關閉」皆可關閉，開啟時焦點移到關閉鈕、關閉後還給原按鈕 ───── */
+(function () {
+  const opener = document.querySelector('.yd-merit-open'); if (!opener) return;
+  const HQ = '/assets/yuandeng/yuandeng-merit-items-hq.webp';
+  let box = null, last = null;
+  function build() {
+    const src = opener.querySelector('img');
+    box = document.createElement('div');
+    box.className = 'yd-lb'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', '功德項目表（放大檢視）'); box.hidden = true;
+    box.innerHTML = '<button type="button" class="yd-lb-close">關閉</button><div class="yd-lb-scroll"><img class="yd-lb-img" alt="" decoding="async"></div>';
+    box.querySelector('.yd-lb-img').alt = src ? src.alt : '功德項目表';
+    document.body.appendChild(box);
+    box.addEventListener('click', e => { if (!e.target.closest('.yd-lb-img')) close(); });
+    box.addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); box.querySelector('.yd-lb-close').focus(); } });
+  }
+  function onKey(e) { if (e.key === 'Escape' || e.key === 'Esc') { e.preventDefault(); close(); } }
+  function open() {
+    if (!box) build();
+    if (!box.hidden) return;
+    last = document.activeElement;
+    const img = box.querySelector('.yd-lb-img'); if (!img.getAttribute('src')) img.src = HQ;
+    box.hidden = false; document.documentElement.classList.add('yd-lb-lock');
+    void box.offsetWidth; box.classList.add('yd-lb-on');
+    box.querySelector('.yd-lb-scroll').scrollTop = 0;
+    box.querySelector('.yd-lb-close').focus({ preventScroll: true });
+    document.addEventListener('keydown', onKey);
+  }
+  function close() {
+    if (!box || box.hidden) return;
+    document.removeEventListener('keydown', onKey);
+    box.classList.remove('yd-lb-on'); box.hidden = true; document.documentElement.classList.remove('yd-lb-lock');
+    if (last && last.focus) last.focus({ preventScroll: true }); else opener.focus({ preventScroll: true });
+  }
+  opener.addEventListener('click', open);
+})();
