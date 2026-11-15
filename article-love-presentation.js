@@ -92,4 +92,6 @@ installStyle();
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleUpdate, { once: true });
 else scheduleUpdate();
 const root = document.getElementById('article-root');
-if (root) new MutationObserver(scheduleUpdate).observe(root, { childList: true, subtree: true });
+if (root && new URLSearchParams(location.search).get("id") === ARTICLE_ID) {
+  new MutationObserver(scheduleUpdate).observe(root, { childList: true, subtree: true });
+}
