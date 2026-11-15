@@ -212,16 +212,7 @@ body.signup-page .yd-banner-slot.empty .yd-banner-empty strong{text-shadow:0 2px
   body.signup-page .yd-banner-slot.empty::before{background-image:url("photos/hero-m.webp")}
 }
 
-/* ── 9. 道場實景：真實照片畫廊（相紙邊框、玻璃反光、圖說疊在照片下緣） ── */
-.yd-gallery{max-width:1120px;margin:44px auto 10px;padding:0 24px}
-.yd-gallery__head{text-align:center;margin:0 0 22px}
-.yd-gallery__head h2{margin:0 0 6px;font:600 clamp(22px,3.4vw,30px)/1.5 'Noto Serif TC',serif;letter-spacing:.2em;color:#4f3923}
-.yd-gallery__head p{margin:0;font-size:13px;letter-spacing:.14em;color:#7a6a52}
-.yd-gallery__grid{
-  display:grid;gap:18px;grid-template-columns:1fr 1.12fr 1fr;
-  grid-template-areas:"banner lamps lamps" "banner candle apples";
-  grid-auto-rows:minmax(210px,auto);
-}
+/* ── 9. 分散在頁面各處的真實照片（相紙邊框、玻璃反光、圖說疊在照片下緣） ── */
 .yd-ph{
   position:relative;margin:0;overflow:hidden;isolation:isolate;border-radius:6px;background:#2a0f08;
   box-shadow:0 0 0 1px #8a5f2277,0 0 0 6px #f7f0e1,0 0 0 7px #c9a06355,0 14px 28px #3a1a0a44,0 30px 60px #3a1a0a22;
@@ -239,23 +230,31 @@ body.signup-page .yd-banner-slot.empty .yd-banner-empty strong{text-shadow:0 2px
 .yd-ph figcaption{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:14px 18px 16px;color:#fff3d6;text-shadow:0 1px 8px #000b}
 .yd-ph figcaption strong{display:block;font:600 17px/1.5 'Noto Serif TC',serif;letter-spacing:.16em;color:#fbe3a0}
 .yd-ph figcaption span{display:block;margin-top:2px;font-size:12.5px;line-height:1.75;letter-spacing:.06em}
-.yd-ph--banner{grid-area:banner}.yd-ph--lamps{grid-area:lamps}.yd-ph--candle{grid-area:candle}.yd-ph--apples{grid-area:apples}
 @media (hover:hover) and (pointer:fine){
   .yd-ph:hover{transform:translateY(-5px);box-shadow:0 0 0 1px #8a5f22aa,0 0 0 6px #fbf5e8,0 0 0 7px #c9a06388,0 22px 40px #3a1a0a55,0 44px 80px #3a1a0a33}
   .yd-ph:hover img{transform:scale(1.045)}
 }
-@media (max-width:860px){
-  .yd-gallery{padding:0 16px;margin-top:34px}
-  .yd-gallery__grid{grid-template-columns:1fr 1fr;grid-template-areas:"lamps lamps" "banner candle" "banner apples";grid-auto-rows:minmax(150px,auto);gap:14px}
-  .yd-ph--lamps{aspect-ratio:16 / 10}
+
+.yd-ph--band{aspect-ratio:16 / 9;margin:0 0 20px}
+.yd-ph--wide{aspect-ratio:21 / 9;max-width:1040px;margin:34px auto 30px}
+.yd-ph--wide img{object-position:50% 40%}
+.yd-ph--tall{aspect-ratio:3 / 4}
+.yd-feature{max-width:980px;margin:6px auto 40px;padding:0 24px;display:grid;grid-template-columns:minmax(0,320px) 1fr;gap:36px;align-items:center}
+.yd-feature__txt h2{margin:0 0 14px;font:600 clamp(24px,3.2vw,32px)/1.5 'Noto Serif TC',serif;letter-spacing:.22em;color:#8a231d}
+.yd-feature__txt p{margin:0 0 12px;font-size:17px;line-height:1.95;letter-spacing:.05em;color:#4f3923}
+@media (max-width:760px){
+  .yd-feature{grid-template-columns:1fr;gap:22px;padding:0 18px;margin-bottom:30px}
+  .yd-ph--tall{aspect-ratio:4 / 5;max-width:360px;margin:0 auto;width:100%}
+  .yd-feature__txt h2{text-align:center}
+  .yd-ph--wide{aspect-ratio:16 / 10;margin:26px 16px 24px}
 }
 @media (max-width:480px){
   .yd-ph figcaption{padding:10px 12px 12px}
-  .yd-ph figcaption strong{font-size:15px}
+  .yd-ph figcaption strong{font-size:15px;letter-spacing:.08em}
   .yd-ph figcaption span{font-size:11.5px}
 }
 
-/* 燭燈那張的主體在左下，圖說改放上緣，避免蓋住燭光 */
-.yd-ph--candle::after{background:linear-gradient(0deg,#0000 58%,#1a0804b8 100%)}
-.yd-ph--candle figcaption{top:0;bottom:auto;padding:14px 18px 22px}
-@media (max-width:480px){.yd-ph figcaption strong{letter-spacing:.08em}.yd-ph--candle figcaption{padding-right:28%}}
+/* 燭燈在畫面左下：照片靠下對齊，圖說改放上緣 */
+.yd-ph--candle img{object-position:30% 100%}
+.yd-ph--candle::after{background:linear-gradient(0deg,#0000 55%,#1a0804b8 100%)}
+.yd-ph--candle figcaption{top:0;bottom:auto;padding:14px 18px 24px}
