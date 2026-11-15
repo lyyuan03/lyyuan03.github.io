@@ -25,7 +25,7 @@ import { ghostsPastLivesSupernaturalKnowingArticle } from "./article-ghosts-past
 import { blessingTeacherDiscernmentArticle } from "./article-blessing-teacher-discernment.js?v=20261002-cover-photo-1";
 import { collectiveUnconsciousElectionArticle } from "./article-collective-unconscious-election.js?v=20261006-1";
 import { treeSpiritsNatureKarmaReincarnationArticle } from "./article-tree-spirits-nature-karma-reincarnation.js?v=20261010-dizhi-support-1";
-import { loveUniversalEmotionFidelityArticle } from "./article-love-universal-emotion-and-fidelity.js?v=20261112-draft-1";
+import { loveUniversalEmotionFidelityArticle } from "./article-love-universal-emotion-and-fidelity.js?v=20261115-paid-final-1";
 import { religiousLightInnerPersonArticle } from "./article-religious-light-inner-person-yuanshen.js?v=20261010-1";
 import { jinmuEventArticles } from "./jinmu-event-series.js?v=20260919-jinmu-series-sort-1";
 

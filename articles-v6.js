@@ -2,6 +2,8 @@
 const articleRoot = document.getElementById("article-root");
 
 const activeArticleId = new URLSearchParams(location.search).get("id") || "";
+// Visual polish for a single article; no extra page script tag or authorization changes.
+void import("./article-love-presentation.js?v=20261115-visual-1").catch(error => console.warn("本篇引文與圖片樣式載入失敗",error));
 if (!activeArticleId) {
   void import("./article-list-rescue.js?v=20260923-ghosts-supernatural-1").catch((error) => {
     console.error("文選靜態備援載入失敗。", error);

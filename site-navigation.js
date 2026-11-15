@@ -71,6 +71,8 @@
         registrationItem.setAttribute("data-parent", "lixing");
         parentItem.after(registrationItem);
       }
+      // 已移除：不再在導覽列額外拉出「辭歲謝平安・圓燈總迴向法儀」。
+      // 該法儀已包含在「報名法儀」頁面內，網友點進報名法儀即可查看，無需多一層位階。
     }
 
     const services = nav.querySelector("#global-nav-services");

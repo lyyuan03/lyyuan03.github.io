@@ -12,8 +12,13 @@ service cloud.firestore {
         && request.auth.token.email_verified == true;
     }
 
+    // 管理員：必須是已驗證的 lyyuan03@gmail.com。
+    // 刻意不呼叫 verifiedEmail()：isAdmin() 在 canReadMemberVideo 等規則中會被重複求值，
+    // 多一層函式呼叫會讓靈機會員影片規則超過 Firestore 1000 次運算上限而被誤拒。
     function isAdmin() {
-      return signedIn() && request.auth.token.email in ["lyyuan03@gmail.com"];
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == "lyyuan03@gmail.com";
     }
 
     function wellnessMember() {
@@ -297,8 +302,11 @@ service cloud.firestore {
       allow get: if isAdmin()
         || (resource.data.status == "published"
           && resource.data.active == true
-          && get(/databases/$(database)/documents/articles/$(articleId)).data.status == "published"
           && resource.data.requiredPermission is string
+          && get(/databases/$(database)/documents/articles/$(articleId)).data.status == "published"
+          // 正文的 requiredPermission 必須與同一 articleId 的公開文件一致，
+          // 避免單獨改錯 eventArticleBodies 的權限欄位就能讀到別篇全文。
+          && get(/databases/$(database)/documents/articles/$(articleId)).data.requiredPermission == resource.data.requiredPermission
           && hasEventPermission(resource.data.requiredPermission));
       allow list, create, update, delete: if isAdmin();
     }

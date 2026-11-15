@@ -33,3 +33,41 @@ html:root body.signup-page.site-auth-enabled #site-auth-bar .site-account-menu{
   background:#faf6ee!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 /* 燈首／個人燈列沿用彩色燈照片圖示：不讓 newyear-fx 的一次性光暈動畫套在照片上 */
 html.fx-on .yd-option.fx-lit-pulse .lamp-icon::before,html.fx-on .yd-option.fx-lit-pulse .lamp-icon svg{animation:none!important}
+
+/* ── 燈別分頁（沿用太歲燈 .tabs 底線樣式）＋ 燈首／個人燈卡片 ── */
+.yd-tabs{margin-top:4px}
+.yd-tabs button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.45;padding:10px 6px;font-size:clamp(12px,3.3vw,15px);cursor:pointer}
+.yd-tabs .yd-tab-count{display:inline-block;margin-left:5px;min-width:18px;padding:0 5px;border-radius:9px;background:#B5302A;color:#fff;font:normal 11px/18px var(--sans);text-align:center;vertical-align:1px}
+.yd-tabs .yd-tab-count[hidden]{display:none}
+.yd-family .yd-options{padding-top:0}
+.yd-option .yd-opt-head .lamp-name small{display:block}
+.yd-option .yd-opt-head .price{margin-left:auto;white-space:nowrap}
+
+/* ── 功德項目表圖：位於「一盞燈，一份誠心」照片下方；相紙邊框與該照片一致，圖片依原比例完整顯示（不裁切） ── */
+.yd-merit{position:relative;margin:0 0 20px;overflow:hidden;border-radius:6px;background:#f6ecd6;line-height:0;
+  box-shadow:0 0 0 1px #8a5f2277,0 0 0 6px #f7f0e1,0 0 0 7px #c9a06355,0 14px 28px #3a1a0a44,0 30px 60px #3a1a0a22}
+.yd-merit img{display:block;width:100%;height:auto}
+
+/* ── 功德項目表：點圖放大提示＋燈箱 ── */
+.yd-merit-open{position:relative;display:block;width:100%;padding:0;margin:0;border:0;background:none;cursor:zoom-in;font:inherit;line-height:0;-webkit-tap-highlight-color:transparent}
+.yd-merit-open:focus-visible{outline:3px solid #B5302A;outline-offset:-3px}
+.yd-merit-hint{position:absolute;right:10px;bottom:10px;padding:3px 11px;border-radius:999px;background:#2a1a0cb8;color:#fbe9b4;font:500 12px/1.7 var(--sans);letter-spacing:.12em;pointer-events:none}
+.yd-lb{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;background:#0a0604ee;opacity:0;transition:opacity .25s ease}
+.yd-lb[hidden]{display:none}
+.yd-lb.yd-lb-on{opacity:1}
+.yd-lb-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:2;padding:8px 20px;border:1px solid #c9a063;border-radius:999px;background:#2a1a0ce6;color:#fbe9b4;font:600 15px/1.5 var(--sans);letter-spacing:.2em;cursor:pointer}
+.yd-lb-close:focus-visible{outline:3px solid #fbe9b4;outline-offset:2px}
+.yd-lb-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;overscroll-behavior:contain;display:flex;padding:56px 12px 20px}
+.yd-lb-img{display:block;margin:auto;width:min(100%,1054px);height:auto;border-radius:4px;box-shadow:0 10px 40px #000a}
+@media (max-width:740px){.yd-lb-scroll{padding:56px 6px 16px}}
+html.yd-lb-lock{overflow:hidden}
+@media (prefers-reduced-motion:reduce){.yd-lb{transition:none}}
+
+/* ── 套用我之前的資料／比照上次點燈 勾選列 ── */
+.yd-reuse{margin:14px 0 4px;padding:10px 12px;border:1px dashed #c9a06380;border-radius:8px;background:#fbf4e4;cursor:pointer;transition:box-shadow .3s ease,border-color .3s ease}
+.yd-reuse input{flex:none}
+.yd-reuse-hint{margin:2px 2px 8px;font-size:13px}
+.yd-reuse-msg{margin:2px 2px 10px}
+.yd-reuse-msg.error{color:#8a231d}
+.yd-reuse.yd-reuse-flash{border-color:#B5302A;box-shadow:0 0 0 3px #b5302a33}
+@media (prefers-reduced-motion:reduce){.yd-reuse{transition:none}}
