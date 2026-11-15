@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>2027 丁未年點燈專屬內容｜管理</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#0f1a14;color:#f5f1e9;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;line-height:1.8}
+    main{width:min(820px,100%);margin:0 auto;padding:40px 20px 80px}
+    h1{font-size:24px;font-weight:500;letter-spacing:.08em;margin:0 0 6px}
+    .sub{color:rgba(245,241,233,.6);font-size:14px;margin:0 0 28px}
+    .card{border:1px solid rgba(197,162,111,.3);background:rgba(8,15,10,.7);padding:22px;margin-bottom:18px}
+    label{display:block;font-size:14px;color:#c5a26f;margin:0 0 6px;letter-spacing:.06em}
+    select,textarea{width:100%;background:#0b130e;color:#f5f1e9;border:1px solid rgba(197,162,111,.4);padding:12px;font:inherit}
+    textarea{min-height:420px;resize:vertical;line-height:1.9}
+    .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:14px}
+    button{min-height:44px;padding:8px 22px;border:1px solid rgba(197,162,111,.6);background:transparent;color:#c5a26f;font:inherit;cursor:pointer}
+    button.primary{background:linear-gradient(150deg,#e5cb96,#a58254);color:#1b140a}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .hint{font-size:13px;color:rgba(245,241,233,.55);margin:8px 0 0}
+    #status{min-height:28px;font-size:15px;margin-top:14px}
+    #status[data-kind=error]{color:#ff9d8a}
+    #status[data-kind=ok]{color:#b8dba0}
+    [hidden]{display:none!important}
+    ul{margin:6px 0 0;padding-left:20px;font-size:14px;color:rgba(245,241,233,.7)}
+  </style>
+</head>
+<body>
+<main>
+  <h1>2027 丁未年點燈專屬內容</h1>
+  <p class="sub">僅限靈元院管理帳號。正文只寫入受權限保護的資料庫，不會出現在公開網頁或 GitHub。</p>
+
+  <section class="card" id="gate">
+    <p id="gateText">請先以管理帳號登入。</p>
+    <div class="row"><button class="primary" id="login" type="button">使用 Google 帳號登入</button><button id="logout" type="button" hidden>登出</button></div>
+  </section>
+
+  <section class="card" id="editor" hidden>
+    <label for="zodiac">生肖</label>
+    <select id="zodiac"></select>
+    <p class="hint" id="meta"></p>
+
+    <label for="content" style="margin-top:18px">專屬內容正文</label>
+    <textarea id="content" placeholder="貼上這個生肖的點燈專屬正文。段落之間空一行。"></textarea>
+    <p class="hint">純文字即可；段落之間空一行，前台會自動分段。不支援 HTML 標籤。</p>
+
+    <div class="row">
+      <button class="primary" id="save" type="button">儲存並開放給已授權者</button>
+      <button id="disable" type="button">暫停開放這個生肖</button>
+      <button id="reload" type="button">重新載入</button>
+    </div>
+    <div id="status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="card">
+    <strong>說明</strong>
+    <ul>
+      <li>每個生肖一份正文，對應各自的閱讀權限；只有該生肖已獲授權的 Gmail 能讀。</li>
+      <li>儲存後，信眾要在生肖頁看到內容，還需要：該生肖頁的專屬區塊已啟用，以及信眾的 Gmail 已開通權限。</li>
+      <li>「暫停開放」不會刪除正文，只是讓所有人暫時讀不到。</li>
+    </ul>
+  </section>
+</main>
+<script type="module" src="/admin-zodiac-lamp.js?v=20261115-1"></script>
+</body>
+</html>

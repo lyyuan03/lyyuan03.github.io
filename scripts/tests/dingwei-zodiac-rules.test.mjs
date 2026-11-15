@@ -48,6 +48,24 @@ await t("不可自行加權限", assertFails(updateDoc(doc(A, "memberEntitlement
 await t("不可改寫外殼文件", assertFails(updateDoc(doc(A, "articles", "dingwei-2027-rat"), { requiredPermission: "x" })));
 await t("外殼文件公開可讀（只放標題，content 必須空）", assertSucceeds(getDoc(doc(C, "articles", "dingwei-2027-rat"))));
 
+// ---- 管理頁 admin-zodiac-lamp.js 的寫入形狀（與 buildDocs 相同）----
+import { writeBatch } from "firebase/firestore";
+const ADMIN = user("lyyuan03@gmail.com");
+const shellOf = (id, extra = {}) => ({ title: "t", slug: id, status: "published", hidden: true, systemRecord: true, systemType: "lampLayer", accessType: "event", eventId: id, requiredPermission: id, accessBadge: "年度點燈專屬", content: "", ...extra });
+const bodyOf = (id, active = true) => ({ articleId: id, title: "t", requiredPermission: id, status: "published", active, content: "new-secret" });
+const adminWrite = (db, id, active = true, extra = {}) => { const b = writeBatch(db); b.set(doc(db, "articles", id), shellOf(id, extra), { merge: true }); b.set(doc(db, "eventArticleBodies", id), bodyOf(id, active), { merge: true }); return b.commit(); };
+await env.withSecurityRulesDisabled(async (ctx) => { await setDoc(doc(ctx.firestore(), "memberEntitlements", "f@gmail.com"), { email: "f@gmail.com", permissions: ["dingwei-2027-new"], status: "active" }); });
+await t("管理頁：管理員可建立新生肖外殼與正文", assertSucceeds(adminWrite(ADMIN, "dingwei-2027-new")));
+await t("管理頁：管理員可更新既有生肖（鼠）", assertSucceeds(adminWrite(ADMIN, "dingwei-2027-rat")));
+await t("管理頁：授權者可讀管理員寫入的正文", assertSucceeds(getDoc(doc(user("f@gmail.com"), "eventArticleBodies", "dingwei-2027-new"))));
+await t("管理頁：未授權者不可讀新正文", assertFails(getDoc(doc(A, "eventArticleBodies", "dingwei-2027-new"))));
+await t("管理頁：外殼帶正文會被拒絕（正文不得進公開文件）", assertFails(setDoc(doc(ADMIN, "articles", "dingwei-2027-leak"), shellOf("dingwei-2027-leak", { content: "secret" }))));
+await t("管理頁：一般使用者不可寫正文", assertFails(setDoc(doc(A, "eventArticleBodies", "dingwei-2027-rat"), bodyOf("dingwei-2027-rat"))));
+await t("管理頁：一般使用者不可寫外殼", assertFails(setDoc(doc(A, "articles", "dingwei-2027-x"), shellOf("dingwei-2027-x"))));
+await t("管理頁：暫停開放", assertSucceeds(adminWrite(ADMIN, "dingwei-2027-new", false)));
+await t("管理頁：暫停後授權者讀不到", assertFails(getDoc(doc(user("f@gmail.com"), "eventArticleBodies", "dingwei-2027-new"))));
+await t("管理頁：暫停後管理員仍可讀", assertSucceeds(getDoc(doc(ADMIN, "eventArticleBodies", "dingwei-2027-new"))));
+
 await env.cleanup();
 for (const r of results) console.log(r.join("  "));
 const failed = results.filter((r) => r[0] === "FAIL").length;

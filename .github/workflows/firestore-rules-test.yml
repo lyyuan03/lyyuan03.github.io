@@ -7,6 +7,7 @@ on:
     paths:
       - firestore.rules
       - zodiac-lamp-reader.js
+      - admin-zodiac-lamp.js
       - scripts/tests/dingwei-zodiac-rules.test.mjs
       - .github/workflows/firestore-rules-test.yml
 
