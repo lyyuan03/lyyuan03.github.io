@@ -8,28 +8,33 @@ body.signup-page{
   --yd-gold-hi:#F4D98E;--yd-gold:#C9A063;--yd-gold-lo:#9C7330;
 }
 
-/* ── 1. 禮謝燈：未亮（沙米色）→ 勾選後點亮（朱紅燈籠＋佛光） ── */
-body.signup-page .lamp-icon{position:relative;width:48px;height:60px;overflow:visible}
+/* ── 1. 禮謝燈：用真實拍攝的供燈照片做圓章；未選取＝同一張照片壓暗，勾選後＝原照亮起並有火光 ── */
+body.signup-page .lamp-icon{position:relative;width:54px;height:54px;overflow:visible}
 body.signup-page .lamp-icon svg{position:absolute;inset:0;opacity:0}
 body.signup-page .lamp-icon::before,
-body.signup-page .lamp-icon::after{content:"";position:absolute;pointer-events:none;background:center / contain no-repeat}
-body.signup-page .lamp-icon::before{inset:0;background-image:url("festive/yuandeng-lantern-red-unlit.svg");filter:drop-shadow(0 3px 3px #5c442030)}
 body.signup-page .lamp-icon::after{
-  left:50%;top:-16%;width:156%;aspect-ratio:1 / 1;
-  background-image:url("festive/yuandeng-lantern-red-lit.svg");
-  opacity:0;transform:translateX(-50%) scale(.82);
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:50%;
+  background:url("photos/lamp-medal.webp") center / cover no-repeat;
+}
+body.signup-page .lamp-icon::before{
+  filter:grayscale(.85) brightness(.55) contrast(.95);
+  box-shadow:0 0 0 2px #b9a577,0 0 0 4px #f6efdf,0 5px 10px #5c442055;
+}
+body.signup-page .lamp-icon::after{
+  opacity:0;transform:scale(.9);
+  box-shadow:0 0 0 2px #e6c373,0 0 0 4px #fff5da,0 0 16px 5px #ffb04a99,0 6px 12px #7c1d1a55;
   transition:opacity .55s ease,transform .55s cubic-bezier(.22,.61,.36,1);
 }
 body.signup-page .lamp.selected .lamp-icon::after{
-  opacity:1;transform:translateX(-50%) scale(1);
-  animation:ydFlame 4.2s ease-in-out .6s infinite;
+  opacity:1;transform:scale(1);
+  animation:ydFlame 3.6s ease-in-out .6s infinite;
 }
-body.signup-page .lamp.selected .lamp-icon::before{opacity:0;transition:opacity .35s ease}
-@keyframes ydFlame{0%,100%{opacity:1}50%{opacity:.82}}
+@keyframes ydFlame{0%,100%{opacity:1}45%{opacity:.86}70%{opacity:.96}}
 
 /* 與 newyear-fx 並存：它也會對 .lamp-icon::before 畫光暈（預設 opacity:0），這裡明確蓋回，並隱藏它的小燈籠圖示 */
-html.fx-on body.signup-page .lamp-icon::before{inset:0;border-radius:0;box-shadow:none;opacity:1;background-repeat:no-repeat;background-position:center;background-size:contain}
+html.fx-on body.signup-page .lamp-icon::before{inset:0;border-radius:50%;opacity:1;background-repeat:no-repeat;background-position:center;background-size:cover}
 html.fx-on body.signup-page .lamp.selected .lamp-icon::before{opacity:0}
+html.fx-on body.signup-page .sponsor-card .lamp-icon::before{border-radius:0;box-shadow:none;background-size:contain;filter:none}
 html.fx-on body.signup-page .sponsor-card.selected .lamp-icon::before{opacity:1}
 html.fx-on body.signup-page .fx-lantern-ico{display:none}
 
@@ -78,7 +83,9 @@ body.signup-page .panel > h3:first-child{
   border-bottom:2px solid #e2bd6a;
   background:
     url("festive/yuandeng-tile-gold.svg") 0 0 / 64px 64px,
-    linear-gradient(180deg,#d4473c 0%,#b5302a 40%,#8c211d 100%);
+    linear-gradient(180deg,#b8362b66 0%,#9c2a2166 45%,#5e101055 100%),
+    url("photos/cloth.webp") center / cover;
+  background-color:#9c2a21;
   box-shadow:inset 0 1px 0 #ffffff55,inset 0 -4px 8px #4a0e0c66,0 3px 7px #5a121038;
   align-items:center;
 }
@@ -104,7 +111,7 @@ body.signup-page h3 .num{
 @media (max-width:740px){
   body.signup-page .panel > .sectionline,
   body.signup-page .panel > h3:first-child{margin:-23px -18px 20px;padding:13px 18px 12px}
-  body.signup-page .lamp-icon{width:40px;height:50px}
+  body.signup-page .lamp-icon{width:46px;height:46px}
   body.signup-page .sponsor-card .lamp-icon{width:38px;height:38px}
 }
 
@@ -148,11 +155,15 @@ body.signup-page .journey b{
 /* ── 6. 頂端「會員登入」列改為不透明，避免下方文字透出 ── */
 html body.signup-page.site-auth-enabled #site-auth-bar{background:#faf6ee!important}
 
-/* ── 7. 送出成功：伺服器確認後（#result.yd-ok）才出現蓮花座上的燈與「圓滿回向」 ── */
+/* ── 7. 送出成功：伺服器確認後（#result.yd-ok）才出現真實燭光照片與「圓滿回向」 ── */
 #result.yd-ok h2{text-align:center}
 #result.yd-ok h2::before{
-  content:"";display:block;width:min(380px,100%);aspect-ratio:320 / 200;margin:-8px auto 0;
-  background:url("festive/yuandeng-success-lotus.svg") center / contain no-repeat;
+  content:"";display:block;width:100%;aspect-ratio:16 / 7;margin:2px 0 14px;border-radius:6px;
+  background:
+    radial-gradient(ellipse at 50% 100%,#ffb04a33,transparent 70%),
+    linear-gradient(180deg,#0000 55%,#2a0d0866 100%),
+    url("photos/g-candle.webp") 62% 62% / cover no-repeat;
+  box-shadow:0 0 0 1px #c9a06377,0 0 0 5px #fbf3df,0 10px 22px #5c442055;
   animation:ydLampIn 1.2s cubic-bezier(.22,.61,.36,1) both;
 }
 #result.yd-ok h2::after{
@@ -160,7 +171,7 @@ html body.signup-page.site-auth-enabled #site-auth-bar{background:#faf6ee!import
   font:600 16px/1.8 'Noto Serif TC',serif;letter-spacing:.7em;text-indent:.7em;text-align:center;color:#a02923;
   animation:ydFadeUp 1s ease .55s both;
 }
-@keyframes ydLampIn{from{opacity:0;transform:translateY(10px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes ydLampIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes ydFadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 @media (prefers-reduced-motion:reduce){
@@ -170,3 +181,81 @@ html body.signup-page.site-auth-enabled #site-auth-bar{background:#faf6ee!import
   #result.yd-ok h2::before,
   #result.yd-ok h2::after{animation:none!important;transition:none!important}
 }
+
+/* ── 8. 主視覺：真實供燈照片（只在橫幅尚未上傳、顯示預設框時使用；後台上傳橫幅後自動讓位） ── */
+body.signup-page .yd-banner-slot.empty{
+  position:relative;isolation:isolate;overflow:hidden;border:0;border-radius:10px;
+  min-height:240px;aspect-ratio:2033 / 774;
+  box-shadow:0 0 0 1px #8a5f2288,0 0 0 7px #f6efdf,0 0 0 8px #c9a06355,0 18px 40px #3a1a0a55,0 40px 80px #3a1a0a33;
+  background:#2a0f08;
+}
+body.signup-page .yd-banner-slot.empty::before{
+  content:"";position:absolute;inset:-3%;z-index:-2;
+  background:url("photos/hero-wide.webp") center / cover no-repeat;
+  animation:ydKen 36s ease-in-out infinite alternate;
+}
+body.signup-page .yd-banner-slot.empty::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.10'/%3E%3C/svg%3E") 0 0 / 160px 160px,
+    radial-gradient(ellipse 46% 34% at 50% 52%,#1a0804a6 0%,#1a080466 55%,#1a080400 100%),
+    radial-gradient(ellipse at 50% 55%,#2a0d0800 45%,#1e090566 100%),
+    linear-gradient(180deg,#1e090555 0%,#1e090500 35%,#1e090544 100%);
+  mix-blend-mode:normal;opacity:1;
+}
+@keyframes ydKen{from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.07) translate3d(-1.2%,-1%,0)}}
+body.signup-page .yd-banner-slot.empty .yd-banner-empty{position:relative;z-index:2;color:#fbe9b4}
+body.signup-page .yd-banner-slot.empty .yd-banner-empty span{text-shadow:0 1px 8px #000b;color:#f5dfa6}
+body.signup-page .yd-banner-slot.empty .yd-banner-empty strong{text-shadow:0 2px 14px #000c,0 0 30px #ffb04a55;color:#fff1c8}
+@media (max-width:740px){
+  body.signup-page .yd-banner-slot.empty{aspect-ratio:16 / 11;min-height:0}
+  body.signup-page .yd-banner-slot.empty::before{background-image:url("photos/hero-m.webp")}
+}
+
+/* ── 9. 道場實景：真實照片畫廊（相紙邊框、玻璃反光、圖說疊在照片下緣） ── */
+.yd-gallery{max-width:1120px;margin:44px auto 10px;padding:0 24px}
+.yd-gallery__head{text-align:center;margin:0 0 22px}
+.yd-gallery__head h2{margin:0 0 6px;font:600 clamp(22px,3.4vw,30px)/1.5 'Noto Serif TC',serif;letter-spacing:.2em;color:#4f3923}
+.yd-gallery__head p{margin:0;font-size:13px;letter-spacing:.14em;color:#7a6a52}
+.yd-gallery__grid{
+  display:grid;gap:18px;grid-template-columns:1fr 1.12fr 1fr;
+  grid-template-areas:"banner lamps lamps" "banner candle apples";
+  grid-auto-rows:minmax(210px,auto);
+}
+.yd-ph{
+  position:relative;margin:0;overflow:hidden;isolation:isolate;border-radius:6px;background:#2a0f08;
+  box-shadow:0 0 0 1px #8a5f2277,0 0 0 6px #f7f0e1,0 0 0 7px #c9a06355,0 14px 28px #3a1a0a44,0 30px 60px #3a1a0a22;
+  transition:transform .5s cubic-bezier(.22,.61,.36,1),box-shadow .5s ease;
+}
+.yd-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.001);transition:transform 1.2s cubic-bezier(.22,.61,.36,1)}
+.yd-ph::before{ /* 玻璃反光 */
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(118deg,#ffffff33 0%,#ffffff10 24%,#0000 42%);
+}
+.yd-ph::after{ /* 底部暗角，讓圖說可讀 */
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,#0000 52%,#1a0804cc 100%);
+}
+.yd-ph figcaption{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:14px 18px 16px;color:#fff3d6;text-shadow:0 1px 8px #000b}
+.yd-ph figcaption strong{display:block;font:600 17px/1.5 'Noto Serif TC',serif;letter-spacing:.16em;color:#fbe3a0}
+.yd-ph figcaption span{display:block;margin-top:2px;font-size:12.5px;line-height:1.75;letter-spacing:.06em}
+.yd-ph--banner{grid-area:banner}.yd-ph--lamps{grid-area:lamps}.yd-ph--candle{grid-area:candle}.yd-ph--apples{grid-area:apples}
+@media (hover:hover) and (pointer:fine){
+  .yd-ph:hover{transform:translateY(-5px);box-shadow:0 0 0 1px #8a5f22aa,0 0 0 6px #fbf5e8,0 0 0 7px #c9a06388,0 22px 40px #3a1a0a55,0 44px 80px #3a1a0a33}
+  .yd-ph:hover img{transform:scale(1.045)}
+}
+@media (max-width:860px){
+  .yd-gallery{padding:0 16px;margin-top:34px}
+  .yd-gallery__grid{grid-template-columns:1fr 1fr;grid-template-areas:"lamps lamps" "banner candle" "banner apples";grid-auto-rows:minmax(150px,auto);gap:14px}
+  .yd-ph--lamps{aspect-ratio:16 / 10}
+}
+@media (max-width:480px){
+  .yd-ph figcaption{padding:10px 12px 12px}
+  .yd-ph figcaption strong{font-size:15px}
+  .yd-ph figcaption span{font-size:11.5px}
+}
+
+/* 燭燈那張的主體在左下，圖說改放上緣，避免蓋住燭光 */
+.yd-ph--candle::after{background:linear-gradient(0deg,#0000 58%,#1a0804b8 100%)}
+.yd-ph--candle figcaption{top:0;bottom:auto;padding:14px 18px 22px}
+@media (max-width:480px){.yd-ph figcaption strong{letter-spacing:.08em}.yd-ph--candle figcaption{padding-right:28%}}
