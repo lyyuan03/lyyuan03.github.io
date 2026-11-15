@@ -1,0 +1,237 @@
+/* ==========================================================================
+   2027 丁未年十二生肖：動態與立體元件設計系統（第一階段：屬鼠範本）
+   - 只使用 CSS transform / opacity / keyframes；捲動效果由 zodiac-motion.js
+     以 IntersectionObserver 與 requestAnimationFrame 控制。
+   - 未載入 JS 時所有內容照常顯示；prefers-reduced-motion 時關閉所有動態。
+   - 品牌色：#0A100C／#EAD8B4／#C9A063／#A58254／#F5F0E8
+   ========================================================================== */
+
+body:has(> .zp-main){
+ --zm-ease:cubic-bezier(.22,.61,.36,1);
+ --zm-shadow-near:0 2px 4px #5c442018,0 8px 18px #5c442014;
+ --zm-shadow-far:0 14px 30px #5c442026,0 40px 80px #5c44201f;
+}
+
+/* ---------- 背景層次：前景微光、中景閱讀面板、背景和紙 ---------- */
+.zp-main::before{
+ content:"";
+ position:absolute;
+ left:0;right:0;top:-40px;height:620px;
+ z-index:-1;
+ pointer-events:none;
+ background:radial-gradient(ellipse at 50% 40%,rgba(234,216,180,.55),rgba(234,216,180,0) 62%);
+}
+
+/* ---------- 首屏：標題在前、主視覺在後 ---------- */
+.zp-main>h1{position:relative;z-index:2;text-shadow:0 1px 0 #fffdf8,0 10px 30px rgba(201,160,99,.28)}
+.zp-main>h1::after{
+ content:"";display:block;width:64px;height:1px;margin-top:18px;
+ background:linear-gradient(90deg,#A58254,#EAD8B4 60%,transparent);
+}
+.zp-main>.zp-hero{
+ position:relative;z-index:1;isolation:isolate;
+ border-radius:6px;
+ box-shadow:0 0 0 6px rgba(255,252,246,.9),0 0 0 7px rgba(201,160,99,.4),var(--zm-shadow-far);
+}
+.zp-main>.zp-hero img{transform:translate3d(0,var(--zm-parallax,0px),0) scale(1.06);will-change:transform}
+/* 主視覺四周的光影過渡：上緣暖光、下緣沉入深色 */
+.zp-main>.zp-hero::after{
+ content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ background:
+  linear-gradient(180deg,rgba(234,216,180,.16),transparent 22%,transparent 70%,rgba(10,16,12,.32)),
+  radial-gradient(ellipse at 50% 50%,transparent 58%,rgba(10,16,12,.28) 100%);
+ box-shadow:inset 0 0 0 1px rgba(234,216,180,.35);
+}
+
+/* 進場：0.6～0.8 秒柔和淡入與微幅位移；文字從 55% 不透明度開始，不需等待 */
+@keyframes zm-rise{from{opacity:.55;transform:translate3d(0,12px,0)}to{opacity:1;transform:none}}
+@keyframes zm-reveal{from{opacity:0;transform:translate3d(0,16px,0) scale(.992)}to{opacity:1;transform:none}}
+.zp-main>.zp-kicker,.zp-main>h1{animation:zm-rise .6s var(--zm-ease) both}
+.zp-main>h1{animation-delay:.06s}
+.zp-main>.zp-hero{animation:zm-reveal .8s var(--zm-ease) .12s both}
+
+/* ---------- 章節標題：金色分隔線與進場淡入 ---------- */
+.zp-main>h2{position:relative;padding-top:34px;scroll-margin-top:132px}
+.zp-main>h2::before{
+ content:"";position:absolute;left:0;top:0;width:min(220px,60%);height:9px;
+ background:
+  radial-gradient(circle,#C9A063 0 2px,transparent 2.5px) 0 50%/9px 9px no-repeat,
+  linear-gradient(90deg,#A58254,rgba(201,160,99,.5) 55%,transparent) 14px 50%/calc(100% - 14px) 1px no-repeat;
+}
+html.zm-ready .zp-main>h2{opacity:.3;transform:translate3d(0,10px,0);transition:opacity .7s var(--zm-ease),transform .7s var(--zm-ease)}
+html.zm-ready .zp-main>h2.zm-in{opacity:1;transform:none}
+
+/* ---------- 閱讀進度與章節目錄 ---------- */
+.zm-progress{
+ position:fixed;left:0;right:0;top:0;z-index:1300;height:3px;pointer-events:none;
+ background:linear-gradient(90deg,#A58254,#C9A063 60%,#EAD8B4);
+ box-shadow:0 0 10px rgba(201,160,99,.55);
+ transform:scaleX(var(--zm-progress,0));transform-origin:0 50%;
+}
+.zm-toc{margin:30px 0 8px;border:1px solid rgba(165,130,84,.35);border-radius:10px;background:rgba(255,252,246,.66);box-shadow:var(--zm-shadow-near)}
+.zm-toc summary{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ min-height:48px;padding:10px 18px;cursor:pointer;list-style:none;
+ font:500 15px/1.6 'Noto Serif TC',serif;letter-spacing:.16em;color:#4f3923;
+}
+.zm-toc summary::-webkit-details-marker{display:none}
+.zm-toc summary::after{content:"";width:9px;height:9px;border-right:1.5px solid #A58254;border-bottom:1.5px solid #A58254;transform:rotate(45deg) translateY(-3px);transition:transform .3s var(--zm-ease)}
+.zm-toc[open] summary::after{transform:rotate(-135deg) translateY(-2px)}
+.zm-toc summary:focus-visible{outline:2px solid #0A100C;outline-offset:3px;border-radius:8px}
+.zm-toc ol{margin:0;padding:4px 18px 16px 18px;list-style:none;counter-reset:zm}
+.zm-toc li{counter-increment:zm;border-top:1px solid rgba(165,130,84,.18)}
+.zm-toc a{display:flex;gap:14px;padding:10px 4px;color:rgba(10,16,12,.8);text-decoration:none;font-size:15px;line-height:1.7}
+.zm-toc a::before{content:counter(zm,cjk-ideographic);color:#7a531c;font-family:'Noto Serif TC',serif;min-width:1.5em}
+.zm-toc a:hover,.zm-toc a:focus-visible{color:#0A100C;background:rgba(201,160,99,.12)}
+.zm-toc a[aria-current="true"]{color:#0A100C;font-weight:500}
+.zm-toc a[aria-current="true"]::before{color:#A58254}
+
+/* ---------- 立體金屬按鈕 ---------- */
+.zp-gated-link,
+.zp-lamp-login,
+.zm-btn{
+ position:relative;isolation:isolate;overflow:hidden;
+ display:inline-flex;align-items:center;justify-content:center;gap:.7em;
+ min-height:50px;padding:12px 30px!important;
+ border:1px solid #8a6838!important;border-radius:999px;
+ color:#2a1d0b!important;
+ font:500 15px/1.4 'Noto Serif TC',serif!important;letter-spacing:.16em!important;
+ text-decoration:none;cursor:pointer;
+ background:linear-gradient(180deg,#F7EDD6 0%,#EAD8B4 20%,#C9A063 62%,#A58254 100%)!important;
+ text-shadow:0 1px 0 rgba(255,246,222,.65);
+ box-shadow:
+  inset 0 1px 0 rgba(255,255,255,.8),
+  inset 0 -2px 0 rgba(96,66,28,.35),
+  inset 0 0 0 1px rgba(255,244,218,.28),
+  0 1px 0 #8a6838,0 4px 0 #6d5129,
+  0 10px 20px rgba(48,32,10,.3);
+ transform:translateY(0);
+ transition:transform .22s var(--zm-ease),box-shadow .22s var(--zm-ease);
+ -webkit-tap-highlight-color:transparent;
+}
+/* 上半部金屬高光 */
+.zp-gated-link::before,.zp-lamp-login::before,.zm-btn::before{
+ content:"";position:absolute;z-index:-1;left:2px;right:2px;top:1px;height:48%;
+ border-radius:999px 999px 45% 45%/999px 999px 100% 100%;
+ background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,0));
+ pointer-events:none;
+}
+/* 滑入時掠過的邊緣反光 */
+.zp-gated-link::after,.zp-lamp-login::after,.zm-btn::after{
+ content:"";position:absolute;z-index:-1;inset:0;
+ background:linear-gradient(105deg,transparent 35%,rgba(255,250,236,.7) 50%,transparent 65%);
+ transform:translateX(-120%);transition:transform .7s var(--zm-ease);
+ pointer-events:none;
+}
+@media(hover:hover) and (pointer:fine){
+ .zp-gated-link:hover,.zp-lamp-login:hover,.zm-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(96,66,28,.35),inset 0 0 0 1px rgba(255,244,218,.32),
+   0 1px 0 #8a6838,0 6px 0 #6d5129,0 16px 28px rgba(48,32,10,.34);
+ }
+ .zp-gated-link:hover::after,.zp-lamp-login:hover::after,.zm-btn:hover::after{transform:translateX(120%)}
+}
+.zp-gated-link:active,.zp-lamp-login:active,.zm-btn:active,
+.zp-gated-link.zm-pressed,.zp-lamp-login.zm-pressed,.zm-btn.zm-pressed{
+ transform:translateY(3px)!important;
+ transition-duration:.08s;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 2px 6px rgba(96,66,28,.35),0 1px 0 #8a6838,0 1px 0 #6d5129,0 4px 8px rgba(48,32,10,.26)!important;
+}
+.zp-gated-link:focus-visible,.zp-lamp-login:focus-visible,.zm-btn:focus-visible{
+ outline:2px solid #0A100C!important;outline-offset:4px;
+ box-shadow:0 0 0 4px #EAD8B4,0 1px 0 #8a6838,0 4px 0 #6d5129,0 10px 20px rgba(48,32,10,.3);
+}
+.zp-gated-preview .zp-gated-link:focus-visible,.zp-lamp .zp-lamp-login:focus-visible{outline-color:#EAD8B4!important;box-shadow:0 0 0 4px rgba(10,16,12,.9),0 4px 0 #6d5129}
+
+/* 次要按鈕：和紙浮雕（上一篇／下一篇） */
+.zp-nav a{
+ position:relative;border-radius:999px!important;min-height:48px;padding:10px 26px!important;
+ background:linear-gradient(180deg,#fffdf8,#f3e9d6)!important;
+ border:1px solid rgba(165,130,84,.6)!important;color:#5a3e17!important;
+ box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(165,130,84,.25),0 3px 0 rgba(165,130,84,.35),0 8px 16px rgba(92,68,32,.14);
+ transition:transform .22s var(--zm-ease),box-shadow .22s var(--zm-ease);
+}
+@media(hover:hover) and (pointer:fine){.zp-nav a:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 #fff,0 5px 0 rgba(165,130,84,.4),0 14px 22px rgba(92,68,32,.18)}}
+.zp-nav a:active{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(165,130,84,.3),0 1px 0 rgba(165,130,84,.35)}
+.zp-nav a:focus-visible{outline:2px solid #0A100C;outline-offset:4px}
+
+/* ---------- 十二生肖選擇區：立體徽章 ---------- */
+.zm-picker{margin-top:60px}
+.zm-picker-title{margin:0 0 6px;font:500 20px/1.6 'Noto Serif TC',serif;letter-spacing:.16em;color:#4f3923}
+.zm-picker-hint{margin:0 0 20px;font-size:14px;color:rgba(10,16,12,.6)}
+.zm-picker ol{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:0;padding:0;list-style:none}
+.zm-seal{
+ position:relative;isolation:isolate;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+ aspect-ratio:1;border-radius:50%;
+ text-decoration:none;color:#4f3923;
+ background:radial-gradient(circle at 50% 32%,#fffdf8,#f1e6d0 70%,#e6d6b6);
+ border:1px solid rgba(165,130,84,.5);
+ box-shadow:inset 0 1px 0 #fff,inset 0 -3px 6px rgba(165,130,84,.22),0 3px 0 rgba(165,130,84,.3),0 8px 16px rgba(92,68,32,.13);
+ transition:transform .25s var(--zm-ease),box-shadow .25s var(--zm-ease),border-color .25s;
+ -webkit-tap-highlight-color:transparent;
+}
+.zm-seal::before{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid rgba(201,160,99,.28);pointer-events:none}
+.zm-seal b{font:500 clamp(20px,2.6vw,26px)/1.1 'Noto Serif TC',serif;color:#7a531c}
+.zm-seal span{font-size:13px;letter-spacing:.2em;padding-left:.2em}
+@media(hover:hover) and (pointer:fine){
+ .zm-seal:hover{transform:translateY(-3px);border-color:#C9A063;box-shadow:inset 0 1px 0 #fff,0 0 0 1px rgba(234,216,180,.9),0 0 18px rgba(201,160,99,.45),0 5px 0 rgba(165,130,84,.35),0 14px 22px rgba(92,68,32,.18)}
+}
+.zm-seal:active,.zm-seal.zm-pressed{transform:translateY(2px) scale(.97);box-shadow:inset 0 2px 6px rgba(165,130,84,.35),0 1px 0 rgba(165,130,84,.3)}
+.zm-seal:focus-visible{outline:2px solid #0A100C;outline-offset:4px}
+.zm-seal[aria-current="page"]{
+ color:#F5F0E8;
+ background:radial-gradient(circle at 50% 30%,#2a3a2c,#0A100C 72%);
+ border-color:#C9A063;
+ box-shadow:inset 0 1px 0 rgba(234,216,180,.35),0 0 0 3px rgba(234,216,180,.55),0 0 22px rgba(201,160,99,.4),0 6px 14px rgba(10,16,12,.3);
+}
+.zm-seal[aria-current="page"] b{color:#EAD8B4}
+.zm-seal[aria-current="page"]::before{border-color:rgba(234,216,180,.4)}
+
+/* ---------- 點燈專屬全文：深色立體框體、金色邊線、柔光、鎖頭 ---------- */
+.zp-gated-preview,.zp-lamp{position:relative;isolation:isolate;overflow:hidden}
+.zp-gated-preview::before,.zp-lamp::before{
+ content:"";position:absolute;inset:7px;border:1px solid rgba(234,216,180,.22);border-radius:6px;pointer-events:none;z-index:-1;
+}
+.zp-gated-preview::after,.zp-lamp::after{
+ content:"";position:absolute;left:50%;top:-120px;width:520px;height:280px;transform:translateX(-50%);z-index:-1;pointer-events:none;
+ background:radial-gradient(ellipse,rgba(201,160,99,.24),transparent 65%);
+}
+body:has(> .zp-main) .zp-lamp,body:has(> .zp-main) .zp-gated-preview{
+ box-shadow:0 1px 0 rgba(234,216,180,.25) inset,0 -2px 0 rgba(0,0,0,.35) inset,0 4px 0 #050906,0 22px 50px rgba(42,30,14,.35)!important;
+ padding:34px clamp(22px,4.5vw,44px)!important;
+}
+.zp-lamp .zp-lock,.zp-gated-label{display:flex;align-items:center;gap:12px}
+/* 精緻鎖頭圖示：金色線條鎖＋深色圓形徽章 */
+.zp-lamp .zp-lock::before,.zp-gated-label::before{
+ content:"";flex:0 0 34px;height:34px;border-radius:50%;
+ border:1px solid rgba(201,160,99,.6);
+ background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C9A063' stroke-width='1.4' stroke-linecap='round'%3E%3Crect x='6' y='10.5' width='12' height='9' rx='1.6'/%3E%3Cpath d='M8.6 10.5V8a3.4 3.4 0 0 1 6.8 0v2.5'/%3E%3Ccircle cx='12' cy='14.6' r='1.1' fill='%23EAD8B4' stroke='none'/%3E%3C/svg%3E") center/20px 20px no-repeat,
+  radial-gradient(circle at 50% 30%,rgba(234,216,180,.18),transparent 70%),
+  #0d1510;
+ box-shadow:0 0 14px rgba(201,160,99,.3),inset 0 1px 0 rgba(234,216,180,.25);
+}
+.zp-lamp-body{border-top:1px solid rgba(201,160,99,.3);padding-top:22px}
+
+/* ---------- 手機：降低動態幅度 ---------- */
+@media(max-width:768px){
+ .zp-main>.zp-hero img{transform:scale(1.02)}
+ .zp-main>.zp-hero{box-shadow:0 0 0 4px rgba(255,252,246,.9),0 0 0 5px rgba(201,160,99,.4),0 16px 34px #5c442026}
+ @keyframes zm-rise{from{opacity:.6;transform:translate3d(0,6px,0)}to{opacity:1;transform:none}}
+ .zm-picker ol{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+ .zm-seal span{font-size:12px;letter-spacing:.12em}
+ .zp-gated-link,.zp-lamp-login{width:100%}
+ .zm-btn{width:100%}
+}
+@media(max-width:360px){.zm-picker ol{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* ---------- 減少動態 ---------- */
+@media(prefers-reduced-motion:reduce){
+ .zp-main>*,.zp-main>h2,.zm-toc summary::after,.zp-gated-link,.zp-lamp-login,.zm-btn,.zm-seal,.zp-nav a,
+ .zp-gated-link::after,.zp-lamp-login::after,.zm-btn::after{animation:none!important;transition:none!important}
+ html.zm-ready .zp-main>h2{opacity:1;transform:none}
+ .zp-main>.zp-hero img{transform:none;will-change:auto}
+ .zp-gated-link:hover,.zp-lamp-login:hover,.zm-btn:hover,.zm-seal:hover,.zp-nav a:hover{transform:none!important}
+ .zm-progress{display:none}
+}
