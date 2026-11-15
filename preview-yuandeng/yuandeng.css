@@ -42,3 +42,8 @@ html.fx-on .yd-option.fx-lit-pulse .lamp-icon::before,html.fx-on .yd-option.fx-l
 .yd-family .yd-options{padding-top:0}
 .yd-option .yd-opt-head .lamp-name small{display:block}
 .yd-option .yd-opt-head .price{margin-left:auto;white-space:nowrap}
+
+/* ── 功德項目表圖：位於「一盞燈，一份誠心」照片下方；相紙邊框與該照片一致，圖片依原比例完整顯示（不裁切） ── */
+.yd-merit{position:relative;margin:0 0 20px;overflow:hidden;border-radius:6px;background:#f6ecd6;line-height:0;
+  box-shadow:0 0 0 1px #8a5f2277,0 0 0 6px #f7f0e1,0 0 0 7px #c9a06355,0 14px 28px #3a1a0a44,0 30px 60px #3a1a0a22}
+.yd-merit img{display:block;width:100%;height:auto}
