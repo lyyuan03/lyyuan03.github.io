@@ -227,7 +227,7 @@ function fillProfile(p, msg) {
   $('#name').scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
-/* ───── 套用我之前的資料（以 Email＋電話向後端查詢統一報名資料；已會員登入則改以 Firebase 驗證 Email） ───── */
+/* ───── 套用我之前的資料（已會員登入：後端驗證 Firebase token；未登入：Email 驗證碼；皆向後端查詢統一報名資料） ───── */
 async function memberCtx() {
   /* 取得已登入會員的 Firebase ID token（後端會驗證，前端自報的 Email 不採信）；失敗一律當作未登入 */
   try {
@@ -239,13 +239,6 @@ async function memberCtx() {
     const token = await u.getIdToken();
     return token ? { token, email: String(u.email).trim().toLowerCase() } : null;
   } catch { return null; }
-}
-async function lookupPrevious(scope, email, phone, ctx) {
-  const body = { action: 'lookup', scope, email, phone };
-  if (ctx) body.idToken = ctx.token;
-  const response = await fetch(ENDPOINT, { method: 'POST', mode: 'cors', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
-  if (!response.ok) throw new Error('net');
-  return response.json();
 }
 function applyLampMatch(lamps) {
   let n = 0, skipped = 0, firstFam = '';
@@ -261,7 +254,81 @@ function applyLampMatch(lamps) {
   syncAll(); if (firstFam) activateLampTab(firstFam);
   return { n, skipped };
 }
-const REUSE_NF = '尚未找到之前的報名紀錄，請手動填寫';
+const REUSE_NF = '找不到之前的報名紀錄，請手動填寫';
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const reuse = { session: null }; /* 驗證成功後的短效 session：只放記憶體，不寫 localStorage；讓 02 點燈區免再驗證一次 */
+async function postLookup(body) {
+  const response = await fetch(ENDPOINT, { method: 'POST', mode: 'cors', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  if (!response.ok) throw new Error('net');
+  return response.json();
+}
+/* Email 驗證碼小視窗：未登入者只憑 Email 不會帶入資料，需輸入寄到該信箱的 6 位數驗證碼。關閉視窗（×／Esc／點背景）＝取消，回傳 null。 */
+const verifyDialog = document.createElement('dialog'); verifyDialog.className = 'modal yd-verify'; verifyDialog.id = 'verifyDialog'; verifyDialog.setAttribute('aria-labelledby', 'ydvTitle');
+verifyDialog.innerHTML = '<button class="close" type="button" aria-label="關閉">×</button><h2 id="ydvTitle">套用之前的登記人資料</h2>' +
+  '<form class="yd-v1" novalidate><label for="ydvEmail">之前登記的 Email</label><input id="ydvEmail" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com"><p class="hint">為保護您的個資，我們會寄一組 6 位數驗證碼到此信箱，確認是您本人才會帶入資料。</p><p class="statusmsg error yd-v-msg" id="ydvMsg1" role="alert" hidden></p><div class="yd-v-actions"><button class="btn" type="submit" id="ydvSend">寄送驗證碼</button></div></form>' +
+  '<form class="yd-v2" novalidate hidden><p class="yd-v-sent" id="ydvSent"></p><label for="ydvCode">6 位數驗證碼</label><input id="ydvCode" class="yd-v-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="000000"><p class="statusmsg error yd-v-msg" id="ydvMsg2" role="alert" hidden></p><div class="yd-v-actions"><button class="btn" type="submit" id="ydvConfirm">確認</button></div><p class="hint yd-v-links"><button type="button" class="yd-link" id="ydvResend">重新寄送驗證碼</button><span aria-hidden="true">・</span><button type="button" class="yd-link" id="ydvChange">改用其他 Email</button></p><p class="hint">收不到信？請檢查垃圾郵件匣；若此 Email 沒有報名紀錄就不會收到信，可關閉視窗後手動填寫。</p></form>';
+document.body.append(verifyDialog);
+function verifyFlow(scope, presetEmail) {
+  return new Promise(resolve => {
+    const q = s => verifyDialog.querySelector(s);
+    const f1 = q('.yd-v1'), f2 = q('.yd-v2'), emailIn = q('#ydvEmail'), codeIn = q('#ydvCode'), sendBtn = q('#ydvSend'), confirmBtn = q('#ydvConfirm'), resendBtn = q('#ydvResend');
+    let done = false, busy = false, email = '', timer = null;
+    const say = (el, t) => { el.hidden = !t; el.textContent = t || ''; };
+    const finish = v => { if (done) return; done = true; clearInterval(timer); verifyDialog.onclose = null; verifyDialog.onclick = null; if (verifyDialog.open) verifyDialog.close(); resolve(v); };
+    const step = n => { f1.hidden = n !== 1; f2.hidden = n !== 2; };
+    const cooldown = sec => { clearInterval(timer); resendBtn.disabled = true; const tick = () => { resendBtn.textContent = sec > 0 ? `重新寄送驗證碼（${sec}）` : '重新寄送驗證碼'; resendBtn.disabled = sec > 0; if (sec-- <= 0) clearInterval(timer); }; tick(); timer = setInterval(tick, 1000); };
+    const fail = (r, fallback) => (r && (r.code === 'rate' || r.code === 'need') && r.error) || fallback;
+    async function send() {
+      if (busy) return; busy = true; sendBtn.disabled = true; say(q('#ydvMsg1'), ''); say(q('#ydvMsg2'), '');
+      email = emailIn.value.trim().toLowerCase();
+      if (!EMAIL_RE.test(email)) { say(q('#ydvMsg1'), '請輸入正確的 Email。'); busy = false; sendBtn.disabled = false; step(1); emailIn.focus(); return; }
+      q('#ydvSent').textContent = '正在寄送驗證碼到 ' + email + ' …'; step(2); codeIn.value = ''; confirmBtn.disabled = true; resendBtn.disabled = true;
+      try {
+        const r = await postLookup({ action: 'lookup_send', email });
+        if (!r || r.ok !== true) { step(1); say(q('#ydvMsg1'), fail(r, '目前無法寄送驗證碼，請稍後再試，或關閉視窗後手動填寫。')); emailIn.focus(); return; }
+        q('#ydvSent').textContent = '若此 Email 有報名紀錄，驗證碼已寄出至 ' + email + '（10 分鐘內有效）。'; confirmBtn.disabled = false; cooldown(60); codeIn.focus();
+      } catch { step(1); say(q('#ydvMsg1'), '目前無法寄送驗證碼，請稍後再試，或關閉視窗後手動填寫。'); }
+      finally { busy = false; sendBtn.disabled = false; }
+    }
+    async function confirmCode() {
+      if (busy) return; const code = codeIn.value.replace(/\D/g, '');
+      if (code.length !== 6) { say(q('#ydvMsg2'), '請輸入 6 位數驗證碼。'); codeIn.focus(); return; }
+      busy = true; confirmBtn.disabled = true; say(q('#ydvMsg2'), '');
+      try {
+        const r = await postLookup({ action: 'lookup_verify', email, code, scope });
+        if (r && r.ok === true) { if (r.session) reuse.session = { email, token: r.session }; finish(r); return; }
+        say(q('#ydvMsg2'), (r && r.error) || '驗證失敗，請稍後再試。');
+        if (r && (r.code === 'expired' || r.code === 'locked')) { cooldown(0); codeIn.value = ''; } else { codeIn.select(); }
+      } catch { say(q('#ydvMsg2'), '目前無法驗證，請稍後再試。'); }
+      finally { busy = false; if (!done) confirmBtn.disabled = false; }
+    }
+    f1.onsubmit = e => { e.preventDefault(); send(); };
+    f2.onsubmit = e => { e.preventDefault(); confirmCode(); };
+    resendBtn.onclick = () => send();
+    q('#ydvChange').onclick = () => { clearInterval(timer); say(q('#ydvMsg1'), ''); step(1); emailIn.focus(); emailIn.select(); };
+    q('.close').onclick = () => finish(null);
+    verifyDialog.onclose = () => finish(null);
+    verifyDialog.onclick = e => { if (e.target === verifyDialog) finish(null); };
+    emailIn.value = presetEmail || ''; codeIn.value = ''; say(q('#ydvMsg1'), ''); say(q('#ydvMsg2'), ''); sendBtn.disabled = false; step(1);
+    verifyDialog.showModal();
+    if (presetEmail) send(); else emailIn.focus();
+  });
+}
+/* 取得「之前的資料」：已登入會員（Firebase ID token，後端驗證）→ 本頁已驗證的 session → Email 驗證碼。回傳後端回應；使用者取消回傳 null。 */
+async function fetchPrevious(scope) {
+  const ctx = await memberCtx();
+  if (ctx) {
+    const r = await postLookup({ action: 'lookup', scope, email: ctx.email, idToken: ctx.token });
+    if (r && (r.ok === true || r.code === 'rate')) return r;
+  }
+  if (reuse.session) {
+    const r = await postLookup({ action: 'lookup', scope, email: reuse.session.email, session: reuse.session.token });
+    if (r && (r.ok === true || r.code === 'rate')) return r;
+    reuse.session = null;
+  }
+  const preset = $('#email').value.trim();
+  return verifyFlow(scope, EMAIL_RE.test(preset) ? preset : '');
+}
 async function runReuse(kind) {
   const cb = $(kind === 'lamps' ? '#reuseLamps' : '#reuseProfile'), msg = $(kind === 'lamps' ? '#reuseLampsMsg' : '#reuseProfileMsg');
   const say = (t, err) => { msg.hidden = !t; msg.textContent = t || ''; msg.classList.toggle('error', !!err); };
@@ -269,24 +336,17 @@ async function runReuse(kind) {
   if (!CFG || cb.dataset.busy) { cb.checked = false; return; }
   cb.dataset.busy = '1'; cb.disabled = true; say('查詢中…');
   try {
-    const ctx = await memberCtx();
-    let email = $('#email').value.trim(); const phone = $('#phone').value.trim();
-    if (!email && ctx) { email = ctx.email; $('#email').value = email; }
-    const viaMember = !!ctx && ctx.email === email.toLowerCase();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || (!phone && !viaMember)) {
-      cb.checked = false; say(kind === 'lamps' ? '請先在「01 登記人資料」填寫 Email 與行動電話，再勾選此項。' : '請先填寫 Email 與行動電話，再勾選此項。', true);
-      (email ? $('#phone') : $('#email')).focus(); return;
-    }
-    const data = await lookupPrevious(kind === 'lamps' ? 'lamps' : 'profile', email, phone, ctx);
-    if (!data || data.ok !== true) { cb.checked = false; say(data && data.code === 'rate' ? '查詢次數過多，請稍後再試，或直接手動填寫。' : (data && data.code === 'need' ? '請先填寫 Email 與行動電話，再勾選此項。' : '目前無法查詢，請稍後再試，或直接手動填寫。'), true); return; }
+    const data = await fetchPrevious(kind === 'lamps' ? 'lamps' : 'profile');
+    if (data === null) { cb.checked = false; say(''); return; }
+    if (!data || data.ok !== true) { cb.checked = false; say(data && data.code === 'rate' ? '操作次數過多，請稍後再試，或直接手動填寫。' : '目前無法查詢，請稍後再試，或直接手動填寫。', true); return; }
     if (!data.found) { cb.checked = false; say(REUSE_NF, true); return; }
     if (kind === 'lamps') {
       const r = applyLampMatch(data.lamps);
       if (!r.n) { cb.checked = false; say('找到您之前的登記，但燈別與本次不同，無法自動帶入，請手動選擇。', true); return; }
       say(`已帶入 ${r.n} 項點燈項目與芳名，可自行修改或取消。` + (r.skipped ? `另有 ${r.skipped} 項因本次燈別不同未帶入。` : ''));
     } else {
-      if (data.name) $('#name').value = data.name;
-      say('已帶入姓名，可自行修改。'); calc();
+      ['name', 'email', 'phone'].forEach(k => { if (data[k]) $('#' + k).value = data[k]; });
+      say(`已帶入 ${data.name || ''} 的資料，可直接修改`); calc();
     }
   } catch { cb.checked = false; say('目前無法查詢，請稍後再試，或直接手動填寫。', true); }
   finally { cb.disabled = false; delete cb.dataset.busy; }
