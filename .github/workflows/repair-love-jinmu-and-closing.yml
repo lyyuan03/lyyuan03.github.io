@@ -1,0 +1,24 @@
+name: Normalize Jinmu naming and love article closing
+on:
+  push:
+    branches: [main]
+    paths:
+      - functions/repair-love-jinmu-and-closing.mjs
+      - .github/workflows/repair-love-jinmu-and-closing.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm --prefix functions ci
+      - name: Replace terms and target paragraph in this one article only
+        run: node functions/repair-love-jinmu-and-closing.mjs
