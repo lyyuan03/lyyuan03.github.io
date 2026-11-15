@@ -1,0 +1,234 @@
+/*! 靈元院 過年氛圍動畫疊層 newyear-fx v1.0 — 配色：主金 #C9A063／淺香檳金 #EAD8B4／暖金 #A58254／底色 #0A100C／內文 #F5F0E8／輔助 #B6B6A5（無紅色）
+ *  所有規則限定在 html.fx-on 之下；動畫一律包在 prefers-reduced-motion: no-preference。 */
+:root{--fx-gold:#C9A063;--fx-champagne:#EAD8B4;--fx-warm:#A58254;--fx-ink:#0A100C;--fx-text:#F5F0E8;--fx-muted:#B6B6A5;--fx-opacity:1}
+
+/* ── 疊層：fixed、不攔截點擊、z-index 低於表單與所有彈窗 ── */
+.fx-layer{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict;opacity:var(--fx-opacity);transition:opacity .6s ease}
+html.fx-quiet .fx-layer{opacity:0}
+.fx-p{position:absolute;top:100%;left:0;border-radius:50%;opacity:0;pointer-events:none;will-change:transform,opacity;
+  background-repeat:no-repeat;background-position:center;background-size:contain}
+.fx-t0{background-color:var(--fx-gold);box-shadow:0 0 6px 1px color-mix(in srgb,var(--fx-gold) 70%,transparent)}
+.fx-t1{background-color:var(--fx-champagne);box-shadow:0 0 8px 2px color-mix(in srgb,var(--fx-champagne) 60%,transparent)}
+.fx-t2{background-color:var(--fx-warm);box-shadow:0 0 5px 1px color-mix(in srgb,var(--fx-warm) 65%,transparent)}
+
+/* ── 步驟進度點亮（靜態狀態；動畫在下方 no-preference 區） ── */
+html.fx-on .journey>span.fx-step-done{border-color:var(--fx-gold)}
+html.fx-on .journey>span.fx-step-done b{background:linear-gradient(145deg,var(--fx-champagne),var(--fx-gold) 60%,var(--fx-warm));color:var(--fx-ink);
+  box-shadow:0 0 0 1px var(--fx-gold),0 0 12px color-mix(in srgb,var(--fx-gold) 65%,transparent)}
+
+/* ── 燈別亮起（靜態狀態） ── */
+html.fx-on .lamp-icon{position:relative}
+html.fx-on .fx-lit .lamp-icon svg{filter:drop-shadow(0 0 7px color-mix(in srgb,var(--fx-gold) 80%,transparent)) drop-shadow(0 0 2px var(--fx-champagne))}
+html.fx-on .lamp-icon::before{content:"";position:absolute;inset:-14px;border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle,color-mix(in srgb,var(--fx-champagne) 85%,transparent) 0,color-mix(in srgb,var(--fx-gold) 40%,transparent) 38%,transparent 70%)}
+html.fx-on .fx-lit .lamp-icon::before{opacity:.55}
+html.fx-on .sumtotal b,html.fx-on .mobiletotal b{transition:text-shadow .6s ease}
+
+
+/* ── 素材裝飾：主視覺（光暈／光點）、區塊角落、標題火焰、燈籠 ── */
+html.fx-on .fx-hero-host{position:relative}
+html.fx-on .fx-hero-host>.yd-banner-empty,html.fx-on .fx-hero-host>img{position:relative;z-index:1}
+.fx-title-halo{position:absolute;left:50%;top:50%;width:min(86%,760px);height:150%;transform:translate(-50%,-50%);pointer-events:none;z-index:0;opacity:1;
+  background:radial-gradient(ellipse at center,color-mix(in srgb,var(--fx-gold) 26%,transparent) 0,color-mix(in srgb,var(--fx-champagne) 12%,transparent) 38%,transparent 68%)}
+html.fx-a-titleHalo .fx-title-halo{background:var(--fx-img-titleHalo) center/contain no-repeat}
+.fx-hero-embers{position:absolute;left:0;right:0;bottom:-10%;height:120%;pointer-events:none;z-index:0;opacity:0;background-repeat:no-repeat;background-position:center bottom;background-size:cover;will-change:transform,opacity}
+.fx-hero-medium{background-image:var(--fx-img-embersMedium)}
+.fx-hero-large{background-image:var(--fx-img-embersLarge);bottom:-6%;opacity:.55}
+html.fx-on .fx-corner-host:not(.mobiletotal){position:relative}
+.fx-corner{position:absolute;top:4px;right:4px;width:84px;height:84px;pointer-events:none;opacity:.6;background:var(--fx-img-embersSmall) center/contain no-repeat}
+html.fx-a-flameMark .panel h3::before{content:"";display:inline-block;width:1.05em;height:1.05em;margin-right:.4em;vertical-align:-.14em;background:var(--fx-img-flameMark) center/contain no-repeat}
+.fx-lantern-ico{position:relative;flex:0 0 22px;width:22px;height:28px;margin-top:3px;display:block;pointer-events:none}
+.fx-lantern-ico::before,.fx-lantern-ico::after{content:"";position:absolute;inset:3px 4px;border-radius:46% 46% 40% 40%/36% 36% 50% 50%}
+.fx-lantern-ico::before{background:color-mix(in srgb,var(--fx-muted) 40%,transparent);border:1px solid var(--fx-warm);opacity:.75}
+.fx-lantern-ico::after{background:radial-gradient(ellipse at 50% 42%,var(--fx-champagne) 0,var(--fx-gold) 55%,var(--fx-warm) 100%);box-shadow:0 0 10px color-mix(in srgb,var(--fx-gold) 80%,transparent);opacity:0}
+html.fx-lantern-img .fx-lantern-ico::before,html.fx-lantern-img .fx-lantern-ico::after{inset:0;border:0;border-radius:0;box-shadow:none;background-repeat:no-repeat;background-position:center;background-size:contain}
+html.fx-lantern-img .fx-lantern-ico::before{background-image:var(--fx-img-lanternUnlit);background-color:transparent;opacity:1}
+html.fx-lantern-img .fx-lantern-ico::after{background-image:var(--fx-img-lanternLit);background-color:transparent}
+.yd-option.fx-lit .fx-lantern-ico::after{opacity:1}
+
+/* ── 送出成功疊層（只在彈窗內） ── */
+.fx-celebrate{position:relative}
+.fx-success{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;display:grid;place-items:center}
+.fx-success>*{grid-area:1/1;pointer-events:none}
+.fx-bg-embers{width:100%;height:100%;opacity:0;background:var(--fx-img-embersLarge) center/cover no-repeat;will-change:opacity}
+.fx-circle{width:200px;height:200px;border-radius:50%;opacity:0;will-change:transform,opacity;border:2px solid color-mix(in srgb,var(--fx-gold) 80%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--fx-gold) 50%,transparent)}
+html.fx-a-successCircle .fx-circle{border:0;box-shadow:none;background:var(--fx-img-successCircle) center/contain no-repeat}
+.fx-halo{width:240px;height:240px;border-radius:50%;opacity:0;will-change:transform,opacity;
+  background:radial-gradient(circle,color-mix(in srgb,var(--fx-champagne) 90%,transparent) 0,color-mix(in srgb,var(--fx-gold) 45%,transparent) 40%,transparent 70%)}
+.fx-lantern{width:64px;height:82px;display:block;opacity:0;will-change:transform,opacity;
+}
+html.fx-lantern-img .fx-lantern{background:var(--fx-img-lanternLit) center/contain no-repeat}
+html:not(.fx-lantern-img) .fx-lantern{filter:drop-shadow(0 0 14px var(--fx-gold))}
+html.fx-lantern-img .fx-lamp-body{display:none}
+html:not(.fx-lantern-img) .fx-lamp-body{display:block;width:100%;height:100%;border-radius:46% 46% 42% 42%/38% 38% 52% 52%;
+  background:radial-gradient(ellipse at 50% 42%,var(--fx-champagne) 0,var(--fx-gold) 52%,var(--fx-warm) 100%);
+  box-shadow:inset 0 -8px 12px color-mix(in srgb,var(--fx-warm) 70%,transparent),0 -6px 0 -2px var(--fx-warm),0 6px 0 -2px var(--fx-warm)}
+.fx-burst{width:6px;height:6px;border-radius:50%;opacity:0;background:radial-gradient(circle,var(--fx-champagne),var(--fx-gold));will-change:transform,opacity;
+  box-shadow:0 0 6px var(--fx-gold)}
+.fx-success-text{align-self:end;margin-bottom:22px;font:600 22px/1.4 var(--serif,'Noto Serif TC',serif);letter-spacing:.35em;text-indent:.35em;color:var(--fx-warm);opacity:0;will-change:opacity;
+  text-shadow:0 0 14px color-mix(in srgb,var(--fx-champagne) 90%,transparent)}
+
+/* ═════ 動畫：僅在使用者「未」要求減少動態時才存在 ═════ */
+@media (prefers-reduced-motion:no-preference){
+
+  /* 素材動畫：主視覺光暈淡入一次、光點緩慢上升（只用 transform／opacity） */
+  html.fx-on .fx-title-halo{animation:fx-halo-in 2.4s ease-out 1 both}
+  @keyframes fx-halo-in{from{opacity:0}to{opacity:1}}
+  html.fx-on .fx-hero-medium{animation:fx-ember-rise 26s linear infinite}
+  html.fx-on .fx-hero-medium.b{animation-delay:-13s}
+  html.fx-on .fx-hero-large{animation:fx-ember-rise-l 40s linear infinite}
+  @keyframes fx-ember-rise{0%{opacity:0;transform:translate3d(0,9%,0)}18%{opacity:.85}82%{opacity:.85}100%{opacity:0;transform:translate3d(0,-13%,0)}}
+  @keyframes fx-ember-rise-l{0%{opacity:0;transform:translate3d(0,6%,0)}20%{opacity:.55}80%{opacity:.55}100%{opacity:0;transform:translate3d(0,-9%,0)}}
+  html.fx-paused .fx-hero-embers{animation-play-state:paused}
+  .fx-lantern-ico::before,.fx-lantern-ico::after{transition:opacity .45s ease}
+  .fx-success .fx-circle{animation:fx-circle-life var(--fx-ms,2600ms) ease-out 1 both}
+  .fx-success .fx-bg-embers{animation:fx-bg-life var(--fx-ms,2600ms) ease-in-out 1 both}
+  @keyframes fx-circle-life{0%{opacity:0;transform:scale(.5)}30%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+  @keyframes fx-bg-life{0%{opacity:0}30%,70%{opacity:.5}100%{opacity:0}}
+
+  /* 1. 進場：光點緩慢上升（transform + opacity） */
+  html.fx-on .fx-p{animation:fx-rise 26s linear infinite}
+  @keyframes fx-rise{
+    0%{transform:translate3d(0,0,0) scale(.6);opacity:0}
+    10%{opacity:var(--o,.7)}
+    55%{transform:translate3d(calc(var(--dx,0px)*.6),-62vh,0) scale(1)}
+    88%{opacity:var(--o,.7)}
+    100%{transform:translate3d(var(--dx,0px),-112vh,0) scale(.8);opacity:0}}
+  html.fx-paused .fx-p,html.fx-quiet .fx-p,html.fx-paused .fx-success *{animation-play-state:paused}
+    @keyframes fx-orn-in{from{opacity:0}to{opacity:.32}}
+
+  /* 2. 標題：淡入＋微光暈，只播一次（!important 以蓋過頁面原有的標題動畫） */
+  html.fx-on .fx-title-once{animation:fx-title-in 1.8s ease-out 1 both!important}
+  @keyframes fx-title-in{
+    0%{opacity:0;filter:drop-shadow(0 0 0 transparent)}
+    55%{opacity:1;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--fx-gold) 70%,transparent))}
+    100%{opacity:1;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--fx-gold) 35%,transparent))}}
+
+  /* 3. 燈別亮起、金額光感 */
+  html.fx-on .fx-lit-pulse .lamp-icon::before{animation:fx-lamp-halo 1.4s ease-out 1 both}
+  html.fx-on .fx-lit-pulse .lamp-icon svg{animation:fx-lamp-pop 1.1s ease-out 1}
+  @keyframes fx-lamp-halo{0%{opacity:0;transform:scale(.5)}35%{opacity:.95;transform:scale(1.15)}100%{opacity:.55;transform:scale(1)}}
+  @keyframes fx-lamp-pop{0%{transform:scale(1)}35%{transform:scale(1.12)}100%{transform:scale(1)}}
+  html.fx-on .fx-shine b{animation:fx-shine 1s ease-out 1}
+  @keyframes fx-shine{0%{opacity:.75;text-shadow:0 0 0 transparent}35%{opacity:1;text-shadow:0 0 16px color-mix(in srgb,var(--fx-gold) 75%,transparent)}100%{opacity:1;text-shadow:0 0 0 transparent}}
+
+  /* 4. 步驟點亮（動畫放在 b，不碰頁面對 span 的 animation:none!important） */
+  html.fx-on .fx-step-pop b{animation:fx-step-pop 1.2s cubic-bezier(.2,.8,.3,1) 1}
+  @keyframes fx-step-pop{0%{transform:scale(.8)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+  /* 5. 送出成功：一盞燈點亮 → 放大 → 淡出，「圓滿回向」 */
+  .fx-success .fx-lantern{animation:fx-lamp-life var(--fx-ms,2600ms) cubic-bezier(.3,.6,.3,1) 1 both}
+  .fx-success .fx-halo{animation:fx-halo-life var(--fx-ms,2600ms) ease-out 1 both}
+  .fx-success .fx-success-text{animation:fx-text-life var(--fx-ms,2600ms) ease-in-out 1 both}
+  .fx-success .fx-burst{animation:fx-burst-life calc(var(--fx-ms,2600ms)*.6) ease-out 1 both;animation-delay:calc(var(--fx-ms,2600ms)*.3 + var(--bd,0s))}
+  @keyframes fx-lamp-life{
+    0%{opacity:0;transform:translateY(14px) scale(.55)}
+    24%{opacity:1;transform:translateY(0) scale(1)}
+    55%{opacity:1;transform:scale(1.05)}
+    100%{opacity:0;transform:scale(2.8)}}
+  @keyframes fx-halo-life{0%{opacity:0;transform:scale(.4)}30%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.6)}}
+  @keyframes fx-text-life{0%,20%{opacity:0;transform:translateY(8px)}42%,70%{opacity:1;transform:translateY(0)}100%{opacity:0}}
+  @keyframes fx-burst-life{0%{opacity:0;transform:translate(0,0) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(var(--bx),var(--by)) scale(.9)}}
+
+  /* 6. 彈窗柔和淡入（只用 opacity＋極小位移；不搶焦點） */
+  html.fx-dialog dialog[open]{animation:fx-dlg-in .55s ease-out 1 both}
+  html.fx-dialog dialog[open]::backdrop{animation:fx-bd-in .55s ease-out 1 both}
+  @keyframes fx-dlg-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes fx-bd-in{from{opacity:0}to{opacity:1}}
+}
+@media (prefers-reduced-motion:reduce){.fx-layer,.fx-success{display:none!important}}
+
+/* ═════════════ v2：3D 質感層（html.fx-3d；靜態質感不依賴動畫，動畫另包在 no-preference） ═════════════ */
+:root{--fx-lift:3px;--fx-halo:1}
+
+/* 3-1 卡片：雙層陰影（近 0 2px 4px 暖金 15%／遠 0 12px 28px 深色 12%）＋頂 1px 內高光、底 1px 內暗線 */
+html.fx-3d .panel,html.fx-3d .lamp,html.fx-3d .summary{
+  box-shadow:0 2px 4px color-mix(in srgb,var(--fx-warm) 15%,transparent),0 12px 28px color-mix(in srgb,var(--fx-ink) 12%,transparent),
+    inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 color-mix(in srgb,var(--fx-warm) 22%,transparent)}
+html.fx-3d .lamp{position:relative;isolation:isolate}
+
+/* 3-2 勾選＝亮起：上浮、金邊、暖金內漸層；光暈層一次淡入；火光層極輕閃動；取消後平順回復 */
+html.fx-3d .lamp.fx-lit{
+  transform:translateY(calc(var(--fx-lift) * -1));border-color:var(--fx-gold);
+  background-image:linear-gradient(180deg,color-mix(in srgb,var(--fx-champagne) 45%,transparent),color-mix(in srgb,var(--fx-gold) 14%,transparent)),linear-gradient(180deg,#fffcf6,#f2e6c9);
+  box-shadow:0 2px 4px color-mix(in srgb,var(--fx-warm) 22%,transparent),0 14px 30px color-mix(in srgb,var(--fx-ink) 14%,transparent),
+    inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 color-mix(in srgb,var(--fx-warm) 30%,transparent),inset 0 0 26px color-mix(in srgb,var(--fx-gold) 22%,transparent)}
+.fx-card-halo,.fx-card-flame{position:absolute;pointer-events:none;opacity:0;z-index:-1}
+.fx-card-halo{inset:-8px;border-radius:14px;
+  background:var(--fx-img-cardHalo,radial-gradient(ellipse at 14% 30%,color-mix(in srgb,var(--fx-champagne) 70%,transparent) 0,color-mix(in srgb,var(--fx-gold) 30%,transparent) 36%,transparent 72%)) center/cover no-repeat}
+.fx-card-flame{left:14px;top:6px;width:52px;height:66px;
+  background:var(--fx-img-cardFlame,radial-gradient(ellipse at 50% 62%,color-mix(in srgb,var(--fx-champagne) 90%,transparent) 0,color-mix(in srgb,var(--fx-gold) 45%,transparent) 42%,transparent 72%)) center/contain no-repeat;transform-origin:50% 90%}
+html.fx-3d .lamp.fx-lit>.fx-card-halo{opacity:calc(.85 * var(--fx-halo))}
+html.fx-3d .lamp.fx-lit>.fx-card-flame{opacity:.9}
+
+/* 3-3 步驟標題列：深色底、頂部高光線、底部陰影、雕刻金細線＋菱形分隔 */
+html.fx-3d .sectionline,html.fx-3d .panel>h3:first-child{
+  position:relative;border:0;border-radius:8px;padding:11px 18px 20px;margin-bottom:20px;color:var(--fx-text);
+  background:linear-gradient(180deg,#1b261d 0%,var(--fx-ink) 100%);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--fx-champagne) 55%,transparent),0 2px 0 color-mix(in srgb,var(--fx-ink) 35%,transparent),0 8px 14px -8px color-mix(in srgb,var(--fx-ink) 55%,transparent)}
+html.fx-3d .sectionline h3,html.fx-3d .panel>h3:first-child{margin:0;color:var(--fx-champagne);text-shadow:0 1px 0 rgba(0,0,0,.5)}
+html.fx-3d .sectionline h3 .num,html.fx-3d .panel>h3:first-child .num{color:var(--fx-gold)}
+html.fx-3d .sectionline small{color:var(--fx-muted)}
+html.fx-3d .sectionline::after,html.fx-3d .panel>h3:first-child::after{content:"";position:absolute;left:14px;right:14px;bottom:7px;height:8px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--fx-gold) 10%,var(--fx-warm) 50%,var(--fx-gold) 90%,transparent) center 4px/100% 1px no-repeat,
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M4 0l4 4-4 4-4-4z' fill='%23C9A063'/%3E%3C/svg%3E") 10% 0/8px 8px no-repeat,
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M4 0l4 4-4 4-4-4z' fill='%23EAD8B4'/%3E%3C/svg%3E") 50% 0/8px 8px no-repeat,
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M4 0l4 4-4 4-4-4z' fill='%23C9A063'/%3E%3C/svg%3E") 90% 0/8px 8px no-repeat}
+
+/* 3-4 CTA／確認送出：金屬漸層、內高光、慢速掃光（6s）、按下下沉 2px */
+html.fx-3d .fx-cta{position:relative;overflow:hidden;color:var(--fx-ink)!important;
+  background:linear-gradient(180deg,var(--fx-champagne) 0%,var(--fx-gold) 52%,var(--fx-warm) 100%)!important;
+  border:1px solid color-mix(in srgb,var(--fx-warm) 80%,#000)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),inset 0 -2px 0 color-mix(in srgb,var(--fx-warm) 60%,transparent),0 3px 0 color-mix(in srgb,var(--fx-warm) 70%,#000),0 8px 16px color-mix(in srgb,var(--fx-ink) 25%,transparent)!important}
+html.fx-3d .fx-cta::after{display:none!important}
+html.fx-3d .fx-cta:active{transform:translateY(2px)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 color-mix(in srgb,var(--fx-warm) 60%,transparent),0 1px 0 color-mix(in srgb,var(--fx-warm) 70%,#000),0 3px 8px color-mix(in srgb,var(--fx-ink) 25%,transparent)!important}
+html.fx-3d .fx-cta:disabled{opacity:.6}
+.fx-sweep{position:absolute;top:0;bottom:0;left:0;width:38%;pointer-events:none;opacity:0;z-index:2;transform:translateX(-140%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)}
+
+/* 3-5 底部金額列：浮起陰影；金額更新時數字微升＋高光一閃 */
+html.fx-3d .mobiletotal{box-shadow:0 -10px 26px color-mix(in srgb,var(--fx-ink) 22%,transparent),0 -1px 0 color-mix(in srgb,var(--fx-gold) 60%,transparent),inset 0 1px 0 rgba(255,255,255,.7)}
+html.fx-3d .mobiletotal b{display:inline-block}
+.fx-glint-host{overflow:hidden}
+html.fx-3d .fx-glint-host:not(.mobiletotal){position:relative}  /* .mobiletotal 本身是 fixed，不可改 position */
+.fx-glint{position:absolute;top:0;bottom:0;left:0;width:34%;pointer-events:none;opacity:0;transform:translateX(-130%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--fx-champagne) 80%,transparent),transparent)}
+
+/* 3-6 背景視差：祥雲／回紋底紋（淺色區），位移 2–6px，rAF 節流 */
+.fx-tile{position:absolute;inset:-14px;pointer-events:none;opacity:.5;will-change:transform;
+  background:var(--fx-img-cloudTile) 0 0/auto repeat}
+html:not(.fx-a-cloudTile) .fx-tile{background-size:72px 72px;background-repeat:repeat;opacity:.16}
+html.fx-quiet .fx-tile{opacity:.08}
+
+/* 3-7 暗色區深度粒子：遠（小、慢、淡）／近（大、快、亮） */
+html.fx-on .fx-dark-host{position:relative}
+.fx-dp{position:absolute;bottom:0;left:0;border-radius:50%;opacity:0;pointer-events:none;will-change:transform,opacity;z-index:0}
+.fx-dp.fx-t0{background:var(--fx-gold);box-shadow:0 0 5px var(--fx-gold)}
+.fx-dp.fx-t1{background:var(--fx-champagne);box-shadow:0 0 6px var(--fx-champagne)}
+.fx-dp.fx-t2{background:var(--fx-warm);box-shadow:0 0 4px var(--fx-warm)}
+.fx-dp.far{filter:blur(.4px)}
+
+@media (prefers-reduced-motion:no-preference){
+  /* 3-2 平順回復＋光暈淡入、火光極輕閃動（4s、振幅極小；輸入文字時暫停） */
+  html.fx-3d .lamp{transition:transform .5s cubic-bezier(.2,.7,.3,1),box-shadow .5s ease,border-color .5s ease!important}
+  .fx-card-halo{transition:opacity .9s ease}
+  .fx-card-flame{transition:opacity .6s ease}
+  html.fx-3d .lamp.fx-lit>.fx-card-flame.fx-flicker{animation:fx-flame 4s ease-in-out infinite}
+  @keyframes fx-flame{0%,100%{opacity:.82;transform:scale(1)}50%{opacity:.95;transform:scale(1.03,1.05)}}
+  html.fx-quiet .fx-card-flame,html.fx-paused .fx-card-flame,html.fx-paused .fx-sweep,html.fx-paused .fx-dp{animation-play-state:paused}
+  /* 3-4 掃光每 6 秒一次 */
+  html.fx-3d .fx-cta .fx-sweep{animation:fx-sweep 6s ease-in-out infinite}
+  @keyframes fx-sweep{0%,70%{opacity:0;transform:translateX(-140%) skewX(-18deg)}74%{opacity:1}92%{opacity:1}100%{opacity:0;transform:translateX(360%) skewX(-18deg)}}
+  html.fx-3d .fx-cta{transition:transform .12s ease,box-shadow .12s ease!important}
+  /* 3-5 金額微升＋一次高光（覆寫 v1 的文字光暈） */
+  html.fx-3d .fx-shine b{animation:fx-num-rise .6s cubic-bezier(.2,.8,.3,1) 1}
+  @keyframes fx-num-rise{0%{transform:translateY(0)}35%{transform:translateY(-3px);text-shadow:0 0 14px color-mix(in srgb,var(--fx-gold) 70%,transparent)}100%{transform:translateY(0);text-shadow:0 0 0 transparent}}
+  html.fx-3d .fx-shine>.fx-glint{animation:fx-glint .9s ease-out 1}
+  @keyframes fx-glint{0%{opacity:0;transform:translateX(-130%) skewX(-18deg)}20%{opacity:.9}100%{opacity:0;transform:translateX(380%) skewX(-18deg)}}
+  /* 3-7 深度粒子：近快遠慢 */
+  .fx-dp{animation:fx-dp-rise 30s linear infinite}
+  @keyframes fx-dp-rise{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:var(--o,.6)}85%{opacity:var(--o,.6)}100%{transform:translate3d(var(--dx,0),calc(var(--rise,260px) * -1),0);opacity:0}}
+  /* 3-8 成功：燈由小放大、光暈擴散、HTML 文字淡入 */
+  @keyframes fx-lamp-life{0%{opacity:0;transform:translateY(10px) scale(.3)}30%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:1;transform:scale(1.08)}100%{opacity:0;transform:scale(2.4)}}
+}
+@media (prefers-reduced-motion:reduce){.fx-sweep,.fx-glint,.fx-dp,.fx-card-halo,.fx-card-flame{display:none!important}}

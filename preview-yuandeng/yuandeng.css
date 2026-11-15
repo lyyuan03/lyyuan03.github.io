@@ -16,3 +16,18 @@
 .review tr.total td{font-weight:600;color:var(--gold);border-top:1px solid var(--line)}
 #profileNote p{margin:0 0 8px}
 @media (max-width:740px){.yd-option .yd-names{padding-left:8px}}
+
+/* ── 修正 1：右側浮動「限定選物」按鈕不遮住卡片右側文字（桌機）：捲動時縮成貼邊半圓，停止捲動後展開（見 app.js） ── */
+@media (min-width:741px){
+  .exclusive-float{transition:transform .35s ease,border-radius .35s ease,box-shadow .2s ease}
+  .exclusive-float.yd-dock{transform:translate(calc(100% + 18px - 30px),-50%);border-radius:999px 0 0 999px}
+  .exclusive-float.yd-dock>*{opacity:0;transition:opacity .2s ease}
+  .exclusive-float.yd-dock:hover,.exclusive-float.yd-dock:focus-visible{transform:translateY(-50%);border-radius:15px}
+  .exclusive-float.yd-dock:hover>*,.exclusive-float.yd-dock:focus-visible>*{opacity:1}
+}
+/* ── 修正 2：頂部固定列（導覽＋會員登入列）改為不透明底，下方內容文字不再透出 ── */
+html:root body.signup-page .global-site-nav,
+html:root body.signup-page .global-site-nav .global-nav-dropdown,
+html:root body.signup-page.site-auth-enabled #site-auth-bar,
+html:root body.signup-page.site-auth-enabled #site-auth-bar .site-account-menu{
+  background:#faf6ee!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
