@@ -122,6 +122,25 @@ await t("安全修正：正文與外殼的 requiredPermission 不一致時，鼠
 await t("安全修正：requiredPermission 不一致時管理員仍可讀（維運與除錯用）", assertSucceeds(getDoc(doc(ADMIN, "eventArticleBodies", "dingwei-2027-mismatch"))));
 await t("安全修正：requiredPermission 一致時（鼠讀鼠）不受影響", assertSucceeds(body(A, "rat")));
 
+// ---- 安全修正的邊界情況與其他活動相容性 ----
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  // 其他活動（金木年度活動）：外殼與正文權限一致，命名規則與生肖不同
+  await setDoc(doc(db, "articles", "jinmu-am-article"), { status: "published", accessType: "event", requiredPermission: "2026-jinmu-am", content: "" });
+  await setDoc(doc(db, "eventArticleBodies", "jinmu-am-article"), { status: "published", active: true, requiredPermission: "2026-jinmu-am", content: "jinmu-secret" });
+  // 只有正文、沒有外殼
+  await setDoc(doc(db, "eventArticleBodies", "dingwei-2027-noshell"), { status: "published", active: true, requiredPermission: "dingwei-2027-rat", content: "x" });
+  // 外殼沒有 requiredPermission 欄位
+  await setDoc(doc(db, "articles", "dingwei-2027-noperm"), { status: "published", accessType: "event", content: "" });
+  await setDoc(doc(db, "eventArticleBodies", "dingwei-2027-noperm"), { status: "published", active: true, requiredPermission: "dingwei-2027-rat", content: "x" });
+});
+await t("相容性：金木活動權限者可讀自己的正文", assertSucceeds(getDoc(doc(B, "eventArticleBodies", "jinmu-am-article"))));
+await t("相容性：沒有金木權限者（只有鼠）不可讀金木正文", assertFails(getDoc(doc(A, "eventArticleBodies", "jinmu-am-article"))));
+await t("邊界：只有正文、沒有公開外殼時，有權限者也不可讀", assertFails(getDoc(doc(A, "eventArticleBodies", "dingwei-2027-noshell"))));
+await t("邊界：外殼缺 requiredPermission 時，有權限者不可讀", assertFails(getDoc(doc(A, "eventArticleBodies", "dingwei-2027-noperm"))));
+await t("邊界：未驗證信箱的管理員不可修改自己的權限文件", assertFails(setDoc(doc(UNVERIFIED_ADMIN, "memberEntitlements", "lyyuan03@gmail.com"), { email: "lyyuan03@gmail.com", permissions: ["dingwei-2027-rat"] })));
+await t("邊界：管理員寫入時外殼與正文權限不同仍可（寫入不受此規則限制，讀取才驗證）", assertSucceeds(setDoc(doc(ADMIN, "eventArticleBodies", "dingwei-2027-adminwrite"), bodyOf("dingwei-2027-adminwrite"))));
+
 await env.cleanup();
 for (const r of results) console.log(r.join("  "));
 const failed = results.filter((r) => r[0] === "FAIL").length;
