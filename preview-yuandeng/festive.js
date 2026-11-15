@@ -45,7 +45,7 @@
     put(head || document.querySelector('section.panel.reveal'), 'before',
       '<section class="yd-feature reveal" aria-label="歲末迎新">' +
       fig('yd-ph--tall', 'photos/g-banner.webp', 800, 1067, '道場牆面掛著三幅紅色布條，分別寫著「春」「滿」「福」，下方有木製矮櫃', '春滿福', '道場牆上新掛的紅布條。') +
-      '<div class="yd-feature__txt"><h2>歲末迎新</h2><p>辭舊迎新之際，道場牆上掛起紅色布條，春、滿、福三字依序排開。</p><p>一年將盡，邀請您以一盞燈回向過去一年的平安，也為新的一年留下一份心願。</p></div></section>', 'div');
+      '<div class="yd-feature__txt"><h2>歲末迎新</h2><p>辭舊迎新之際，道場牆上掛起紅色布條，春、滿、福三字依序排開。</p><p>一年將盡，邀請您以一盞燈迴向過去一年的平安，也為新的一年留下一份心願。</p></div></section>', 'div');
     /* B. 選擇燈別：燭光與菊花（16:9） */
     var lan = document.querySelector('#lanterns .sectionline');
     put(lan, 'after', fig('yd-ph--band yd-ph--candle', 'photos/g-candle.webp', 1000, 804, '一盞點亮的燭燈，旁邊是一朵桃紅色的菊花，後方是供燈架', '一盞燈，一份誠心', '燭光與鮮花，安靜陪著每一份心願。'));

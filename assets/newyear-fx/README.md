@@ -30,7 +30,7 @@
 | `assetBase` / `assets` | `/assets/yuandeng/` + 8 個檔名 | 素材；檔名留空＝停用；載入前先探測，缺檔自動備援 |
 | `effects` | 全開 | `ambient,title,lamp,amount,steps,success,dialog,cta,parallax,card3d` 可個別關閉（`card3d:false`＝關閉卡片／標題列的 3D 質感） |
 | `quietWhileTyping` | `true` | 文字欄位取得焦點時，背景光點淡出並暫停 |
-| `successText` / `successMs` | 圓滿回向 / 2600 | 成功動畫文字與時長 |
+| `successText` / `successMs` | 圓滿迴向 / 2600 | 成功動畫文字與時長 |
 | `selectors` | 見檔內 | 對應頁面元素（標題、燈別勾選、金額、步驟、結果彈窗…） |
 | `steps` | `null` | 傳入 3 個函式覆寫 01/02/03 的完成判斷 |
 
@@ -64,7 +64,7 @@
 2. 標題淡入＋光暈，只播一次。
 3. 勾選燈別 → 該燈亮起；金額更新 → 輕微光感。
 4. 步驟 01/02/03 完成 → 進度點亮（01 資料齊、02 已選燈且芳名皆填、03 有金額且注意事項全勾）。
-5. **送出成功**：僅在伺服器回報成功後（結果彈窗 eyebrow 變為 `SIGNUP COMPLETE` 且彈窗已開）才播放「一盞燈點亮→放大→淡出＋圓滿回向」；送出中／失敗不會觸發。亦可由頁面 `window.dispatchEvent(new CustomEvent('lyyuan:signup-success'))` 觸發。
+5. **送出成功**：僅在伺服器回報成功後（結果彈窗 eyebrow 變為 `SIGNUP COMPLETE` 且彈窗已開）才播放「一盞燈點亮→放大→淡出＋圓滿迴向」；送出中／失敗不會觸發。亦可由頁面 `window.dispatchEvent(new CustomEvent('lyyuan:signup-success'))` 觸發。
 6. 彈窗柔和淡入（opacity＋8px 位移），不搶焦點。
 
 ## 效能與無障礙
@@ -78,7 +78,7 @@
 5. 底部金額列：浮起陰影；金額更新時數字微升＋一次高光。
 6. 背景視差：祥雲／回紋底紋，位移 ≤ `parallax` px，rAF 節流。
 7. 暗色區遠近兩層粒子（近快遠慢）。
-8. 成功（僅伺服器回報成功後）：燈由小放大、光暈擴散、「圓滿回向」HTML 文字淡入。
+8. 成功（僅伺服器回報成功後）：燈由小放大、光暈擴散、「圓滿迴向」HTML 文字淡入。
 所有裝飾皆 `aria-hidden`、`pointer-events:none`；`prefers-reduced-motion` 開啟時整個疊層不啟動。
 
 ## 頁面層修正（不屬於特效，不受主開關影響，在 `preview-yuandeng/yuandeng.css` + `app.js`）

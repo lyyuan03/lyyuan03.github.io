@@ -1,4 +1,4 @@
-/* 115年(丙午) 辭歲謝平安 圓燈總回向法儀 — 線上登記
+/* 115年(丙午) 辭歲謝平安 圓燈總迴向法儀 — 線上登記
    與 /preview-vokdayja/（太歲燈）共用同一個報名後端，以活動代碼 yuandeng-115-bingwu 區分。
    全部內容來自雲端「活動內容設定」；這一頁只負責顯示、試算與送出。 */
 'use strict';
@@ -34,7 +34,7 @@ function cfgLooksValid(c) {
 function evGate(msg) {
   const r = document.documentElement;
   if (!msg) { r.removeAttribute('data-ev'); r.removeAttribute('data-ev-msg'); return; }
-  document.title = '靈元院・圓燈總回向法儀';
+  document.title = '靈元院・圓燈總迴向法儀';
   r.setAttribute('data-ev', 'unavailable'); r.setAttribute('data-ev-msg', msg);
 }
 function announceDeadline() {
@@ -45,7 +45,7 @@ function applyStaticCopy() {
   $$('[data-cfg]').forEach(el => { const v = cfgGet(el.dataset.cfg); if (typeof v === 'string' && v) el.textContent = v; });
   $$('[data-cfg-html]').forEach(el => { const v = cfgGet(el.dataset.cfgHtml); if (typeof v === 'string' && v) el.innerHTML = rich(v); });
   $$('[data-cfg-tail]').forEach(el => { const v = cfgGet(el.dataset.cfgTail); let t = null; el.childNodes.forEach(n => { if (n.nodeType === 3 && n.nodeValue.trim()) t = n; }); if (t && typeof v === 'string' && v) t.nodeValue = v; });
-  const img = { src: '/assets/yuandeng-banner-2027-dingwei.webp', alt: '116年2月11日（四）辭歲謝平安・圓燈總回向法儀（丁未年）' }, slot = $('#bannerSlot'), pic = $('#bannerImg');
+  const img = { src: '/assets/yuandeng-banner-2027-dingwei.webp', alt: '116年2月11日（四）辭歲謝平安・圓燈總迴向法儀（丁未年）' }, slot = $('#bannerSlot'), pic = $('#bannerImg');
   if (img && img.src) { pic.src = img.src; pic.alt = img.alt || ''; pic.hidden = false; slot.classList.remove('empty'); }
   else { pic.hidden = true; slot.classList.add('empty'); }
   $('#transferInfo').innerHTML = rich(CFG.page.transferInfo || '');
@@ -69,7 +69,8 @@ function personHTML() {
   return `<div class="person"><div class="person-title">芳名</div><button type="button" class="remove">移除此位</button><label for="pn${id}" class="req">姓名</label><input id="pn${id}" data-person-name required maxlength="40" autocomplete="off" placeholder="請填芳名"></div>`;
 }
 function optionHTML(l) {
-  return `<div class="yd-option" data-key="${esc(l.key)}"><label class="choice yd-opt-head"><input type="checkbox" class="opt-check"><span><strong>${esc(optLabel(l))}</strong>　${money(l.price)}／位</span></label><div class="yd-names" hidden><div class="person-list"></div><button type="button" class="subbtn add-person">${esc(CFG.copy.addPerson || '＋ 新增芳名')}</button></div></div>`;
+  /* 沿用太歲燈（preview-vokdayja）的燈列版型：勾選框＋圖示＋標題／副標＋金額，勾選後展開詳細框（.people） */
+  return `<div class="yd-option" data-key="${esc(l.key)}"><label class="lamp-head yd-opt-head"><input type="checkbox" class="opt-check"><span class="lamp-icon">${ICON}</span><span class="lamp-name"><strong>${esc(optLabel(l))}</strong></span><span class="price">${money(l.price)}／位</span></label><div class="people yd-names" hidden><div class="person-list"></div><button type="button" class="subbtn add-person">${esc(CFG.copy.addPerson || '＋ 新增芳名')}</button></div></div>`;
 }
 function renderLamps() {
   const box = $('#lampFamilies'); box.innerHTML = '';

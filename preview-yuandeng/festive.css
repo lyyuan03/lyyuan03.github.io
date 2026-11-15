@@ -1,4 +1,4 @@
-/* 圓燈總回向法儀・過年喜慶與宗教氛圍層（朱紅＋金）
+/* 圓燈總迴向法儀・過年喜慶與宗教氛圍層（朱紅＋金）
    疊在 style.css / yuandeng.css 之後載入。不改背景圖、不改表單結構與送出流程。
    色彩：朱紅 #B5302A（深 #7C1D1A／亮 #D8483C）、金 #C9A063（亮 #F4D98E／深 #9C7330）、米白底。
    動態只用 opacity / transform，並尊重 prefers-reduced-motion。 */
@@ -17,7 +17,7 @@ body.signup-page .lamp-icon::after{
   background:url("photos/lamp-medal.webp") center / cover no-repeat;
 }
 body.signup-page .lamp-icon::before{
-  filter:grayscale(.85) brightness(.55) contrast(.95);
+  filter:saturate(.95) brightness(.9);   /* 保持彩色照片（不再轉黑白），僅略暗以區分未選取 */
   box-shadow:0 0 0 2px #b9a577,0 0 0 4px #f6efdf,0 5px 10px #5c442055;
 }
 body.signup-page .lamp-icon::after{
@@ -25,7 +25,8 @@ body.signup-page .lamp-icon::after{
   box-shadow:0 0 0 2px #e6c373,0 0 0 4px #fff5da,0 0 16px 5px #ffb04a99,0 6px 12px #7c1d1a55;
   transition:opacity .55s ease,transform .55s cubic-bezier(.22,.61,.36,1);
 }
-body.signup-page .lamp.selected .lamp-icon::after{
+body.signup-page .lamp.selected .lamp-icon::after,
+body.signup-page .yd-option.on .lamp-icon::after{
   opacity:1;transform:scale(1);
   animation:ydFlame 3.6s ease-in-out .6s infinite;
 }
@@ -33,7 +34,8 @@ body.signup-page .lamp.selected .lamp-icon::after{
 
 /* 與 newyear-fx 並存：它也會對 .lamp-icon::before 畫光暈（預設 opacity:0），這裡明確蓋回，並隱藏它的小燈籠圖示 */
 html.fx-on body.signup-page .lamp-icon::before{inset:0;border-radius:50%;opacity:1;background-repeat:no-repeat;background-position:center;background-size:cover}
-html.fx-on body.signup-page .lamp.selected .lamp-icon::before{opacity:0}
+html.fx-on body.signup-page .lamp.selected .lamp-icon::before,
+html.fx-on body.signup-page .yd-option.on .lamp-icon::before{opacity:0}
 html.fx-on body.signup-page .sponsor-card .lamp-icon::before{border-radius:0;box-shadow:none;background-size:contain;filter:none}
 html.fx-on body.signup-page .sponsor-card.selected .lamp-icon::before{opacity:1}
 html.fx-on body.signup-page .fx-lantern-ico{display:none}
@@ -155,7 +157,7 @@ body.signup-page .journey b{
 /* ── 6. 頂端「會員登入」列改為不透明，避免下方文字透出 ── */
 html body.signup-page.site-auth-enabled #site-auth-bar{background:#faf6ee!important}
 
-/* ── 7. 送出成功：伺服器確認後（#result.yd-ok）才出現真實燭光照片與「圓滿回向」 ── */
+/* ── 7. 送出成功：伺服器確認後（#result.yd-ok）才出現真實燭光照片與「圓滿迴向」 ── */
 #result.yd-ok h2{text-align:center}
 #result.yd-ok h2::before{
   content:"";display:block;width:100%;aspect-ratio:16 / 7;margin:2px 0 14px;border-radius:6px;
@@ -167,7 +169,7 @@ html body.signup-page.site-auth-enabled #site-auth-bar{background:#faf6ee!import
   animation:ydLampIn 1.2s cubic-bezier(.22,.61,.36,1) both;
 }
 #result.yd-ok h2::after{
-  content:"圓滿回向";display:block;margin-top:4px;
+  content:"圓滿迴向";display:block;margin-top:4px;
   font:600 16px/1.8 'Noto Serif TC',serif;letter-spacing:.7em;text-indent:.7em;text-align:center;color:#a02923;
   animation:ydFadeUp 1s ease .55s both;
 }

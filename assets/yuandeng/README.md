@@ -22,7 +22,7 @@
 | `yuandeng-flame-mark.svg` | 卡片小圖示／標題，米色底宜深金 |
 | `yuandeng-lantern-unlit.svg` | 燈別未選取狀態，建議固定尺寸 |
 | `yuandeng-lantern-lit.svg` | 燈別已選取狀態；可個別動畫火焰或光暈 |
-| `yuandeng-success-circle.svg` | 深色成功彈窗：純燈與光暈；HTML 負責「圓滿回向」 |
+| `yuandeng-success-circle.svg` | 深色成功彈窗：純燈與光暈；HTML 負責「圓滿迴向」 |
 | `yuandeng-title-halo.svg` | 深色首屏主標題正後方，勿用在米色表單 |
 | `yuandeng-card-corners.svg` | 米色表單卡片四角整組；可作覆蓋層 |
 | `yuandeng-cloud-fret-tile.svg` | 米色表單區：祥雲／回紋無縫重複，建議整層 opacity: .04 |
@@ -35,7 +35,7 @@
 | `yuandeng-depth-near.svg` | 深色首屏／頁尾：近景大而柔焦，可慢速視差 |
 
 ## 使用與注意
-- `success-circle.svg` 無文字；請在 HTML 另放文字，例如 `<h2 class="yd-success-title">圓滿回向</h2>`；只在伺服端確認報名成功後顯示。
+- `success-circle.svg` 無文字；請在 HTML 另放文字，例如 `<h2 class="yd-success-title">圓滿迴向</h2>`；只在伺服端確認報名成功後顯示。
 - 透明 tile 重複請使用 CSS `background-repeat: repeat`，`cloud-fret-tile` 用獨立透明層的 `opacity: .04`，避免讓卡片文字一起變淡。
 - 光點視差建議只動畫 CSS `transform`；移動幅度小，並依 `prefers-reduced-motion` 停用動畫。附 `yuandeng-v3-usage.css` 作為獨立參考。
 - SVG 的 `<g id="檔名前綴-layer-名稱">`、gradient ID 均有獨立命名。內嵌同一 SVG 多次於同一份 HTML 時，仍應為每個實例再加唯一前綴，或以外部 `<img>` 引入，以免重複 ID。
