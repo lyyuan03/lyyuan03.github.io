@@ -117,7 +117,7 @@ if (location.pathname.endsWith("/admin.html")) {
 
 if (location.pathname.endsWith("/fahui.html")) {
   const registrationClosedScript = document.createElement("script");
-  registrationClosedScript.src = "/fahui-registration-closed.js?v=20260803-1";
+  registrationClosedScript.src = "/fahui-registration-closed.js?v=20261115-noop-1";
   registrationClosedScript.defer = true;
   document.head.appendChild(registrationClosedScript);
 }
