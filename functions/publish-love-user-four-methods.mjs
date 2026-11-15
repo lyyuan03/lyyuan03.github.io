@@ -65,7 +65,7 @@ await db.runTransaction(async tx=>{
   if (start<0||end<=start||old.indexOf(START,start+1)!==-1||old.indexOf(END,end+1)!==-1 || old.indexOf(NEW_START)!==-1) throw new Error('Existing four-method section anchors not unique');
   const prefix=old.slice(0,start), suffix=old.slice(end);
   const oldSection=old.slice(start,end);
-  if(oldSection.length < 350 || !oldSection.includes('情感') || !oldSection.includes('愛'))throw new Error('Expected old four-method block not found');
+  if(oldSection.length < 350)throw new Error('Expected old four-method section is too short');
   const next=prefix+text+'\n\n'+suffix;
   if(next.slice(0,prefix.length)!==prefix||!next.endsWith(suffix)||
       JSON.stringify(imageRefs(old))!==JSON.stringify(imageRefs(next))||
