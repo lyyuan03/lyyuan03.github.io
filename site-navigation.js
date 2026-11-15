@@ -57,6 +57,22 @@
       annualLink.closest("li")?.after(annualSubitem);
     }
 
+    // Keep ritual registration subordinate to the regular-ritual overview across all pages.
+    // The shared navigation script normalizes legacy static navigation markup.
+    const activityRitualLink = Array.from(activityMenu?.querySelectorAll("a") || [])
+      .find((link) => normalizedPath(new URL(link.href, window.location.origin).pathname) === "/lixing.html");
+    const registrationLink = Array.from(activityMenu?.querySelectorAll("a") || [])
+      .find((link) => normalizedPath(new URL(link.href, window.location.origin).pathname) === "/fahui.html");
+    if (activityRitualLink && registrationLink) {
+      const parentItem = activityRitualLink.closest("li");
+      const registrationItem = registrationLink.closest("li");
+      if (parentItem && registrationItem && !registrationItem.classList.contains("global-nav-ritual-subitem")) {
+        registrationItem.classList.add("global-nav-ritual-subitem");
+        registrationItem.setAttribute("data-parent", "lixing");
+        parentItem.after(registrationItem);
+      }
+    }
+
     const services = nav.querySelector("#global-nav-services");
     pruneUnfinishedServiceItems(services);
     if (services && currentPath.startsWith("/services")) {
