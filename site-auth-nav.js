@@ -121,7 +121,7 @@ function ensureZodiacStatusLinks() {
     item.innerHTML = `
       <a data-zodiac-status-link href="${ZODIAC_STATUS_URL}">
         <span>2027 十二生肖流年指引</span>
-        <span data-zodiac-status-label>內容建置中</span>
+        <span data-zodiac-status-label>鼠牛虎已上線</span>
       </a>`;
     const annualSubitem = menu.querySelector(".global-nav-annual-subitem");
     const annualMainLink = Array.from(menu.querySelectorAll("a")).find((link) => {
@@ -142,7 +142,7 @@ function updateZodiacStatusLinks(isAdmin) {
     link.href = isAdmin ? ZODIAC_PREVIEW_URL : ZODIAC_STATUS_URL;
     link.title = isAdmin
       ? "開啟僅限靈元院管理帳號的 2027 生肖不公開預覽"
-      : "2027 十二生肖流年指引目前內容建置中";
+      : "2027 十二生肖流年指引：鼠、牛、虎已上線，其餘生肖整理中";
     if (isAdmin) {
       link.target = "_blank";
       link.rel = "noopener noreferrer";
@@ -152,7 +152,7 @@ function updateZodiacStatusLinks(isAdmin) {
       link.removeAttribute("rel");
       if (window.location.pathname === ZODIAC_STATUS_URL) link.setAttribute("aria-current", "page");
     }
-    if (label) label.textContent = isAdmin ? "不公開預覽" : "內容建置中";
+    if (label) label.textContent = isAdmin ? "不公開預覽" : "鼠牛虎已上線";
   });
 }
 
