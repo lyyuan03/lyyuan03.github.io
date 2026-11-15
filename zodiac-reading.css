@@ -7,15 +7,16 @@
    只作用於含 .zp-main 的生肖文章頁；總覽頁維持原設定（舊瀏覽器亦退回原設定）。
    ========================================================================== */
 
-/* 舊版設定：總覽頁與不支援 :has() 的瀏覽器沿用 */
+/* 總覽頁（無 .zp-main）與不支援 :has() 的瀏覽器沿用此設定：
+   與報名頁（/preview-vokdayja/）相同的和紙背景，不使用森林／大樹圖。 */
 body{
- background-color:#0a100c!important;
- background-image:linear-gradient(90deg,#0a100cb8,#0a100c40,#0a100cb0),url('/forest-path.jpg')!important;
- background-position:center 47%!important;
+ background-color:#f4efe4!important;
+ background-image:linear-gradient(180deg,#f4efe86b,#f4efe847,#f4efe87a),url('/preview-vokdayja/assets/goat-bg-2027-no-goat.jpg')!important;
+ background-position:center center!important;
  background-size:cover!important;
  background-repeat:no-repeat!important;
  background-attachment:fixed!important;
- color:#f5f0e8;
+ color:#0A100C;
 }
 @media(max-width:768px){body{background-attachment:scroll!important;background-position:center top!important}}
 

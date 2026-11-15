@@ -12,10 +12,12 @@
   <link rel="stylesheet" href="/zodiac-reading.css?v=20261115-a">
   <link rel="stylesheet" href="/zodiac-picker.css?v=20261115-badges-1">
   <style>
-    :root{--gold:#c5a26f;--gold-deep:#a58254;--cream:#f5f1e9;--dark:#0f1a14;--serif:'Noto Serif TC','Georgia',serif;--sans:'Noto Sans TC','Arial',sans-serif;--en:'Cormorant Garamond',serif}
+    :root{--gold:#7a531c;--gold-deep:#a58254;--cream:#0A100C;--dark:#0f1a14;--serif:'Noto Serif TC','Georgia',serif;--sans:'Noto Sans TC','Arial',sans-serif;--en:'Cormorant Garamond',serif}
+    /* 背景改用和紙設定（見 zodiac-reading.css 的共用 body 規則），這裡只保留排版，不再設定森林背景。
+       --gold／--cream 兩個變數在本頁只用於文字顏色，已改為深金／墨色以符合淺色和紙底的對比需求。 */
     *{box-sizing:border-box}
     html,body{min-height:100%;margin:0}
-    body{overflow-x:hidden;background:linear-gradient(rgba(8,17,11,.76),rgba(7,14,9,.9)),url('/forest-path.jpg') center/cover fixed no-repeat;background-color:var(--dark);color:var(--cream);font-family:var(--sans);letter-spacing:.04em}
+    body{overflow-x:hidden;color:var(--cream);font-family:var(--sans);letter-spacing:.04em}
     .zodiac-status-main{display:grid;min-height:calc(100svh - 104px);padding:128px 24px 76px;place-items:center}
     .zodiac-status-card{width:min(720px,100%);padding:clamp(38px,7vw,72px) clamp(24px,7vw,68px);text-align:center;border:1px solid rgba(197,162,111,.32);background:linear-gradient(145deg,rgba(15,26,20,.88),rgba(8,15,10,.82));box-shadow:0 28px 90px rgba(0,0,0,.35);backdrop-filter:blur(12px)}
     .zodiac-status-kicker{margin:0 0 18px;color:var(--gold);font-family:var(--en);font-size:12px;letter-spacing:.34em}
@@ -38,7 +40,7 @@
     .zo-draft{display:inline-block;margin:0 0 22px;padding:4px 14px;border:1px solid rgba(197,162,111,.45);border-radius:999px;color:#dec38f;font-size:12px;letter-spacing:.16em}
     .zo-main h1{text-align:left}
     .zo-main h1 small{display:block;margin-bottom:6px;color:var(--gold);font-size:.42em;letter-spacing:.24em}
-    .zo-intro{margin-top:24px;font-family:var(--serif);font-size:18px;line-height:2;color:rgba(245,241,233,.86)}
+    .zo-intro{margin-top:24px;font-family:var(--serif);font-size:18px;line-height:2;color:rgba(10,16,12,.84)}
     .zo-main h2{margin:56px 0 18px;font-family:var(--serif);font-weight:400;font-size:24px;letter-spacing:.14em;color:var(--gold)}
     .zo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
     .zo-card{display:flex;flex-direction:column;gap:6px;padding:22px;border:1px solid rgba(197,162,111,.3);background:linear-gradient(145deg,rgba(15,26,20,.84),rgba(8,15,10,.76));color:var(--cream);text-decoration:none;transition:border-color .2s,transform .2s}
@@ -49,7 +51,7 @@
     .zo-rel{font-size:14px;color:rgba(245,241,233,.7)}
     .zo-go{margin-top:6px;font-size:13px;color:var(--gold);letter-spacing:.1em}
     .zo-guide{margin:-6px 0 20px;font-size:15px;color:rgba(245,241,233,.7)}
-    .zo-notes{margin-top:48px;font-size:14px;line-height:1.9;color:rgba(245,241,233,.55)}
+    .zo-notes{margin-top:48px;font-size:14px;line-height:1.9;color:rgba(10,16,12,.6)}
     @media(max-width:560px){.zo-main{padding:112px 16px 58px}.zo-grid{grid-template-columns:1fr 1fr}.zo-card{padding:16px}}
   </style>
   <script src="/analytics-config.js"></script>
