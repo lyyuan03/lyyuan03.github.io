@@ -20,9 +20,15 @@
     button.primary{background:linear-gradient(150deg,#e5cb96,#a58254);color:#1b140a}
     button:disabled{opacity:.45;cursor:not-allowed}
     .hint{font-size:13px;color:rgba(245,241,233,.55);margin:8px 0 0}
-    #status{min-height:28px;font-size:15px;margin-top:14px}
-    #status[data-kind=error]{color:#ff9d8a}
-    #status[data-kind=ok]{color:#b8dba0}
+    #status,.status{min-height:28px;font-size:15px;margin-top:14px;white-space:pre-line}
+    #status[data-kind=error],.status[data-kind=error]{color:#ff9d8a}
+    #status[data-kind=ok],.status[data-kind=ok]{color:#b8dba0}
+    .zodiac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+    .zodiac-grid label{display:flex;gap:6px;align-items:center;margin:0;color:#f5f1e9;border:1px solid rgba(197,162,111,.3);padding:8px 10px;cursor:pointer}
+    table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+    th,td{text-align:left;padding:8px 6px;border-bottom:1px solid rgba(197,162,111,.2);vertical-align:top}
+    th{color:#c5a26f;font-weight:400}
+    .src{font-size:12px;color:rgba(245,241,233,.55)}
     [hidden]{display:none!important}
     ul{margin:6px 0 0;padding-left:20px;font-size:14px;color:rgba(245,241,233,.7)}
   </style>
@@ -54,15 +60,37 @@
     <div id="status" role="status" aria-live="polite"></div>
   </section>
 
+  <section class="card" id="grants" hidden>
+    <strong>閱讀權限（手動開通）</strong>
+    <p class="hint">自動同步完成前的測試用。一筆訂單點了哪幾個生肖的燈，就勾哪幾個。手動開通與日後訂單自動開通分開記錄，撤銷手動開通不會影響訂單開通。</p>
+
+    <label for="grantEmails" style="margin-top:16px">信眾 Gmail（一行一個，可一次多個）</label>
+    <textarea id="grantEmails" style="min-height:110px" placeholder="example@gmail.com"></textarea>
+    <p class="hint">必須是信眾登入網站用的 Gmail。英文大小寫不影響；「.」的位置請照信眾的帳號填寫。</p>
+
+    <label style="margin-top:16px">生肖</label>
+    <div class="zodiac-grid" id="grantZodiacs"></div>
+
+    <div class="row">
+      <button class="primary" id="grant" type="button">開通</button>
+      <button id="revoke" type="button">撤銷手動開通</button>
+    </div>
+    <div id="grantStatus" class="status" role="status" aria-live="polite"></div>
+
+    <div class="row" style="margin-top:22px"><button id="listGrants" type="button">載入已開通名單</button></div>
+    <div id="grantList"></div>
+  </section>
+
   <section class="card">
     <strong>說明</strong>
     <ul>
       <li>每個生肖一份正文，對應各自的閱讀權限；只有該生肖已獲授權的 Gmail 能讀。</li>
       <li>儲存後，信眾要在生肖頁看到內容，還需要：該生肖頁的專屬區塊已啟用，以及信眾的 Gmail 已開通權限。</li>
       <li>「暫停開放」不會刪除正文，只是讓所有人暫時讀不到。</li>
+      <li>名單中的來源：「手動」是本頁開通；「訂單」是日後自動同步開通；「其他」是在別處加入的權限，本頁不會移除。</li>
     </ul>
   </section>
 </main>
-<script type="module" src="/admin-zodiac-lamp.js?v=20261115-1"></script>
+<script type="module" src="/admin-zodiac-lamp.js?v=20261115-2"></script>
 </body>
 </html>
