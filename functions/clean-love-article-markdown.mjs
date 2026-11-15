@@ -32,9 +32,13 @@ if(bodySnap.exists){
     // Body versioning is preserved, but incremented when actual content changes.
     const {createHash}=await import('node:crypto');
     const nextVersion=Math.max(1,Number(bodySnap.data().contentVersion||0)+1);
-    await bodyRef.update({content:updated,contentHash:createHash('sha256').update(updated).digest('hex'),contentVersion:nextVersion});
+    const newHash=createHash('sha256').update(updated).digest('hex');
+    await bodyRef.update({content:updated,contentHash:newHash,contentVersion:nextVersion});
+    // Keep the public paid metadata synchronized with the protected body version.
+    await articleRef.update({paidContentHash:newHash,paidContentVersion:nextVersion});
     const verify=await bodyRef.get();
-    if(verify.data().content!==updated)throw new Error('Paid body verification failed');
+    const publicVerify=await articleRef.get();
+    if(verify.data().content!==updated||publicVerify.data().paidContentHash!==newHash||Number(publicVerify.data().paidContentVersion)!==nextVersion)throw new Error('Paid body verification failed');
   }
 }
 console.log('LOVE_MARKDOWN_CLEANUP', JSON.stringify({articleId:ARTICLE_ID, originalStatus:doc.status,originalAccessType:doc.accessType, removedPublicStars:oldContent.length-revised.length,removedPrivatePairs:privateReplacements, privateBodyExists:bodySnap.exists, paths:imagePaths(revised).length}));
