@@ -383,3 +383,19 @@
 .global-nav-annual-subitem > a:focus-visible {
   color: #f0dfbc !important;
 }
+
+/* Ritual registration belongs under the regular ritual overview. */
+.global-nav-ritual-subitem > a {
+  padding-left: 38px !important;
+  color: rgba(245, 240, 232, .60) !important;
+  font-size: 11.5px !important;
+}
+.global-nav-ritual-subitem > a::before {
+  content: "└ ";
+  color: rgba(200, 170, 123, .60);
+}
+.global-nav-ritual-subitem > a:hover,
+.global-nav-ritual-subitem > a:focus-visible,
+.global-nav-ritual-subitem > a[aria-current="page"] {
+  color: #d7ba88 !important;
+}
