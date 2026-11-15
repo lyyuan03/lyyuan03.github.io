@@ -250,3 +250,103 @@ html.zm-ready body:has(> .zp-main) .zm-in{opacity:1!important;transform:none!imp
  .zr-switch-step,.zr-month-nav a{transition:none}
  .zr-switch-step:hover,.zr-switch-step:active,.zr-switch-step.zm-pressed{transform:none}
 }
+
+/* ==========================================================================
+   刊物式閱讀調整（2026-11-15）：把「排版正確的網誌」往「年度刊物的一個章節」推進。
+   1 主視覺與和紙同一語系　2 紙面延伸、背景退後　3 標題加重並加「朱印」
+   4 點燈區改為淺色封緘　5 內文墨色加深、開篇與結尾加留白與記號
+   只改外觀，不動文章文字；全部放在檔案最後，覆蓋較早載入的深色框與白框設定。
+   ========================================================================== */
+body:has(> .zp-main){
+ --zr-text:rgba(10,16,12,.93);
+ --zr-soft:rgba(10,16,12,.76);
+ --zr-seal:#9a3b2e;              /* 朱印：僅用於小面積印記 */
+}
+
+/* 2 背景退後：同一張和紙圖，加厚米白遮罩；閱讀面板更接近整張紙 */
+body:has(> .zp-main)::before{
+ background:
+  linear-gradient(180deg,rgba(244,239,228,.7) 0%,rgba(244,239,228,.58) 40%,rgba(244,239,228,.72) 100%),
+  url('/preview-vokdayja/assets/goat-bg-2027-no-goat.jpg') center center/cover no-repeat;
+}
+body:has(> .zp-main) .zp-main{
+ background:linear-gradient(180deg,rgba(255,253,248,.95),rgba(253,249,241,.93));
+ border-color:rgba(165,130,84,.22);
+ box-shadow:0 1px 2px #5c44200f,0 24px 60px #5c442018,inset 0 1px 0 #fffdf8;
+}
+body:has(> .zp-main) .zp-main::after{border-color:rgba(201,160,99,.1)}
+
+/* 1 主視覺：降低飽和、偏暖，邊緣沒入紙色，不再用白框＋金框把它框成貼上去的圖 */
+body:has(> .zp-main) .zp-main>.zp-hero{
+ margin-top:40px;border:0;border-radius:3px;background:#efe6d4;
+ box-shadow:0 14px 34px #5c442022;
+}
+body:has(> .zp-main) .zp-main>.zp-hero img{filter:saturate(.58) sepia(.26) contrast(.94) brightness(1.06) hue-rotate(-6deg)}
+body:has(> .zp-main) .zp-main>.zp-hero::after{
+ background:
+  linear-gradient(180deg,rgba(244,236,218,.22),transparent 24%,transparent 56%,rgba(250,246,236,.78) 100%),
+  radial-gradient(ellipse at 50% 46%,transparent 52%,rgba(244,236,218,.38) 100%);
+ box-shadow:none;mix-blend-mode:normal;
+}
+@media(max-width:768px){
+ body:has(> .zp-main) .zp-main>.zp-hero{box-shadow:0 10px 24px #5c44201c}
+}
+
+/* 3 頁首：標題加大，英文小標與重複的年份讓位給朱印（小標仍保留給輔助閱讀） */
+body:has(> .zp-main) .zp-main .zp-kicker{
+ position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+}
+body:has(> .zp-main) .zp-main h1{
+ font-weight:500;font-size:clamp(38px,6.4vw,62px);line-height:1.3;letter-spacing:.16em;color:var(--zr-ink);
+}
+body:has(> .zp-main) .zp-main h1 small{font-weight:400;color:var(--zr-gold-ink);margin-bottom:14px}
+body:has(> .zp-main) .zp-main h1::after{height:1px;width:96px;margin-top:22px}
+.zr-seal{
+ position:absolute;top:clamp(78px,9vw,100px);right:clamp(24px,6vw,64px);z-index:2;
+ width:clamp(48px,6.5vw,64px);aspect-ratio:1;display:grid;place-items:center;
+ font:600 clamp(26px,3.6vw,34px)/1 'Noto Serif TC',serif;color:#fbf3e6;
+ background:var(--zr-seal);border-radius:4px;
+ box-shadow:inset 0 0 0 2px rgba(251,243,230,.35),inset 0 0 0 4px var(--zr-seal),0 2px 6px rgba(120,40,30,.25);
+ opacity:.92;transform:rotate(-3deg);user-select:none;
+}
+@media(max-width:560px){.zr-seal{top:28px;right:20px;width:44px;font-size:24px}}
+
+/* 5 開篇與結尾：導語放大並以細線收束；全文結尾加印記，讓版面有起訖 */
+body:has(> .zp-main) .zp-lead{
+ font-size:clamp(18px,2.2vw,21px);line-height:2.1;letter-spacing:.05em;
+ padding-bottom:30px;margin-bottom:6px;border-bottom:1px solid var(--zr-rule);
+}
+body:has(> .zp-main) .zp-rel{margin-top:30px}
+body:has(> .zp-main) .zp-notes{position:relative;padding-top:34px;margin-top:var(--zr-gap-section)}
+body:has(> .zp-main) .zp-notes::before{
+ content:"";position:absolute;left:50%;top:0;width:9px;height:9px;transform:translateX(-50%) rotate(45deg);
+ border:1px solid var(--zr-gold-lo);background:var(--zr-gold-hi);
+}
+
+/* 4 點燈區：淺色「封緘」，細金線雙框，不再是全頁最重的黑塊 */
+body:has(> .zp-main) .zp-lamp:not([data-lamp-state="granted"]):not([data-lamp-state="adminPreview"]),
+body:has(> .zp-main) .zp-gated-preview,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"] .zr-gate,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"] .zr-gate{
+ color:var(--zr-text);
+ background:linear-gradient(180deg,rgba(252,246,232,.92),rgba(247,239,221,.9));
+ border:1px solid rgba(165,130,84,.5);border-radius:6px;
+ box-shadow:inset 0 0 0 4px rgba(255,252,246,.8),inset 0 0 0 5px rgba(201,160,99,.28),0 8px 24px #5c44201a!important;
+}
+body:has(> .zp-main) .zp-lamp::after,body:has(> .zp-main) .zp-gated-preview::after{
+ background:radial-gradient(ellipse,rgba(234,216,180,.5),transparent 65%);
+}
+body:has(> .zp-main) .zp-lamp::before,body:has(> .zp-main) .zp-gated-preview::before{border-color:transparent}
+body:has(> .zp-main) .zp-lamp p,
+body:has(> .zp-main) .zp-lamp[data-lamp-state] .zr-gate p,
+body:has(> .zp-main) .zp-gated-preview p{color:var(--zr-soft)}
+body:has(> .zp-main) .zp-lamp .zp-lock,
+body:has(> .zp-main) .zp-gated-preview .zp-gated-label{color:var(--zr-gold-ink);font-weight:500;letter-spacing:.12em}
+body:has(> .zp-main) .zp-lamp .zp-lock::before,
+body:has(> .zp-main) .zp-gated-label::before{
+ border-color:rgba(165,130,84,.6);box-shadow:0 0 0 3px rgba(255,252,246,.8);
+ background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a531c' stroke-width='1.4' stroke-linecap='round'%3E%3Crect x='6' y='10.5' width='12' height='9' rx='1.6'/%3E%3Cpath d='M8.6 10.5V8a3.4 3.4 0 0 1 6.8 0v2.5'/%3E%3Ccircle cx='12' cy='14.6' r='1.1' fill='%237a531c' stroke='none'/%3E%3C/svg%3E") center/20px 20px no-repeat,
+  #fbf5e8;
+}
+body:has(> .zp-main) .zp-lamp .zp-lamp-editor-link{color:var(--zr-gold-ink)}
