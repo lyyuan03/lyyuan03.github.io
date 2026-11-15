@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>《請問愛》文章安全匯入｜靈元院管理員</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:#0A100C;color:#F5F0E8;line-height:1.8}
+main{max-width:700px;margin:8vh auto;padding:30px 28px;background:#F5F0E8;color:#2F332C;border:1px solid #C9A063}
+h1{font-size:24px;color:#4A4537;margin:0 0 12px}.sub{font-size:14px;color:#655E50}
+label{display:block;margin-top:20px;font-weight:600}input{display:block;width:100%;font-size:16px;padding:12px;border:1px solid #A58254;border-radius:4px;margin:6px 0 15px}
+button{padding:12px 24px;background:#A58254;color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}a{color:#876038}
+#result-link{display:block;margin-top:18px}#import-status{padding:12px;background:rgba(201,160,99,.10);border-left:3px solid #C9A063;margin-top:18px;white-space:pre-wrap;overflow-wrap:anywhere}
+#import-status[data-kind=error]{border-color:#9D4D45}
+</style>
+<script type="module" src="./firebase-config.js"></script>
+</head>
+<body>
+<main>
+<h1>《請問愛》文章｜贊助付費正文安全匯入</h1>
+<p class="sub">限已登入的靈元院網站管理員使用。本頁從加密檔解密完整定稿，將公開試閱存入 <code>articles</code>，付費正文單獨存入受規則保護的 <code>paidArticleBodies</code>。六張內文圖片、封面與縮圖會在匯入前逐一驗證。</p>
+<p><a href="./admin.html">前往官網文章後台登入</a></p>
+<label for="decryption-key">本次文章解密金鑰</label>
+<input id="decryption-key" type="password" autocomplete="off" spellcheck="false" placeholder="貼上專屬解密金鑰" />
+<button id="import-paid-love" disabled>驗證並發布為贊助付費文章</button>
+<div id="import-status" role="status" aria-live="polite">正在檢查管理員登入狀態……</div>
+<a id="result-link" hidden href="./articles.html?id=love-universal-emotion-and-fidelity">閱讀文章／檢查付費閱讀狀態</a>
+<p class="sub">此頁不會將解密金鑰提交給網站伺服器；解密在管理員瀏覽器內完成，付費正文由 Firestore 規則保護。請勿把金鑰放進 GitHub、公開文章或社群貼文。</p>
+</main>
+<script type="module" src="./admin-love-paid-import.js?v=20261115-1"></script>
+</body>
+</html>
