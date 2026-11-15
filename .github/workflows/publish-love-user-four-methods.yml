@@ -1,4 +1,5 @@
 name: Publish user supplied four practices to protected love article
+# Fresh Pages deployment; earlier run had a GitHub artifact race and a retry collision.
 on:
   push:
     branches: [main]
