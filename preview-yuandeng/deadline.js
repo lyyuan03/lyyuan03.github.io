@@ -1,4 +1,4 @@
-/* 圓燈總回向法儀：報名截止時間與法儀日期讀取雲端設定（meta.deadline／meta.ritualDate，臺灣時間）；
+/* 圓燈總迴向法儀：報名截止時間與法儀日期讀取雲端設定（meta.deadline／meta.ritualDate，臺灣時間）；
    由 app.js 載入設定後以 lyyuan-config 事件通知；截止時間一到自動關閉報名表單。複製自 preview-vokdayja/deadline.js。 */
 (() => {
   'use strict';
@@ -108,7 +108,7 @@
     const ritual = toMs(String(detail.ritualDate || '').trim());
     if (!isNaN(ritual)) {
       const note = String(detail.ritualNote || '').trim();
-      lines.push(dateLine(ritual, note ? note : '', () => '舉行【辭歲謝平安 圓燈總回向法儀】'));
+      lines.push(dateLine(ritual, note ? note : '', () => '舉行【辭歲謝平安 圓燈總迴向法儀】'));
     }
     box.replaceChildren(...lines);
   }

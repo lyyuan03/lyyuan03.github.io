@@ -1,4 +1,4 @@
-/* 圓燈總回向法儀專用樣式（疊在 style.css 之上；style.css 複製自 preview-vokdayja） */
+/* 圓燈總迴向法儀專用樣式（疊在 style.css 之上；style.css 複製自 preview-vokdayja） */
 .yd-banner-slot{max-width:1120px;margin:0 auto;border:1px solid #c9a06370;border-radius:6px;overflow:hidden;background:#0a100c0d}
 .yd-banner-slot img{display:block;width:100%;height:auto}
 .yd-banner-slot.empty{aspect-ratio:2033/774;min-height:150px;display:grid;place-items:center;border-style:dashed;border-color:var(--line)}
@@ -7,15 +7,15 @@
 .yd-banner-empty strong{font-size:clamp(20px,4.6vw,38px);font-weight:600;letter-spacing:.18em}
 .yd-hero-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .yd-family .yd-options{padding-top:6px}
-.yd-option{border-top:1px solid #c9a06322;padding:4px 0 8px}
-.yd-option:first-of-type{border-top:0}
-.yd-option .yd-opt-head{padding:8px 0;margin:0;font-size:15px;border-bottom:0}
-.yd-option .yd-names{padding:0 0 6px 24px}
-.yd-option.on .yd-opt-head strong{color:var(--gold)}
+/* 燈首／個人燈列：版型沿用太歲燈 .lamp 列（勾選框＋圖示＋標題＋金額，勾選後展開 .people 詳細框） */
+.yd-option{border:1px solid #c9a06330;border-radius:9px;background:#f8f2e7;margin:10px 0;transition:border-color .25s ease,box-shadow .25s ease,background .25s ease}
+.yd-option.on{border-color:#C9A063;background:linear-gradient(165deg,#fff5da 0%,#f8e0a6 58%,#f1cd84 100%);box-shadow:0 0 22px #f0b44a35}
+.yd-option .yd-opt-head{margin:0;border-bottom:0;font-size:inherit}
+.yd-option .yd-names{border-top:1px solid var(--line)}
 .review td.n{text-align:right;white-space:nowrap}
 .review tr.total td{font-weight:600;color:var(--gold);border-top:1px solid var(--line)}
 #profileNote p{margin:0 0 8px}
-@media (max-width:740px){.yd-option .yd-names{padding-left:8px}}
+
 
 /* ── 修正 1：右側浮動「限定選物」按鈕不遮住卡片右側文字（桌機）：捲動時縮成貼邊半圓，停止捲動後展開（見 app.js） ── */
 @media (min-width:741px){
@@ -31,3 +31,5 @@ html:root body.signup-page .global-site-nav .global-nav-dropdown,
 html:root body.signup-page.site-auth-enabled #site-auth-bar,
 html:root body.signup-page.site-auth-enabled #site-auth-bar .site-account-menu{
   background:#faf6ee!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* 燈首／個人燈列沿用彩色燈照片圖示：不讓 newyear-fx 的一次性光暈動畫套在照片上 */
+html.fx-on .yd-option.fx-lit-pulse .lamp-icon::before,html.fx-on .yd-option.fx-lit-pulse .lamp-icon svg{animation:none!important}

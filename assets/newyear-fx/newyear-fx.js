@@ -47,13 +47,13 @@
     specksOpacity: 0.35,                 // 米色光點底紋透明度
     effects: { ambient: true, title: true, lamp: true, amount: true, steps: true, success: true, dialog: true, cta: true, parallax: true, card3d: true },
     quietWhileTyping: true,              // 表單欄位取得焦點時，隱藏並暫停背景光點（填寫區不放持續動畫）
-    successText: '圓滿回向',
+    successText: '圓滿迴向',
     successMs: 2600,
     selectors: {
       title: ['.yd-banner-empty strong', '.banner-hero h1:not(.sr-only)', '#register .heading h2'],
       heroHost: ['#bannerSlot', '.banner-hero'],  // 主視覺容器（光暈與光點疊在其中）
       sectionPanel: '.panel',                     // 角落裝飾掛載的區塊
-      lanternHost: '.yd-opt-head',                // 燈別選項列（燈籠插在勾選框右側）
+      lanternHost: '',                            // 燈別選項列（燈籠插在勾選框右側）；圓燈頁選項列已改用彩色燈照片圖示，故預設不插入
       lampInput: 'input.fam-check, input.opt-check, input.lamp-check, input.sponsor-check',
       lampCard: '.yd-option, .lamp',
       amount: ['#total', '#mobileAmount'],
@@ -200,7 +200,7 @@
   }
   function buildLanterns() {
     if (!C.effects.lamp) return;
-    $$(C.selectors.lanternHost).forEach(function (h) {
+    if (C.selectors.lanternHost) $$(C.selectors.lanternHost).forEach(function (h) {
       if (h.querySelector('.fx-lantern-ico')) return;
       var ico = document.createElement('i'); ico.className = 'fx-lantern-ico'; ico.setAttribute('aria-hidden', 'true'); ico.setAttribute('data-fx-decor', '');
       var inp = h.querySelector('input'); if (inp && inp.nextSibling) h.insertBefore(ico, inp.nextSibling); else h.appendChild(ico);
@@ -363,7 +363,7 @@
     later(function () { first = false; }, 900);
   }
 
-  /* ───────────── 5. 送出成功：伺服器回報成功後，一盞燈點亮、放大淡出，「圓滿回向」 ───────────── */
+  /* ───────────── 5. 送出成功：伺服器回報成功後，一盞燈點亮、放大淡出，「圓滿迴向」 ───────────── */
   var celebrating = false;
   function celebrate() {
     if (!C.effects.success || celebrating) return;

@@ -1,6 +1,6 @@
-# 圓燈總回向法儀報名（`preview-yuandeng/`）
+# 圓燈總迴向法儀報名（`preview-yuandeng/`）
 
-「115年(丙午) 辭歲謝平安 圓燈總回向法儀」的獨立報名頁。與太歲燈（`preview-vokdayja/`）共用同一個報名後端（Apps Script）、同一份 116年 Google 試算表與同一個後台，以活動代碼 **`yuandeng-115-bingwu`** 區分；資料各自寫入自己的「明細」與「報名總表」分頁。
+「115年(丙午) 辭歲謝平安 圓燈總迴向法儀」的獨立報名頁。與太歲燈（`preview-vokdayja/`）共用同一個報名後端（Apps Script）、同一份 116年 Google 試算表與同一個後台，以活動代碼 **`yuandeng-115-bingwu`** 區分；資料各自寫入自己的「明細」與「報名總表」分頁。
 
 - 報名頁：`https://lyyuan.tw/preview-yuandeng/`（`noindex`，主站導覽未連結）
 - 法儀日：116年1月31日（農曆十二月二十四日送神日）；截止：116年1月29日 23:59（`meta.deadline`，到點前端與後端同時自動關閉）
