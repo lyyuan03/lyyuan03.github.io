@@ -345,3 +345,30 @@ body:has(> .zp-main) .zp-gated-label::before{
   #fbf5e8;
 }
 body:has(> .zp-main) .zp-lamp .zp-lamp-editor-link{color:var(--zr-gold-ink)}
+
+/* ---------- 題圖（尚無繪製主視覺的生肖）：和紙、金色圓相、生肖徽章與地支字 ----------
+   以既有徽章組成完整的章節題圖，不再顯示「待補」虛線框；日後有繪製主視覺時換回 <img> 即可。 */
+body:has(> .zp-main) .zp-main>.zp-hero--emblem{
+ aspect-ratio:2.3/1;display:grid;place-items:center;overflow:hidden;border:0;
+ background:
+  radial-gradient(circle at 50% 50%,transparent 0 calc(min(34vw,150px) - 1px),rgba(165,130,84,.55) min(34vw,150px),transparent calc(min(34vw,150px) + 1.5px)),
+  radial-gradient(circle at 50% 50%,rgba(234,216,180,.75),rgba(234,216,180,.18) min(40vw,190px),transparent min(62vw,330px)),
+  linear-gradient(90deg,transparent 0 8%,rgba(165,130,84,.32) 8% calc(8% + 1px),transparent calc(8% + 1px) calc(92% - 1px),rgba(165,130,84,.32) calc(92% - 1px) 92%,transparent 92%),
+  linear-gradient(180deg,#f6eedb,#efe4cc);
+}
+body:has(> .zp-main) .zp-main>.zp-hero--emblem::after{
+ background:linear-gradient(180deg,transparent 60%,rgba(250,246,236,.7));
+}
+body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-badge{
+ grid-area:1/1;position:relative;z-index:1;width:min(46%,236px);height:auto;object-fit:contain;
+ border-radius:50%;clip-path:circle(43%);mix-blend-mode:multiply;filter:none;transform:scale(1.12);will-change:auto;
+}
+body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-glyph{
+ grid-area:1/1;justify-self:end;align-self:end;margin:0 calc(8% + 22px) 18px 0;
+ font:400 clamp(40px,7vw,76px)/1 'Noto Serif TC',serif;color:rgba(165,130,84,.34);letter-spacing:0;
+}
+@media(max-width:768px){
+ body:has(> .zp-main) .zp-main>.zp-hero--emblem{aspect-ratio:16/10}
+ body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-badge{width:min(50%,190px)}
+ body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-glyph{margin:0 calc(8% + 10px) 10px 0}
+}
