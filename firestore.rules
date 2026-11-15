@@ -12,8 +12,13 @@ service cloud.firestore {
         && request.auth.token.email_verified == true;
     }
 
+    // 管理員：必須是已驗證的 lyyuan03@gmail.com。
+    // 刻意不呼叫 verifiedEmail()：isAdmin() 在 canReadMemberVideo 等規則中會被重複求值，
+    // 多一層函式呼叫會讓靈機會員影片規則超過 Firestore 1000 次運算上限而被誤拒。
     function isAdmin() {
-      return verifiedEmail() && request.auth.token.email in ["lyyuan03@gmail.com"];
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == "lyyuan03@gmail.com";
     }
 
     function wellnessMember() {
