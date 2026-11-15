@@ -1,0 +1,37 @@
+name: Storage rules test (emulator only)
+
+# 只在 Storage 模擬器中驗證 storage.rules，不使用任何憑證、不連正式資料、不部署。
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - storage.rules
+      - scripts/tests/storage-rules.test.mjs
+      - .github/workflows/storage-rules-test.yml
+
+permissions:
+  contents: read
+
+jobs:
+  rules-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install emulator test tools (temporary, not committed)
+        run: |
+          mkdir -p /tmp/rules-test && cd /tmp/rules-test
+          npm init -y >/dev/null
+          npm i --legacy-peer-deps firebase-tools@13 @firebase/rules-unit-testing@3 firebase@10
+      - name: Run storage rules tests (any failed case fails the job)
+        run: |
+          cp storage.rules scripts/tests/storage-rules.test.mjs /tmp/rules-test/
+          cd /tmp/rules-test
+          echo '{"storage":{"rules":"storage.rules"},"emulators":{"storage":{"host":"127.0.0.1","port":9199},"ui":{"enabled":false}}}' > firebase.json
+          npx firebase emulators:exec --only storage --project demo-storage "node storage-rules.test.mjs storage.rules"
