@@ -1,0 +1,66 @@
+name: Prepare final love article image files and public encryption key
+on:
+  push:
+    branches:
+      - feat/love-paid-final-20261115
+    paths:
+      - .github/workflows/love-paid-final-assets.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/love-paid-final-20261115
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Extract public-only RSA key from existing publisher credential
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { createPrivateKey, createPublicKey } from 'node:crypto';
+          const json = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || '{}');
+          if (!json.private_key) throw new Error('Existing Firebase publisher key is unavailable');
+          const publicKey = createPublicKey(createPrivateKey(json.private_key)).export({ type:'spki', format:'pem' });
+          fs.mkdirSync('.github/diagnostics', {recursive:true});
+          fs.writeFileSync('.github/diagnostics/love-publisher-public.pem', publicKey);
+          console.log('Public-only key exported. The private key is never saved or printed.');
+          NODE
+      - name: Re-export eight article WebP images with gently improved color and luminosity
+        run: |
+          python -m pip install --quiet pillow
+          python <<'PY'
+          from PIL import Image, ImageEnhance
+          import os
+          from pathlib import Path
+          root=Path('assets/articles/love-universal-emotion-and-fidelity')
+          names=[f'{i:02d}-{n}.webp' for i,n in [(1,'multiple-loves'),(2,'emotion-born-in-contact'),(3,'universal-love'),(4,'choice-and-boundaries'),(5,'patterns-and-reflection'),(6,'reading-and-understanding')]]
+          names+=['cover.webp','thumbnail-450x800.webp']
+          for name in names:
+              p=root/name
+              with Image.open(p) as image:
+                  image.load()
+                  rgb=image.convert('RGB')
+                  adjusted=ImageEnhance.Brightness(rgb).enhance(1.045)
+                  adjusted=ImageEnhance.Color(adjusted).enhance(1.065)
+                  adjusted=ImageEnhance.Contrast(adjusted).enhance(1.025)
+                  if image.size != adjusted.size: raise RuntimeError('Image size changed')
+                  adjusted.save(p,format='WEBP',quality=92,method=6)
+                  with Image.open(p) as check:
+                      check.verify()
+                  print(f'REEXPORTED {name}: {p.stat().st_size} bytes; {image.size}')
+          PY
+      - name: Commit refreshed binary assets and public key to feature branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/articles/love-universal-emotion-and-fidelity/*.webp .github/diagnostics/love-publisher-public.pem
+          git commit -m "Re-upload eight refreshed images and publisher public key" || exit 0
+          git push origin HEAD:feat/love-paid-final-20261115
