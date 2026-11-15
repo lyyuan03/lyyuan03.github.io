@@ -253,7 +253,7 @@ function registrationFromApi(data){
   restoreRegistration(registrationFromApi(data));editToken=token;editId=data.id;editLocks=data.locks||null;applyEditLocks();calc();
   $('#editTitle').textContent=`正在修改報名 ${editId}`;
   $('#editPolicy').textContent='修改完成後請按「儲存修改」，資料將更新至原報名。請勿轉傳專屬連結。';
-  $('#cancelEdit').hidden=false;setEditButtons(true);
+  $('#cancelEdit').hidden=false;setEditButtons(true);window.lyyuanOfferYuandeng&&window.lyyuanOfferYuandeng(token);
  }catch{
   editLocks=null;restoreRegistration(blank);clearEditQuery();
   $('#editTitle').textContent='無法載入報名資料';
@@ -422,3 +422,37 @@ function applyStats(stats){
   lastStats=stats;applyStats(stats);
  }catch{ /* Keep the static zodiac cards when stats are unavailable. */ }
 })();
+
+/* 圓燈總回向法儀：確認信連結頁的「以此資料報名圓燈」按鈕。
+   圓燈活動狀態為「開放」且未截止時自動出現；開放前可在網址加 &yd=1（或 &yd=預覽金鑰）預覽。
+   只讀取姓名／Email／電話（action=prefill），存到這台裝置後前往圓燈頁；不會修改本頁的報名資料。 */
+window.lyyuanOfferYuandeng=async function(token){
+ try{
+  if($('#toYuandeng'))return;
+  const EV='yuandeng-115-bingwu',PAGE='/preview-yuandeng/',KEY='lyyuan.yuandeng.profile.v1';
+  const yd=new URLSearchParams(location.search).get('yd')||'',preview=/^[A-Za-z0-9_-]{16,80}$/.test(yd)?yd:'';
+  if(!yd){
+   const url=new URL(window.LYYUAN_SIGNUP_WEBAPP_URL);url.searchParams.set('action','config');url.searchParams.set('event',EV);
+   const res=await fetch(url,{redirect:'follow'});if(!res.ok)return;
+   const data=await res.json(),dl=data&&data.config&&data.config.meta&&data.config.meta.deadline;
+   if(!data||data.ok!==true||data.status!=='開放'||!dl||!(Date.parse(dl+(/[zZ]|[+-]\d\d:?\d\d$/.test(dl)?'':'+08:00'))>Date.now()))return;
+  }
+  const box=$('#editBanner');if(!box||$('#toYuandeng'))return;
+  const hint=document.createElement('p');hint.className='hint';hint.textContent='也可以用這份資料（姓名、Email、電話）報名「辭歲謝平安 圓燈總回向法儀」；會建立一筆新的報名，不會更動這筆報名；將另開新分頁。';
+  const btn=document.createElement('button');btn.type='button';btn.className='subbtn';btn.id='toYuandeng';btn.textContent='以此資料報名圓燈';
+  const msg=document.createElement('p');msg.className='hint';msg.hidden=true;
+  btn.onclick=async()=>{
+   btn.disabled=true;msg.hidden=true;
+   const tab=window.open('about:blank','_blank'); /* 另開分頁：本頁尚未儲存的修改不受影響；被擋下時才在本頁前往 */
+   try{
+    const url=new URL(window.LYYUAN_SIGNUP_WEBAPP_URL);url.searchParams.set('action','prefill');url.searchParams.set('token',token);
+    const res=await fetch(url,{redirect:'follow'}),data=await res.json();
+    if(!res.ok||data.ok!==true||!data.fields)throw new Error('prefill');
+    localStorage.setItem(KEY,JSON.stringify({name:data.fields.name||'',email:data.fields.email||'',phone:data.fields.phone||'',src:'taisui-link',at:Date.now()}));
+    const dest=PAGE+'?applied=1'+(preview?'&preview='+encodeURIComponent(preview):'');
+    if(tab){tab.location.href=dest;btn.disabled=false}else location.href=dest;
+   }catch{if(tab)tab.close();msg.textContent='暫時無法帶入資料，請稍後再試，或直接前往圓燈登記頁自行填寫。';msg.hidden=false;btn.disabled=false}
+  };
+  box.append(hint,btn,msg);
+ }catch{ /* 取不到圓燈狀態就不顯示按鈕，不影響太歲燈 */ }
+};
