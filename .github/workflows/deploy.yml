@@ -91,6 +91,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Exclude internal docs and tests from the published site
+        # docs/ 放內部查證與稽核文件，scripts/tests/ 放測試資料；兩者都不是官網內容，不隨網站發佈。
+        # 只影響本 job 的檢出副本，不改動 repo。網站頁面沒有任何連結指向這兩個資料夾。
+        run: rm -rf docs scripts/tests
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
