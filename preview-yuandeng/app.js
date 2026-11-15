@@ -335,3 +335,13 @@ window.addEventListener('beforeunload', e => { if (editToken) { e.preventDefault
   if ('IntersectionObserver' in window) { const ob = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); ob.unobserve(en.target); } }), { threshold: .08 }); $$('.reveal').forEach(el => ob.observe(el)); }
   else $$('.reveal').forEach(el => el.classList.add('in'));
 })();
+
+/* 右側浮動按鈕：桌機捲動時縮成貼邊半圓，停止捲動 900ms 後展開（只切換 class，不改按鈕本身行為） */
+(() => {
+  const btn = document.getElementById('exclusiveFloat'); if (!btn) return;
+  const mq = window.matchMedia('(min-width: 741px)'); let t = 0;
+  addEventListener('scroll', () => {
+    if (!mq.matches) { btn.classList.remove('yd-dock'); return; }
+    btn.classList.add('yd-dock'); clearTimeout(t); t = setTimeout(() => btn.classList.remove('yd-dock'), 900);
+  }, { passive: true });
+})();

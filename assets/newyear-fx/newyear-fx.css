@@ -34,7 +34,7 @@ html.fx-a-titleHalo .fx-title-halo{background:var(--fx-img-titleHalo) center/con
 .fx-hero-embers{position:absolute;left:0;right:0;bottom:-10%;height:120%;pointer-events:none;z-index:0;opacity:0;background-repeat:no-repeat;background-position:center bottom;background-size:cover;will-change:transform,opacity}
 .fx-hero-medium{background-image:var(--fx-img-embersMedium)}
 .fx-hero-large{background-image:var(--fx-img-embersLarge);bottom:-6%;opacity:.55}
-.fx-corner-host{position:relative}
+html.fx-on .fx-corner-host:not(.mobiletotal){position:relative}
 .fx-corner{position:absolute;top:4px;right:4px;width:84px;height:84px;pointer-events:none;opacity:.6;background:var(--fx-img-embersSmall) center/contain no-repeat}
 html.fx-a-flameMark .panel h3::before{content:"";display:inline-block;width:1.05em;height:1.05em;margin-right:.4em;vertical-align:-.14em;background:var(--fx-img-flameMark) center/contain no-repeat}
 .fx-lantern-ico{position:relative;flex:0 0 22px;width:22px;height:28px;margin-top:3px;display:block;pointer-events:none}
@@ -137,3 +137,98 @@ html:not(.fx-lantern-img) .fx-lamp-body{display:block;width:100%;height:100%;bor
   @keyframes fx-bd-in{from{opacity:0}to{opacity:1}}
 }
 @media (prefers-reduced-motion:reduce){.fx-layer,.fx-success{display:none!important}}
+
+/* ═════════════ v2：3D 質感層（html.fx-3d；靜態質感不依賴動畫，動畫另包在 no-preference） ═════════════ */
+:root{--fx-lift:3px;--fx-halo:1}
+
+/* 3-1 卡片：雙層陰影（近 0 2px 4px 暖金 15%／遠 0 12px 28px 深色 12%）＋頂 1px 內高光、底 1px 內暗線 */
+html.fx-3d .panel,html.fx-3d .lamp,html.fx-3d .summary{
+  box-shadow:0 2px 4px color-mix(in srgb,var(--fx-warm) 15%,transparent),0 12px 28px color-mix(in srgb,var(--fx-ink) 12%,transparent),
+    inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 color-mix(in srgb,var(--fx-warm) 22%,transparent)}
+html.fx-3d .lamp{position:relative;isolation:isolate}
+
+/* 3-2 勾選＝亮起：上浮、金邊、暖金內漸層；光暈層一次淡入；火光層極輕閃動；取消後平順回復 */
+html.fx-3d .lamp.fx-lit{
+  transform:translateY(calc(var(--fx-lift) * -1));border-color:var(--fx-gold);
+  background-image:linear-gradient(180deg,color-mix(in srgb,var(--fx-champagne) 45%,transparent),color-mix(in srgb,var(--fx-gold) 14%,transparent)),linear-gradient(180deg,#fffcf6,#f2e6c9);
+  box-shadow:0 2px 4px color-mix(in srgb,var(--fx-warm) 22%,transparent),0 14px 30px color-mix(in srgb,var(--fx-ink) 14%,transparent),
+    inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 color-mix(in srgb,var(--fx-warm) 30%,transparent),inset 0 0 26px color-mix(in srgb,var(--fx-gold) 22%,transparent)}
+.fx-card-halo,.fx-card-flame{position:absolute;pointer-events:none;opacity:0;z-index:-1}
+.fx-card-halo{inset:-8px;border-radius:14px;
+  background:var(--fx-img-cardHalo,radial-gradient(ellipse at 14% 30%,color-mix(in srgb,var(--fx-champagne) 70%,transparent) 0,color-mix(in srgb,var(--fx-gold) 30%,transparent) 36%,transparent 72%)) center/cover no-repeat}
+.fx-card-flame{left:14px;top:6px;width:52px;height:66px;
+  background:var(--fx-img-cardFlame,radial-gradient(ellipse at 50% 62%,color-mix(in srgb,var(--fx-champagne) 90%,transparent) 0,color-mix(in srgb,var(--fx-gold) 45%,transparent) 42%,transparent 72%)) center/contain no-repeat;transform-origin:50% 90%}
+html.fx-3d .lamp.fx-lit>.fx-card-halo{opacity:calc(.85 * var(--fx-halo))}
+html.fx-3d .lamp.fx-lit>.fx-card-flame{opacity:.9}
+
+/* 3-3 步驟標題列：深色底、頂部高光線、底部陰影、雕刻金細線＋菱形分隔 */
+html.fx-3d .sectionline,html.fx-3d .panel>h3:first-child{
+  position:relative;border:0;border-radius:8px;padding:11px 18px 20px;margin-bottom:20px;color:var(--fx-text);
+  background:linear-gradient(180deg,#1b261d 0%,var(--fx-ink) 100%);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--fx-champagne) 55%,transparent),0 2px 0 color-mix(in srgb,var(--fx-ink) 35%,transparent),0 8px 14px -8px color-mix(in srgb,var(--fx-ink) 55%,transparent)}
+html.fx-3d .sectionline h3,html.fx-3d .panel>h3:first-child{margin:0;color:var(--fx-champagne);text-shadow:0 1px 0 rgba(0,0,0,.5)}
+html.fx-3d .sectionline h3 .num,html.fx-3d .panel>h3:first-child .num{color:var(--fx-gold)}
+html.fx-3d .sectionline small{color:var(--fx-muted)}
+html.fx-3d .sectionline::after,html.fx-3d .panel>h3:first-child::after{content:"";position:absolute;left:14px;right:14px;bottom:7px;height:8px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--fx-gold) 10%,var(--fx-warm) 50%,var(--fx-gold) 90%,transparent) center 4px/100% 1px no-repeat,
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M4 0l4 4-4 4-4-4z' fill='%23C9A063'/%3E%3C/svg%3E") 10% 0/8px 8px no-repeat,
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M4 0l4 4-4 4-4-4z' fill='%23EAD8B4'/%3E%3C/svg%3E") 50% 0/8px 8px no-repeat,
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M4 0l4 4-4 4-4-4z' fill='%23C9A063'/%3E%3C/svg%3E") 90% 0/8px 8px no-repeat}
+
+/* 3-4 CTA／確認送出：金屬漸層、內高光、慢速掃光（6s）、按下下沉 2px */
+html.fx-3d .fx-cta{position:relative;overflow:hidden;color:var(--fx-ink)!important;
+  background:linear-gradient(180deg,var(--fx-champagne) 0%,var(--fx-gold) 52%,var(--fx-warm) 100%)!important;
+  border:1px solid color-mix(in srgb,var(--fx-warm) 80%,#000)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),inset 0 -2px 0 color-mix(in srgb,var(--fx-warm) 60%,transparent),0 3px 0 color-mix(in srgb,var(--fx-warm) 70%,#000),0 8px 16px color-mix(in srgb,var(--fx-ink) 25%,transparent)!important}
+html.fx-3d .fx-cta::after{display:none!important}
+html.fx-3d .fx-cta:active{transform:translateY(2px)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 color-mix(in srgb,var(--fx-warm) 60%,transparent),0 1px 0 color-mix(in srgb,var(--fx-warm) 70%,#000),0 3px 8px color-mix(in srgb,var(--fx-ink) 25%,transparent)!important}
+html.fx-3d .fx-cta:disabled{opacity:.6}
+.fx-sweep{position:absolute;top:0;bottom:0;left:0;width:38%;pointer-events:none;opacity:0;z-index:2;transform:translateX(-140%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)}
+
+/* 3-5 底部金額列：浮起陰影；金額更新時數字微升＋高光一閃 */
+html.fx-3d .mobiletotal{box-shadow:0 -10px 26px color-mix(in srgb,var(--fx-ink) 22%,transparent),0 -1px 0 color-mix(in srgb,var(--fx-gold) 60%,transparent),inset 0 1px 0 rgba(255,255,255,.7)}
+html.fx-3d .mobiletotal b{display:inline-block}
+.fx-glint-host{overflow:hidden}
+html.fx-3d .fx-glint-host:not(.mobiletotal){position:relative}  /* .mobiletotal 本身是 fixed，不可改 position */
+.fx-glint{position:absolute;top:0;bottom:0;left:0;width:34%;pointer-events:none;opacity:0;transform:translateX(-130%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--fx-champagne) 80%,transparent),transparent)}
+
+/* 3-6 背景視差：祥雲／回紋底紋（淺色區），位移 2–6px，rAF 節流 */
+.fx-tile{position:absolute;inset:-14px;pointer-events:none;opacity:.5;will-change:transform;
+  background:var(--fx-img-cloudTile) 0 0/auto repeat}
+html:not(.fx-a-cloudTile) .fx-tile{background-size:72px 72px;background-repeat:repeat;opacity:.16}
+html.fx-quiet .fx-tile{opacity:.08}
+
+/* 3-7 暗色區深度粒子：遠（小、慢、淡）／近（大、快、亮） */
+html.fx-on .fx-dark-host{position:relative}
+.fx-dp{position:absolute;bottom:0;left:0;border-radius:50%;opacity:0;pointer-events:none;will-change:transform,opacity;z-index:0}
+.fx-dp.fx-t0{background:var(--fx-gold);box-shadow:0 0 5px var(--fx-gold)}
+.fx-dp.fx-t1{background:var(--fx-champagne);box-shadow:0 0 6px var(--fx-champagne)}
+.fx-dp.fx-t2{background:var(--fx-warm);box-shadow:0 0 4px var(--fx-warm)}
+.fx-dp.far{filter:blur(.4px)}
+
+@media (prefers-reduced-motion:no-preference){
+  /* 3-2 平順回復＋光暈淡入、火光極輕閃動（4s、振幅極小；輸入文字時暫停） */
+  html.fx-3d .lamp{transition:transform .5s cubic-bezier(.2,.7,.3,1),box-shadow .5s ease,border-color .5s ease!important}
+  .fx-card-halo{transition:opacity .9s ease}
+  .fx-card-flame{transition:opacity .6s ease}
+  html.fx-3d .lamp.fx-lit>.fx-card-flame.fx-flicker{animation:fx-flame 4s ease-in-out infinite}
+  @keyframes fx-flame{0%,100%{opacity:.82;transform:scale(1)}50%{opacity:.95;transform:scale(1.03,1.05)}}
+  html.fx-quiet .fx-card-flame,html.fx-paused .fx-card-flame,html.fx-paused .fx-sweep,html.fx-paused .fx-dp{animation-play-state:paused}
+  /* 3-4 掃光每 6 秒一次 */
+  html.fx-3d .fx-cta .fx-sweep{animation:fx-sweep 6s ease-in-out infinite}
+  @keyframes fx-sweep{0%,70%{opacity:0;transform:translateX(-140%) skewX(-18deg)}74%{opacity:1}92%{opacity:1}100%{opacity:0;transform:translateX(360%) skewX(-18deg)}}
+  html.fx-3d .fx-cta{transition:transform .12s ease,box-shadow .12s ease!important}
+  /* 3-5 金額微升＋一次高光（覆寫 v1 的文字光暈） */
+  html.fx-3d .fx-shine b{animation:fx-num-rise .6s cubic-bezier(.2,.8,.3,1) 1}
+  @keyframes fx-num-rise{0%{transform:translateY(0)}35%{transform:translateY(-3px);text-shadow:0 0 14px color-mix(in srgb,var(--fx-gold) 70%,transparent)}100%{transform:translateY(0);text-shadow:0 0 0 transparent}}
+  html.fx-3d .fx-shine>.fx-glint{animation:fx-glint .9s ease-out 1}
+  @keyframes fx-glint{0%{opacity:0;transform:translateX(-130%) skewX(-18deg)}20%{opacity:.9}100%{opacity:0;transform:translateX(380%) skewX(-18deg)}}
+  /* 3-7 深度粒子：近快遠慢 */
+  .fx-dp{animation:fx-dp-rise 30s linear infinite}
+  @keyframes fx-dp-rise{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:var(--o,.6)}85%{opacity:var(--o,.6)}100%{transform:translate3d(var(--dx,0),calc(var(--rise,260px) * -1),0);opacity:0}}
+  /* 3-8 成功：燈由小放大、光暈擴散、HTML 文字淡入 */
+  @keyframes fx-lamp-life{0%{opacity:0;transform:translateY(10px) scale(.3)}30%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:1;transform:scale(1.08)}100%{opacity:0;transform:scale(2.4)}}
+}
+@media (prefers-reduced-motion:reduce){.fx-sweep,.fx-glint,.fx-dp,.fx-card-halo,.fx-card-flame{display:none!important}}

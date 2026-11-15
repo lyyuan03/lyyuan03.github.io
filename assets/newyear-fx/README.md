@@ -1,11 +1,11 @@
-# newyear-fx — 過年氛圍動畫疊層（v1.0）
+# newyear-fx — 過年氛圍動畫疊層（v2.0，含 3D 質感層）
 
 獨立的 CSS + JS，不改頁面 HTML 結構與背景圖。目前只掛在 `preview-yuandeng/`（草稿預覽），可重複使用於其他報名頁。
 
 ## 安裝（只加兩行標籤）
 ```html
-<link rel="stylesheet" href="/assets/newyear-fx/newyear-fx.css?v=20261115-fx-1">   <!-- 放 <head> 內，其他 CSS 之後 -->
-<script src="/assets/newyear-fx/newyear-fx.js?v=20261115-fx-1" defer></script>      <!-- 放 </body> 前、頁面 app.js 之後 -->
+<link rel="stylesheet" href="/assets/newyear-fx/newyear-fx.css?v=20261115-fx-2">   <!-- 放 <head> 內，其他 CSS 之後 -->
+<script src="/assets/newyear-fx/newyear-fx.js?v=20261115-fx-2" defer></script>      <!-- 放 </body> 前、頁面 app.js 之後 -->
 ```
 選用：在 `newyear-fx.js` 之前用 `window.LYYUAN_FX = {...}` 覆寫參數（不需要就不寫）。
 
@@ -16,13 +16,19 @@
 | 參數 | 預設 | 說明 |
 |---|---|---|
 | `enabled` | `true` | `false`＝完全關閉 |
-| `count.desktop` / `count.mobile` | 36 / 16 | 背景光點數；硬上限 桌機 60、手機 30（不可超過） |
+| `count.desktop` / `count.mobile` | 36 / 12 | 背景光點數；硬上限 桌機 60、手機 30（含深度粒子與成功爆點，由 `room()` 統一控管） |
+| `depth.desktop` / `depth.mobile` | `{far:8,near:4}` / `{far:2,near:1}` | 暗色區（主視覺、頁尾、成功彈窗）每區遠／近兩層粒子數；近層較快較亮、遠層較慢較淡 |
+| `lift` | 3 | 勾選亮起時卡片上浮 px（0–12） |
+| `haloIntensity` | 1 | 亮燈光暈強度（0–1.5） |
+| `flicker` | `true` | 亮燈火光極輕微閃動（4 秒週期） |
+| `parallax` | 6 | 背景祥雲／回紋視差位移 px（0＝關；建議 2–6） |
+| `ctaSweep` | `true` | CTA 每 6 秒一次掃光 |
 | `speed` | 1 | 光點上升速度倍率 |
 | `size` | 1 | 光點大小倍率 |
 | `opacity` | 1 | 背景光點整體透明度 |
 | `colors` | 見上 | 三色金與底/文字色 |
 | `assetBase` / `assets` | `/assets/yuandeng/` + 8 個檔名 | 素材；檔名留空＝停用；載入前先探測，缺檔自動備援 |
-| `effects` | 全開 | `ambient,title,lamp,amount,steps,success,dialog` 可個別關閉 |
+| `effects` | 全開 | `ambient,title,lamp,amount,steps,success,dialog,cta,parallax,card3d` 可個別關閉（`card3d:false`＝關閉卡片／標題列的 3D 質感） |
 | `quietWhileTyping` | `true` | 文字欄位取得焦點時，背景光點淡出並暫停 |
 | `successText` / `successMs` | 圓滿回向 / 2600 | 成功動畫文字與時長 |
 | `selectors` | 見檔內 | 對應頁面元素（標題、燈別勾選、金額、步驟、結果彈窗…） |
@@ -35,7 +41,8 @@
 - 使用者系統開啟「減少動態效果」（prefers-reduced-motion）：完全不啟動（不插入任何節點、不載入素材）；執行中切換也即時生效。
 - 最快撤除：從頁面移除那兩行標籤即可，頁面無任何相依。
 
-## 素材（SVG，由設計提供，放 `/assets/yuandeng/`）
+## 素材（SVG，由設計提供，放 `/assets/yuandeng/`；目前缺檔，全部走備援）
+新增（v3 pack 預期檔名，確認後只需改 `assets` 對照表）：`yuandeng-cloud-tile.svg`（視差底紋，缺檔用內建回紋）、`yuandeng-card-halo.svg`、`yuandeng-card-flame.svg`（缺檔用 CSS 漸層）。
 | 檔名 | 用途 |
 |---|---|
 | `yuandeng-title-halo.svg` | 主視覺標題後方光暈，淡入一次（缺檔：CSS 漸層光暈） |
@@ -57,3 +64,18 @@
 
 ## 效能與無障礙
 只用 transform／opacity（標題與金額為一次性短暫 filter／text-shadow）；分頁隱藏時暫停；表單填寫時背景淡出。
+
+## v2：3D 質感層（`html.fx-3d`）
+1. 卡片（`.panel .lamp .summary`）雙層陰影：近 `0 2px 4px` 暖金 15%、遠 `0 12px 28px` 深色 12%；頂 1px 內高光、底 1px 內暗線。
+2. 勾選＝亮起（`.lamp.fx-lit`）：上浮 `lift`、邊框 `#C9A063`、暖金內漸層、燈籠換亮版、光暈層淡入、火光層 4 秒極輕閃動；取消後平順回復。
+3. 步驟標題列（`.sectionline`）：深色底、頂部高光線、底部陰影、雕刻金細線＋菱形分隔。
+4. CTA／確認送出：`#EAD8B4→#C9A063→#A58254` 金屬漸層、內高光、6 秒一次掃光、按下下沉 2px。
+5. 底部金額列：浮起陰影；金額更新時數字微升＋一次高光。
+6. 背景視差：祥雲／回紋底紋，位移 ≤ `parallax` px，rAF 節流。
+7. 暗色區遠近兩層粒子（近快遠慢）。
+8. 成功（僅伺服器回報成功後）：燈由小放大、光暈擴散、「圓滿回向」HTML 文字淡入。
+所有裝飾皆 `aria-hidden`、`pointer-events:none`；`prefers-reduced-motion` 開啟時整個疊層不啟動。
+
+## 頁面層修正（不屬於特效，不受主開關影響，在 `preview-yuandeng/yuandeng.css` + `app.js`）
+- 右側浮動「限定選物」按鈕：桌機捲動時縮成貼邊半圓，停止捲動 900ms 後展開；滑過／聚焦即展開。
+- 頂部固定列（導覽＋會員登入）改為不透明底 `#faf6ee`（移除半透明與 backdrop-filter）。
