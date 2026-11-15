@@ -13,7 +13,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return signedIn() && request.auth.token.email in ["lyyuan03@gmail.com"];
+      return verifiedEmail() && request.auth.token.email in ["lyyuan03@gmail.com"];
     }
 
     function wellnessMember() {
@@ -297,8 +297,11 @@ service cloud.firestore {
       allow get: if isAdmin()
         || (resource.data.status == "published"
           && resource.data.active == true
-          && get(/databases/$(database)/documents/articles/$(articleId)).data.status == "published"
           && resource.data.requiredPermission is string
+          && get(/databases/$(database)/documents/articles/$(articleId)).data.status == "published"
+          // 正文的 requiredPermission 必須與同一 articleId 的公開文件一致，
+          // 避免單獨改錯 eventArticleBodies 的權限欄位就能讀到別篇全文。
+          && get(/databases/$(database)/documents/articles/$(articleId)).data.requiredPermission == resource.data.requiredPermission
           && hasEventPermission(resource.data.requiredPermission));
       allow list, create, update, delete: if isAdmin();
     }

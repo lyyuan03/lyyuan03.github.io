@@ -96,6 +96,32 @@ const listQuery = (db) => getDocs(query(collection(db, "memberEntitlements"), wh
 await t("名單：管理員可載入已開通名單", assertSucceeds(listQuery(ADMIN)));
 await t("名單：一般使用者不可載入名單", assertFails(listQuery(A)));
 
+// ---- 安全修正：isAdmin() 必須檢查 email_verified ----
+// 目前只有 Google 登入一個管理員帳號，email_verified 一律為 true，所以修正不影響正常流程；
+// 這裡模擬「未驗證信箱但使用 lyyuan03@gmail.com」的狀況，確認修正後會被拒絕（舊規則會放行）。
+const UNVERIFIED_ADMIN = user("lyyuan03@gmail.com", false);
+await t("安全修正：未驗證信箱的管理員不可寫入外殼", assertFails(setDoc(doc(UNVERIFIED_ADMIN, "articles", "dingwei-2027-adminverify"), shellOf("dingwei-2027-adminverify"))));
+await t("安全修正：未驗證信箱的管理員不可寫入正文", assertFails(setDoc(doc(UNVERIFIED_ADMIN, "eventArticleBodies", "dingwei-2027-adminverify"), bodyOf("dingwei-2027-adminverify"))));
+await t("安全修正：未驗證信箱的管理員不可讀他人權限文件", assertFails(getDoc(doc(UNVERIFIED_ADMIN, "memberEntitlements", "a@gmail.com"))));
+await t("安全修正：已驗證信箱的管理員仍可正常寫入（相容性）", assertSucceeds(setDoc(doc(ADMIN, "articles", "dingwei-2027-adminverify"), shellOf("dingwei-2027-adminverify"))));
+
+// ---- 安全修正：eventArticleBodies.requiredPermission 必須與對應 articles 文件一致 ----
+// 模擬管理頁手動改錯正文的 requiredPermission 欄位（實際發生時是人為失誤或資料污染，
+// 不是透過本站管理介面——介面一律同步寫入兩邊相同的值，見 admin-zodiac-lamp.js / article-admin-core.js）。
+// 這裡刻意讓 articles/dingwei-2027-mismatch 宣告需要「鼠」權限，
+// 但 eventArticleBodies/dingwei-2027-mismatch 卻標成「牛」權限、內容其實是鼠的專屬全文。
+// 修正前：只有牛權限的人（b@gmail.com）就能讀到這篇「鼠」的全文，即使他沒有鼠的權限。
+// 修正後：因為兩邊 requiredPermission 不一致，無論持有哪個生肖權限都必須被拒絕。
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, "articles", "dingwei-2027-mismatch"), { status: "published", hidden: true, systemRecord: true, systemType: "lampLayer", accessType: "event", requiredPermission: "dingwei-2027-rat", content: "" });
+  await setDoc(doc(db, "eventArticleBodies", "dingwei-2027-mismatch"), { status: "published", active: true, requiredPermission: "dingwei-2027-ox", content: "secret-rat-leaked-via-ox-permission" });
+});
+await t("安全修正：正文與外殼的 requiredPermission 不一致時，牛權限者不可讀（修正前會洩漏鼠的全文）", assertFails(getDoc(doc(B, "eventArticleBodies", "dingwei-2027-mismatch"))));
+await t("安全修正：正文與外殼的 requiredPermission 不一致時，鼠權限者也不可讀", assertFails(getDoc(doc(A, "eventArticleBodies", "dingwei-2027-mismatch"))));
+await t("安全修正：requiredPermission 不一致時管理員仍可讀（維運與除錯用）", assertSucceeds(getDoc(doc(ADMIN, "eventArticleBodies", "dingwei-2027-mismatch"))));
+await t("安全修正：requiredPermission 一致時（鼠讀鼠）不受影響", assertSucceeds(body(A, "rat")));
+
 await env.cleanup();
 for (const r of results) console.log(r.join("  "));
 const failed = results.filter((r) => r[0] === "FAIL").length;
