@@ -460,7 +460,7 @@ const renderLatestArticles = (articles) => {
   }
 
   const merged = [...firestoreArticles, ...staticArticles]
-    .filter((article) => article.status === "published")
+    .filter((article) => article.status === "published" && article.hidden !== true && article.systemRecord !== true)
     .reduce((items, article) => {
       const key = article.id || article.slug;
       if (key && !items.some((item) => (item.id || item.slug) === key)) items.push(article);
