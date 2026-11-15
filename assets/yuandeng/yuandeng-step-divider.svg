@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="44" viewBox="0 0 720 44" fill="none" aria-hidden="true">
+<desc>深色區步驟標題：雙線與菱形</desc>
+<defs></defs>
+<g id="step-divider-layer-body" stroke="#A58254" stroke-width="1" stroke-linejoin="miter"><path d="M8 19H310 M410 19H712"/><path d="M8 25H310 M410 25H712"/><path d="M360 5L377 22 360 39 343 22Z"/><path d="M360 11L371 22 360 33 349 22Z"/></g>
+<g id="step-divider-layer-highlight" stroke="#EAD8B4" stroke-opacity=".77" stroke-width="1"><path d="M8 18H310 M410 18H712"/><path d="M360 5L377 22"/></g>
+<g id="step-divider-layer-shadow" stroke="#A58254" stroke-opacity=".6"><path d="M8 26H310 M410 26H712"/></g>
+<path d="M360 17L365 22 360 27 355 22Z" fill="#C9A063"/>
+</svg>

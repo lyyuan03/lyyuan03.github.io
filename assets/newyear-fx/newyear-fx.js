@@ -25,18 +25,26 @@
     // 載入前會先探測：檔案不存在（404）時自動退回 CSS 繪製的備援圖形（或略過該裝飾），不會出現破圖。
     assetBase: '/assets/yuandeng/',
     assets: {
-      titleHalo: 'yuandeng-title-halo.svg',       // 主視覺標題後方光暈，淡入一次
-      embersMedium: 'yuandeng-embers-medium.svg', // 主視覺緩慢上升（手機只用這一張）
-      embersLarge: 'yuandeng-embers-large.svg',   // 僅桌機：主視覺與成功畫面背景
-      embersSmall: 'yuandeng-embers-small.svg',   // 區塊角落裝飾（靜態，僅桌機）
-      flameMark: 'yuandeng-flame-mark.svg',       // 區塊標題前的小火焰圖示（靜態）
-      cloudTile: 'yuandeng-cloud-tile.svg',        // 祥雲／回紋底紋（視差；缺檔：內建 SVG 回紋）
-      cardHalo: 'yuandeng-card-halo.svg',          // 亮燈卡片光暈（缺檔：CSS 漸層）
-      cardFlame: 'yuandeng-card-flame.svg',        // 亮燈卡片火光（缺檔：CSS 漸層）
-      lanternUnlit: 'yuandeng-lantern-unlit.svg', // 每個燈別選項左側：未亮
-      lanternLit: 'yuandeng-lantern-lit.svg',     // 每個燈別選項左側：已勾選＝亮
-      successCircle: 'yuandeng-success-circle.svg' // 成功畫面圓環（伺服器回報成功後才出現）
+      titleHalo: 'yuandeng-title-halo.svg',           // 主視覺標題後方光暈，淡入一次（深色首屏）
+      embersMedium: 'yuandeng-embers-medium.svg',     // 主視覺緩慢上升（手機只用這一張）
+      embersLarge: 'yuandeng-embers-large.svg',       // 僅桌機：主視覺與成功畫面背景
+      flameMark: 'yuandeng-flame-mark.svg',           // 區塊標題前的小火焰（靜態）
+      lanternUnlit: 'yuandeng-lantern-unlit.svg',     // 燈別選項左側：未亮
+      lanternLit: 'yuandeng-lantern-lit.svg',         // 燈別選項左側：已勾選＝亮
+      successCircle: 'yuandeng-success-circle.svg',   // 成功畫面：燈＋光暈（文字由 HTML 負責），伺服器成功後才出現
+      cardCorners: 'yuandeng-card-corners.svg',       // 米色卡片四角（1:1 裁切四角，不變形）
+      cloudFretTile: 'yuandeng-cloud-fret-tile.svg',  // 米色區祥雲／回紋底紋（視差，整層 opacity .04）
+      beigeSpecksTile: 'yuandeng-beige-specks-tile.svg', // 米色區稀疏深金光點（視差，較快）
+      sponsorLandscape: 'yuandeng-sponsor-landscape.svg', // 贊助「景觀園藝」圖示
+      sponsorRitual: 'yuandeng-sponsor-ritual.svg',   // 贊助「神像供具」圖示
+      sponsorHardware: 'yuandeng-sponsor-hardware.svg', // 贊助「硬體設備」圖示
+      stepDivider: 'yuandeng-step-divider.svg',       // 步驟標題列（深色）雙線菱形雕刻分隔
+      depthFar: 'yuandeng-depth-far.svg',             // 暗色區遠景粒子層（慢速視差）
+      depthNear: 'yuandeng-depth-near.svg'            // 暗色區近景粒子層（較快）
+      // 備註：素材包另有 yuandeng-embers-small.svg（深色區低密度點綴）目前未使用，可自行加入此表。
     },
+    tileOpacity: 0.04,                   // 祥雲／回紋底紋整層透明度（素材包建議 .04）
+    specksOpacity: 0.35,                 // 米色光點底紋透明度
     effects: { ambient: true, title: true, lamp: true, amount: true, steps: true, success: true, dialog: true, cta: true, parallax: true, card3d: true },
     quietWhileTyping: true,              // 表單欄位取得焦點時，隱藏並暫停背景光點（填寫區不放持續動畫）
     successText: '圓滿回向',
@@ -154,7 +162,7 @@
         if (!started || has(k)) return; assetState.loaded.push(k);
         root.style.setProperty('--fx-img-' + k, 'url("' + u + '")'); root.classList.add('fx-a-' + k);
         if (has('lanternUnlit') && has('lanternLit')) root.classList.add('fx-lantern-img');
-        buildDecor(); if (k === 'cloudTile' && tileEl) tileEl.style.backgroundImage = '';
+        buildDecor(); buildDepth(); if ((k === 'cloudFretTile' || k === 'beigeSpecksTile') && layer) bindParallaxRefresh();
       };
       im.onerror = function () { if (assetState.missing.indexOf(k) < 0) assetState.missing.push(k); };
       im.src = u;
@@ -177,7 +185,18 @@
         if (has('embersMedium')) { node('fx-hero fx-hero-embers fx-hero-medium', host); node('fx-hero fx-hero-embers fx-hero-medium b', host); }
       }
     }
-    if (has('embersSmall') && !mobile && C.effects.ambient) $$(C.selectors.sectionPanel).forEach(function (p) { p.classList.add('fx-corner-host'); node('fx-corner', p); });
+    if (has('cardCorners') && C.effects.card3d) $$(C.selectors.sectionPanel).forEach(function (p) {
+      p.classList.add('fx-corner-host'); var c = node('fx-corner', p); c.innerHTML = '<b class="tl"></b><b class="tr"></b><b class="bl"></b><b class="br"></b>';
+    });
+    syncSponsors();
+  }
+  function syncSponsors() {   // 贊助三項：依標題對應素材包圖示（只換圖示外觀，不動勾選邏輯）
+    $$('.lamp').forEach(function (c) {
+      if (!c.querySelector('.sponsor-check')) return;
+      var t = (c.querySelector('.lamp-name strong') || c).textContent || '';
+      var k = /景觀|園藝/.test(t) ? 'Landscape' : /神像|供具/.test(t) ? 'Ritual' : /硬體|設備/.test(t) ? 'Hardware' : '';
+      if (k && has('sponsor' + k)) c.classList.add('fx-sp-' + k.toLowerCase());
+    });
   }
   function buildLanterns() {
     if (!C.effects.lamp) return;
@@ -213,7 +232,8 @@
     if (!C.effects.amount) return;
     C.selectors.glintHosts.forEach(function (q) { $$(q).forEach(function (h) { h.classList.add('fx-glint-host'); if (!h.querySelector(':scope > .fx-glint')) node('fx-glint', h); }); });
   }
-  function depthPlan() { var d = (isMobile() ? C.depth.mobile : C.depth.desktop) || {}; return { far: clamp(d.far, 0, 30), near: clamp(d.near, 0, 30) }; }
+  function depthPlan() { var d = (isMobile() ? C.depth.mobile : C.depth.desktop) || {}; return { far: has('depthFar') ? 0 : clamp(d.far, 0, 30), near: has('depthNear') ? 0 : clamp(d.near, 0, 30) }; }
+  function addDepthImgs(host) { ['far', 'near'].forEach(function (k) { if (has('depth' + (k === 'far' ? 'Far' : 'Near'))) { var n = node('fx-depth-img ' + k, host, true); n.setAttribute('data-fx-host', ''); } }); }
   function fillDepth(host, rise) {
     var plan = depthPlan(), frag = document.createDocumentFragment(), kinds = [['far', plan.far], ['near', plan.near]];
     kinds.forEach(function (k) {
@@ -228,12 +248,12 @@
     host.appendChild(frag);
   }
   function buildDepth() {
-    $$('.fx-dp[data-fx-host]').forEach(function (n) { n.remove(); });
+    $$('[data-fx-host]').forEach(function (n) { n.remove(); });
     if (!C.effects.ambient) return;
     var used = [];
     C.selectors.darkHosts.forEach(function (q) {
       var h = $(q); if (!h || used.indexOf(h) >= 0) return; used.push(h);
-      h.classList.add('fx-dark-host');
+      h.classList.add('fx-dark-host'); addDepthImgs(h);
       var before = h.querySelectorAll('.fx-dp').length; if (before) return;
       var mark = document.createElement('i'); mark.className = 'fx-dp-mark'; h.appendChild(mark);   // 佔位，讓子粒子容易整批移除
       var tmp = document.createElement('div'); fillDepth(tmp, Math.max(120, Math.round(h.offsetHeight || 260)));
@@ -241,17 +261,26 @@
       mark.remove();
     });
   }
-  var tileEl = null, tickPending = false;
+  var tileEl = null, specksEl = null, tickPending = false;
   var MEANDER = "data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'><g fill='none' stroke='#A58254' stroke-width='1.2' stroke-linecap='square' opacity='.55'><path d='M6 66V6h60v48H30V30h18v12'/><path d='M0 36h6M66 36h6M36 0v6M36 66v6'/></g></svg>");
   function parallaxTick() {
     tickPending = false; if (!tileEl) return;
     var max = document.documentElement.scrollHeight - window.innerHeight, p = max > 0 ? Math.min(1, Math.max(0, (window.pageYOffset || 0) / max)) : 0, a = clamp(C.parallax, 0, 12);
     tileEl.style.transform = 'translate3d(' + (p * a * .5).toFixed(2) + 'px,' + (-p * a).toFixed(2) + 'px,0)';
+    if (specksEl) specksEl.style.transform = 'translate3d(' + (p * a * .25).toFixed(2) + 'px,' + (-p * a * .6).toFixed(2) + 'px,0)';
+  }
+  function bindParallaxRefresh() { if (!layer || !tileEl) return; $$('.fx-tile,.fx-specks', layer).forEach(function (n) { n.remove(); }); tileEl = specksEl = null; mountTiles(); parallaxTick(); }
+  function mountTiles() {
+    if (!layer) return;
+    tileEl = document.createElement('i'); tileEl.className = 'fx-tile'; layer.insertBefore(tileEl, layer.firstChild);
+    tileEl.style.backgroundImage = has('cloudFretTile') ? '' : 'url("' + MEANDER + '")';
+    if (has('cloudFretTile')) tileEl.style.opacity = String(clamp(C.tileOpacity, 0, 1));
+    specksEl = null;
+    if (has('beigeSpecksTile')) { specksEl = document.createElement('i'); specksEl.className = 'fx-specks'; specksEl.style.opacity = String(clamp(C.specksOpacity, 0, 1)); layer.insertBefore(specksEl, tileEl.nextSibling); }
   }
   function bindParallax() {
     if (!layer || !(Number(C.parallax) > 0) || !C.effects.parallax) return;
-    tileEl = document.createElement('i'); tileEl.className = 'fx-tile'; layer.insertBefore(tileEl, layer.firstChild);
-    tileEl.style.backgroundImage = has('cloudTile') ? '' : 'url("' + MEANDER + '")';
+    mountTiles();
     var req = function () { if (tickPending) return; tickPending = true; (window.requestAnimationFrame || setTimeout)(parallaxTick); };
     on(window, 'scroll', req, { passive: true }); on(window, 'resize', req); parallaxTick();
   }
@@ -342,10 +371,10 @@
     celebrating = true;
     var wrap = document.createElement('div'); wrap.className = 'fx-success'; wrap.setAttribute('aria-hidden', 'true');
     var mobile = isMobile(), bursts = Math.max(0, Math.min(room(), mobile ? 8 : 18));
-    var html = (has('embersLarge') && !mobile ? '<span class="fx-bg-embers"></span>' : '') + '<span class="fx-circle"></span><span class="fx-halo"></span><span class="fx-lantern"><span class="fx-lamp-body"></span></span>';
+    var sc = has('successCircle'), html = (has('embersLarge') && !mobile ? '<span class="fx-bg-embers"></span>' : '') + (has('depthFar') ? '<span class="fx-depth-img far"></span>' : '') + (has('depthNear') ? '<span class="fx-depth-img near"></span>' : '') + (sc ? '<span class="fx-sc"></span>' : '') + '<span class="fx-circle"></span><span class="fx-halo"></span><span class="fx-lantern"><span class="fx-lamp-body"></span></span>';
     for (var i = 0; i < bursts; i++) { var a = (i / bursts) * 6.2832 + rnd(-.2, .2), d = rnd(90, 170); html += '<i class="fx-burst" style="--bx:' + (Math.cos(a) * d).toFixed(0) + 'px;--by:' + (Math.sin(a) * d).toFixed(0) + 'px;--bd:' + rnd(0, .25).toFixed(2) + 's"></i>'; }
     html += '<span class="fx-success-text"></span>';
-    wrap.innerHTML = html; wrap.querySelector('.fx-success-text').textContent = String(C.successText);
+    wrap.innerHTML = html; if (sc) wrap.classList.add('fx-sc-on'); wrap.querySelector('.fx-success-text').textContent = String(C.successText);
     wrap.style.setProperty('--fx-ms', (Number(C.successMs) || 2600) + 'ms');
     dlg.classList.add('fx-celebrate'); dlg.appendChild(wrap);
     if (C.effects.ambient) fillDepth(wrap, Math.max(160, Math.round(dlg.offsetHeight || 320)));
@@ -392,7 +421,7 @@
     timers.splice(0).forEach(clearTimeout);
     if (layer) { layer.remove(); layer = null; }
     $$('[data-fx-decor]').forEach(function (n) { n.remove(); });
-    $$('.fx-dark-host,.fx-glint-host,.fx-cta,.fx-card').forEach(function (n) { n.classList.remove('fx-dark-host', 'fx-glint-host', 'fx-cta', 'fx-card'); });
+    $$('.fx-dark-host,.fx-glint-host,.fx-cta,.fx-card,.fx-sp-landscape,.fx-sp-ritual,.fx-sp-hardware').forEach(function (n) { n.classList.remove('fx-dark-host', 'fx-glint-host', 'fx-cta', 'fx-card', 'fx-sp-landscape', 'fx-sp-ritual', 'fx-sp-hardware'); });
     $$('.fx-hero-host,.fx-corner-host').forEach(function (n) { n.classList.remove('fx-hero-host', 'fx-corner-host'); });
     assetState.loaded = []; assetState.missing = [];
     $$('.fx-success').forEach(function (n) { n.remove(); });

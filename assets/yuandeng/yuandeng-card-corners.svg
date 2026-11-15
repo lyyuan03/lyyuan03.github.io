@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420" fill="none" aria-hidden="true">
+<desc>米色表單卡片四角；內嵌後可保留原比例</desc>
+<defs></defs>
+<defs><g id="card-corners-corner-unit"><path d="M8 44V21Q8 8 21 8H44" stroke="#A58254" stroke-width="1.25"/><path d="M13 38V23Q13 13 23 13H38" stroke="#C9A063" stroke-width=".8"/><path d="M19 8L26 15 19 22 12 15Z" stroke="#A58254" stroke-width="1"/><path d="M27 13L36 13" stroke="#C9A063" stroke-width=".8"/><path d="M8 27L14 34 8 41" stroke="#C9A063" stroke-width="1"/></g></defs><use href="#card-corners-corner-unit"/><use href="#card-corners-corner-unit" transform="translate(800 0) scale(-1 1)"/><use href="#card-corners-corner-unit" transform="translate(0 420) scale(1 -1)"/><use href="#card-corners-corner-unit" transform="translate(800 420) scale(-1 -1)"/>
+</svg>

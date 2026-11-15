@@ -35,7 +35,26 @@ html.fx-a-titleHalo .fx-title-halo{background:var(--fx-img-titleHalo) center/con
 .fx-hero-medium{background-image:var(--fx-img-embersMedium)}
 .fx-hero-large{background-image:var(--fx-img-embersLarge);bottom:-6%;opacity:.55}
 html.fx-on .fx-corner-host:not(.mobiletotal){position:relative}
-.fx-corner{position:absolute;top:4px;right:4px;width:84px;height:84px;pointer-events:none;opacity:.6;background:var(--fx-img-embersSmall) center/contain no-repeat}
+.fx-corner{position:absolute;inset:0;pointer-events:none;z-index:1}
+.fx-corner b{position:absolute;width:56px;height:56px;background:var(--fx-img-cardCorners) no-repeat;background-size:800px 420px}  /* 1:1 裁切素材四角，不隨卡片變形 */
+.fx-corner .tl{left:0;top:0;background-position:0 0}
+.fx-corner .tr{right:0;top:0;background-position:-744px 0}
+.fx-corner .bl{left:0;bottom:0;background-position:0 -364px}
+.fx-corner .br{right:0;bottom:0;background-position:-744px -364px}
+.fx-depth-img{position:absolute;inset:0;z-index:-1;pointer-events:none;background-position:center;background-repeat:no-repeat;background-size:cover;will-change:transform}
+.fx-depth-img.far{background-image:var(--fx-img-depthFar);opacity:.58}
+.fx-depth-img.near{background-image:var(--fx-img-depthNear);opacity:.5}
+/* 贊助三項：換成素材包圖示（不動勾選邏輯） */
+html.fx-a-sponsorLandscape .fx-sp-landscape .lamp-icon svg,html.fx-a-sponsorRitual .fx-sp-ritual .lamp-icon svg,html.fx-a-sponsorHardware .fx-sp-hardware .lamp-icon svg{display:none}
+html.fx-a-sponsorLandscape .fx-sp-landscape .lamp-icon{background:var(--fx-img-sponsorLandscape) center/contain no-repeat}
+html.fx-a-sponsorRitual .fx-sp-ritual .lamp-icon{background:var(--fx-img-sponsorRitual) center/contain no-repeat}
+html.fx-a-sponsorHardware .fx-sp-hardware .lamp-icon{background:var(--fx-img-sponsorHardware) center/contain no-repeat}
+/* 成功畫面：素材為「燈＋光暈」，有素材時取代 CSS 備援（HTML 文字另放） */
+.fx-sc{width:min(320px,80%);aspect-ratio:640/300;opacity:0;background:var(--fx-img-successCircle) center/contain no-repeat;will-change:transform,opacity}
+.fx-sc-on .fx-circle,.fx-sc-on .fx-halo,.fx-sc-on .fx-lantern{display:none}
+/* 步驟標題列：有素材時用雙線菱形分隔 */
+html.fx-a-stepDivider.fx-3d .sectionline,html.fx-a-stepDivider.fx-3d .panel>h3:first-child{padding-bottom:30px}
+html.fx-a-stepDivider.fx-3d .sectionline::after,html.fx-a-stepDivider.fx-3d .panel>h3:first-child::after{left:50%;right:auto;width:min(360px,calc(100% - 28px));transform:translateX(-50%);height:auto;aspect-ratio:720/44;bottom:3px;background:var(--fx-img-stepDivider) center/100% 100% no-repeat}
 html.fx-a-flameMark .panel h3::before{content:"";display:inline-block;width:1.05em;height:1.05em;margin-right:.4em;vertical-align:-.14em;background:var(--fx-img-flameMark) center/contain no-repeat}
 .fx-lantern-ico{position:relative;flex:0 0 22px;width:22px;height:28px;margin-top:3px;display:block;pointer-events:none}
 .fx-lantern-ico::before,.fx-lantern-ico::after{content:"";position:absolute;inset:3px 4px;border-radius:46% 46% 40% 40%/36% 36% 50% 50%}
@@ -155,9 +174,9 @@ html.fx-3d .lamp.fx-lit{
     inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 color-mix(in srgb,var(--fx-warm) 30%,transparent),inset 0 0 26px color-mix(in srgb,var(--fx-gold) 22%,transparent)}
 .fx-card-halo,.fx-card-flame{position:absolute;pointer-events:none;opacity:0;z-index:-1}
 .fx-card-halo{inset:-8px;border-radius:14px;
-  background:var(--fx-img-cardHalo,radial-gradient(ellipse at 14% 30%,color-mix(in srgb,var(--fx-champagne) 70%,transparent) 0,color-mix(in srgb,var(--fx-gold) 30%,transparent) 36%,transparent 72%)) center/cover no-repeat}
+  background:var(--fx-img-cardHalo-unused,radial-gradient(ellipse at 14% 30%,color-mix(in srgb,var(--fx-champagne) 70%,transparent) 0,color-mix(in srgb,var(--fx-gold) 30%,transparent) 36%,transparent 72%)) center/cover no-repeat}
 .fx-card-flame{left:14px;top:6px;width:52px;height:66px;
-  background:var(--fx-img-cardFlame,radial-gradient(ellipse at 50% 62%,color-mix(in srgb,var(--fx-champagne) 90%,transparent) 0,color-mix(in srgb,var(--fx-gold) 45%,transparent) 42%,transparent 72%)) center/contain no-repeat;transform-origin:50% 90%}
+  background:var(--fx-img-cardFlame-unused,radial-gradient(ellipse at 50% 62%,color-mix(in srgb,var(--fx-champagne) 90%,transparent) 0,color-mix(in srgb,var(--fx-gold) 45%,transparent) 42%,transparent 72%)) center/contain no-repeat;transform-origin:50% 90%}
 html.fx-3d .lamp.fx-lit>.fx-card-halo{opacity:calc(.85 * var(--fx-halo))}
 html.fx-3d .lamp.fx-lit>.fx-card-flame{opacity:.9}
 
@@ -196,13 +215,14 @@ html.fx-3d .fx-glint-host:not(.mobiletotal){position:relative}  /* .mobiletotal 
 
 /* 3-6 背景視差：祥雲／回紋底紋（淺色區），位移 2–6px，rAF 節流 */
 .fx-tile{position:absolute;inset:-14px;pointer-events:none;opacity:.5;will-change:transform;
-  background:var(--fx-img-cloudTile) 0 0/auto repeat}
-html:not(.fx-a-cloudTile) .fx-tile{background-size:72px 72px;background-repeat:repeat;opacity:.16}
+  background:var(--fx-img-cloudFretTile) 0 0/auto repeat}
+.fx-specks{position:absolute;inset:-14px;pointer-events:none;will-change:transform;background:var(--fx-img-beigeSpecksTile) 0 0/auto repeat}
+html:not(.fx-a-cloudFretTile) .fx-tile{background-size:72px 72px;background-repeat:repeat;opacity:.16}
 html.fx-quiet .fx-tile{opacity:.08}
 
 /* 3-7 暗色區深度粒子：遠（小、慢、淡）／近（大、快、亮） */
-html.fx-on .fx-dark-host{position:relative}
-.fx-dp{position:absolute;bottom:0;left:0;border-radius:50%;opacity:0;pointer-events:none;will-change:transform,opacity;z-index:0}
+html.fx-on .fx-dark-host{position:relative;isolation:isolate}
+.fx-dp{position:absolute;bottom:0;left:0;border-radius:50%;opacity:0;pointer-events:none;will-change:transform,opacity;z-index:-1}
 .fx-dp.fx-t0{background:var(--fx-gold);box-shadow:0 0 5px var(--fx-gold)}
 .fx-dp.fx-t1{background:var(--fx-champagne);box-shadow:0 0 6px var(--fx-champagne)}
 .fx-dp.fx-t2{background:var(--fx-warm);box-shadow:0 0 4px var(--fx-warm)}
@@ -225,10 +245,18 @@ html.fx-on .fx-dark-host{position:relative}
   @keyframes fx-num-rise{0%{transform:translateY(0)}35%{transform:translateY(-3px);text-shadow:0 0 14px color-mix(in srgb,var(--fx-gold) 70%,transparent)}100%{transform:translateY(0);text-shadow:0 0 0 transparent}}
   html.fx-3d .fx-shine>.fx-glint{animation:fx-glint .9s ease-out 1}
   @keyframes fx-glint{0%{opacity:0;transform:translateX(-130%) skewX(-18deg)}20%{opacity:.9}100%{opacity:0;transform:translateX(380%) skewX(-18deg)}}
-  /* 3-7 深度粒子：近快遠慢 */
+  /* 3-7 深度粒子（素材層）：只動 transform，幅度小 */
+  .fx-depth-img.far{animation:fx-drift-far 18s ease-in-out infinite alternate}
+  .fx-depth-img.near{animation:fx-drift-near 12s ease-in-out infinite alternate}
+  @keyframes fx-drift-far{to{transform:translate3d(0,-6px,0)}}
+  @keyframes fx-drift-near{to{transform:translate3d(0,-16px,0)}}
+  html.fx-paused .fx-depth-img{animation-play-state:paused}
+  .fx-success .fx-sc{animation:fx-sc-life var(--fx-ms,2600ms) cubic-bezier(.3,.6,.3,1) 1 both}
+  @keyframes fx-sc-life{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1)}62%{opacity:1;transform:scale(1.06)}100%{opacity:0;transform:scale(1.9)}}
+  /* 深度粒子（CSS 備援）：近快遠慢 */
   .fx-dp{animation:fx-dp-rise 30s linear infinite}
   @keyframes fx-dp-rise{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:var(--o,.6)}85%{opacity:var(--o,.6)}100%{transform:translate3d(var(--dx,0),calc(var(--rise,260px) * -1),0);opacity:0}}
   /* 3-8 成功：燈由小放大、光暈擴散、HTML 文字淡入 */
   @keyframes fx-lamp-life{0%{opacity:0;transform:translateY(10px) scale(.3)}30%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:1;transform:scale(1.08)}100%{opacity:0;transform:scale(2.4)}}
 }
-@media (prefers-reduced-motion:reduce){.fx-sweep,.fx-glint,.fx-dp,.fx-card-halo,.fx-card-flame{display:none!important}}
+@media (prefers-reduced-motion:reduce){.fx-sweep,.fx-glint,.fx-dp,.fx-depth-img,.fx-card-halo,.fx-card-flame{display:none!important}}
