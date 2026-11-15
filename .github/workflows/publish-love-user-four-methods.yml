@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - functions/publish-love-user-four-methods.mjs
-      - secure-imports/love-four-methods-v3.enc.json
+      - secure-imports/love-four-methods-v4.enc.json
       - .github/workflows/publish-love-user-four-methods.yml
 permissions:
   contents: read
