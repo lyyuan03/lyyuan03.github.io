@@ -45,7 +45,7 @@ function applyStaticCopy() {
   $$('[data-cfg]').forEach(el => { const v = cfgGet(el.dataset.cfg); if (typeof v === 'string' && v) el.textContent = v; });
   $$('[data-cfg-html]').forEach(el => { const v = cfgGet(el.dataset.cfgHtml); if (typeof v === 'string' && v) el.innerHTML = rich(v); });
   $$('[data-cfg-tail]').forEach(el => { const v = cfgGet(el.dataset.cfgTail); let t = null; el.childNodes.forEach(n => { if (n.nodeType === 3 && n.nodeValue.trim()) t = n; }); if (t && typeof v === 'string' && v) t.nodeValue = v; });
-  const img = (CFG.images || {}).banner, slot = $('#bannerSlot'), pic = $('#bannerImg');
+  const img = { src: '/assets/yuandeng-banner-2027-dingwei.webp', alt: '116年2月11日（四）辭歲謝平安・圓燈總回向法儀（丁未年）' }, slot = $('#bannerSlot'), pic = $('#bannerImg');
   if (img && img.src) { pic.src = img.src; pic.alt = img.alt || ''; pic.hidden = false; slot.classList.remove('empty'); }
   else { pic.hidden = true; slot.classList.add('empty'); }
   $('#transferInfo').innerHTML = rich(CFG.page.transferInfo || '');
