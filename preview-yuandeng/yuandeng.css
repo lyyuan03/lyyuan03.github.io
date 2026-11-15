@@ -1,0 +1,18 @@
+/* 圓燈總回向法儀專用樣式（疊在 style.css 之上；style.css 複製自 preview-vokdayja） */
+.yd-banner-slot{max-width:1120px;margin:0 auto;border:1px solid #c9a06370;border-radius:6px;overflow:hidden;background:#0a100c0d}
+.yd-banner-slot img{display:block;width:100%;height:auto}
+.yd-banner-slot.empty{aspect-ratio:2033/774;min-height:150px;display:grid;place-items:center;border-style:dashed;border-color:var(--line)}
+.yd-banner-empty{display:grid;gap:6px;text-align:center;padding:18px;color:var(--gold);font-family:var(--serif)}
+.yd-banner-empty span{font-size:14px;letter-spacing:.3em;opacity:.85}
+.yd-banner-empty strong{font-size:clamp(20px,4.6vw,38px);font-weight:600;letter-spacing:.18em}
+.yd-hero-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.yd-family .yd-options{padding-top:6px}
+.yd-option{border-top:1px solid #c9a06322;padding:4px 0 8px}
+.yd-option:first-of-type{border-top:0}
+.yd-option .yd-opt-head{padding:8px 0;margin:0;font-size:15px;border-bottom:0}
+.yd-option .yd-names{padding:0 0 6px 24px}
+.yd-option.on .yd-opt-head strong{color:var(--gold)}
+.review td.n{text-align:right;white-space:nowrap}
+.review tr.total td{font-weight:600;color:var(--gold);border-top:1px solid var(--line)}
+#profileNote p{margin:0 0 8px}
+@media (max-width:740px){.yd-option .yd-names{padding-left:8px}}
