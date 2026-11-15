@@ -96,8 +96,26 @@ const listQuery = (db) => getDocs(query(collection(db, "memberEntitlements"), wh
 await t("名單：管理員可載入已開通名單", assertSucceeds(listQuery(ADMIN)));
 await t("名單：一般使用者不可載入名單", assertFails(listQuery(A)));
 
+// ---- 2026-11-15 閱讀系統稽核：補充必要情境 ----
+for (const z of Z) await t(`稽核：管理員可讀${z}`, assertSucceeds(body(ADMIN, z)));
+for (const z of Z) await t(`稽核：只有其他活動權限者不可讀${z}`, assertFails(body(C, z)));
+for (const z of Z) await t(`稽核：未登入不可讀${z}`, assertFails(body(env.unauthenticatedContext().firestore(), z)));
+await t("稽核：讀取不存在的正文文件被拒（不透露是否已建立）", assertFails(getDoc(doc(A, "eventArticleBodies", "dingwei-2027-none"))));
+await t("稽核：一般使用者不可讀他人外殼以外的正文清單", assertFails(getDocs(collection(A, "eventArticleBodies"))));
+
+// ---- 稽核觀察（NOTE，不影響通過與否）：記錄現行規則行為，供是否強化 firestore.rules 決策 ----
+const observe = async (name, p) => { try { await p; results.push(["NOTE", `${name}：目前「允許」`]); } catch { results.push(["NOTE", `${name}：目前「拒絕」`]); } };
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, "articles", "dingwei-2027-mismatch"), { status: "published", hidden: true, accessType: "event", requiredPermission: "dingwei-2027-ox", content: "" });
+  await setDoc(doc(db, "eventArticleBodies", "dingwei-2027-mismatch"), { status: "published", active: true, requiredPermission: "dingwei-2027-ox", content: "x" });
+});
+await observe("觀察：管理員信箱 email_verified=false 讀正文（isAdmin 未檢查驗證）", body(user("lyyuan03@gmail.com", false), "rat"));
+await observe("觀察：正文 requiredPermission 與文件 ID 不一致時，持有該權限者可讀（規則未綁定文件 ID）", getDoc(doc(B, "eventArticleBodies", "dingwei-2027-mismatch")));
+
 await env.cleanup();
 for (const r of results) console.log(r.join("  "));
 const failed = results.filter((r) => r[0] === "FAIL").length;
-console.log(`\n${results.length - failed}/${results.length} 通過`);
+const notes = results.filter((r) => r[0] === "NOTE").length;
+console.log(`\n${results.length - failed - notes}/${results.length - notes} 通過（另有 ${notes} 項稽核觀察）`);
 process.exit(failed ? 1 : 0);

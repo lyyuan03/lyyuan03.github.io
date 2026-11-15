@@ -1,0 +1,252 @@
+/* ==========================================================================
+   2027 丁未年十二生肖：共用文章閱讀系統（第一階段：屬鼠範本）
+   接在 zodiac-reading.css（和紙背景）與 zodiac-motion.css（動態、按鈕）之後載入。
+   只定義版型、字級、留白與元件外觀；不含文章文字，不涉權限。
+   公開篇（A 區）是靜態 HTML；點燈專屬全文（B 區）由 zodiac-lamp-reader.js 從 Firestore
+   載入後以相同字級規則呈現。
+   品牌色：#EAD8B4 高光金／#C9A063 主體金／#A58254 深金／#0A100C 深墨／#F5F0E8 米白
+   ========================================================================== */
+
+body:has(> .zp-main){
+ --zr-ink:#0A100C;
+ --zr-text:rgba(10,16,12,.86);
+ --zr-soft:rgba(10,16,12,.68);
+ --zr-gold-ink:#7a531c;          /* 小字用深金，和紙底對比 ≥ 4.5:1 */
+ --zr-gold:#C9A063;
+ --zr-gold-lo:#A58254;
+ --zr-gold-hi:#EAD8B4;
+ --zr-rule:rgba(165,130,84,.32);
+ --zr-body:18px;
+ --zr-leading:2;
+ --zr-gap-section:72px;
+ --zr-gap-sub:40px;
+ --zr-anchor:128px;              /* 固定導覽列高度＋留白，錨點不被遮住 */
+}
+
+/* ---------- 標題與正文字級 ---------- */
+/* 標題只在標點處換行（keep-all），太長且無標點時才允許任意換行，避免「生／活」這類拆字 */
+body:has(> .zp-main) .zp-main h1,
+body:has(> .zp-main) .zp-main h2,
+body:has(> .zp-main) .zp-main h3{word-break:keep-all;overflow-wrap:anywhere}
+body:has(> .zp-main) .zp-main h1{
+ font-family:'Noto Serif TC',serif;font-weight:400;
+ font-size:clamp(32px,5.2vw,46px);line-height:1.45;letter-spacing:.12em;
+ text-wrap:balance;
+}
+body:has(> .zp-main) .zp-main h1 small{font-size:clamp(14px,1.6vw,17px);letter-spacing:.3em;margin-bottom:10px}
+body:has(> .zp-main) .zp-main>h2,
+body:has(> .zp-main) .zr-exclusive h2{
+ margin:var(--zr-gap-section) 0 22px;
+ font-family:'Noto Serif TC',serif;font-weight:500;
+ font-size:clamp(22px,3vw,28px);line-height:1.6;letter-spacing:.08em;
+ color:var(--zr-gold-ink);
+ text-wrap:balance;line-break:strict;
+ scroll-margin-top:var(--zr-anchor);
+}
+body:has(> .zp-main) .zr-exclusive h2{position:relative;padding-top:34px}
+body:has(> .zp-main) .zr-exclusive h2::before{
+ content:"";position:absolute;left:0;top:0;width:min(220px,60%);height:9px;
+ background:
+  radial-gradient(circle,#C9A063 0 2px,transparent 2.5px) 0 50%/9px 9px no-repeat,
+  linear-gradient(90deg,#A58254,rgba(201,160,99,.5) 55%,transparent) 14px 50%/calc(100% - 14px) 1px no-repeat;
+}
+body:has(> .zp-main) .zr-exclusive .zr-summary > h2::before{display:none}
+body:has(> .zp-main) .zr-exclusive h3{
+ margin:var(--zr-gap-sub) 0 14px;
+ font-family:'Noto Serif TC',serif;font-weight:500;
+ font-size:clamp(18px,2.2vw,20px);line-height:1.7;letter-spacing:.08em;
+ color:var(--zr-ink);
+ text-wrap:balance;line-break:strict;
+ scroll-margin-top:var(--zr-anchor);
+}
+body:has(> .zp-main) .zp-lead{
+ margin:32px 0 0;
+ font-family:'Noto Serif TC',serif;font-size:clamp(17px,2vw,19px);line-height:2.05;letter-spacing:.04em;
+ color:var(--zr-text);text-wrap:pretty;line-break:strict;
+}
+body:has(> .zp-main) .zp-reading,
+body:has(> .zp-main) .zr-exclusive{max-width:none}
+body:has(> .zp-main) .zp-reading p,
+body:has(> .zp-main) .zr-exclusive p{
+ margin:0 0 1.3em;
+ font-family:'Noto Serif TC',serif;font-size:var(--zr-body);line-height:var(--zr-leading);letter-spacing:.035em;
+ color:var(--zr-text);text-wrap:pretty;line-break:strict;
+}
+body:has(> .zp-main) .zp-rel{margin-top:24px}
+body:has(> .zp-main) .zp-main>.zp-hero{margin-top:32px}
+
+/* 文字欄置中：每行約 33～35 個全形字（以正文字級計）。主視覺保留整個面板寬度，其餘集中於閱讀欄寬 */
+body:has(> .zp-main) .zp-main > :not(.zp-hero):not(.zm-picker):not(.zr-switch){
+ max-width:calc(var(--zr-body) * 35);margin-left:auto;margin-right:auto;
+}
+body:has(> .zp-main) .zp-main > .zr-switch,
+body:has(> .zp-main) .zp-main > .zm-picker{max-width:calc(var(--zr-body) * 35 + 120px);margin-left:auto;margin-right:auto}
+
+/* ---------- 公開篇與專屬全文的分界 ---------- */
+.zr-divide{
+ display:flex;align-items:center;gap:18px;
+ margin:var(--zr-gap-section) 0 28px;
+ font:500 13px/1.6 'Noto Serif TC',serif;letter-spacing:.32em;color:var(--zr-gold-ink);
+}
+.zr-divide::before,.zr-divide::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--zr-gold-lo) 30%,var(--zr-gold-lo) 70%,transparent)}
+.zr-divide span{display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
+.zr-divide span::before{content:"";width:7px;height:7px;transform:rotate(45deg);border:1px solid var(--zr-gold-lo);background:var(--zr-gold-hi)}
+body:has(> .zp-main) .zr-divide + .zp-lamp{margin-top:0}
+
+/* ---------- 專屬區：未登入、未授權等狀態維持精簡深色框；授權後正文回到和紙閱讀面 ---------- */
+body:has(> .zp-main) .zp-lamp .zr-gate p{margin:0 0 8px}
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"],
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"]{
+ padding:0!important;background:none!important;border:0!important;box-shadow:none!important;
+ overflow:visible;color:var(--zr-text);
+}
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"]::before,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"]::after,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"]::before,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"]::after{display:none}
+body:has(> .zp-main) .zp-lamp[data-lamp-state="granted"] .zr-gate,
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"] .zr-gate{
+ position:relative;padding:22px clamp(20px,4vw,32px);
+ color:rgba(245,240,232,.84);
+ background:linear-gradient(150deg,#18241b,#0A100C);
+ border:1px solid rgba(201,160,99,.55);border-radius:10px;
+ box-shadow:inset 0 1px 0 rgba(234,216,180,.18),0 4px 0 #050906,0 16px 36px rgba(42,30,14,.28);
+}
+body:has(> .zp-main) .zp-lamp[data-lamp-state] .zr-gate p{color:rgba(245,240,232,.84)}
+body:has(> .zp-main) .zp-lamp[data-lamp-state="adminPreview"] .zr-gate{border-style:dashed}
+body:has(> .zp-main) .zp-lamp .zr-exclusive{
+ margin-top:12px;padding-top:4px;border-top:0;
+ color:var(--zr-text);font-family:inherit;font-size:inherit;line-height:inherit;
+}
+body:has(> .zp-main) .zp-lamp .zr-exclusive > p:first-child{margin-top:36px}
+
+/* ---------- 引言：只用於原稿中以「> 」標記的句子 ---------- */
+body:has(> .zp-main) .zr-quote{
+ position:relative;margin:44px 0;padding:6px 0 6px 28px;
+ border-left:2px solid var(--zr-gold);
+}
+body:has(> .zp-main) .zr-quote::before{
+ content:"";position:absolute;left:-5px;top:0;width:8px;height:8px;border-radius:50%;background:var(--zr-gold-hi);box-shadow:0 0 0 1px var(--zr-gold-lo);
+}
+body:has(> .zp-main) .zr-quote p{
+ margin:0;font-family:'Noto Serif TC',serif;font-weight:500;
+ font-size:clamp(19px,2.4vw,23px);line-height:1.9;letter-spacing:.06em;color:var(--zr-ink);
+}
+
+/* ---------- 十二節氣月：月份段落導覽與時間軸，文字完整依原稿順序 ---------- */
+.zr-month-nav{margin:6px 0 28px;max-width:100%;overflow:hidden}
+.zr-month-nav ol{
+ display:flex;gap:8px;margin:0;padding:2px 2px 10px;list-style:none;
+ overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+ scrollbar-width:thin;scrollbar-color:var(--zr-gold-lo) transparent;
+}
+.zr-month-nav li{flex:0 0 auto;scroll-snap-align:start}
+@media(min-width:769px){.zr-month-nav ol{flex-wrap:wrap;overflow:visible;padding-bottom:2px}}
+.zr-month-nav a{
+ display:inline-flex;align-items:center;min-height:38px;padding:6px 14px;border-radius:999px;
+ border:1px solid rgba(165,130,84,.45);background:rgba(255,252,246,.75);
+ font:500 14px/1.4 'Noto Serif TC',serif;letter-spacing:.08em;color:var(--zr-gold-ink);text-decoration:none;
+ transition:background .2s,border-color .2s,color .2s;
+}
+.zr-month-nav a:hover,.zr-month-nav a:focus-visible{background:rgba(201,160,99,.16);border-color:var(--zr-gold-lo);color:var(--zr-ink)}
+.zr-month-nav a:focus-visible{outline:2px solid var(--zr-ink);outline-offset:2px}
+.zr-timeline{position:relative;padding-left:30px}
+.zr-timeline::before{content:"";position:absolute;left:6px;top:10px;bottom:10px;width:1px;background:linear-gradient(180deg,var(--zr-gold-lo),rgba(165,130,84,.18))}
+.zr-month{position:relative;padding-bottom:6px}
+body:has(> .zp-main) .zr-month h3{margin-top:34px}
+.zr-month:first-child h3{margin-top:4px!important}
+.zr-month h3::before{
+ content:"";position:absolute;left:-29px;top:.62em;width:11px;height:11px;border-radius:50%;
+ background:radial-gradient(circle at 40% 35%,#fff7e4,var(--zr-gold) 70%);border:1px solid var(--zr-gold-lo);
+ box-shadow:0 0 0 4px rgba(244,239,228,.95);
+}
+.zr-month h3{position:relative}
+
+/* ---------- 年度總結：與一般正文區隔的層次 ---------- */
+body:has(> .zp-main) .zr-summary{
+ position:relative;margin:var(--zr-gap-section) 0 0;padding:8px 0 4px 0;
+}
+body:has(> .zp-main) .zr-summary > h2{
+ margin-top:0;padding-top:30px;text-align:left;
+}
+body:has(> .zp-main) .zr-summary > h2::after{
+ content:"";display:block;width:48px;height:1px;margin-top:16px;background:var(--zr-gold-lo);
+}
+body:has(> .zp-main) .zr-summary{
+ border-top:1px solid var(--zr-rule);border-bottom:1px solid var(--zr-rule);
+ background:linear-gradient(180deg,rgba(234,216,180,.18),rgba(234,216,180,0) 60%);
+ padding-bottom:24px;
+}
+body:has(> .zp-main) .zr-summary p{font-size:calc(var(--zr-body) + 1px)}
+
+/* ---------- 目錄：分組標示；寬螢幕改為左側章節導覽 ---------- */
+.zm-toc .zm-toc-group{margin:12px 18px 0;font:500 12px/1.6 'Noto Sans TC',sans-serif;letter-spacing:.24em;color:var(--zr-gold-ink)}
+.zm-toc .zm-toc-group + ol{padding-top:0}
+@media(min-width:1360px){
+ body:has(> .zp-main) .zm-toc{
+  position:fixed;z-index:20;top:132px;
+  left:max(16px,calc(50% - 450px - 244px));width:212px;max-height:calc(100vh - 176px);overflow:auto;
+  margin:0;border-radius:10px;background:rgba(255,252,246,.8);backdrop-filter:blur(6px);
+ }
+ body:has(> .zp-main) .zm-toc summary{pointer-events:none;min-height:42px;font-size:14px}
+ body:has(> .zp-main) .zm-toc summary::after{display:none}
+ body:has(> .zp-main) .zm-toc a{font-size:14px;padding:8px 4px}
+}
+
+/* ---------- 生肖切換：上一生肖／十二生肖總覽／下一生肖 ---------- */
+.zr-switch{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;margin:var(--zr-gap-section) 0 0}
+.zr-switch a{-webkit-tap-highlight-color:transparent}
+.zr-switch-step{
+ display:flex;align-items:center;gap:12px;min-height:64px;padding:8px 18px 8px 8px;border-radius:999px;
+ text-decoration:none;color:#3b2a12;
+ background:linear-gradient(180deg,#fffdf8,#f1e5cd);
+ border:1px solid rgba(165,130,84,.6);
+ box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(165,130,84,.25),0 3px 0 rgba(165,130,84,.4),0 10px 18px rgba(92,68,32,.14);
+ transition:transform .22s var(--zm-ease,ease),box-shadow .22s var(--zm-ease,ease);
+}
+.zr-switch-prev{justify-self:start}
+.zr-switch-next{flex-direction:row-reverse;padding:8px 8px 8px 18px;text-align:right;justify-self:end}
+.zr-switch-step img{flex:0 0 48px;width:48px;height:48px;border-radius:50%;box-shadow:0 0 0 2px rgba(201,160,99,.6)}
+.zr-switch-step span{display:flex;flex-direction:column;font:500 16px/1.4 'Noto Serif TC',serif;letter-spacing:.12em}
+.zr-switch-step small{font:400 12px/1.5 'Noto Sans TC',sans-serif;letter-spacing:.2em;color:var(--zr-gold-ink)}
+@media(hover:hover) and (pointer:fine){
+ .zr-switch-step:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 #fff,0 5px 0 rgba(165,130,84,.42),0 16px 24px rgba(92,68,32,.18)}
+}
+.zr-switch-step:active,.zr-switch-step.zm-pressed{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(165,130,84,.3),0 1px 0 rgba(165,130,84,.35)}
+.zr-switch a:focus-visible{outline:2px solid var(--zr-ink);outline-offset:4px}
+
+/* ---------- 章節進場（只在 html.zm-ready 時，且文字從可讀的半透明開始） ---------- */
+html.zm-ready body:has(> .zp-main) .zr-exclusive h2,
+html.zm-ready body:has(> .zp-main) .zr-exclusive h3,
+html.zm-ready body:has(> .zp-main) .zr-quote,
+html.zm-ready body:has(> .zp-main) .zr-divide{
+ opacity:.35;transform:translate3d(0,10px,0);
+ transition:opacity .7s var(--zm-ease,ease),transform .7s var(--zm-ease,ease);
+}
+html.zm-ready body:has(> .zp-main) .zm-in{opacity:1!important;transform:none!important}
+.zp-main>.zp-lead{animation:zm-rise .7s var(--zm-ease,ease) .18s both}
+
+/* ---------- 平板與手機 ---------- */
+@media(max-width:768px){
+ body:has(> .zp-main){--zr-body:16px;--zr-leading:1.98;--zr-gap-section:56px;--zr-gap-sub:32px;--zr-anchor:112px}
+ .zr-switch{grid-template-columns:1fr 1fr;gap:12px}
+ .zr-switch-home{grid-column:1 / -1;grid-row:2;width:100%}
+ .zr-switch-step{min-height:58px;padding-right:12px}
+ .zr-switch-next{padding-left:12px}
+ .zr-switch-step img{flex-basis:40px;width:40px;height:40px}
+ .zr-switch-step span{font-size:15px;letter-spacing:.08em}
+ .zr-timeline{padding-left:24px}
+ .zr-month h3::before{left:-23px}
+ body:has(> .zp-main) .zr-quote{padding-left:20px}
+}
+@media(max-width:360px){.zr-divide{letter-spacing:.2em;gap:10px}}
+
+@media(prefers-reduced-motion:reduce){
+ html.zm-ready body:has(> .zp-main) .zr-exclusive h2,
+ html.zm-ready body:has(> .zp-main) .zr-exclusive h3,
+ html.zm-ready body:has(> .zp-main) .zr-quote,
+ html.zm-ready body:has(> .zp-main) .zr-divide{opacity:1;transform:none;transition:none}
+ .zp-main>.zp-lead{animation:none}
+ .zr-switch-step,.zr-month-nav a{transition:none}
+ .zr-switch-step:hover,.zr-switch-step:active,.zr-switch-step.zm-pressed{transform:none}
+}
