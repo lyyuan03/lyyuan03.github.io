@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" opacity=".16" width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+<desc>米色區可作4%整層透明度無縫回紋</desc>
+<defs></defs>
+<g id="cloud-fret-tile-layer-body" stroke="#F4D98E" stroke-width="1" stroke-linejoin="round" stroke-linecap="round"><path d="M-10 40H12V29H22V40H34V50H45V39H57V28H67V39H90"/><path d="M40 -10V9H30V19H40V31H50V42H61V52H50V65H40V90"/></g><g id="cloud-fret-tile-layer-highlight" stroke="#F4D98E" stroke-width=".6" opacity=".65"><path d="M-10 43H15V32H19 M60 31H64V42H90"/><path d="M43 -10V12H33V16 M43 67V90"/></g>
+</svg>

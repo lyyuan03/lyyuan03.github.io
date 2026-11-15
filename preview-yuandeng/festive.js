@@ -1,6 +1,7 @@
 /* 圓燈報名頁・過年氛圍：極小輔助腳本
    1. 依贊助項目名稱替卡片標記圖示種類（供 festive.css 換圖示）
-   2. 成功彈窗關閉時移除成功樣式
+   2. 在報名區上方放一排裝飾用的燈串（純裝飾，aria-hidden）
+   3. 成功彈窗關閉時移除成功樣式
    只觀察 #sponsorChoices 的直接子節點新增，且只寫入屬性，不會觸發自己；無計時器、無輪詢。 */
 (function () {
   'use strict';
@@ -17,7 +18,16 @@
       cards[i].setAttribute('data-yd-icon', kindOf(t ? t.textContent : ''));
     }
   }
+  function garland() {
+    var reg = document.getElementById('register');
+    if (!reg || !reg.parentNode || document.querySelector('.yd-garland')) return;
+    var g = document.createElement('div');
+    g.className = 'yd-garland'; g.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < 7; i++) g.appendChild(document.createElement('i'));
+    reg.parentNode.insertBefore(g, reg);
+  }
   function init() {
+    garland();
     var box = document.getElementById('sponsorChoices');
     if (box) {
       decorate(box);
