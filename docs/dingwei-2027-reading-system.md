@@ -56,22 +56,35 @@
 - `eventArticleBodies` 不開放列出；非管理員必須同時符合：外殼已發布、正文已發布且開放、帳號為已驗證 Gmail、權限文件含該生肖權限、帳號未停用。
 - 對非管理員，「文件不存在」與「沒有權限」同樣回傳拒絕，前端刻意不區分，避免透露哪些生肖已建立正文。
 
-### 建議強化（尚未修改 `firestore.rules`，需宇色老師確認）
+### 已修正（PR #486，獨立於本範本、未合併）
 
-1. `isAdmin()` 未檢查 `email_verified`。Google 登入的信箱一定已驗證，但若日後啟用其他登入方式，可能被未驗證的同名信箱冒用。建議：
-   ```
-   function isAdmin() {
-     return signedIn() && request.auth.token.email_verified == true
-       && request.auth.token.email in ["lyyuan03@gmail.com"];
-   }
-   ```
-2. `eventArticleBodies` 的讀取條件沒有把 `requiredPermission` 綁定到文件 ID。管理頁寫入時兩者一定相同，但若有人手動改錯，持有其他生肖權限者可能讀到這篇。前端已會拒絕顯示，但資料已下載到瀏覽器。建議在讀取條件加上 `&& resource.data.requiredPermission == articleId`。
+兩項 2026-11-15 的「建議強化」已宇色老師核准修改，實作在 `zodiac-2027-security-fix` 分支：
 
-模擬器測試 `scripts/tests/dingwei-zodiac-rules.test.mjs` 已加入這兩項「稽核觀察」（NOTE，不影響通過與否）及十二生肖逐一的管理員／未授權／未登入測試。
+1. `isAdmin()` 補上 `email_verified == true`。
+2. `eventArticleBodies/{articleId}` 的讀取條件新增：正文自身的 `requiredPermission` 必須與同一 `articleId` 的 `articles` 公開文件一致，不只檢查正文自己宣告的欄位。
+
+兩項都已確認與 `admin-zodiac-lamp.js`、`article-admin-core.js`（金木年度活動等其他活動共用）既有寫入邏輯相容，因為這兩個管理介面建立/更新文章時都會同步寫入相同的 `requiredPermission` 到兩份文件。模擬器測試新增正向（已驗證管理員、`requiredPermission` 一致）與反向（未驗證信箱冒用管理員、`requiredPermission` 不一致）測試，修正前會放行、修正後必須拒絕。詳見 PR #486。
 
 ### 營運提醒
 
 - 管理頁「儲存並開放」會立即對已授權信眾開放。原稿未經核定前，請勿在正式資料庫按下開放；若需管理員預覽，請使用「暫停開放」儲存（管理員仍可在生肖頁閱讀）。
+
+## 七、報名核帳與閱讀權限的關係（2026-11-15 稽核，部分無法驗證）
+
+**結論先說：核帳到開通之間沒有任何自動化程式連結，全靠管理員手動操作；以下只能驗證「開通之後」的部分。**
+
+### 已確認（可在本機與模擬器驗證）
+
+- `admin-zodiac-lamp.js` 的「手動開通」區塊是唯一會寫入 `memberEntitlements.permissions`（生肖點燈權限）的管理介面：只能輸入 Gmail 清單與勾選的生肖，交易邏輯在 `zodiac-lamp-grants.js`。全站搜尋 `applyGrant`／`zodiac-lamp-grants`，呼叫者只有這一個管理頁，沒有任何 Cloud Function、結帳 callback 或排程會呼叫它。
+- `functions/member-entitlements-sync.js`（贊助會員／身心靈會員的自動同步函式）明確保留既有的 `permissions` 陣列（`hasIndependentPermissions` 判斷），不會覆寫或清空生肖點燈的手動開通權限，兩套系統互不干擾。
+- 權限撤銷立即生效：模擬器測試「手動撤銷：h 的牛已不可讀」等案例證實，`applyRevoke` 寫入後，Firestore Rules 立刻拒絕該生肖的讀取；`zodiac-lamp-reader.js` 每次頁面載入都重新向 Firestore 讀取，沒有任何本地快取，撤銷後重新整理即看不到內容。
+- 多信眾、多生肖對應正確：模擬器測試涵蓋同一信箱擁有多個生肖（b 同時有鼠、牛）、不同信箱分別開通（g 另有金木活動權限、h 開通四個生肖後只撤銷其中兩個），`memberEntitlements/{email}` 以信箱為文件 ID、`permissions` 為陣列，彼此不會互相污染。
+
+### 無法驗證（請勿視為已確認安全）
+
+- **「待確認」「已回報匯款」不能取得閱讀權限、只有「已核帳」才會授予權限**——這件事完全是人工流程：本機找到的報名狀態清單（`preview-vokdayja/app.js` 的 `records`）是標示為「版面操作示意，非雲端報名紀錄」的示範資料，不是真正的報名／核帳資料庫；本 repo 內沒有任何程式碼讀取真正的報名或付款狀態、也沒有任何自動化規則規定「只有核帳完成才能按下開通」。管理員目前是憑自己核對匯款紀錄後，直接到生肖點燈管理頁手動輸入信箱、勾選生肖、按下開通，這一步的正確性完全依賴管理員本人，程式碼層面無法稽核、也無法保證。
+- 因此，從「報名表狀態」到「管理員按下開通」這一段，本次稽核**明確標示為尚未驗證**；已驗證的只有「開通之後」（Firestore 規則是否正確放行/拒絕、撤銷是否立即生效、多人多生肖是否互相污染）這一段。
+- 若日後要讓這段流程也能被程式稽核，需要先確認正式的報名核帳系統（本 repo 看不到，可能是試算表或另一套後台）如何標記「已核帳」，再評估是否要寫一個限定條件的自動化開通流程、或至少讓管理頁顯示報名核帳狀態供管理員核對後再開通——這屬於新功能，需另外確認範圍與需求後才能動工，本次稽核不包含實作。
 
 ## 六、文字待審清單（只列出，不修改；交 ChatGPT Work 查證、作者核定）
 
