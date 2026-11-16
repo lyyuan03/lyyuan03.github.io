@@ -336,31 +336,35 @@ function refreshLimitedReadingDeadlines(articles = []) {
   });
 }
 
-const JINMU_FEATURED_ORDER = new Map([
+const JINMU_SERIES_ORDER = new Map([
   ["2026-yaochi-birthday-morning", 1],
   ["reconciliation-absolution-heart", 2],
   ["2026-building-patron-record", 3],
   ["2026-lineage-lamp-building-record", 4]
 ]);
-
+const JINMU_SERIES_SORT_TIME = Date.parse("2026-08-29T04:03:00.000Z");
+function jinmuSeriesOrder(article) {
+  const order = JINMU_SERIES_ORDER.get(articleKey(article));
+  return Number.isFinite(order) ? order : 0;
+}
+function articleSortTime(article = {}) {
+  if (jinmuSeriesOrder(article)) return JINMU_SERIES_SORT_TIME;
+  return articlePublishedTime(article);
+}
 function sortPublished(a, b) {
   if (adminPreviewEnabled()) {
     const aDraft = a?.status === "draft";
     const bDraft = b?.status === "draft";
     if (aDraft !== bDraft) return aDraft ? -1 : 1;
   }
-
-  const aFeaturedOrder = JINMU_FEATURED_ORDER.get(articleKey(a));
-  const bFeaturedOrder = JINMU_FEATURED_ORDER.get(articleKey(b));
-  const aIsFeatured = Number.isFinite(aFeaturedOrder);
-  const bIsFeatured = Number.isFinite(bFeaturedOrder);
-  if (aIsFeatured || bIsFeatured) {
-    if (aIsFeatured && bIsFeatured) return aFeaturedOrder - bFeaturedOrder;
-    return aIsFeatured ? -1 : 1;
-  }
-
-  const timeDiff = articlePublishedTime(b) - articlePublishedTime(a);
+  const timeDiff = articleSortTime(b) - articleSortTime(a);
   if (timeDiff !== 0) return timeDiff;
+  const aSeries = jinmuSeriesOrder(a);
+  const bSeries = jinmuSeriesOrder(b);
+  if (aSeries || bSeries) {
+    if (aSeries && bSeries) return aSeries - bSeries;
+    return aSeries ? -1 : 1;
+  }
   return String(articleKey(a)).localeCompare(String(articleKey(b)), "zh-Hant");
 }
 
