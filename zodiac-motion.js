@@ -124,7 +124,7 @@
       const r = heroImg.parentElement.getBoundingClientRect();
       if (r.bottom > 0 && r.top < window.innerHeight) {
         const offset = Math.max(-18, Math.min(18, (r.top + r.height / 2 - window.innerHeight / 2) * -0.04));
-        heroImg.style.setProperty("--zm-parallax", `${offset.toFixed(1)}px`);
+        heroImg.parentElement.style.setProperty("--zm-parallax", `${offset.toFixed(1)}px`);
       }
     }
     if (entries.length) {
