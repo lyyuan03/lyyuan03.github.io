@@ -382,4 +382,12 @@ body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video{
 }
 body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video.is-playing{opacity:1}
 @media(max-width:768px){body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video{transform:scale(1.02)}}
-@media(prefers-reduced-motion:reduce){body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video{display:none}}
+@media(prefers-reduced-motion:reduce){body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video{transform:none;will-change:auto}}
+/* 暫停／播放動態按鈕 */
+body:has(> .zp-main) .zp-main>.zp-hero .zp-hero-toggle{
+ position:absolute;right:12px;bottom:12px;z-index:2;min-height:32px;padding:4px 14px;
+ border:1px solid rgba(165,130,84,.55);border-radius:999px;background:rgba(250,246,236,.84);
+ color:#5c4420;font:500 13px/1.4 'Noto Sans TC',sans-serif;letter-spacing:.08em;cursor:pointer;
+}
+body:has(> .zp-main) .zp-main>.zp-hero .zp-hero-toggle:hover,
+body:has(> .zp-main) .zp-main>.zp-hero .zp-hero-toggle:focus-visible{background:#fff;outline:2px solid rgba(165,130,84,.6);outline-offset:2px}
