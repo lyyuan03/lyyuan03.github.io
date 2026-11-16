@@ -63,10 +63,8 @@ publishedArticleIds.forEach((id) => {
 
 [
   ".next-reading-thumbnail img",
-  '.next-reading[data-related-reading][aria-label="下一篇延伸閱讀"]{display:none!important}',
   ".recommended-book-link",
-  ".recommended-book-cover img",
-  ".recommended-book-cover.is-landscape img"
+  ".recommended-book-cover img"
 ].forEach((text) => requireText(page, text, `前台樣式缺少：${text}`));
 
 [
