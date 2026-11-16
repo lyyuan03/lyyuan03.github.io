@@ -118,15 +118,26 @@ function rescueNow() {
   return renderListFallback();
 }
 
+// 備援只在文章核心遲遲沒有畫出列表時才接手。
+// 核心正常時會在 2.5 秒內完成首屏，備援若搶先畫一次，版面會先後跳動兩次。
+const RESCUE_GRACE_MS = 2500;
+let rescueArmed = false;
+function rescueWhenArmed() {
+  if (rescueArmed) rescueNow();
+}
+
 if (root && !activeId) {
-  rescueNow();
-  [120, 350, 800, 1500, 3000, 6000].forEach((delay) => window.setTimeout(rescueNow, delay));
+  window.setTimeout(() => {
+    rescueArmed = true;
+    rescueNow();
+  }, RESCUE_GRACE_MS);
+  [4000, 6000].forEach((delay) => window.setTimeout(rescueWhenArmed, delay));
   const observer = new MutationObserver(() => {
     window.clearTimeout(window.__lyyuanArticleRescueTimer);
-    window.__lyyuanArticleRescueTimer = window.setTimeout(rescueNow, 30);
+    window.__lyyuanArticleRescueTimer = window.setTimeout(rescueWhenArmed, 30);
   });
   observer.observe(root, { childList: true, subtree: true });
   window.setInterval(() => {
-    if (document.visibilityState === "visible") rescueNow();
+    if (document.visibilityState === "visible") rescueWhenArmed();
   }, 2000);
 }
