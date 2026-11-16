@@ -146,7 +146,7 @@ const listEl = document.getElementById("article-list");
 const metricsEl = document.getElementById("article-metrics");
 const form = document.getElementById("article-form");
 const formFields = Object.fromEntries(
-  ["title", "slug", "category", "status", "excerpt", "coverImage", "bookTitle", "bookAuthor", "bookPublisher", "bookPurchaseUrl", "bookCoverImage", "accessType", "content"]
+  ["title", "slug", "category", "status", "excerpt", "coverImage", "bookTitle", "bookAuthor", "bookPublisher", "bookPurchaseUrl", "bookCoverImage", "topics", "nextReadingId", "accessType", "content"]
     .map((name) => [name, form.elements.namedItem(name)])
 );
 const preview = document.getElementById("preview");
@@ -474,6 +474,8 @@ function getFormData() {
     bookPublisher: data.bookPublisher.trim(),
     bookPurchaseUrl: data.bookPurchaseUrl.trim(),
     bookCoverImage: data.bookCoverImage.trim(),
+    topics: String(data.topics || "").split(/[、，,]/).map((topic) => topic.trim()).filter(Boolean).slice(0, 4),
+    nextReadingId: String(data.nextReadingId || "").trim(),
     accessType: data.accessType || "open",
     eventId: (data.eventId || "").trim(),
     content: data.content.trim()
@@ -675,6 +677,8 @@ function setFormData(article = {}) {
   formFields.bookPublisher.value = article.bookPublisher || "";
   formFields.bookPurchaseUrl.value = article.bookPurchaseUrl || "";
   formFields.bookCoverImage.value = article.bookCoverImage || "";
+  if (formFields.topics) formFields.topics.value = Array.isArray(article.topics) ? article.topics.join("、") : "";
+  if (formFields.nextReadingId) formFields.nextReadingId.value = article.nextReadingId || "";
   formFields.accessType.value = normalizeAdminAccessType(article);
   renderEventOptions(article.eventId || "");
   toggleEventAccess();
