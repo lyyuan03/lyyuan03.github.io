@@ -372,3 +372,14 @@ body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-glyph{
  body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-badge{width:min(50%,190px)}
  body:has(> .zp-main) .zp-main>.zp-hero--emblem .zp-hero-glyph{margin:0 calc(8% + 10px) 10px 0}
 }
+
+/* 主視覺循環短片：疊在靜態首圖上方，與首圖使用同樣的色調與位移；載入並播放後才淡入 */
+body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video{
+ position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
+ opacity:0;transition:opacity .9s ease;pointer-events:none;
+ transform:translate3d(0,var(--zm-parallax,0px),0) scale(1.06);will-change:transform;
+ filter:saturate(.58) sepia(.26) contrast(.94) brightness(1.06) hue-rotate(-6deg);
+}
+body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video.is-playing{opacity:1}
+@media(max-width:768px){body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video{transform:scale(1.02)}}
+@media(prefers-reduced-motion:reduce){body:has(> .zp-main) .zp-main>.zp-hero video.zp-hero-video{display:none}}
