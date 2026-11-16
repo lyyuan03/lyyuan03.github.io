@@ -63,10 +63,24 @@ function applyConfig(c) {
   }
 }
 
+/* ───── 芳名建議：只存在這台裝置（localStorage），成功送出後才記錄；不查詢任何後端 ───── */
+const NAMES_KEY = 'lyyuan.yuandeng.names.v1', NAMES_MAX = 50;
+function readNames() { try { const v = JSON.parse(localStorage.getItem(NAMES_KEY) || '[]'); return Array.isArray(v) ? v.filter(x => typeof x === 'string' && x).slice(0, NAMES_MAX) : []; } catch { return []; } }
+function renderNameList() { const dl = $('#ydNameHistory'); if (dl) dl.innerHTML = readNames().map(n => `<option value="${esc(n)}"></option>`).join(''); }
+function rememberNames(names) {
+  try {
+    const seen = new Set(), out = [];
+    [...names, ...readNames()].forEach(n => { n = String(n || '').trim(); if (n && !seen.has(n)) { seen.add(n); out.push(n); } });
+    localStorage.setItem(NAMES_KEY, JSON.stringify(out.slice(0, NAMES_MAX)));
+  } catch { /* 無痕或儲存空間已滿時略過 */ }
+  renderNameList();
+}
+renderNameList();
+
 /* ───── 禮謝燈 ───── */
 function personHTML() {
   const id = ++uid;
-  return `<div class="person"><div class="person-title">芳名</div><button type="button" class="remove">移除此位</button><label for="pn${id}" class="req">姓名</label><input id="pn${id}" data-person-name required maxlength="40" autocomplete="off" placeholder="請填芳名"></div>`;
+  return `<div class="person"><div class="person-title">芳名</div><button type="button" class="remove">移除此位</button><label for="pn${id}" class="req">姓名</label><input id="pn${id}" name="lampName" type="text" data-person-name required maxlength="40" autocomplete="on" list="ydNameHistory" placeholder="請填芳名"></div>`;
 }
 function optionHTML(l) {
   /* 沿用太歲燈（preview-vokdayja）「總燈首」卡片版型：勾選框＋圖示＋粗體標題＋小標（燈別）＋右側金額，勾選後展開詳細框（.people） */
@@ -191,7 +205,6 @@ const scalarIds = ['name', 'email', 'phone', 'last5', 'remitNote', 'cert', 'note
 function captureFields() { const f = {}; scalarIds.forEach(id => { const el = $('#' + id); if (el) f[id] = el.value; }); return f; }
 function setPeople(list, rowFn, rows) { list.innerHTML = ''; rows.forEach(vals => { list.insertAdjacentHTML('beforeend', rowFn()); const inputs = list.lastElementChild.querySelectorAll('input'); vals.forEach((v, i) => { if (inputs[i]) inputs[i].value = v ?? ''; }); }); }
 function restoreRegistration(data) {
-  { const c = $('#reuseLamps'); if (c) c.checked = false; const m = $('#reuseLampsMsg'); if (m) { m.hidden = true; m.textContent = ''; } }
   scalarIds.forEach(id => { const el = $('#' + id); if (el) el.value = (data.fields || {})[id] ?? (id === 'cert' ? '不索取' : ''); });
   $$('.fam-check,.opt-check,.sponsor-check').forEach(c => { c.checked = false; });
   CFG.lamps.forEach(l => {
@@ -227,54 +240,6 @@ function fillProfile(p, msg) {
   $('#name').scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
-/* ───── 比照我上次的點燈項目與芳名（只在勾選時，以 01 的 Email＋電話向後端查詢最近一筆圓燈登記；不寄信、不需驗證碼） ───── */
-function applyLampMatch(lamps) {
-  let n = 0, skipped = 0, firstFam = '';
-  (lamps || []).forEach(l => {
-    const names = (l.people || []).filter(Boolean);
-    const cl = CFG.lamps.find(x => x.enabled !== false && x.key === l.key) || CFG.lamps.find(x => x.enabled !== false && x.name === l.name);
-    const o = cl && names.length ? lampEl(cl.key) : null;
-    if (!o) { skipped++; return; }
-    o.querySelector('.opt-check').checked = true;
-    setPeople(o.querySelector('.person-list'), personHTML, names.map(x => [x]));
-    n++; if (!firstFam) firstFam = cl.family;
-  });
-  syncAll(); if (firstFam) activateLampTab(firstFam);
-  return { n, skipped };
-}
-const REUSE_NF = '找不到上次的點燈紀錄，請手動選擇';
-async function postLookup(body) {
-  const response = await fetch(ENDPOINT, { method: 'POST', mode: 'cors', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
-  if (!response.ok) throw new Error('net');
-  return response.json();
-}
-async function runReuse() {
-  const cb = $('#reuseLamps'), msg = $('#reuseLampsMsg');
-  const say = (t, err) => { msg.hidden = !t; msg.textContent = t || ''; msg.classList.toggle('error', !!err); };
-  if (!cb.checked) { say(''); return; }
-  if (!CFG || cb.dataset.busy) { cb.checked = false; return; }
-  const email = $('#email').value.trim(), phone = $('#phone').value.trim();
-  if (!email) { cb.checked = false; say('請先填寫上方 Email', true); $('#email').focus(); return; }
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { cb.checked = false; say('請先填寫正確的 Email（上方 01 登記人資料）', true); $('#email').focus(); return; }
-  if (!phone) { cb.checked = false; say('請先填寫上方 Email 與電話', true); $('#phone').focus(); return; }
-  cb.dataset.busy = '1'; cb.disabled = true; say('查詢中…');
-  try {
-    const data = await postLookup({ action: 'lookup', email, phone });
-    if (!data || data.ok !== true) { cb.checked = false; say(data && data.code === 'rate' ? '查詢次數過多，請稍後再試，或直接手動選擇。' : (data && data.code === 'need' ? '請先填寫上方 Email 與電話' : '目前無法查詢，請稍後再試，或直接手動選擇。'), true); return; }
-    if (!data.found) { cb.checked = false; say(REUSE_NF, true); return; }
-    const r = applyLampMatch(data.lamps);
-    if (!r.n) { cb.checked = false; say(REUSE_NF, true); return; }
-    say('已帶入上次的點燈項目與芳名，可直接修改' + (r.skipped ? `（另有 ${r.skipped} 項因本次燈別不同未帶入）` : ''));
-  } catch { cb.checked = false; say('目前無法查詢，請稍後再試，或直接手動選擇。', true); }
-  finally { cb.disabled = false; delete cb.dataset.busy; }
-}
-$('#reuseLamps').addEventListener('change', runReuse);
-$('#heroApplyPrev').onclick = () => {
-  const cb = $('#reuseLamps'), row = cb.closest('.yd-reuse');
-  cb.scrollIntoView({ block: 'center', behavior: 'smooth' }); cb.focus({ preventScroll: true });
-  row.classList.add('yd-reuse-flash'); setTimeout(() => row.classList.remove('yd-reuse-flash'), 2200);
-};
-
 /* ───── 查詢／修改我的報名 ───── */
 const recordsDialog = document.createElement('dialog'); recordsDialog.className = 'modal'; recordsDialog.id = 'myRecordsDialog'; recordsDialog.setAttribute('aria-label', '查詢與修改報名');
 recordsDialog.innerHTML = '<button class="close" type="button" aria-label="關閉">×</button><div id="myRecordsBody"></div>';
@@ -295,6 +260,11 @@ $('#cancelEdit').onclick = () => {
   if (!confirm('離開後將放棄這次尚未儲存的修改，是否繼續？')) return;
   editToken = null; editId = null; clearQuery('edit'); formNode.reset(); restoreRegistration({ fields: {}, lamps: [], sponsors: [], agreements: {} });
   $('#editBanner').hidden = true; setEditButtons(false);
+};
+$('#newAnother').onclick = () => {
+  editToken = null; editId = null; clearQuery('edit'); formNode.reset(); restoreRegistration({ fields: {}, lamps: [], sponsors: [], agreements: {} });
+  $('#editBanner').hidden = true; setEditButtons(false);
+  $('#doneNote').hidden = true; formNode.hidden = false; $('#register').scrollIntoView({ block: 'start', behavior: 'smooth' });
 };
 async function loadEmailRegistration(token) {
   loadingEdit = true; $('#editBanner').hidden = false; $('#editTitle').textContent = '正在載入報名…'; $('#cancelEdit').hidden = true;
@@ -366,6 +336,9 @@ formNode.onsubmit = e => {
     .then(res => {
       if (res && res.ok === true && res.id && (!savingEdit || res.updated === true)) {
         previewEntries.set(res.id, { id: res.id, data: { fields: payload.fields } }); showOk(res);
+        rememberNames((payload.lamps || []).flatMap(l => (l.people || []).map(p => p.name)));
+        /* 伺服器確認成功後把表單從畫面上收起：Chrome 偵測到「送出成功後表單消失」就會提示儲存姓名／電話／Email */
+        formNode.hidden = true; $('#doneNote').hidden = false;
       } else showFail('寫入報名表失敗：' + ((res && res.error) || '未知錯誤'));
     })
     .catch(() => showFail('無法連線報名後端，請稍後再試或聯繫行政。'))
