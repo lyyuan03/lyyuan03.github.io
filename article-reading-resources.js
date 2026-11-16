@@ -214,6 +214,40 @@ export function recommendedBookForArticle(article = {}) {
 }
 
 /**
+ * 文章的主題標籤、閱讀深度與來源標記（原本寫在文章核心內）。
+ * 後台文章欄位 topics、readingLevel 有填值時優先使用。
+ * 主題標籤也是延伸閱讀與首頁個人推薦的比對依據。
+ */
+export const articleGuides = Object.freeze({
+  "quantum-frequency-work-wish": { topics: ["神祕學"], level: "初識" },
+  "yuanshen-destiny-archetype": { topics: ["元神與人格", "修行心性"], level: "深度" },
+  "love-beyond-filial-piety-and-ancestor-worship": { topics: ["修行心性", "生命選擇"], level: "深度" },
+  "how-to-judge-true-lingxiu-understanding": { topics: ["靈修辨識", "元神與人格"], level: "深度" },
+  "reading-you-can-not-fear-death": { topics: ["修行心性", "生命選擇"], level: "深度" },
+  "2026-guanyin-vow-lamp-record": { topics: ["信仰與人", "修行心性"], level: "深度" },
+  "2026-guanyin-vow-lamp-record-v2": { topics: ["信仰與人", "修行心性"], level: "深度" },
+  "2058-future-person-prophecy": { topics: ["靈修辨識", "修行心性"], level: "深度" },
+  "this-book-took-thirty-years": { topics: ["元神與人格", "修行心性"], level: "深度" },
+  "wealth-as-water": { topics: ["金錢意識", "自我信任"], level: "深度" },
+  "fantasy-intuition-or-yuanshen": { topics: ["靈修辨識", "元神與人格"], level: "深度" },
+  "spiritual-practice-cannot-be-outsourced-to-gods": { topics: ["神明與修行"], level: "初識" },
+  "celebrity-death-dream-spirit-five-checks": { topics: ["亡者接觸", "靈界辨識"], level: "深度" },
+  "japan-temple-faith-and-decline": { topics: ["信仰與人"], level: "深度" },
+  "shenming-yinlu-ganying-budengyu-xiuwei": { topics: ["感應與修為", "修行心性"], level: "進階" },
+  "jitong-leader-discernment": { topics: ["靈乩辨識", "權力與界線"], level: "深度" },
+  "jitong-discernment-before-exorcism": { topics: ["靈乩辨識", "靈界辨識"], level: "深度" },
+  "good-fortune-believe-in-yourself-choices": { topics: ["自我信任", "生命選擇"], level: "初識" },
+  "yuanshen-awakening-eleven-principles": { topics: ["元神與人格", "感應與修為"], level: "初識" },
+  "seven-twenty-five-election-shift": { topics: ["社會觀察"], level: "初識" },
+  "tonglingren-wufa-huifu-putongren": { topics: ["靈修辨識", "修行心性"], level: "進階" },
+  "lingxiu-zouhuo-rumo": { topics: ["靈修辨識"], level: "初識" },
+  "lingxiu-yuanshen-reality": { topics: ["元神與人格", "修行心性"], level: "進階" },
+  "jitong-shenming-fushen": { topics: ["靈修辨識", "感應與修為"], level: "深度" },
+  "wealth-discipline-investing-and-self-mastery": { topics: ["財富"], sourceTag: "宇色著作", level: "初識" },
+  "market-crash-money-self-control": { topics: ["金錢意識", "生命選擇"], level: "初識" }
+});
+
+/**
  * 文章結尾「延伸閱讀」的編輯指定。依文章內容串成閱讀路線：
  * 同一系列依序銜接、避免兩篇互指繞圈，一般文章不導向活動限定文章。
  * 優先順序：後台文章欄位 nextReadingId ＞ 這份對應 ＞ 自動比對。
@@ -323,22 +357,99 @@ export function pickNextReading(article = {}, pool = [], { topicsOf = () => [] }
     || findById(nextReadingByArticle[articleKey(article)]);
   if (explicit) return explicit;
 
-  const topics = new Set(topicsOf(article));
-  const book = bookKeyOf(article);
-  const grams = textBigrams(article);
   let best = null;
   let bestScore = -1;
   candidates.forEach((item) => {
-    let score = 0;
-    topicsOf(item).forEach((topic) => { if (topics.has(topic)) score += 3; });
-    if (book && bookKeyOf(item) === book) score += 2;
-    if (item.category && item.category === article.category) score += 1;
-    const itemGrams = textBigrams(item);
-    let shared = 0;
-    itemGrams.forEach((gram) => { if (grams.has(gram)) shared += 1; });
-    const union = grams.size + itemGrams.size - shared;
-    if (union) score += (shared / union) * 30;
+    const score = articleSimilarity(article, item, topicsOf);
     if (score > bestScore) { best = item; bestScore = score; }
   });
   return best;
+}
+
+/** 兩篇文章的相近程度：主題標籤、延伸書目、分類，以及標題摘要的用詞。 */
+export function articleSimilarity(article = {}, item = {}, topicsOf = () => []) {
+  const topics = new Set(topicsOf(article));
+  let score = 0;
+  topicsOf(item).forEach((topic) => { if (topics.has(topic)) score += 3; });
+  const book = bookKeyOf(article);
+  if (book && bookKeyOf(item) === book) score += 2;
+  if (item.category && item.category === article.category) score += 1;
+  const grams = textBigrams(article);
+  const itemGrams = textBigrams(item);
+  let shared = 0;
+  itemGrams.forEach((gram) => { if (grams.has(gram)) shared += 1; });
+  const union = grams.size + itemGrams.size - shared;
+  if (union) score += (shared / union) * 30;
+  return score;
+}
+
+const FINISHED_DEPTH = 0.85;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * 首頁「接續你的閱讀」：依讀者在這台裝置上的閱讀紀錄推薦。
+ * history：[{ id, depth: 0–1, lastAt: 毫秒 }]，新到舊皆可。
+ * 回傳 { continueReading, picks, otherAngle }；沒有紀錄時回傳 null。
+ */
+export function recommendForReader(history = [], pool = [], { topicsOf = () => [], now = Date.now() } = {}) {
+  const byKey = new Map();
+  pool.forEach((item) => {
+    if (articleKey(item)) byKey.set(articleKey(item), item);
+    if (item.slug) byKey.set(item.slug, item);
+  });
+  const readable = (item) => item
+    && (!item.status || item.status === "published")
+    && item.hidden !== true && item.systemRecord !== true
+    && !isEventArticle(item);
+  const entries = history
+    .map((entry) => ({ ...entry, article: byKey.get(entry.id) }))
+    .filter((entry) => entry.article)
+    .sort((a, b) => (b.lastAt || 0) - (a.lastAt || 0));
+  if (!entries.length) return null;
+
+  const visited = new Set(entries.map((entry) => articleKey(entry.article)));
+  const continueEntry = entries.find((entry) => readable(entry.article)
+    && (entry.depth || 0) < FINISHED_DEPTH
+    && now - (entry.lastAt || 0) < 30 * DAY_MS);
+  const continueReading = continueEntry
+    ? { article: continueEntry.article, depth: continueEntry.depth || 0 }
+    : null;
+
+  const candidates = pool.filter((item) => readable(item) && !visited.has(articleKey(item)));
+  if (!candidates.length) return { continueReading, picks: [], otherAngle: null };
+
+  const recent = entries.slice(0, 12);
+  const scored = candidates.map((item) => {
+    let score = 0;
+    let because = null;
+    let bestContribution = 0;
+    recent.forEach((entry) => {
+      const ageDays = Math.max(0, (now - (entry.lastAt || now)) / DAY_MS);
+      const weight = (0.5 + Math.min(1, entry.depth || 0)) / (1 + ageDays / 14);
+      let contribution = articleSimilarity(entry.article, item, topicsOf) * weight;
+      if (nextReadingByArticle[articleKey(entry.article)] === articleKey(item)) contribution += 4 * weight;
+      score += contribution;
+      if (contribution > bestContribution) { bestContribution = contribution; because = entry.article; }
+    });
+    return { article: item, score, because };
+  }).sort((a, b) => b.score - a.score);
+
+  const picks = scored.slice(0, continueReading ? 1 : 2);
+  const pickedKeys = new Set(picks.map((pick) => articleKey(pick.article)));
+  // 換個角度：刻意挑一篇讀者還沒讀過的分類，避免推薦只強化原本相信的東西。
+  const readCategories = new Set(entries.map((entry) => entry.article.category));
+  // 只從相似度低於中位數的文章裡挑，才是真的換一個角度，而不是換個分類講同一件事。
+  const remaining = scored.filter((item) => !pickedKeys.has(articleKey(item.article)));
+  const median = scored[Math.floor(scored.length / 2)]?.score ?? 0;
+  const different = remaining.filter((item) => item.score <= median);
+  const otherAngle = different.find((item) => !readCategories.has(item.article.category))
+    || different[0]
+    || remaining[remaining.length - 1]
+    || null;
+
+  return {
+    continueReading,
+    picks: picks.map(({ article, because }) => ({ article, because })),
+    otherAngle: otherAngle ? { article: otherAngle.article } : null
+  };
 }

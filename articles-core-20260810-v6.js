@@ -1,7 +1,7 @@
 import { auth, db, isAdminEmail } from "./firebase-config.js?v=20260831-permissions-1";
 import { resolveArticleThumbnailUrl } from "./article-thumbnail-url.js?v=20260918-photo-3";
 import { staticArticles } from "./static-articles.js?v=20261017-election-photo-cache-3";
-import { recommendedBookForArticle, pickNextReading } from "./article-reading-resources.js?v=20261116-next-reading-1";
+import { recommendedBookForArticle, pickNextReading, articleGuides } from "./article-reading-resources.js?v=20261116-reader-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -43,34 +43,6 @@ const bookUrl = "https://lyyuan.tw/books.html?v=spiritual-books-20260703-refresh
 const limitedReadingDeadlines = new Map();
 const ARTICLE_STATUS_INDEX_ID = "__article-publication-status";
 const LEGACY_FIRESTORE_MANAGED_IDS = new Set(["yuanshen-destiny-archetype", "2058-future-person-prophecy"]);
-const articleGuides = {
-  "quantum-frequency-work-wish": { topics: ["神祕學"], level: "初識" },
-  "yuanshen-destiny-archetype": { topics: ["元神與人格", "修行心性"], level: "深度" },
-  "love-beyond-filial-piety-and-ancestor-worship": { topics: ["修行心性", "生命選擇"], level: "深度" },
-  "how-to-judge-true-lingxiu-understanding": { topics: ["靈修辨識", "元神與人格"], level: "深度" },
-  "reading-you-can-not-fear-death": { topics: ["修行心性", "生命選擇"], level: "深度" },
-  "2026-guanyin-vow-lamp-record": { topics: ["信仰與人", "修行心性"], level: "深度" },
-  "2026-guanyin-vow-lamp-record-v2": { topics: ["信仰與人", "修行心性"], level: "深度" },
-  "2058-future-person-prophecy": { topics: ["靈修辨識", "修行心性"], level: "深度" },
-  "this-book-took-thirty-years": { topics: ["元神與人格", "修行心性"], level: "深度" },
-  "wealth-as-water": { topics: ["金錢意識", "自我信任"], level: "深度" },
-  "fantasy-intuition-or-yuanshen": { topics: ["靈修辨識", "元神與人格"], level: "深度" },
-  "spiritual-practice-cannot-be-outsourced-to-gods": { topics: ["神明與修行"], level: "初識" },
-  "celebrity-death-dream-spirit-five-checks": { topics: ["亡者接觸", "靈界辨識"], level: "深度" },
-  "japan-temple-faith-and-decline": { topics: ["信仰與人"], level: "深度" },
-  "shenming-yinlu-ganying-budengyu-xiuwei": { topics: ["感應與修為", "修行心性"], level: "進階" },
-  "jitong-leader-discernment": { topics: ["靈乩辨識", "權力與界線"], level: "深度" },
-  "jitong-discernment-before-exorcism": { topics: ["靈乩辨識", "靈界辨識"], level: "深度" },
-  "good-fortune-believe-in-yourself-choices": { topics: ["自我信任", "生命選擇"], level: "初識" },
-  "yuanshen-awakening-eleven-principles": { topics: ["元神與人格", "感應與修為"], level: "初識" },
-  "seven-twenty-five-election-shift": { topics: ["社會觀察"], level: "初識" },
-  "tonglingren-wufa-huifu-putongren": { topics: ["靈修辨識", "修行心性"], level: "進階" },
-  "lingxiu-zouhuo-rumo": { topics: ["靈修辨識"], level: "初識" },
-  "lingxiu-yuanshen-reality": { topics: ["元神與人格", "修行心性"], level: "進階" },
-  "jitong-shenming-fushen": { topics: ["靈修辨識", "感應與修為"], level: "深度" },
-  "wealth-discipline-investing-and-self-mastery": { topics: ["財富"], sourceTag: "宇色著作", level: "初識" },
-  "market-crash-money-self-control": { topics: ["金錢意識", "生命選擇"], level: "初識" }
-};
 
 const articleThumbnailImages = {
   "yuanqin-debt-heart": "assets/articles/yuanqin-debt-heart/01-cover-yuanqin.webp?v=20260828-clean-text-2",
