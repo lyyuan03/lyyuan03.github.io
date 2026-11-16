@@ -62,12 +62,3 @@ html.fx-on .yd-option.fx-lit-pulse .lamp-icon::before,html.fx-on .yd-option.fx-l
 @media (max-width:740px){.yd-lb-scroll{padding:56px 6px 16px}}
 html.yd-lb-lock{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.yd-lb{transition:none}}
-
-/* ── 套用我之前的資料／比照上次點燈 勾選列 ── */
-.yd-reuse{margin:14px 0 4px;padding:10px 12px;border:1px dashed #c9a06380;border-radius:8px;background:#fbf4e4;cursor:pointer;transition:box-shadow .3s ease,border-color .3s ease}
-.yd-reuse input{flex:none}
-.yd-reuse-hint{margin:2px 2px 8px;font-size:13px}
-.yd-reuse-msg{margin:2px 2px 10px}
-.yd-reuse-msg.error{color:#8a231d}
-.yd-reuse.yd-reuse-flash{border-color:#B5302A;box-shadow:0 0 0 3px #b5302a33}
-@media (prefers-reduced-motion:reduce){.yd-reuse{transition:none}}
