@@ -1,0 +1,5 @@
+# 本機產生的暫存檔，不應提交，也不應隨 GitHub Pages 公開
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
