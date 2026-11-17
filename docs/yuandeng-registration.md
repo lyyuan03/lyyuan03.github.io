@@ -18,7 +18,7 @@
 ## 資料帶入
 
 - **確認信連結匯入**：太歲燈確認信連結頁（`preview-vokdayja/?edit=…`）會多一個「以此資料報名圓燈」按鈕。按下後呼叫後端 `action=prefill`（只回傳姓名／Email／電話），存入這台裝置的 `localStorage`（`lyyuan.yuandeng.profile.v1`），另開圓燈頁帶入；基本資料可修改，送出會建立新的圓燈報名，不碰太歲燈資料。按鈕在圓燈活動狀態為「開放」且未截止時自動出現；開放前可在太歲燈連結後加 `&yd=1`（或 `&yd=<預覽碼>`）預覽。
-- **瀏覽器自動填入（取代原「比照我上次…」查詢）**：01 的姓名／Email／電話是標準欄位（`autocomplete=name/email/tel`），由 Chrome 等瀏覽器自己的自動填入帶出（需使用者已在瀏覽器存過聯絡資料）。送出成功後表單會收起（Chrome 以「送出成功後表單消失」判斷為已送出並提示儲存）。02 的芳名欄位綁定同一個 `<datalist>`，內容來自這台裝置 `localStorage`（`lyyuan.yuandeng.names.v1`，成功送出後才記錄、去重、最多 50 筆）；不再查詢後端。後端 `action=lookup` 仍保留但前端不再呼叫。
+- **瀏覽器自動填入（取代原「比照我上次…」查詢）**：01 的姓名／Email／電話是標準欄位（`autocomplete=name/email/tel`），由 Chrome 等瀏覽器自己的自動填入帶出（需使用者已在瀏覽器存過聯絡資料）。另外，伺服器確認送出成功後，姓名／Email／電話也會存在這台裝置 `localStorage`（`lyyuan.yuandeng.contact.v1`，最多 5 組），下次開啟時自動填入空白欄位並列為下拉建議；送出失敗不儲存。送出成功後表單保持顯示，上方出現「報名已送出」，關閉結果視窗後清空燈別等內容、保留登記人資料。02 的芳名欄位綁定同一個 `<datalist>`，內容來自這台裝置 `localStorage`（`lyyuan.yuandeng.names.v1`，成功送出後才記錄、去重、最多 50 筆）；不再查詢後端。後端 `action=lookup` 仍保留但前端不再呼叫。
 
 ## 確認信
 
