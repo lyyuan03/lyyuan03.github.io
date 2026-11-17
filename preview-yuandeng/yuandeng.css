@@ -62,3 +62,8 @@ html.fx-on .yd-option.fx-lit-pulse .lamp-icon::before,html.fx-on .yd-option.fx-l
 @media (max-width:740px){.yd-lb-scroll{padding:56px 6px 16px}}
 html.yd-lb-lock{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.yd-lb{transition:none}}
+
+/* ── 02 下方：答謝仙佛內容（選填） ── */
+.yd-thanks{margin-top:22px}
+.yd-thanks .hint{margin:2px 0 8px}
+.yd-thanks textarea{min-height:110px}
