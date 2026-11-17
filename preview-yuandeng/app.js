@@ -76,6 +76,30 @@ function rememberNames(names) {
   renderNameList();
 }
 renderNameList();
+/* 登記人資料（姓名／Email／電話）：伺服器確認成功後才存在這台裝置，下次空白時自動帶入並作為下拉建議；不查詢後端 */
+const CONTACT_KEY = 'lyyuan.yuandeng.contact.v1', CONTACT_MAX = 5;
+function readContacts() { try { const v = JSON.parse(localStorage.getItem(CONTACT_KEY) || '[]'); return Array.isArray(v) ? v.filter(c => c && typeof c === 'object' && (c.name || c.email || c.phone)).slice(0, CONTACT_MAX) : []; } catch { return []; } }
+function renderContactLists() {
+  const cs = readContacts();
+  [['ydContactName', 'name'], ['ydContactEmail', 'email'], ['ydContactPhone', 'phone']].forEach(([id, k]) => {
+    const dl = $('#' + id); if (!dl) return;
+    dl.innerHTML = [...new Set(cs.map(c => String(c[k] || '').trim()).filter(Boolean))].map(v => `<option value="${esc(v)}"></option>`).join('');
+  });
+}
+function rememberContact(f) {
+  const c = { name: String(f.name || '').trim(), email: String(f.email || '').trim(), phone: String(f.phone || '').trim() };
+  if (!c.name && !c.email && !c.phone) return;
+  try {
+    const same = x => x.name === c.name && x.email.toLowerCase() === c.email.toLowerCase() && x.phone === c.phone;
+    localStorage.setItem(CONTACT_KEY, JSON.stringify([c, ...readContacts().filter(x => !same(x))].slice(0, CONTACT_MAX)));
+  } catch { /* 無痕或儲存空間已滿時略過 */ }
+  renderContactLists();
+}
+function prefillContact() {
+  const c = readContacts()[0]; if (!c) return;
+  ['name', 'email', 'phone'].forEach(k => { const el = $('#' + k); if (el && !el.value.trim() && c[k]) el.value = c[k]; });
+}
+renderContactLists();
 
 /* ───── 禮謝燈 ───── */
 function personHTML() {
@@ -261,11 +285,6 @@ $('#cancelEdit').onclick = () => {
   editToken = null; editId = null; clearQuery('edit'); formNode.reset(); restoreRegistration({ fields: {}, lamps: [], sponsors: [], agreements: {} });
   $('#editBanner').hidden = true; setEditButtons(false);
 };
-$('#newAnother').onclick = () => {
-  editToken = null; editId = null; clearQuery('edit'); formNode.reset(); restoreRegistration({ fields: {}, lamps: [], sponsors: [], agreements: {} });
-  $('#editBanner').hidden = true; setEditButtons(false);
-  $('#doneNote').hidden = true; formNode.hidden = false; $('#register').scrollIntoView({ block: 'start', behavior: 'smooth' });
-};
 async function loadEmailRegistration(token) {
   loadingEdit = true; $('#editBanner').hidden = false; $('#editTitle').textContent = '正在載入報名…'; $('#cancelEdit').hidden = true;
   try {
@@ -329,7 +348,7 @@ formNode.onsubmit = e => {
     if (eyebrow) eyebrow.textContent = 'SIGNUP COMPLETE'; $('#result h2').textContent = savingEdit ? '已更新' : '報名已送出'; if (foot) foot.hidden = true;
     $('#resultBody').innerHTML = `<p>${esc(payload.fields.name)}，${savingEdit ? '報名資料已更新' : '報名資料已送出'}。</p><p>報名編號：<b style="color:var(--gold)">${esc(res.id || '')}</b></p><p>功德金總計：<b style="color:var(--gold)">${money(currentTotal)}</b></p><div class="notice">${$('#transferInfo').innerHTML}</div><p class="hint">確認信將寄至 ${esc(payload.fields.email)}（若未收到請檢查垃圾郵件匣）。本編號已寫入靈元院報名表。</p>${res.priceAdjusted ? '<p class="hint">金額已依最新價格設定重新計算。</p>' : ''}`;
   };
-  submitting = true;
+  submitting = true; $('#doneNote').hidden = true;
   eyebrow && (eyebrow.textContent = 'SIGNUP'); $('#result h2').textContent = '正在送出…'; $('#resultBody').innerHTML = '<p>正在將報名資料送至靈元院報名表，請稍候。</p>'; if (foot) foot.hidden = true; $('#result').showModal();
   fetch(ENDPOINT, { method: 'POST', mode: 'cors', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
     .then(r => r.json().catch(() => ({ ok: false, error: '回應格式錯誤' })))
@@ -337,14 +356,25 @@ formNode.onsubmit = e => {
       if (res && res.ok === true && res.id && (!savingEdit || res.updated === true)) {
         previewEntries.set(res.id, { id: res.id, data: { fields: payload.fields } }); showOk(res);
         rememberNames((payload.lamps || []).flatMap(l => (l.people || []).map(p => p.name)));
-        /* 伺服器確認成功後把表單從畫面上收起：Chrome 偵測到「送出成功後表單消失」就會提示儲存姓名／電話／Email */
-        formNode.hidden = true; $('#doneNote').hidden = false;
+        rememberContact(payload.fields);
+        /* 表單保持顯示；在表單上方顯示「報名已送出」。新報名：關閉結果視窗後清空燈別等內容、保留登記人資料，方便再登記一筆 */
+        const dn = $('#doneNote'); dn.hidden = false;
+        dn.innerHTML = `<strong>${savingEdit ? '報名已更新' : '報名已送出'}</strong><p>報名編號：${esc(res.id || '')}。確認信將寄至 ${esc(payload.fields.email)}。${savingEdit ? '' : '如需再登記另一筆，可直接在下方重新選擇燈別與芳名（登記人資料已保留）。'}</p>`;
+        if (!savingEdit) resetAfterSubmit = true;
       } else showFail('寫入報名表失敗：' + ((res && res.error) || '未知錯誤'));
     })
     .catch(() => showFail('無法連線報名後端，請稍後再試或聯繫行政。'))
     .finally(() => { submitting = false; });
 };
 $$('#result .close,#result .closeResult').forEach(b => { b.onclick = () => $('#result').close(); });
+let resetAfterSubmit = false;
+$('#result').addEventListener('close', () => {
+  if (!resetAfterSubmit) return; resetAfterSubmit = false;
+  const keep = { name: $('#name').value, email: $('#email').value, phone: $('#phone').value };
+  formNode.reset(); $$('#form .person-list').forEach(l => { l.innerHTML = ''; }); /* 清掉上一筆的芳名／贊助列 */
+  restoreRegistration({ fields: keep, lamps: [], sponsors: [], agreements: {} });
+  $('#doneNote').scrollIntoView({ block: 'center', behavior: 'smooth' });
+});
 window.addEventListener('beforeunload', e => { if (editToken) { e.preventDefault(); e.returnValue = ''; } });
 
 /* ───── 啟動：先載入雲端設定（草稿且沒有預覽金鑰時顯示「尚未開放」） ───── */
@@ -369,6 +399,7 @@ window.addEventListener('beforeunload', e => { if (editToken) { e.preventDefault
   evGate(''); announceDeadline();
   const params = new URLSearchParams(location.search);
   if (params.has('applied')) { clearQuery('applied'); const p = readProfile(); if (p) fillProfile(p, '已帶入您太歲燈報名的資料（姓名、Email、電話），可自行修改。送出後會建立一筆新的圓燈報名，不會更動太歲燈報名。'); clearProfile(); /* 帶入後立即清除這台裝置暫存的姓名／Email／電話 */ }
+  if (!params.get('edit')) prefillContact(); /* 只補空白欄位；太歲燈帶入的資料優先 */
   if (params.get('edit')) loadEmailRegistration(params.get('edit'));
   if ('IntersectionObserver' in window) { const ob = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); ob.unobserve(en.target); } }), { threshold: .08 }); $$('.reveal').forEach(el => ob.observe(el)); }
   else $$('.reveal').forEach(el => el.classList.add('in'));
