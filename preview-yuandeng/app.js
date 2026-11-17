@@ -225,7 +225,7 @@ function calc() {
 formNode.addEventListener('input', calc);
 
 /* ───── 擷取／還原 ───── */
-const scalarIds = ['name', 'email', 'phone', 'last5', 'remitNote', 'cert', 'note'];
+const scalarIds = ['name', 'email', 'phone', 'last5', 'remitNote', 'cert', 'note', 'thanks'];
 function captureFields() { const f = {}; scalarIds.forEach(id => { const el = $('#' + id); if (el) f[id] = el.value; }); return f; }
 function setPeople(list, rowFn, rows) { list.innerHTML = ''; rows.forEach(vals => { list.insertAdjacentHTML('beforeend', rowFn()); const inputs = list.lastElementChild.querySelectorAll('input'); vals.forEach((v, i) => { if (inputs[i]) inputs[i].value = v ?? ''; }); }); }
 function restoreRegistration(data) {
@@ -323,7 +323,7 @@ function buildPayload(savingEdit) {
     ...(savingEdit ? { mode: 'edit', token: editToken } : {}),
     ...(PREVIEW_TOKEN ? { preview: PREVIEW_TOKEN } : {}),
     event: EVENT, honeypot: ($('#website') && $('#website').value) || '',
-    fields: { name: f.name, email: f.email, phone: f.phone, overseas: false, address: '', last5: f.last5, remitNote: f.remitNote, cert: f.cert, note: f.note },
+    fields: { name: f.name, email: f.email, phone: f.phone, overseas: false, address: '', last5: f.last5, remitNote: f.remitNote, cert: f.cert, note: f.note, thanks: f.thanks || '' },
     lamps: CFG.lamps.map(l => { const sel = isSelected(l.key); return { key: l.key, name: l.name, role: l.role, unitPrice: l.price, selected: sel, people: sel ? namesOf(l.key).map(n => ({ name: n.trim(), calendar: '', birthYear: '', birthMonth: '', birthDay: '', address: '' })) : [] }; }),
     sponsors: CFG.sponsors.map(s => {
       const card = $('#sponsor-' + s.key), sel = !!card && card.querySelector('.sponsor-check').checked;
