@@ -2,7 +2,7 @@
 'use strict';const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],money=n=>'NT$ '+Number(n).toLocaleString('zh-TW'),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DEFAULT_CFG=window.LYYUAN_SIGNUP_DEFAULT_CONFIG;
 let eventStatus='開放',previewMode=false;const EVENT_CLOSED_TEXT={'關閉':'本次報名目前已關閉，暫不接受新的報名。','草稿':'本次活動尚未開放報名。'},EVENT_PREVIEW_TEXT='預覽模式：此活動為草稿，尚未公開，目前無法送出報名。';
-let CFG=DEFAULT_CFG,lampDefs=[],products=[],sponsors=[],registrationType={},lampPurposes={},lampFortune={},hotKeys=new Set(),lastStats=null;let uid=0,currentTotal=0,currentPending=false;
+let CFG=DEFAULT_CFG,lampDefs=[],products=[],sponsors=[],registrationType={},lampPurposes={},lampFortune={},hotKeys=new Set(),lastStats=null;const ZODIAC_NAMES=['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];let uid=0,currentTotal=0,currentPending=false;
 /* 116年度專屬籤詩對外文案：內建與雲端設定一律以本頁核定版本顯示。 */
 const ANNUAL_FORTUNE_COPY={"head_taisui":"慈賜<strong>《歲運呈祥・吉慶天籤》</strong><br>開示116年流年吉凶、運勢起伏與應注意之事，指引趨吉避凶、逢凶化吉，祈願歲序安泰、福運亨通。","head_pozai":"慈賜<strong>《破厄消災・福慧靈籤》</strong><br>開示116年災厄防範、平安護身與修行課題，指引化解障礙、增長福慧，祈願災消障除、身心安泰。","head_guangcai":"慈賜<strong>《財祿亨通・歲運金籤》</strong><br>開示116年財運盛衰、求財契機與事業運程，指引財路宜忌、進退時機，祈願財源廣進、福祿盈門。","co_pozai":"慈賜<strong>《鎮業化煞・安泰聖籤》</strong><br>開示116年企業經營可能面臨的阻礙、風險與應注意之事，指引防範災厄、化解不利、穩固事業根基，祈願營運平安、員工安康、諸事順遂。","co_guangcai":"慈賜<strong>《鴻業昌隆・財祿金籤》</strong><br>開示116年企業財運、營運走勢、商機財路與事業發展，指引經營宜忌、財務進退及拓展契機，祈願生意興隆、財源廣進、鴻業昌盛。"};
 const ANNUAL_FORTUNE_NOTE="<strong>116年度慈賜籤詩</strong>本年度太歲燈、破災降魔燈、廣財運通燈總燈首，以及破災降魔燈、廣財運通燈公司行號燈，分別慈賜專屬年度籤詩，開示116年應留意的運勢、平安、修行與事業方向。";
@@ -33,7 +33,7 @@ const rich=s=>esc(s).replace(/&lt;(\/?)(strong|b)&gt;/g,'<$1$2>').replace(/&lt;b
 const cfgGet=path=>path.split('.').reduce((o,k)=>o==null?o:o[k],CFG);
 window.LYYUAN_SIGNUP_WEBAPP_URL=window.LYYUAN_SIGNUP_WEBAPP_URL||'https://script.google.com/macros/s/AKfycbzVWhkaSoSIsBKTBcYnmbAg9Gbka0aBczkSQeAVsvWlz7a6rqByzwuCVlkykMnmTHRh/exec';
 window.LYYUAN_SIGNUP_EVENT=window.LYYUAN_SIGNUP_EVENT||(()=>{try{const e=new URLSearchParams(location.search).get('event');return e&&/^[a-z0-9][a-z0-9-]{2,60}$/.test(e)?e:''}catch{return''}})()||'lamp-116-dingwei';const icon='<svg viewBox="0 0 40 50" fill="none" aria-hidden="true"><path d="M20 2v5M9 9h22M10 12c-8 10-8 17 0 25h20c8-8 8-15 0-25H10ZM9 40h22M20 40v8M15 43v4M25 43v4" stroke="currentColor" stroke-width="1.1"/><path d="M20 13v23M13 13c-4 10-4 15 0 23M27 13c4 10 4 15 0 23" stroke="currentColor" opacity=".45"/><ellipse cx="20" cy="25" rx="5" ry="8" fill="currentColor" opacity=".18"/></svg>';
-function personHTML(l){const id=++uid,company=l.r==='公司',year=new Date().getFullYear()-1911;return `<div class="person"><div class="person-title">${company?'公司行號':'芳名'}資料</div><button type="button" class="remove">移除此位</button><label for="pn${id}" class="req">${company?'公司名稱':'姓名'}</label><input id="pn${id}" data-person-name required placeholder="${company?'公司行號全名':'請填芳名'}">${company?'':`<label for="cal${id}" class="req">曆別</label><select id="cal${id}" required><option value="">請先選擇國曆或農曆</option><option>國曆</option><option>農曆</option></select><label class="req" for="by${id}">出生年月日（民國）</label><div class="birth"><select id="by${id}" aria-label="民國出生年" required><option value="">民國年</option>${Array.from({length:year},(_,i)=>`<option value="${year-i}">民國 ${year-i} 年</option>`).join('')}</select><input aria-label="出生月" type="number" required min="1" max="12" placeholder="月"><input aria-label="出生日" type="number" required min="1" max="31" placeholder="日"></div>`}<label for="pa${id}" class="req">${company?'公司地址':'現居地址'}</label><input id="pa${id}" required placeholder="請填寫完整地址"></div>`}
+function personHTML(l){const id=++uid,company=l.r==='公司',year=new Date().getFullYear()-1911;return `<div class="person"><div class="person-title">${company?'公司行號':'芳名'}資料</div><button type="button" class="remove">移除此位</button><label for="pn${id}" class="req">${company?'公司名稱':'姓名'}</label><input id="pn${id}" data-person-name required placeholder="${company?'公司行號全名':'請填芳名'}">${company?'':`<label for="cal${id}" class="req">曆別</label><select id="cal${id}" required><option value="">請先選擇國曆或農曆</option><option>國曆</option><option>農曆</option></select><label class="req" for="by${id}">出生年月日（民國）</label><div class="birth"><select id="by${id}" aria-label="民國出生年" required><option value="">民國年</option>${Array.from({length:year},(_,i)=>`<option value="${year-i}">民國 ${year-i} 年</option>`).join('')}</select><input aria-label="出生月" type="number" required min="1" max="12" placeholder="月"><input aria-label="出生日" type="number" required min="1" max="31" placeholder="日"></div>`}<label for="pa${id}" class="req">${company?'公司地址':'現居地址'}</label><input id="pa${id}" required placeholder="請填寫完整地址">${(!company&&l.k==='taisui')?`<label for="pz${id}" class="req">點燈生肖</label><select id="pz${id}" data-zodiac required><option value="">請選擇要點燈的生肖</option>${ZODIAC_NAMES.map(z=>`<option>${z}</option>`).join('')}</select><p class="hint">年度點燈專屬解讀會依這裡選的生肖開通。</p>`:''}</div>`}
 function buildLamps(){
  const c=CFG.copy,order=CFG.roleOrder;
  $$('[role=tabpanel]').forEach(p=>p.innerHTML='');
@@ -230,7 +230,7 @@ function registrationFromApi(data){
   fields:data.fields||{},
   lamps:lampDefs.map(l=>{
    const item=(data.lamps||[]).find(item=>item.key===l.k);
-   return {key:l.k,selected:!!item&&(item.selected??true),people:(item?.people||[]).map(p=>l.r==='公司'?[p.name,p.address]:[p.name,p.calendar,p.birthYear,p.birthMonth,p.birthDay,p.address])};
+   return {key:l.k,selected:!!item&&(item.selected??true),people:(item?.people||[]).map(p=>l.r==='公司'?[p.name,p.address]:[p.name,p.calendar,p.birthYear,p.birthMonth,p.birthDay,p.address,p.zodiac||''])};
   }),
   sponsors:sponsors.map(([key])=>{
    const item=(data.sponsors||[]).find(item=>item.key===key);
@@ -297,7 +297,7 @@ formNode.onsubmit=e=>{
      lamps:regData.lamps.map(item=>({
        key:item.key,name:nameOf(item.key),role:roleOf(item.key),unitPrice:priceOf(item.key),selected:!!item.selected,
        people:(item.people||[]).map(vals=>{
-         if((vals||[]).length>=6)return{name:vals[0],calendar:vals[1],birthYear:vals[2],birthMonth:vals[3],birthDay:vals[4],address:vals[5]};
+         if((vals||[]).length>=6)return{name:vals[0],calendar:vals[1],birthYear:vals[2],birthMonth:vals[3],birthDay:vals[4],address:vals[5],zodiac:vals[6]||''};
          return{name:vals[0]||'',address:vals[1]||'',calendar:'',birthYear:'',birthMonth:'',birthDay:''};
        })
      })),
