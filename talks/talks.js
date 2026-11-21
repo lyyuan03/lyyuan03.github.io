@@ -51,6 +51,11 @@
     if (image) image.addEventListener("error", () => image.remove(), { once: true });
   });
 
+  // 書封圖片若載入失敗，改用備用圖片網址（只換一次）
+  document.querySelectorAll(".talk-reading img[data-alt-src]").forEach((image) => {
+    image.addEventListener("error", () => { image.src = image.dataset.altSrc; }, { once: true });
+  });
+
   window.addEventListener("message", (event) => {
     if (event.origin !== EMBED) return;
     const entry = players.find((item) => item.iframe && item.iframe.contentWindow === event.source);
