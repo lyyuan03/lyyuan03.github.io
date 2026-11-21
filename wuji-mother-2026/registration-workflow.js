@@ -78,7 +78,7 @@
       list.replaceChildren();
       if (saved) {
         saved.rows.forEach(rowData => {
-          list.insertAdjacentHTML('beforeend', personMarkup(false, false, card.dataset.roleKey.endsWith('-deputy')));
+          list.insertAdjacentHTML('beforeend', personMarkup(false, false, card.dataset.roleKey.endsWith('-deputy'), card.dataset.roleKey === 'master'));
           writeRow(list.lastElementChild, rowData);
         });
         $$('[data-qual]', card).forEach(x => { x.checked = saved.qualifications.includes(x.value); });

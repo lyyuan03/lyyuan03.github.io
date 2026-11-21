@@ -31,20 +31,20 @@ for(const lamp of lamps){
  roleDefs.push({key:roleKey(lamp.id,'personal'),name:lamp.name+'・個人燈',role:'個人燈',limit:null,deadline:DEADLINE_MAIN,price:lamp.personal});
 }
 const defByKey=Object.fromEntries(roleDefs.map(d=>[d.key,d]));
-function personMarkup(sponsor=false,variableDonation=false,spiritualInquiry=false){
+function personMarkup(sponsor=false,variableDonation=false,spiritualInquiry=false,familyNames=false){
  const i=++rowId;
  if(sponsor)return '<div class="person-entry"><div class="person-title"><button class="remove-person" type="button">移除此筆</button></div><div class="person-fields"><div class="wide"><label for="person-'+i+'">芳名<span class="req">＊</span></label><input id="person-'+i+'" data-person-name required autocomplete="off" placeholder="請填芳名"></div>'+(variableDonation?'<div class="wide"><label for="amount-'+i+'">隨喜金額（NT$）<span class="req">＊</span></label><input id="amount-'+i+'" data-donation-amount required type="number" min="1" step="1" inputmode="numeric" placeholder="請填金額"></div>':'')+'</div></div>';
  const currentMinguoYear=new Date().getFullYear()-1911;
  const years=Array.from({length:currentMinguoYear},(_,i)=>'<option value="'+(currentMinguoYear-i)+'">民國 '+(currentMinguoYear-i)+' 年</option>').join('');
  const inquiry=spiritualInquiry?'<div class="wide spiritual-question"><label for="inquiry-'+i+'">靈修釋疑</label><p class="spiritual-question-note">敬請留意：每人僅限提出一項靈修疑問。本項諮詢並非通靈問事，敬請勿填寫涉及個人主神、靈脈、元神等相關詢問內容。為利後續釋疑回覆，煩請詳述您的疑問及相關情況；若內容尚有不足之處，將再請您補充說明，感謝您的理解與配合。</p><textarea id="inquiry-'+i+'" data-spiritual-question rows="4" placeholder="如需釋疑，請在此詳述一項靈修疑問"></textarea></div>':'';
- return '<div class="person-entry"><div class="person-title"><b>點燈芳名</b><button class="remove-person" type="button">移除此位</button></div><div class="person-fields"><div><label for="person-'+i+'">姓名<span class="req">＊</span></label><input id="person-'+i+'" data-person-name required autocomplete="off" placeholder="請填芳名"></div><div><label for="cal-'+i+'">曆別<span class="req">＊</span></label><select id="cal-'+i+'" data-calendar required><option value="">請先選擇國曆或農曆</option><option>國曆</option><option>農曆</option></select></div><div class="wide"><label>出生年月日（民國）<span class="req">＊</span></label><div class="birth-row"><select data-birth-year aria-label="民國出生年" required><option value="">民國年</option>'+years+'</select><input data-birth-month aria-label="出生月" inputmode="numeric" required type="number" min="1" max="12" placeholder="月"><input data-birth-day aria-label="出生日" inputmode="numeric" required type="number" min="1" max="31" placeholder="日"></div></div><div class="wide"><label for="addr-'+i+'">現居地址<span class="req">＊</span></label><input id="addr-'+i+'" data-home-address required autocomplete="off" placeholder="請填寫完整地址"></div>'+inquiry+'</div></div>';
+ return '<div class="person-entry"><div class="person-title"><b>點燈芳名</b><button class="remove-person" type="button">移除此位</button></div><div class="person-fields"><div><label for="person-'+i+'">姓名<span class="req">＊</span></label><input id="person-'+i+'" data-person-name required autocomplete="off" placeholder="請填芳名"></div><div><label for="cal-'+i+'">曆別<span class="req">＊</span></label><select id="cal-'+i+'" data-calendar required><option value="">請先選擇國曆或農曆</option><option>國曆</option><option>農曆</option></select></div><div class="wide"><label>出生年月日（民國）<span class="req">＊</span></label><div class="birth-row"><select data-birth-year aria-label="民國出生年" required><option value="">民國年</option>'+years+'</select><input data-birth-month aria-label="出生月" inputmode="numeric" required type="number" min="1" max="12" placeholder="月"><input data-birth-day aria-label="出生日" inputmode="numeric" required type="number" min="1" max="31" placeholder="日"></div></div><div class="wide"><label for="addr-'+i+'">現居地址<span class="req">＊</span></label><input id="addr-'+i+'" data-home-address required autocomplete="off" placeholder="請填寫完整地址"></div>'+inquiry+(familyNames?'<div class="wide family-names"><label for="family-'+i+'">闔家姓名</label><p class="family-names-note">請填寫要一起列入疏文及牌位的闔家成員姓名，多位請以頓號或換行分隔。</p><textarea id="family-'+i+'" data-family-names rows="3" placeholder="例如：王大明、王小華、王美麗"></textarea></div>':'')+'</div></div>';
 }
 function roleMarkup(d){
  const priced=d.price!=null;
  const eligibility=d.key==='master'?'<div class="eligibility"><b>總功德主・115年資格自述</b><p>須於乙巳年（2025年）三場聖誕懺儀中，至少兩場登記燈首以上，且必須包含「無極老母聖誕」。</p><label><input type="checkbox" value="guanyin" data-qual> 2025 觀音菩薩聖誕</label><label><input type="checkbox" value="yaochi" data-qual> 2025 瑤池金母聖誕</label><label><input type="checkbox" value="wuji" data-qual> 2025 無極老母聖誕</label></div>':'';
  const delivery=(d.deliver||d.key==='master')?'<div class="delivery-field"><label>紙本符令與祈請迴向文寄送地址<span class="req">＊</span></label><input data-delivery-address autocomplete="off" placeholder="郵遞區號、縣市、鄉鎮市區、路街門牌"></div>':'';
- const caption=d.limit!=null?'尚可報名 '+d.limit+' 位｜'+(d.deadline===DEADLINE_MASTER?'115/12/03':'115/12/21')+' 23:59 截止':'不限名額｜115/12/21 23:59 截止';
- return '<article class="role-card" data-role-key="'+d.key+'" data-limit="'+(d.limit??'')+'"><label class="role-head"><input type="checkbox" class="role-check"><span><span class="role-name">'+d.name+'</span><span class="role-limit" data-status>'+caption+'</span></span><span class="role-price">'+(priced?fmt(d.price)+'／位':'金額待核定')+'</span></label><div class="role-details" hidden><p class="hint">先勾選，再填寫芳名。可新增多位，受限額項目不得超過剩餘席次。</p>'+eligibility+'<div class="people-list"></div><button class="add-person" type="button">＋ 新增芳名</button>'+delivery+'</div></article>';
+ const caption=d.limit!=null?'尚可報名 '+d.limit+' 位｜'+(d.deadline===DEADLINE_MASTER?'115/12/03':'115/12/21')+' 23:59 截止':'';
+ return '<article class="role-card" data-role-key="'+d.key+'" data-limit="'+(d.limit??'')+'"><label class="role-head"><input type="checkbox" class="role-check"><span><span class="role-name">'+d.name+'</span><span class="role-limit" data-status>'+caption+'</span></span><span class="role-price">'+(priced?fmt(d.price)+'／位':'金額待核定')+'</span></label><div class="role-details" hidden>'+eligibility+'<div class="people-list"></div><button class="add-person" type="button">＋ 新增芳名</button>'+delivery+'</div></article>';
 }
 $('#master-choice').innerHTML=roleMarkup(roleDefs[0]);
 $('#lamp-tabs').innerHTML=lamps.map((l,i)=>'<button type="button" role="tab" data-lamp-tab="'+l.id+'" id="tab-'+l.id+'" aria-controls="panel-'+l.id+'" aria-selected="'+(i===0)+'"><span class="dot" style="background:'+l.color+'"></span>'+l.name+'</button>').join('');
@@ -62,7 +62,7 @@ function refreshAvailability(){
   if(closed&&check.checked){check.checked=false;$('.role-details',card).hidden=true;card.classList.remove('selected');}
   check.disabled=closed;card.classList.toggle('is-closed',closed);
   const status=$('[data-status]',card);
-  status.textContent=(now>=d.deadline?'報名已截止':d.limit==null?'不限名額｜115/12/21 23:59 截止':'尚可報名 '+maxAvailable(d)+' 位｜'+(d.deadline===DEADLINE_MASTER?'115/12/03':'115/12/21')+' 23:59 截止');
+  status.textContent=(now>=d.deadline?'報名已截止':d.limit==null?'':'尚可報名 '+maxAvailable(d)+' 位｜'+(d.deadline===DEADLINE_MASTER?'115/12/03':'115/12/21')+' 23:59 截止');
   const add=$('.add-person',card);if(add)add.disabled=d.limit!=null&&count>=maxAvailable(d);
  });
  if(now>=DEADLINE_MAIN){$$('.sponsor-check').forEach(c=>{c.disabled=true;c.checked=false;const box=c.closest('.sponsor-card');$('.sponsor-people',box).hidden=true});}
@@ -78,7 +78,7 @@ document.addEventListener('change',e=>{
  if(t.matches('.role-check,.sponsor-check')){
   const card=t.closest('.role-card,.sponsor-card');const detail=$('.role-details,.sponsor-people',card);
   detail.hidden=!t.checked;card.classList.toggle('selected',t.checked);
-  if(t.checked&&!$('.person-entry',card))$('.people-list',card).insertAdjacentHTML('beforeend',personMarkup(card.classList.contains('sponsor-card'),card.dataset.price==='variable',card.dataset.roleKey?.endsWith('-deputy')));
+  if(t.checked&&!$('.person-entry',card))$('.people-list',card).insertAdjacentHTML('beforeend',personMarkup(card.classList.contains('sponsor-card'),card.dataset.price==='variable',card.dataset.roleKey?.endsWith('-deputy'),card.dataset.roleKey==='master'));
   calculate();
  }else if(t.matches('[data-used]'))refreshAvailability();
 });
@@ -88,7 +88,7 @@ document.addEventListener('click',e=>{
  if(add){
   const card=add.closest('.role-card,.sponsor-card');const d=card.dataset.roleKey?defByKey[card.dataset.roleKey]:null;
   if(d&&$$('.person-entry',card).length>=maxAvailable(d))return;
-  $('.people-list',card).insertAdjacentHTML('beforeend',personMarkup(card.classList.contains('sponsor-card'),card.dataset.price==='variable',card.dataset.roleKey?.endsWith('-deputy')));
+  $('.people-list',card).insertAdjacentHTML('beforeend',personMarkup(card.classList.contains('sponsor-card'),card.dataset.price==='variable',card.dataset.roleKey?.endsWith('-deputy'),card.dataset.roleKey==='master'));
   refreshAvailability();return;
  }
  const remove=e.target.closest('.remove-person');
