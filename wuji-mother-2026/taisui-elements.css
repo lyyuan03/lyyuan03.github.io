@@ -1,0 +1,70 @@
+/* 同步靈元院丁未年點燈頁的翻頁倒數與限定選物浮標；只作用於新增元件。 */
+.annual-deadline-wide{margin-block:38px 34px}
+.annual-deadline{position:relative;isolation:isolate;overflow:hidden;min-height:176px;display:grid;grid-template-columns:minmax(180px,.85fr) minmax(230px,1fr) minmax(290px,1.32fr);gap:20px;align-items:center;padding:25px 28px;border:1px solid #a58254;border-radius:16px;background:linear-gradient(118deg,#f6f2e9 0%,#e8e9dd 57%,#d8ddc5 100%);box-shadow:0 12px 26px #594f471a;color:#594f47}
+.annual-deadline::before{content:"";position:absolute;inset:7px;border:1px solid #a5825440;border-radius:11px;pointer-events:none}
+.annual-deadline::after{content:"";position:absolute;right:-48px;top:-80px;width:230px;height:230px;border:1px solid #6063301e;border-radius:50%;box-shadow:0 0 0 22px #60633009,0 0 0 44px #60633008;pointer-events:none}
+.annual-deadline__ornament{position:absolute;right:19px;top:13px;color:#a58254;font-size:20px;opacity:.7}
+.annual-deadline__heading,.annual-deadline__count,.annual-deadline__dates{position:relative;z-index:1;min-width:0}
+.annual-deadline__heading{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:9px}
+.annual-deadline__eyebrow{margin:0;font:500 12px/1.4 Georgia,serif;letter-spacing:.23em;color:#87683f}
+.annual-deadline__heading h2{margin:0;color:#594f47;font:500 clamp(22px,2.25vw,29px)/1.45 var(--serif);letter-spacing:.07em}
+.annual-deadline__count{display:flex;align-items:center;justify-content:center;gap:12px;min-height:98px}
+.annual-deadline__word{color:#594f47;font:500 16px/1.4 var(--serif);white-space:nowrap}
+.annual-flip{display:inline-flex;gap:5px;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.annual-flip__tile{position:relative;display:inline-block;width:54px;height:80px;flex:0 0 54px;border-radius:9px;perspective:480px;filter:drop-shadow(0 5px 5px #594f4730);isolation:isolate}
+.annual-flip__top,.annual-flip__bottom{position:absolute;left:0;right:0;height:50%;overflow:hidden;display:block}
+.annual-flip__top{top:0;border-radius:9px 9px 0 0;background:linear-gradient(#fff,#fff8f4)}
+.annual-flip__bottom{bottom:0;border-radius:0 0 9px 9px;background:linear-gradient(#f5ece5,#fffaf8)}
+.annual-flip__number{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding-bottom:5px;font:600 62px/1 Georgia,'Times New Roman',serif;letter-spacing:-.04em;color:#b52535;font-variant-numeric:lining-nums tabular-nums}
+.annual-flip__tile::after{content:"";position:absolute;top:50%;left:0;right:0;z-index:3;height:2px;background:#9f8e8073;transform:translateY(-50%)}
+.annual-flip__tile.flipping .annual-flip__top{animation:annualTopFlapFixed .28s ease-in-out;transform-origin:center bottom}
+.annual-flip__tile.flipping .annual-flip__bottom{animation:annualBottomFlapFixed .28s ease-in-out;transform-origin:center top}
+@keyframes annualTopFlapFixed{0%,100%{transform:rotateX(0)}50%{transform:rotateX(-30deg)}}
+@keyframes annualBottomFlapFixed{0%,100%{transform:rotateX(0)}50%{transform:rotateX(25deg)}}
+.annual-deadline__dates{display:grid;gap:10px;border-left:1px solid #a5825477;padding-left:19px}
+.annual-deadline__dates p{display:flex;gap:8px;align-items:flex-start;margin:0;color:#594f47;font:13px/1.7 var(--sans)}
+.annual-deadline__dates p>span:first-child{color:#a58254;font-size:17px;line-height:1.5}
+.annual-deadline__dates b{font-weight:700}
+.annual-deadline__closed{position:relative;z-index:1;grid-column:2;color:#9d2933;text-align:center;font:600 18px/1.6 var(--serif)}
+.annual-deadline__closed[hidden]{display:none}
+.annual-deadline[aria-disabled="true"] .annual-deadline__count{display:none}
+#days-left[hidden],#countdown-ticks[hidden]{display:none}
+
+/* 官網丁未年限定商品浮標的造型、閃光與手機收合行為。 */
+.exclusive-float{position:fixed;right:18px;top:48%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:184px;min-height:136px;padding:19px 12px 17px;isolation:isolate;overflow:hidden;border:2px solid #f5d791;border-radius:19px;background:linear-gradient(142deg,#9b632d 0%,#49371e 40%,#172d28 100%);color:#fff5d9;text-align:center;box-shadow:0 0 0 4px #c797432e,0 15px 35px #1f190d75,inset 0 1px #fff8c7b3;animation:exclusiveAttentionFloat 4.8s ease-in-out infinite,exclusiveAttentionGlow 3.2s ease-in-out infinite;will-change:transform;font-family:var(--serif);cursor:pointer}
+.exclusive-float::before{content:"";position:absolute;inset:-35% -60%;z-index:-1;pointer-events:none;background:linear-gradient(110deg,transparent 37%,#fff2bf54 47%,#ffffffa6 51%,transparent 61%);transform:translateX(-120%) rotate(-8deg);animation:exclusiveAttentionShine 5.5s ease-in-out infinite}
+.exclusive-float::after{content:"限定選物";position:absolute;top:7px;right:-24px;width:96px;transform:rotate(38deg);background:#b52d34;color:#fff9e5;font:700 10px/1.55 var(--sans);letter-spacing:.08em;box-shadow:0 2px 7px #0005;pointer-events:none}
+.exclusive-float__eyebrow{font-size:13px;font-weight:700;color:#fff0bd;text-shadow:0 1px 4px #000a}
+.exclusive-float__title{font-size:19px;font-weight:800;color:#fff8e8;text-shadow:0 2px 8px #000b;letter-spacing:.08em;white-space:nowrap}
+.exclusive-float__action{display:inline-block;margin-top:3px;padding:5px 13px;border:1px solid #ffedb3a6;border-radius:999px;color:#3c2815;background:linear-gradient(#f7e3b8,#dcb773);box-shadow:0 3px 9px #0004;font-size:12px;font-weight:700}
+.exclusive-float:hover{animation-play-state:paused;transform:translateY(-50%) scale(1.075);box-shadow:0 0 0 6px #e2b86742,0 22px 45px #1f190d8c,0 0 24px #f1bf5c80}
+.exclusive-float:focus-visible{outline:3px solid #ba8728;outline-offset:3px}
+@keyframes exclusiveAttentionFloat{0%,100%{transform:translateY(-50%)}50%{transform:translateY(calc(-50% - 7px))}}
+@keyframes exclusiveAttentionGlow{0%,100%{box-shadow:0 0 0 3px #c7974329,0 15px 35px #1f190d6e,0 0 4px #ebbc5d26}50%{box-shadow:0 0 0 6px #e2b8673d,0 17px 39px #1f190d80,0 0 23px #f1bf5c6b}}
+@keyframes exclusiveAttentionShine{0%,22%{transform:translateX(-120%) rotate(-8deg)}38%,100%{transform:translateX(120%) rotate(-8deg)}}
+.exclusive-float__compact-icon,.exclusive-float-dismiss{display:none}
+.exclusive-float[hidden],.exclusive-float-dismiss[hidden]{display:none!important}
+.exclusive-dialog{position:fixed;inset:0;margin:auto;width:min(600px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);padding:0;border:1px solid #d1b07a;border-radius:16px;background:#f8f1e4;color:#594f47;box-shadow:0 25px 70px #1c160c99;overflow:hidden}
+.exclusive-dialog::backdrop{background:#191711b8;backdrop-filter:blur(3px)}
+.exclusive-dialog__body{display:flex;flex-direction:column;max-height:calc(100dvh - 32px);min-height:0}
+.exclusive-dialog__header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;font:600 14px/1.6 var(--serif);color:#76552f}
+.exclusive-dialog__close{border:1px solid #c8b18a;background:#fffaf0;border-radius:50%;width:34px;height:34px;flex:0 0 34px;cursor:pointer;color:#694e2e;font-size:17px}
+.exclusive-dialog__art{min-height:0;flex:1;overflow:auto;text-align:center;background:#e8dfcf}
+.exclusive-dialog__art img{display:block;width:100%;height:auto;object-fit:contain;margin:0 auto}
+.exclusive-dialog__footer{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px 14px;background:#f8f1e4}
+.exclusive-dialog__shop{display:block;width:100%;border:1px solid #a78048;border-radius:999px;padding:12px 16px;background:linear-gradient(110deg,#dec18b,#af874f);color:#33291e;text-align:center;text-decoration:none;font:700 15px/1.5 var(--serif);cursor:pointer;box-shadow:0 3px 10px #594f472a}
+.exclusive-dialog__shop:hover{filter:brightness(1.05)}
+.exclusive-dialog__footer span{font-size:11px;color:#806c51}
+
+@media(max-width:1000px){.annual-deadline{gap:13px;grid-template-columns:minmax(135px,.7fr) minmax(190px,.85fr) minmax(265px,1.25fr);padding:20px}.annual-deadline__dates{padding-left:12px}.annual-flip__tile{width:48px;height:72px;flex-basis:48px}.annual-flip__number{font-size:55px}}
+@media(max-width:740px){.annual-deadline-wide{margin-block:20px 29px}.annual-deadline{display:flex;flex-direction:column;gap:14px;padding:20px}.annual-deadline__heading{width:100%;align-items:center;text-align:center;gap:6px}.annual-deadline__heading h2{font-size:24px}.annual-deadline__count{width:100%;min-height:72px}.annual-deadline__dates{width:100%;border-left:0;border-top:1px solid #a5825477;padding:12px 0 0;gap:9px}.annual-deadline__dates p{font-size:13px}.annual-deadline__closed{width:100%}
+ .exclusive-float{right:12px;top:auto;bottom:84px;transform:none;width:142px;min-height:94px;padding:13px 8px 10px;gap:4px;border-radius:15px;z-index:70;animation:exclusiveAttentionFloatMobile 4.8s ease-in-out infinite,exclusiveAttentionGlow 3.2s ease-in-out infinite}
+ .exclusive-float__eyebrow{font-size:10px}.exclusive-float__title{font-size:15px}.exclusive-float__action{font-size:10px;padding:3px 10px}.exclusive-float::after{top:5px;right:-28px;font-size:8px}.exclusive-float:hover{transform:translateY(-4px) scale(1.04)}
+ .exclusive-float-dismiss:not([hidden]){display:flex;align-items:center;justify-content:center;position:fixed;right:6px;bottom:167px;width:29px;height:29px;padding:0;z-index:72;border:1px solid #e7cca2;border-radius:50%;background:#f9f1e4;color:#69462b;font:700 22px/1 Arial,sans-serif;box-shadow:0 2px 8px #35271755;cursor:pointer}
+ .exclusive-float--collapsed,.exclusive-float--collapsed:hover{top:50%!important;bottom:auto!important;right:0!important;width:46px!important;height:46px!important;min-height:46px!important;padding:0!important;gap:0!important;overflow:hidden!important;border-radius:50% 0 0 50%!important;border:2px solid #e9c678!important;border-right:0!important;background:linear-gradient(145deg,#a87738,#584023 65%,#29362c)!important;box-shadow:0 3px 11px #211b1850!important;animation:none!important;transform:translateY(-50%)!important;transition:none!important;will-change:auto!important}
+ .exclusive-float--collapsed::before,.exclusive-float--collapsed::after{display:none!important;content:none!important;animation:none!important}
+ .exclusive-float--collapsed .exclusive-float__eyebrow,.exclusive-float--collapsed .exclusive-float__title,.exclusive-float--collapsed .exclusive-float__action{display:none!important}
+ .exclusive-float--collapsed .exclusive-float__compact-icon{display:block!important;color:#fff0bc;font:700 26px/1 var(--serif)}
+}
+@keyframes exclusiveAttentionFloatMobile{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media(prefers-reduced-motion:reduce){.annual-flip__tile.flipping .annual-flip__top,.annual-flip__tile.flipping .annual-flip__bottom{animation:none}.exclusive-float,.exclusive-float::before{animation:none!important;will-change:auto}}
