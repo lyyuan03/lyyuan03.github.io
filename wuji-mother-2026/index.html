@@ -81,8 +81,6 @@
     </ul>
   </div>
 </nav>
-<div class="draft-ribbon">私人審核草稿｜正式報名、名額查詢及 Google 寫入尚未開放</div>
-<div class="preview-toolbar"><div class="wrap toolbar-inner"><span>靈元院・無極老母聖誕</span><div class="view-toggle" aria-label="切換展示畫面"><button type="button" data-view="front" class="active" aria-pressed="true">報名前台</button><button type="button" data-view="admin" aria-pressed="false">行政後台</button></div></div></div>
 <div id="front-view">
 <header class="banner-hero banner-hero--official" id="top">
  <img id="hero-banner" src="assets/wuji-ceremony-banner-115.webp" alt="靈元院丙午年無極老母至尊聖誕福壽康寧祝壽懺儀官方 Banner，115年12月23日舉行">
@@ -97,7 +95,7 @@
   <div class="annual-deadline__count" id="deadlineCountdown" aria-live="off"><span class="annual-deadline__word">還有</span><span class="annual-flip" id="annualFlipDigits" aria-label="報名剩餘天數"><span class="annual-flip__tile"><span class="annual-flip__top"></span><span class="annual-flip__bottom"></span><span class="annual-flip__number">—</span></span></span><span class="annual-deadline__word">天截止</span></div>
   <div class="annual-deadline__closed" id="annualDeadlineClosed" role="status" hidden>無極老母聖誕點燈報名已截止</div>
   <div class="annual-deadline__dates">
-   <p><span aria-hidden="true">✧</span><span><b>115/12/3日（四）23:59</b><br>總功德主、燈首報名截止</span></p>
+   <p><span aria-hidden="true">✧</span><span><b>115/12/3（四）23:59</b><br>總功德主、燈首報名截止</span></p>
    <p><span aria-hidden="true">✧</span><span><b>115/12/21（一）23:59</b><br>本次懺儀報名截止</span></p>
    <p><span aria-hidden="true">✧</span><span><b>115/12/23（三）</b><br>舉行【無極老母聖誕祝壽懺儀】</span></p>
   </div>
@@ -133,31 +131,10 @@
 <div id="admin-view" hidden><div class="wrap"><div class="admin-top"><div><span class="eyebrow">ADMINISTRATION</span><h1>無極老母聖誕・點燈登記管理後台</h1><p>依靈元院太歲燈報名後台欄位設置；目前為私人草稿展示，未連接真實報名資料。</p></div><span class="admin-badge">草稿・未開放收單</span></div>
  <div class="admin-metrics"><article><small>登記筆數（本次模擬）</small><b id="admin-count">0</b><span>重新整理後清除</span></article><article><small>待確認金額</small><b id="admin-pending-count">0</b><span>模擬待行政核定</span></article><article><small>已核帳</small><b id="admin-paid-count">0</b><span>正式核帳尚未串接</span></article></div>
  <div class="admin-tabs" role="tablist" aria-label="後台分頁"><button type="button" data-admin="regs" class="active">報名資料</button><button type="button" data-admin="settings">燈別與金額</button><button type="button" data-admin="texts">網頁內容</button><button type="button" data-admin="system">系統設定</button></div>
- <div class="admin-pane" id="admin-regs"><div class="admin-card"><h2>報名資料管理</h2><p>可依登記編號、姓名或燈別搜尋及篩選。本頁僅顯示本次開啟期間的模擬資料，沒有讀取 Google 正式名冊。</p><div class="admin-filters"><input id="admin-search" aria-label="搜尋登記資料" placeholder="搜尋登記編號、姓名或燈別"><select id="admin-status-filter" aria-label="篩選登記狀態"><option value="">全部狀態</option><option>待確認</option><option>已回報匯款</option><option>已核帳</option></select></div><div class="table-scroll"><table><thead><tr><th>登記編號</th><th>登記人</th><th>燈別</th><th>金額</th><th>狀態</th><th>操作</th></tr></thead><tbody id="admin-record-rows"><tr><td colspan="6" class="empty">目前沒有模擬登記資料</td></tr></tbody></table></div></div></div>
- <div class="admin-pane" id="admin-settings" hidden><div class="admin-card"><h2>燈別與金額設定</h2><p>與太歲燈相同，可在此試算各燈別功德金；未核定欄位保留空白。設定僅套用至本次瀏覽，不影響正式報名。</p><div id="price-settings" class="admin-price-grid"></div><button type="button" class="btn gold" id="apply-prices">套用至本頁</button><p class="feedback" id="price-settings-message" role="status" hidden></p></div><div class="admin-card"><h2>名額與報名截止</h2><p>總功德主限 3 位、各燈首限 2 位，115/12/03 23:59 截止；副燈首各限 3 位、個人燈不限名額，115/12/21 23:59 截止，額滿或期限先到即停止。下方僅模擬已使用名額。</p><div id="capacity-settings"></div></div></div>
- <div class="admin-pane" id="admin-texts" hidden><div class="admin-card"><h2>網頁內容編輯</h2><p>可在本頁暫時調整法會說明與結緣事項。Banner 下方的重複標題文字已依需求移除。重新整理後還原。</p><div class="admin-text-fields"><label for="edit-event-info">本次法會護持功德項目</label><textarea id="edit-event-info" rows="3">本次無極老母聖誕法會的護持功德、登記須知與點燈說明。</textarea><label for="edit-benefits">總功德主・燈首・副燈首專屬辦理事項</label><textarea id="edit-benefits" rows="6">．本次懺儀，無極老母特為登記燈首以上之信眾，於聖誕當日(12/22子時至12/23子時)期間在家祝壽修持靈動，特降結緣〈祝壽祈請符令〉及〈祝壽迴向祈請文〉紙本一份。符令與祈請文預計於12/4寄出。
-．總功德主、燈首及副燈首護持功德金，請洽本院行政團隊Telegram。</textarea></div><button type="button" class="btn gold" id="apply-page-text">套用至本頁</button><p class="feedback" id="page-text-message" role="status" hidden></p></div><div class="admin-card"><h2>本次法會 Banner</h2><p>已使用本次法會正式 Banner。選取新圖可即時預覽，重新整理後還原。</p><label for="banner-upload">選擇 Banner 圖片</label><input type="file" id="banner-upload" accept="image/png,image/jpeg,image/webp"><p class="small-notice">官方 Banner 與圖文說明的原始圖片均保留在網站內。</p></div></div>
- <div class="admin-pane" id="admin-system" hidden><div class="admin-card"><h2>系統串接狀態</h2><p>欄位規劃與太歲燈相同；本次無極老母私人草稿尚未對接專屬 Apps Script，避免誤寫入正式名冊。</p><div class="table-scroll"><table><tbody><tr><th>Apps Script 報名寫入</th><td>尚未開放（私人草稿）</td></tr><tr><th>Google 管理者登入</th><td>尚未連接</td></tr><tr><th>Email 驗證碼與確認信修改</th><td>尚未連接</td></tr><tr><th>雲端資料備份與版本紀錄</th><td>尚未建立</td></tr></tbody></table></div><p id="sheet-link-holder">Google 報表位置待建立</p></div><div class="admin-card"><h2>Google 報名表欄位對照</h2><div class="table-scroll"><table><thead><tr><th>欄位群組</th><th>需要同步的欄位</th></tr></thead><tbody><tr><td>登記人</td><td>登記編號、姓名、Gmail、電話／Telegram</td></tr><tr><td>總功德主</td><td>芳名、國曆／農曆、民國出生年月日、現居地址、2025年資格自述、符令寄送地址、名額</td></tr><tr><td>五大因緣燈</td><td>五大燈別，各燈首／副燈首／個人燈芳名、出生資料、現居地址、副燈首靈修釋疑、符令寄送地址、名額</td></tr><tr><td>建院隨喜</td><td>各項贊助芳名、固定功德金／隨喜金額、筆數</td></tr><tr><td>匯款與審核</td><td>可計算總額、待核定金額、匯款後五碼、備註附言、感謝狀、備註、審核狀態、修改時間、報名注意事項同意</td></tr></tbody></table></div></div></div>
 </div></div>
-<dialog class="registration-dialog" id="registration-result-dialog" aria-label="草稿登記結果"><button type="button" class="dialog-close" data-close-dialog="registration-result-dialog" aria-label="關閉">×</button><span class="eyebrow">SIGNUP PREVIEW</span><h2>模擬登記完成</h2><div id="registration-result-content"></div><p>此編號僅供本次頁面操作示範，沒有建立正式報名、寄信或保留名額。</p><button type="button" class="btn neutral" data-close-dialog="registration-result-dialog">返回檢視</button></dialog>
-<dialog class="registration-dialog" id="session-records-dialog" aria-label="查詢與修改報名"><button type="button" class="dialog-close" data-close-dialog="session-records-dialog" aria-label="關閉">×</button><span class="eyebrow">MY REGISTRATIONS</span><h2>查詢／修改我的報名</h2><p>正式修改須使用 Gmail 確認信中的專屬連結。以下僅是本次瀏覽的模擬紀錄，重新整理後清除。</p><div id="session-record-list"></div><button type="button" class="btn neutral" data-close-dialog="session-records-dialog">關閉</button></dialog>
-<button type="button" class="exclusive-float" id="exclusiveFloat" aria-haspopup="dialog" aria-controls="exclusivePosterDialog" aria-label="查看116年丁未年限定開運結緣選物">
- <span class="exclusive-float__eyebrow">116 丁未年限定</span>
- <span class="exclusive-float__title">開運結緣選物</span>
- <span class="exclusive-float__action">點我探索 ↗</span>
- <span class="exclusive-float__compact-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13"/><path d="M12 8H8.5a2.5 2.5 0 1 1 2.45-3C11.55 6.37 12 8 12 8Zm0 0h3.5a2.5 2.5 0 1 0-2.45-3C12.45 6.37 12 8 12 8Z"/></svg></span>
-</button>
-<button type="button" class="exclusive-float-dismiss" id="exclusiveFloatDismiss" aria-label="收合選物廣告" title="收合選物廣告">×</button>
-<dialog class="exclusive-dialog" id="exclusivePosterDialog" aria-label="116年丁未年限定商品海報">
- <div class="exclusive-dialog__body">
-  <div class="exclusive-dialog__header"><span>靈元院｜116年丁未年限定選物</span><button type="button" class="exclusive-dialog__close" id="exclusivePosterClose" aria-label="關閉商品海報">✕</button></div>
-  <div class="exclusive-dialog__art"><img src="https://d2ol7oe51mr4n9.cloudfront.net/user_3CC8OMVTj8bkUz71eKrO5BtBL9Y/57c87714-0da6-4b3a-beb1-df4840e03ae6.png" alt="靈元院116年丁未年限定商品：廣財運通香、鎮煞護安香粉與元神光彩御守" loading="lazy" decoding="async"></div>
-  <div class="exclusive-dialog__footer"><a class="exclusive-dialog__shop" href="https://lyyuan.tw/preview-vokdayja/#items" target="_blank" rel="noopener noreferrer">前往選購香品・御守</a><span>前往靈元院丁未年點燈頁的請購專區</span></div>
- </div>
-</dialog>
-<footer id="site-canonical-footer">
-  <div class="site-footer-container">
-    <div class="site-footer-inner">
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="site-footer-brand">
       <img class="site-footer-brand-mark" src="/assets/footer-logo-gold.svg?v=20260721-1" alt="靈元院" width="128" height="128">
       <div class="site-footer-links">
         <a href="https://www.facebook.com/share/18zfvhPkBF/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12.5" stroke="currentColor" stroke-width="1.2"/><path d="M15.5 9h-1.8c-.6 0-1 .4-1 1v1.5H11v2h1.7V19h2.2v-5.5h1.6l.3-2h-1.9V10.2c0-.3.1-.4.5-.4H16.5V9z" fill="currentColor"/></svg></a>
@@ -175,4 +152,5 @@
 <script src="registration-workflow.js" defer></script>
 <script src="taisui-elements.js" defer></script>
 <script src="cis-motion.js" defer></script>
-</body></html>
+</body>
+</html>
