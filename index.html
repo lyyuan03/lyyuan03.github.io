@@ -23,6 +23,31 @@
 @media(max-width:560px){.footer-brand-mark{width:112px;max-width:38vw}}
 </style>
 
+<style id="home-talks-style">
+.home-talks{position:relative;overflow:hidden;padding:84px 24px;background:linear-gradient(160deg,#0a100a 0%,#121a10 60%,#1a160e 100%);border-top:1px solid rgba(165,130,84,.2);border-bottom:1px solid rgba(165,130,84,.18);color:#f5f0e8}
+.home-talks::before{content:"";position:absolute;inset:-30%;background:radial-gradient(circle at 85% 20%,rgba(165,130,84,.14),transparent 30%);pointer-events:none}
+.home-talks-inner{position:relative;z-index:1;max-width:1080px;margin:0 auto}
+.home-talks-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;margin-bottom:36px}
+.home-talks-kicker{display:block;margin-bottom:12px;color:#c8aa7b;font-family:var(--en);font-size:12px;letter-spacing:.28em;text-transform:uppercase}
+.home-talks h2{margin:0;color:#efd29d;font-family:var(--serif);font-size:clamp(30px,4vw,44px);font-weight:400;line-height:1.5;letter-spacing:.08em}
+.home-talks-head p{max-width:560px;margin:10px 0 0;color:rgba(245,240,232,.68);font-size:15px;line-height:1.9}
+.home-talks-cta{display:inline-flex;align-items:center;gap:12px;padding:10px 0;color:#d5b67f;font-size:13px;letter-spacing:.13em;border-bottom:1px solid rgba(200,170,123,.5);transition:gap .22s,color .22s}
+.home-talks-cta:hover{gap:18px;color:#f0d6a6}
+.home-talks-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.home-talk{display:block;color:inherit;text-decoration:none}
+.home-talk-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;background:#050805;border:1px solid rgba(200,170,123,.32);transition:border-color .3s}
+.home-talk-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.9) brightness(.82);transition:transform .5s ease,filter .35s}
+.home-talk-thumb:after{content:"";position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border:1px solid rgba(217,183,119,.85);border-radius:50%;background:rgba(9,13,8,.6)}
+.home-talk-thumb:before{content:"";position:absolute;z-index:1;left:50%;top:50%;margin:-9px 0 0 -5px;border-left:15px solid #efd29d;border-top:9px solid transparent;border-bottom:9px solid transparent}
+.home-talk:hover .home-talk-thumb{border-color:rgba(217,183,119,.7)}
+.home-talk:hover .home-talk-thumb img{transform:scale(1.04);filter:saturate(.95) brightness(.92)}
+.home-talk small{display:block;margin:16px 0 6px;color:#c8aa7b;font-size:12px;letter-spacing:.14em}
+.home-talk h3{margin:0;color:#efd29d;font-family:var(--serif);font-size:19px;font-weight:400;line-height:1.65;letter-spacing:.05em}
+.home-talk span{display:block;margin-top:8px;color:rgba(245,240,232,.54);font-size:13px}
+.home-talk:focus-visible,.home-talks-cta:focus-visible{outline:3px solid #d9b777;outline-offset:4px}
+@media(max-width:860px){.home-talks{padding:64px 20px}.home-talks-grid{grid-template-columns:1fr;gap:34px}}
+@media(prefers-reduced-motion:reduce){.home-talk-thumb img,.home-talks-cta{transition:none}.home-talk:hover .home-talk-thumb img{transform:none}}
+</style>
 <style id="design-dna-v1">
 :root{
   --ci-deep-brown:#594F47;
@@ -418,6 +443,38 @@ section{position:relative}
       <a class="featured-card" data-reveal data-reveal-delay="2" href="articles.html?id=market-crash-money-self-control">
         <img src="assets/articles/thumbnails/market-crash.jpg" alt="" loading="lazy">
         <div class="featured-copy"><small>人・俗世</small><h3>當市場暴跌，你失去的是錢，還是主導權？</h3><p>市場放大的不只是資金，也會放大尚未被處理的焦慮與欲望。</p><span>開始閱讀 →</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+<section class="home-talks" aria-labelledby="home-talks-title">
+  <div class="home-talks-inner" data-reveal>
+    <div class="home-talks-head">
+      <div>
+        <span class="home-talks-kicker">Talks · 精選影音</span>
+        <h2 id="home-talks-title">宇色談靈修</h2>
+        <p>元神・通靈・民間信仰・修行實務。從媒體專訪開始，認識宇色怎麼談靈修。</p>
+      </div>
+      <a class="home-talks-cta" href="/talks/">前往影音專頁 <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="home-talks-grid">
+      <a class="home-talk" href="/talks/#v-vqLk6wf0sro">
+        <div class="home-talk-thumb"><img src="https://i.ytimg.com/vi/vqLk6wf0sro/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>
+        <small>媒體專訪</small>
+        <h3>靈動、元神與起靈：宇色談卡神與陰陽眼的辛苦</h3>
+        <span>T爆大事件</span>
+      </a>
+      <a class="home-talk" href="/talks/#v-MkAkiMqJFlI">
+        <div class="home-talk-thumb"><img src="https://i.ytimg.com/vi/MkAkiMqJFlI/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>
+        <small>元神與啟靈</small>
+        <h3>元神甦醒有哪些特徵？</h3>
+        <span>宇色心養生</span>
+      </a>
+      <a class="home-talk" href="/talks/#v-k990W-0OG_A">
+        <div class="home-talk-thumb"><img src="https://i.ytimg.com/vi/k990W-0OG_A/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>
+        <small>信仰與宗教文化</small>
+        <h3>臺灣人為什麼這麼愛跑靈山？靈修文化七十年</h3>
+        <span>宇色心養生</span>
       </a>
     </div>
   </div>

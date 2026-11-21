@@ -47,6 +47,21 @@
       else nav.querySelector(".global-nav-links")?.appendChild(item);
     }
 
+    // 「宇色談靈修」影音專頁：放在「影音・社群」選單最上方，全站共用此腳本補入。
+    const mediaMenu = nav.querySelector("#global-nav-media");
+    if (mediaMenu && !mediaMenu.querySelector("[data-talks-link]")) {
+      const label = document.createElement("li");
+      label.className = "global-nav-group";
+      label.textContent = "站內影音專頁";
+      const talksItem = document.createElement("li");
+      talksItem.innerHTML = '<a href="/talks/" data-talks-link>宇色談靈修｜精選影音</a>';
+      mediaMenu.prepend(label, talksItem);
+      if (currentPath === "/talks/" || currentPath === "/talks") {
+        talksItem.querySelector("a").setAttribute("aria-current", "page");
+        mediaMenu.closest(".global-nav-item")?.querySelector(":scope > .global-nav-trigger")?.classList.add("is-active");
+      }
+    }
+
     const activityMenu = nav.querySelector("#global-nav-activity");
     const annualLink = Array.from(activityMenu?.querySelectorAll("a") || [])
       .find((link) => normalizedPath(new URL(link.href, window.location.origin).pathname) === "/niandian.html");
