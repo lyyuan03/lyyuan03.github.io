@@ -57,18 +57,19 @@ function setEditMode(on,counts){editMode=Boolean(on);ownCounts=on?Object.assign(
 function usedSeats(key){return Math.max(0,(liveUsed[key]||0)-(ownCounts[key]||0));}
 function maxAvailable(d){return d.limit==null?Infinity:Math.max(0,d.limit-usedSeats(d.key));}
 function refreshAvailability(){
- const now=Date.now();
+ const now=Date.now(),liveClosed=window.WujiLiveClosed===true;
  $$('.role-card').forEach(card=>{
   const d=defByKey[card.dataset.roleKey],check=$('.role-check',card),count=$$('.person-entry',card).length;
-  const closed=now>=d.deadline||maxAvailable(d)===0;const keep=check.checked&&(ownCounts[d.key]||0)>0;
+  const closed=liveClosed||now>=d.deadline||maxAvailable(d)===0;const keep=!liveClosed&&check.checked&&(ownCounts[d.key]||0)>0;
   if(closed&&check.checked&&!keep){check.checked=false;$('.role-details',card).hidden=true;card.classList.remove('selected');}
   check.disabled=closed&&!keep;card.classList.toggle('is-closed',closed);
   const status=$('[data-status]',card);
-  status.textContent=(now>=d.deadline?'報名已截止':(d.limit!=null&&maxAvailable(d)===0&&!keep)?'名額已滿':d.limit==null?'':'尚可報名 '+maxAvailable(d)+' 位｜'+(d.deadline===DEADLINE_MASTER?'115/12/03':'115/12/21')+' 23:59 截止');
-  const add=$('.add-person',card);if(add)add.disabled=(d.limit!=null&&count>=maxAvailable(d))||(now>=d.deadline&&count>=(ownCounts[d.key]||0));
+  status.textContent=(liveClosed?'報名已關閉':now>=d.deadline?'報名已截止':(d.limit!=null&&maxAvailable(d)===0&&!keep)?'名額已滿':d.limit==null?'':'尚可報名 '+maxAvailable(d)+' 位｜'+(d.deadline===DEADLINE_MASTER?'115/12/03':'115/12/21')+' 23:59 截止');
+  const add=$('.add-person',card);if(add)add.disabled=liveClosed||(d.limit!=null&&count>=maxAvailable(d))||(now>=d.deadline&&count>=(ownCounts[d.key]||0));
  });
- const allClosed=now>=DEADLINE_MAIN&&!editMode;$$('#offering-form button[type=submit],button[type=submit][form="offering-form"]').forEach(b=>{if(allClosed)b.disabled=true;else if(b.dataset.closedLock)b.disabled=false;b.dataset.closedLock=allClosed?'1':'';});
- if(now>=DEADLINE_MAIN&&!editMode){$$('.sponsor-check').forEach(c=>{c.disabled=true;c.checked=false;const box=c.closest('.sponsor-card');$('.sponsor-people',box).hidden=true});}
+ const allClosed=(now>=DEADLINE_MAIN&&!editMode)||liveClosed;$$('#offering-form button[type=submit],button[type=submit][form="offering-form"]').forEach(b=>{if(allClosed)b.disabled=true;else if(b.dataset.closedLock)b.disabled=false;b.dataset.closedLock=allClosed?'1':'';});
+ if(allClosed){$$('.sponsor-check').forEach(c=>{c.disabled=true;c.checked=false;const box=c.closest('.sponsor-card');$('.sponsor-people',box).hidden=true});}
+ else $$('.sponsor-check').forEach(c=>{c.disabled=false;});
  calculate();
 }
 function selectTab(id){
@@ -153,6 +154,7 @@ $('#offering-form').addEventListener('submit',e=>{
  if(registrant.some(input=>!input.value.trim())||!$('#registrant-email').checkValidity()){
   feedback.textContent='請先填妥登記人姓名、有效電子郵件及行動電話／Telegram。';return;
  }
+ if(window.WujiLiveClosed===true){feedback.textContent='本次報名目前已關閉，無法送出或修改。如需協助請聯繫靈元院行政團隊。';return;}
  if(Date.now()>=DEADLINE_MAIN&&!editMode){feedback.textContent='本次報名已於 115/12/21 23:59 截止，無法新增報名。';return;}
  const selected=$$('.role-check:checked,.sponsor-check:checked');
  if(!selected.length){feedback.textContent='請先勾選至少一項點燈或隨喜功德。';return;}
