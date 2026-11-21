@@ -143,6 +143,7 @@
     injectStyle();
     const panel = document.createElement("div");
     panel.className = "yuanshen-feature";
+    panel.id = "book-yuanshen-awakening"; // 影音專頁「延伸閱讀」的定位錨點，請勿更名
     panel.setAttribute("data-yuanshen-feature", "");
     panel.innerHTML = [
       '<button type="button" class="yuanshen-feature-cover" aria-label="閱讀《我在人間的元神覺醒》的書籍導讀" aria-haspopup="dialog" aria-controls="yuanshen-reading-dialog">',

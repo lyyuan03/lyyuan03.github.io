@@ -60,7 +60,7 @@ if (document.readyState === "loading") {
 
 if (location.pathname.endsWith("/books.html")) {
   const latestBookScript = document.createElement("script");
-  latestBookScript.src = "/books-latest-feature-2026.js?v=20261121-reading-2";
+  latestBookScript.src = "/books-latest-feature-2026.js?v=20261121-reading-3";
   latestBookScript.defer = true;
   document.head.appendChild(latestBookScript);
 }
