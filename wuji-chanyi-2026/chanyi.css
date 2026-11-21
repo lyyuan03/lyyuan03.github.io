@@ -65,7 +65,11 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;line-height:1.5;color
 .wave{position:absolute;top:-1px;left:0;width:100%;height:30px;display:block;fill:var(--prev,#0f1a14);z-index:1;pointer-events:none}
 
 /* ── 起：Hero ── */
-.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:7.5rem 1.5rem 5rem;overflow:hidden;isolation:isolate;background:var(--bg)}
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:7.5rem 1.5rem 5rem;overflow:hidden;isolation:isolate;
+  background:
+    linear-gradient(180deg,rgba(8,14,9,.72) 0%,rgba(9,16,10,.78) 54%,rgba(8,12,8,.91) 100%),
+    url('/wuji-chanyi-2026/images/photo-sunflower-hero.webp') center / cover no-repeat,
+    #0f1a14}
 .hero__sky{position:absolute;inset:0;z-index:-1;pointer-events:none}
 .hero__beam{position:absolute;left:50%;top:0;width:min(46vw,460px);min-width:240px;height:78%;transform:translateX(-50%);
   background:linear-gradient(to bottom,rgba(236,214,164,.13),rgba(236,214,164,.04) 55%,transparent);
@@ -147,6 +151,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;line-height:1.5;color
 .photo{margin:3rem auto;max-width:880px}
 .photo img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;filter:saturate(.86) brightness(.96)}
 .photo--tight{margin-top:0}
+.photo figcaption{padding:1rem 1.2rem;text-align:center;background:#152019;color:var(--gold-soft);font-family:var(--serif);font-size:clamp(1rem,2vw,1.25rem);letter-spacing:.08em;line-height:1.8}
 
 /* ── 慈示引言 ── */
 .oracle{position:relative;margin:2.6rem 0 3.2rem;padding:3rem 1rem 2.8rem;text-align:center;border-top:1px solid var(--ln);border-bottom:1px solid var(--ln);background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(236,214,164,.07),transparent 75%)}
@@ -331,7 +336,9 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;line-height:1.5;color
 .hero__cloud--r{right:1%;top:56%;width:min(340px,46vw);animation-name:cloudDrift2;animation-duration:85s}
 @keyframes cloudDrift{from{transform:translateX(0)}to{transform:translateX(26px)}}
 @keyframes cloudDrift2{from{transform:translateX(0)}to{transform:translateX(-26px)}}
-/* 標題在朱紅圓日上要清楚：主標改為米白 */
+/* 主視覺已改用實拍供花照片：朱紅圓日與水墨遠山疊在照片上會顯得髒，預設隱藏（標記保留，需要時移除下一行即可恢復） */
+.hero__sun,.hero__mount{display:none}
+/* 標題：主標米白 */
 .hero__title-main{color:#F6EDD6;text-shadow:0 1px 18px rgba(60,12,8,.35)}
 .hero__title-sub{color:var(--gold-hi)}
 /* 書法標題替換位置：設計師提供直排書法透明 PNG／SVG 後，把 h1 內文字換成 <img class="hero__brush"> */
@@ -424,8 +431,11 @@ html body.wuji-chanyi #site-auth-bar,html body.wuji-chanyi.site-auth-enabled #si
 /* ═════════ 專屬閱讀：鎖定預覽卡（比照生肖頁） ═════════ */
 .section--locked{background:linear-gradient(180deg,#0f1a14,#0b130e);padding-top:1rem}
 .chanyi-lock{position:relative;max-width:860px;margin:0 auto;padding:clamp(1.6rem,4vw,2.6rem) clamp(1.25rem,4vw,2.6rem);
-  background:linear-gradient(150deg,rgba(22,36,27,.96),rgba(11,19,14,.96));border:1px solid rgba(197,162,111,.5);box-shadow:0 24px 70px rgba(0,0,0,.3)}
+  background:linear-gradient(150deg,rgba(7,17,11,.76),rgba(7,13,9,.83)),url('/wuji-chanyi-2026/images/photo-lock-bg.webp') center/cover;
+  border:1px solid rgba(197,162,111,.5);box-shadow:0 24px 70px rgba(0,0,0,.3)}
 .chanyi-lock[hidden],.chanyi-gate[hidden]{display:none!important}
+.chanyi-lock__photo{margin:1.4rem 0 1.7rem;border:1px solid rgba(197,162,111,.22);overflow:hidden}
+.chanyi-lock__photo img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover}
 .chanyi-lock__label{display:flex;align-items:center;gap:12px;margin:0 0 .4rem;font-size:.72rem;letter-spacing:.32em;color:var(--gold-soft)}
 .chanyi-lock__label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(197,162,111,.5),transparent)}
 .chanyi-lock h2{margin:.3rem 0 1.1rem;font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:.1em;line-height:1.6;

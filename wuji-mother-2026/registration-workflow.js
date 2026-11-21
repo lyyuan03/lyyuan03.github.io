@@ -155,6 +155,7 @@
       if (data && data.ok && data.used) {
         Object.keys(liveUsed).forEach(key => delete liveUsed[key]);
         Object.assign(liveUsed, data.used);
+        window.WujiLiveClosed = data.open === false;
         refreshAvailability();
       }
     } catch (error) { /* 名額由伺服器送出時再次檢查 */ }
