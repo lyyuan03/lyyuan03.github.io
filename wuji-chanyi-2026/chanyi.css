@@ -54,9 +54,9 @@ h1,h2,h3{font-family:var(--serif);font-weight:700;margin:0;line-height:1.45}
 .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;
   text-align:center;padding:7rem 1.5rem 5rem;overflow:hidden;isolation:isolate;
   background:
-    radial-gradient(ellipse 80% 55% at 50% 30%,rgba(165,130,84,.30),transparent 70%),
-    radial-gradient(ellipse 120% 70% at 50% 110%,rgba(96,99,48,.35),transparent 65%),
-    linear-gradient(180deg,#0f0c09 0%,#1c1712 45%,#231c15 75%,#16120e 100%);}
+    linear-gradient(180deg,rgba(8,14,9,.72) 0%,rgba(9,16,10,.78) 54%,rgba(8,12,8,.91) 100%),
+    url('/wuji-chanyi-2026/images/photo-sunflower-hero.webp') center / cover no-repeat,
+    #0f1a14;}
 .hero__sky{position:absolute;inset:0;z-index:-1;pointer-events:none}
 .hero__glow{position:absolute;left:50%;top:26%;width:min(900px,140vw);aspect-ratio:1;transform:translate(-50%,-50%);
   background:radial-gradient(circle,rgba(255,236,196,.13) 0%,rgba(214,187,133,.09) 30%,transparent 62%);
@@ -379,6 +379,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:700;margin:0;line-height:1.45}
 .hero__smoke i:nth-child(3){left:5%;bottom:-12%;width:1200px;opacity:.3;animation:drift 90s ease-in-out infinite alternate}
 .photo{margin:0 0 2.4rem;border:1px solid rgba(165,130,84,.3);overflow:hidden}
 .photo img{display:block;width:100%;height:auto}
+.photo figcaption{padding:1rem 1.2rem;text-align:center;background:#152019;color:var(--gold-soft);font-family:var(--serif);font-size:clamp(1rem,2vw,1.25rem);letter-spacing:.08em;line-height:1.8}
 .date-banner{text-align:center;margin:0 auto 2.6rem;padding:1.8rem 1rem;max-width:620px;border:1px solid rgba(165,130,84,.4);background:rgba(22,18,14,.45)}
 .date-banner p{margin:0}
 .date-banner__kicker{font-family:var(--serif);letter-spacing:.5em;padding-left:.5em;color:var(--gold-soft);font-size:.95rem}
@@ -413,8 +414,11 @@ html body.wuji-chanyi #site-auth-bar,html body.wuji-chanyi.site-auth-enabled #si
 /* ═════════ 專屬閱讀：鎖定預覽卡（比照生肖頁） ═════════ */
 .section--locked{background:linear-gradient(180deg,#1b1611,#16120e);padding-top:1rem}
 .chanyi-lock{position:relative;max-width:860px;margin:0 auto;padding:clamp(1.6rem,4vw,2.6rem) clamp(1.25rem,4vw,2.6rem);
-  background:linear-gradient(150deg,rgba(36,29,21,.96),rgba(18,14,10,.96));border:1px solid rgba(197,162,111,.5);box-shadow:0 24px 70px rgba(0,0,0,.3)}
+  background:linear-gradient(150deg,rgba(7,17,11,.76),rgba(7,13,9,.83)),url('/wuji-chanyi-2026/images/photo-lock-bg.webp') center/cover;
+  border:1px solid rgba(197,162,111,.5);box-shadow:0 24px 70px rgba(0,0,0,.3)}
 .chanyi-lock[hidden],.chanyi-gate[hidden]{display:none!important}
+.chanyi-lock__photo{margin:1.4rem 0 1.7rem;border:1px solid rgba(197,162,111,.22);overflow:hidden}
+.chanyi-lock__photo img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover}
 .chanyi-lock__label{display:flex;align-items:center;gap:12px;margin:0 0 .4rem;font-size:.72rem;letter-spacing:.32em;color:var(--gold-soft)}
 .chanyi-lock__label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(197,162,111,.5),transparent)}
 .chanyi-lock h2{margin:.3rem 0 1.1rem;font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:.1em;line-height:1.6;
