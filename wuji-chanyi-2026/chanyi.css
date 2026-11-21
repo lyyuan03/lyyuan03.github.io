@@ -375,6 +375,52 @@ html body.wuji-chanyi #site-auth-bar,html body.wuji-chanyi.site-auth-enabled #si
   .wuji-chanyi .hero{min-height:auto;padding:3.4rem 1.15rem 4rem}
 }
 
+
+/* ═════════ 三層慈示：神諭（最高位階）→ 奉示轉述 → 靈修釋義 ═════════
+   位階以底色、字級、位置建立：層次越高，字越大、底色越深、越居中；越往人間，底色越亮、字越小、越靠左。
+   標記（供專屬全文使用）：section.layer.layer--oracle／layer--relay／layer--interp，
+   內含 .layer__inner > .layer__label 與段落；不需要任何新的 JavaScript。 */
+.layer{position:relative;padding:clamp(3.4rem,7vw,5.6rem) 1.5rem}
+.layer__inner{max-width:720px;margin:0 auto}
+.layer__label{margin:0 0 1.6rem;font-family:var(--serif);font-size:.86rem;letter-spacing:.34em;line-height:1.6}
+.layer p{margin:0 0 1.15em}
+.layer p:last-child{margin-bottom:0}
+
+/* 第一層｜無極老母至尊．慈示：深墨綠底、暗金大字、置中 */
+.layer--oracle{background:var(--deep);color:#C9AE78;text-align:center;padding-top:clamp(4rem,9vw,7rem);padding-bottom:clamp(4rem,9vw,7rem)}
+.layer--oracle .layer__inner{max-width:780px}
+.layer--oracle .layer__label{display:inline-flex;align-items:center;gap:.9rem;color:#C9AE78;letter-spacing:.4em;padding-left:.4em;margin-bottom:2.2rem}
+.layer--oracle .layer__label::before,.layer--oracle .layer__label::after{content:"";width:34px;height:1px;background:rgba(201,174,120,.55)}
+.layer--oracle .layer__label::before{margin-right:.1rem}
+.layer__dot{display:block;width:7px;height:7px;margin:0 auto 1.4rem;border-radius:50%;background:var(--vermilion)}
+.layer--oracle blockquote{margin:0;padding:0}
+.layer--oracle blockquote p{font-family:var(--serif);font-weight:600;font-size:clamp(1.55rem,3.8vw,2.45rem);line-height:1.95;letter-spacing:.16em;color:#D9BF8A;margin:0 0 .6em;text-shadow:none;text-wrap:balance}
+.layer--oracle .layer__source{margin-top:2rem;font-size:.84rem;letter-spacing:.3em;color:rgba(201,174,120,.7)}
+
+/* 第二層｜宇色老師．奉示轉述：深苔綠底、象牙白字、左側暗金細線 */
+.layer--relay{background:var(--moss);color:#EDE6D4}
+.layer--relay .layer__inner{padding-left:clamp(1.1rem,3vw,1.8rem);border-left:1px solid rgba(201,174,120,.6)}
+.layer--relay .layer__label{color:#C9AE78}
+.layer--relay p{font-size:1.03rem;line-height:2.05;letter-spacing:.05em}
+
+/* 第三層｜宇色老師．靈修釋義：宣紙米白底、深墨綠字，字級最小 */
+.layer--interp{background:var(--paper);color:#16261c}
+.layer--interp .layer__label{color:#7a5f3a}
+.layer--interp p{font-size:1rem;line-height:2.05;letter-spacing:.04em;color:#243327}
+.layer__ask{margin:1.6rem 0;padding:.2rem 0 .2rem 1.2rem;border-left:2px solid var(--vermilion)}
+.layer__ask p{font-family:var(--serif);color:#16261c}
+
+@media (max-width:640px){
+  .layer{padding:3rem 1.25rem}
+  .layer--oracle{padding-top:3.6rem;padding-bottom:3.6rem}
+  .layer--oracle blockquote p{letter-spacing:.1em;line-height:1.9}
+  .layer--oracle .layer__label{letter-spacing:.28em;font-size:.8rem}
+  .layer--oracle .layer__label::before,.layer--oracle .layer__label::after{width:20px}
+  .layer__label{letter-spacing:.24em;font-size:.8rem}
+  .layer--relay p{font-size:1rem}
+  .layer--interp p{font-size:.98rem}
+}
+
 /* ═════════ 專屬閱讀：鎖定預覽卡（比照生肖頁） ═════════ */
 .section--locked{background:linear-gradient(180deg,#0f1a14,#0b130e);padding-top:1rem}
 .chanyi-lock{position:relative;max-width:860px;margin:0 auto;padding:clamp(1.6rem,4vw,2.6rem) clamp(1.25rem,4vw,2.6rem);
