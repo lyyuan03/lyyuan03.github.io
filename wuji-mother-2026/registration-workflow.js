@@ -373,5 +373,6 @@
   renderRecords();
   Object.assign(api, {showRecords, submitLive});
   loadStatus();
+  setInterval(loadStatus, 60000);
   openEditFromLink();
 })();
