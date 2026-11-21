@@ -1,0 +1,160 @@
+/* 靈元院 CIS 立體視覺層：棕 #594F47、淺棕 #A58254、墨綠 #606330、金屬金／銀近似色。 */
+:root{
+ --cis-earth:#594f47;
+ --cis-bronze:#a58254;
+ --cis-olive:#606330;
+ --cis-gold:#c9a063;
+ --cis-silver:#aeb4b2;
+ --cis-silver-light:#eef0ee;
+ --cis-ivory:#fffaf1;
+ --cis-linen:#f5ecda;
+ --cis-deep:#24352b;
+ --cis-ease:cubic-bezier(.2,.8,.2,1);
+}
+body{background:radial-gradient(ellipse at 12% 12%,#efe0bc9e 0%,transparent 38%),radial-gradient(ellipse at 88% 33%,#60633020 0%,transparent 44%),linear-gradient(155deg,#f9f5eb,#f3f0e7 57%,#f0ede4)}
+.preview-toolbar{background:linear-gradient(110deg,#1e3226,#594f47 52%,#28392b);border-bottom:1px solid #c9a06378;box-shadow:0 7px 20px #27302447,inset 0 1px #e4d4a51c}
+.view-toggle{background:#100e0a55;box-shadow:inset 0 2px 4px #1118,0 1px #e9d9b825}
+.view-toggle button{transition:background .25s var(--cis-ease),box-shadow .25s var(--cis-ease),transform .25s var(--cis-ease)}
+.view-toggle button.active{background:linear-gradient(150deg,#f4e3bb,#d7b878 67%,#ad8952);color:var(--cis-deep);box-shadow:inset 0 1px #fff9,0 3px 9px #0005,0 1px 0 #fef4d3}
+.view-toggle button:hover{transform:translateY(-1px)}
+
+/* 祝壽光影：沿用原本的實拍照片，僅加一層緩緩移動的暖金光。 */
+.banner-hero::after{content:"";position:absolute;inset:-20%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 76% 45%,#c9a0631c,transparent 43%),linear-gradient(113deg,transparent 31%,#fff2cb0a 47%,transparent 62%);background-size:130% 130%;animation:cisHeroGlow 19s ease-in-out infinite alternate}
+@keyframes cisHeroGlow{0%{background-position:0% 40%;opacity:.45}100%{background-position:100% 60%;opacity:1}}
+.hero-content h1{color:#fff9ea;text-shadow:0 2px 2px #17160b,0 7px 25px #0009,0 0 24px #d5b57344}
+.hero-content h1 em{color:#f4dcac;text-shadow:0 2px 1px #6c4e2b,0 8px 24px #d1a76561}
+.hero-caption{text-shadow:0 2px 8px #000a}
+.banner-hint{color:#f2e2c0}
+
+/* 正式法會 Banner 保留完整圖面，原本的報名按鈕與日期留在圖片下方。 */
+.banner-hero--official{display:block;min-height:0;background:linear-gradient(110deg,#15271b,#344334 55%,#594f47)}
+.banner-hero--official>img{position:relative;inset:auto;display:block;width:100%;height:auto;object-fit:contain;object-position:center;filter:none;z-index:auto}
+.banner-hero--official .banner-tint,.banner-hero--official::after{display:none}
+.banner-hero--official .hero-content{padding:24px 0 32px}
+.banner-hero--official .hero-content h1{font-size:clamp(28px,3.2vw,42px);line-height:1.35;margin:7px 0 9px}
+.banner-hero--official .hero-caption{font-size:15px;line-height:1.8}
+.banner-hero--official .hero-actions{margin-top:17px}
+.banner-hero--official .banner-hint{display:none}
+
+/* 按鍵：金屬邊緣、浮起陰影和按下回饋；按鈕功能保持原狀。 */
+.btn,.add-person,.lamp-tabs button,.admin-tabs button,.view-toggle button,.sponsor-head,.role-head{
+ transition:transform .25s var(--cis-ease),box-shadow .3s var(--cis-ease),background .3s var(--cis-ease),border-color .3s var(--cis-ease);
+}
+.btn{position:relative;border-radius:12px;min-height:50px;box-shadow:inset 0 1px 0 #fff9,inset 0 -3px 0 #594f4740,0 5px 0 #594f4726,0 11px 22px #332c2140;overflow:hidden}
+.btn::before{content:"";position:absolute;inset:1px 1px auto;height:44%;border-radius:11px 11px 32% 32%;pointer-events:none;background:linear-gradient(#fff9,#fff0)}
+.btn.gold{background:linear-gradient(150deg,#f6e8c6 0%,#e5c88c 35%,#c9a063 76%,#a58254 100%);border:1px solid #f8dfa5;color:#302819;text-shadow:0 1px #fff5}
+.btn.outline-light{background:linear-gradient(135deg,#354b3bdf,#594f47dd 55%,#303f31e8);border:1px solid #d1b57e;color:#fff8e9;box-shadow:inset 0 1px #fff5,inset 0 -3px #101d1590,0 6px 0 #0b190e85,0 12px 27px #0006}
+.btn.neutral{background:linear-gradient(155deg,#fffdf7,#e7e9e2 52%,#d4d8d0);border:1px solid #b4a78d;color:#475141}
+.btn:hover{transform:translateY(-4px);box-shadow:inset 0 1px #fff9,inset 0 -3px #594f4738,0 8px 0 #594f4726,0 17px 30px #332c2142}
+.btn:active{transform:translateY(2px);box-shadow:inset 0 3px 8px #594f4750,0 1px 0 #594f4733,0 4px 9px #332c2135}
+
+/* 三步驟、圖像與法會說明：交錯金、銀、橄欖綠的淺色層次。 */
+.journey{perspective:1100px;gap:14px}
+.journey>div{position:relative;padding:12px 15px;border:1px solid #b9a078a1;border-radius:12px;background:linear-gradient(145deg,#fffbf1,#e9d9b6 68%,#d9c298);box-shadow:inset 0 2px #fff9,inset 0 -2px #b38e6255,0 5px 0 #a5825429,0 12px 22px #594f471c;transform-style:preserve-3d}
+.journey>div:nth-child(2){background:linear-gradient(145deg,#fffefa,#e6eae5 58%,#cfd8d0);border-color:#929d8bb0;box-shadow:inset 0 2px #fff,0 5px 0 #60633022,0 12px 22px #465a4620}
+.journey>div:nth-child(3){background:linear-gradient(145deg,#f9f2df,#e2dfc6 59%,#c3c69b);border-color:#87906ba3}
+.journey b{flex:none;background:radial-gradient(circle at 30% 20%,#fff9e6,#d3b678 70%,#b18c51);border:1px solid #9c784a;box-shadow:inset 0 1px #fffbdf,0 3px 7px #594f4733;color:var(--cis-earth);font-weight:700}
+.journey>div:nth-child(2) b{background:linear-gradient(145deg,#fff,#ced8d0);border-color:#94a193;color:#455b48}
+.journey>div:nth-child(3) b{background:linear-gradient(145deg,#f3efdb,#bfc492);border-color:#888e60;color:#4e5230}
+.archive{padding-top:49px}
+.archive h2,.event-explainer h2,.form-heading h2,.admin-top h1{display:table;max-width:100%;position:relative;padding:4px 16px 8px 3px;color:var(--cis-earth);text-shadow:0 2px #fff7,0 4px 10px #a5825422}
+.archive h2::after,.event-explainer h2::after,.form-heading h2::after,.admin-top h1::after{content:"";display:block;width:65%;height:4px;margin-top:6px;border-radius:5px;background:linear-gradient(90deg,var(--cis-bronze),var(--cis-gold),var(--cis-silver),transparent);box-shadow:0 2px 6px #a5825440}
+.archive-grid{perspective:1100px;gap:20px}
+.archive-grid figure{border:4px solid #f8f3e7;border-radius:13px;box-shadow:0 1px #fff,inset 0 0 0 1px #d8c5a2,0 8px 0 #a5825426,0 17px 36px #594f473f;transform-style:preserve-3d;will-change:transform}
+.archive-grid figure:nth-child(2){border-color:#f5f6f1;box-shadow:0 8px 0 #aab4a824,0 17px 36px #60633036}
+.archive-grid figure:nth-child(3){border-color:#f3f0e4;box-shadow:0 8px 0 #95996830,0 17px 36px #60633030}
+.archive-grid img{transition:filter .6s,scale .7s var(--cis-ease);filter:saturate(.95) contrast(1.025)}
+.archive-grid figure:hover img{scale:1.055;filter:saturate(1.05)}
+.archive-grid figcaption{padding-bottom:15px;font-size:14px;text-shadow:0 1px 5px #000}
+.placeholder-visual{position:relative;overflow:hidden;border:1px solid #bba374;border-radius:15px;background:radial-gradient(circle at 20% 15%,#fffaf3,#ede3ce 50%,#e3e8d8);box-shadow:inset 0 2px #fff,inset 0 0 0 7px #ffffff55,0 8px 0 #a582541e,0 19px 35px #594f4726;transform-style:preserve-3d}
+.placeholder-visual::after{content:"";position:absolute;inset:12px;border:1px dashed #a582548a;border-radius:9px;pointer-events:none}
+.placeholder-visual span{color:var(--cis-earth);text-shadow:0 1px #fff}
+
+/* 兩張正式法會圖文完整展示，不裁切圖片中的任何內容。 */
+.event-explainer{grid-template-columns:minmax(0,1fr);gap:22px}
+.ceremony-poster-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:start}
+.ceremony-poster-gallery figure{margin:0;overflow:hidden;border:1px solid #c0a46e;border-radius:9px;background:#fdf7eb;box-shadow:0 2px 0 #fff,inset 0 0 0 1px #fff9,0 6px 0 #a5825426,0 16px 30px #594f4730}
+.ceremony-poster-gallery img{display:block;width:100%;height:auto;max-width:100%}
+@media(max-width:750px){.ceremony-poster-gallery{grid-template-columns:minmax(0,1fr);gap:24px}.banner-hero--official .hero-content{padding:20px 0 30px}}
+
+/* 表單與選項有浮雕厚度，保留所有欄位尺寸與選取行為。 */
+.registration-area{background:radial-gradient(ellipse at 0% 10%,#eedec38a,transparent 44%),radial-gradient(ellipse at 100% 50%,#b5bfad54,transparent 47%),linear-gradient(150deg,#f5f2ea,#eff0e9 60%,#f7f1e8);border-top:1px solid #c8b68c;padding-top:64px}
+.form-heading h2{color:#4b5540}
+.panel,.lookup-panel,.summary{border-radius:16px;border-color:#cbb99c;background:linear-gradient(148deg,#fffef9 0%,#faf6ec 48%,#f1eee5 100%);box-shadow:inset 0 2px #fff,inset 0 0 0 1px #ffffff9c,0 6px 0 #a582541a,0 18px 37px #594f4724}
+.panel{position:relative;overflow:visible}
+.panel::before{content:"";position:absolute;left:16px;right:16px;top:0;height:4px;border-radius:0 0 8px 8px;background:linear-gradient(90deg,transparent,#c9a063b9 19%,#aeb4b2cf 50%,#60633070 80%,transparent);pointer-events:none}
+.panel-title{border-bottom:1px solid #c4b39292}
+.panel-title h3{padding:7px 14px 7px 7px;background:linear-gradient(145deg,#fdfaf1,#e9e5d9 58%,#d7ded2);border:1px solid #c4ad85;border-radius:10px;box-shadow:inset 0 2px #fff,0 3px 0 #a582542e,0 7px 14px #594f4720;color:#4a543f;font-weight:600;text-shadow:0 1px #fff}
+.num{min-width:39px;height:39px;background:linear-gradient(145deg,#7c834a,#606330 53%,#394b38);border:1px solid #c5b478;color:#fff5d8;box-shadow:inset 0 1px #dfdcab91,0 3px 7px #33463455;text-shadow:0 2px #334029}
+.lookup-panel{background:linear-gradient(130deg,#fffcf3,#ebe2cd 55%,#e8ebe6);border-left:5px solid #c9a063}
+.lookup-panel h3{color:#594f47;text-shadow:0 2px #fff}
+.instructions{border-left:4px solid var(--cis-gold);border-radius:9px;background:linear-gradient(115deg,#f8efdc,#e8ebdf);box-shadow:inset 0 1px #fff,0 5px 12px #594f4717}
+.choice-col{border:1px solid #ad9a78;border-radius:13px;overflow:hidden;background:#fffdf8;box-shadow:inset 0 1px #fff,0 6px 0 #a582541c,0 15px 26px #594f4727}
+.choice-heading{position:relative;overflow:hidden;background:linear-gradient(130deg,#344a39,#594f47 54%,#786443);border-bottom:3px solid #c9a063}
+.choice-col:nth-child(2) .choice-heading{background:linear-gradient(125deg,#4e5b39,#606330 52%,#514f40);border-bottom-color:#c5c7b0}
+.choice-heading::after{content:"";position:absolute;right:-80px;top:-80px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#f7e7b823,transparent 70%);pointer-events:none}
+.choice-heading h4{color:#fff8e7;text-shadow:0 2px 7px #0006}
+.lamp-tabs button{border-color:#bdb6a5;border-radius:9px;background:linear-gradient(145deg,#fffefa,#e7e9e1);box-shadow:inset 0 1px #fff,0 3px 0 #60633017,0 6px 12px #594f4714;min-height:49px;font-weight:600}
+.lamp-tabs button:hover{transform:translateY(-2px);border-color:#a58254;box-shadow:inset 0 1px #fff,0 5px 0 #a5825425,0 10px 16px #594f4725}
+.lamp-tabs button[aria-selected=true]{background:linear-gradient(145deg,#f9edd1,#d8c08a 65%,#bda16e);border-color:#98753e;box-shadow:inset 0 1px #fff7,inset 0 -3px #8b6d3d,0 4px 0 #a5825429,0 9px 15px #594f4730;color:#3c3e28}
+.lamp-tabs button:nth-child(1) .dot{background:var(--cis-earth)!important}
+.lamp-tabs button:nth-child(2) .dot{background:var(--cis-silver)!important}
+.lamp-tabs button:nth-child(3) .dot{background:var(--cis-olive)!important}
+.lamp-tabs button:nth-child(4) .dot{background:var(--cis-gold)!important}
+.lamp-tabs button:nth-child(5) .dot{background:var(--cis-bronze)!important}
+.lamp-tabs .dot{width:11px;height:11px;box-shadow:inset 0 1px #fff5,0 1px 4px #2b2a2044;border:1px solid #ffffff65}
+.role-card{border-radius:10px;background:linear-gradient(140deg,#fffefa,#f4f2e9);border-color:#d0c5af;box-shadow:inset 0 1px #fff,0 4px 12px #594f4712}
+.role-card:not(.is-closed):hover{border-color:#a58254;box-shadow:inset 0 1px #fff,0 7px 17px #594f4725}
+.role-card.selected{background:linear-gradient(135deg,#fffdf8,#f2e6c8);border-color:#bd9560;box-shadow:inset 0 1px #fff,0 0 0 2px #c9a06344,0 7px 18px #594f4725}
+.role-head input,.sponsor-head input,.terms input{accent-color:#606330}
+.role-price{color:#7c5b2f}
+.role-details{background:#fffdf8}
+.person-entry{border-radius:8px;background:linear-gradient(140deg,#f7f3e9,#edf0e8);border-color:#d2c4a8}
+.add-person{min-height:42px;border-radius:9px;background:linear-gradient(140deg,#f6f1df,#d5e0cb 65%,#b7c19d);border-color:#92a47b;box-shadow:inset 0 1px #fff,0 4px 0 #60633027,0 7px 12px #594f4719;color:#3f503a;font-weight:700}
+.add-person:not(:disabled):hover{transform:translateY(-3px);box-shadow:inset 0 1px #fff,0 7px 0 #60633027,0 12px 20px #594f4729}
+.add-person:not(:disabled):active{transform:translateY(1px);box-shadow:inset 0 3px 7px #60633033,0 1px 0 #60633027}
+.reserved-benefits{border-radius:0 9px 9px 0;background:linear-gradient(125deg,#faf1dc,#e7ebd9);border-left-color:#c9a063;box-shadow:inset 0 1px #fff,0 5px 15px #594f471c}
+.sponsor-grid{gap:13px}
+.sponsor-card{border:1px solid #baa989;border-radius:11px;overflow:hidden;background:linear-gradient(145deg,#fffaf1,#ecdab6);box-shadow:inset 0 2px #fff9,0 4px 0 #a5825427,0 9px 17px #594f471c;transition:transform .25s var(--cis-ease),box-shadow .3s var(--cis-ease),border-color .3s}
+.sponsor-card:nth-child(3n+2){background:linear-gradient(145deg,#fffef9,#e2e7d8);border-color:#9fa988}
+.sponsor-card:nth-child(3n){background:linear-gradient(145deg,#fff,#e5e9e7);border-color:#abb4b0}
+.sponsor-card:hover{transform:translateY(-3px);box-shadow:inset 0 2px #fff,0 7px 0 #a5825422,0 14px 22px #594f4730}
+.sponsor-card:has(.sponsor-check:checked){border-color:#8d8f60;box-shadow:inset 0 2px #fff,0 0 0 2px #a5825463,0 8px 20px #594f472e}
+.sponsor-head b{color:#75542b}
+.money-table th{color:#47533e}.total-line{border-top-color:#a58254}.total-line strong{color:#48603a;text-shadow:0 1px #fff,0 3px 8px #60633022}
+.payment-notice{border-radius:0 9px 9px 0;background:linear-gradient(120deg,#e9efdf,#f5ecd7);border-left-color:#606330;box-shadow:inset 0 1px #fff,0 6px 17px #594f471b}
+.summary{background:linear-gradient(150deg,#fffbef,#e7e8d9 55%,#dfe3d4);border:1px solid #ac966a;box-shadow:inset 0 2px #fff,0 7px 0 #a5825425,0 20px 32px #594f4726}
+.summary h3{color:#594f47;text-shadow:0 1px #fff}
+.summary-total{border-top-color:#c9a063}.summary-total b{color:#43583c;text-shadow:0 1px #fff}
+.summary .btn{box-shadow:inset 0 1px #fff,0 4px 0 #a582542e,0 8px 18px #594f4728}
+
+/* 行政後台同步採用同一套 CIS，避免前後台視覺斷裂。 */
+#admin-view{background:radial-gradient(ellipse at 0% 0%,#ead9b596,transparent 50%),linear-gradient(145deg,#f5f2e8,#e9eee7)}
+.admin-badge{border-radius:999px;background:linear-gradient(135deg,#f7e5c0,#e7d8a3);border-color:#a58254;box-shadow:inset 0 1px #fff,0 4px 10px #594f4727;color:#67502b}
+.admin-tabs button{border-radius:10px 10px 0 0;border-color:#c0b7a1;background:linear-gradient(#fff,#eaece6);box-shadow:inset 0 1px #fff,0 3px 7px #594f4715}
+.admin-tabs button.active{background:linear-gradient(145deg,#647044,#465741 65%,#594f47);color:#fff9eb;border-color:#c9a063;box-shadow:inset 0 1px #fff5,0 5px 13px #594f4730}
+.admin-card,.admin-metrics article{border:1px solid #c6b79b;border-radius:13px;background:linear-gradient(145deg,#fffef8,#f1efe5 65%,#e5eae2);box-shadow:inset 0 2px #fff,0 5px 0 #a5825419,0 14px 26px #594f4721}
+.admin-metrics article:nth-child(even){background:linear-gradient(145deg,#fffefa,#e7ebe5 60%,#d6dfd3)}
+.admin-metrics b{color:#4c5e3a;text-shadow:0 1px #fff,0 3px 8px #60633024}
+.admin-card h2{color:var(--cis-earth)}
+
+/* 捲動進場與指標淺角度 3D；不對輸入框套用位移。 */
+@media(prefers-reduced-motion:no-preference){
+ html.cis-motion .cis-reveal{opacity:0;translate:0 17px;filter:blur(3px);transition:opacity .72s var(--cis-ease),translate .72s var(--cis-ease),filter .72s var(--cis-ease);transition-delay:var(--cis-delay,0ms)}
+ html.cis-motion .cis-reveal.is-visible{opacity:1;translate:0 0;filter:blur(0)}
+ .cis-tilt{--cis-rotate-x:0deg;--cis-rotate-y:0deg;transform:perspective(1100px) rotateX(var(--cis-rotate-x)) rotateY(var(--cis-rotate-y));transition:transform .35s var(--cis-ease),box-shadow .3s var(--cis-ease)}
+ .cis-tilt:hover{box-shadow:0 10px 0 #a5825420,0 22px 36px #594f4731}
+}
+@media(max-width:1000px){.journey>div{padding:10px}.panel-title h3{font-size:20px}}
+@media(max-width:750px){
+ .hero-content h1{text-shadow:0 2px 3px #000b,0 6px 14px #594f477a}
+ .journey{gap:12px}.journey>div{padding:10px 13px;border-radius:10px}
+ .panel-title h3{font-size:19px;line-height:1.45;padding:7px 8px 7px 6px}
+ .archive-grid{gap:12px}
+ .archive-grid figure{border-width:3px;border-radius:10px}
+ .registration-area{padding-top:39px}
+ .choice-col{border-radius:10px}
+ .sponsor-card:hover{transform:none}
+}
+@media(hover:none),(pointer:coarse){.cis-tilt{transform:none!important}.btn:hover,.journey>div:hover,.archive-grid figure:hover,.sponsor-card:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.banner-hero::after{animation:none}.cis-reveal{opacity:1!important;translate:none!important;filter:none!important}.cis-tilt{transform:none!important}}
