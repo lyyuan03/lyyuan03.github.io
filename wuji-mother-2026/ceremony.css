@@ -24,3 +24,28 @@
 /* 移除審核草稿列與前後台切換列後，主內容避開固定導覽列 */
 #front-view,#admin-view{padding-top:56px}
 @media(max-width:750px){#front-view,#admin-view{padding-top:58px}}
+
+/* 丙午年無極老母聖誕說明（置於歷年懺儀實錄之前） */
+.wuji-intro{margin-top:44px;padding:46px clamp(20px,5vw,60px) 44px;background:linear-gradient(160deg,#fbf8f1,#f1e8d6);border:1px solid #d9c49a;border-radius:18px;box-shadow:0 14px 34px #4a3a2026,inset 0 1px #fff;color:var(--ink);position:relative}
+.wuji-intro::before{content:"";position:absolute;inset:8px;border:1px solid #c9a0634d;border-radius:12px;pointer-events:none}
+.wuji-intro__head{text-align:center;margin-bottom:26px}
+.wuji-intro__title{font-family:var(--serif);font-size:clamp(25px,3.4vw,38px);letter-spacing:.08em;margin:0;color:#3a2c18}
+.wuji-intro__subtitle{font-family:var(--serif);font-size:clamp(20px,2.6vw,28px);letter-spacing:.2em;margin:6px 0 0;color:#8a6a3c;font-weight:600}
+.wuji-intro__tagline{display:inline-block;margin:16px 0 0;padding:6px 20px;border-top:1px solid #c9a063;border-bottom:1px solid #c9a063;font-size:15px;letter-spacing:.14em;color:#5b4a30}
+.wuji-intro__body{max-width:760px;margin:0 auto}
+.wuji-intro__body p{margin:0 0 14px;font-size:16px;line-height:2}
+.wuji-intro__h3{font-family:var(--serif);text-align:center;font-size:clamp(20px,2.4vw,26px);letter-spacing:.12em;color:#3a2c18;margin:34px 0 18px}
+.wuji-intro__h3::before,.wuji-intro__h3::after{content:"✧";color:#b8925a;font-size:.7em;margin:0 12px;vertical-align:middle}
+.wuji-intro__grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px}
+.wuji-intro__card{background:#fffdf8;border:1px solid #e1d2b2;border-radius:14px;padding:20px 20px 16px;box-shadow:0 6px 16px #5a46280f}
+.wuji-intro__card h4{font-family:var(--serif);font-size:18px;margin:0 0 10px;color:#6e4f24;letter-spacing:.06em}
+.wuji-intro__card p,.wuji-intro__card li{font-size:15px;line-height:1.9;margin:0}
+.wuji-intro__card ul{margin:0;padding-left:1.2em}
+.wuji-intro__card li{margin-bottom:6px}
+.wuji-intro__card--gold{background:linear-gradient(150deg,#f7ebcd,#e6cf98);border-color:#c9a063}
+.wuji-intro__time,.wuji-intro__closing{text-align:center;max-width:720px;margin:0 auto}
+.wuji-intro__time p,.wuji-intro__closing p{margin:0 0 8px;line-height:1.9}
+.wuji-intro__date{font-family:var(--serif);font-size:clamp(22px,2.8vw,30px);color:#8b2c1f;letter-spacing:.1em;font-weight:700}
+.wuji-intro__note{margin-top:14px!important;font-size:14px;color:#6f6352}
+.wuji-intro__blessing{font-family:var(--serif);font-size:18px;color:#6e4f24;letter-spacing:.1em;margin-top:12px!important}
+@media(max-width:750px){.wuji-intro{margin-top:30px;padding:34px 18px 30px;border-radius:14px}.wuji-intro__grid{grid-template-columns:1fr}.wuji-intro__tagline{font-size:13px;letter-spacing:.06em;padding:6px 10px}}
