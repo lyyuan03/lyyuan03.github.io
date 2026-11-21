@@ -53,3 +53,4 @@
 .req{color:#c0392b;font-weight:700}
 .person-title:has(> .remove-person:only-child){justify-content:flex-end}
 .panel-title small:has(.req){color:#c0392b;font-weight:600}
+.family-names-note{margin:0 0 6px;font-size:13px;line-height:1.7;color:#6f6352}.family-names textarea{width:100%}
