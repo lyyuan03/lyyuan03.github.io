@@ -1,4 +1,4 @@
-/* 報名流程／行政模擬元件：沿用既有靈元院 CIS，保留頁首、Banner 與既有版面。 */
+/* 報名流程／查詢修改元件：沿用既有靈元院 CIS，保留頁首、Banner 與既有版面。 */
 .admin-filters{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;margin:16px 0 22px}
 .admin-filters input,.admin-filters select,.admin-text-fields input,.admin-text-fields textarea,.admin-price-row input,.registration-dialog select{display:block;width:100%;min-width:0;padding:11px 13px;border:1px solid #c9b89b;border-radius:8px;background:linear-gradient(#fff,#faf9f5);color:#354b3a;font:inherit;box-shadow:inset 0 2px 4px #594f4710}
 .admin-text-fields{display:grid;gap:9px;margin:22px 0}
@@ -29,4 +29,11 @@
 .session-record small{display:block;color:#667267;font-size:13px;line-height:1.5;margin-top:6px}
 .session-record .btn{flex:none}
 .summary>button[type=submit]{width:100%;margin:9px 0 12px}
+.lookup-form{margin:18px 0 6px}
+.lookup-form .form-field{margin-bottom:14px}
+.lookup-form .btn{width:100%}
+.lookup-result{margin:12px 0 0;padding:12px 14px;border:1px solid #ccad65;border-radius:8px;background:#f9eed4;color:#785827!important;font-size:14px!important}
+.lookup-message:not([hidden]){display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;font-size:14px}
+.lookup-message .edit-leave{padding:8px 14px;font-size:13px}
+button[disabled].btn{opacity:.6;cursor:wait}
 @media(max-width:760px){.admin-filters,.admin-price-grid{grid-template-columns:1fr}.registration-dialog{padding:26px 18px}.registration-receipt>div{grid-template-columns:1fr;gap:3px}.session-record{flex-direction:column;align-items:flex-start}.session-record .btn{width:100%}}

@@ -52,20 +52,22 @@ $('#lamp-panels').innerHTML=lamps.map((l,i)=>'<section class="lamp-panel" id="pa
 $('#sponsor-choices').className='sponsor-grid';
 $('#sponsor-choices').innerHTML=sponsors.map(s=>'<article class="sponsor-card" data-sponsor="'+s.id+'" data-price="'+(s.price==null?'variable':s.price)+'"><label class="sponsor-head"><input type="checkbox" class="sponsor-check"><span>'+s.name+'<b>'+(s.price==null?'隨喜金額':fmt(s.price)+'／筆')+'</b></span></label><div class="sponsor-people" hidden><div class="people-list"></div><button type="button" class="add-person">＋ 新增芳名</button></div></article>').join('');
 $('#capacity-settings').innerHTML=roleDefs.map(d=>'<div class="cap-row"><span>'+d.name+'</span><label>示意已用 <input aria-label="'+d.name+'示意已使用名額" type="number" min="0" max="'+(d.limit??100)+'" value="0" data-used="'+d.key+'"></label><small>'+(d.limit==null?'不限名額':'總上限 '+d.limit+' 位')+'</small></div>').join('');
-function simulatedUsed(key){return Math.max(0,Number($('[data-used="'+key+'"]')?.value||0));}
-function maxAvailable(d){return d.limit==null?Infinity:Math.max(0,d.limit-simulatedUsed(d.key));}
+const liveUsed={};let ownCounts={};let editMode=false;
+function setEditMode(on,counts){editMode=Boolean(on);ownCounts=on?Object.assign({},counts||{}):{};}
+function usedSeats(key){return Math.max(0,(liveUsed[key]||0)-(ownCounts[key]||0));}
+function maxAvailable(d){return d.limit==null?Infinity:Math.max(0,d.limit-usedSeats(d.key));}
 function refreshAvailability(){
  const now=Date.now();
  $$('.role-card').forEach(card=>{
   const d=defByKey[card.dataset.roleKey],check=$('.role-check',card),count=$$('.person-entry',card).length;
-  const closed=now>=d.deadline||maxAvailable(d)===0;
-  if(closed&&check.checked){check.checked=false;$('.role-details',card).hidden=true;card.classList.remove('selected');}
-  check.disabled=closed;card.classList.toggle('is-closed',closed);
+  const closed=now>=d.deadline||maxAvailable(d)===0;const keep=check.checked&&(ownCounts[d.key]||0)>0;
+  if(closed&&check.checked&&!keep){check.checked=false;$('.role-details',card).hidden=true;card.classList.remove('selected');}
+  check.disabled=closed&&!keep;card.classList.toggle('is-closed',closed);
   const status=$('[data-status]',card);
   status.textContent=(now>=d.deadline?'報名已截止':d.limit==null?'':'尚可報名 '+maxAvailable(d)+' 位｜'+(d.deadline===DEADLINE_MASTER?'115/12/03':'115/12/21')+' 23:59 截止');
-  const add=$('.add-person',card);if(add)add.disabled=d.limit!=null&&count>=maxAvailable(d);
+  const add=$('.add-person',card);if(add)add.disabled=(d.limit!=null&&count>=maxAvailable(d))||(now>=d.deadline&&count>=(ownCounts[d.key]||0));
  });
- if(now>=DEADLINE_MAIN){$$('.sponsor-check').forEach(c=>{c.disabled=true;c.checked=false;const box=c.closest('.sponsor-card');$('.sponsor-people',box).hidden=true});}
+ if(now>=DEADLINE_MAIN&&!editMode){$$('.sponsor-check').forEach(c=>{c.disabled=true;c.checked=false;const box=c.closest('.sponsor-card');$('.sponsor-people',box).hidden=true});}
  calculate();
 }
 function selectTab(id){
@@ -87,7 +89,7 @@ document.addEventListener('click',e=>{
  const add=e.target.closest('.add-person');
  if(add){
   const card=add.closest('.role-card,.sponsor-card');const d=card.dataset.roleKey?defByKey[card.dataset.roleKey]:null;
-  if(d&&$$('.person-entry',card).length>=maxAvailable(d))return;
+  if(d&&($$('.person-entry',card).length>=maxAvailable(d)||(Date.now()>=d.deadline&&$$('.person-entry',card).length>=(ownCounts[d.key]||0))))return;
   $('.people-list',card).insertAdjacentHTML('beforeend',personMarkup(card.classList.contains('sponsor-card'),card.dataset.price==='variable',card.dataset.roleKey?.endsWith('-deputy'),card.dataset.roleKey==='master'));
   refreshAvailability();return;
  }
@@ -162,7 +164,7 @@ $('#offering-form').addEventListener('submit',e=>{
   const card=$('[data-role-key="'+d.key+'"]');
   return $('.role-check',card).checked&&d.limit!=null&&$$('.person-entry',card).length>maxAvailable(d);
  });
- if(overLimit){feedback.textContent='目前填寫芳名超過示意剩餘名額，請調整。';return;}
+ if(overLimit){feedback.textContent='目前填寫芳名超過剩餘名額，請調整。';return;}
  const missing=$$('.role-card.selected .person-entry input:not([type=checkbox]),.role-card.selected .person-entry select,.sponsor-card.selected .person-entry input').some(input=>!String(input.value||'').trim());
  if(missing){feedback.textContent='已選擇的芳名資料尚有空白欄位，請檢查姓名、曆別、出生日期及現居地址。';return;}
  const invalid=$$('.role-card.selected [data-birth-month],.role-card.selected [data-birth-day],.sponsor-card.selected [data-donation-amount]').some(input=>!input.checkValidity()||Number(input.value)<Number(input.min));
@@ -171,8 +173,8 @@ $('#offering-form').addEventListener('submit',e=>{
  if(noDelivery){feedback.textContent='總功德主與燈首請填寫符令寄送地址。';return;}
  if(!$('#remit-last-five').checkValidity()||!/^\d{5}$/.test($('#remit-last-five').value.trim())){feedback.textContent='請依太歲燈登記格式填寫匯款帳號後五碼（五位數字）。';$('#remit-last-five').focus();return;}
  if(!$('#remit-reference').value.trim()){feedback.textContent='請填寫備註附言。';$('#remit-reference').focus();return;}
- feedback.textContent='展示表單欄位檢查通過。模擬紀錄僅保留在目前開啟的頁面，不會寄信、保留名額或寫入 Google 試算表。';
- if(window.WujiDraft?.recordValidSubmission)window.WujiDraft.recordValidSubmission();
+ feedback.textContent='資料送出中，請稍候…';
+ if(window.WujiDraft?.submitLive)window.WujiDraft.submitLive(feedback);else feedback.textContent='系統載入中，請稍後再按一次確認送出。';
 });
 $('#banner-upload').addEventListener('change',e=>{
  const file=e.target.files?.[0];if(!file)return;
@@ -182,7 +184,7 @@ $('#banner-upload').addEventListener('change',e=>{
 });
 const sheetURL='https://docs.google.com/spreadsheets/d/1DvfDmmpAf7RJAT7JDlvqZT4zdjYeFo8CwR3ZsvSAVME/edit#gid=1876276825';
 const link=document.createElement('a');link.href=sheetURL;link.target='_blank';link.rel='noopener noreferrer';link.textContent='開啟靈元院報名表（行政權限）';$('#sheet-link-holder').textContent='';$('#sheet-link-holder').appendChild(link);
-window.WujiDraft={roleDefs,sponsors,personMarkup,calculate,refreshAvailability,switchView,selectTab,fmt,previewRecords,escapeHTML};
+window.WujiDraft={roleDefs,sponsors,personMarkup,calculate,refreshAvailability,switchView,selectTab,fmt,previewRecords,escapeHTML,liveUsed,setEditMode};
 window.addEventListener('load',()=>$$('.global-site-nav a[href^="/"]').forEach(a=>{a.href='https://lyyuan.tw'+a.getAttribute('href')}));
 updateClock();setInterval(updateClock,1000);calculate();
 })();
