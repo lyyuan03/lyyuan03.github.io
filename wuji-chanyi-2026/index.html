@@ -17,7 +17,7 @@
 <link rel="canonical" href="https://lyyuan.tw/wuji-chanyi-2026/">
 <meta property="og:url" content="https://lyyuan.tw/wuji-chanyi-2026/">
 <link rel="stylesheet" href="/site-navigation.css?v=20261110-dingwei-1">
-<link rel="stylesheet" href="/wuji-chanyi-2026/chanyi.css?v=20261121-photos-2">
+<link rel="stylesheet" href="/wuji-chanyi-2026/chanyi.css?v=20261121-oracle-5">
 <script>document.documentElement.classList.add('js');</script>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -114,6 +114,18 @@
   <!-- ═════════ Hero 主視覺 ═════════ -->
   <section class="hero" id="top" aria-labelledby="hero-title">
     <div class="hero__sky" aria-hidden="true">
+      <!-- 宗教氛圍（程式繪製）：朱紅圓日、水墨遠山、祥雲。邊緣用濾鏡做出毛筆暈染的不規則感。 -->
+      <svg width="0" height="0" style="position:absolute" focusable="false"><defs>
+        <filter id="ink-rough" x="-8%" y="-8%" width="116%" height="116%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation="1.1"/></filter>
+        <radialGradient id="sunGrad" cx="50%" cy="46%" r="52%"><stop offset="0" stop-color="#B8402F" stop-opacity=".46"/><stop offset=".7" stop-color="#A93A2F" stop-opacity=".36"/><stop offset="1" stop-color="#8E2F27" stop-opacity=".24"/></radialGradient>
+      </defs></svg>
+      <div class="hero__mount"><svg viewBox="0 0 1440 380" preserveAspectRatio="none" focusable="false"><g filter="url(#ink-rough)">
+        <path d="M0 215 C120 175 220 135 340 175 C450 210 520 105 660 135 C790 163 860 95 1010 135 C1150 173 1260 115 1440 160 V380 H0Z" fill="#cfd8c4" opacity=".03"/>
+        <path d="M0 262 C140 222 250 200 380 238 C520 278 600 190 760 218 C910 244 1030 186 1180 224 C1290 250 1370 232 1440 244 V380 H0Z" fill="#cfd8c4" opacity=".04"/>
+        <path d="M0 312 C160 284 290 270 430 296 C590 326 700 262 860 284 C1010 304 1160 272 1300 296 C1370 306 1410 304 1440 300 V380 H0Z" fill="#cfd8c4" opacity=".055"/>
+      </g></svg></div>
+      <div class="hero__cloud hero__cloud--l"><svg viewBox="0 0 300 120" focusable="false"><g filter="url(#ink-rough)" fill="none" stroke="#C4A978" stroke-width="1.5" stroke-linecap="round"><path d="M20 92 C6 92 4 72 20 68 C16 48 40 38 54 50 C60 28 96 22 108 42 C124 30 150 38 150 58 C168 52 186 64 180 80 C196 78 204 96 188 100 L36 100 C28 100 24 96 20 92Z"/><path d="M60 78 C60 64 80 62 82 74 C84 82 72 86 68 80"/><path d="M190 100 C230 100 250 94 286 100"/></g></svg></div>
+      <div class="hero__cloud hero__cloud--r"><svg viewBox="0 0 300 120" focusable="false"><g filter="url(#ink-rough)" fill="none" stroke="#C4A978" stroke-width="1.5" stroke-linecap="round" transform="translate(300 0) scale(-1 1)"><path d="M20 92 C6 92 4 72 20 68 C16 48 40 38 54 50 C60 28 96 22 108 42 C124 30 150 38 150 58 C168 52 186 64 180 80 C196 78 204 96 188 100 L36 100 C28 100 24 96 20 92Z"/><path d="M60 78 C60 64 80 62 82 74 C84 82 72 86 68 80"/><path d="M190 100 C230 100 250 94 286 100"/></g></svg></div>
       <!-- 正式神尊圖片替換位置：
            若靈元院提供經授權之正式神尊圖片，請放入 images/ 資料夾（建議 WebP，約 900×900），
            並將下方 div 改為：
@@ -124,7 +136,11 @@
 
     <div class="hero__content">
       <p class="hero__eyebrow">靈元院 恭啟</p>
-      <h1 class="hero__title" id="hero-title"><span class="hero__title-main"><span class="nw">丙午年．</span><span class="nw">無極老母至尊聖誕</span></span><span class="hero__title-sub">福壽康寧祝壽懺儀</span></h1>
+      <!-- 書法標題：取得設計師直排書法透明圖後，可將下方 h1 內的文字換成 <img class="hero__brush" src="/wuji-chanyi-2026/images/title-brush.webp" alt="丙午年．無極老母至尊聖誕福壽康寧祝壽懺儀">（保留 h1 與 id） -->
+      <div class="hero__titlewrap">
+        <div class="hero__sun"><svg viewBox="0 0 600 600" focusable="false"><g filter="url(#ink-rough)"><circle cx="300" cy="300" r="268" fill="url(#sunGrad)"/><circle cx="306" cy="308" r="252" fill="#5a1a14" opacity=".12"/></g></svg></div>
+        <h1 class="hero__title" id="hero-title"><span class="hero__title-main"><span class="nw">丙午年．</span><span class="nw">無極老母至尊聖誕</span></span><span class="hero__title-sub">福壽康寧祝壽懺儀</span></h1>
+      </div>
       <div class="rule" aria-hidden="true"></div>
       <p class="hero__quote glow-text"><span class="nw">一朝聖誕，萬靈朝元；</span><span class="nw">慈恩普照，鑒察修心。</span></p>
       <p class="hero__support"><span class="nw">恭迎無極聖駕・</span><span class="nw">龍鳳兒歲末省修承母恩</span></p>
@@ -153,7 +169,6 @@
 
       <figure class="photo reveal">
         <img src="/wuji-chanyi-2026/images/photo-01-origin.webp" alt="老木架旁的紫紅色菊花祝壽供花" width="2400" height="1600" loading="lazy" decoding="async">
-        <figcaption>「每個人的家，皆可成為自己的道場。」</figcaption>
       </figure>
 
       <div class="prose">
@@ -172,6 +187,16 @@
       </div>
     </div>
   </section>
+
+  <!-- ═════════ 公開區｜無極老母至尊慈示（僅放已確認原話，其餘慈示全文維持專屬閱讀）═════════ -->
+  <section class="layer layer--oracle" id="oracle-public" aria-label="無極老母至尊慈示">
+    <div class="layer__inner reveal">
+      <span class="layer__dot" aria-hidden="true"></span>
+      <p class="layer__label">無極老母至尊．慈示</p>
+      <blockquote><p>「每個人的家，皆可成為自己的道場。」</p></blockquote>
+    </div>
+  </section>
+
 
   <!-- ═════════ 專屬閱讀：未開通者僅見至「緣起」為止 ═════════ -->
   <section class="section section--locked" id="chanyi-exclusive" aria-label="懺儀完整內容專屬閱讀">
