@@ -49,3 +49,4 @@
 .wuji-intro__note{margin-top:14px!important;font-size:14px;color:#6f6352}
 .wuji-intro__blessing{font-family:var(--serif);font-size:18px;color:#6e4f24;letter-spacing:.1em;margin-top:12px!important}
 @media(max-width:750px){.wuji-intro{margin-top:30px;padding:34px 18px 30px;border-radius:14px}.wuji-intro__grid{grid-template-columns:1fr}.wuji-intro__tagline{font-size:13px;letter-spacing:.06em;padding:6px 10px}}
+.wuji-intro__lunar{display:inline-block;font-size:.62em;letter-spacing:.06em;color:#8b2c1f}
