@@ -20,3 +20,7 @@
 .spiritual-question textarea{box-sizing:border-box;display:block;width:100%;min-height:105px;padding:12px 13px;border:1px solid #b8c1ad;border-radius:7px;background:#fffdf9;color:#26392d;font:inherit;font-size:14px;line-height:1.65;resize:vertical}
 .spiritual-question textarea:focus{outline:2px solid #ac8c4a;outline-offset:1px}
 .reserved-benefits .benefit-copy p{margin:12px 0;line-height:1.9}
+
+/* 移除審核草稿列與前後台切換列後，主內容避開固定導覽列 */
+#front-view,#admin-view{padding-top:56px}
+@media(max-width:750px){#front-view,#admin-view{padding-top:58px}}
