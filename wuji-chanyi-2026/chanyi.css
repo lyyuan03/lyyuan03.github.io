@@ -391,7 +391,14 @@ h1,h2,h3{font-family:var(--serif);font-weight:700;margin:0;line-height:1.45}
 /* ═════════ 官網導覽與登入列整合 ═════════ */
 /* 官網固定導覽（56px）＋登入列（site-auth-nav.js 會替 body 加上登入列高度的 padding）。 */
 body.wuji-chanyi{overflow-x:clip}
-.wuji-chanyi .site-header{position:sticky;inset:auto;top:104px;margin-top:56px;z-index:40;background:rgba(22,18,14,.92);border-bottom:1px solid rgba(165,130,84,.18)}
+/* 頁內區塊導覽：緊貼在官網導覽＋登入列下方、背景不透明，不重複顯示靈元院 logo。 */
+html body.wuji-chanyi .global-site-nav,html body.wuji-chanyi nav.global-site-nav{background:#090e08!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html body.wuji-chanyi #site-auth-bar,html body.wuji-chanyi.site-auth-enabled #site-auth-bar{background:#070b06!important}
+.wuji-chanyi .site-header,.wuji-chanyi .site-header.is-scrolled{position:sticky;inset:auto;top:104px;margin-top:56px;z-index:40;
+  background:#16120e;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:1px solid rgba(165,130,84,.28);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.wuji-chanyi .site-header .brand{display:none}
+.wuji-chanyi .site-header__inner{justify-content:center;padding:.55rem 1.5rem}
+.wuji-chanyi .site-header .site-nav{gap:1.8rem}
 .wuji-chanyi .site-header .progress{bottom:-1px}
 .wuji-chanyi .hero{min-height:calc(100svh - 160px);padding:4.5rem 1.5rem 5rem}
 @media (max-width:1080px){
@@ -431,5 +438,5 @@ body.chanyi-granted .chanyi-lock,body.chanyi-granted .chanyi-divide{display:none
   .chanyi-lock__label{letter-spacing:.18em;font-size:.66rem}
   .chanyi-gate{padding:1.1rem 1rem}
 }
-.wuji-chanyi section[id]{scroll-margin-top:170px}
-@media (max-width:1080px){.wuji-chanyi section[id]{scroll-margin-top:120px}}
+.wuji-chanyi section[id]{scroll-margin-top:172px}
+@media (max-width:1080px){.wuji-chanyi section[id]{scroll-margin-top:124px}}
