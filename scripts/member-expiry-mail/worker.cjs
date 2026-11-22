@@ -116,17 +116,28 @@ async function main() {
   const dryRun = process.env.SEND_MEMBER_EXPIRY_MAIL !== 'true';
   let transport;
   let from;
+  let smtpStatus = 'not-checked';
+  // 只回報錯誤代碼（例如 EAUTH、ECONNECTION），不輸出帳號、密碼、主機或信箱。
+  const safeCode = (error) => String(error?.code || error?.responseCode || 'UNKNOWN').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 30);
+  let config = {};
+  try { config = JSON.parse(process.env.SMTP_CONFIG || '{}'); } catch { config = null; }
   if (!dryRun) {
-    let config;
-    try { config = JSON.parse(process.env.SMTP_CONFIG || '{}'); } catch { throw new Error('Invalid SMTP_CONFIG JSON'); }
+    if (config === null) throw new Error('Invalid SMTP_CONFIG JSON');
     if (!config.host || !config.user || !config.pass) throw new Error('Owner must configure GitHub Actions SMTP_CONFIG secret. No mail sent.');
+  }
+  if (config && config.host && config.user && config.pass) {
     transport = nodemailer.createTransport({
       host: config.host, port: Number(config.port || 465), secure: config.secure !== false,
       auth: { user: config.user, pass: config.pass }, logger: false, debug: false,
       connectionTimeout: 15000, greetingTimeout: 15000, socketTimeout: 30000
     });
     from = config.from || `LYY靈元院行政團隊 <${config.user}>`;
-    await transport.verify();
+    try { await transport.verify(); smtpStatus = 'ok'; } catch (error) {
+      smtpStatus = `failed:${safeCode(error)}`;
+      if (!dryRun) { console.error(JSON.stringify({ smtp: smtpStatus })); throw new Error('SMTP verify failed'); }
+    }
+  } else {
+    smtpStatus = config === null ? 'invalid-config-json' : 'not-configured';
   }
 
   const [sponsorSnapshot, wellnessSnapshot] = await Promise.all([
@@ -153,7 +164,7 @@ async function main() {
     }
   }
   // 紀錄只輸出總數，不輸出信箱或內容。
-  console.log(JSON.stringify({ dryRun, members: byEmail.size, candidates, pending, sent }));
+  console.log(JSON.stringify({ dryRun, smtp: smtpStatus, members: byEmail.size, candidates, pending, sent }));
   transport?.close();
 }
 
