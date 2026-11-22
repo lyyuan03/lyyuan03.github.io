@@ -14,6 +14,18 @@
 <link rel="stylesheet" href="taisui-elements.css">
 <link rel="stylesheet" href="cis-dimensional.css">
 <link rel="stylesheet" href="registration-workflow.css">
+<script>
+/* 一般進入（選單、分享連結、舊的 #register 連結）一律從頁面頂端開始；
+   確認信的修改連結（?edit=…）維持原本自動捲動到表單的行為。 */
+(function(){
+  if (location.hash !== '#register' || new URLSearchParams(location.search).has('edit')) return;
+  history.replaceState(history.state, '', location.pathname + location.search);
+  var top = function(){ window.scrollTo({top: 0, left: 0, behavior: 'instant'}); };
+  top();
+  document.addEventListener('DOMContentLoaded', top);
+  window.addEventListener('load', function(){ top(); setTimeout(top, 0); });
+})();
+</script>
 </head>
 <body>
 <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
