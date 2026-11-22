@@ -8,7 +8,7 @@ void import("./analytics-config.js?v=20261122-article-insights-1")
   .then(() => activeArticleId ? import("./article-insights.js?v=20261122-1") : null)
   .catch((error) => console.warn("文選流量追蹤暫時無法載入。", error));
 // Visual polish for a single article; no extra page script tag or authorization changes.
-void import("./article-love-presentation.js?v=20261122-abundance-mother-quotes-1").catch(error => console.warn("本篇引文與圖片樣式載入失敗",error));
+void import("./article-love-presentation.js?v=20261122-abundance-mother-quotes-2").catch(error => console.warn("本篇引文與圖片樣式載入失敗",error));
 if (!activeArticleId) {
   void import("./article-list-rescue.js?v=20260923-ghosts-supernatural-1").catch((error) => {
     console.error("文選靜態備援載入失敗。", error);
@@ -101,8 +101,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20261122-analytics-1",
-    "./articles-core-20260810-v6.js?v=20261122-analytics-1&retry=1"
+    "./articles-core-20260810-v6.js?v=20261122-abundance-quotes-2",
+    "./articles-core-20260810-v6.js?v=20261122-abundance-quotes-2&retry=1"
   ];
   let lastError = null;
   for (const [index, moduleUrl] of coreModuleUrls.entries()) {
@@ -125,8 +125,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20261116-reader-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20261122-analytics-1"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20261122-analytics-1"],
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20261122-abundance-quotes-2"],
+    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20261122-abundance-quotes-2"],
     ["會員專屬提問", "./article-member-questions.js?v=20261122-grace-1"]
   ];
   const importWithRetry = async (path) => {
