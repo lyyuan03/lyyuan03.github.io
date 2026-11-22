@@ -11,6 +11,7 @@ on:
       - zodiac-lamp-grants.js
       - scripts/tests/zodiac-lamp-grants.test.mjs
       - scripts/tests/dingwei-zodiac-rules.test.mjs
+      - scripts/tests/article-analytics-rules.test.mjs
       - .github/workflows/firestore-rules-test.yml
 
 permissions:
@@ -33,10 +34,10 @@ jobs:
           mkdir -p /tmp/rules-test && cd /tmp/rules-test
           npm init -y >/dev/null
           npm i --legacy-peer-deps firebase-tools@13 @firebase/rules-unit-testing@3 firebase@10
-      - name: Run grant-logic unit tests and 12-zodiac permission tests against unchanged firestore.rules
+      - name: Run grant, zodiac and article analytics rules tests
         run: |
           node scripts/tests/zodiac-lamp-grants.test.mjs
-          cp firestore.rules zodiac-lamp-grants.js scripts/tests/dingwei-zodiac-rules.test.mjs /tmp/rules-test/
+          cp firestore.rules zodiac-lamp-grants.js scripts/tests/dingwei-zodiac-rules.test.mjs scripts/tests/article-analytics-rules.test.mjs /tmp/rules-test/
           cd /tmp/rules-test
           echo '{"firestore":{"rules":"firestore.rules"},"emulators":{"firestore":{"host":"127.0.0.1","port":8080},"ui":{"enabled":false}}}' > firebase.json
-          npx firebase emulators:exec --only firestore --project demo-zodiac "node dingwei-zodiac-rules.test.mjs firestore.rules"
+          npx firebase emulators:exec --only firestore --project demo-zodiac "node dingwei-zodiac-rules.test.mjs firestore.rules && node article-analytics-rules.test.mjs firestore.rules"

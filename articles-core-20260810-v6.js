@@ -614,6 +614,8 @@ function renderList(articles) {
     visibleArticleCount += window.matchMedia("(max-width: 760px)").matches ? 6 : 9;
     renderList(articles);
   });
+  // 供延遲載入的統計模組核對 Firestore 原始文章 ID，不涉及閱讀權限。
+  root.querySelector(".article-view")?.setAttribute("data-article-doc-id", article.__firestoreId || articleKeyValue);
   bindLimitedReadingCountdowns();
   bindListMotion();
   refreshCoverBadges();
@@ -1055,7 +1057,8 @@ function renderArticle(article) {
   bindArticleExperience();
   if (!isDraftPreview) trackArticleView(articleKeyValue);
   document.dispatchEvent(new CustomEvent("lyyuan:article-rendered", {
-    detail: { articleId: articleKeyValue, accessType }
+    // Firestore 文件 ID 可能與靜態文章 ID 不同；只供統計規則核對公開文章。
+    detail: { articleId: articleKeyValue, accessType, articleDocId: article.__firestoreId || articleKeyValue }
   }));
 }
 

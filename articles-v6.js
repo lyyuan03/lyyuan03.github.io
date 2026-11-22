@@ -2,6 +2,11 @@
 const articleRoot = document.getElementById("article-root");
 
 const activeArticleId = new URLSearchParams(location.search).get("id") || "";
+// 既有頁面腳本數量受 stability lock 保護，文選統計透過現有入口載入。
+void import("./analytics-config.js?v=20261122-article-insights-1")
+  .then(() => import("./analytics.js?v=20261122-article-insights-1"))
+  .then(() => activeArticleId ? import("./article-insights.js?v=20261122-1") : null)
+  .catch((error) => console.warn("文選流量追蹤暫時無法載入。", error));
 // Visual polish for a single article; no extra page script tag or authorization changes.
 void import("./article-love-presentation.js?v=20261115-visual-1").catch(error => console.warn("本篇引文與圖片樣式載入失敗",error));
 if (!activeArticleId) {
@@ -96,8 +101,8 @@ function applyArticleDisplayOverrides() {
 
 async function loadArticleCore() {
   const coreModuleUrls = [
-    "./articles-core-20260810-v6.js?v=20261122-grace-1",
-    "./articles-core-20260810-v6.js?v=20261122-grace-1&retry=1"
+    "./articles-core-20260810-v6.js?v=20261122-analytics-1",
+    "./articles-core-20260810-v6.js?v=20261122-analytics-1&retry=1"
   ];
   let lastError = null;
   for (const [index, moduleUrl] of coreModuleUrls.entries()) {
@@ -120,8 +125,8 @@ async function loadArticleAddons() {
   const addons = [
     ["文章圖片修正", "./article-love-beyond-filial-piety-display-fix.js?v=20260812-static-first-fix-6"],
     ["文章重點引言", "./article-key-quote-display.js?v=20261116-reader-1"],
-    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20261122-grace-1"],
-    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20261122-grace-1"],
+    ["非會員贊助方案", "./article-paid-gate-restore.js?v=20261122-analytics-1"],
+    ["付費正文安全載入", "./paid-article-secure-loader.js?v=20261122-analytics-1"],
     ["會員專屬提問", "./article-member-questions.js?v=20261122-grace-1"]
   ];
   const importWithRetry = async (path) => {

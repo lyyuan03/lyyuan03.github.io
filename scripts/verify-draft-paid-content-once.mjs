@@ -11,8 +11,9 @@ assert.match(draft, /data-admin-draft-preview-detail="true"/);
 assert.match(draft, /function hydratePaidDraft\(/);
 assert.match(draft, /return \{ \.\.\.article, content: \[publicContent, privateContent\]/);
 assert.match(secure, /view\.dataset\.adminDraftPreviewDetail === "true"/);
-assert.match(html, /articles-v6\.js\?v=20261122-grace-1/);
-assert.match(loader, /paid-article-secure-loader\.js\?v=20261122-grace-1/);
+const articleEntryToken = html.match(/articles-v6\.js\?v=([^"'&]+)/)?.[1];
+assert.ok(articleEntryToken, "文章入口必須有一致的快取版本。");
+assert.ok(loader.includes(`paid-article-secure-loader.js?v=${articleEntryToken}`));
 
 function extractFunction(start, end) {
   const from = secure.indexOf(start);
