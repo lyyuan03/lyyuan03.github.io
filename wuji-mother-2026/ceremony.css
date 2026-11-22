@@ -54,3 +54,24 @@
 .person-title:has(> .remove-person:only-child){justify-content:flex-end}
 .panel-title small:has(.req){color:#c0392b;font-weight:600}
 .family-names-note{margin:0 0 6px;font-size:13px;line-height:1.7;color:#6f6352}.family-names textarea{width:100%}
+
+/* 無極老母至尊慈示：祝壽緣起主視覺與報名入口 */
+.wuji-oracle-feature{margin:32px auto 8px;padding:clamp(26px,4vw,48px);max-width:930px;background:linear-gradient(155deg,#263d30,#14291f);border:1px solid #c9a063;border-radius:16px;box-shadow:0 15px 32px rgba(31,40,28,.21);color:#f5f1e8;text-align:center;position:relative}
+.wuji-oracle-feature__eyebrow{font-size:13px;letter-spacing:.14em;color:#dcc18e;font-weight:600;margin:0 0 12px}
+.wuji-oracle-feature h3{font-size:clamp(21px,2.8vw,30px);line-height:1.6;letter-spacing:.045em;color:#fff4dc;margin:0 0 21px}
+.wuji-oracle-feature>p:not(.wuji-oracle-feature__eyebrow):not(.wuji-oracle-feature__note){max-width:690px;margin:0 auto 13px;font-size:16px;line-height:1.95;text-align:left}
+.wuji-oracle-feature__quote{margin:24px auto;padding:24px 12px;border-top:1px solid rgba(217,194,143,.66);border-bottom:1px solid rgba(217,194,143,.66);max-width:740px}
+.wuji-oracle-feature__quote p{margin:0;font:600 clamp(24px,3.1vw,37px)/1.65 var(--serif);letter-spacing:.07em;color:#f3dba0;text-wrap:balance}
+.wuji-oracle-feature__link{display:inline-flex;align-items:center;justify-content:center;gap:9px;max-width:100%;margin-top:15px;padding:12px 25px;border-radius:999px;background:#eed49e;border:1px solid #eed49e;color:#243026;font-size:16px;font-weight:700;text-decoration:none;line-height:1.5;transition:background .2s ease,transform .2s ease}
+.wuji-oracle-feature__link:hover{background:#fff0c5;transform:translateY(-2px)}
+.wuji-oracle-feature__link:focus-visible,.wuji-oracle-registration__link:focus-visible{outline:3px solid #f3dba0;outline-offset:3px}
+.wuji-oracle-feature__note{font-size:12px;line-height:1.8;color:#ded7c7;margin:14px 0 0}
+.wuji-oracle-registration{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 24px;margin-bottom:26px;background:#faf6ed;border:1px solid #c8b181;border-left:5px solid #a58254;border-radius:12px;box-shadow:0 6px 17px rgba(68,55,37,.07)}
+.wuji-oracle-registration__copy{min-width:0}
+.wuji-oracle-registration__label{color:#72603b;letter-spacing:.08em;font-size:13px;font-weight:700;margin:0 0 2px}
+.wuji-oracle-registration h2{font-size:clamp(18px,2vw,23px);line-height:1.5;color:#384631;margin:0 0 6px}
+.wuji-oracle-registration__copy>p:last-child{margin:0;color:#4d574a;font-size:14px;line-height:1.7}
+.wuji-oracle-registration__link{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;padding:11px 18px;border-radius:999px;background:#2b4234;color:#fff2d5;text-decoration:none;font-size:14px;font-weight:700;line-height:1.5;text-align:center;transition:background .2s ease}
+.wuji-oracle-registration__link:hover{background:#41604a}
+@media(max-width:750px){.wuji-oracle-feature{margin:24px auto 0;padding:28px 17px}.wuji-oracle-feature>p:not(.wuji-oracle-feature__eyebrow):not(.wuji-oracle-feature__note){font-size:15px}.wuji-oracle-feature__quote{padding:18px 5px}.wuji-oracle-feature__quote p{letter-spacing:.025em}.wuji-oracle-feature__link{width:100%;padding:13px 12px;font-size:15px}.wuji-oracle-registration{padding:17px;flex-direction:column;align-items:stretch;gap:12px}.wuji-oracle-registration__link{width:100%}}
+@media(prefers-reduced-motion:reduce){.wuji-oracle-feature__link,.wuji-oracle-registration__link{transition:none}.wuji-oracle-feature__link:hover{transform:none}}
