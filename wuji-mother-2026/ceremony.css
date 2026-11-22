@@ -75,3 +75,12 @@
 .wuji-oracle-registration__link:hover{background:#41604a}
 @media(max-width:750px){.wuji-oracle-feature{margin:24px auto 0;padding:28px 17px}.wuji-oracle-feature>p:not(.wuji-oracle-feature__eyebrow):not(.wuji-oracle-feature__note){font-size:15px}.wuji-oracle-feature__quote{padding:18px 5px}.wuji-oracle-feature__quote p{letter-spacing:.025em}.wuji-oracle-feature__link{width:100%;padding:13px 12px;font-size:15px}.wuji-oracle-registration{padding:17px;flex-direction:column;align-items:stretch;gap:12px}.wuji-oracle-registration__link{width:100%}}
 @media(prefers-reduced-motion:reduce){.wuji-oracle-feature__link,.wuji-oracle-registration__link{transition:none}.wuji-oracle-feature__link:hover{transform:none}}
+
+.instructions a,.leader-notice a{color:#8a2a1f;font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.instructions a:hover,.leader-notice a:hover{color:#5e1a12}
+.leader-notice{display:flex;gap:14px;align-items:flex-start;margin:-6px 0 24px;padding:16px 20px;border:1px solid #c9a063;border-left:5px solid #9b2f22;border-radius:9px;background:linear-gradient(120deg,#fbefe3,#f6e6cf);box-shadow:inset 0 1px #fff,0 6px 16px #6b3a2a1f;color:#4a3328}
+.leader-notice__icon{flex:none;width:30px;height:30px;border-radius:50%;background:#9b2f22;color:#fff6e3;font:700 18px/30px 'Noto Serif TC',serif;text-align:center;box-shadow:0 0 0 3px #f3d9a4}
+.leader-notice h4{margin:2px 0 6px;font-size:17px;color:#7d241a;letter-spacing:.06em}
+.leader-notice p{margin:0;font-size:14.5px;line-height:1.9}
+.leader-notice strong{color:#9b2f22;background:#fff3d6;padding:1px 5px;border-radius:4px;white-space:nowrap}
+@media(max-width:750px){.leader-notice{padding:14px 15px;gap:11px}.leader-notice h4{font-size:16px}.leader-notice p{font-size:14px}}
