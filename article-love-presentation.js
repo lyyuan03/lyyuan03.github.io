@@ -1,6 +1,7 @@
-// Only the "love-universal-emotion-and-fidelity" article: visual polish and
-// attributed quotations. Never reads, writes or changes membership access.
+// Presentation for the love article and the unpublished abundance draft.
+// Never reads, writes or changes membership access.
 const ARTICLE_ID = 'love-universal-emotion-and-fidelity';
+const ABUNDANCE_ARTICLE_ID = 'market-crash-abundance-consciousness-20261122';
 const QUOTES = new Map([
   ['「情愛並非始終專一不變。」', '無極瑤池金母靈訊｜《請問愛》'],
   ['「人類並非天生具備自我約束的能力。」', '無極瑤池金母靈訊｜《請問愛》'],
@@ -81,6 +82,7 @@ function prepareParagraph(p) {
 let scheduled = false;
 function update() {
   scheduled = false;
+  prepareAbundanceQuotes();
   document.querySelectorAll(`#article-root .article-view[data-article-id="${ARTICLE_ID}"] .article-body p`).forEach(prepareParagraph);
 }
 function scheduleUpdate() {
@@ -92,6 +94,83 @@ installStyle();
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleUpdate, { once: true });
 else scheduleUpdate();
 const root = document.getElementById('article-root');
-if (root && new URLSearchParams(location.search).get("id") === ARTICLE_ID) {
+if (root && [ARTICLE_ID, ABUNDANCE_ARTICLE_ID].includes(new URLSearchParams(location.search).get("id"))) {
   new MutationObserver(scheduleUpdate).observe(root, { childList: true, subtree: true });
 }
+
+const ABUNDANCE_STYLE_ID = 'abundance-mother-quote-20261122';
+const abundanceSelector = '#article-root .article-view[data-article-id="' + ABUNDANCE_ARTICLE_ID + '"] .article-body';
+const abundanceCss = [
+  abundanceSelector + ' p.abundance-mother-quote {',
+  '  box-sizing: border-box;',
+  '  max-width: 790px;',
+  '  margin: 34px auto !important;',
+  '  padding: 27px clamp(18px, 5vw, 48px) 30px !important;',
+  '  text-align: center !important;',
+  "  font-family: 'Source Han Serif TC', 'Noto Serif TC', 'Songti TC', serif;",
+  '  font-size: clamp(17px, 2.8vw, 21px);',
+  '  font-weight: 600;',
+  '  line-height: 2.05;',
+  '  letter-spacing: .035em;',
+  '  color: #493724;',
+  '  border: 1px solid rgba(165,130,84,.48);',
+  '  border-top: 2px solid #A58254;',
+  '  border-radius: 4px;',
+  '  background: linear-gradient(150deg, rgba(255,250,239,.86), rgba(229,216,188,.28));',
+  '  box-shadow: 0 10px 30px rgba(66,47,19,.075);',
+  '}',
+  abundanceSelector + ' p.abundance-mother-quote::before {',
+  '  content: attr(data-source-label);',
+  '  display: block;',
+  '  margin-bottom: 13px;',
+  '  color: #886536;',
+  "  font-family: 'Noto Sans TC', 'PingFang TC', sans-serif;",
+  '  font-weight: 600;',
+  '  font-size: 12px;',
+  '  line-height: 1.6;',
+  '  letter-spacing: .10em;',
+  '}',
+  abundanceSelector + ' p.abundance-mother-quote-marker,',
+  abundanceSelector + ' p.abundance-mother-quote-citation {',
+  '  display: none !important;',
+  '}',
+  '@media (max-width: 700px) {',
+  '  ' + abundanceSelector + ' p.abundance-mother-quote { margin: 26px auto !important; }',
+  '}'
+].join('\n');
+
+function installAbundanceStyle() {
+  if (document.getElementById(ABUNDANCE_STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = ABUNDANCE_STYLE_ID;
+  style.textContent = abundanceCss;
+  document.head.appendChild(style);
+}
+
+function prepareAbundanceQuotes() {
+  const view = document.querySelector('#article-root .article-view[data-article-id="' + ABUNDANCE_ARTICLE_ID + '"]');
+  const body = view?.querySelector('.article-body');
+  if (!body) return;
+  const paragraphs = [...body.querySelectorAll(':scope > p')];
+  for (let i = 0; i < paragraphs.length - 1; i += 1) {
+    const marker = paragraphs[i];
+    const markerText = (marker.textContent || '').trim();
+    if (!/^【母娘(?:靈訊|開示)[^】]*】$/.test(markerText)) continue;
+    const quote = paragraphs[i + 1];
+    if (!quote || quote.classList.contains('abundance-mother-quote')) continue;
+    const quoteText = (quote.textContent || '').trim();
+    if (!quoteText || (markerText.startsWith('【母娘靈訊') && !quoteText.startsWith('「'))) continue;
+    const next = paragraphs[i + 2];
+    const citationText = (next?.textContent || '').trim();
+    const hasCitation = /^——《[^》]+》問題\d+$/.test(citationText);
+    const sourceLabel = markerText.includes('非逐字')
+      ? '無極瑤池金母慈示｜宇色依記憶轉述（非逐字）'
+      : '無極瑤池金母靈訊' + (hasCitation ? '｜' + citationText.replace(/^——/, '') : '');
+    quote.dataset.sourceLabel = sourceLabel;
+    quote.classList.add('abundance-mother-quote');
+    quote.setAttribute('aria-label', sourceLabel + '。' + quoteText);
+    marker.classList.add('abundance-mother-quote-marker');
+    if (hasCitation) next.classList.add('abundance-mother-quote-citation');
+  }
+}
+installAbundanceStyle();

@@ -8,7 +8,7 @@ void import("./analytics-config.js?v=20261122-article-insights-1")
   .then(() => activeArticleId ? import("./article-insights.js?v=20261122-1") : null)
   .catch((error) => console.warn("文選流量追蹤暫時無法載入。", error));
 // Visual polish for a single article; no extra page script tag or authorization changes.
-void import("./article-love-presentation.js?v=20261115-visual-1").catch(error => console.warn("本篇引文與圖片樣式載入失敗",error));
+void import("./article-love-presentation.js?v=20261122-abundance-mother-quotes-1").catch(error => console.warn("本篇引文與圖片樣式載入失敗",error));
 if (!activeArticleId) {
   void import("./article-list-rescue.js?v=20260923-ghosts-supernatural-1").catch((error) => {
     console.error("文選靜態備援載入失敗。", error);
