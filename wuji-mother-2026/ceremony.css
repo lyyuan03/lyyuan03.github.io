@@ -96,3 +96,4 @@
 .instructions-box .instructions,.leader-notice .leader-notice__list{margin:0;padding:0 0 0 19px;font-size:14px;line-height:1.8}
 .instructions-box .instructions li,.leader-notice .leader-notice__list li{margin:4px 0}
 @media(max-width:750px){.leader-notice{padding:15px 25px 15px 21px}.leader-notice h4{font-size:15px}.instructions-box .instructions,.leader-notice .leader-notice__list{font-size:14px}}
+.leader-notice .leader-notice__list .leader-notice__note{margin:4px 0 0;font-size:12.5px;line-height:1.7;color:#7a6455}
