@@ -6,7 +6,7 @@
  */
 window.LYY_ANALYTICS_CONFIG = Object.freeze({
   gtmId: "",
-  measurementId: ""
+  measurementId: "G-D5XXE93FHC"
 });
 
 const installGlobalArticleNavLinks = () => {
