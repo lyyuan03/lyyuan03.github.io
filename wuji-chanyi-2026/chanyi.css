@@ -462,7 +462,7 @@ body.chanyi-granted .chanyi-lock,body.chanyi-granted .chanyi-divide{display:none
 .wuji-chanyi section[id]{scroll-margin-top:172px}
 @media (max-width:1080px){.wuji-chanyi section[id]{scroll-margin-top:124px}}
 
-/* ═════════ 頂端 Banner（「靈元院 恭啟」上方）＋主標題橫排 ═════════ */
+/* ═════════ 頂端 Banner（「靈元院 恭啟」上方） ═════════ */
 .chanyi-banner{background:#0d1510;line-height:0}
 .chanyi-banner__img{display:block;width:100%;max-width:1200px;height:auto;aspect-ratio:2000/713;margin:0 auto}
 @media (max-width:1080px){
@@ -473,8 +473,5 @@ body.chanyi-granted .chanyi-lock,body.chanyi-granted .chanyi-divide{display:none
   .wuji-chanyi .chanyi-banner{margin-top:58px}
   html:not(.is-article-detail) body.wuji-chanyi.site-auth-enabled .hero,.wuji-chanyi .hero{margin-top:0!important}
 }
-.wuji-chanyi .hero__titlewrap{display:block}
-.wuji-chanyi .hero__title{display:block;writing-mode:horizontal-tb;text-orientation:mixed;white-space:normal;margin:0 auto;max-width:22em}
-.wuji-chanyi .hero__title-main{margin:0;font-size:clamp(1.75rem,4.4vw,3.2rem);letter-spacing:.12em;line-height:1.45}
-.wuji-chanyi .hero__title-sub{margin:.55em 0 0;font-size:clamp(1.05rem,2.2vw,1.6rem);letter-spacing:.32em;line-height:1.6}
-.wuji-chanyi .hero__title .nw{display:inline-block;white-space:nowrap}
+/* 手機直排標題：左側祥雲縮小上移，避免與「福壽康寧祝壽懺儀」直行交疊 */
+@media (max-width:480px){.wuji-chanyi .hero__cloud--l{width:30vw;left:1%;top:7%}}
