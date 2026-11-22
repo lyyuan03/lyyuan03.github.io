@@ -1,0 +1,43 @@
+name: Member Expiry Mail (no Firebase deployment)
+# 付費文章會員到期通知信：到期後每小時掃描，每一期只寄一封（7 天內重新加入沿用原閱讀範圍）。
+# 不需要 Cloud Functions，也不需要付費方案；沿用既有 SMTP_CONFIG 與 FIREBASE_SERVICE_ACCOUNT secrets。
+# 預設只做 dry run（只計數，不寄信）。確認後把儲存庫變數 MEMBER_EXPIRY_MAIL_SEND 設為 "true" 才會自動寄出。
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+    inputs:
+      send:
+        description: 'Send expiry mail (false only counts; no writes or mail)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: member-expiry-mail
+  cancel-in-progress: false
+jobs:
+  notify:
+    if: github.repository == 'lyyuan03/lyyuan03.github.io'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm --prefix functions ci
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Test expiry mail rules
+        run: node --test scripts/member-expiry-mail/worker.test.cjs
+      - name: Send member expiry notices
+        env:
+          SMTP_CONFIG: ${{ secrets.SMTP_CONFIG }}
+          SEND_MEMBER_EXPIRY_MAIL: ${{ (github.event_name == 'schedule' && vars.MEMBER_EXPIRY_MAIL_SEND == 'true') || inputs.send == true }}
+        run: node scripts/member-expiry-mail/worker.cjs

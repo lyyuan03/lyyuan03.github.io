@@ -177,7 +177,7 @@ function offerMarkup() {
   if (hasActiveArticleAccess(state.member)) {
     const expiry = memberDate(state.member?.expiresAt || state.member?.wellnessBenefit?.expiresAt);
     const expiryText = expiry ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium" }).format(expiry) : "有效期間內";
-    return `<div class="sponsor-access-active"><strong>你的閱讀資格已啟用</strong><span>${expiry ? `${expiryText}前，` : "有效期間內，"}可閱讀開通日前 30 天起發表的贊助專屬文章。</span></div>`;
+    return `<div class="sponsor-access-active"><strong>你的閱讀資格已啟用</strong><span>${expiry ? `${expiryText}前，` : "有效期間內，"}可閱讀開通日前 30 天起發表的贊助專屬文章。到期後 7 天內再次加入，沿用原本的閱讀範圍；超過 7 天則重新起算。</span></div>`;
   }
 
   const offer = state.offer;
@@ -204,7 +204,8 @@ function offerMarkup() {
         <small>${loginPrefix}含開通日前 30 天起的文章</small>
       </button>
     </div>
-    <div class="sponsor-auto-note">綠界安全付款・付款成功後系統自動開通・並帶你回到本篇文章</div>`;
+    <div class="sponsor-auto-note">綠界安全付款・付款成功後系統自動開通・並帶你回到本篇文章</div>
+    <div class="sponsor-auto-note">到期後 7 天內再次加入，沿用原本的閱讀範圍；超過 7 天重新加入，則從重新加入當天起算，可讀往前 30 天內發表的文章。</div>`;
 }
 
 function installStyles() {

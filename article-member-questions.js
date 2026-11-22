@@ -2,7 +2,7 @@
 // 私密：會員只能看到自己的提問與回覆（Firestore rules 強制）；不公開顯示任何人的提問。
 // 不新增 MutationObserver / setInterval：只監聽文章核心與付費載入器既有的事件。
 import { auth, db } from "./firebase-config.js";
-import { resolveMemberAccess } from "./member-access-resolver.js?v=20261001-article-window-1";
+import { resolveMemberAccess } from "./member-access-resolver.js?v=20261122-grace-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { addDoc, collection, getDocs, query, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 

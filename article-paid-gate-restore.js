@@ -98,6 +98,7 @@ function restoredGateMarkup() {
           </button>
         </div>
         <div class="paid-value-note">點選方案後登入 Gmail，系統會帶你前往綠界安全付款；付款成功後自動開通閱讀資格。</div>
+        <div class="paid-value-note">到期後 7 天內再次加入，沿用原本的閱讀範圍；超過 7 天重新加入，則從重新加入當天起算，可讀往前 30 天內發表的文章。</div>
         <div class="paid-member-return">
           <span>已經有閱讀資格？</span>
           <button class="paid-inquiry-primary" type="button" data-paid-member-login>會員登入／重新確認資格</button>
