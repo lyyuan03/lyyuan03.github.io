@@ -361,8 +361,8 @@
     msg.hidden = false;
     $('.event-explainer > div > p').textContent = value('#edit-event-info');
     const benefits = $('.reserved-benefits .benefit-copy');
-    benefits.replaceChildren();
-    value('#edit-benefits').split(/\n+/).filter(line => line.trim()).forEach(line => {
+    if (benefits) benefits.replaceChildren();
+    if (benefits) value('#edit-benefits').split(/\n+/).filter(line => line.trim()).forEach(line => {
       const paragraph = document.createElement('p');
       paragraph.textContent = line;
       benefits.appendChild(paragraph);
