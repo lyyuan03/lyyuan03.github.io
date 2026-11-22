@@ -6,6 +6,7 @@
 <title>文章後台｜靈元院</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap">
+<link rel="stylesheet" href="/article-analytics-dashboard.css?v=20261122-2">
 <style>
 :root{--gold:#A58254;--cream:#F5F0E8;--ink:#17130d;--deep:#071106;--panel:#10180d;--line:rgba(165,130,84,.28);--muted:rgba(245,240,232,.68);--sans:'Noto Sans TC','Arial',sans-serif;--serif:'Noto Serif TC','Georgia',serif}
 *{box-sizing:border-box}body{margin:0;background:#071106;color:var(--cream);font-family:var(--sans);line-height:1.75;letter-spacing:.04em}.admin-shell{min-height:100vh}.admin-top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 28px;background:rgba(7,17,6,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(16px)}.brand{display:flex;flex-direction:column;gap:2px}.brand strong{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:.18em;color:var(--gold)}.brand span{font-size:12px;color:rgba(245,240,232,.55);letter-spacing:.16em}.top-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.admin-main{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:24px;max-width:1280px;margin:0 auto;padding:28px}.panel{background:rgba(16,24,13,.94);border:1px solid var(--line);box-shadow:0 18px 60px rgba(0,0,0,.24)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid rgba(165,130,84,.18)}.panel-head h2{margin:0;font-family:var(--serif);font-weight:500;font-size:18px;letter-spacing:.14em}.article-list{max-height:calc(100vh - 164px);overflow:auto}.article-list-group{border-bottom:1px solid rgba(165,130,84,.22)}.article-list-group-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 18px;background:#0c140a;border-bottom:1px solid rgba(165,130,84,.2);color:#D8BD91;font-size:12px;letter-spacing:.12em}.article-list-group-head strong{font-weight:500}.article-list-group-head span{color:rgba(245,240,232,.45);font-size:11px}.article-list-empty{padding:14px 18px;color:rgba(245,240,232,.38);font-size:12px}.article-item{width:100%;display:block;text-align:left;padding:16px 18px;border:0;border-bottom:1px solid rgba(165,130,84,.14);background:transparent;color:var(--cream);cursor:pointer}.article-item:hover,.article-item.is-active{background:rgba(165,130,84,.1)}.article-item-title{font-size:15px;font-weight:500;margin-bottom:5px}.article-item-meta{font-size:12px;color:rgba(245,240,232,.48)}.editor{padding:22px;display:grid;gap:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:grid;gap:7px}.field label{font-size:13px;color:rgba(245,240,232,.72)}input,select,textarea{width:100%;border:1px solid rgba(165,130,84,.32);background:rgba(4,8,3,.62);color:var(--cream);font:inherit;padding:11px 12px;border-radius:0;outline:none}textarea{min-height:320px;resize:vertical;line-height:1.9}.content-preview{padding:18px;background:rgba(245,240,232,.06);border:1px solid rgba(165,130,84,.18);color:rgba(245,240,232,.8);max-height:360px;overflow:auto}.content-preview h1,.content-preview h2,.content-preview h3{font-family:var(--serif);color:var(--gold);font-weight:500}.content-preview p{margin:0 0 1em}.content-preview img{max-width:100%;height:auto;display:block;margin:18px auto;border:1px solid rgba(165,130,84,.18)}.editor-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.upload-note{font-size:12px;color:rgba(245,240,232,.48)}.btn{border:1px solid rgba(165,130,84,.55);background:rgba(165,130,84,.11);color:#CBAA77;padding:10px 16px;font-family:var(--sans);font-size:14px;letter-spacing:.08em;cursor:pointer}.btn:hover{background:rgba(165,130,84,.2)}.btn.primary{background:rgba(165,130,84,.24);color:#F5F0E8}.btn.danger{border-color:rgba(180,90,78,.55);color:#e2a09a;background:rgba(180,90,78,.1)}.btn:disabled{opacity:.55;cursor:wait}.status{font-size:13px;color:rgba(245,240,232,.58)}.empty{padding:28px;color:rgba(245,240,232,.48);text-align:center}.gate{max-width:460px;margin:12vh auto;padding:40px 34px;text-align:center;background:rgba(16,24,13,.94);border:1px solid var(--line)}.gate h1{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.16em;color:var(--gold);margin:0 0 12px}.gate p{color:var(--muted);margin:0 0 24px}.hidden{display:none!important}@media(max-width:860px){.admin-main{grid-template-columns:1fr;padding:18px}.article-list{max-height:300px}.grid{grid-template-columns:1fr}.admin-top{align-items:flex-start;flex-direction:column}}
@@ -46,7 +47,7 @@
       <a class="btn" href="#member-questions">會員提問</a>
       <a class="btn" href="#wellness-members">養生療癒會員</a>
       <a class="btn" href="#member-video-management">會員影片</a>
-      <a class="btn" href="#article-analytics">文章流量分析</a>
+      <a class="btn primary" href="#article-analytics">數據分析中心・下載報表</a>
       <a class="btn primary" href="/admin-zodiac-lamp.html">2027 十二生肖・全文與閱讀權限管理</a>
       <a class="btn" href="articles.html" target="_blank">查看前台文章</a>
       <a class="btn" href="index.html">回首頁</a>
@@ -442,58 +443,129 @@
     </section>
     <section class="panel article-analytics-panel" id="article-analytics" aria-labelledby="article-analytics-heading">
       <div class="panel-head">
-        <h2 id="article-analytics-heading">文章流量分析</h2>
+        <h2 id="article-analytics-heading">網站數據分析中心</h2>
         <span id="article-analytics-status" class="article-analytics-status" role="status" aria-live="polite">等待管理員登入…</span>
       </div>
       <div class="article-analytics-body">
-        <div class="article-analytics-box" style="margin-bottom:20px">
-          <h3>全站流量｜Google Analytics 4（免費）</h3>
-          <div class="article-analytics-toolbar" style="margin-bottom:8px">
-            <a class="btn primary" href="https://analytics.google.com/analytics/web/#/a401584080p546095269/reports/realtime" target="_blank" rel="noopener noreferrer">查看即時流量</a>
-            <a class="btn" href="https://analytics.google.com/analytics/web/#/a401584080p546095269/reports/intelligenthome" target="_blank" rel="noopener noreferrer">查看流量總覽</a>
+        <div class="insight-hero">
+          <p class="insight-eyebrow">LYYUAN · CONTENT INSIGHTS</p>
+          <h3>從讀者喜歡看什麼，決定下一篇內容</h3>
+          <p>先確認網站的訪客與熱門頁面，再觀察會員願意閱讀、解鎖哪些文章。最後把報表下載，交給 ChatGPT 分析內容方向。每個區塊都有清楚的資料來源與用途。</p>
+          <nav class="insight-shortcuts" aria-label="數據分析區塊快速前往">
+            <a href="#insight-traffic">01 全站訪客</a>
+            <a href="#insight-members">02 會員閱讀</a>
+            <a href="#insight-export">03 下載分析資料</a>
+            <a href="#insight-guide">04 數據能回答什麼</a>
+          </nav>
+        </div>
+
+        <section class="insight-section insight-section--traffic" id="insight-traffic" aria-labelledby="insight-traffic-title">
+          <div class="insight-section-heading">
+            <span class="insight-section-number" aria-hidden="true">01</span>
+            <div>
+              <p class="insight-section-label">GOOGLE ANALYTICS 4｜全站訪客</p>
+              <h3 id="insight-traffic-title">誰來到網站？最常看哪個頁面？</h3>
+              <p>觀察所有訪客的流量、熱門網頁、平均參與時間、來源與地區。這些指標在 Google Analytics 免費報表中查看。</p>
+            </div>
           </div>
-          <p class="article-analytics-description">這兩個按鍵會開啟 Google Analytics，使用有權限的 Google 帳號登入即可查看全站訪客、頁面瀏覽及流量來源；每月統計可在 Google 報表中調整日期範圍。下方則是本網站後台的會員文章統計，兩套資料的計算方式不同。</p>
-        </div>
-        <h3 style="color:#D8BD91;font-size:16px;font-weight:500;margin:0 0 12px">會員文章月報｜網站後台</h3>
-        <div class="article-analytics-toolbar">
-          <label for="article-analytics-month">統計月份（臺灣時間）</label>
-          <input type="month" id="article-analytics-month">
-          <button type="button" id="article-analytics-refresh" class="btn">重新整理</button>
-          <button type="button" id="article-analytics-export" class="btn">匯出 CSV</button>
-        </div>
-        <div id="article-analytics-setup" class="article-analytics-note">正在確認 GA4 串接狀態…</div>
-        <div id="article-analytics-cards" class="article-analytics-cards" aria-live="polite"></div>
-        <div class="article-analytics-rank" aria-label="排行榜顯示數量">
-          <button type="button" class="btn" data-analytics-rank="3" aria-pressed="true">前三名</button>
-          <button type="button" class="btn" data-analytics-rank="10" aria-pressed="false">前十名</button>
-        </div>
-        <div class="article-analytics-box">
-          <h3>本月付費文章排行榜</h3>
-          <div class="article-analytics-table-wrap">
-            <table class="article-analytics-table">
-              <thead><tr><th>文章</th><th>登入讀者</th><th>解鎖全文</th><th>到達 90%</th><th>解鎖率</th></tr></thead>
-              <tbody id="article-analytics-ranking"><tr><td colspan="5">等待統計資料…</td></tr></tbody>
-            </table>
+          <div class="insight-action-grid">
+            <a class="insight-action" href="https://analytics.google.com/analytics/web/#/a401584080p546095269/reports/realtime" target="_blank" rel="noopener noreferrer"><strong>查看即時流量 ↗</strong><span>現在有多少人正在看網站</span></a>
+            <a class="insight-action" href="https://analytics.google.com/analytics/web/#/a401584080p546095269/reports/intelligenthome" target="_blank" rel="noopener noreferrer"><strong>查看全站流量總覽 ↗</strong><span>選擇月份，再開啟「頁面和畫面」「流量開發」等報表</span></a>
           </div>
-          <p class="article-analytics-description">本月數字是上線後開始累積的「每篇不重複登入者」，解鎖率為成功解鎖人數／開啟文章的登入人數。到達 90% 為捲動進度且停留至少 15 秒，不代表逐字讀完。</p>
-        </div>
-        <div class="article-analytics-grid">
+          <p class="insight-tip"><strong>想分析熱門網頁或停留時間？</strong> 在 GA4 左側「報表」開啟「參與 → 頁面和畫面」，右上角調整日期後下載 CSV。搜尋、LINE、Facebook 等進站來源，可在「流量開發」報表查看。Google 報表需要有權限的帳號登入，資料不會直接出現在下方會員月報。</p>
+        </section>
+
+        <section class="insight-section insight-section--member" id="insight-members" aria-labelledby="insight-members-title">
+          <div class="insight-section-heading">
+            <span class="insight-section-number" aria-hidden="true">02</span>
+            <div>
+              <p class="insight-section-label">FIRESTORE｜網站後台月報</p>
+              <h3 id="insight-members-title">會員實際閱讀、解鎖了哪些文章？</h3>
+              <p>這裡直接顯示會員文章月報，幫助辨認願意深入閱讀的主題。下方的閱讀、解鎖與來源數據從統計上線後開始累積。</p>
+            </div>
+          </div>
+          <div class="article-analytics-toolbar">
+            <label for="article-analytics-month">選擇統計月份（臺灣時間）</label>
+            <input type="month" id="article-analytics-month">
+            <button type="button" id="article-analytics-refresh" class="btn">更新本月數據</button>
+          </div>
+          <div id="article-analytics-setup" class="article-analytics-note">正在確認 GA4 串接狀態…</div>
+          <div id="article-analytics-cards" class="article-analytics-cards" aria-live="polite"></div>
+          <h4 class="insight-subhead">本月哪些付費文章最受會員歡迎？</h4>
+          <div class="article-analytics-rank" aria-label="排行榜顯示數量">
+            <button type="button" class="btn" data-analytics-rank="3" aria-pressed="true">看前三名</button>
+            <button type="button" class="btn" data-analytics-rank="10" aria-pressed="false">看前十名</button>
+          </div>
           <div class="article-analytics-box">
-            <h3>歷來付費文章閱讀排行榜</h3>
+            <h3>付費文章熱門排行榜｜所選月份</h3>
             <div class="article-analytics-table-wrap">
               <table class="article-analytics-table">
-                <thead><tr><th>文章</th><th>累積開啟次數</th></tr></thead>
-                <tbody id="article-analytics-all-time"><tr><td colspan="2">等待統計資料…</td></tr></tbody>
+                <thead><tr><th>文章</th><th>登入讀者</th><th>解鎖全文</th><th>到達 90%</th><th>解鎖率</th></tr></thead>
+                <tbody id="article-analytics-ranking"><tr><td colspan="5">等待統計資料…</td></tr></tbody>
               </table>
             </div>
-            <p class="article-analytics-description">沿用既有 articleMetrics 紀錄，包含未登入訪客，無法回推歷史付費會員人數。</p>
+            <p class="article-analytics-description">「登入讀者」是同篇文章／同月份的不重複登入人數；「解鎖率」＝解鎖全文人數／開啟該文章的登入人數。閱讀進度到 90% 且至少停留 15 秒，仍不等於逐字讀完。</p>
           </div>
-          <div class="article-analytics-box">
-            <h3>登入讀者的來源與跨月比較</h3>
-            <div id="article-analytics-sources" class="article-analytics-status">尚無資料。</div>
-            <p class="article-analytics-description">來源以 UTM 或瀏覽器引薦資訊估算。未登入訪客的完整流量、搜尋與轉換資料請以 GA4 報表為準。</p>
+          <div class="article-analytics-grid">
+            <div class="article-analytics-box">
+              <h3>累積文章熱度｜歷來開啟次數</h3>
+              <div class="article-analytics-table-wrap">
+                <table class="article-analytics-table">
+                  <thead><tr><th>文章</th><th>累積開啟次數</th></tr></thead>
+                  <tbody id="article-analytics-all-time"><tr><td colspan="2">等待統計資料…</td></tr></tbody>
+                </table>
+              </div>
+              <p class="article-analytics-description">沿用既有 articleMetrics 紀錄，包含未登入訪客，無法回推歷史付費會員人數，也不等於不重複訪客。</p>
+            </div>
+            <div class="article-analytics-box">
+              <h3>登入讀者從哪裡來？｜來源與跨月差異</h3>
+              <div id="article-analytics-sources" class="article-analytics-status">尚無資料。</div>
+              <p class="article-analytics-description">依 UTM 或瀏覽器引薦資訊推估；每篇文章的來源紀錄算一筆，並非不重複人數。完整來源與未登入訪客請使用 GA4。</p>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section class="insight-section insight-section--export" id="insight-export" aria-labelledby="insight-export-title">
+          <div class="insight-section-heading">
+            <span class="insight-section-number" aria-hidden="true">03</span>
+            <div>
+              <p class="insight-section-label">DOWNLOAD｜給 ChatGPT 的分析資料</p>
+              <h3 id="insight-export-title">下載報表，分析讀者偏好的主題</h3>
+              <p>按下即可取得已匯總的 CSV 檔案。下載後，直接上傳 ChatGPT；無須提供會員姓名、Email 或個人識別碼。</p>
+            </div>
+          </div>
+          <div class="insight-action-grid">
+            <button type="button" id="article-analytics-export" class="insight-action"><strong>下載 ① 本月會員閱讀 CSV ↓</strong><span>文章名稱、登入人數、解鎖、完成進度與解鎖率</span></button>
+            <button type="button" id="article-analytics-export-sources" class="insight-action"><strong>下載 ② 本月讀者來源 CSV ↓</strong><span>Google／LINE／Facebook 等來源篇次</span></button>
+            <button type="button" id="article-analytics-export-alltime" class="insight-action"><strong>下載 ③ 歷來熱門文章 CSV ↓</strong><span>累積文章開啟次數；含重複與訪客</span></button>
+            <a class="insight-action" href="https://analytics.google.com/analytics/web/#/a401584080p546095269/reports/intelligenthome" target="_blank" rel="noopener noreferrer"><strong>另外下載 ④ GA4 全站報表 ↗</strong><span>熱門網頁、參與時間、地區、搜尋與社群來源，須在 Google 匯出</span></a>
+            <button type="button" id="article-analytics-copy-prompt" class="insight-action"><strong>複製 ⑤ ChatGPT 分析指令</strong><span>連同上述 CSV 上傳後，貼上指令即可開始分析</span></button>
+          </div>
+          <span id="article-analytics-export-status" class="insight-export-status" role="status" aria-live="polite"></span>
+          <p class="insight-tip"><strong>建議分析方式：</strong>上傳「本月會員閱讀＋讀者來源＋歷來熱門文章」，再加入從 GA4 匯出的「頁面和畫面」「流量開發」「客層詳細資料」。比較熱門主題、閱讀完成狀況與流量來源；報表缺少的年齡、性別或興趣不可自行推測。</p>
+        </section>
+
+        <section class="insight-section insight-section--guide" id="insight-guide" aria-labelledby="insight-guide-title">
+          <div class="insight-section-heading">
+            <span class="insight-section-number" aria-hidden="true">04</span>
+            <div>
+              <p class="insight-section-label">DATA GUIDE｜可以分析與無法直接得知的事</p>
+              <h3 id="insight-guide-title">您想知道的讀者輪廓，哪些有資料？</h3>
+              <p>把可確認的數字與推測分清楚，才能讓 ChatGPT 提出可靠的內容建議。</p>
+            </div>
+          </div>
+          <table class="insight-guide-table">
+            <tbody>
+              <tr><th>最受歡迎的文章／網頁</th><td><span class="insight-pill insight-pill--yes">可以分析</span>會員月報看付費文章；GA4「頁面和畫面」看全站熱門網頁。</td></tr>
+              <tr><th>Google 搜尋點閱率（CTR）</th><td><span class="insight-pill insight-pill--partial">需另一項工具</span>Google Search Console 可看搜尋曝光、點擊與點閱率；GA4 的頁面瀏覽量不等於搜尋點閱率。</td></tr>
+              <tr><th>停留時間最長的頁面</th><td><span class="insight-pill insight-pill--yes">可以分析</span>GA4 的「平均參與時間」可比較頁面，並不等於逐字閱讀時間。</td></tr>
+              <tr><th>從哪裡來／為何進站</th><td><span class="insight-pill insight-pill--partial">部分可知</span>GA4 可看國家、城市、搜尋或社群來源；個人的來訪動機需要問卷才能確認。</td></tr>
+              <tr><th>年齡、性別、興趣</th><td><span class="insight-pill insight-pill--partial">視資料而定</span>GA4 可能提供彙總資料；受 Google signals、使用者同意、資料量及隱私門檻限制，可能有「未知」或不顯示。</td></tr>
+              <tr><th>最想看什麼新內容</th><td><span class="insight-pill insight-pill--partial">可推估方向</span>由熱門主題、解鎖與閱讀趨勢推估；要了解明確需求，建議加入自願填寫的內容偏好問卷。</td></tr>
+              <tr><th>職業、個人收入來源／金額</th><td><span class="insight-pill insight-pill--no">無法由 GA4 得知</span>目前沒有這些資料，不應從地區、年齡或點閱行為推測個人收入；需要另外設計自願問卷。</td></tr>
+            </tbody>
+          </table>
+        </section>
       </div>
     </section>
   </main>
@@ -511,6 +583,6 @@
 <script type="module" src="wellness-member-admin.js?v=20261017-first-join-month-1"></script>
 <script type="module" src="member-video-admin.js?v=20261017-first-join-month-1"></script>
 <script type="module" src="admin-member-questions.js?v=20261103-member-questions-1"></script>
-<script type="module" src="/article-analytics-admin.js?v=20261122-1"></script>
+<script type="module" src="/article-analytics-admin.js?v=20261122-2"></script>
 </body>
 </html>
