@@ -75,19 +75,17 @@ nav.is-scrolled{background:rgba(7,17,6,.94);border-color:rgba(165,130,84,.28)}
 .home-photos h2,.home-build h2{font-size:29px;font-weight:500;letter-spacing:.18em;margin-bottom:28px}
 .home-photos figure,.home-build figure{margin:0;overflow:hidden;border-radius:2px;background:#16200f}
 .home-photos img,.home-build img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.86) sepia(.08) contrast(1.04) brightness(.96)}
-.home-photos-grid figure,.home-build-grid figure{position:relative;min-width:0;width:100%;aspect-ratio:4/3}
+.home-photos-grid figure,.home-build-grid figure{position:relative;min-width:0;flex:0 0 calc((100% - 36px)/4);max-width:271px;aspect-ratio:4/3}
 .home-photos-grid img,.home-build-grid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.home-photos-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.home-photos-grid,.home-build-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
 .home-build-note{margin:-10px 0 24px;font-size:14px;line-height:1.9;letter-spacing:.06em;color:rgba(245,240,232,.68)}
-.home-build-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
-.home-build-grid .g1,.home-build-grid .g2{grid-column:span 2}
 .home-build img{filter:saturate(.82) sepia(.1) contrast(1.06) brightness(.92)}
 .home-build-grid figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 11px;font-size:13px;letter-spacing:.12em;color:#F5F0E8;background:linear-gradient(transparent,rgba(8,12,6,.78))}
+@media(max-width:960px){.home-photos-grid figure,.home-build-grid figure{flex-basis:calc((100% - 24px)/3)}}
+@media(max-width:600px){.home-photos-grid figure,.home-build-grid figure{flex-basis:calc((100% - 12px)/2)}}
 @media(max-width:760px){.about-photo{margin:-38px -32px 22px}
 .home-photos,.home-build{padding-left:18px;padding-right:18px}.home-photos{padding-top:64px}
-.home-photos h2,.home-build h2{font-size:24px}
-.home-photos-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-.home-build-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-build-grid .g1,.home-build-grid .g2{grid-column:span 1}}
+.home-photos h2,.home-build h2{font-size:24px}}
 .featured-reading{padding:92px 24px 100px;background:#0C140A;color:#F5F0E8}
 .featured-inner{max-width:1120px;margin:0 auto}
 .section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:30px}
