@@ -243,6 +243,12 @@ test('fallback legacy member who started before the policy keeps full access thi
   await assertSucceeds(getDoc(doc(client(), 'paidArticleBodies/article')));
 });
 
+test('fallback legacy member with the explicit 1970 marker keeps full access after renewing (startsAt is today)', async () => {
+  await seed('sponsor', future, 'absent', { startsAt: ago(1), articleWindowStartsAt: EPOCH });
+  await seedWindowArticle(ago(900));
+  await assertSucceeds(getDoc(doc(client(), 'paidArticleBodies/article')));
+});
+
 test('fallback member who started after the policy date without anchor is window-limited', {
   skip: Date.now() < WINDOW_EFFECTIVE_MS + DAY ? 'policy effective date not reached yet' : false
 }, async () => {

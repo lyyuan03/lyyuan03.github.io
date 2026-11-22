@@ -8,7 +8,9 @@ const {
   sponsorPlanDays,
   articleWindowAnchor,
   articleWindowStart,
-  nextArticleWindowAnchor
+  isContinuousMembership,
+  nextArticleWindowAnchor,
+  ARTICLE_WINDOW_GRACE_DAYS
 } = require("../article-window");
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -45,14 +47,47 @@ test("continuous renewal keeps the original anchor", () => {
   assert.equal(nextArticleWindowAnchor(member, new Date("2026-11-01T00:00:00.000Z")).getTime(), anchor.getTime());
 });
 
-test("rejoining after expiry restarts the anchor on the new activation day", () => {
-  const now = new Date("2026-12-10T00:00:00.000Z");
+test("rejoining within the 7-day grace period keeps the original anchor", () => {
+  const anchor = new Date("2026-10-05T00:00:00.000Z");
+  const member = { status: "active", articleWindowStartsAt: anchor.toISOString(), expiresAt: "2026-11-04T00:00:00.000Z" };
+  assert.equal(ARTICLE_WINDOW_GRACE_DAYS, 7);
+  assert.equal(nextArticleWindowAnchor(member, new Date("2026-11-11T00:00:00.000Z")).getTime(), anchor.getTime());
+});
+
+test("rejoining after the grace period restarts the anchor on the new activation day", () => {
+  const now = new Date("2026-11-11T00:00:01.000Z");
   const member = { status: "active", articleWindowStartsAt: "2026-10-05T00:00:00.000Z", expiresAt: "2026-11-04T00:00:00.000Z" };
   assert.equal(nextArticleWindowAnchor(member, now).getTime(), now.getTime());
 });
 
-test("a pre-policy member switches to the new rule when renewing", () => {
-  const now = new Date("2026-10-20T00:00:00.000Z");
+test("a pre-policy member who keeps renewing stays unrestricted (1970 marker)", () => {
+  const member = { status: "active", startsAt: "2026-09-01T00:00:00.000Z", expiresAt: "2026-10-31T00:00:00.000Z" };
+  const anchor = nextArticleWindowAnchor(member, new Date("2026-10-20T00:00:00.000Z"));
+  assert.equal(anchor.getTime(), 0);
+  assert.equal(articleWindowStart({ articleWindowStartsAt: anchor }).getTime(), 0);
+  // 標記在下次續約時繼續沿用
+  const renewed = { status: "active", startsAt: "2026-10-20T00:00:00.000Z", articleWindowStartsAt: anchor, expiresAt: "2026-11-30T00:00:00.000Z" };
+  assert.equal(nextArticleWindowAnchor(renewed, new Date("2026-11-20T00:00:00.000Z")).getTime(), 0);
+});
+
+test("a pre-policy member within the grace period stays unrestricted", () => {
+  const member = { status: "active", startsAt: "2026-09-01T00:00:00.000Z", expiresAt: "2026-10-31T00:00:00.000Z" };
+  assert.equal(nextArticleWindowAnchor(member, new Date("2026-11-07T00:00:00.000Z")).getTime(), 0);
+});
+
+test("a pre-policy member who lapses beyond the grace period is restarted like a new member", () => {
+  const now = new Date("2026-12-01T00:00:00.000Z");
   const member = { status: "active", startsAt: "2026-09-01T00:00:00.000Z", expiresAt: "2026-10-31T00:00:00.000Z" };
   assert.equal(nextArticleWindowAnchor(member, now).getTime(), now.getTime());
+  assert.equal(articleWindowStart({ articleWindowStartsAt: now }).getTime(), now.getTime() - 30 * DAY);
+});
+
+test("suspended, disabled or revoked members never get continuity", () => {
+  const now = new Date("2026-11-01T00:00:00.000Z");
+  const base = { status: "active", articleWindowStartsAt: "2026-10-05T00:00:00.000Z", expiresAt: "2026-11-04T00:00:00.000Z" };
+  assert.equal(isContinuousMembership(base, now), true);
+  assert.equal(isContinuousMembership({ ...base, suspended: true }, now), false);
+  assert.equal(isContinuousMembership({ ...base, disabled: true }, now), false);
+  assert.equal(isContinuousMembership({ ...base, revokedAt: "2026-10-20T00:00:00.000Z" }, now), false);
+  assert.equal(nextArticleWindowAnchor({ ...base, suspended: true }, now).getTime(), now.getTime());
 });

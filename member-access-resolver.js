@@ -70,8 +70,8 @@ export function activeEntitlement(entitlement = {}, email = "", now = new Date()
 }
 
 // 付費文章閱讀範圍（與 functions/article-window.js、firestore.rules 同一規則）：
-// 只能閱讀「本期連續會員開通日前 30 天起」發表的付費文章。
-// 規則生效（2026-10-01）前已在期間內的舊會員，本期不受限制。
+// 只能閱讀「本期連續會員起算日前 30 天起」發表的付費文章（到期後 7 天內重新付費視同連續）。
+// 規則生效（2026-10-01）前加入的舊會員，只要沒有中斷就不受限制（起算日 1970-01-01 標記）。
 const ARTICLE_WINDOW_LOOKBACK_MS = 30 * 24 * 60 * 60 * 1000;
 const ARTICLE_WINDOW_EFFECTIVE_AT = new Date("2026-09-30T16:00:00.000Z");
 
@@ -81,7 +81,8 @@ function memberRecordWindowStart(record = {}) {
     const startsAt = accessDate(record.startsAt);
     if (startsAt && startsAt >= ARTICLE_WINDOW_EFFECTIVE_AT) anchor = startsAt;
   }
-  return anchor ? new Date(anchor.getTime() - ARTICLE_WINDOW_LOOKBACK_MS) : new Date(0);
+  // 1970-01-01 是舊會員「不受限制」的起算日標記。
+  return anchor && anchor.getTime() > 0 ? new Date(anchor.getTime() - ARTICLE_WINDOW_LOOKBACK_MS) : new Date(0);
 }
 
 // 回傳此會員可閱讀的最早發表時間；null 代表不受限制（管理員），undefined 代表尚無法判斷（交由伺服器規則決定）。

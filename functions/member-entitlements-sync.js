@@ -116,7 +116,7 @@ async function rebuildEntitlement(emailParam) {
   if (wellnessAccess.expiresAt) payload.wellnessExpiresAt = Timestamp.fromDate(wellnessAccess.expiresAt);
   else payload.wellnessExpiresAt = FieldValue.delete();
 
-  // 付費文章閱讀範圍：只能閱讀此時間之後發表的付費文章（1970-01-01 代表規則生效前的舊會員本期不受限制）。
+  // 付費文章閱讀範圍：只能閱讀此時間之後發表的付費文章（1970-01-01 代表規則生效前加入、未中斷超過 7 天的舊會員不受限制）。
   if (sponsorAccess.articleWindowStartsAt) payload.sponsorArticleWindowStartsAt = Timestamp.fromDate(sponsorAccess.articleWindowStartsAt);
   else payload.sponsorArticleWindowStartsAt = FieldValue.delete();
 

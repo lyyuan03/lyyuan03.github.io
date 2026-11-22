@@ -16,11 +16,14 @@ BASE_URL = f"https://firestore.googleapis.com/v1/projects/{PROJECT_ID}/databases
 SCHEMA_VERSION = 1
 
 # 付費文章閱讀範圍（與 functions/article-window.js 相同規則）：
-# 只能閱讀「本期連續會員開通日前 30 天起」發表的付費文章；規則生效前的舊會員本期不受限制。
+# 只能閱讀「本期連續會員起算日前 30 天起」發表的付費文章。到期後 7 天內重新付費視同連續（沿用原起算日）；
+# 規則生效前的舊會員只要沒有中斷（含寬限期）就持續不受限制，起算日以 1970-01-01 標記。
 ARTICLE_WINDOW_POLICY = "join-minus-30d-v1"
 ARTICLE_WINDOW_LOOKBACK = dt.timedelta(days=30)
+ARTICLE_WINDOW_GRACE = dt.timedelta(days=7)
 ARTICLE_WINDOW_EFFECTIVE_AT = dt.datetime(2026, 9, 30, 16, 0, tzinfo=dt.timezone.utc)  # 2026-10-01 00:00 臺北
 UNRESTRICTED_WINDOW_START = dt.datetime(1970, 1, 1, tzinfo=dt.timezone.utc)
+LEGACY_UNRESTRICTED_ANCHOR = UNRESTRICTED_WINDOW_START
 
 
 def access_token() -> str:
@@ -154,16 +157,18 @@ def article_window_start(record: dict) -> dt.datetime:
         starts_at = parse_datetime(record.get("startsAt"))
         if starts_at is not None and starts_at >= ARTICLE_WINDOW_EFFECTIVE_AT:
             anchor = starts_at
-    return anchor - ARTICLE_WINDOW_LOOKBACK if anchor is not None else UNRESTRICTED_WINDOW_START
+    if anchor is None or anchor <= UNRESTRICTED_WINDOW_START:
+        return UNRESTRICTED_WINDOW_START
+    return anchor - ARTICLE_WINDOW_LOOKBACK
 
 
 def window_anchor_updates(record: dict, active: bool) -> dict:
     """維護會員來源資料上的閱讀範圍起算日（不依賴 Cloud Functions 版本）。
 
     - 規則生效後開通、尚未記錄起算日：以 startsAt 作為起算日。
-    - 有效期間內續約（新的 startsAt 早於上次記錄的到期日）：沿用原起算日。
-    - 中斷後重新加入（新的 startsAt 晚於或等於上次記錄的到期日）：以新的 startsAt 重新起算。
-    - 規則生效前已在期間內的舊會員：不寫入起算日，本期維持不受限制。
+    - 規則生效前加入、尚未記錄起算日的舊會員：寫入 1970-01-01 標記（持續不受限制）。
+    - 有效期間內續約，或到期後 7 天內重新付費（新的 startsAt 不晚於上次記錄的到期日 + 7 天）：沿用原起算日。
+    - 中斷超過 7 天後重新加入：以新的 startsAt 重新起算（舊會員與新會員相同）。
     """
     if not active:
         return {}
@@ -174,9 +179,12 @@ def window_anchor_updates(record: dict, active: bool) -> dict:
 
     new_anchor = anchor
     if anchor is None:
-        if starts_at is not None and starts_at >= ARTICLE_WINDOW_EFFECTIVE_AT:
-            new_anchor = starts_at
-    elif starts_at is not None and seen_expires is not None and starts_at >= seen_expires:
+        joined_at = starts_at or parse_datetime(record.get("firstJoinedAt"))
+        if joined_at is not None and joined_at >= ARTICLE_WINDOW_EFFECTIVE_AT:
+            new_anchor = joined_at
+        else:
+            new_anchor = LEGACY_UNRESTRICTED_ANCHOR
+    elif starts_at is not None and seen_expires is not None and starts_at - seen_expires > ARTICLE_WINDOW_GRACE:
         new_anchor = starts_at
 
     updates: dict = {}

@@ -77,7 +77,7 @@ function activationEmailContent(member = {}) {
 會員方案：${planDaysLabel(months)}
 開通日期：${formatDate(member.startsAt || member.paidAt)}
 資格到期日：${formatDate(member.expiresAt)}
-閱讀範圍：開通日前 30 天起發表的贊助專屬文章，資格到期後即無法閱讀
+閱讀範圍：起算日前 30 天起發表的贊助專屬文章，資格到期後即無法閱讀（到期後 7 天內重新加入，沿用原起算日；超過 7 天則以重新加入當天重新起算）
 本次方案：${priceLabel}
 實收金額：新台幣 ${Number(member.amount || 0).toLocaleString("zh-TW")} 元
 
@@ -191,15 +191,23 @@ function addPlanDays(date, months) {
   return new Date(new Date(date).getTime() + days * 24 * 60 * 60 * 1000);
 }
 
-// 付費文章閱讀範圍起算日：仍在有效期間內續約沿用原起算日；否則（或規則生效前的舊會員續約）以今天重新起算。
+// 付費文章閱讀範圍起算日（與 functions/article-window.js 同一規則）：
+// 有效期間內續約，或到期後 7 天內重新付費，沿用原起算日；舊會員（沒有起算日）連續時以 1970-01-01 標記持續不受限制；
+// 超過寬限期、停權或撤銷後重新加入，以今天重新起算。
+const ARTICLE_WINDOW_GRACE_DAYS = 7;
 function nextArticleWindowAnchor(member = {}, now = new Date()) {
   const expiresAt = dateValue(member.expiresAt);
-  const stillActive = member.status === "active" && expiresAt && expiresAt > now;
-  if (!stillActive) return now;
+  const continuous = member.status === "active"
+    && member.disabled !== true
+    && member.suspended !== true
+    && !member.revokedAt
+    && expiresAt
+    && new Date(expiresAt.getTime() + ARTICLE_WINDOW_GRACE_DAYS * 24 * 60 * 60 * 1000) >= now;
+  if (!continuous) return now;
   const explicit = dateValue(member.articleWindowStartsAt);
   if (explicit) return explicit;
   const startsAt = dateValue(member.startsAt);
-  return startsAt && startsAt >= ARTICLE_WINDOW_EFFECTIVE_AT ? startsAt : now;
+  return startsAt && startsAt >= ARTICLE_WINDOW_EFFECTIVE_AT ? startsAt : new Date(0);
 }
 
 function selectedMonths() {

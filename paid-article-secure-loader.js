@@ -1,5 +1,5 @@
 import { auth, db } from "./firebase-config.js";
-import { resolveMemberAccess, paidArticleWindowStart, paidArticleWithinWindow } from "./member-access-resolver.js?v=20261001-article-window-1";
+import { resolveMemberAccess, paidArticleWindowStart, paidArticleWithinWindow } from "./member-access-resolver.js?v=20261122-grace-1";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, doc, getDoc, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -281,7 +281,7 @@ async function hydratePaidBody() {
     const publishedLabel = formatTaipeiDate(metadata.publishedAt);
     view.dataset.paidSecureAccess = "out-of-window";
     view.dataset.paidBodyState = "locked";
-    setSecureStatus(view, `這篇付費文章${publishedLabel ? `發表於 ${publishedLabel}，` : ""}不在您目前的閱讀範圍內。會員可閱讀開通日前 30 天起發表的付費文章${windowLabel ? `（您的範圍：${windowLabel} 之後發表的文章）` : ""}。`);
+    setSecureStatus(view, `這篇付費文章${publishedLabel ? `發表於 ${publishedLabel}，` : ""}不在您目前的閱讀範圍內。會員可閱讀開通日前 30 天起發表的付費文章${windowLabel ? `（您的範圍：${windowLabel} 之後發表的文章）` : ""}。到期後 7 天內再次加入會沿用原本的範圍，超過 7 天則從重新加入當天重新起算。`);
     return;
   }
 

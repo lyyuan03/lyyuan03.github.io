@@ -15,19 +15,20 @@
 
 以上各類會員（靈極會員、已開通文章權限的養生頻道會員、贊助付費文章會員）一律套用同一個閱讀範圍：
 
-1. 只能閱讀「本期連續會員開通日前 30 天起」發表的付費文章，一直到資格到期為止。文章以第一次正式發布時間 `articles/{id}.publishedAt` 判斷。
-2. 資格到期、停權或取消後，新舊付費文章一律不能閱讀。
-3. 仍在有效期間內續約，不會重設起算日；資格中斷後重新加入，起算日改為重新開通當天。
-4. 規則生效前（2026-10-01 00:00 臺北時間）已在期間內的舊會員，本期到期前維持可閱讀全部付費文章；續約或重新加入後套用新規則。
+1. 只能閱讀「本期連續會員起算日前 30 天起」發表的付費文章，一直到資格到期為止。文章以第一次正式發布時間 `articles/{id}.publishedAt` 判斷。
+2. 資格到期、停權或取消後，新舊付費文章一律不能閱讀（寬限期只保留起算日，不延長閱讀資格）。
+3. 仍在有效期間內續約，不會重設起算日。到期後 7 天內重新付費（寬限期，`ARTICLE_WINDOW_GRACE_DAYS = 7`）視同連續，沿用原起算日。超過 7 天才重新加入，起算日改為重新開通當天，可讀範圍為重新開通日前 30 天起。停權、停用或已撤銷的會員不適用寬限期。
+4. 規則生效前（2026-10-01 00:00 臺北時間）已加入的舊會員，只要沒有中斷（含 7 天寬限），續約後仍可閱讀全部付費文章，並以 `articleWindowStartsAt = 1970-01-01` 明確標記「不受限制」。一旦中斷超過 7 天，重新加入後與新會員相同，重新起算。
 5. 贊助付費文章方案以天數計算：1 個月 = 30 天、3 個月 = 90 天。養生頻道方案維持原本月份計算。
+6. 到期通知信：會員資格到期後，由 `.github/workflows/member-expiry-mail.yml` 每小時掃描一次，對每一期到期的有效付費文章會員只寄一封（內容：已到期、7 天內重新加入可沿用原範圍、超過 7 天重新起算）。寄送紀錄存於 `_memberExpiryMail/{sha256}`，不重複寄送。預設只做 dry run，儲存庫變數 `MEMBER_EXPIRY_MAIL_SEND` 設為 `true` 才會真正寄信。
 
 資料欄位：
 
-- 會員來源資料 `sponsorMemberAccess/{email}`、`memberAccess/{email}`：`articleWindowStartsAt` 為本期連續會員的起算日（付款或後台開通時寫入）。沒有此欄位時，`startsAt` 晚於生效日即以 `startsAt` 起算，否則視為生效前的舊會員。
+- 會員來源資料 `sponsorMemberAccess/{email}`、`memberAccess/{email}`：`articleWindowStartsAt` 為本期連續會員的起算日（付款或後台開通時寫入；舊會員為 `1970-01-01` 標記，代表不受限制）。沒有此欄位時，`startsAt` 晚於生效日即以 `startsAt` 起算，否則視為生效前的舊會員。
 - `memberEntitlements/{email}`：`sponsorArticleWindowStartsAt`、`wellnessArticleWindowStartsAt` 為可閱讀的最早發表時間（起算日減 30 天；`1970-01-01` 代表舊會員本期不受限制），並以 `articleWindowPolicy = "join-minus-30d-v1"` 標示。
-- 排程重建（`.github/scripts/rebuild-member-entitlements.py`，在 GitHub Actions 執行，不依賴 Cloud Functions 版本）會把起算日寫回會員來源資料的 `articleWindowStartsAt`，並以 `articleWindowSeenExpiresAt` 記錄上次看到的到期日：新的 `startsAt` 早於該到期日視為連續續約、沿用起算日；晚於或等於則視為中斷後重新加入、重新起算。
+- 排程重建（`.github/scripts/rebuild-member-entitlements.py`，在 GitHub Actions 執行，不依賴 Cloud Functions 版本）會把起算日寫回會員來源資料的 `articleWindowStartsAt`，並以 `articleWindowSeenExpiresAt` 記錄上次看到的到期日：新的 `startsAt` 不晚於該到期日加 7 天視為連續（續約或寬限期內回來）、沿用起算日；晚於則視為中斷後重新加入、重新起算。尚未標記起算日的舊會員，會在排程中被補上 `1970-01-01` 標記。
 - `memberEntitlements` 尚未寫入閱讀範圍時（舊版後端剛建立），Firestore 規則改以會員來源資料的起算日判斷。
-- 同一規則實作於 `functions/article-window.js`、`functions/member-entitlements-sync.js`、`.github/scripts/rebuild-member-entitlements.py`、`member-access-resolver.js` 與 `firestore.rules`，任何一處修改都必須同步其他各處。
+- 同一規則實作於 `functions/article-window.js`、`functions/member-entitlements-sync.js`、`.github/scripts/rebuild-member-entitlements.py`、`member-access-resolver.js`、`firestore.rules`，以及付款或後台開通時寫入起算日的 `functions/index.js`、`functions/sponsor-offer-functions.js`、`membership-admin.js`（三處共用 `nextArticleWindowAnchor` 規則），任何一處修改都必須同步其他各處。
 
 
 
