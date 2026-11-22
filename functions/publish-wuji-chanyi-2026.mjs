@@ -11,7 +11,7 @@ import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
 const ID = 'wuji-2026-chanyi';
-const REVISION = '20261121-v3-1';
+const REVISION = '20261122-v3-2';
 const ENVELOPE = 'secure-imports/wuji-chanyi-2026.enc.json';
 const TITLE = '丙午年．無極老母至尊聖誕福壽康寧祝壽懺儀・懺儀完整內容';
 const hash = (x) => createHash('sha256').update(x).digest('hex');
