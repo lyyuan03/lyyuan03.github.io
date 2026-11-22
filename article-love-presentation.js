@@ -155,17 +155,19 @@ function prepareAbundanceQuotes() {
   for (let i = 0; i < paragraphs.length - 1; i += 1) {
     const marker = paragraphs[i];
     const markerText = (marker.textContent || '').trim();
-    if (!/^【母娘(?:靈訊|開示)[^】]*】$/.test(markerText)) continue;
+    const markerMatch = markerText.match(/^【(?:無極瑤池金母|母娘)(靈訊|開示|慈示)[^】]*】$/);
+    if (!markerMatch) continue;
+    const markerKind = markerMatch[1];
     const quote = paragraphs[i + 1];
     if (!quote || quote.classList.contains('abundance-mother-quote')) continue;
     const quoteText = (quote.textContent || '').trim();
-    if (!quoteText || (markerText.startsWith('【母娘靈訊') && !quoteText.startsWith('「'))) continue;
+    if (!quoteText || (markerKind === '靈訊' && !quoteText.startsWith('「'))) continue;
     const next = paragraphs[i + 2];
     const citationText = (next?.textContent || '').trim();
-    const hasCitation = /^——《[^》]+》問題\d+$/.test(citationText);
+    const hasCitation = /^——《[^》]+》(?:問題\d+)?$/.test(citationText);
     const sourceLabel = markerText.includes('非逐字')
       ? '無極瑤池金母慈示｜宇色依記憶轉述（非逐字）'
-      : '無極瑤池金母靈訊' + (hasCitation ? '｜' + citationText.replace(/^——/, '') : '');
+      : '無極瑤池金母' + markerKind + (hasCitation ? '｜' + citationText.replace(/^——/, '') : '');
     quote.dataset.sourceLabel = sourceLabel;
     quote.classList.add('abundance-mother-quote');
     quote.setAttribute('aria-label', sourceLabel + '。' + quoteText);
