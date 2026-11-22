@@ -361,6 +361,72 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // 每月文章的不重複登入讀者。只存 UID、文章 ID、流量來源及事件時間，
+    // 不保存 Email、姓名、付費正文或任何可由訪客讀取的個人閱讀名單。
+    match /articleMonthlyReaders/{month}/readers/{readerId} {
+      function isCurrentTaipeiMonth() {
+        let taipeiNow = request.time + duration.value(8, 'h');
+        return month.matches('^20[0-9]{2}-(0[1-9]|1[0-2])$')
+          && int(month.split('-')[0]) == taipeiNow.year()
+          && int(month.split('-')[1]) == taipeiNow.month();
+      }
+
+      function validArticleId(articleId) {
+        return articleId is string
+          && articleId.matches('^[A-Za-z0-9_-]{1,120}$');
+      }
+
+      function matchesPublishedArticle(articleId, articleDocId) {
+        let articlePath = /databases/$(database)/documents/articles/$(articleDocId);
+        return validArticleId(articleId)
+          && validArticleId(articleDocId)
+          && exists(articlePath)
+          && get(articlePath).data.status == 'published'
+          && (articleDocId == articleId || get(articlePath).data.slug == articleId);
+      }
+
+      function ownsRecord() {
+        return verifiedEmail()
+          && resource.data.uid == request.auth.uid
+          && readerId == request.auth.uid + '__' + resource.data.articleId;
+      }
+
+      allow get, list: if isAdmin();
+
+      allow create: if verifiedEmail()
+        && isCurrentTaipeiMonth()
+        && request.resource.data.keys().hasOnly(['uid', 'articleId', 'articleDocId', 'source', 'viewedAt'])
+        && request.resource.data.uid == request.auth.uid
+        && matchesPublishedArticle(request.resource.data.articleId, request.resource.data.articleDocId)
+        && readerId == request.auth.uid + '__' + request.resource.data.articleId
+        && request.resource.data.source in ['direct', 'google', 'facebook', 'line', 'instagram', 'youtube', 'other']
+        && request.resource.data.viewedAt == request.time;
+
+      allow update: if ownsRecord()
+        && isCurrentTaipeiMonth()
+        && request.resource.data.keys().hasOnly([
+          'uid', 'articleId', 'articleDocId', 'source', 'viewedAt', 'unlockedAt', 'completedAt'
+        ])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['unlockedAt', 'completedAt'])
+        && resource.data.articleId == request.resource.data.articleId
+        && (
+          // 成功開通全文只允許具該篇付費文章閱讀權限的會員記錄一次。
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['unlockedAt'])
+            && !resource.data.keys().hasAny(['unlockedAt'])
+            && request.resource.data.unlockedAt == request.time
+            && canReadPaidArticles(resource.data.articleDocId))
+          ||
+          // 閱讀到內文 90% 的記錄同一會員每篇每月只寫入一次。
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['completedAt'])
+            && !resource.data.keys().hasAny(['completedAt'])
+            && request.resource.data.completedAt == request.time
+            && (get(/databases/$(database)/documents/articles/$(resource.data.articleDocId)).data.accessType != 'paid'
+              || resource.data.keys().hasAny(['unlockedAt'])))
+        );
+
+      allow delete: if false;
+    }
+
     match /articleNotifications/{articleId} {
       allow read: if isAdmin();
       allow create, update, delete: if false;

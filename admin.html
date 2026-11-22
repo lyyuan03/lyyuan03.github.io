@@ -17,6 +17,7 @@
 .admin-toast{position:fixed;right:24px;bottom:24px;z-index:100;max-width:min(420px,calc(100vw - 32px));padding:14px 18px;border:1px solid rgba(165,130,84,.55);background:rgba(16,24,13,.97);color:#F5F0E8;box-shadow:0 16px 44px rgba(0,0,0,.42);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s,transform .2s}.admin-toast.is-visible{opacity:1;transform:none}.admin-toast.is-success{border-color:rgba(151,181,112,.72)}.admin-toast.is-error{border-color:rgba(218,117,106,.8)}
 @media(max-width:860px){.save-actions{bottom:8px}.save-status-inline{order:3;width:100%}.admin-toast{right:16px;bottom:16px;left:16px;max-width:none}}
 .activity-panel{grid-column:1/-1;scroll-margin-top:96px}.activity-layout{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(380px,1.2fr);gap:20px;padding:22px}.activity-stack{display:grid;gap:20px}.activity-list-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:12px 13px;border:1px solid rgba(165,130,84,.25);background:rgba(165,130,84,.065)}.activity-list-select-all{display:inline-flex;align-items:center;gap:8px;color:rgba(245,240,232,.78);font-size:13px;cursor:pointer}.activity-list-select-all input,.activity-list-checkbox{width:18px;height:18px;margin:0;accent-color:#A58254;cursor:pointer}.activity-list-selected-count{margin-right:auto;color:#CBAA77;font-size:12px;letter-spacing:.05em}.activity-list-row{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}.activity-list-row.is-selected{border-color:rgba(203,170,119,.55);background:rgba(165,130,84,.12)}.activity-list-check-cell{display:flex;align-items:center;justify-content:center;min-width:24px}.activity-status[data-state="success"]{color:#BFD39C}.activity-status[data-state="error"]{color:#F1AAA2}.activity-status[data-state="saving"]{color:#D8BD91}.event-access-fields{padding:14px;border:1px solid rgba(165,130,84,.22);background:rgba(165,130,84,.05)}@media(max-width:860px){.activity-layout{grid-template-columns:1fr;padding:16px}}
+.article-analytics-panel{grid-column:1/-1;scroll-margin-top:100px}.article-analytics-body{padding:22px}.article-analytics-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px}.article-analytics-toolbar label{font-size:13px;color:#D8BD91}.article-analytics-toolbar input{width:180px;padding:9px 12px;background:#0A1409;border:1px solid var(--line);color:var(--cream);color-scheme:dark;font:14px var(--sans)}.article-analytics-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}.article-analytics-card{padding:17px;background:rgba(165,130,84,.07);border:1px solid rgba(165,130,84,.22)}.article-analytics-card small{display:block;color:var(--muted);font-size:12px}.article-analytics-card strong{display:block;color:#E3C597;font-size:27px;line-height:1.45;font-weight:500;font-variant-numeric:tabular-nums}.article-analytics-card span{font-size:11px;color:var(--muted)}.article-analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.article-analytics-box{min-width:0;padding:17px;background:rgba(4,8,3,.26);border:1px solid rgba(165,130,84,.2)}.article-analytics-box h3{margin:0 0 14px;color:#D8BD91;font-size:16px;font-weight:500}.article-analytics-table-wrap{width:100%;overflow-x:auto}.article-analytics-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}.article-analytics-table th,.article-analytics-table td{padding:11px 8px;border-bottom:1px solid rgba(165,130,84,.15)}.article-analytics-table th{color:#CBAA77;font-weight:500;white-space:nowrap}.article-analytics-table td{color:rgba(245,240,232,.82)}.article-analytics-table td:first-child{min-width:160px}.article-analytics-table a{color:#D8BD91}.article-analytics-description{font-size:12px;line-height:1.8;color:var(--muted);margin:14px 0 0}.article-analytics-note{font-size:13px;line-height:1.8;color:#D8BD91;padding:14px;border:1px solid rgba(165,130,84,.22);background:rgba(165,130,84,.055);margin:0}.article-analytics-rank{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.article-analytics-rank button[aria-pressed=true]{background:#A58254;color:#071106}.article-analytics-status{font-size:12px;color:var(--muted)}@media(max-width:900px){.article-analytics-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.article-analytics-grid{grid-template-columns:1fr}}@media(max-width:520px){.article-analytics-body{padding:15px}.article-analytics-cards{grid-template-columns:1fr 1fr}.article-analytics-card{padding:12px}.article-analytics-card strong{font-size:23px}}
 </style>
 <script src="/analytics-config.js"></script>
 <script src="/analytics.js" defer></script>
@@ -45,6 +46,7 @@
       <a class="btn" href="#member-questions">會員提問</a>
       <a class="btn" href="#wellness-members">養生療癒會員</a>
       <a class="btn" href="#member-video-management">會員影片</a>
+      <a class="btn" href="#article-analytics">文章流量分析</a>
       <a class="btn primary" href="/admin-zodiac-lamp.html">2027 十二生肖・全文與閱讀權限管理</a>
       <a class="btn" href="articles.html" target="_blank">查看前台文章</a>
       <a class="btn" href="index.html">回首頁</a>
@@ -438,6 +440,54 @@
         </div>
       </div>
     </section>
+    <section class="panel article-analytics-panel" id="article-analytics" aria-labelledby="article-analytics-heading">
+      <div class="panel-head">
+        <h2 id="article-analytics-heading">文章流量分析</h2>
+        <span id="article-analytics-status" class="article-analytics-status" role="status" aria-live="polite">等待管理員登入…</span>
+      </div>
+      <div class="article-analytics-body">
+        <div class="article-analytics-toolbar">
+          <label for="article-analytics-month">統計月份（臺灣時間）</label>
+          <input type="month" id="article-analytics-month">
+          <button type="button" id="article-analytics-refresh" class="btn">重新整理</button>
+          <button type="button" id="article-analytics-export" class="btn">匯出 CSV</button>
+          <a class="btn" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer">開啟 Google Analytics</a>
+        </div>
+        <div id="article-analytics-setup" class="article-analytics-note">正在確認 GA4 串接狀態…</div>
+        <div id="article-analytics-cards" class="article-analytics-cards" aria-live="polite"></div>
+        <div class="article-analytics-rank" aria-label="排行榜顯示數量">
+          <button type="button" class="btn" data-analytics-rank="3" aria-pressed="true">前三名</button>
+          <button type="button" class="btn" data-analytics-rank="10" aria-pressed="false">前十名</button>
+        </div>
+        <div class="article-analytics-box">
+          <h3>本月付費文章排行榜</h3>
+          <div class="article-analytics-table-wrap">
+            <table class="article-analytics-table">
+              <thead><tr><th>文章</th><th>登入讀者</th><th>解鎖全文</th><th>到達 90%</th><th>解鎖率</th></tr></thead>
+              <tbody id="article-analytics-ranking"><tr><td colspan="5">等待統計資料…</td></tr></tbody>
+            </table>
+          </div>
+          <p class="article-analytics-description">本月數字是上線後開始累積的「每篇不重複登入者」，解鎖率為成功解鎖人數／開啟文章的登入人數。到達 90% 為捲動進度且停留至少 15 秒，不代表逐字讀完。</p>
+        </div>
+        <div class="article-analytics-grid">
+          <div class="article-analytics-box">
+            <h3>歷來付費文章閱讀排行榜</h3>
+            <div class="article-analytics-table-wrap">
+              <table class="article-analytics-table">
+                <thead><tr><th>文章</th><th>累積開啟次數</th></tr></thead>
+                <tbody id="article-analytics-all-time"><tr><td colspan="2">等待統計資料…</td></tr></tbody>
+              </table>
+            </div>
+            <p class="article-analytics-description">沿用既有 articleMetrics 紀錄，包含未登入訪客，無法回推歷史付費會員人數。</p>
+          </div>
+          <div class="article-analytics-box">
+            <h3>登入讀者的來源與跨月比較</h3>
+            <div id="article-analytics-sources" class="article-analytics-status">尚無資料。</div>
+            <p class="article-analytics-description">來源以 UTM 或瀏覽器引薦資訊估算。未登入訪客的完整流量、搜尋與轉換資料請以 GA4 報表為準。</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -453,5 +503,6 @@
 <script type="module" src="wellness-member-admin.js?v=20261017-first-join-month-1"></script>
 <script type="module" src="member-video-admin.js?v=20261017-first-join-month-1"></script>
 <script type="module" src="admin-member-questions.js?v=20261103-member-questions-1"></script>
+<script type="module" src="/article-analytics-admin.js?v=20261122-1"></script>
 </body>
 </html>
