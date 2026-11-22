@@ -446,12 +446,20 @@
         <span id="article-analytics-status" class="article-analytics-status" role="status" aria-live="polite">等待管理員登入…</span>
       </div>
       <div class="article-analytics-body">
+        <div class="article-analytics-box" style="margin-bottom:20px">
+          <h3>全站流量｜Google Analytics 4（免費）</h3>
+          <div class="article-analytics-toolbar" style="margin-bottom:8px">
+            <a class="btn primary" href="https://analytics.google.com/analytics/web/#/a401584080p546095269/reports/realtime" target="_blank" rel="noopener noreferrer">查看即時流量</a>
+            <a class="btn" href="https://analytics.google.com/analytics/web/#/a401584080p546095269/reports/intelligenthome" target="_blank" rel="noopener noreferrer">查看流量總覽</a>
+          </div>
+          <p class="article-analytics-description">這兩個按鍵會開啟 Google Analytics，使用有權限的 Google 帳號登入即可查看全站訪客、頁面瀏覽及流量來源；每月統計可在 Google 報表中調整日期範圍。下方則是本網站後台的會員文章統計，兩套資料的計算方式不同。</p>
+        </div>
+        <h3 style="color:#D8BD91;font-size:16px;font-weight:500;margin:0 0 12px">會員文章月報｜網站後台</h3>
         <div class="article-analytics-toolbar">
           <label for="article-analytics-month">統計月份（臺灣時間）</label>
           <input type="month" id="article-analytics-month">
           <button type="button" id="article-analytics-refresh" class="btn">重新整理</button>
           <button type="button" id="article-analytics-export" class="btn">匯出 CSV</button>
-          <a class="btn" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer">開啟 Google Analytics</a>
         </div>
         <div id="article-analytics-setup" class="article-analytics-note">正在確認 GA4 串接狀態…</div>
         <div id="article-analytics-cards" class="article-analytics-cards" aria-live="polite"></div>
