@@ -302,6 +302,17 @@ def delete_entitlement(email: str) -> None:
     request_json("DELETE", f"{BASE_URL}/memberEntitlements/{doc_id}")
 
 
+def window_stats_bucket(record: dict) -> str:
+    """只供紀錄統計（不含任何個資）：回傳此有效會員目前的閱讀範圍類型。"""
+    anchor = parse_datetime(record.get("articleWindowStartsAt"))
+    if anchor is None or anchor <= UNRESTRICTED_WINDOW_START:
+        return "unrestricted"
+    joined = parse_datetime(record.get("firstJoinedAt"))
+    if joined is not None and joined < ARTICLE_WINDOW_EFFECTIVE_AT and anchor >= ARTICLE_WINDOW_EFFECTIVE_AT:
+        return "limited_joined_before_policy"  # 規則生效前就加入、現在起算日在生效後：可能是中斷後重新加入，也可能是被舊邏輯重設
+    return "limited"
+
+
 def main() -> int:
     sponsor_docs = list_collection("sponsorMemberAccess")
     wellness_docs = list_collection("memberAccess")
@@ -311,6 +322,7 @@ def main() -> int:
     updated = 0
     deleted = 0
     anchors_updated = 0
+    window_stats = {"unrestricted": 0, "limited": 0, "limited_joined_before_policy": 0}
     for email in emails:
         has_sponsor = email in sponsor_docs
         has_wellness = email in wellness_docs
@@ -335,11 +347,17 @@ def main() -> int:
             wellness = {**wellness, **{key: timestamp_value(value)["timestampValue"] for key, value in wellness_anchor.items()}}
             anchors_updated += 1
 
+        if has_sponsor and sponsor_state(sponsor, email, now)["article"]:
+            window_stats[window_stats_bucket(sponsor)] += 1
+        if has_wellness and wellness_state(wellness, email, now)["article"]:
+            window_stats[window_stats_bucket(wellness)] += 1
+
         fields = entitlement_fields(email, sponsor, wellness, has_sponsor, has_wellness)
         patch_entitlement(email, fields)
         updated += 1
 
     print(f"Member entitlement rebuild complete: {updated} updated, {deleted} deleted, {anchors_updated} reading-window anchors updated.")
+    print("Active article members by reading window (counts only): " + ", ".join(f"{key}={value}" for key, value in window_stats.items()))
     return 0
 
 
