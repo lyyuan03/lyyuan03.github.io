@@ -303,8 +303,12 @@ section{position:relative}
 /* 首頁精修（僅視覺）：降低特效感、收斂英文標籤、強化紙質與層次 */
 :root{--night:#080d07;--paper:#efe8da;--paper2:#e6dcc9;--gold-hi:#d7b985;--line:rgba(165,130,84,.34)}
 /* 1. 拿掉泛用發光特效 */
-#ly-motion-canvas,.ly-aura,.hero::after,body::after{display:none!important}
-.hero-logo{animation:none!important;filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.1)}
+#ly-motion-canvas,.ly-aura,.hero-content::before,.hero::after,body::after{display:none!important}
+.hero-logo{width:clamp(240px,26vw,330px);margin-bottom:6px;animation:lyLogoRise 1.8s var(--ease-calm) both,lyLogoBreath 7s 1.8s ease-in-out infinite!important;filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.12)}
+@keyframes lyLogoRise{from{opacity:0;transform:translateY(16px) scale(.94);filter:blur(6px) brightness(1)}to{opacity:1;transform:none;filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.12)}}
+@keyframes lyLogoBreath{0%,100%{transform:scale(1);filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.1)}50%{transform:scale(1.035);filter:drop-shadow(0 0 30px rgba(225,193,111,.42)) brightness(1.2)}}
+@media(max-width:768px){.hero-logo{width:210px}}
+@media(prefers-reduced-motion:reduce){.hero-logo{animation:none!important}}
 .ly-scroll-light{height:1px;box-shadow:none;background:linear-gradient(90deg,transparent,#c9a761)}
 .seal-decor{display:none}
 /* 2. 首屏：詩句直接浮在畫面上，不加方框 */
