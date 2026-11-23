@@ -377,8 +377,46 @@ section{position:relative}
 .contact-section:before{background-attachment:scroll!important}
 .about-section:before{mix-blend-mode:normal;opacity:.18}
 </style>
+<style id="home-forest-flow">
+/* 一鏡到底：整頁共用同一張固定的森林背景，區塊改為透明，卡片改為深色半透明＋細金線 */
+.ly-forest{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(8,13,7,.58),rgba(8,13,7,.66)),url('/forest-path.jpg') center/cover no-repeat;transform:translateZ(0)}
+body{background:#080d07}
+.hero-bg{display:none}
+.hero-overlay{background:radial-gradient(ellipse 70% 60% at 50% 45%,rgba(8,13,7,0),rgba(8,13,7,.38) 100%),linear-gradient(180deg,rgba(8,13,7,.18),rgba(8,13,7,0) 40%,rgba(8,13,7,.2))}
+/* 區塊：透明底，只以極淡的明暗變化區分節奏 */
+.about-section{background:linear-gradient(180deg,rgba(8,13,7,.12),rgba(8,13,7,.3));border-top:1px solid rgba(197,162,111,.28);color:var(--cream)}
+.about-section:before{display:none}
+.home-photos{background:rgba(8,13,7,.34)}
+.home-build{background:rgba(8,13,7,.22)}
+.home-course-entry{background:rgba(8,13,7,.42);border-top-color:rgba(165,130,84,.24);border-bottom-color:rgba(165,130,84,.2)}
+.home-course-entry:before{display:none}
+.featured-reading{background:rgba(8,13,7,.26)}
+.contact-section{background:rgba(8,13,7,.46)}
+.contact-section:before{display:none}
+/* 關於：深色半透明卡 */
+.about-item{background:rgba(8,13,7,.56);border:1px solid rgba(197,162,111,.3);box-shadow:0 18px 40px -22px rgba(0,0,0,.7);color:var(--cream)}
+.about-item:hover{box-shadow:0 26px 50px -22px rgba(0,0,0,.8);border-color:rgba(215,185,133,.5)}
+.about-item h3{color:#f0e3c8}
+.about-item h3:after{color:rgba(215,185,133,.26)}
+.about-item p{color:rgba(245,240,232,.86)}
+.about-quote{background:linear-gradient(90deg,rgba(165,130,84,.16),transparent);border-left-color:rgba(215,185,133,.7)}
+.about-quote p{color:rgba(245,240,232,.9)}
+.about-photo{background:#16200f}
+/* 文選卡：保留圖片，文字區改深色半透明 */
+.featured-card,.featured-card:nth-child(even){background:rgba(8,13,7,.58);color:var(--cream);border:1px solid rgba(197,162,111,.3);box-shadow:0 14px 32px rgba(0,0,0,.35)}
+.featured-card:hover,.featured-card:focus-visible{border-color:rgba(215,185,133,.55)}
+.featured-copy small{color:#cdae80}
+.featured-copy h3{color:#f0e3c8}
+.featured-copy p{color:rgba(245,240,232,.78)}
+.featured-copy span{color:#cdae80}
+/* 照片與營建區：標題與說明文字加一點陰影，確保在森林上清楚 */
+.home-photos h2,.home-build h2,.featured-reading h2,.section-heading h2{text-shadow:0 2px 18px rgba(0,0,0,.7)}
+.home-build-note{color:rgba(245,240,232,.82)}
+@media(max-width:768px){.ly-forest{background-position:60% center}}
+</style>
 </head>
 <body>
+<div class="ly-forest" aria-hidden="true"></div>
 <div class="ly-mist a" aria-hidden="true"></div><div class="ly-mist b" aria-hidden="true"></div>
 
 <div class="ly-scroll-light" aria-hidden="true"></div>
