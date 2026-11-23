@@ -307,12 +307,26 @@ section{position:relative}
 /* 山形標誌：淡淡地鋪在詩句後方，文字浮在其上；僅做一次淡入，之後靜止（不佔效能） */
 .hero-poem-wrap{position:relative}
 .hero-mountain{position:absolute;left:50%;top:50%;z-index:-1;width:clamp(360px,44vw,600px);max-width:none;margin:0;translate:-50% -52%;pointer-events:none;user-select:none;
-  filter:sepia(.4) saturate(.8) brightness(1.9);opacity:.28;
+  filter:sepia(.45) saturate(.95) brightness(2.2);opacity:.4;
   -webkit-mask-image:radial-gradient(ellipse 62% 62% at 50% 50%,#000 35%,transparent 78%);mask-image:radial-gradient(ellipse 62% 62% at 50% 50%,#000 35%,transparent 78%);
-  animation:lyMountainIn 3.2s var(--ease-calm) .4s both}
-@keyframes lyMountainIn{from{opacity:0}to{opacity:.28}}
+  animation:lyMountainIn 3.2s var(--ease-calm) .4s both,lyTwinkle 8s ease-in-out 3.6s infinite}
+@keyframes lyMountainIn{from{opacity:0}to{opacity:.4}}
+@keyframes lyTwinkle{0%,100%{opacity:.36}18%{opacity:.52}34%{opacity:.4}52%{opacity:.56}70%{opacity:.38}86%{opacity:.48}}
+/* 山後方的淡金光暈：只動 opacity（合成層動畫，不耗效能） */
+.hero-poem-wrap:before{content:"";position:absolute;left:50%;top:50%;z-index:-2;width:clamp(460px,58vw,800px);aspect-ratio:1.5;translate:-50% -52%;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(233,203,129,.34),rgba(233,203,129,.1) 45%,transparent 72%);
+  opacity:.6;animation:lyGlow 6s ease-in-out infinite;will-change:opacity}
+@keyframes lyGlow{0%,100%{opacity:.4}50%{opacity:.85}}
+/* 全頁霧氣：兩層大面積柔光，以 transform 緩慢飄移（無 filter／blend，不使用畫布） */
+.ly-mist{position:fixed;top:-10%;bottom:-10%;left:-30%;right:-30%;z-index:90;pointer-events:none;will-change:transform,opacity;backface-visibility:hidden}
+.ly-mist.a{background:radial-gradient(ellipse 22% 20% at 22% 68%,rgba(206,221,201,.22),transparent 72%),radial-gradient(ellipse 26% 22% at 62% 38%,rgba(206,221,201,.15),transparent 72%),radial-gradient(ellipse 24% 18% at 48% 92%,rgba(218,228,208,.2),transparent 72%);opacity:.8;animation:lyMistA 70s ease-in-out infinite alternate}
+.ly-mist.b{background:radial-gradient(ellipse 24% 18% at 78% 74%,rgba(206,221,201,.2),transparent 72%),radial-gradient(ellipse 22% 24% at 34% 30%,rgba(214,226,206,.14),transparent 72%),radial-gradient(ellipse 28% 16% at 14% 46%,rgba(206,221,201,.16),transparent 72%);opacity:.7;animation:lyMistB 95s ease-in-out infinite alternate}
+@keyframes lyMistA{0%{transform:translate3d(-7%,0,0);opacity:.6}50%{opacity:.9}100%{transform:translate3d(7%,-3%,0);opacity:.7}}
+@keyframes lyMistB{0%{transform:translate3d(6%,-2%,0);opacity:.5}50%{opacity:.8}100%{transform:translate3d(-8%,2%,0);opacity:.6}}
+@media(max-width:768px){.ly-mist.b{display:none}}
+@media(prefers-reduced-motion:reduce){.ly-mist{animation:none}.hero-poem-wrap:before{animation:none}}
 @media(max-width:768px){.hero-mountain{width:min(86vw,420px)}}
-@media(prefers-reduced-motion:reduce){.hero-mountain{animation:none}}
+@media(prefers-reduced-motion:reduce){.hero-mountain{animation:none;opacity:.42}}
 .ly-scroll-light{height:1px;box-shadow:none;background:linear-gradient(90deg,transparent,#c9a761)}
 .seal-decor{display:none}
 /* 2. 首屏：詩句直接浮在畫面上，不加方框 */
@@ -365,6 +379,7 @@ section{position:relative}
 </style>
 </head>
 <body>
+<div class="ly-mist a" aria-hidden="true"></div><div class="ly-mist b" aria-hidden="true"></div>
 
 <div class="ly-scroll-light" aria-hidden="true"></div>
 <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
