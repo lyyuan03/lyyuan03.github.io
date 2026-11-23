@@ -304,15 +304,15 @@ section{position:relative}
 :root{--night:#080d07;--paper:#efe8da;--paper2:#e6dcc9;--gold-hi:#d7b985;--line:rgba(165,130,84,.34)}
 /* 1. 拿掉泛用發光特效 */
 #ly-motion-canvas,.ly-aura,.hero-content::before,.hero::after,body::after{display:none!important}
-.hero-logo{width:clamp(240px,26vw,330px);margin-bottom:6px;animation:lyLogoRise 1.8s var(--ease-calm) both,lyLogoBreath 7s 1.8s ease-in-out infinite!important;filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.12)}
-@keyframes lyLogoRise{from{opacity:0;transform:translateY(16px) scale(.94);filter:blur(6px) brightness(1)}to{opacity:1;transform:none;filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.12)}}
-@keyframes lyLogoBreath{0%,100%{transform:scale(1);filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.1)}50%{transform:scale(1.035);filter:drop-shadow(0 0 30px rgba(225,193,111,.42)) brightness(1.2)}}
-@media(max-width:768px){.hero-logo{width:210px}}
-.hero-mountain{width:clamp(210px,24vw,300px);margin-bottom:34px;filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.6) saturate(.8) sepia(.25)}
-@keyframes lyLogoRise{from{opacity:0;transform:translateY(18px) scale(.92);filter:blur(6px) brightness(1.2)}to{opacity:1;transform:none;filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.6) saturate(.8) sepia(.25)}}
-@keyframes lyLogoBreath{0%,100%{transform:scale(1);filter:drop-shadow(0 6px 28px rgba(0,0,0,.7)) brightness(1.55) saturate(.8) sepia(.25)}50%{transform:scale(1.04);filter:drop-shadow(0 0 34px rgba(225,193,111,.5)) brightness(1.85) saturate(.85) sepia(.25)}}
-@media(max-width:768px){.hero-mountain{width:190px}}
-@media(prefers-reduced-motion:reduce){.hero-logo{animation:none!important}}
+/* 山形標誌：淡淡地鋪在詩句後方，文字浮在其上；僅做一次淡入，之後靜止（不佔效能） */
+.hero-poem-wrap{position:relative}
+.hero-mountain{position:absolute;left:50%;top:50%;z-index:-1;width:clamp(360px,44vw,600px);max-width:none;margin:0;translate:-50% -52%;pointer-events:none;user-select:none;
+  filter:sepia(.4) saturate(.8) brightness(1.9);opacity:.28;
+  -webkit-mask-image:radial-gradient(ellipse 62% 62% at 50% 50%,#000 35%,transparent 78%);mask-image:radial-gradient(ellipse 62% 62% at 50% 50%,#000 35%,transparent 78%);
+  animation:lyMountainIn 3.2s var(--ease-calm) .4s both}
+@keyframes lyMountainIn{from{opacity:0}to{opacity:.28}}
+@media(max-width:768px){.hero-mountain{width:min(86vw,420px)}}
+@media(prefers-reduced-motion:reduce){.hero-mountain{animation:none}}
 .ly-scroll-light{height:1px;box-shadow:none;background:linear-gradient(90deg,transparent,#c9a761)}
 .seal-decor{display:none}
 /* 2. 首屏：詩句直接浮在畫面上，不加方框 */
@@ -358,14 +358,15 @@ section{position:relative}
 .hero-primary{border-radius:999px}
 @media(max-width:900px){.home-build-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:170px}.home-build-grid figure:nth-child(1){grid-column:span 2;grid-row:span 2}.home-build-grid figure:nth-child(6){grid-column:auto}}
 @media(max-width:768px){.brand-block{grid-template-columns:1fr;max-width:360px}.brand-row{flex-direction:row;justify-content:flex-start;gap:18px;padding:18px 22px;margin-left:0;margin-top:-1px}.brand-row:first-child{margin-top:0}.brand-char{font-size:36px}.brand-divider,.brand-en{display:none}.about-section{padding:80px 0 72px}.hero-poem{padding:0}}
+/* 效能：關閉背景動態（粒子畫布與光團已移除；背景圖不再縮放／視差／固定） */
+.hero-bg{animation:none!important;translate:none!important;transform:none!important;transition:none!important;will-change:auto}
+.contact-section:before{background-attachment:scroll!important}
+.about-section:before{mix-blend-mode:normal;opacity:.18}
 </style>
 </head>
 <body>
 
-<canvas id="ly-motion-canvas" aria-hidden="true"></canvas>
 <div class="ly-scroll-light" aria-hidden="true"></div>
-<div class="ly-aura a" aria-hidden="true"></div>
-<div class="ly-aura b" aria-hidden="true"></div>
 <nav class="global-site-nav" aria-label="主要導覽" data-navigation-version="20260828-ia-3">
   <div class="global-nav-inner">
     <ul class="global-nav-links">
@@ -431,7 +432,7 @@ section{position:relative}
     </ul>
   </div>
 </nav>
-<header class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><svg class="seal-decor top-right" viewBox="0 0 100 100" fill="none"><rect x="8" y="8" width="84" height="84" rx="4" stroke="#A58254" stroke-width="2"/><rect x="14" y="14" width="72" height="72" rx="2" stroke="#A58254" stroke-width="1"/><text x="50" y="58" text-anchor="middle" font-family="serif" font-size="28" fill="#A58254" letter-spacing="2">虛空</text></svg><div class="hero-content"><p class="hero-eyebrow">LING · YUAN · YUAN</p><img src="assets/logo-mountain.png" alt="靈元院 山形標誌" class="hero-logo hero-mountain"><div class="hero-rule"></div><div class="hero-poem-wrap"><div class="hero-poem">穿過五欲六塵的層層煙迷<br>俯首越過靜謐陰翳<br>靜聽內在神性靈喚<br>照鑑明台真理</div></div><div class="brand-block"><div class="brand-row"><span class="brand-char">靈</span><span class="brand-divider"></span><span class="brand-def">元靈本源</span><span class="brand-en">Spirituality we inherit from the Source</span></div><div class="brand-row"><span class="brand-char">元</span><span class="brand-divider"></span><span class="brand-def">自性本始</span><span class="brand-en">Oneness, who we are from the Beginning</span></div><div class="brand-row"><span class="brand-char">院</span><span class="brand-divider"></span><span class="brand-def">謐靜空間</span><span class="brand-en">Temple where we enjoy the Silence</span></div></div><div class="closing-block"><p class="closing-zh">空無、幽玄、靜穆，<br>一隅大隱隱於市，人神相會之靈山秘境。</p><p class="closing-en">With spacious emptiness, delicate subtleness and silent respectfulness,<br>it is a spiritual mountain, a secret space where man and divinity meet,<br>quietly hidden in a busy city.</p></div><div class="hero-actions"><a class="hero-primary" href="articles.html">進入文選</a></div></div><div class="scroll-hint"><span>SCROLL</span><div class="scroll-hint-line"></div></div></header>
+<header class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><svg class="seal-decor top-right" viewBox="0 0 100 100" fill="none"><rect x="8" y="8" width="84" height="84" rx="4" stroke="#A58254" stroke-width="2"/><rect x="14" y="14" width="72" height="72" rx="2" stroke="#A58254" stroke-width="1"/><text x="50" y="58" text-anchor="middle" font-family="serif" font-size="28" fill="#A58254" letter-spacing="2">虛空</text></svg><div class="hero-content"><p class="hero-eyebrow">LING · YUAN · YUAN</p><div class="hero-rule"></div><div class="hero-poem-wrap"><img src="assets/logo-mountain.png" alt="" aria-hidden="true" class="hero-mountain"><div class="hero-poem">穿過五欲六塵的層層煙迷<br>俯首越過靜謐陰翳<br>靜聽內在神性靈喚<br>照鑑明台真理</div></div><div class="brand-block"><div class="brand-row"><span class="brand-char">靈</span><span class="brand-divider"></span><span class="brand-def">元靈本源</span><span class="brand-en">Spirituality we inherit from the Source</span></div><div class="brand-row"><span class="brand-char">元</span><span class="brand-divider"></span><span class="brand-def">自性本始</span><span class="brand-en">Oneness, who we are from the Beginning</span></div><div class="brand-row"><span class="brand-char">院</span><span class="brand-divider"></span><span class="brand-def">謐靜空間</span><span class="brand-en">Temple where we enjoy the Silence</span></div></div><div class="closing-block"><p class="closing-zh">空無、幽玄、靜穆，<br>一隅大隱隱於市，人神相會之靈山秘境。</p><p class="closing-en">With spacious emptiness, delicate subtleness and silent respectfulness,<br>it is a spiritual mountain, a secret space where man and divinity meet,<br>quietly hidden in a busy city.</p></div><div class="hero-actions"><a class="hero-primary" href="articles.html">進入文選</a></div></div><div class="scroll-hint"><span>SCROLL</span><div class="scroll-hint-line"></div></div></header>
 <section class="about-section"><div class="about-grid"><div class="about-item"><figure class="about-photo"><img src="assets/photos/07-blessing.webp" alt="法師於法儀中為信眾加持衣物" width="800" height="1200" loading="lazy" decoding="async" style="object-position:50% 38%"></figure><h3>靈元院緣起與法脈</h3><p>奉靈山派創始神無極瑤池金母慈示，於台中設立專屬靈修之會靈聖地。</p><p>以喚醒元神靈性為靈修根本，提供自修者一個心靈棲居靜修之所。</p><p>靈元院規制與儀軌，依循靈山派無極法精神與無極瑤池金母降示之教導，向世人分享靈山派獨樹一幟的元神修煉奧秘、信仰神學與空間美學。</p></div><div class="about-item"><figure class="about-photo"><img src="assets/photos/03-hall-banners.webp" alt="靈元院道場內的垂幔與靜修空間" width="1200" height="863" loading="lazy" decoding="async"></figure><h3>靜心修持的靈性空間美學</h3><p>本院舉凡道場題名、布置擺設、靈性美學以及空間規劃，均依無極瑤池金母親降指示，及空間氣場流動而設計。</p><p>形成一處隱匿於都市叢林中，寧靜且適於靈修人親近無極瑤池金母、靈山法靜修的環境。</p><div class="about-quote"><p>空無、幽玄、靜穆，<br>一隅大隱隱於市，人神相會之靈山秘境。</p></div></div><div class="about-item"><figure class="about-photo"><img src="assets/photos/05-buddha-class.webp" alt="木雕佛首與後方靜坐的學員" width="800" height="600" loading="lazy" decoding="async"></figure><h3>元神修煉之道</h3><p>靈元院的修法儀軌，以喚醒每一位靈修人的元神為目的，讓靈修者在心靈棲居之處，感受到無極瑤池金母的恩典。</p><p>在眾仙佛菩薩的指導之下，每一位龍鳳兒都能暫時遠離塵囂紛擾，找回內在的寧靜，喚醒沈睡的元神，回歸靈性本源。</p></div></div></section>
 <section class="home-photos" aria-labelledby="home-photos-title">
   <div class="home-photos-inner">
